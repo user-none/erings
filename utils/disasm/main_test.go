@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bytes"
 	"strings"
 	"testing"
 )
@@ -20,7 +21,11 @@ func TestDisassembleLinesDelaySlotAndTarget(t *testing.T) {
 		0x00, 0x00, // 0x08 .data.l high
 		0x00, 0x20, // 0x0A .data.l low -> 0x00000020
 	}
-	lines := disassembleLines(data, 0, 0, 6)
+	var buf bytes.Buffer
+	if err := disassembleLines(&buf, data, 0, 0, 6); err != nil {
+		t.Fatalf("disassembleLines: %v", err)
+	}
+	lines := strings.Split(strings.TrimRight(buf.String(), "\n"), "\n")
 	if len(lines) != 6 {
 		t.Fatalf("got %d lines, want 6: %v", len(lines), lines)
 	}
@@ -47,7 +52,11 @@ func TestDisassembleLinesPoolBounds(t *testing.T) {
 		0x00, 0x09, // 0x06 NOP
 		0x12, 0x34, // 0x08 cannot hold a full 32-bit word
 	}
-	lines := disassembleLines(data, 0, 0, 5) // must not panic
+	var buf bytes.Buffer
+	if err := disassembleLines(&buf, data, 0, 0, 5); err != nil { // must not panic
+		t.Fatalf("disassembleLines: %v", err)
+	}
+	lines := strings.Split(strings.TrimRight(buf.String(), "\n"), "\n")
 	if len(lines) != 5 {
 		t.Fatalf("got %d lines, want 5: %v", len(lines), lines)
 	}
@@ -62,7 +71,11 @@ func TestDisassembleLinesPoolBoundaryOK(t *testing.T) {
 		0x12, 0x34, // 0x04 .data.l high
 		0x56, 0x78, // 0x06 .data.l low -> 0x12345678
 	}
-	lines := disassembleLines(data, 0, 0, 4)
+	var buf bytes.Buffer
+	if err := disassembleLines(&buf, data, 0, 0, 4); err != nil {
+		t.Fatalf("disassembleLines: %v", err)
+	}
+	lines := strings.Split(strings.TrimRight(buf.String(), "\n"), "\n")
 	found := false
 	for _, l := range lines {
 		if strings.Contains(l, ".data.l H'12345678") {
