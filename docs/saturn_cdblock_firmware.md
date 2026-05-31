@@ -1,6 +1,6 @@
 # Saturn CD Block Firmware Disassembly Notes (CDB-106)
 
-Source: cdb106.bin disassembled with utils/emudbg/disasm
+Source: cdb106.bin disassembled with utils/disasm
 SHA256: 2dfb3618b5b612bb49abbf0d1d8d53016908bb81aa8c92515f0836203e0b7f1c
 
 ## Firmware Identification

@@ -160,7 +160,7 @@ To use this function for other purposes with that launcher, the current
 hooked in function needs to be changed or replaced for one off testing.
 Changes to this histogram capture should not be committed.
 
-### `utils/emudbg/disasm`
+### `utils/disasm`
 
 A simple SH-2 disassembler which can be used to investigate game
 execution.
