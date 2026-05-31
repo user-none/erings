@@ -31,7 +31,7 @@ func parseHexAddr(s string) (uint32, error) {
 	return uint32(addr), nil
 }
 
-// dataEntry describes a constant pool reference found during the first pass.
+// dataEntry describes a constant pool word referenced by a PC-relative load.
 type dataEntry struct {
 	size uint8 // 2 = .data.w (16-bit), 4 = .data.l (32-bit)
 }
@@ -199,7 +199,8 @@ func main() {
 	} else if n <= 0 {
 		fmt.Fprintf(os.Stderr, "error: -count must be positive\n")
 		os.Exit(1)
-	} else if addr-baseAddr+uint32(n)*2 > fileSize {
+	} else if uint64(addr-baseAddr)+uint64(n)*2 > uint64(fileSize) {
+		// 64-bit math so a very large -count cannot wrap the range check.
 		fmt.Fprintf(os.Stderr, "error: address range exceeds file size (0x%08X-0x%08X)\n",
 			baseAddr, baseAddr+fileSize-1)
 		os.Exit(1)
