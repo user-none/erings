@@ -44,6 +44,31 @@ func Disassemble(pc uint32, op uint16) string {
 	return illegal(op)
 }
 
+// IsDelayedBranch reports whether op is an SH-2 delayed branch, i.e. the
+// following instruction (the delay slot) executes before the branch takes
+// effect. The decode patterns mirror those used by Disassemble above. This is
+// a disassembly aid; the execution core handles delay slots via runtime state
+// (CPU.inDelay/delayPC) rather than opcode classification.
+func IsDelayedBranch(op uint16) bool {
+	switch op {
+	case 0x000B, 0x002B: // RTS, RTE
+		return true
+	}
+	switch nibble(op, 3) {
+	case 0x0: // BSRF (xx03, x0xx) / BRAF (xx03, x2xx)
+		if nibble(op, 0) == 0x3 {
+			return nibble(op, 1) == 0x0 || nibble(op, 1) == 0x2
+		}
+	case 0x4: // JSR (xx0B) / JMP (xx2B)
+		return imm8(op) == 0x0B || imm8(op) == 0x2B
+	case 0x8: // BT/S (xxDx) / BF/S (xxFx); NOT BT(9)/BF(B)
+		return nibble(op, 2) == 0xD || nibble(op, 2) == 0xF
+	case 0xA, 0xB: // BRA, BSR
+		return true
+	}
+	return false
+}
+
 func reg(n uint8) string {
 	return fmt.Sprintf("R%d", n)
 }

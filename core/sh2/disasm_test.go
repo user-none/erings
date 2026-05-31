@@ -370,3 +370,38 @@ func TestDisasmIllegal(t *testing.T) {
 		})
 	}
 }
+
+func TestIsDelayedBranch(t *testing.T) {
+	tests := []struct {
+		op   uint16
+		want bool
+	}{
+		// Delayed branches.
+		{0x000B, true}, // RTS
+		{0x002B, true}, // RTE
+		{0x0303, true}, // BSRF R3
+		{0x0E03, true}, // BSRF R14
+		{0x0323, true}, // BRAF R3
+		{0x440B, true}, // JSR @R4
+		{0x4F0B, true}, // JSR @R15
+		{0x442B, true}, // JMP @R4
+		{0x8D05, true}, // BT/S +disp
+		{0x8F05, true}, // BF/S +disp
+		{0xA123, true}, // BRA
+		{0xB123, true}, // BSR
+		// Not delayed branches.
+		{0x8905, false}, // BT (non-delayed)
+		{0x8B05, false}, // BF (non-delayed)
+		{0x0009, false}, // NOP
+		{0x6013, false}, // MOV R1,R0
+		{0xD32A, false}, // MOV.L @(disp,PC),R3
+		{0x0013, false}, // group 0, nibble0 == 3 but nibble1 == 1 (not BSRF/BRAF)
+	}
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("0x%04X", tt.op), func(t *testing.T) {
+			if got := IsDelayedBranch(tt.op); got != tt.want {
+				t.Errorf("IsDelayedBranch(0x%04X) = %v, want %v", tt.op, got, tt.want)
+			}
+		})
+	}
+}
