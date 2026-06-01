@@ -101,6 +101,18 @@ type Emulator struct {
 	m68kCyclesPerFrame   uint32
 
 	audioBuffer []int16
+
+	// hasBIOS records whether a real BIOS image was loaded via SetBIOS.
+	// Start() uses this to decide between the real-BIOS boot (BIOS code
+	// runs from $20000200) and the HLE-BIOS boot in hlebios.go.
+	hasBIOS bool
+
+	// ipImage caches the disc's Initial Program (16 sectors of user
+	// data, 32 KB) read at SetDisc time. Used by region auto-detect
+	// and the HLE BIOS boot path. Nil when no disc is attached or
+	// the read failed. Refreshed on every SetDisc so future disc-swap
+	// support stays simple.
+	ipImage []byte
 }
 
 // NewEmulator creates a Saturn emulator with all components wired together.
@@ -216,42 +228,40 @@ func (e *Emulator) recalcSegments(activeCycles uint32) {
 	e.segSystemCycles[segmentsPerScanline-1] += hblank - hblankBase*half
 }
 
-// SetDisc attaches a disc reader to the CD Block and auto-detects
-// the disc's region to set the SMPC area code and VDP2 PAL bit.
-// This ensures the BIOS and SYS_ARE region checks pass regardless of
+// SetDisc attaches a disc reader to the CD Block, caches the disc's
+// IP image for later HLE-BIOS boot, and auto-detects the disc's
+// region to set the SMPC area code and VDP2 PAL bit. The region
+// step ensures BIOS and SYS_ARE region checks pass regardless of
 // which BIOS region is loaded.
 func (e *Emulator) SetDisc(d DiscReader) {
 	e.cdblock.SetDisc(d)
-	if d != nil {
-		e.autoDetectRegion(d)
-	}
-}
-
-// autoDetectRegion reads the IP header from sector 0 and sets the
-// SMPC area code to match the disc's first compatible region, and
-// also propagates PAL/NTSC selection into VDP2 timing.
-// The area codes are 10 ASCII bytes at IP System ID offset $40:
-// J=Japan, T=Asia NTSC, U=North America, E=Europe PAL.
-func (e *Emulator) autoDetectRegion(d DiscReader) {
-	data, err := d.ReadSector(0)
-	if err != nil || len(data) < 16+0x50 {
+	e.ipImage = nil
+	if d == nil {
 		return
 	}
-	// User data starts at byte 16 in a raw 2352-byte sector.
-	// Area codes are at System ID offset $40, 10 bytes.
-	areaField := data[16+0x40 : 16+0x4A]
+	e.ipImage = readIPImage(d)
+	e.autoDetectRegion()
+}
+
+// autoDetectRegion reads the area-code field from the cached IP
+// image's System ID header and sets the SMPC area code to match
+// the disc's first compatible region, propagating PAL/NTSC
+// selection into VDP2 timing. The area codes are 10 ASCII bytes
+// at System ID offset $40: J=Japan, T=Asia NTSC, U=North America,
+// E=Europe PAL.
+func (e *Emulator) autoDetectRegion() {
+	if len(e.ipImage) < 0x4A {
+		return
+	}
+	areaField := e.ipImage[0x40:0x4A]
 	for _, ch := range areaField {
 		switch ch {
-		case 'J':
-			e.smpc.areaCode = 0x01
-			e.vdp2.SetPAL(false)
-			return
-		case 'T':
-			e.smpc.areaCode = 0x02
-			e.vdp2.SetPAL(false)
-			return
 		case 'U':
 			e.smpc.areaCode = 0x04
+			e.vdp2.SetPAL(false)
+			return
+		case 'J':
+			e.smpc.areaCode = 0x01
 			e.vdp2.SetPAL(false)
 			return
 		case 'E':
@@ -548,13 +558,27 @@ func (e *Emulator) SetBIOS(key string, data []byte) error {
 		// at the power-on entry point so it begins executing BIOS code
 		// rather than interpreting the vector table as instructions.
 		e.slave.LoadResetVectors()
+		e.hasBIOS = true
 		return nil
 	}
 	return errors.New("unknown BIOS key: " + key)
 }
 
-// Start is a no-op. The emulator is ready after construction and SetBIOS.
-func (e *Emulator) Start() {
+// Start prepares the emulator for the first RunFrame. When no real
+// BIOS was loaded via SetBIOS, it constructs an HLEBIOS in place
+// and boots it from the cached disc IP image. The HLEBIOS instance
+// is not retained on the emulator: it stays alive only through the
+// closures it wires into master.HLEHook / slave.HLEHook, and is
+// otherwise invisible to the rest of the emulator. Real-BIOS boots
+// construct nothing and leave the CPU hooks nil.
+func (e *Emulator) Start() error {
+	if !e.hasBIOS {
+		hle := NewHLEBIOS(e.bus, e.master, e.slave)
+		if err := hle.Boot(e.ipImage); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Close releases emulator resources.

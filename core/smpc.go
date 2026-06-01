@@ -503,6 +503,17 @@ func (s *SMPC) SetPadData(port int, data uint16) {
 	}
 }
 
+// PadData returns the current active-low 16-bit pad button state for
+// port 0 or 1. Used by HLE BIOS PER_* services to fabricate
+// peripheral records without going through the full SMPC INTBACK
+// sequence. Returns $FFFF (all released) for out-of-range ports.
+func (s *SMPC) PadData(port int) uint16 {
+	if port >= 0 && port < 2 {
+		return s.padState[port]
+	}
+	return 0xFFFF
+}
+
 // collectPeripheralData populates OREGs with Saturn digital pad data.
 // For each port not in 0-byte mode, writes:
 //   - Port status (0xF1: direct connect, 1 connector)

@@ -147,6 +147,28 @@ auto-draw would not fire until the following frame, halving the
 inner emulator's framerate.
 
 
+# IP execution vs direct application loading
+
+The application binary can be loaded and entered directly instead of
+running the disc's IP first: read the 1st Read Address from System ID
++$F0, load CD file ID 2 there, set the master PC to that address, and
+run. Waku Waku 7, Burning Rangers, and Bulk Slash all run fine this
+way.
+
+NiGHTS does not. Its application streams disc data during gameplay
+through a CD-block helper reached via WRAM-H slot $060002DC. The IP's
+tail relocates a CD-read routine into the workspace at $06000D00 and
+rewrites slot $060002DC to point at it, then runs a CD-block
+initialization sequence. Loading the application directly skips this,
+so slot $060002DC is never set up and the game's disc reads call a
+routine that does not exist.
+
+The IP's register cleanup (XOR R0-R14, zero GBR/PR/SR, CLRMAC) runs
+before this relocation work, so it is not the final register state at
+the application entry; substantial setup code runs afterward.
+
+A BIOS of some kind (real or HLE) is still needed.
+
 # Timing
 
 The Saturn is extremely timing dependant. While there are some

@@ -8,6 +8,21 @@ package sh2
 func (c *CPU) execute() {
 	wasDelay := c.inDelay
 
+	// HLE BIOS trap. The HLE BIOS publishes function-pointer slots
+	// holding magic addresses in $A0000xxx; when game code JSRs
+	// through one of those slots, PC lands here. Run the registered
+	// Go service and act as if an RTS executed (PC = PR). No bus
+	// fetch happens — the bus has no special case for the magic
+	// range. Skipped inside a delay slot so a (theoretical) delay-
+	// slot landing here preserves the parent branch's semantics.
+	if !wasDelay && c.HLEHook != nil && c.reg.PC>>12 == 0xA0000 {
+		c.prevPC = c.reg.PC
+		c.lastLoadReg = 0xFF
+		c.HLEHook(c.reg.PC)
+		c.reg.PC = c.reg.PR
+		return
+	}
+
 	var op uint16
 	if c.hasDeferred {
 		op = c.deferredOp

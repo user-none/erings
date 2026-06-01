@@ -4,6 +4,7 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -78,12 +79,14 @@ const (
 )
 
 func main() {
-	biosPath := flag.String("bios", "", "Path to Saturn BIOS ROM (512KB, required)")
+	biosPath := flag.String("bios", "", "Path to Saturn BIOS ROM (512KB). Optional - if omitted, the HLE BIOS boots the disc directly.")
 	chdPath := flag.String("chd", "", "Path to CHD V5 disc image")
 	cpuProfile := flag.String("cpuprofile", "", "Write CPU profile to file")
 	dumpDir := flag.String("dump-dir", ".", "Directory to write memory dumps into (created if missing)")
+	savePath := flag.String("save", "", "Path to backup-RAM save file. If a directory, uses <gameid>.srm inside it. Loaded on start (if it exists) and written on close.")
 	flag.Parse()
 
+	var cpuProfileFile *os.File
 	if *cpuProfile != "" {
 		f, err := os.Create(*cpuProfile)
 		if err != nil {
@@ -92,33 +95,28 @@ func main() {
 		if err := pprof.StartCPUProfile(f); err != nil {
 			log.Fatalf("failed to start CPU profile: %v", err)
 		}
-		sigCh := make(chan os.Signal, 1)
-		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-		go func() {
-			<-sigCh
-			pprof.StopCPUProfile()
-			f.Close()
-			os.Exit(0)
-		}()
+		cpuProfileFile = f
 	}
 
-	if *biosPath == "" {
-		fmt.Fprintln(os.Stderr, "Usage: saturn -bios <path> [-chd <path>]")
+	if *biosPath == "" && *chdPath == "" {
+		fmt.Fprintln(os.Stderr, "Usage: saturn -bios <path> [-chd <path>]  OR  saturn -chd <path>  (HLE BIOS)")
 		os.Exit(1)
-	}
-
-	biosData, err := os.ReadFile(*biosPath)
-	if err != nil {
-		log.Fatalf("failed to read BIOS: %v", err)
 	}
 
 	emu := core.NewEmulator()
 
-	if err := emu.SetBIOS("main_bios", biosData); err != nil {
-		log.Fatalf("failed to set BIOS: %v", err)
+	if *biosPath != "" {
+		biosData, err := os.ReadFile(*biosPath)
+		if err != nil {
+			log.Fatalf("failed to read BIOS: %v", err)
+		}
+		if err := emu.SetBIOS("main_bios", biosData); err != nil {
+			log.Fatalf("failed to set BIOS: %v", err)
+		}
 	}
 
 	var disc *romloader.Disc
+	var err error
 	if *chdPath != "" {
 		disc, err = romloader.OpenDisc(*chdPath)
 		if err != nil {
@@ -128,7 +126,32 @@ func main() {
 		emu.SetDisc(disc)
 	}
 
-	emu.Start()
+	resolvedSavePath := resolveSavePath(*savePath, disc)
+	if resolvedSavePath != "" {
+		loadSaveFile(emu, resolvedSavePath)
+	}
+
+	// SIGINT/SIGTERM handler. Flushes the save file (if -save was
+	// given) and stops the CPU profile (if -cpuprofile was given)
+	// before exiting. Without this, CTRL-C would skip both — the
+	// normal close-path only runs when ebiten exits cleanly.
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigCh
+		if resolvedSavePath != "" {
+			writeSaveFile(emu, resolvedSavePath)
+		}
+		if cpuProfileFile != nil {
+			pprof.StopCPUProfile()
+			cpuProfileFile.Close()
+		}
+		os.Exit(0)
+	}()
+
+	if err := emu.Start(); err != nil {
+		log.Fatalf("emulator start failed: %v", err)
+	}
 
 	ebiten.SetWindowTitle("Saturn")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
@@ -157,13 +180,96 @@ func main() {
 	g.startWatchdog()
 	go g.emulationLoop()
 
-	if err := ebiten.RunGame(g); err != nil {
-		log.Fatal(err)
-	}
+	runErr := ebiten.RunGame(g)
 
+	// Always run the close path on any clean exit (Cmd+Q, window-X,
+	// ebiten.Termination). On macOS Cmd+Q goes through AppKit and
+	// does NOT raise a Unix signal, so the SIGINT goroutine never
+	// fires for those paths — the save flush + pprof flush + disc
+	// release have to happen here.
 	g.close()
+	if resolvedSavePath != "" {
+		writeSaveFile(emu, resolvedSavePath)
+	}
+	if cpuProfileFile != nil {
+		pprof.StopCPUProfile()
+		cpuProfileFile.Close()
+	}
 	if disc != nil {
 		disc.Close()
+	}
+
+	// ebiten.Termination is the sentinel ebiten returns for a normal
+	// window close — not a fatal error. Only escalate other errors.
+	if runErr != nil && !errors.Is(runErr, ebiten.Termination) {
+		log.Fatal(runErr)
+	}
+}
+
+// resolveSavePath turns the user's -save argument into the actual file
+// path the emulator should read from on start and write to on close.
+// If the argument is empty, returns "" (save handling disabled). If
+// the argument names an existing directory, the file inside it is
+// <gameid>.srm — gameid extracted from the disc's IP header at user-
+// offset $20 (10 ASCII bytes per Disc Format Standards ST-040). If
+// the argument names anything else (an existing file or a path that
+// doesn't yet exist), it is used verbatim.
+func resolveSavePath(arg string, disc *romloader.Disc) string {
+	if arg == "" {
+		return ""
+	}
+	if info, err := os.Stat(arg); err == nil && info.IsDir() {
+		id := readGameID(disc)
+		if id == "" {
+			log.Fatalf("-save points at a directory but the disc has no readable game ID")
+		}
+		return filepath.Join(arg, id+".srm")
+	}
+	return arg
+}
+
+// readGameID reads the 10-byte product number from the disc's IP
+// header (offset $20 in the IP user data) and returns it with
+// trailing spaces trimmed. Returns "" if the disc is nil, unreadable,
+// or doesn't have a Saturn IP header.
+func readGameID(disc *romloader.Disc) string {
+	if disc == nil {
+		return ""
+	}
+	data, err := disc.ReadSector(0)
+	if err != nil || len(data) < 16+0x2A {
+		return ""
+	}
+	user := data[16:]
+	if string(user[0:16]) != "SEGA SEGASATURN " {
+		return ""
+	}
+	return strings.TrimSpace(strings.TrimRight(string(user[0x20:0x2A]), " "))
+}
+
+// loadSaveFile attempts to read the file at path and feed it to the
+// emulator via SetSRAM. A missing file is fine — the path is still
+// remembered so writeSaveFile can create it on close. Any other read
+// error or unexpected file size is logged and skipped (without
+// SetSRAM the emulator starts with a freshly-formatted backup).
+func loadSaveFile(emu *core.Emulator, path string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return
+		}
+		log.Printf("Warning: failed to read save file %q: %v", path, err)
+		return
+	}
+	emu.SetSRAM(data)
+}
+
+// writeSaveFile writes the emulator's current backup RAM to the
+// given path. Logs and continues on error so close-time failures
+// don't mask other shutdown work.
+func writeSaveFile(emu *core.Emulator, path string) {
+	if err := os.WriteFile(path, emu.GetSRAM(), 0644); err != nil {
+		log.Printf("Warning: failed to write save file %q: %v", path, err)
 	}
 }
 

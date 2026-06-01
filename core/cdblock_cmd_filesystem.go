@@ -247,6 +247,60 @@ func (cb *CDBlock) cmdReadFile() {
 	cb.hirqReq |= hirqCMOK
 }
 
+// LoadFileByFID synchronously copies the disc file at the given CD-block
+// file ID into dst. Mirrors the real-BIOS sub_2F48 path (ChangeDirectory
+// root + GetFileInfo + ReadFile) without running the CD-block's async
+// state machine: parses the file system if needed, looks up the file,
+// and reads its sectors directly. Returns the number of bytes written
+// to dst.
+//
+// Used by the HLE BIOS sub_1C90 service so the BIOS-layer load goes
+// through the CD-block's own file table (single source of truth for
+// ISO9660 parsing and file-ID assignment) instead of reaching past it
+// to the raw disc.
+func (cb *CDBlock) LoadFileByFID(fid uint32, dst []byte) (int, error) {
+	if cb.disc == nil {
+		return 0, fmt.Errorf("LoadFileByFID: no disc")
+	}
+	cb.fsInit()
+	if !cb.fsInitialized {
+		return 0, fmt.Errorf("LoadFileByFID: filesystem init failed")
+	}
+	if len(cb.fsFiles) == 0 {
+		cb.fsFiles = cb.parseDirectory(cb.fsRootLBA, cb.fsRootSize)
+	}
+	idx := int(fid) - 2
+	if idx < 0 || idx >= len(cb.fsFiles) {
+		return 0, fmt.Errorf("LoadFileByFID: fid %d out of range (have %d files)", fid, len(cb.fsFiles))
+	}
+	f := cb.fsFiles[idx]
+	// fad is LBA + 150; sectors live at LBA = fad - 150.
+	lba := int(f.fad) - 150
+	size := f.size
+	if size > uint32(len(dst)) {
+		size = uint32(len(dst))
+	}
+	sectorCount := (size + 2047) / 2048
+	written := uint32(0)
+	for i := uint32(0); i < sectorCount; i++ {
+		raw, err := cb.disc.ReadSector(lba + int(i))
+		if err != nil {
+			return int(written), fmt.Errorf("LoadFileByFID: ReadSector(%d): %w", lba+int(i), err)
+		}
+		if len(raw) < 16+2048 {
+			return int(written), fmt.Errorf("LoadFileByFID: short sector at LBA %d (%d bytes)", lba+int(i), len(raw))
+		}
+		ud := raw[16 : 16+2048]
+		take := uint32(2048)
+		if written+take > size {
+			take = size - written
+		}
+		copy(dst[written:written+take], ud[:take])
+		written += take
+	}
+	return int(written), nil
+}
+
 func (cb *CDBlock) cmdAbortFile() {
 	cb.playing = false
 	cb.status = cdStatusPause

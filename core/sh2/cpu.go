@@ -133,6 +133,15 @@ type CPU struct {
 
 	// Trace callback: called with (pc, opcode) before each instruction
 	TraceFunc func(pc uint32, op uint16)
+
+	// HLEHook, if non-nil, is invoked from the execute loop when the
+	// fetched PC falls within the HLE BIOS magic address range. The
+	// hook is responsible for performing the emulated service in Go.
+	// The bus returns RTS (+ NOP delay slot) at these addresses, so
+	// the CPU unwinds to the caller normally after the hook returns.
+	// Set by HLEBIOS.Boot when the emulator is started without a real
+	// BIOS image; nil otherwise.
+	HLEHook func(pc uint32)
 }
 
 // New creates a CPU connected to the given bus in power-on state.
@@ -525,6 +534,53 @@ func (c *CPU) Registers() Registers {
 // SetPC sets the program counter.
 func (c *CPU) SetPC(pc uint32) {
 	c.reg.PC = pc
+}
+
+// SetReg sets general-purpose register Rn (n = 0..15). Used by
+// external code (HLE BIOS, boot setup) to seed register state
+// without going through an SH-2 instruction.
+func (c *CPU) SetReg(n int, v uint32) {
+	c.reg.R[n] = v
+}
+
+// SetVBR sets the vector base register.
+func (c *CPU) SetVBR(v uint32) {
+	c.reg.VBR = v
+}
+
+// SetSR sets the status register. Reserved bits are masked off so
+// no LDC-equivalent invariant is broken.
+func (c *CPU) SetSR(v uint32) {
+	c.reg.SR = v & srMask
+}
+
+// SetGBR sets the global base register.
+func (c *CPU) SetGBR(v uint32) {
+	c.reg.GBR = v
+}
+
+// SetPR sets the procedure register. Used by HLE BIOS services
+// that need a bus-served RTS at a magic address to land at a
+// specific PC when the magic address was reached without a
+// preceding JSR (which would have set PR for them).
+func (c *CPU) SetPR(v uint32) {
+	c.reg.PR = v
+}
+
+// FRT returns the CPU's free-running timer module. Used by HLE BIOS
+// services that need to configure FRT registers on a CPU whose own
+// setup code we're replacing with Go (e.g., enabling slave FRT
+// input-capture interrupts when the real-BIOS slave-init code that
+// would normally configure them is being skipped).
+func (c *CPU) FRT() *FRT {
+	return &c.frt
+}
+
+// INTC returns the CPU's interrupt controller. Used by HLE BIOS
+// services that need to set vector / priority registers on a CPU
+// whose own setup code we're replacing with Go.
+func (c *CPU) INTC() *INTC {
+	return &c.intc
 }
 
 // inhibitInterruptNext flags that the immediately-following

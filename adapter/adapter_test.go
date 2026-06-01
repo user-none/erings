@@ -50,12 +50,18 @@ func TestSystemInfo(t *testing.T) {
 		t.Errorf("Players = %d, want 2", si.Players)
 	}
 
-	if len(si.Buttons) != 13 {
-		t.Fatalf("Buttons count = %d, want 13", len(si.Buttons))
+	// The adapter exposes only the 9 face buttons (A..Start) here;
+	// the 4 d-pad directions occupy IDs 0..3 in the SetInput bit
+	// layout but are surfaced through the system's directional-pad
+	// abstraction, not the Buttons list. IDs continue from 4
+	// (btnA) up to 12 (btnStart).
+	if len(si.Buttons) != 9 {
+		t.Fatalf("Buttons count = %d, want 9 (face buttons A..Start)", len(si.Buttons))
 	}
 	for i, b := range si.Buttons {
-		if b.ID != i {
-			t.Errorf("Buttons[%d].ID = %d, want %d (sequential bit layout)", i, b.ID, i)
+		wantID := i + 4 // skip d-pad IDs 0..3
+		if b.ID != wantID {
+			t.Errorf("Buttons[%d].ID = %d, want %d (sequential face-button IDs starting at btnA=4)", i, b.ID, wantID)
 		}
 	}
 
@@ -63,8 +69,11 @@ func TestSystemInfo(t *testing.T) {
 		t.Fatalf("BIOSOptions count = %d, want 1", len(si.BIOSOptions))
 	}
 	opt := si.BIOSOptions[0]
-	if opt.Key != "main_bios" || !opt.Required {
-		t.Errorf("BIOSOption = %+v, want key main_bios required", opt)
+	// main_bios is OPTIONAL: when absent, the HLE BIOS in core/
+	// stands in. Required=true would force users to supply a BIOS
+	// dump even when the HLE path is fully functional.
+	if opt.Key != "main_bios" || opt.Required {
+		t.Errorf("BIOSOption = %+v, want key main_bios with Required=false (HLE BIOS available)", opt)
 	}
 	want := map[string]string{
 		"mpr-17933.bin": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",

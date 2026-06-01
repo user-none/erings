@@ -76,7 +76,7 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 			{
 				Key:      "main_bios",
 				Label:    "System BIOS",
-				Required: true,
+				Required: false,
 				Variants: []coreif.BIOSVariant{
 					{
 						Label:    "USA",

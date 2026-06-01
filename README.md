@@ -26,8 +26,13 @@ What you will find is a clean UI allowing you organize and play games.
 
 ## Requirements
 
-- A real Saturn BIOS image is required (USA or Japan)
 - Games must be supplied as CHD disc images
+
+## BIOS
+
+A Saturn BIOS image (USA or Japan) is optional. Without one, a built-in
+HLE (high-level emulation) BIOS boots the game. A real BIOS is not
+included with the emulator and needs to be user sourced.
 
 ## Building
 
@@ -37,14 +42,22 @@ On macOS, a `.app` bundle can be produced with: `make macos`
 
 ## Running
 
-With no arguments, erings opens the UI for selecting a BIOS and a disc:
+With no arguments, erings opens the UI for selecting a disc (and,
+optionally, a BIOS):
 
 ```
 ./build/erings
 ```
 
-To launch a game directly without going through the UI, pass both a BIOS
-image and a disc image on the command line:
+To launch a game directly without going through the UI, pass a disc
+image on the command line. A BIOS is optional; if omitted, the built-in
+HLE BIOS boots the game:
+
+```
+./build/erings -disc /path/to/game.chd
+```
+
+To use a real BIOS instead, add `-bios`:
 
 ```
 ./build/erings -bios /path/to/bios.bin -disc /path/to/game.chd

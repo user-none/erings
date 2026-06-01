@@ -45,6 +45,13 @@ type Bus struct {
 	minitWritten    bool
 	sinitWritten    bool
 	cdDataTRNSCache uint16 // cached DATATRNS word for byte reads
+
+	// ReadTrace, when non-nil, is called for every Read8/Read16/Read32.
+	// Used for narrow-region debug tracing (e.g. discovering what a
+	// game reads from BUP state buffers after a BUP slot returns).
+	// Implementations should filter by address — the callback fires
+	// for ALL reads so it's expensive when enabled.
+	ReadTrace func(addr uint32, size int, value uint32)
 }
 
 // NewBus creates a new Saturn system bus with RAM allocated and the
@@ -84,6 +91,26 @@ func formatBackupRAM(ram []byte) {
 	for i := 0x40; i < len(ram); i++ {
 		ram[i] = 0x00
 	}
+}
+
+// writeWramHU32 stores a big-endian 32-bit value at the given
+// Work-RAM-H offset, bypassing the full bus dispatch. Used by HLE
+// BIOS service routines that need to update WRAM-H dispatch tables
+// without going through Write32's address decoding.
+func (b *Bus) writeWramHU32(off uint32, val uint32) {
+	b.wramH[off] = uint8(val >> 24)
+	b.wramH[off+1] = uint8(val >> 16)
+	b.wramH[off+2] = uint8(val >> 8)
+	b.wramH[off+3] = uint8(val)
+}
+
+// readWramHU32 reads a big-endian 32-bit value at the given
+// Work-RAM-H offset. Companion to writeWramHU32.
+func (b *Bus) readWramHU32(off uint32) uint32 {
+	return uint32(b.wramH[off])<<24 |
+		uint32(b.wramH[off+1])<<16 |
+		uint32(b.wramH[off+2])<<8 |
+		uint32(b.wramH[off+3])
 }
 
 // GetBackupRAM returns a copy of the 32 KB internal backup RAM. The
@@ -254,6 +281,14 @@ func (b *Bus) AccessCycles(addr uint32, size uint32) uint32 {
 
 // Read8 reads a byte from the given address.
 func (b *Bus) Read8(addr uint32) uint8 {
+	val := b.read8Impl(addr)
+	if b.ReadTrace != nil {
+		b.ReadTrace(addr, 1, uint32(val))
+	}
+	return val
+}
+
+func (b *Bus) read8Impl(addr uint32) uint8 {
 	addr &= 0x07FFFFFF
 
 	switch {
@@ -525,6 +560,14 @@ func (b *Bus) Write8(addr uint32, val uint8) {
 
 // Read16 reads a big-endian 16-bit value from the given address.
 func (b *Bus) Read16(addr uint32) uint16 {
+	val := b.read16Impl(addr)
+	if b.ReadTrace != nil {
+		b.ReadTrace(addr, 2, uint32(val))
+	}
+	return val
+}
+
+func (b *Bus) read16Impl(addr uint32) uint16 {
 	masked := addr & 0x07FFFFFF
 	switch {
 	case masked >= 0x06000000 && masked <= 0x07FFFFFF:
@@ -608,6 +651,14 @@ func (b *Bus) Read16(addr uint32) uint16 {
 
 // Read32 reads a big-endian 32-bit value from the given address.
 func (b *Bus) Read32(addr uint32) uint32 {
+	val := b.read32Impl(addr)
+	if b.ReadTrace != nil {
+		b.ReadTrace(addr, 4, val)
+	}
+	return val
+}
+
+func (b *Bus) read32Impl(addr uint32) uint32 {
 	masked := addr & 0x07FFFFFF
 	switch {
 	case masked >= 0x06000000 && masked <= 0x07FFFFFF:

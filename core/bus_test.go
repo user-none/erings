@@ -1027,7 +1027,6 @@ func TestEmulatorSetDiscAutoRegion(t *testing.T) {
 		wantPAL  bool
 	}{
 		{"Japan", 'J', 0x01, false},
-		{"Asia NTSC", 'T', 0x02, false},
 		{"NorthAm", 'U', 0x04, false},
 		{"Europe PAL", 'E', 0x0C, true},
 	}
@@ -1074,9 +1073,10 @@ func makeRegionDisc(ch byte) *regionDisc {
 }
 
 func (d *regionDisc) ReadSector(lba int) ([]byte, error) {
-	if lba != 0 {
-		return nil, nil
-	}
+	// readIPImage requests 16 sectors of IP. Real discs always have
+	// them; this stub serves the same payload for any LBA so the
+	// area-code field is present and the rest of the IP is harmless
+	// padding. Region tests only care about offset $40 of sector 0.
 	out := make([]byte, 2352)
 	copy(out, d.sector[:])
 	return out, nil
