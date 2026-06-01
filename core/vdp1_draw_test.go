@@ -1464,8 +1464,6 @@ func TestVBlankOutVBEErase(t *testing.T) {
 	}
 }
 
-// --- PTMR write all-immediate (matches mednafen's direct write) ---
-
 // TestPTMRPTM10Deferred verifies that a PTM=10 write lands in
 // ptmrPending and does NOT update the live ptmr immediately. Per VDP1
 // manual Sec.3, PTM=01 is the only immediate value; PTM=00 and PTM=10
@@ -2567,7 +2565,7 @@ func TestDrawScaledSpriteZoomCenter(t *testing.T) {
 	v.VBlankIn()
 	drainDrawing(v)
 
-	// Per VDP1 manual §6 Figure 6.2: left=XA-XB/2, right=XA+(XB+1)/2.
+	// Per VDP1 manual Sec 6 Figure 6.2: left=XA-XB/2, right=XA+(XB+1)/2.
 	// With XA=50, XB=10: left=45, right=55. Both edges inclusive, so the
 	// sprite covers (45,45) to (55,55) = 11x11 pixels.
 	if got := readFBPixel(v, 45, 45); got != 0x0110 {
@@ -2594,7 +2592,7 @@ func TestDrawScaledSpriteZoomCenterOddDisplay(t *testing.T) {
 	v := NewVDP1(NewSCU())
 	v.Write(0x04, 2)
 
-	// Asymmetric centering with odd display width. Per manual §6 Fig 6.2,
+	// Asymmetric centering with odd display width. Per manual Sec 6 Fig 6.2,
 	// for ZP=0xA: left = XA - XB/2 (floor), right = XA + (XB+1)/2 (ceil).
 	// With XA=50, XB=7: left=50-3=47, right=50+4=54. Sprite is 8 pixels
 	// wide. Source charW=8 maps 1:1 to destination - exactly the regime

@@ -120,7 +120,7 @@ The backup library supports three storage devices:
 | 1 | Memory cartridge or parallel interface | 2 | 1 |
 | 2 | Serial interface | - | - |
 
-Built-in backup memory: 32 KB chip capacity (per System Library §1.2.3),
+Built-in backup memory: 32 KB chip capacity (per System Library Sec 1.2.3),
 mapped into a 64 KB addressable region at 00180000H-0018FFFFH.
 External cartridge: Accessed through A-Bus CS0.
 

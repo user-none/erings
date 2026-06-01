@@ -221,7 +221,7 @@ address += NXADR
 When TABLE=0 (ring buffer mode):
 - Address wraps within ring buffer: `address &= (RBL_size - 1)`
 - RBL_size is set by the RBL register: 0=8K, 1=16K, 2=32K, 3=64K words
-- RBP is in 4K-word units per SCSP User's Manual §4.3 (RBP[19:13],
+- RBP is in 4K-word units per SCSP User's Manual Sec 4.3 (RBP[19:13],
   "per 4K-word boundary"). Each RBP step advances the ring buffer base by
   4K words (8K bytes).
 - Base word offset = RBP << 12 (in word units; equivalently, byte address
