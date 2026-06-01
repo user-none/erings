@@ -274,7 +274,7 @@ Step-level summary:
 3. Poll SF bit 0 in a loop, re-running a ~70-iteration delay before
    each check, until it clears (command complete).
 4. Loop-read 1024 longwords from cache-through WRAM-H base
-   $26000000 in $0400 increments — walks the cache-line addresses to
+   $26000000 in $0400 increments - walks the cache-line addresses to
    drain/flush.
 5. Save the T flag (cold-vs-warm boot indicator) to $06000324.
 6. Clear SCU AIACK ($25FE00A8) and SCU AREF ($25FE00B8); set VBR =
@@ -282,14 +282,14 @@ Step-level summary:
    (key $A55A); set SBYCR ($FFFFFE91) = $80 (SBY standby bit); write
    $A51D to the WDT region ($FFFFFE80) and $8000 to the SH-2
    on-chip register at $FFFFFEE0.
-7. Issue a clock-change SMPC command — CKCHG320 ($0F) on cold boot
-   or CKCHG352 ($0E) on warm boot — selected via the T flag
+7. Issue a clock-change SMPC command - CKCHG320 ($0F) on cold boot
+   or CKCHG352 ($0E) on warm boot - selected via the T flag
    arithmetic (`MOVT R0; ADD #14,R0` produces $0E + T, with T
    inverted earlier so cold gives $0F and warm gives $0E).
 8. SLEEP, then infinite loop at $000530.
 
 The CKCHG command triggers a system clock change that on Saturn is
-observed as a soft reset — execution re-enters via the reset vector,
+observed as a soft reset - execution re-enters via the reset vector,
 not by a wake from SLEEP. The infinite loop at $000530 is a safety
 net for the (unexpected) case where SLEEP returns. The code at
 $000534 is reached only via the NMI vector ($00002C = $20000534),
@@ -709,14 +709,12 @@ Boot state machine
        |
        +-- Region check (SMPC area code vs disc area codes)
        |
-       +-- Security check / auth stub (4 KB from BIOS ROM $040000
-       |   copied to $06020000 and executed; jumps to $06028000)
-       |     - Copyright string comparison
-       |     - SMPC authentication sequence
+       +-- Disc authentication (CD-block $E0 / $E1 auth-status check;
+       |   see security_check.md)
        |
        +-- On success: master dispatches into the IP load window
-       |   $06002000-$0600A000. Entry PC is game-specific (auth path's
-       |   hardcoded $06028000 is one possibility but not always used).
+       |   $06002000-$0600A000, entering the disc's IP security code
+       |   at $06002100 (IP+$100).
        |
        +-- On failure: CD multiplayer (audio CD player)
 ```

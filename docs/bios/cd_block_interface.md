@@ -31,9 +31,9 @@ that issue these commands.
 3. sub_1912 communicates with CD Block through sub_29D4
 4. Validates disc header ("SEGA SEGASATURN " check)
 5. sub_1A18: Copies 4096 bytes (1024 longs) from BIOS ROM $040000 to
-   $06020000. This is the security check code containing the copyright
-   string and disc validation logic
-6. Jumps to $06020000 to run security check from Work RAM
+   $06020000. This is the SEGA PLAYER shell bootstrap (see
+   system_applications.md)
+6. Jumps to $06020000 to run the shell
 
 ### Game Load Pump (sub_1C90)
 
@@ -185,18 +185,18 @@ hardware-register addresses appearing in the BIOS constant pools:
 
 These pool constants live in the main BIOS CD driver around
 $0040xx-$0043xx (the sub_41E4 / sub_42EC / sub_4A9C family), below the
-security-check blob at $040000-$04FFFF. The driver loads the hardware
+SEGA PLAYER region at $040000 (system_applications.md). The driver loads the hardware
 register addresses directly as pool constants; the WRAM-H slots it
 uses are the HIRQ shadow $060003A4 and the boot-chain pointer slots in
 the slot table at $06000234-$0600034C.
 
-By the time the BIOS hands off to game code, File ID 2 has been
-transferred from the disc to the address held at $060002B0
-(= System ID +$F0), with the exact byte count the CD-block reports
-for that file. The transfer uses CD-block commands $73 (Get File
-Info) and $75 (Read File) over the register interface at
-$25890008/$2589000C (HIRQ + mask) and $25890018-$25890024
-(CR1-CR4).
+The game executable (file ID 2) is transferred from the disc to the
+address held at $060002B0 (= System ID +$F0), with the exact byte
+count the CD-block reports for that file. The IP drives this through
+the game-load pump (sub_1C90) after handoff; the transfer uses
+CD-block commands $73 (Get File Info) and $74 (Read File) over the
+register interface at $25890008/$2589000C (HIRQ + mask) and
+$25890018-$25890024 (CR1-CR4).
 
 ## CD Block Register Map
 
@@ -565,11 +565,13 @@ CMD:  CR1=$E100  CR2=$0000  CR3=$0000  CR4=$0000
 RSP:  CR2=[auth_status:16]
 ```
 
-Note: the BIOS does not issue $E0/$E1 from its main code region; the
-$75 Abort File command builder at sub_3AEC is sometimes mistaken for
-an $E0 builder. Authentication is performed by the security-check
-blob copied from BIOS ROM $040000 to WRAM-H $06020000 (see CD Game
-Start).
+Note: the $75 Abort File command builder at sub_3AEC has a similar
+register setup and should not be confused with an $E0 builder. The
+boot disc-validation state machine issues the auth-status query from
+main BIOS code: sub_2B74 (state 0) calls sub_49F4, which builds the
+CD-block command packet and sends it via sub_4B74 / sub_4B86, then
+checks for the authenticated result (status value 4). See
+security_check.md.
 
 ### CDC_SysIsConnect - CD Block Presence Check
 
@@ -600,10 +602,22 @@ disc detection entirely and proceeds without CD support.
 
 ### BIOS Boot CD Block Command Sequence
 
-The boot CD path is driven by a state machine (the sub_2650 state
-handlers, sub_29D4, and the sub_2F48 load pump) rather than a fixed
-linear packet sequence; the list below is the set of CD Block commands
-the boot path issues, in roughly the phase order the machine follows:
+The boot CD path reads two separate things from the disc:
+
+- **The IP (Initial Program)** - the disc's boot program in the system
+  area at the start of the data track. The BIOS reads it into Work-RAM-H
+  at $06002000, validates the System ID header ("SEGA SEGASATURN ") and
+  region code, authenticates the disc (the CD-block $E0 / $E1 auth-status
+  check; see security_check.md), and hands off to the IP at $06002100.
+- **The 1st-read file** - the game executable, which is the first regular
+  ISO9660 file on the data track (CD-block file ID 2). After handoff the
+  IP calls the game-load pump (sub_1C90, above), which reads file ID 2 into
+  the address from System ID +$F0. See ip_bin.md.
+
+The path is driven by a state machine (the sub_2650 state handlers,
+sub_29D4, and the sub_2F48 load pump) rather than a fixed linear packet
+sequence; the list below is the set of CD Block commands the boot path
+issues, in roughly the phase order the machine follows:
 
 1. **CDC_SysIsConnect** - verify CD Block is present (reads CR registers, checks for "CDBLOCK" signature)
 2. **Get CD Status** ($00) - poll drive status until ready
@@ -615,8 +629,8 @@ the boot path issues, in roughly the phase order the machine follows:
 8. **Get Session Info** ($03) - check session information
 9. **Change Directory** ($70) - navigate to the root directory
 10. **Get File System Scope** ($72) - get the file-info range
-11. **Get File Info** ($73) - read IP.BIN file information (File ID 2)
-12. **Read File** ($74) - start reading IP.BIN into the CD buffer
+11. **Get File Info** ($73) - read the 1st-read file's info (file ID 2, the game executable)
+12. **Read File** ($74) - start reading the game executable into the host
 13. **Set Sector Length** ($60) - set the host transfer sector size
 14. **Get Copy Error** ($67) - check the transfer result
 15. **End Data Transfer** ($06) - complete the transfer
@@ -625,9 +639,5 @@ the boot path issues, in roughly the phase order the machine follows:
 The sector payload is moved into Work RAM by reading the DATATRNS
 register directly, not by a Get Sector Data ($61) command. The BIOS
 does not issue Read Directory ($71) during boot.
-
-After transfer, the BIOS validates the header ("SEGA SEGASATURN "), checks
-the region code, copies the security check code to Work RAM, and runs
-disc authentication.
 
 

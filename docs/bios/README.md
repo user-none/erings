@@ -16,7 +16,7 @@ and Work-RAM regions the BIOS exposes to disc-supplied code.
 | [handoff_state.md](handoff_state.md) | Per-subsystem state at the moment the BIOS hands off to the disc's IP. Captured-dump observations. |
 | [ip_bin.md](ip_bin.md) | IP.BIN structure, System ID layout, BIOS->disc handoff convention. |
 | [slave_sh2_init.md](slave_sh2_init.md) | Slave SH-2 bring-up via SMPC SSH_ON; observed patterns. |
-| [security_check.md](security_check.md) | Disc security/authentication code at BIOS `$040000` and its associated data tables. |
+| [security_check.md](security_check.md) | Disc security check: CD-block disc authentication (`$E0`/`$E1`), the boot disc-validation state machine, and IP.BIN header / region validation. |
 
 ### Subsystem interfaces
 
@@ -40,7 +40,8 @@ and Work-RAM regions the BIOS exposes to disc-supplied code.
 |---|---|
 | [bios_font.md](bios_font.md) | 8x16 ISO-8859-1 bitmap font sub_50EA uploads, plus font / graphics data references. |
 | [text_drawers.md](text_drawers.md) | sub_511C and sub_50A0 - the security-screen text painting routines. |
-| [boot_library.md](boot_library.md) | Saturn logo animation, CD multiplayer (audio CD player), system-settings screens. |
+| [boot_library.md](boot_library.md) | Boot library at `$007000`: Saturn logo / disc-check animation only (NOT the apps). |
+| [system_applications.md](system_applications.md) | SEGA PLAYER multimedia shell at `$040000`: CD player, CD+G, Video-CD, System Settings / Memory Manager. The `$040400` module directory, the boot dispatch, and the load mechanism. |
 
 ### Companion docs
 

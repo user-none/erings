@@ -120,7 +120,7 @@ is included at the end as a reference.
 | $06000258 / $0600025C | $0600083C | Default no-op handler |
 | $06000260 | $06000D00 | Workspace pointer (BIOS-provided 16-byte zero-filled buffer) |
 | $06000264 | $00000000 | sub_1C90 memcpy source-pointer slot (data, not a function pointer) |
-| $06000268 | $00001A18 | BIOS-ROM sub_1A18 (copies BIOS auth code to $06020000) |
+| $06000268 | $00001A18 | BIOS-ROM sub_1A18 (copies the $040000 SEGA PLAYER shell to $06020000; see system_applications.md) |
 | $0600026C | $0000186C | SYS_EXECDMP entry (SDK dispatches SYS_EXECDMP through this slot). Tail-call thunk: loads R7 from $19C4, then jumps through the pointer at $19BC (= $000424). |
 | $06000270 | $000030DC | BIOS-ROM CD-block helper |
 | $06000274 | $00003174 | SYS_CHKMPEG entry (MPEG-card presence check; SDK dispatches SYS_CHKMPEG through this slot). |

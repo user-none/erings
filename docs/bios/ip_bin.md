@@ -73,20 +73,13 @@ first master SH-2 instruction fetched from this region is the disc's
 own IP code starting to run; this is the empirical handoff signal
 used to capture the BIOS-handoff state.
 
-**Security check execution area ($06020000):**
-sub_1A18 copies 4096 bytes of BIOS authentication code from BIOS ROM
-$040000 to $06020000. This code sets up its own execution environment
-(SR=$F0, GBR=$06020000, VBR=$06000000, SP=$0601FFF0) and authenticates
-the disc via SMPC register sequences. On success, it loads R0 from a
-pool entry at $06020060 (= $06028000 in BIOS_USA) and executes
-`JMP @R0`.
-
 **1st Read File mechanism:**
-During the Saturn logo display (which overlaps with security code
-execution), the BIOS reads file ID 2 from the disc and transfers it
-to the address specified in System ID offset $F0. This allows the
-game's main binary to load in parallel with the license screen
-display. The Disc Format Standards (ST-040-R4) state the Saturn
+After handoff the IP calls the BIOS game-load pump (sub_1C90), which
+reads file ID 2 - the first regular ISO9660 file, i.e. the game's main
+binary - from the disc and transfers it to the address specified in
+System ID offset $F0. The transfer runs in the background while the IP's
+license / loading screen displays, so the game binary loads in parallel
+with the screen. The Disc Format Standards (ST-040-R4) state the Saturn
 logo display lasts 2-3.5 seconds depending on transfer size.
 
 ### BIOS -> Disc Handoff
@@ -96,12 +89,6 @@ the BIOS hands off at **PC = $06002100 (IP+$100, security-code
 entry)** for both captured games. This is the entry point of the
 disc's own SYS_SEC.OBJ within the IP. The handoff target was the
 same across both captures; it is BIOS-controlled, not game-controlled.
-
-The auth code at BIOS $040000 (copied to $06020000) has a pool entry
-at $040060 / $06020060 containing the constant $06028000, and ends
-with `JMP @R0` at $06020014. On the captured boots the BIOS does
-**not** execute that JMP - the master never reaches $06020014. The
-$06028000 target is dead code on the observed path.
 
 What the BIOS reads from the disc that affects boot:
 

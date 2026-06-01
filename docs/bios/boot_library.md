@@ -1,11 +1,15 @@
 # Boot Library
 
-Material that lives in the boot library blob (BIOS `$007000`
-compressed body, decompressed to `$06010000` on the no-game / CD
-player / system-menu paths): the Saturn logo animation, the CD
-multiplayer (audio CD player), and the system settings screens.
-This code does not run on a CD-game boot path; the CD-block
-firmware (loaded at the same address) takes its place.
+The boot library is the BIOS `$007000` compressed body, decompressed to
+`$06010000` on the no-game / fall-through boot path. It contains only the
+Saturn-logo / disc-check animation and the small shell that drives it while
+the disc is checked.
+
+It does NOT contain the CD player, CD+G, Video-CD, system-settings, or
+memory-manager applications. Those are a separate program - the SEGA PLAYER
+shell at ROM `$040000`, loaded to `$06020000` on a different dispatch path;
+see system_applications.md. On a CD-game boot path the CD filesystem driver
+(`$01D000`), loaded at the same `$06010000`, takes the boot library's place.
 
 ## Saturn Logo Animation
 
@@ -159,37 +163,24 @@ polls that status under SCDQ gating, does not write $0600022C itself.
 | $06012FC0 | Full animation render (uses SCU DSP) |
 
 
-## CD Multiplayer (Audio CD Player)
+## Applications Are Not in the Boot Library
 
-The CD multiplayer is the audio CD playback interface activated when:
-- No game disc is detected
-- An audio CD is inserted
-- The boot code check fails
+The CD player, CD+G player, Video-CD front end, system-settings screens,
+and backup-RAM memory manager are NOT part of this `$007000` body. They are
+the SEGA PLAYER shell and its modules at ROM `$040000`, a separate program
+loaded to `$06020000`. The boot dispatcher routes to the shell (rather than
+to this boot library) when the type tag at `$0600024C` is `HCDM` / `HCGG` /
+`$22` - the path `SYS_EXECDMP` takes. See system_applications.md for the
+shell, its `$040400` module directory, and the load mechanism.
 
-The CD player code is part of the compressed system library, accessed
-via the SYS_EXECDMP function (function 7 in the system library).
-When invoked, the entire system reinitializes to the CD player state.
+The decision points that select a shell application still originate in the
+boot/SMPC flow:
 
-The player provides playback controls (play, pause, stop, skip, scan,
-repeat, shuffle) displayed as a graphical interface on screen. It
-supports regular audio CDs and CD+G (CD+Graphics) discs.
+- No game disc / audio CD inserted / boot check fails -> CD-player path
+- SMPC cold reset (STE=0 in OREG0) -> Set Clock screen
+- L+R held during reset -> System Settings menu
 
-
-## System Settings Screens
-
-The system settings screens are displayed when:
-- SMPC cold reset detected (STE=0 in OREG0): Set Clock screen
-- L+R held during reset: System Settings menu
-
-These screens handle:
-- Date and time configuration (written to SMPC RTC via SETTIME command)
-- Language selection (6 languages: English, German, French, Spanish,
-  Italian, Japanese)
-- Help window settings
-- Audio output settings (stereo/mono)
-- Sound effects toggle
-- Backup RAM memory manager (list, delete saves)
-
-The settings code is in the compressed system library. The graphics
-(fonts, menu tiles) are in the $005240-$006F00 region.
+but the code those screens run is the SEGA PLAYER shell, not this body. The
+shared bitmap font those screens render with is the `$005240` body
+(bios_font.md).
 

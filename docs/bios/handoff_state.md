@@ -47,10 +47,6 @@ All registers below are byte-for-byte identical across both captures
 | Cache (CCR) | $01 (cache enabled, all four ways purged - set in Phase 1 $000380) |
 
 Notes:
-- The auth code at BIOS $040000 (copied to $06020000) sets SR=$F0,
-  GBR=$06020000, SP=$0601FFF0 via its `LDC.L` sequence and would JMP
-  to $06028000. None of those values are in the observed handoff
-  state - that auth path is not executed on the captured boot.
 - SR=$00000001 means interrupts are enabled (mask = 0) and T=1 at
   handoff. This is unusual; the IP's first instruction can rely on
   interrupts being unblocked.
@@ -292,18 +288,17 @@ games):
 | $06000238 | Pointer to copy routine ($000002BC) |
 | $0600023C | Pointer to copy data table ($00000350) |
 | $06000248 | SMPC area code + display mode (16-bit, $8000 = reversed-J + no PAL on NiGHTS) |
-| $0600024C | Boot state — observed value is $00000000 at the handoff capture point; not "HCDM" as previously inferred |
+| $0600024C | Boot state - observed value is $00000000 at the handoff capture point; not "HCDM" as previously inferred |
 | $06000328 | SMPC init entry pointer ($000004C8) |
 | $06000840-$0600094A | SCU interrupt trampoline stubs + common dispatcher (from BIOS $820 copy) |
 | $06000A00-$06000A7F | SCU user-handler effective slots (SETUINT writes here for vectors $40-$5F; base addr $06000900 + vec*4) |
 | $06000A80-$06000AFF | SCU priority/mask effective slots (base addr $06000980 + vec*4) |
 | $06000980 | SCU priority/mask table (128 B) - populated by SYS_SETUINT at runtime |
 | $06001100-$060017FF | System init code (1792 B from BIOS $001100) |
-| $06002000 | IP+0 — "SEGA SEGASATURN " (System ID hardware identifier from disc) |
-| $06002040 | IP+$40 — compatible area codes ("JTU       " for NiGHTS) |
-| $06002100 | IP+$100 — security code (SYS_SEC.OBJ from disc); this is where master PC starts at handoff |
+| $06002000 | IP+0 - "SEGA SEGASATURN " (System ID hardware identifier from disc) |
+| $06002040 | IP+$40 - compatible area codes ("JTU       " for NiGHTS) |
+| $06002100 | IP+$100 - security code (SYS_SEC.OBJ from disc); this is where master PC starts at handoff |
 | $06010000-$0602FFFF | Decompressed CD-block firmware (from BIOS $01D000) |
-| $06020000-$06020FFF | Security check code (from BIOS $040000); the auth-code path's `JMP @R0` target lives at pool $06020060 but this path was not executed on the captured boots |
 
 ### Backup RAM ($00180000)
 
@@ -340,12 +335,11 @@ of the handoff state and must exist for game code to function:
 
 After boot, $06010000 holds whichever compressed body was last loaded
 (CD Block firmware on the CD-game path, or boot library on the no-game
-path). $06020000 holds the security check code; its auth-code pool at
-$06020060 holds the BIOS_USA hardcoded JMP target $06028000, which is
-only used by the auth code's JMP @R0 - not every game's boot path
-executes that JMP. The disc's IP / AIP entry lies somewhere inside
-$06002000-$0600A000 (game-specific). See the Work RAM-H layout under
-"Key Addresses Summary" for the full map.
+path). The IP loads at the fixed $06002000 buffer, and the BIOS always
+hands off to its security-code entry at $06002100 (IP+$100). The game's
+main binary (the 1st-read file) loads at the address given in System ID
+$F0, which is the part that varies by disc. See the Work RAM-H layout
+under "Key Addresses Summary" for the full map.
 
 ## VDP2 Initial Register State
 
@@ -432,9 +426,7 @@ character pattern reads across the 4 VRAM banks for all 4 scroll screens.
 | $06001100 | 1792 bytes | System init code (from BIOS $001100) |
 | $06002000-$0600A000 | 32 KB total | Disc IP load buffer; the IP.BIN header occupies $06002000-$060020FF and SYS_SEC.OBJ begins at $06002100 (IP+$100). See ip_bin.md for the full header layout. |
 | $06002000 | 16 bytes | "SEGA SEGASATURN " hardware ID (IP+0) |
-| $06002040 | 10 bytes | Compatible area codes (IP+$40) — read by the sub_1BB4 region check |
+| $06002040 | 10 bytes | Compatible area codes (IP+$40) - read by the sub_1BB4 region check |
 | $06002100 | varies | IP security-code start (SYS_SEC.OBJ at IP+$100); master PC starts here at handoff. Also serves as the validation comparison buffer during boot. |
-| $06020000 | 4096 bytes | Security check code (from BIOS $040000); pool at $06020060 holds the auth-path JMP target |
-| $0601FFF0 | 16 bytes | Security check stack top |
 
 
