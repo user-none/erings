@@ -116,8 +116,8 @@ determined by its stream content.
 A third caller exists outside the BIOS: the disc's IP/SYS_SEC code
 reaches sub_1F04 via the BIOS routine table slot at $0005E4
 (sub_50EA, which sets up R4=$005240/R5=&$06000E20/R6=$1000 and
-JSRs into LZSS). $005240 IS a compressed body — the boot-library
-bitmap font — but only external (disc-side) code decompresses it,
+JSRs into LZSS). $005240 IS a compressed body - the boot-library
+bitmap font - but only external (disc-side) code decompresses it,
 so a BIOS-internal grep finds no callers. See "Boot Library Font"
 section for details.
 
@@ -338,7 +338,7 @@ running the documented decompressor on each body.
 - Header: $1001 at $5240, block_count: 39
 - Compressed size: ~1.3 KB (consumed by decompressor before reaching
   the trailing-byte pair)
-- Decompressed size: ~3.7 KB
+- Decompressed size: 4,096 bytes ($1000)
 - Loader: none in BIOS code. No static disassembly site calls sub_1F04
   with source $5240.
 
@@ -351,8 +351,8 @@ text.
 
 - Header: $1001 at $7000, block_count: 2534
 - Compressed size: ~88 KB (BIOS bytes $7000 through ~$1CA00)
-- Decompressed size: determined by stream content; cap is
-  `R6 = $00040000` (generous upper bound)
+- Decompressed size: 180,224 bytes ($2C000); the `R6 = $00040000`
+  cap is a generous upper bound the stream stays under
 - Loader: sub_173C ($00173C), called on the no-game / fall-through
   boot path
 
@@ -366,8 +366,8 @@ dispatches to $0601066C.
 
 - Header: $1001 at $1D000, block_count: 827
 - Compressed size: ~28 KB
-- Decompressed size: ~57 KB (`R6 = $40000` cap from sub_15D4 is a
-  generous upper bound, not the actual decompressed length)
+- Decompressed size: 59,136 bytes ($E700); the `R6 = $40000` cap from
+  sub_15D4 is a generous upper bound, not the actual decompressed length
 - Loader: sub_15D4 ($0015D4), called on the CD-game boot path
 
 Contents: CD Block filesystem code - directory traversal, file lookup,
