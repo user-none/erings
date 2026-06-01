@@ -223,15 +223,16 @@ The top 4 bits of the token select one of three reference types:
 |----------------------------|------|--------|---------------------|
 | $0000 | Short match (RLE of previous byte) | `(token & $0FFF) + 3` | 1 |
 | $1000 | Long match (extra length byte) | `next_byte + 17` | `token & $0FFF` |
-| Everything else ($2000-$FFFF) | Standard match | `token >> 12` (range 2-15) | `token & $0FFF` |
+| Everything else ($2000-$FFFF) | Standard match | `(token >> 12) + 1` (range 3-16) | `token & $0FFF` |
 
 - Short match: replicates the byte just written by the previous output
   step. Length = `(token & $0FFF) + 3`, so 3-4098 bytes.
 - Long match: consumes one additional byte from the stream after the
   token. Length = `extra_byte + 17`, so 17-272 bytes.
-- Standard match: length is exactly `token >> 12` (arithmetic shift
-  performed by sub_2522: 11 SHAR R0 + 1 in RTS delay slot = right
-  shift by 12). Range is `$2000 -> 2` ... `$F000 -> 15`.
+- Standard match: length is `(token >> 12) + 1`. sub_2522 performs the
+  arithmetic shift (11 SHAR R0 + 1 in the RTS delay slot = right shift
+  by 12) and the handler then adds 1 (sub_1F60 $20A6 ADD #1,R4). Range
+  is `$2000 -> 3` ... `$F000 -> 16`.
 
 For all three types, the produced length is clamped against
 `max_out - current_dest` so the handler never overruns the dest
@@ -247,7 +248,7 @@ buffer (sub_1F60 $201A, $2074, $20AE).
 | Tokens per tail block | 1-16 | R7 = trailing byte1 at sub_1E0C $1EB0 |
 | Short-match length range | 3 - 4098 | `(token + 3)`, token in $0000-$0FFF |
 | Long-match length range | 17 - 272 | `next_byte + 17` |
-| Standard-match length range | 2 - 15 | `token >> 12`, token in $2000-$FFFF |
+| Standard-match length range | 3 - 16 | `(token >> 12) + 1`, token in $2000-$FFFF |
 | Literal output | 2 bytes per token (hi then lo) | sub_1F60 $1FE4 + $1FFE |
 
 ### Validation
@@ -310,7 +311,7 @@ def decompress(src, max_out):
                     for i in range(min(length, remaining)):
                         out.append(back(len(out) - offset))
                 else:
-                    length = token >> 12
+                    length = (token >> 12) + 1
                     offset = token & 0x0FFF
                     for i in range(min(length, remaining)):
                         out.append(back(len(out) - offset))

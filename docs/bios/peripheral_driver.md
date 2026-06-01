@@ -1,6 +1,6 @@
 # Peripheral Driver
 
-The 16 KB driver the BIOS decompresses out of `$0007D660` into a
+The 14,394-byte driver the BIOS decompresses out of `$0007D660` into a
 caller-supplied buffer when PER_Init runs. Disassembled per-slot
 reference: 11 function-pointer slots at the buffer head, the
 per-slot function bodies, and the shared sub-routines for
@@ -89,9 +89,10 @@ disassembly.
 The peripheral driver lives in BIOS ROM at $0007D660 (sub_1F04
 header followed by compressed body). PER_Init decompresses the
 body into the buffer at caller's R4 ($0607C000 for NiGHTS) and
-JSRs into it. The decompressed image fills up to the caller's
-R6 cap; the only invocation in the BIOS passes R6 = $4000
-(16 KB), so the decompressed driver is 16 KB.
+JSRs into it. The decompressed image is 14,394 bytes ($383A),
+the length the stream produces. R6 = $4000 (the cap the only BIOS
+invocation passes) is an upper bound the stream stays under, not
+a target; the driver does not span the full 16 KB buffer.
 
 After PER_Init's JSR @R2 returns, the buffer is structured as:
 
@@ -101,7 +102,7 @@ After PER_Init's JSR @R2 returns, the buffer is structured as:
         48 bytes total
 +$0030  relocator continuation code, then function bodies
         and PC-relative constant pools interleaved
-+$3FFF  end of buffer
++$383A  end of decompressed driver (14,394 bytes total)
 ```
 
 The first function in the buffer (the relocator) overwrites the
@@ -122,8 +123,8 @@ ROM $0007D666+: compressed stream (311 main blocks + tail)
 Note: only bit 0 of the header is used by sub_1F04 (compressed vs.
 raw). The upper bits ($1000) are reserved/arbitrary and do NOT
 indicate output size. The actual decompressed size is determined
-by the compressed stream's `block_count` + tail and bounded by the
-caller's R6.
+by the compressed stream's `block_count` + tail (14,394 bytes) and
+bounded by the caller's R6.
 
 ### Function-pointer table (slots 0-10)
 
