@@ -367,6 +367,10 @@ const (
 	// negative and breaks the game's pointer arithmetic.
 	wramHNoopHandler     = 0x83C
 	wramHNoopHandlerAddr = 0x06000000 + wramHNoopHandler
+
+	// Per-vector interrupt default-handler table in BIOS ROM at $0600
+	// (128 entries x 4 B), read by SYS_SETSINT for handler=0.
+	wramHIntDefaultTable = 0x600
 )
 
 // biosPointerSlots lists WRAM-H offsets the real BIOS populates
@@ -484,6 +488,7 @@ func (h *HLEBIOS) Boot(ip []byte) error {
 	h.installIntStubs()
 	h.populateVBRTable()
 	h.installVirtualBIOS()
+	h.populateIntDefaultTable()
 	h.registerServices()
 
 	h.master.HLEHook = h.dispatch(h.master)
@@ -775,6 +780,26 @@ func (h *HLEBIOS) populateVBRTable() {
 	for vec := uint32(0x40); vec <= 0x5F; vec++ {
 		stubAddr := uint32(0x06000000) + wramHIntStubBase + (vec-0x40)*hleIntStubStride
 		h.bus.writeWramHU32(vec*4, stubAddr)
+	}
+}
+
+// populateIntDefaultTable fills the per-vector interrupt default-handler
+// table at BIOS-ROM $0600, read by SYS_SETSINT when the caller passes
+// handler=0 (see docs/bios/system_services.md "$06000784 - SYS_SETSINT").
+// SCU vectors $40-$5F default to their dispatcher trampoline; $4E/$4F and
+// all other entries default to the RTE;NOP no-op.
+func (h *HLEBIOS) populateIntDefaultTable() {
+	noop := uint32(0x06000000) + wramHDefaultRTE
+	for idx := uint32(0); idx < 128; idx++ {
+		def := noop
+		if idx >= 0x40 && idx <= 0x5F && idx != 0x4E && idx != 0x4F {
+			def = uint32(0x06000000) + wramHIntStubBase + (idx-0x40)*hleIntStubStride
+		}
+		off := wramHIntDefaultTable + idx*4
+		h.bus.bios[off+0] = byte(def >> 24)
+		h.bus.bios[off+1] = byte(def >> 16)
+		h.bus.bios[off+2] = byte(def >> 8)
+		h.bus.bios[off+3] = byte(def)
 	}
 }
 

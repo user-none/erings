@@ -124,13 +124,23 @@ func hleSysGetUintService(cpu *sh2.CPU, bus *Bus) {
 // Install an SH-2-level interrupt vector via the CPU's VBR table.
 //
 //	R4 = vector index (in 32-bit units relative to VBR)
-//	R5 = handler address
+//	R5 = handler address; 0 selects the per-vector default from the
+//	     table at BIOS $0600 (SCU vectors $40-$5F default to their
+//	     dispatcher trampoline). See docs/bios/system_services.md.
 //
 // No return value.
 func hleSysSetSintService(cpu *sh2.CPU, bus *Bus) {
 	r := cpu.Registers()
-	addr := r.VBR + r.R[4]*4
-	bus.Write32(addr, r.R[5])
+	idx := r.R[4]
+	handler := r.R[5]
+	if handler == 0 {
+		off := wramHIntDefaultTable + idx*4
+		if int(off)+4 <= len(bus.bios) {
+			handler = uint32(bus.bios[off])<<24 | uint32(bus.bios[off+1])<<16 |
+				uint32(bus.bios[off+2])<<8 | uint32(bus.bios[off+3])
+		}
+	}
+	bus.Write32(r.VBR+idx*4, handler)
 }
 
 // hleSysGetSintService implements SYS_GETSINT.

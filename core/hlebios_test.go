@@ -156,6 +156,42 @@ func TestHLESysGetUintService(t *testing.T) {
 	}
 }
 
+func TestHLESysSetSintService(t *testing.T) {
+	h, bus, master, _ := newHLEBIOSForTest()
+	if err := h.Boot(makeIPImage()); err != nil {
+		t.Fatalf("Boot: %v", err)
+	}
+
+	// handler=0 on an SCU vector installs that vector's dispatcher
+	// trampoline, not null. Games arm SCU interrupts this way (SFZ3
+	// Level-0 DMA, vec $4B); writing null here sent the master through
+	// a null vector on the next interrupt.
+	wantTramp := uint32(0x06000000) + wramHIntStubBase + (0x4B-0x40)*hleIntStubStride
+	master.SetReg(4, 0x4B)
+	master.SetReg(5, 0)
+	hleSysSetSintService(master, bus)
+	if got := bus.readWramHU32(0x4B * 4); got != wantTramp {
+		t.Errorf("SETSINT($4B, 0): vector = %08X, want trampoline %08X", got, wantTramp)
+	}
+
+	// handler=0 on $4E/$4F defaults to the RTE;NOP no-op, not a trampoline.
+	wantNoop := uint32(0x06000000) + wramHDefaultRTE
+	master.SetReg(4, 0x4E)
+	master.SetReg(5, 0)
+	hleSysSetSintService(master, bus)
+	if got := bus.readWramHU32(0x4E * 4); got != wantNoop {
+		t.Errorf("SETSINT($4E, 0): vector = %08X, want no-op %08X", got, wantNoop)
+	}
+
+	// A non-zero handler is written to the vector verbatim.
+	master.SetReg(4, 0x4B)
+	master.SetReg(5, 0x06043B48)
+	hleSysSetSintService(master, bus)
+	if got := bus.readWramHU32(0x4B * 4); got != 0x06043B48 {
+		t.Errorf("SETSINT($4B, handler): vector = %08X, want 06043B48", got)
+	}
+}
+
 func TestHLESysTassemService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, 3)
@@ -181,7 +217,6 @@ func TestHLESysClrsemService(t *testing.T) {
 		t.Errorf("CLRSEM did not clear semaphore")
 	}
 }
-
 
 func TestHLESysSetScuimService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
