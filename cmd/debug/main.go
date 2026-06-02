@@ -572,7 +572,19 @@ func writeMemoryDump(dump core.MemoryDump, baseDir string) error {
 		{"vdp1_display_fb.bin", dump.VDP1DisplayFB},
 		{"vdp2_vram.bin", dump.VDP2VRAM},
 		{"vdp2_cram.bin", dump.VDP2CRAM},
+		{"vdp2_regs.bin", dump.VDP2Regs},
+		{"vdp1_regs.bin", dump.VDP1Regs},
+		{"vdp1_shadow.bin", dump.VDP1Shadow},
 		{"sound_ram.bin", dump.SoundRAM},
+		{"scu_regs.bin", dump.SCURegs},
+		{"scu_internal.bin", dump.SCUInternal},
+		{"scu_dsp.bin", dump.SCUDSP},
+		{"scsp_regs.bin", dump.SCSPRegs},
+		{"scsp_slots.bin", dump.SCSPSlots},
+		{"scsp_dsp.bin", dump.SCSPDSP},
+		{"scsp_timers.bin", dump.SCSPTimers},
+		{"sh2_master_regs.bin", dump.SH2MasterRegs},
+		{"sh2_slave_regs.bin", dump.SH2SlaveRegs},
 	}
 	for _, r := range regions {
 		if err := os.WriteFile(filepath.Join(dir, r.name), r.data, 0o644); err != nil {
