@@ -22,18 +22,18 @@ func main() {
 
 	factory := &adapter.Factory{}
 
-	if *biosPath != "" || *discPath != "" {
-		if *biosPath == "" || *discPath == "" {
-			log.Fatal("-bios and -disc must both be specified for direct run")
-		}
+	if *discPath != "" {
+		options := map[string]string{"fast_boot": "true"}
+		var biosMap map[string][]byte
+		if *biosPath != "" {
+			biosData, err := os.ReadFile(*biosPath)
+			if err != nil {
+				log.Fatalf("failed to read BIOS: %v", err)
+			}
 
-		biosData, err := os.ReadFile(*biosPath)
-		if err != nil {
-			log.Fatalf("failed to read BIOS: %v", err)
+			biosMap = map[string][]byte{"main_bios": biosData}
 		}
-
-		bios := map[string][]byte{"main_bios": biosData}
-		if err := desktop.RunDirect(factory, *discPath, nil, bios); err != nil {
+		if err := desktop.RunDirect(factory, *discPath, options, biosMap); err != nil {
 			log.Fatal(err)
 		}
 		return

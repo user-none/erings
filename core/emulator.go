@@ -107,6 +107,9 @@ type Emulator struct {
 	// runs from $20000200) and the HLE-BIOS boot in hlebios.go.
 	hasBIOS bool
 
+	// Pending option state (applied by Start)
+	pendingFastBoot bool
+
 	// ipImage caches the disc's Initial Program (16 sectors of user
 	// data, 32 KB) read at SetDisc time. Used by region auto-detect
 	// and the HLE BIOS boot path. Nil when no disc is attached or
@@ -545,6 +548,15 @@ func (e *Emulator) GetTiming() Timing {
 	return Timing{FPS: 60, Scanlines: 263}
 }
 
+// SetOption applies a core option change identified by key.
+// Values are stored and applied when Start() is called.
+func (e *Emulator) SetOption(key string, value string) {
+	switch key {
+	case "fast_boot":
+		e.pendingFastBoot = (value == "true")
+	}
+}
+
 // SetBIOS loads a BIOS image by key name. For main_bios, also sets
 // the master SH-2 entry point from the reset vectors.
 func (e *Emulator) SetBIOS(key string, data []byte) error {
@@ -577,7 +589,13 @@ func (e *Emulator) Start() error {
 		if err := hle.Boot(e.ipImage); err != nil {
 			return err
 		}
+		return nil
 	}
+
+	if e.pendingFastBoot {
+		e.installFastBoot()
+	}
+
 	return nil
 }
 

@@ -84,6 +84,7 @@ func main() {
 	cpuProfile := flag.String("cpuprofile", "", "Write CPU profile to file")
 	dumpDir := flag.String("dump-dir", ".", "Directory to write memory dumps into (created if missing)")
 	savePath := flag.String("save", "", "Path to backup-RAM save file. If a directory, uses <gameid>.srm inside it. Loaded on start (if it exists) and written on close.")
+	fastBoot := flag.Bool("fast-boot", false, "Skip the real BIOS boot animation and enter the disc IP directly (real BIOS only; no effect with the HLE BIOS).")
 	flag.Parse()
 
 	var cpuProfileFile *os.File
@@ -148,6 +149,10 @@ func main() {
 		}
 		os.Exit(0)
 	}()
+
+	if *fastBoot {
+		emu.SetOption("fast_boot", "true")
+	}
 
 	if err := emu.Start(); err != nil {
 		log.Fatalf("emulator start failed: %v", err)

@@ -72,6 +72,16 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 				ThumbnailRepo: "Sega_-_Saturn",
 			},
 		},
+		CoreOptions: []coreif.CoreOption{
+			{
+				Key:         "fast_boot",
+				Label:       "Fast Boot",
+				Description: "Skip BIOS animation screens",
+				Type:        coreif.CoreOptionBool,
+				Default:     "true",
+				Category:    coreif.CoreOptionCategoryCore,
+			},
+		},
 		BIOSOptions: []coreif.BIOSOption{
 			{
 				Key:      "main_bios",
@@ -180,7 +190,7 @@ func (e *emulator) GetFramebufferStride() int           { return e.emu.GetFrameb
 func (e *emulator) GetActiveHeight() int                { return e.emu.GetActiveHeight() }
 func (e *emulator) GetAudioSamples() []int16            { return e.emu.GetAudioSamples() }
 func (e *emulator) SetInput(player int, buttons uint32) { e.emu.SetInput(player, buttons) }
-func (e *emulator) SetOption(key string, value string)  {}
+func (e *emulator) SetOption(key string, value string)  { e.emu.SetOption(key, value) }
 func (e *emulator) SetRom(data []byte)                  {} // Saturn is disc-only
 func (e *emulator) Start()                              { e.emu.Start() }
 func (e *emulator) Close()                              { e.emu.Close() }
