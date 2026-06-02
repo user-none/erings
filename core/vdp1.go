@@ -213,9 +213,6 @@ func (v *VDP1) Reset() {
 	v.ptmr = 0
 	v.fbcrPending = 0
 	v.ptmrPending = 0
-	v.ewdrPending = 0
-	v.ewlrPending = 0
-	v.ewrrPending = 0
 	v.edsr = 0x0003
 	v.sysClipX = 319
 	v.sysClipY = 223

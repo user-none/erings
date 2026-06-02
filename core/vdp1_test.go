@@ -56,6 +56,46 @@ func TestVDP1Defaults(t *testing.T) {
 	}
 }
 
+// TestVDP1EraseRegistersSurviveReset verifies that the erase/write setup
+// registers (EWDR/EWLR/EWRR) are preserved across Reset(). A CKCHG clock
+// change routes through Reset(); games program the erase region once at
+// init and never rewrite it, so wiping it here would drive the active
+// erase region to the degenerate (0,0)-(0,0), stop the sprite framebuffer
+// from clearing, and smear stale/animated pixels (the SFZ3 menu bug).
+func TestVDP1EraseRegistersSurviveReset(t *testing.T) {
+	v := NewVDP1(NewSCU())
+
+	// Game programs the erase region once at init: fill color, upper-left,
+	// and a near-full-screen lower-right. These are deferred registers, so
+	// a vblank latch makes them active.
+	const (
+		ewdr = 0x1234
+		ewlr = 0x0205
+		ewrr = 0x58E0
+	)
+	v.Write(0x06, ewdr)
+	v.Write(0x08, ewlr)
+	v.Write(0x0A, ewrr)
+	v.latchPending()
+	if v.ewrr != ewrr || v.ewlr != ewlr || v.ewdr != ewdr {
+		t.Fatalf("latch failed: ewdr=0x%04X ewlr=0x%04X ewrr=0x%04X", v.ewdr, v.ewlr, v.ewrr)
+	}
+
+	// CKCHG clock change: must not wipe the one-time erase setup.
+	v.Reset()
+	v.latchPending() // next vblank re-latches pending into active
+
+	if v.ewrr != ewrr {
+		t.Errorf("EWRR wiped by Reset: active=0x%04X, want 0x%04X", v.ewrr, ewrr)
+	}
+	if v.ewlr != ewlr {
+		t.Errorf("EWLR wiped by Reset: active=0x%04X, want 0x%04X", v.ewlr, ewlr)
+	}
+	if v.ewdr != ewdr {
+		t.Errorf("EWDR wiped by Reset: active=0x%04X, want 0x%04X", v.ewdr, ewdr)
+	}
+}
+
 func TestVDP1TVMRViaMODR(t *testing.T) {
 	v := NewVDP1(NewSCU())
 
