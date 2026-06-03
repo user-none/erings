@@ -528,12 +528,18 @@ Sets GBR = $25FE0000 (SCU register base), then:
 7. Timer 0: T0C ($90) = $03FF
 8. Timer 1: T1S ($94) = $01FF
 9. Timer 1 mode: T1MD ($98) = 0
-10. Loads game entry info from $06000340 (function table)
+10. Loads SYS_SETSCUIM ($060007B0) from the service-table slot at
+    $06000340 and the SCU IMS shadow from $06000348 (passed as R4)
 11. Sets VBR = $06000000 (Work RAM-H)
-12. Jumps to game via function pointer from $06000340
+12. Tail-jumps to SYS_SETSCUIM, which writes the shadow to the live
+    SCU IMS ($25FE00A0) and RTS-returns to sub_1800's caller - a
+    return through a service routine, not a game hand-off
 
-The interrupt mask register (IMS at $A0) is not written by this
-routine; the handoff IMS value is established elsewhere.
+$06000340 is a static service-table slot ($060007B0, copied with the
+WRAM-H block and never repatched), so this tail target is SYS_SETSCUIM
+on every path that reaches sub_1800. The routine does not write the
+SCU IMS ($A0) in its own body; it delegates that to the SYS_SETSCUIM
+tail call, which loads the mask from the $06000348 shadow.
 
 ### Header Validation (sub_1A3C)
 

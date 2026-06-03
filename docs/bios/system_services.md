@@ -49,7 +49,7 @@ disc-boot captures).
 | $06000314 | $06000774 | SYS_GETSINT | Get interrupt vector at VBR+idx*4 |
 | $06000318 | $0600083C | (default RTS) | reserved slot |
 | $0600031C | $0600083C | (default RTS) | reserved slot |
-| $06000320 | $060006B0 | SYS_CHGSYSCK | Change system clock mode (SDK dispatches SYS_CHGSYSCK through this slot). Chains through two function pointers via the $060006AA helper (pool $06000708 -> $06000328 -> $000004C8 SMPC reinit; pool $0600070C -> $0600032C -> $00001800 SCU init), then issues SMPC command $19 via data pools $06000714/$06000718; the chained $000004C8 routine performs the CKCHG that re-clocks the system. |
+| $06000320 | $060006B0 | SYS_CHGSYSCK | Change system clock mode (SDK dispatches SYS_CHGSYSCK through this slot). Saves PR, then chains $000004C8 (SMPC re-init: RESDISA, clock-mode flag to $06000324, VBR=$20000000, CKCHG; the CKCHG NMI is handled at BIOS $000534, which RTSs back in at $060006B8) then $00001800 (SCU init: DMA/A-bus reset, timers disabled, then tail-calls SYS_SETSCUIM via $06000340 to reload the IMS from the $06000348 shadow, VBR=$06000000). Finally issues SMPC $19/RESENAB via pools $06000714/$06000718 and RTS-returns to the caller. See the $060006B0 detail section. |
 | **$06000324** | **$00000000** | **SYS_GETSYSCK clock-mode word (data, not a pointer)** | Holds the current system clock mode; SYS_GETSYSCK is the SDK's inline read of this location (`*(Uint32*)$06000324`). Initial value 0. Not the default-RTS sentinel; mis-populating it with $0600083C would corrupt the clock-mode read. |
 | $06000328 | $000004C8 | SMPC re-init entry | NMI / soft-reset hook; can also be invoked directly by game code to drive SMPC reinit. |
 | $0600032C | $00001800 | SCU register zero-fill | Same body as $060002A0. |
@@ -372,21 +372,41 @@ The interrupt-acknowledge helper used by the SCU dispatcher epilogue
 
 ### $060006B0 - SYS_CHGSYSCK
 
-A short routine that chains through two BIOS function pointers via
-the $060006AA helper (`MOV.L @R1,R1; JMP @R1`):
+Changes the system clock mode; the SDK dispatches it through slot
+$06000320. The routine saves PR, then chains through two BIOS
+function pointers via the $060006AA helper (`MOV.L @R1,R1; JMP @R1`),
+in order:
 
 - Pool $06000708 = $06000328 -> `mem.L[$06000328]` = $000004C8 (SMPC re-init)
 - Pool $0600070C = $0600032C -> `mem.L[$0600032C]` = $00001800 (SCU register init)
 
-After both calls, the routine issues an SMPC command sequence using
-two data pools: $06000718 = $20100063 (SMPC SF register) and
-$06000714 = $2010001F (SMPC COMREG). It writes 1 to SF, $19 to
-COMREG, DT busy-waits, then polls SF.0 for completion.
+$000004C8 masks interrupts (SR=$F0), issues RESDISA ($1A), records
+the clock-mode flag at $06000324, sets VBR=$20000000, reprograms the
+BSC/WDT/SBYCR/on-chip registers, issues CKCHG320 ($0F) / CKCHG352
+($0E), and SLEEPs; it never returns by RTS. The CKCHG raises an NMI
+on the master, which - VBR being $20000000 - vectors to the BIOS NMI
+handler at $000534. That handler discards the SLEEP exception frame
+(`ADD #8,R15`), completes the SMPC handshake, restores SR, and
+RTS-returns into SYS_CHGSYSCK at $060006B8 (the saved PR from the
+first chained call). This is the resume path after the clock change.
 
-The two chained calls (SMPC re-init then SCU register init) followed
-by the SMPC command implement SYS_CHGSYSCK (change system clock
-mode), which the SDK dispatches through slot $06000320: the chained
-$000004C8 routine performs the CKCHG that changes the clock.
+$00001800 disables the DMA levels, sets the DMA mode registers,
+programs the A-bus registers, disables the SCU timers (T0C=$3FF,
+T1S=$1FF, T1MD=0), restores VBR=$06000000, then tail-jumps through
+$06000340 to SYS_SETSCUIM ($060007B0) with the IMS shadow from
+$06000348 - reloading the live SCU IMS from its shadow. SYS_SETSCUIM
+RTS-returns into SYS_CHGSYSCK at $060006BE.
+
+The routine then issues an SMPC command via two data pools:
+$06000718 = $20100063 (SMPC SF) and $06000714 = $2010001F (SMPC
+COMREG). It writes 1 to SF, $19 (RESENAB) to COMREG, DT busy-waits,
+polls SF.0, then restores PR and RTS-returns to its caller.
+
+Net effect: the dot clock is changed (CKCHG) and the clock-mode word
+at $06000324 updated; the SCU is reset with its IMS reloaded from the
+$06000348 shadow; the reset-button NMI is cycled off (RESDISA) then
+on (RESENAB); VBR ends at $06000000; and control returns to the
+caller.
 
 ### $06000810 - SYS_CHGUIPR
 
