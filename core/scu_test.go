@@ -1648,6 +1648,36 @@ func TestSCUIndirectDMAZeroCountMaxLevel1(t *testing.T) {
 	}
 }
 
+// TestSCUDMADirectZeroCountMax verifies the direct-mode count==0 -> maximum
+// transfer convention (SCU User's Manual Fig 3.3/3.4): the count field cannot
+// hold its own maximum (0xFFFFF / 0xFFF), so a programmed 0 means the full
+// 0x100000 bytes (level 0) or 0x1000 bytes (levels 1-2). Mirrors the
+// indirect-mode tests above; the transferred size is observed via dmaDelay
+// (= count/4). Without this, a count=0 DMA wrongly transfers nothing.
+func TestSCUDMADirectZeroCountMax(t *testing.T) {
+	t.Run("Level0", func(t *testing.T) {
+		s := NewSCU()
+		s.SetBus(newFakeSCUBus())
+		runDirectDMA(s, 0x3000, 0x2000, 0, 0x101)
+		if got, want := s.dmaDelay[0], 0x100000/4; got != want {
+			t.Errorf("level 0 direct count=0 delay = %d, want %d (0x100000/4)", got, want)
+		}
+	})
+	t.Run("Level1", func(t *testing.T) {
+		s := NewSCU()
+		s.SetBus(newFakeSCUBus())
+		s.Write(0x20+0x00, 0x3000) // D1R
+		s.Write(0x20+0x04, 0x2000) // D1W
+		s.Write(0x20+0x08, 0)      // D1C = 0 (max)
+		s.Write(0x20+0x0C, 0x101)  // D1AD
+		s.Write(0x20+0x14, 0x07)   // D1MD: factor 7 (immediate), direct
+		s.Write(0x20+0x10, 0x01)   // D1EN triggers
+		if got, want := s.dmaDelay[1], 0x1000/4; got != want {
+			t.Errorf("level 1 direct count=0 delay = %d, want %d (0x1000/4)", got, want)
+		}
+	})
+}
+
 // fakeSCUBus is a simple in-memory bus for DMA tests.
 type fakeSCUBus struct {
 	mem map[uint32]uint32
@@ -1750,7 +1780,6 @@ func TestSCUDMAUnalignedAndPartial(t *testing.T) {
 		{name: "BBusUnalignedTail", count: 6, d0ad: readInc4WriteInc2, dstAddr: bbusDst, bbusDouble: true},
 		{name: "FixedSrcCount3", srcOff: 1, count: 3, d0ad: readInc0WriteInc4, dstAddr: ramDstBase, fixedSrc: true},
 		{name: "SparseWriteInc8Count16_RAM", count: 16, d0ad: readInc4WriteInc8, dstAddr: ramDstBase},
-		{name: "ZeroCount", count: 0, d0ad: readInc4WriteInc4, dstAddr: ramDstBase},
 	}
 
 	for _, tc := range cases {

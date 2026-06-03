@@ -737,12 +737,22 @@ func (s *SCU) executeDMA(lvl int) {
 	readInc := dmaReadAdd[readIdx]
 	writeInc := dmaWriteAdd[writeIdx]
 
-	// Count mask: Level 0 = 20-bit (1 MB), Levels 1-2 = 12-bit (4 KB)
+	// Count mask: Level 0 = 20-bit (1 MB), Levels 1-2 = 12-bit (4 KB).
+	// A count register of 0 means the maximum transfer size: the field
+	// cannot represent its own maximum (0xFFFFF = 1 MB-1, 0xFFF = 4 KB-1),
+	// so 0 denotes the full 0x100000 / 0x1000 bytes (SCU User's Manual
+	// Fig 3.3/3.4). Mirrors executeIndirectDMA's count==0 handling.
 	count := s.dmaC[lvl]
 	if lvl == 0 {
 		count &= 0xFFFFF
+		if count == 0 {
+			count = 0x100000
+		}
 	} else {
 		count &= 0xFFF
+		if count == 0 {
+			count = 0x1000
+		}
 	}
 
 	src, dst := s.dmaTransfer(s.dmaR[lvl], s.dmaW[lvl], count, readInc, writeInc)
