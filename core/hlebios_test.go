@@ -247,18 +247,58 @@ func TestHLESysChgScuimService(t *testing.T) {
 
 func TestHLESysChgSysCkService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
-	// Arm the timers as a game would before the clock-mode change.
+	// Arm SCU state as a game would before the clock-mode change.
 	bus.scu.Write(0x90, 0x001) // T0C
 	bus.scu.Write(0x98, 0x101) // T1MD: timer-enable set
+	bus.scu.Write(0x14, 0x003) // DMA L0 mode (perturb; service resets to 7)
+	// IMS shadow with bit 15 set: the SETSCUIM-tail AIACK write is skipped,
+	// the live IMS is the masked low word, and the shadow is full-width.
+	bus.writeWramHU32(wramHIMSShadow, 0xFFFFD660)
+	master.SetReg(4, 1) // clock mode 1 (352)
+
 	hleSysChgSysCkService(master, bus)
-	if got := bus.scu.ReadInternal(0x98); got&1 != 0 {
-		t.Errorf("CHGSYSCK left T1MD=%X, want timer-enable (bit 0) cleared", got)
+
+	// Clock-mode word at $06000324 (read by SYS_GETSYSCK).
+	if got := bus.readWramHU32(wramHSysTable + 0x24); got != 1 {
+		t.Errorf("clock-mode word = %X, want 1", got)
 	}
+	// Timers reset and disabled.
 	if got := bus.scu.ReadInternal(0x90); got != 0x3FF {
-		t.Errorf("CHGSYSCK T0C=%X, want 3FF", got)
+		t.Errorf("T0C = %X, want 3FF", got)
 	}
 	if got := bus.scu.ReadInternal(0x94); got != 0x1FF {
-		t.Errorf("CHGSYSCK T1S=%X, want 1FF", got)
+		t.Errorf("T1S = %X, want 1FF", got)
+	}
+	if got := bus.scu.ReadInternal(0x98); got&1 != 0 {
+		t.Errorf("T1MD = %X, want timer-enable (bit 0) cleared", got)
+	}
+	// DMA disabled, mode register reset.
+	if got := bus.scu.ReadInternal(0x10); got != 0 {
+		t.Errorf("DMA L0 enable = %X, want 0", got)
+	}
+	if got := bus.scu.ReadInternal(0x14); got != 7 {
+		t.Errorf("DMA L0 mode = %X, want 7", got)
+	}
+	// A-bus + RSEL.
+	if got := bus.scu.ReadInternal(0xB0); got != 0x1FF01FF0 {
+		t.Errorf("ASR0 = %X, want 1FF01FF0", got)
+	}
+	if got := bus.scu.ReadInternal(0xB8); got != 0x1F {
+		t.Errorf("AREF = %X, want 1F", got)
+	}
+	if got := bus.scu.ReadInternal(0xA8); got != 1 {
+		t.Errorf("AIACK = %X, want 1", got)
+	}
+	if got := bus.scu.ReadInternal(0xC4); got != 1 {
+		t.Errorf("RSEL = %X, want 1", got)
+	}
+	// IMS reloaded from the shadow: live IMS is the masked low word, the
+	// shadow keeps the full 32-bit value (matching the BIOS).
+	if got := bus.scu.ReadInternal(0xA0); got != 0xD660 {
+		t.Errorf("live IMS = %X, want D660", got)
+	}
+	if got := bus.readWramHU32(wramHIMSShadow); got != 0xFFFFD660 {
+		t.Errorf("IMS shadow = %X, want FFFFD660", got)
 	}
 }
 
@@ -267,8 +307,9 @@ func TestHLEBootInitializesIMSShadow(t *testing.T) {
 	if err := h.Boot(makeIPImage()); err != nil {
 		t.Fatalf("Boot: %v", err)
 	}
-	if got := bus.readWramHU32(wramHIMSShadow); got != 0xBFFF {
-		t.Errorf("IMS shadow at boot = %08X, want BFFF", got)
+	// Seeded to the traced BIOS-handoff value (all SCU interrupts masked).
+	if got := bus.readWramHU32(wramHIMSShadow); got != 0xFFFFFFFF {
+		t.Errorf("IMS shadow at boot = %08X, want FFFFFFFF", got)
 	}
 }
 

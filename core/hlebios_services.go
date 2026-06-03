@@ -194,14 +194,15 @@ func hleSysClrsemService(cpu *sh2.CPU, bus *Bus) {
 // shadow at $06000348 that SDK code reads for SYS_GETSCUIM (the
 // live IMS register is write-only on hardware).
 //
-//	R4 = new IMS value (low 16 bits)
+//	R4 = new IMS value (low 16 bits drive the live mask; the full
+//	     32-bit value is kept in the shadow, matching the BIOS)
 //
 // No return value.
 func hleSysSetScuimService(cpu *sh2.CPU, bus *Bus) {
 	r := cpu.Registers()
 	val := r.R[4]
 	bus.scu.Write(0xA0, val)
-	bus.writeWramHU32(wramHIMSShadow, val&0xFFFF)
+	bus.writeWramHU32(wramHIMSShadow, val)
 }
 
 // hleSysChgScuimService implements SYS_CHGSCUIM.
@@ -219,21 +220,60 @@ func hleSysChgScuimService(cpu *sh2.CPU, bus *Bus) {
 	cur := bus.readWramHU32(wramHIMSShadow)
 	newVal := (cur & r.R[4]) | r.R[5]
 	bus.scu.Write(0xA0, newVal)
-	bus.writeWramHU32(wramHIMSShadow, newVal&0xFFFF)
+	bus.writeWramHU32(wramHIMSShadow, newVal)
 }
 
 // hleSysChgSysCkService implements SYS_CHGSYSCK.
 //
-// Rewrites the SCU timer registers to their reset values (T0C=$3FF,
-// T1S=$1FF, T1MD=0), clearing the timer-enable bit so the SCU timers
-// stop. This is the SCU half of the clock-mode change; the SMPC clock
-// switch is not modeled.
+// Reproduces the bus-visible effects of the real routine ($060006B0), in
+// order: the clock-mode word at $06000324 and VDP2 TVMD take the requested
+// mode (R4 bit 0); the SCU is reset (DMA disabled, A-bus reprogrammed,
+// timers stopped); and the SCU IMS is reloaded from its $06000348 shadow
+// exactly as SYS_SETSCUIM does (sign-extended IST, conditional AIACK). The
+// SMPC clock command and its NMI are not issued - their register effects
+// are written here directly.
 //
-// No arguments, no return value.
+//	R4 = clock mode (bit 0: 0 = 320, 1 = 352)
 func hleSysChgSysCkService(cpu *sh2.CPU, bus *Bus) {
-	bus.scu.Write(0x90, 0x3FF) // T0C
-	bus.scu.Write(0x94, 0x1FF) // T1S
-	bus.scu.Write(0x98, 0)     // T1MD: clear timer-enable
+	mode := cpu.Registers().R[4] & 1
+
+	// SMPC half: clock-mode word, transient AIACK/AREF clears, SCU RSEL,
+	// and the VDP2 TVMD resolution change.
+	bus.Write32(0x06000324, mode)
+	bus.Write32(0x05FE00A8, 0)
+	bus.Write32(0x05FE00B8, 0)
+	bus.Write32(0x05FE00C4, 1)
+	bus.Write16(0x05F80000, uint16(mode))
+
+	// SCU half (sub_1800): disable DMA, reprogram A-bus, stop timers.
+	for lvl := uint32(0); lvl < 3; lvl++ {
+		b := uint32(0x05FE0000) + lvl*0x20
+		bus.Write32(b+0x00, 0)
+		bus.Write32(b+0x04, 0)
+		bus.Write32(b+0x08, 0)
+		bus.Write32(b+0x0C, 0)
+		bus.Write32(b+0x10, 0)
+		bus.Write32(b+0x14, 7)
+	}
+	bus.Write32(0x05FE0060, 0)
+	bus.Write32(0x05FE0080, 0)
+	bus.Write32(0x05FE00B0, 0x1FF01FF0)
+	bus.Write32(0x05FE00B4, 0x1FF01FF0)
+	bus.Write32(0x05FE00B8, 0x1F)
+	bus.Write32(0x05FE00A8, 1)
+	bus.Write32(0x05FE0090, 0x3FF)
+	bus.Write32(0x05FE0094, 0x1FF)
+	bus.Write32(0x05FE0098, 0)
+
+	// SETSCUIM tail: reload the SCU IMS from the $06000348 shadow.
+	shadow := bus.readWramHU32(wramHIMSShadow)
+	bus.Write32(0x06000348, shadow)
+	bus.Write32(0x05FE00A0, shadow)
+	ist := uint32(int32(int16(uint16(shadow))))
+	bus.Write32(0x05FE00A4, ist)
+	if int32(ist) >= 0 {
+		bus.Write32(0x05FE00A8, 1)
+	}
 }
 
 // hleBiosFillService replaces BIOS sub_02AC.

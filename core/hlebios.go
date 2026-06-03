@@ -610,11 +610,14 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 	// BIOS PER_Init calling the decompressed driver.
 	h.bus.writeWramHU32(wramHSysTable+0x58, hleBiosPERInit)
 
-	// SCU IMS shadow at $06000348. Initialized to the SCU's reset
-	// value ($0000BFFF) so SYS_GETSCUIM and CHGSCUIM's RMW step see
-	// a sane starting mask. The slot sits inside the dispatch-table
-	// region but is not a function pointer; SDK code reads it as data.
-	h.bus.writeWramHU32(wramHIMSShadow, 0x0000BFFF)
+	// SCU IMS shadow at $06000348. Seeded to the BIOS-handoff value
+	// ($FFFFFFFF, all SCU interrupts masked) so SYS_GETSCUIM and
+	// CHGSCUIM's RMW step start from the same mask the real BIOS
+	// leaves - traced on hardware as FFFFFFFF, with the game only ever
+	// modifying the low interrupt bits. The slot sits inside the
+	// dispatch-table region but is not a function pointer; SDK code
+	// reads it as data.
+	h.bus.writeWramHU32(wramHIMSShadow, 0xFFFFFFFF)
 
 	// SCU user-handler table sentinels for vectors $40-$5F. Real
 	// BIOS dispatcher does mem[$06000900 + vec*4]; for those
