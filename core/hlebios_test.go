@@ -196,15 +196,15 @@ func TestHLESysTassemService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, 3)
 	hleSysTassemService(master, bus)
-	if r0 := master.Registers().R[0]; r0 != 0 {
-		t.Errorf("first TASSEM returned %d, want 0 (acquired)", r0)
+	if r0 := master.Registers().R[0]; r0 != 1 {
+		t.Errorf("first TASSEM returned %d, want 1 (was free, now acquired)", r0)
 	}
 	if bus.wramH[wramHSemArray+3] == 0 {
 		t.Errorf("TASSEM did not set semaphore byte")
 	}
 	hleSysTassemService(master, bus)
-	if r0 := master.Registers().R[0]; r0 != 1 {
-		t.Errorf("second TASSEM returned %d, want 1 (already held)", r0)
+	if r0 := master.Registers().R[0]; r0 != 0 {
+		t.Errorf("second TASSEM returned %d, want 0 (already held)", r0)
 	}
 }
 

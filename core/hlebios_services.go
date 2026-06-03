@@ -162,16 +162,16 @@ func hleSysGetSintService(cpu *sh2.CPU, bus *Bus) {
 //
 // Returns in R0:
 //
-//	0 = semaphore was free, now acquired
-//	1 = semaphore was already held
+//	1 = semaphore was free, now acquired
+//	0 = semaphore was already held
 func hleSysTassemService(cpu *sh2.CPU, bus *Bus) {
 	idx := cpu.Registers().R[4] & 0xFF
 	off := wramHSemArray + idx
 	if bus.wramH[off] == 0 {
 		bus.wramH[off] = 0x80
-		cpu.SetReg(0, 0)
-	} else {
 		cpu.SetReg(0, 1)
+	} else {
+		cpu.SetReg(0, 0)
 	}
 }
 
