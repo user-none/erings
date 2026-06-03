@@ -417,8 +417,8 @@ character pattern reads across the 4 VRAM banks for all 4 scroll screens.
 | $060002B0 | varies | CD Block status buffer |
 | $06000324 | 4 bytes | Cold/warm boot indicator |
 | $06000328 | 4 bytes | SMPC init entry point ($0004C8) |
-| $06000340 | varies | Game entry info (function ptr + params) |
-| $06000348 | 4 bytes | NMI/reset status flag |
+| $06000340 | 4 bytes | SYS_SETSCUIM function pointer ($060007B0) |
+| $06000348 | 4 bytes | SCU IMS shadow (last value written to SCU IMS) |
 | $060003A0 | varies | CD Block session state |
 | $06000690 | varies | System main loop (runtime populated) |
 | $06000840-$0600094A | ~266 bytes | Interrupt handler pointer slots |
