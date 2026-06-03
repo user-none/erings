@@ -273,6 +273,7 @@ const (
 	hleSysClrsem   = 0xA0000034
 	hleSysSetScuim = 0xA0000040
 	hleSysChgScuim = 0xA0000044
+	hleSysChgSysCk = 0xA0000048
 
 	// BIOS-published WRAM-H routine replacements (slots at
 	// $06000234-$0600034C; see docs "BIOS-Published WRAM-H
@@ -600,6 +601,7 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 	h.bus.writeWramHU32(wramHSysTable+0x34, hleSysClrsem)
 	h.bus.writeWramHU32(wramHSysTable+0x40, hleSysSetScuim)
 	h.bus.writeWramHU32(wramHSysTable+0x44, hleSysChgScuim)
+	h.bus.writeWramHU32(wramHSysTable+0x20, hleSysChgSysCk)
 	// PER_Init at $06000358: magic address dispatched in Go. The
 	// service writes RTS+NOP at the caller's R4 buffer (so any
 	// later JSR to "the driver entry" returns cleanly) AND

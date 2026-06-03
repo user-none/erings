@@ -23,6 +23,7 @@ func (h *HLEBIOS) registerServices() {
 	h.register(hleSysClrsem, hleSysClrsemService)
 	h.register(hleSysSetScuim, hleSysSetScuimService)
 	h.register(hleSysChgScuim, hleSysChgScuimService)
+	h.register(hleSysChgSysCk, hleSysChgSysCkService)
 
 	// BIOS-published WRAM-H routine replacements.
 	h.register(hleBiosFill, hleBiosFillService)
@@ -219,6 +220,20 @@ func hleSysChgScuimService(cpu *sh2.CPU, bus *Bus) {
 	newVal := (cur & r.R[4]) | r.R[5]
 	bus.scu.Write(0xA0, newVal)
 	bus.writeWramHU32(wramHIMSShadow, newVal&0xFFFF)
+}
+
+// hleSysChgSysCkService implements SYS_CHGSYSCK.
+//
+// Rewrites the SCU timer registers to their reset values (T0C=$3FF,
+// T1S=$1FF, T1MD=0), clearing the timer-enable bit so the SCU timers
+// stop. This is the SCU half of the clock-mode change; the SMPC clock
+// switch is not modeled.
+//
+// No arguments, no return value.
+func hleSysChgSysCkService(cpu *sh2.CPU, bus *Bus) {
+	bus.scu.Write(0x90, 0x3FF) // T0C
+	bus.scu.Write(0x94, 0x1FF) // T1S
+	bus.scu.Write(0x98, 0)     // T1MD: clear timer-enable
 }
 
 // hleBiosFillService replaces BIOS sub_02AC.

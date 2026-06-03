@@ -57,6 +57,7 @@ func TestHLEBootDispatchTableWired(t *testing.T) {
 		{wramHSysTable + 0x34, hleSysClrsem, "CLRSEM slot"},
 		{wramHSysTable + 0x40, hleSysSetScuim, "SETSCUIM slot"},
 		{wramHSysTable + 0x44, hleSysChgScuim, "CHGSCUIM slot"},
+		{wramHSysTable + 0x20, hleSysChgSysCk, "CHGSYSCK slot"},
 		{wramHSysTable + 0x08, wramHNoopHandlerAddr, "unused slot points to $0600083C (no-op handler)"},
 		{wramHSysTable + 0x24, 0, "slot $324 is data zero per real-BIOS handoff"},
 		{wramHSysTable + 0x50, 0, "slot $350 is data zero per real-BIOS handoff"},
@@ -241,6 +242,23 @@ func TestHLESysChgScuimService(t *testing.T) {
 	// (0x00FF & 0xF0F0) | 0x0F00 = 0x00F0 | 0x0F00 = 0x0FF0
 	if got := bus.readWramHU32(wramHIMSShadow); got != 0x0FF0 {
 		t.Errorf("CHGSCUIM shadow = %08X, want 0FF0", got)
+	}
+}
+
+func TestHLESysChgSysCkService(t *testing.T) {
+	_, bus, master, _ := newHLEBIOSForTest()
+	// Arm the timers as a game would before the clock-mode change.
+	bus.scu.Write(0x90, 0x001) // T0C
+	bus.scu.Write(0x98, 0x101) // T1MD: timer-enable set
+	hleSysChgSysCkService(master, bus)
+	if got := bus.scu.ReadInternal(0x98); got&1 != 0 {
+		t.Errorf("CHGSYSCK left T1MD=%X, want timer-enable (bit 0) cleared", got)
+	}
+	if got := bus.scu.ReadInternal(0x90); got != 0x3FF {
+		t.Errorf("CHGSYSCK T0C=%X, want 3FF", got)
+	}
+	if got := bus.scu.ReadInternal(0x94); got != 0x1FF {
+		t.Errorf("CHGSYSCK T1S=%X, want 1FF", got)
 	}
 }
 
