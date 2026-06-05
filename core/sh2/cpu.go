@@ -838,6 +838,11 @@ func (c *CPU) writeOnChip8(addr uint32, val uint8) {
 		c.frt.syncTo(c.cycles)
 		c.frt.Write(addr, val)
 		c.recomputeFRTEvent()
+		// TIER/FTCSR writes can change the level-sensitive request line
+		// (enable an already-latched flag); re-evaluate.
+		if addr == 0xFFFFFE10 || addr == 0xFFFFFE11 {
+			c.RefreshOnChipInterrupts()
+		}
 	case addr >= 0xFFFFFE80 && addr <= 0xFFFFFE83:
 		// WDT registers require a 16-bit write with the A5/5A key
 		// in the high byte. Byte writes silently discard.
@@ -859,6 +864,9 @@ func (c *CPU) writeOnChip8(addr uint32, val uint8) {
 			cur = (cur & 0xFF00) | uint16(val)
 		}
 		c.intc.Write(aligned, cur)
+		// IPRA/IPRB priority changes can make an already-pending request
+		// deliverable; re-evaluate the level-sensitive on-chip sources.
+		c.RefreshOnChipInterrupts()
 	case addr == 0xFFFFFE71 || addr == 0xFFFFFE72:
 		// DRCR: native 8-bit
 		c.dmac.WriteDRCR(addr, val)
@@ -946,6 +954,11 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 		c.frt.syncTo(c.cycles)
 		c.frt.Write(addr, uint8(val))
 		c.recomputeFRTEvent()
+		// TIER/FTCSR writes can change the level-sensitive request line
+		// (enable an already-latched flag); re-evaluate.
+		if addr == 0xFFFFFE10 || addr == 0xFFFFFE11 {
+			c.RefreshOnChipInterrupts()
+		}
 		return true
 	case addr == 0xFFFFFE91:
 		// SBYCR - Standby Control Register. Stub storage only; STBY
@@ -965,6 +978,9 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 	case addr >= 0xFFFFFE60 && addr <= 0xFFFFFE68:
 		// INTC registers (IPRB, VCRA-VCRD)
 		c.intc.Write(addr&0xFFFFFFFE, uint16(val))
+		// IPRB priority changes can make an already-pending request
+		// deliverable; re-evaluate the level-sensitive on-chip sources.
+		c.RefreshOnChipInterrupts()
 		return true
 	case addr == 0xFFFFFE71 || addr == 0xFFFFFE72:
 		// DMAC DRCR0/DRCR1 (byte access)
@@ -981,10 +997,18 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 		c.wdt.syncTo(c.cycles)
 		c.wdt.WriteWord(addr, uint16(val))
 		c.recomputeWDTEvent()
+		// WTCSR (0xFE80) mode/flag changes can change the level-sensitive
+		// ITI request line; re-evaluate. RSTCSR (0xFE82) does not.
+		if addr == 0xFFFFFE80 {
+			c.RefreshOnChipInterrupts()
+		}
 		return true
 	case addr >= 0xFFFFFEE0 && addr <= 0xFFFFFEE5:
 		// INTC registers (ICR, IPRA, VCRWDT)
 		c.intc.Write(addr&0xFFFFFFFE, uint16(val))
+		// IPRA priority changes can make an already-pending request
+		// deliverable; re-evaluate the level-sensitive on-chip sources.
+		c.RefreshOnChipInterrupts()
 		return true
 	case addr >= 0xFFFFFF00 && addr <= 0xFFFFFF1F:
 		// DIVU registers (32-bit access), including the undocumented
@@ -993,12 +1017,24 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 		if c.divu.Write(addr&0xFFFFFFFC, val) {
 			c.routeDIVUInterrupt()
 		}
+		// DVCR (0xFFFFFF08) carries OVFIE; enabling it while OVF is set
+		// makes the level-sensitive request active without a fresh edge.
+		if addr&0xFFFFFFFC == 0xFFFFFF08 {
+			c.RefreshOnChipInterrupts()
+		}
 		return true
 	case addr >= 0xFFFFFF80 && addr <= 0xFFFFFFB0:
 		// DMAC registers (32-bit access)
-		ch := c.dmac.Write(addr&0xFFFFFFFC, val)
+		dmacReg := addr & 0xFFFFFFFC
+		ch := c.dmac.Write(dmacReg, val)
 		if ch >= 0 {
 			c.routeDMACInterrupt(ch)
+		}
+		// CHCR0/CHCR1 (IE) and DMAOR (DME) carry the transfer-end
+		// interrupt enables; enabling one while TE is set makes the
+		// level-sensitive request active without a fresh edge.
+		if dmacReg == 0xFFFFFF8C || dmacReg == 0xFFFFFF9C || dmacReg == 0xFFFFFFB0 {
+			c.RefreshOnChipInterrupts()
 		}
 		return true
 	case addr == 0xFFFFFFE0:
@@ -1079,6 +1115,39 @@ func (c *CPU) routeFRTInterrupts(triggered uint8) {
 		return
 	}
 	c.intc.AssertSource(isrcFRT)
+}
+
+// RefreshOnChipInterrupts re-evaluates the level-sensitive request line of
+// every implemented on-chip interrupt source and marks the INTC pending bit
+// for those currently asserting with a non-zero priority.
+//
+// SH7604 on-chip interrupt requests are level-sensitive: each is the logical
+// AND of a status flag and its enable bit (FRT Sec 11.5, WDT Sec 12.3.2,
+// DIVU Sec 10, DMAC Sec 9), held until software clears the flag, and the INTC
+// samples it continuously (Sec 5). A request can become active with no fresh
+// flag-set edge: by enabling an already-set flag, by a mode change exposing a
+// held flag, or by raising the module priority while a flag is pending. The
+// peripherals' edge callbacks (route*Interrupt) only cover the flag-set edge,
+// so this is called after any write to an interrupt control/enable/mode/
+// priority register to recover those level transitions. Over-marking is safe:
+// processInterrupt lazily clears a pending bit whose source is no longer
+// asserted.
+func (c *CPU) RefreshOnChipInterrupts() {
+	if c.divu.IRQAsserted() && c.intc.divuPriority() > 0 {
+		c.intc.AssertSource(isrcDIVU)
+	}
+	if c.dmac.IRQAsserted(0) && c.intc.dmacPriority() > 0 {
+		c.intc.AssertSource(isrcDMAC0)
+	}
+	if c.dmac.IRQAsserted(1) && c.intc.dmacPriority() > 0 {
+		c.intc.AssertSource(isrcDMAC1)
+	}
+	if c.frt.IRQFlags() != 0 && c.intc.frtPriority() > 0 {
+		c.intc.AssertSource(isrcFRT)
+	}
+	if c.wdt.IRQAsserted() && c.intc.wdtPriority() > 0 {
+		c.intc.AssertSource(isrcWDT)
+	}
 }
 
 // routeDIVUInterrupt marks the DIVU source as possibly asserted if

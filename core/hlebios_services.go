@@ -574,6 +574,12 @@ func hleSlaveInitService(cpu *sh2.CPU, bus *Bus) {
 		cpu.INTC().Write(0xFFFFFE66, 0x6400)
 		cpu.INTC().Write(0xFFFFFE60, 0x0F00)
 		cpu.FRT().Write(0xFFFFFE10, 0x80)
+		// These pokes bypass the CPU on-chip write path, so re-evaluate the
+		// level-sensitive on-chip interrupt lines explicitly: a master MINIT
+		// can arrive before this runs (slave reset by SSHON, master writes
+		// MINIT while the slave is still in early boot), latching FTCSR.ICF
+		// with ICIE off. Enabling ICIE here must deliver the pending capture.
+		cpu.RefreshOnChipInterrupts()
 		// Slave halts at BIOS-ROM BRA-self ($2000020C) while waiting
 		// for IRQs. Slot $06000250 stays at hleSentinel — only the
 		// slave's PR is redirected.
