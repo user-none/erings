@@ -131,11 +131,17 @@ func (cb *CDBlock) cmdInitCDSystem() {
 	cb.lastBufferDest = 0xFF
 	cb.authenticated = false
 	cb.initSelectors()
-	// Parse speed flag from CR1 bit 4
-	if cb.cmd[0]&0x10 != 0 {
-		cb.cdSpeed = 1
-	} else {
-		cb.cdSpeed = 2
+	// Init flags (CR1 low byte). Bit 5 requests a change to the init
+	// flags; bits 0-4 (bit 4 = data-read speed, 1=1x/0=2x) apply only when
+	// it is set. 0xFF is the no-change sentinel, as 0xFFFF is for standby
+	// and ECC/retry in CR2/CR4.
+	initFlag := cb.cmd[0] & 0xFF
+	if initFlag != 0xFF && initFlag&0x20 != 0 {
+		if initFlag&0x10 != 0 {
+			cb.cdSpeed = 1
+		} else {
+			cb.cdSpeed = 2
+		}
 	}
 	// Reset timing state
 	cb.sectorAccum = 0
