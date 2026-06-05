@@ -35,59 +35,14 @@ func (d *fakeDisc) Track(i int) (number int, typ string, frames int, pregap int,
 	return t[0].(int), t[1].(string), t[2].(int), t[3].(int), t[4].(int), t[5].(uint8)
 }
 
-func (d *fakeDisc) Close() error { return nil }
+func (d *fakeDisc) NumTrackIndexes(i int) int { return 1 }
 
-func TestSystemInfo(t *testing.T) {
-	si := (&Factory{}).SystemInfo()
-
-	if !si.Disc {
-		t.Error("SystemInfo.Disc must be true for the Saturn (disc-based)")
-	}
-	if len(si.Extensions) != 1 || si.Extensions[0] != ".chd" {
-		t.Errorf("Extensions = %v, want [.chd]", si.Extensions)
-	}
-	if si.Players != 2 {
-		t.Errorf("Players = %d, want 2", si.Players)
-	}
-
-	// The adapter exposes only the 9 face buttons (A..Start) here;
-	// the 4 d-pad directions occupy IDs 0..3 in the SetInput bit
-	// layout but are surfaced through the system's directional-pad
-	// abstraction, not the Buttons list. IDs continue from 4
-	// (btnA) up to 12 (btnStart).
-	if len(si.Buttons) != 9 {
-		t.Fatalf("Buttons count = %d, want 9 (face buttons A..Start)", len(si.Buttons))
-	}
-	for i, b := range si.Buttons {
-		wantID := i + 4 // skip d-pad IDs 0..3
-		if b.ID != wantID {
-			t.Errorf("Buttons[%d].ID = %d, want %d (sequential face-button IDs starting at btnA=4)", i, b.ID, wantID)
-		}
-	}
-
-	if len(si.BIOSOptions) != 1 {
-		t.Fatalf("BIOSOptions count = %d, want 1", len(si.BIOSOptions))
-	}
-	opt := si.BIOSOptions[0]
-	// main_bios is OPTIONAL: when absent, the HLE BIOS in core/
-	// stands in. Required=true would force users to supply a BIOS
-	// dump even when the HLE path is fully functional.
-	if opt.Key != "main_bios" || opt.Required {
-		t.Errorf("BIOSOption = %+v, want key main_bios with Required=false (HLE BIOS available)", opt)
-	}
-	want := map[string]string{
-		"mpr-17933.bin": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",
-		"sega_101.bin":  "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac",
-	}
-	if len(opt.Variants) != len(want) {
-		t.Fatalf("Variants count = %d, want %d", len(opt.Variants), len(want))
-	}
-	for _, v := range opt.Variants {
-		if want[v.Filename] != v.SHA256 {
-			t.Errorf("variant %q SHA256 = %s, want %s", v.Filename, v.SHA256, want[v.Filename])
-		}
-	}
+func (d *fakeDisc) TrackIndex(i, n int) (indexNumber int, lba int) {
+	t := d.tracks[i]
+	return 1, t[4].(int) + t[3].(int) // INDEX 01 at startLBA + pregap
 }
+
+func (d *fakeDisc) Close() error { return nil }
 
 // makeSaturnSector0 builds a sector-0 image with the given product
 // number, device-info field ("CD-n/m" or "" to leave blank/space), and

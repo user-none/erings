@@ -1086,6 +1086,8 @@ func (d *regionDisc) NumTracks() int { return 1 }
 func (d *regionDisc) Track(i int) (int, string, int, int, int, uint8) {
 	return 1, "MODE1_RAW", 100, 0, 0, 0x41
 }
+func (d *regionDisc) NumTrackIndexes(i int) int      { return 1 }
+func (d *regionDisc) TrackIndex(i, n int) (int, int) { return 1, 0 }
 
 // TestBus16BitInvalidRegions drives the invalid-size paths in Read16/Write16
 // that log but have no side effect beyond "return 0" or "no-op".

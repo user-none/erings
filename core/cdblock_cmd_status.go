@@ -28,12 +28,7 @@ func (cb *CDBlock) cmdGetCDStatus() {
 			if tr != nil {
 				trackNum = tr.number
 				ctrlAddr = uint16(tr.control)
-				if tr.isAudio {
-					relFAD := fad - tr.startFAD
-					if relFAD < 150 {
-						trackIdx = 0
-					}
-				}
+				trackIdx = fadToIndex(tr, fad)
 			}
 			cb.setResponse(
 				(ctrlAddr<<8)|uint16(trackNum),

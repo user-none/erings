@@ -34,6 +34,7 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>chd</string>
+				<string>cue</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>

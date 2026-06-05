@@ -29,6 +29,8 @@ func (d *obsDisc) NumTracks() int { return len(d.tracks) }
 func (d *obsDisc) Track(i int) (int, string, int, int, int, uint8) {
 	return trackAt(d.tracks, i)
 }
+func (d *obsDisc) NumTrackIndexes(i int) int      { return 1 }
+func (d *obsDisc) TrackIndex(i, n int) (int, int) { return trackIndexAt(d.tracks, i) }
 
 func (d *obsDisc) ReadSector(lba int) ([]byte, error) {
 	if d.sectorMap != nil {
@@ -355,7 +357,7 @@ func TestCDBlockPlayDiscEndPosTrackModeUsesEndFAD(t *testing.T) {
 
 	obsExec(cb, 0x10, 0x00, 0x0100, 0x0000, 0x0200)
 
-	wantEnd := cb.trackCache[2].startFAD
+	wantEnd := cb.trackCache[2].index01FAD
 	if cb.endFAD != wantEnd {
 		t.Errorf("endFAD = %d, want %d (start of track 3)", cb.endFAD, wantEnd)
 	}
@@ -407,7 +409,7 @@ func TestCDBlockPosToFADTrackNumberDecoding(t *testing.T) {
 		t.Errorf("FAD-mode posToFAD = 0x%X, want 0x000ABC", got)
 	}
 
-	want := cb.trackCache[1].startFAD
+	want := cb.trackCache[1].index01FAD
 	if got := cb.posToFAD(0x000200); got != want {
 		t.Errorf("track-mode posToFAD(track=2) = %d, want %d", got, want)
 	}

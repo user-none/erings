@@ -95,7 +95,16 @@ type TrackInfo struct {
 	Frames   int
 	Pregap   int
 	StartLBA int
-	Control  uint8 // CTRL/ADR byte (0x41=data, 0x01=audio)
+	Control  uint8        // CTRL/ADR byte (0x41=data, 0x01=audio)
+	Indexes  []TrackIndex // index numbers >= 1, ascending by FAD
+}
+
+// TrackIndex is one exposed index point within a track: its index number
+// (>= 1) and its absolute FAD. Index 0 (pregap) is not stored; it is the
+// implied default for any FAD below the first entry.
+type TrackIndex struct {
+	Number uint8
+	FAD    uint32
 }
 
 // DiscReader is the disc input to the emulator. It is primitive-only
@@ -108,6 +117,11 @@ type DiscReader interface {
 	ReadSector(lba int) ([]byte, error)
 	NumTracks() int
 	Track(i int) (number int, typ string, frames int, pregap int, startLBA int, control uint8)
+	// NumTrackIndexes / TrackIndex expose the per-track index map (index
+	// numbers >= 1, absolute LBA). Index 0 (pregap) is implied for any FAD
+	// below the first entry. n is a 0-based ordinal into the exposed list.
+	NumTrackIndexes(i int) int
+	TrackIndex(i, n int) (indexNumber int, lba int)
 }
 
 // discTOC adapts a primitive DiscReader into the struct-based view the
@@ -123,6 +137,12 @@ func newDiscTOC(d DiscReader) *discTOC {
 	t := make([]TrackInfo, n)
 	for i := 0; i < n; i++ {
 		num, typ, frames, pregap, startLBA, control := d.Track(i)
+		ni := d.NumTrackIndexes(i)
+		idxs := make([]TrackIndex, ni)
+		for j := 0; j < ni; j++ {
+			number, lba := d.TrackIndex(i, j)
+			idxs[j] = TrackIndex{Number: uint8(number), FAD: uint32(lba + 150)}
+		}
 		t[i] = TrackInfo{
 			Number:   num,
 			Type:     typ,
@@ -130,6 +150,7 @@ func newDiscTOC(d DiscReader) *discTOC {
 			Pregap:   pregap,
 			StartLBA: startLBA,
 			Control:  control,
+			Indexes:  idxs,
 		}
 	}
 	return &discTOC{d: d, tracks: t}
@@ -152,10 +173,18 @@ type bufferedSector struct {
 }
 
 type trackEntry struct {
-	startFAD uint32
-	number   uint8
-	isAudio  bool
-	control  uint8 // CTRL/ADR from TrackInfo
+	// index01FAD is the INDEX 01 (body) position: where the track's program
+	// begins after any pregap. It is the seek/play landing target and the
+	// origin for relative MSF.
+	index01FAD uint32
+	// pregapStartFAD is the first FAD physically owned by the track (start of
+	// its pregap). It is the track-membership boundary used by trackAt. When
+	// the track has no pregap it equals index01FAD.
+	pregapStartFAD uint32
+	number         uint8
+	isAudio        bool
+	control        uint8        // CTRL/ADR from TrackInfo
+	indexes        []TrackIndex // index numbers >= 1, ascending by FAD
 }
 
 type cdFilter struct {
@@ -203,7 +232,7 @@ type CDBlock struct {
 
 	status              uint8
 	disc                *discTOC
-	trackCache          []trackEntry    // sorted by startFAD, built in SetDisc
+	trackCache          []trackEntry    // sorted by FAD, built in SetDisc
 	filters             [24]cdFilter    // filter conditions and connections
 	partitions          [24]cdPartition // per-partition sector storage
 	cdDeviceFilter      uint8           // which filter CD device feeds into (0xFF=disconnected)
@@ -465,16 +494,19 @@ func (cb *CDBlock) SetDisc(d DiscReader) {
 		tracks := cb.disc.Tracks()
 		cb.trackCache = make([]trackEntry, len(tracks))
 		for i, tr := range tracks {
-			// StartLBA points at the start of the track's pregap
-			// (CHTR Frames includes pregap per chd/metadata.go). Skip
-			// the pregap so PlayDisc / SeekDisc to a track lands on
-			// the first audio (or data) sample, not on the silent
-			// inter-track lead-in. Track 1 typically has Pregap=0.
+			// StartLBA points at the start of the track's pregap (CHTR
+			// Frames includes pregap per chd/metadata.go). index01FAD skips
+			// the pregap so PlayDisc / SeekDisc lands on the first audio (or
+			// data) sample, not the silent inter-track lead-in; pregapStartFAD
+			// keeps the pregap so trackAt attributes it to this track. Track 1
+			// typically has Pregap=0, making the two equal.
 			cb.trackCache[i] = trackEntry{
-				startFAD: uint32(tr.StartLBA + tr.Pregap + 150),
-				number:   uint8(tr.Number),
-				isAudio:  tr.Type == "AUDIO",
-				control:  tr.Control,
+				index01FAD:     uint32(tr.StartLBA + tr.Pregap + 150),
+				pregapStartFAD: uint32(tr.StartLBA + 150),
+				number:         uint8(tr.Number),
+				isAudio:        tr.Type == "AUDIO",
+				control:        tr.Control,
+				indexes:        tr.Indexes,
 			}
 		}
 		cb.detectDiscType()
@@ -782,12 +814,7 @@ func (cb *CDBlock) standardReturn() {
 		if tr != nil {
 			trackNum = tr.number
 			ctrlAddr = tr.control
-			if tr.isAudio {
-				relFAD := fad - tr.startFAD
-				if relFAD < 150 {
-					trackIdx = 0
-				}
-			}
+			trackIdx = fadToIndex(tr, fad)
 		}
 	}
 	st := uint16(cb.status)
@@ -804,13 +831,32 @@ func (cb *CDBlock) standardReturn() {
 }
 
 // trackAt returns the track entry containing the given FAD, or nil if none.
+// Membership uses pregapStartFAD so a track's pregap is attributed to that
+// track (not the previous one), matching CD subchannel reporting.
 func (cb *CDBlock) trackAt(fad uint32) *trackEntry {
 	for i := len(cb.trackCache) - 1; i >= 0; i-- {
-		if fad >= cb.trackCache[i].startFAD {
+		if fad >= cb.trackCache[i].pregapStartFAD {
 			return &cb.trackCache[i]
 		}
 	}
 	return nil
+}
+
+// fadToIndex returns the reported index number for a FAD within a track. It
+// starts at the implicit floor of 0 and rises to the highest exposed index
+// (number >= 1) whose FAD the play head has reached. The entries are ascending
+// by FAD, so a FAD at or past the track body yields 1, and a multi-indexed
+// audio track yields 2+ as playback advances.
+func fadToIndex(tr *trackEntry, fad uint32) uint8 {
+	idx := uint8(0)
+	for _, e := range tr.indexes {
+		if fad >= e.FAD {
+			idx = e.Number
+		} else {
+			break
+		}
+	}
+	return idx
 }
 
 // cdFlag returns the 4-bit flag field for CR1 status reports.
@@ -957,18 +1003,18 @@ func (cb *CDBlock) currentTrackIsAudio() bool {
 	return false
 }
 
-// appendAudioSamples decodes 588 stereo BE int16 sample pairs from a
+// appendAudioSamples decodes 588 stereo LE int16 sample pairs from a
 // 2352-byte CD-DA audio sector and appends them to the audio queue.
-// Byte order is big-endian (high byte first) per the CHD CDFL codec
-// in core/chd/codec.go which swaps FLAC's native LE output to BE.
+// Byte order is little-endian (low byte first), the canonical disc-image
+// order romloader returns from ReadSector.
 func (cb *CDBlock) appendAudioSamples(raw []byte) {
 	if len(raw) < 2352 {
 		return
 	}
 	for i := 0; i < 588; i++ {
 		base := i * 4
-		l := int16(uint16(raw[base])<<8 | uint16(raw[base+1]))
-		r := int16(uint16(raw[base+2])<<8 | uint16(raw[base+3]))
+		l := int16(uint16(raw[base]) | uint16(raw[base+1])<<8)
+		r := int16(uint16(raw[base+2]) | uint16(raw[base+3])<<8)
 		cb.pushAudioPair(l, r)
 	}
 }

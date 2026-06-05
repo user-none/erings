@@ -32,7 +32,7 @@ func (cb *CDBlock) posToFAD(pos uint32) uint32 {
 	trackNum := int((pos >> 8) & 0xFF)
 	for _, tr := range cb.trackCache {
 		if int(tr.number) == trackNum {
-			return tr.startFAD
+			return tr.index01FAD
 		}
 	}
 	return 150
@@ -51,7 +51,7 @@ func (cb *CDBlock) posToEndFAD(pos uint32) uint32 {
 	for i, tr := range cb.trackCache {
 		if int(tr.number) == trackNum {
 			if i+1 < len(cb.trackCache) {
-				return cb.trackCache[i+1].startFAD
+				return cb.trackCache[i+1].index01FAD
 			}
 			return cb.leadoutFAD()
 		}
@@ -65,17 +65,24 @@ func (cb *CDBlock) buildSubCodeQ() []uint16 {
 	var trackNum byte = 1
 	var relFAD uint32
 
+	indexNum := byte(1)
 	tr := cb.trackAt(cb.playFAD)
 	if tr != nil {
 		trackNum = byte(tr.number)
 		ctrlAdr = tr.control
-		relFAD = cb.playFAD - tr.startFAD
+		if cb.playFAD >= tr.index01FAD {
+			relFAD = cb.playFAD - tr.index01FAD
+		} else {
+			// In the pregap the relative MSF counts down to INDEX 01.
+			relFAD = tr.index01FAD - cb.playFAD
+		}
+		indexNum = fadToIndex(tr, cb.playFAD)
 	}
 
 	rm, rs, rf := fad2bcd(relFAD)
 	am, as, af := fad2bcd(cb.playFAD)
 	trackBCD := toBCD(trackNum)
-	indexBCD := toBCD(1)
+	indexBCD := toBCD(indexNum)
 
 	buf := make([]uint16, 5)
 	buf[0] = uint16(ctrlAdr)<<8 | uint16(trackBCD)
@@ -192,7 +199,7 @@ func (cb *CDBlock) cmdSeekDisc() {
 			// player interprets as "show total tracks / total time".
 			cb.playFAD = 150
 			if len(cb.trackCache) > 0 {
-				cb.playFAD = cb.trackCache[0].startFAD
+				cb.playFAD = cb.trackCache[0].index01FAD
 			}
 			cb.seekFAD = cb.playFAD
 			cb.pendingStatus = cdStatusStandby
@@ -205,7 +212,7 @@ func (cb *CDBlock) cmdSeekDisc() {
 			var targetFAD uint32
 			for _, tr := range cb.trackCache {
 				if int(tr.number) == trackNum {
-					targetFAD = tr.startFAD
+					targetFAD = tr.index01FAD
 					found = true
 					break
 				}

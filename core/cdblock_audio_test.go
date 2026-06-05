@@ -34,13 +34,13 @@ func (m *audioMockDisc) ReadSector(lba int) ([]byte, error) {
 		off -= tr.Frames
 	}
 	if inAudio {
-		// Audio sector: fill with a recognizable BE int16 pattern so
+		// Audio sector: fill with a recognizable LE int16 pattern so
 		// decode tests can verify byte order. Sample i: L=i, R=i+0x4000.
 		for i := 0; i < 588; i++ {
-			data[i*4+0] = byte(i >> 8)
-			data[i*4+1] = byte(i)
-			data[i*4+2] = byte((i + 0x4000) >> 8)
-			data[i*4+3] = byte(i + 0x4000)
+			data[i*4+0] = byte(i)
+			data[i*4+1] = byte(i >> 8)
+			data[i*4+2] = byte(i + 0x4000)
+			data[i*4+3] = byte((i + 0x4000) >> 8)
 		}
 	} else {
 		// Data sector: MODE1 sync + header + LBA-pattern user data.
@@ -65,6 +65,8 @@ func (m *audioMockDisc) NumTracks() int { return len(m.tracks) }
 func (m *audioMockDisc) Track(i int) (int, string, int, int, int, uint8) {
 	return trackAt(m.tracks, i)
 }
+func (m *audioMockDisc) NumTrackIndexes(i int) int      { return 1 }
+func (m *audioMockDisc) TrackIndex(i, n int) (int, int) { return trackIndexAt(m.tracks, i) }
 
 func newAudioMockDisc() *audioMockDisc {
 	return &audioMockDisc{
@@ -81,19 +83,19 @@ func newCDBlockWithAudioDisc() *CDBlock {
 	return cb
 }
 
-func TestCDBlockAudioSampleDecodeBE(t *testing.T) {
+func TestCDBlockAudioSampleDecodeLE(t *testing.T) {
 	cb := NewCDBlock(nil)
-	// Build a 2352-byte buffer with two known stereo pairs.
+	// Build a 2352-byte buffer with two known stereo pairs, little-endian.
 	// Sample 0: L=0x1234, R=0x5678. Sample 1: L=-1 (0xFFFF), R=1 (0x0001).
 	raw := make([]byte, 2352)
-	raw[0] = 0x12
-	raw[1] = 0x34
-	raw[2] = 0x56
-	raw[3] = 0x78
+	raw[0] = 0x34
+	raw[1] = 0x12
+	raw[2] = 0x78
+	raw[3] = 0x56
 	raw[4] = 0xFF
 	raw[5] = 0xFF
-	raw[6] = 0x00
-	raw[7] = 0x01
+	raw[6] = 0x01
+	raw[7] = 0x00
 
 	cb.appendAudioSamples(raw)
 

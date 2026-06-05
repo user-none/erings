@@ -80,7 +80,7 @@ const (
 
 func main() {
 	biosPath := flag.String("bios", "", "Path to Saturn BIOS ROM (512KB). Optional - if omitted, the HLE BIOS boots the disc directly.")
-	chdPath := flag.String("chd", "", "Path to CHD V5 disc image")
+	discPath := flag.String("disc", "", "Path to CHD V5 or cue disc image")
 	cpuProfile := flag.String("cpuprofile", "", "Write CPU profile to file")
 	dumpDir := flag.String("dump-dir", ".", "Directory to write memory dumps into (created if missing)")
 	savePath := flag.String("save", "", "Path to backup-RAM save file. If a directory, uses <gameid>.srm inside it. Loaded on start (if it exists) and written on close.")
@@ -99,8 +99,8 @@ func main() {
 		cpuProfileFile = f
 	}
 
-	if *biosPath == "" && *chdPath == "" {
-		fmt.Fprintln(os.Stderr, "Usage: saturn -bios <path> [-chd <path>]  OR  saturn -chd <path>  (HLE BIOS)")
+	if *biosPath == "" && *discPath == "" {
+		fmt.Fprintln(os.Stderr, "Usage: saturn -bios <path> [-disc <path>]  OR  saturn -disc <path>  (HLE BIOS)")
 		os.Exit(1)
 	}
 
@@ -118,8 +118,8 @@ func main() {
 
 	var disc *romloader.Disc
 	var err error
-	if *chdPath != "" {
-		disc, err = romloader.OpenDisc(*chdPath)
+	if *discPath != "" {
+		disc, err = romloader.OpenDisc(*discPath)
 		if err != nil {
 			log.Fatalf("failed to open disc: %v", err)
 		}

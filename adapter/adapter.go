@@ -54,7 +54,6 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 	return coreif.SystemInfo{
 		Name:             erings.Name,
 		ConsoleName:      "Sega Saturn",
-		Extensions:       []string{".chd"},
 		ScreenWidth:      704,
 		MaxScreenHeight:  512,
 		PixelAspectRatio: 1.0,
@@ -197,8 +196,9 @@ func (e *emulator) Close()                              { e.emu.Close() }
 
 func (e *emulator) SetDisc(disc coreif.DiscReader) {
 	// coreif.DiscReader's method set is a superset of core.DiscReader
-	// (both primitive: ReadSector/NumTracks/Track), so it is passed
-	// straight through with no adapter type.
+	// (both primitive: ReadSector/NumTracks/Track plus the index
+	// accessors NumTrackIndexes/TrackIndex), so it is passed straight
+	// through with no adapter type.
 	e.emu.SetDisc(disc)
 }
 

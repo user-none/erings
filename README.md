@@ -24,9 +24,12 @@ the emulator itself.
 
 What you will find is a clean UI allowing you organize and play games.
 
-## Requirements
+## Disc formats
 
-- Games must be supplied as CHD disc images
+Several disc image formats are supported
+
+- chd
+- cue (tracks must have .bin extension)
 
 ## BIOS
 
@@ -55,12 +58,14 @@ HLE BIOS boots the game:
 
 ```
 ./build/erings -disc /path/to/game.chd
+./build/erings -disc /path/to/game.cue
 ```
 
 To use a real BIOS instead, add `-bios`:
 
 ```
 ./build/erings -bios /path/to/bios.bin -disc /path/to/game.chd
+./build/erings -bios /path/to/bios.bin -disc /path/to/game.cue
 ```
 
 You can build and run using: `go run ./cmd/desktop`

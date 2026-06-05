@@ -443,6 +443,13 @@ func trackAt(ts []TrackInfo, i int) (int, string, int, int, int, uint8) {
 	return t.Number, t.Type, t.Frames, t.Pregap, t.StartLBA, t.Control
 }
 
+// trackIndexAt synthesizes the single implicit-floor index entry (INDEX 01 at
+// the track body) for a TrackInfo-backed fake disc.
+func trackIndexAt(ts []TrackInfo, i int) (int, int) {
+	t := ts[i]
+	return 1, t.StartLBA + t.Pregap
+}
+
 // mockDisc implements DiscReader for testing.
 type mockDisc struct {
 	tracks []TrackInfo
@@ -481,6 +488,8 @@ func (m *mockDisc) NumTracks() int { return len(m.tracks) }
 func (m *mockDisc) Track(i int) (int, string, int, int, int, uint8) {
 	return trackAt(m.tracks, i)
 }
+func (m *mockDisc) NumTrackIndexes(i int) int      { return 1 }
+func (m *mockDisc) TrackIndex(i, n int) (int, int) { return trackIndexAt(m.tracks, i) }
 
 func newMockDisc2Track() *mockDisc {
 	return &mockDisc{
@@ -898,6 +907,8 @@ func (d *isoDisc) NumTracks() int { return 1 }
 func (d *isoDisc) Track(i int) (int, string, int, int, int, uint8) {
 	return 1, "MODE1_RAW", d.maxLBA, 0, 0, 0x41
 }
+func (d *isoDisc) NumTrackIndexes(i int) int      { return 1 }
+func (d *isoDisc) TrackIndex(i, n int) (int, int) { return 1, 0 }
 
 // setSector stores a raw 2352-byte sector at the given LBA.
 func (d *isoDisc) setSector(lba int, data []byte) {
@@ -2689,5 +2700,79 @@ func TestCDBlockGetFileInfoAllFiles(t *testing.T) {
 	// 2 files * 6 words/file = 12 words.
 	if len(cb.dataBuf) != 12 {
 		t.Errorf("dataBuf len = %d, want 12 (2 files * 6 words)", len(cb.dataBuf))
+	}
+}
+
+func TestFadToIndex(t *testing.T) {
+	// Multi-indexed audio track: INDEX 01 at body, INDEX 02/03 within it.
+	tr := &trackEntry{
+		index01FAD: 1150,
+		indexes: []TrackIndex{
+			{Number: 1, FAD: 1150},
+			{Number: 2, FAD: 1750},
+			{Number: 3, FAD: 2500},
+		},
+	}
+	cases := []struct {
+		fad  uint32
+		want uint8
+	}{
+		{1000, 0}, // below INDEX 01 -> implicit pregap floor
+		{1150, 1}, // body start
+		{1700, 1},
+		{1750, 2},
+		{2499, 2},
+		{2500, 3},
+		{9999, 3},
+	}
+	for _, c := range cases {
+		if got := fadToIndex(tr, c.fad); got != c.want {
+			t.Errorf("fadToIndex(%d) = %d, want %d", c.fad, got, c.want)
+		}
+	}
+
+	// A track with no index entries reports the floor.
+	empty := &trackEntry{}
+	if got := fadToIndex(empty, 5000); got != 0 {
+		t.Errorf("fadToIndex(empty) = %d, want 0", got)
+	}
+}
+
+func TestPregapBoundaryReporting(t *testing.T) {
+	// Track 1 data (no pregap); track 2 audio with a 150-frame pregap, so its
+	// pregap occupies FAD [1150, 1300) and its body (INDEX 01) is at 1300.
+	cb := &CDBlock{}
+	cb.trackCache = []trackEntry{
+		{index01FAD: 150, pregapStartFAD: 150, number: 1, control: 0x41,
+			indexes: []TrackIndex{{Number: 1, FAD: 150}}},
+		{index01FAD: 1300, pregapStartFAD: 1150, number: 2, isAudio: true, control: 0x01,
+			indexes: []TrackIndex{{Number: 1, FAD: 1300}}},
+	}
+
+	// A FAD in track 2's pregap is attributed to track 2 (not track 1).
+	tr := cb.trackAt(1150)
+	if tr == nil || tr.number != 2 {
+		t.Fatalf("trackAt(1150) = %v, want track 2", tr)
+	}
+	if got := fadToIndex(tr, 1150); got != 0 {
+		t.Errorf("pregap index = %d, want 0", got)
+	}
+	// The body is index 1.
+	if got := fadToIndex(cb.trackAt(1300), 1300); got != 1 {
+		t.Errorf("body index = %d, want 1", got)
+	}
+
+	// SubQ in the pregap: track 2 (0x02), index 0, relative MSF counting down
+	// to INDEX 01. 100 frames before the body -> 0:01:25 (1s 25f).
+	cb.playFAD = 1200
+	q := cb.buildSubCodeQ()
+	if q[0] != 0x0102 {
+		t.Errorf("SubQ word0 = 0x%04X, want 0x0102 (audio, track 2)", q[0])
+	}
+	if q[1] != 0x0000 {
+		t.Errorf("SubQ word1 = 0x%04X, want 0x0000 (index 0, rel M=0)", q[1])
+	}
+	if q[2] != 0x0125 {
+		t.Errorf("SubQ word2 = 0x%04X, want 0x0125 (rel S=1 F=25, countdown)", q[2])
 	}
 }
