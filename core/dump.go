@@ -45,6 +45,8 @@ type MemoryDump struct {
 
 	SH2MasterRegs []byte // Master SH-2 programmer registers + cycles + halted
 	SH2SlaveRegs  []byte // Slave SH-2 programmer registers + cycles + halted
+
+	M68KState []byte // MC68EC000 sound CPU state (m68k.CPU.Serialize)
 }
 
 // dumpVDP2Regs serializes the VDP2 register file to a big-endian byte
@@ -316,5 +318,6 @@ func (e *Emulator) DumpMemory() MemoryDump {
 		SCSPTimers:    dumpSCSPTimers(e.scsp),
 		SH2MasterRegs: dumpSH2Regs(e.master),
 		SH2SlaveRegs:  dumpSH2Regs(e.slave),
+		M68KState:     e.scsp.M68KSerialize(),
 	}
 }

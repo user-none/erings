@@ -1611,6 +1611,15 @@ func (s *SCSP) WriteRAM32(addr uint32, val uint32) {
 	s.ram[addr+3] = uint8(val)
 }
 
+// M68KSerialize returns the sound CPU's full register/state block as
+// produced by m68k.CPU.Serialize (D0-D7, A0-A7, PC, SR, USP, SSP, prevPC,
+// etc.). Used by the memory dump to inspect 68K state.
+func (s *SCSP) M68KSerialize() []byte {
+	buf := make([]byte, m68k.SerializeSize)
+	s.m68k.Serialize(buf)
+	return buf
+}
+
 // InReset returns whether the 68K sound CPU is held in reset.
 func (s *SCSP) InReset() bool {
 	return s.inReset

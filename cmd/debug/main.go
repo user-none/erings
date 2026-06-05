@@ -585,6 +585,7 @@ func writeMemoryDump(dump core.MemoryDump, baseDir string) error {
 		{"scsp_timers.bin", dump.SCSPTimers},
 		{"sh2_master_regs.bin", dump.SH2MasterRegs},
 		{"sh2_slave_regs.bin", dump.SH2SlaveRegs},
+		{"m68k_state.bin", dump.M68KState},
 	}
 	for _, r := range regions {
 		if err := os.WriteFile(filepath.Join(dir, r.name), r.data, 0o644); err != nil {
