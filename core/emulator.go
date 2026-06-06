@@ -281,6 +281,28 @@ func (e *Emulator) GetSRAM() []byte { return e.bus.GetBackupRAM() }
 // SetSRAM loads previously persisted internal backup RAM.
 func (e *Emulator) SetSRAM(data []byte) { e.bus.SetBackupRAM(data) }
 
+// ReadMemory reads from the RetroAchievements flat Saturn address space into
+// buf and returns the number of bytes read. The flat layout matches the
+// rcheevos Saturn memory map: 0x000000-0x0FFFFF is Work RAM-L (hardware
+// 0x00200000) and 0x100000-0x1FFFFF is Work RAM-H (hardware 0x06000000).
+// Reads stop at the first address outside that range.
+func (e *Emulator) ReadMemory(addr uint32, buf []byte) uint32 {
+	var n uint32
+	for i := range buf {
+		cur := addr + uint32(i)
+		switch {
+		case cur < wramLSize:
+			buf[i] = e.bus.wramL[cur]
+		case cur < wramLSize+wramHSize:
+			buf[i] = e.bus.wramH[cur-wramLSize]
+		default:
+			return n
+		}
+		n++
+	}
+	return n
+}
+
 // RunFrame executes one complete frame of emulation.
 func (e *Emulator) RunFrame() {
 	smpc := e.smpc

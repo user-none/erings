@@ -330,3 +330,45 @@ func TestEmulatorClose(t *testing.T) {
 	// Close should not panic
 	e.Close()
 }
+
+func TestReadMemory(t *testing.T) {
+	e := NewEmulator()
+
+	// Distinct markers at each region edge so the flat mapping is observable.
+	e.bus.wramL[0] = 0xAA
+	e.bus.wramL[wramLSize-1] = 0xBB
+	e.bus.wramH[0] = 0xCC
+	e.bus.wramH[wramHSize-1] = 0xDD
+
+	buf := make([]byte, 1)
+
+	// Flat 0 -> Work RAM-L start.
+	if n := e.ReadMemory(0, buf); n != 1 || buf[0] != 0xAA {
+		t.Fatalf("flat 0: n=%d buf=%#x, want 1 0xAA", n, buf[0])
+	}
+	// Flat 0x100000 -> Work RAM-H start (the L/H boundary).
+	if n := e.ReadMemory(0x100000, buf); n != 1 || buf[0] != 0xCC {
+		t.Fatalf("flat 0x100000: n=%d buf=%#x, want 1 0xCC", n, buf[0])
+	}
+	// Last byte of Work RAM-H.
+	if n := e.ReadMemory(0x1FFFFF, buf); n != 1 || buf[0] != 0xDD {
+		t.Fatalf("flat 0x1FFFFF: n=%d buf=%#x, want 1 0xDD", n, buf[0])
+	}
+
+	// A read spanning the L/H boundary returns contiguous bytes from both.
+	span := make([]byte, 2)
+	if n := e.ReadMemory(wramLSize-1, span); n != 2 || span[0] != 0xBB || span[1] != 0xCC {
+		t.Fatalf("L/H span: n=%d span=%#x, want 2 [0xBB 0xCC]", n, span)
+	}
+
+	// Out-of-range start reads nothing.
+	if n := e.ReadMemory(0x200000, buf); n != 0 {
+		t.Fatalf("out-of-range: n=%d, want 0", n)
+	}
+
+	// A read running off the end returns only the in-range count.
+	tail := make([]byte, 4)
+	if n := e.ReadMemory(0x1FFFFE, tail); n != 2 {
+		t.Fatalf("tail overrun: n=%d, want 2", n)
+	}
+}

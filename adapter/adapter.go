@@ -61,6 +61,8 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 		Buttons:          saturnButtons(),
 		Players:          2,
 		Disc:             true,
+		ConsoleID:        39,
+		BigEndianMemory:  true,
 		DataDirName:      "erings",
 		CoreName:         erings.Name,
 		CoreVersion:      erings.Version,
@@ -193,6 +195,12 @@ func (e *emulator) SetOption(key string, value string)  { e.emu.SetOption(key, v
 func (e *emulator) SetRom(data []byte)                  {} // Saturn is disc-only
 func (e *emulator) Start()                              { e.emu.Start() }
 func (e *emulator) Close()                              { e.emu.Close() }
+
+// ReadMemory implements coreif.MemoryInspector for RetroAchievements, mapping
+// the rcheevos flat Saturn address space onto Work RAM.
+func (e *emulator) ReadMemory(addr uint32, buf []byte) uint32 {
+	return e.emu.ReadMemory(addr, buf)
+}
 
 func (e *emulator) SetDisc(disc coreif.DiscReader) {
 	// coreif.DiscReader's method set is a superset of core.DiscReader

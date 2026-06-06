@@ -6,8 +6,8 @@ require (
 	github.com/ebitengine/oto/v3 v3.4.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
 	github.com/user-none/eblitui/coreif v0.7.0
-	github.com/user-none/eblitui/desktop v0.4.0
-	github.com/user-none/eblitui/romloader v0.4.0
+	github.com/user-none/eblitui/desktop v0.4.1
+	github.com/user-none/eblitui/romloader v0.4.1
 	github.com/user-none/go-chip-m68k v0.0.0-20260316002938-35a669db4103
 )
 
@@ -33,7 +33,7 @@ require (
 	github.com/sqweek/dialog v0.0.0-20240226140203-065105509627 // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
 	github.com/user-none/eblitui/rdb v0.2.0 // indirect
-	github.com/user-none/go-rcheevos v0.0.0 // indirect
+	github.com/user-none/go-rcheevos v0.1.0 // indirect
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
 	golang.design/x/clipboard v0.7.1 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
