@@ -90,6 +90,7 @@ Game controls (D-pad, buttons) are configured in the UI's input settings.
 ## Current State
 
 - Runs through the eblitui desktop UI
+- RetroAchievements supported
 - NTSC and PAL region
 - A 4MB extended RAM cartridge is always present
 - Single player digital controller only (the core supports a second
@@ -113,7 +114,6 @@ Japanese games or a Japanese BIOS to play US games.
     and selecting the next game from the ui
 - Save states
 - Rewind (not currently working, requires save states)
-- RetroAchievements (in ui but not currently working)
 
 ## Game Compatibility
 
