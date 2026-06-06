@@ -40,8 +40,8 @@ func saturnButtons() []coreif.Button {
 		{Name: "X", ID: btnX, DefaultKey: "U", DefaultPad: "L1"},
 		{Name: "Y", ID: btnY, DefaultKey: "I", DefaultPad: "Y"},
 		{Name: "Z", ID: btnZ, DefaultKey: "O", DefaultPad: "R1"},
-		{Name: "L", ID: btnL, DefaultKey: "N", DefaultPad: "LeftTrigger"},
-		{Name: "R", ID: btnR, DefaultKey: "M", DefaultPad: "RightTrigger"},
+		{Name: "L", ID: btnL, DefaultKey: "C", DefaultPad: "LeftTrigger"},
+		{Name: "R", ID: btnR, DefaultKey: "N", DefaultPad: "RightTrigger"},
 		{Name: "Start", ID: btnStart, DefaultKey: "Enter", DefaultPad: "Start"},
 	}
 }
