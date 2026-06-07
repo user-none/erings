@@ -421,6 +421,13 @@ func (g *game) emulationLoop() {
 	fpsStart := time.Now()
 	swapCountStart := uint64(0)
 
+	// Per-window RunFrame compute-time stats (wall time of RunFrame only,
+	// excludes the audio-pacing wait).
+	frameTimeMin := time.Duration(math.MaxInt64)
+	frameTimeMax := time.Duration(0)
+	frameTimeSum := time.Duration(0)
+	frameTimeCount := 0
+
 	for {
 		if !g.control.shouldRun() {
 			return
@@ -444,7 +451,17 @@ func (g *game) emulationLoop() {
 			g.audioPlayer.queueSamples(nil)
 		} else {
 			g.stage.Store(stageRunFrame)
+			runStart := time.Now()
 			g.emu.RunFrame()
+			runDur := time.Since(runStart)
+			if runDur < frameTimeMin {
+				frameTimeMin = runDur
+			}
+			if runDur > frameTimeMax {
+				frameTimeMax = runDur
+			}
+			frameTimeSum += runDur
+			frameTimeCount++
 
 			g.stage.Store(stageQueueAudio)
 			g.audioPlayer.queueSamples(g.emu.GetAudioSamples())
@@ -508,9 +525,23 @@ func (g *game) emulationLoop() {
 			// the emulator fps is full speed.
 			swapCountNow := g.emu.VDP1SwapCount()
 			gameFPS := float64(swapCountNow-swapCountStart) / fpsElapsed.Seconds()
-			fmt.Printf("frame %d  fps %.2f  game_fps %.2f\n", frameCount, fps, gameFPS)
+
+			// RunFrame compute time over the window, in milliseconds.
+			var fmin, fmax, favg float64
+			if frameTimeCount > 0 {
+				fmin = float64(frameTimeMin.Microseconds()) / 1000.0
+				fmax = float64(frameTimeMax.Microseconds()) / 1000.0
+				favg = float64(frameTimeSum.Microseconds()) / 1000.0 / float64(frameTimeCount)
+			}
+			fmt.Printf("frame %d  fps %.2f  game_fps %.2f | fmin %.3f, fmax %.3f, favg %.3f ms\n",
+				frameCount, fps, gameFPS, fmin, fmax, favg)
+
 			fpsStart = time.Now()
 			swapCountStart = swapCountNow
+			frameTimeMin = time.Duration(math.MaxInt64)
+			frameTimeMax = 0
+			frameTimeSum = 0
+			frameTimeCount = 0
 		}
 	}
 }
