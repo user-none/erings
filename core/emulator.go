@@ -61,6 +61,23 @@ type Timing struct {
 // decrease to reduce per-frame overhead.
 const segmentsPerScanline = 4
 
+// buildSH2StallTable builds the per-region SH-2 data-access wait-state table
+// (128 entries, one per 1 MB block of the 27-bit physical space) from the
+// bus wait-state model. Each entry is the single-access cost for that region,
+// so a data read/write is charged its location's wait states with a single
+// array index. The 1 MB granularity captures every distinct region (BIOS,
+// A-Bus, CD, SCSP, VDP1, VDP2, CRAM/SCU, WRAM-H).
+func buildSH2StallTable(bus *Bus) [128]uint32 {
+	var t [128]uint32
+	for i := range t {
+		t[i] = bus.AccessCycles(uint32(i)<<20, 4)
+		if t[i] > 0 {
+			t[i] -= 1
+		}
+	}
+	return t
+}
+
 // Emulator ties together all Saturn components and runs one frame at a time.
 type Emulator struct {
 	bus    *Bus
@@ -133,6 +150,15 @@ func NewEmulator() *Emulator {
 
 	master := sh2.New(bus, true)
 	slave := sh2.New(bus, false)
+
+	// Per-region SH-2 data-access wait states. Modeling bus access timing
+	// slows memory-heavy code to roughly hardware rate and keeps self-timed
+	// games (e.g. TS2) from running ahead. The table is region-aware (WRAM-H,
+	// A-Bus, B-Bus devices each differ) at 1 MB granularity, derived from the
+	// same wait-state model as Bus.AccessCycles; tune there.
+	stallTable := buildSH2StallTable(bus)
+	master.SetBusStallTable(stallTable)
+	slave.SetBusStallTable(stallTable)
 
 	e := &Emulator{
 		bus:             bus,

@@ -8,7 +8,8 @@ import "testing"
 // testBus is a minimal Bus implementation backed by a flat byte slice.
 // Big-endian byte order matches the SH-2 convention.
 type testBus struct {
-	mem []byte
+	mem        []byte
+	accessCost uint32 // per-access wait states returned by AccessCycles
 }
 
 func newTestBus(size int) *testBus {
@@ -44,10 +45,11 @@ func (b *testBus) Write32(addr uint32, val uint32) {
 	b.mem[addr+3] = uint8(val)
 }
 
-// AccessCycles returns a fixed minimal cost per access. Tests that
-// depend on DMA stall duration assume this constant.
+// AccessCycles returns the configured per-access wait states. It defaults to
+// 0 (zero-wait) so instruction-timing tests are unaffected by bus stall;
+// tests that exercise DMAC stall or CPU bus-access stall set accessCost.
 func (b *testBus) AccessCycles(addr uint32, size uint32) uint32 {
-	return 2
+	return b.accessCost
 }
 
 func TestFetchPC(t *testing.T) {
@@ -789,5 +791,92 @@ func TestDualCPUIndependentOnChipState(t *testing.T) {
 	}
 	if master.wdt.wtcsr&wtcsrTME == 0 {
 		t.Errorf("master WTCSR.TME = 0 after own write, want 1 (self-affecting)")
+	}
+}
+
+// TestBusAccessStallCharged verifies the per-region bus-access stall: each
+// external data read/write adds its region's table cost to the stall debt,
+// regions differ, and on-chip registers and instruction fetches do not stall.
+func TestBusAccessStallCharged(t *testing.T) {
+	bus := newTestBus(0x10000)
+	cpu := New(bus, true)
+	var tbl [128]uint32
+	tbl[0] = 3     // region of addr 0x000xxxxx
+	tbl[1] = 7     // region of addr 0x001xxxxx (per-location differs)
+	tbl[0x60] = 30 // region of addr 0x060xxxxx (WRAM-H, 0x06000000>>20)
+	cpu.SetBusStallTable(tbl)
+
+	// Region-aware lookup distinguishes locations.
+	if got := cpu.busStallFor(0x100); got != 3 {
+		t.Errorf("busStallFor(0x100) = %d, want 3", got)
+	}
+	if got := cpu.busStallFor(0x00100100); got != 7 {
+		t.Errorf("busStallFor(0x00100100) = %d, want 7", got)
+	}
+	if got := cpu.busStallFor(0x06001234); got != 30 {
+		t.Errorf("busStallFor(0x06001234) = %d, want 30", got)
+	}
+	if got := cpu.busStallFor(0x26001234); got != 30 {
+		t.Errorf("cache-through mirror busStallFor(0x26001234) = %d, want 30", got)
+	}
+
+	cpu.busStall = 0
+	cpu.read32(0x100) // external data read in region 0 -> cost 3
+	if cpu.busStall != 3 {
+		t.Errorf("data read stall = %d, want 3", cpu.busStall)
+	}
+
+	cpu.busStall = 0
+	cpu.write16(0x100, 0) // external data write in region 0 -> cost 3
+	if cpu.busStall != 3 {
+		t.Errorf("data write stall = %d, want 3", cpu.busStall)
+	}
+
+	cpu.busStall = 0
+	cpu.read8(0xFFFFFE92) // on-chip register (CCR): not an external bus access
+	if cpu.busStall != 0 {
+		t.Errorf("on-chip read stall = %d, want 0", cpu.busStall)
+	}
+
+	cpu.busStall = 0
+	cpu.reg.PC = 0
+	cpu.fetchPC() // instruction fetch is not charged
+	if cpu.busStall != 0 {
+		t.Errorf("fetch stall = %d, want 0", cpu.busStall)
+	}
+
+	// Default (no table) charges nothing.
+	plain := New(bus, true)
+	plain.read32(0x100)
+	if plain.busStall != 0 {
+		t.Errorf("default stall = %d, want 0", plain.busStall)
+	}
+}
+
+// TestBusStallDrains verifies the stall debt is drained one cycle per Clock()
+// before the next instruction executes.
+func TestBusStallDrains(t *testing.T) {
+	const stall = 3
+	bus := newTestBus(0x100)
+	for a := 0; a+1 < len(bus.mem); a += 2 { // NOPs
+		bus.mem[a], bus.mem[a+1] = 0x00, 0x09
+	}
+	cpu := New(bus, true)
+	cpu.reg.PC = 0
+	cpu.busStall = stall // simulate one data access's debt
+	start := cpu.Cycles()
+
+	for i := 0; i < stall; i++ {
+		cpu.Clock()
+		if cpu.reg.PC != 0 {
+			t.Fatalf("instruction executed during stall drain at step %d", i)
+		}
+	}
+	cpu.Clock() // debt drained: the NOP now executes
+	if cpu.reg.PC != 2 {
+		t.Error("instruction did not execute after stall drained")
+	}
+	if got := cpu.Cycles() - start; got != uint64(stall)+1 {
+		t.Errorf("cycles = %d, want %d", got, stall+1)
 	}
 }

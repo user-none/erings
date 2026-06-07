@@ -698,6 +698,7 @@ func TestDMACStallCyclesMatchesTCR(t *testing.T) {
 	cases := []uint32{1, 4, 10}
 	for _, tcr := range cases {
 		bus := newTestBus(0x1000)
+		bus.accessCost = 2
 		cpu := New(bus, true)
 		d := &cpu.dmac
 		d.ch[0].sar = 0x100

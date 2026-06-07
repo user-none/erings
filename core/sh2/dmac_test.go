@@ -17,6 +17,7 @@ import "testing"
 // large enough for the transfer regions used below.
 func dmacFixture(size int) (*DMAC, *testBus) {
 	bus := newTestBus(size)
+	bus.accessCost = 2
 	d := &DMAC{}
 	d.Reset()
 	d.bus = bus
@@ -244,6 +245,7 @@ func TestDMACStallBlocksCPUExecution(t *testing.T) {
 // tickPeripherals during DMAC stall.
 func TestDMACStallTicksPeripherals(t *testing.T) {
 	bus := newTestBus(0x1000)
+	bus.accessCost = 2
 	cpu := New(bus, true)
 	cpu.reg.SR = srIMask
 

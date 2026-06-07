@@ -119,6 +119,20 @@ type CPU struct {
 	cacheData [4096]byte
 	ccr       uint8 // Cache Control Register (0xFFFFFE92)
 
+	// busStall is bus-access wait-state debt (in CPU cycles) accumulated by
+	// the current instruction's external data accesses. It is drained one
+	// cycle per Clock() before the next instruction executes, so each data
+	// read/write extends the instruction by its region's busStallTable cost.
+	busStall uint32
+
+	// busStallTable gives the wait-state penalty added per external data
+	// read/write, indexed by address region at 1 MB granularity
+	// ((addr>>20)&0x7F). It is a precomputed per-location cost - region-aware
+	// without a per-access switch or cache. All zero by default (no stall);
+	// the emulator fills it via SetBusStallTable, so instruction-timing unit
+	// tests (which build CPUs directly) are unaffected.
+	busStallTable [128]uint32
+
 	// sbycr is the Standby Control Register (0xFFFFFE91). Stub
 	// storage only: writes persist, reads return the stored value.
 	// STBY/SLEEP behavior driven by bit 7 (SBY) is NOT modeled -
@@ -202,6 +216,7 @@ func (c *CPU) Reset() {
 	c.stepBus = BusNone
 	c.branchTaken = false
 	c.ccr = 0
+	c.busStall = 0
 	c.sbycr = 0
 	c.bcr1 = 0x03F0
 	c.intc.Reset()
@@ -224,6 +239,19 @@ func (c *CPU) Clock() ClockState {
 	if c.pendingOp != popNone {
 		c.lastLoadReg = 0xFF
 		return c.stepPending()
+	}
+
+	// Bus-access wait states: drain the stall debt the previous instruction
+	// accumulated before executing the next one. Like load-use stall, no
+	// interrupt window is exposed mid-access, so this returns before the
+	// interrupt check below.
+	if c.busStall > 0 {
+		c.busStall--
+		c.cycles++
+		if c.peripheralsDue() {
+			c.tickPeripherals()
+		}
+		return ClockState{}
 	}
 
 	// DMAC bus stall: CPU cannot execute while DMA transfer is in progress.
@@ -654,6 +682,7 @@ func (c *CPU) read16(addr uint32) uint16 {
 	if isCacheRegion(addr) {
 		return 0
 	}
+	c.busStall += c.busStallFor(addr)
 	return c.bus.Read16(addr)
 }
 
@@ -677,6 +706,7 @@ func (c *CPU) read32(addr uint32) uint32 {
 	if isCacheRegion(addr) {
 		return 0
 	}
+	c.busStall += c.busStallFor(addr)
 	return c.bus.Read32(addr)
 }
 
@@ -699,6 +729,7 @@ func (c *CPU) write16(addr uint32, val uint16) {
 	if isCacheRegion(addr) {
 		return
 	}
+	c.busStall += c.busStallFor(addr)
 	c.bus.Write16(addr, val)
 }
 
@@ -723,6 +754,7 @@ func (c *CPU) write32(addr uint32, val uint32) {
 	if isCacheRegion(addr) {
 		return
 	}
+	c.busStall += c.busStallFor(addr)
 	c.bus.Write32(addr, val)
 }
 
@@ -764,6 +796,16 @@ func isCacheDataArray(addr uint32) bool {
 	return addr >= 0xC0000000 && addr < 0xE0000000
 }
 
+// SetBusStallTable installs the per-region data-access wait-state table
+// (indexed by (addr>>20)&0x7F). The emulator builds it from the memory map.
+// A zero table (the default) disables bus-access stall.
+func (c *CPU) SetBusStallTable(t [128]uint32) { c.busStallTable = t }
+
+// busStallFor returns the wait-state penalty for an external data access at
+// addr. A single masked array index - region-aware at 1 MB granularity, which
+// also folds the cache-through mirror (bit 29) onto the same physical region.
+func (c *CPU) busStallFor(addr uint32) uint32 { return c.busStallTable[(addr>>20)&0x7F] }
+
 // read8 reads a byte, checking for on-chip peripheral addresses first.
 func (c *CPU) read8(addr uint32) uint8 {
 	if isOnChip(addr) {
@@ -776,6 +818,7 @@ func (c *CPU) read8(addr uint32) uint8 {
 	if isCacheRegion(addr) {
 		return 0
 	}
+	c.busStall += c.busStallFor(addr)
 	return c.bus.Read8(addr)
 }
 
@@ -824,6 +867,7 @@ func (c *CPU) write8(addr uint32, val uint8) {
 	if isCacheRegion(addr) {
 		return
 	}
+	c.busStall += c.busStallFor(addr)
 	c.bus.Write8(addr, val)
 }
 
@@ -967,12 +1011,12 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 		c.sbycr = uint8(val) & 0xDF
 		return true
 	case addr == 0xFFFFFE92:
-		// CCR - Cache Control Register
+		// CCR - Cache Control Register. The cache contents are not modeled
+		// (only its timing effect, via the per-region stall table), so the
+		// cache-purge bit (CP, bit 4) is accepted and self-clears with no
+		// state to flush.
 		v := uint8(val) & 0xDF // bit 5 reserved, always 0
-		if v&0x10 != 0 {
-			// CP (cache purge): invalidate all lines, auto-clears
-			v &^= 0x10
-		}
+		v &^= 0x10             // CP auto-clears
 		c.ccr = v
 		return true
 	case addr >= 0xFFFFFE60 && addr <= 0xFFFFFE68:

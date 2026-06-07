@@ -390,15 +390,41 @@ memory-to-memory transfers.
 ## Cache
 
 The SH-2 has a 4 KB on-chip cache (4-way set associative, 64 entries,
-16 bytes per line). Cache lookup is not emulated: every memory access
-goes directly to the bus. In an emulator, RAM access is already an
-array index with no latency to hide, so modeling tag comparisons, LRU,
-and line fills would add overhead with no benefit.
+16 bytes per line). erings does not model the cache contents - every
+read returns current data from the bus, which is also more correct than
+hardware in the dual-CPU case (no stale-data problem). A full tag/valid/
+LRU cache model was tried purely to drive access timing and removed: its
+per-access bookkeeping cost more than it was worth, and games are timed
+accurately enough by the bus-access wait-state model below.
 
-Reading current data from the bus is actually more correct than real
-hardware in the dual-CPU case since there is no stale-data problem.
+### Bus-access wait states
 
-### What is implemented
+Memory-heavy code must be slowed to roughly hardware rate, both for
+timing accuracy and to keep self-timed games (e.g. TS2) from running
+ahead of their intended frame rate. Each external data read/write is
+charged a per-region wait-state penalty:
+
+- `busStallTable [128]uint32` (per CPU) holds the cost for each 1 MB
+  block of the 27-bit physical space, indexed by `(addr>>20)&0x7F`
+  (which also folds the cache-through mirror onto the same region). The
+  emulator fills it once from the bus wait-state model
+  (`buildSH2StallTable` -> `Bus.AccessCycles`); it is all-zero by
+  default so unit tests that build a CPU directly see no stall.
+- `read8/16/32` and `write8/16/32` add `busStallFor(addr)` to
+  `CPU.busStall` on the external-bus path. On-chip registers, the cache
+  data array, and the cache control regions are not charged.
+- Instruction fetch is not charged: fetches are overwhelmingly cache
+  hits on hardware, so treating them as free approximates that without
+  tracking residency.
+- `busStall` is drained one cycle per `Clock()` before the next
+  instruction executes (the same deferred-cycle pattern as load-use
+  stall), so each access extends its instruction by the region's cost.
+
+A flat per-access value already tracks measured frame timing closely;
+the region table refines it per location (WRAM-H, A-Bus, the B-Bus
+devices each differ) at a single array index, with no switch or cache.
+
+### Cache data array
 
 The cache data array region (0xC0000000-0xDFFFFFFF) is backed by a
 per-CPU 4 KB buffer (cacheData). Games commonly lock the cache and use
@@ -406,25 +432,13 @@ this region as fast CPU-internal scratch RAM for stacks and tight loops.
 Each SH-2 has its own private buffer; the 4 KB is mirrored throughout
 the region.
 
-Other cache control regions are no-ops:
+The other cache control regions are no-ops:
 - 0x40000000-0x5FFFFFFF (associative purge): writes ignored
 - 0x60000000-0x7FFFFFFF (address array): reads return 0, writes ignored
 - 0x80000000-0xBFFFFFFF (reserved): reads return 0, writes ignored
 
-CCR (0xFFFFFE92) is stored but has no functional effect beyond
-read-back.
-
-### Symptoms of missing cache emulation
-
-If a game exhibits any of the following and other causes have been ruled
-out, investigate whether full cache emulation is needed:
-
-- Data corruption when both CPUs access the same memory region
-- Graphics glitches after DMA transfers (CPU reads stale pre-DMA data)
-- Game code that writes to 0x40000000+ addresses with no visible effect
-- Game code that reads/writes CCR and expects cache state changes
-- Game code that accesses 0x60000000+ for direct tag manipulation
-- Timing-sensitive code that depends on cache hit/miss cycle counts
+CCR (0xFFFFFE92) is stored; the cache-enable/way/purge bits have no
+modeled effect (CP self-clears) since cache contents are not tracked.
 
 ## Memory Access / Region Routing Simplifications
 
@@ -443,7 +457,8 @@ does, and why the simplification is safe for Saturn software.
 - **D2 Associative-purge reserved alias** (Sec 8.4.7, Table 7.3).
   Hardware defines the associative purge region at
   0x40000000-0x47FFFFFF and reserves 0x48000000-0x5FFFFFFF. erings
-  folds the two ranges into one no-op block.
+  folds the two ranges into one no-op block (cache contents are not
+  modeled, so there is nothing to purge).
 - **D3 Address-array reserved alias** (Sec 8.4.9, Table 7.3).
   Hardware maps the address array at 0x60000000-0x600003FF; the rest
   of 0x60000000-0x7FFFFFFF is addressable via tag-address bit layout.
