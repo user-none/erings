@@ -1746,16 +1746,32 @@ func TestCDBlockCDSpeed(t *testing.T) {
 		t.Errorf("default cdSpeed = %d, want 2", cb.cdSpeed)
 	}
 
-	// InitCDSystem without bit 4 -> 2x speed
-	execCommandFull(cb, 0x04, 0x00, 0, 0, 0)
-	if cb.cdSpeed != 2 {
-		t.Errorf("cdSpeed after init without bit4 = %d, want 2", cb.cdSpeed)
+	// Bit 5 (0x20) requests a change to the init flags; only then do
+	// the speed bits apply (bit 4 = 1x). 0xFF is the no-change sentinel.
+
+	// Change requested (bit5) + bit4 -> 1x
+	execCommandFull(cb, 0x04, 0x30, 0, 0, 0)
+	if cb.cdSpeed != 1 {
+		t.Errorf("cdSpeed after init with bit5+bit4 = %d, want 1", cb.cdSpeed)
 	}
 
-	// InitCDSystem with bit 4 -> 1x speed
+	// Change requested (bit5) without bit4 -> 2x
+	execCommandFull(cb, 0x04, 0x20, 0, 0, 0)
+	if cb.cdSpeed != 2 {
+		t.Errorf("cdSpeed after init with bit5 only = %d, want 2", cb.cdSpeed)
+	}
+
+	// Bit 4 set but no change bit (bit5) -> speed unchanged (still 2x)
 	execCommandFull(cb, 0x04, 0x10, 0, 0, 0)
+	if cb.cdSpeed != 2 {
+		t.Errorf("cdSpeed after init with bit4 only = %d, want 2 (unchanged)", cb.cdSpeed)
+	}
+
+	// 0xFF no-change sentinel preserves the current speed.
+	execCommandFull(cb, 0x04, 0x30, 0, 0, 0) // set 1x
+	execCommandFull(cb, 0x04, 0xFF, 0, 0, 0) // no-change
 	if cb.cdSpeed != 1 {
-		t.Errorf("cdSpeed after init with bit4 = %d, want 1", cb.cdSpeed)
+		t.Errorf("cdSpeed after 0xFF no-change = %d, want 1 (preserved)", cb.cdSpeed)
 	}
 }
 
