@@ -216,6 +216,34 @@ multiple sources.
 3. The SCU documentation
 
 
+## SH-2 Bus Access Timing
+
+Accurate SH-2 bus access timing depends on cache emulation. The SH-2 reaches
+external memory over a bus with wait states, so an access costs more than a
+single cycle. The cost varies by region: work RAM, cartridge (A-Bus), and the
+video and sound chips (B-Bus) each respond at different speeds. The on-chip
+cache is the deciding factor, since an access that hits the cache is fast
+while a miss pays the full external wait state. Because each access cost is
+set by that hit-or-miss outcome, the timing cannot be reproduced exactly
+without modeling the cache. The net effect is a limit on how many
+instructions the SH-2 executes per frame.
+
+This matters because games are written against that real throughput.
+
+Thunderstrike 2 drives its own frame rate: the master SH-2 finishes a frame
+of work and then waits for VBlank-IN. At full speed with no wait states the
+master finishes far too early, advances every frame, and the game runs at
+60 fps instead of its intended 30. Realistic access timing pushes the
+master's work past the deadline so it advances every other frame and runs
+at 30.
+
+NiGHTS into Dreams works its SH-2 heavily each frame, and the wait states are
+part of the real cost of that work. Without them the SH-2 appears to do far
+more per frame than the hardware can, and the game runs slower than its
+intended rate. Restoring the wait states returns the per-frame work to a
+hardware level and the game runs at full speed.
+
+
 # Game FPS
 
 Games have an effective frame rate that the game itself drives.
