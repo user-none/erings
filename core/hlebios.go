@@ -495,8 +495,28 @@ func (h *HLEBIOS) Boot(ip []byte) error {
 	h.master.HLEHook = h.dispatch(h.master)
 	h.slave.HLEHook = h.dispatch(h.slave)
 
+	// IP entry register state, from docs/bios/handoff_state.md. The IP
+	// security/init code reads R0-R7, so they carry their handoff values.
 	h.master.SetPC(ipEntry)
-	h.master.SetReg(15, ipStack)
+	h.master.SetReg(0, 0x00000358)
+	h.master.SetReg(1, 0x06002100)
+	h.master.SetReg(2, 0x0600021C)
+	h.master.SetReg(3, 0x06001800)
+	h.master.SetReg(4, 0x00000000)
+	h.master.SetReg(5, 0xFFFF7FFF)
+	h.master.SetReg(6, 0x00000000)
+	h.master.SetReg(7, 0x060012FE)
+	for r := 8; r <= 14; r++ {
+		h.master.SetReg(r, 0)
+	}
+	// Master SP = Stack-M ($060002A8, the disc's IP+$E8) when non-zero,
+	// else the $06002000 default.
+	masterSP := h.bus.readWramHU32(0x2A8)
+	if masterSP == 0 {
+		masterSP = ipStack
+	}
+	h.master.SetReg(15, masterSP)
+	h.master.SetPR(0x060006A8)
 	h.master.SetVBR(0x06000000)
 	h.master.SetSR(0x00000001)
 	h.master.SetGBR(0x25D00000)
@@ -530,9 +550,22 @@ func (h *HLEBIOS) copyIP(ip []byte) {
 	copy(h.bus.wramH[off:], ip)
 }
 
-// populateDataTables seeds every Work-RAM-H region the real BIOS
-// would have written before handing off to the disc. See
-// project_hle_bios_state_inventory.md for the inventory.
+// copyIPSysBlock installs the disc's IP System ID block (IP+$E0..$FF, 8
+// longwords) into the system-variable area at $060002A0..$060002BF. These
+// slots carry the master SP (Stack-M, $2A8), the slave SP (Stack-S,
+// $2AC), and the 1st-read address ($2B0); the app-launch and slave-init
+// paths read them from here, so they must be present before the IP runs.
+func copyIPSysBlock(bus *Bus, ip []byte) {
+	if len(ip) < 0x100 {
+		return
+	}
+	for k := uint32(0); k < 8; k++ {
+		o := 0xE0 + k*4
+		v := uint32(ip[o])<<24 | uint32(ip[o+1])<<16 | uint32(ip[o+2])<<8 | uint32(ip[o+3])
+		bus.writeWramHU32(0x2A0+k*4, v)
+	}
+}
+
 func (h *HLEBIOS) populateDataTables(ip []byte) {
 	// IP entry / workspace pointers used by SDK code as known-good
 	// constants. The IP entry pointer is what some SDK functions
@@ -540,14 +573,8 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 	h.bus.writeWramHU32(wramHIPEntryPtr, ipEntry)
 	h.bus.writeWramHU32(wramHWorkspacePtr, 0x06000000+wramHWorkspace)
 
-	// $060002B0 = "1st Read Address" from System ID +$F0. The BIOS
-	// sets this before handoff so sub_1C90 / sub_2F48 know where to
-	// land the application binary. Confirmed in the captured handoff
-	// state (both NiGHTS and the other captured game have $06004000
-	// here, matching their respective System ID +$F0).
-	loadAddr := uint32(ip[0xF0])<<24 | uint32(ip[0xF1])<<16 |
-		uint32(ip[0xF2])<<8 | uint32(ip[0xF3])
-	h.bus.writeWramHU32(0x2B0, loadAddr)
+	// IP System ID block (IP+$E0..$FF) in the system-variable area at $060002A0..$060002BF.
+	copyIPSysBlock(h.bus, ip)
 
 	// "2RDY" warm-boot handshake magic at $06000240. Real BIOS Phase
 	// 3 sets this before handoff (captured handoff dumps confirm
@@ -555,7 +582,7 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 	// reads mem.L[$06000240] and checks for this magic to know that
 	// master-side warm-boot work is done; with the slot at zero the
 	// slave's init takes a different path. Some games (Waku Waku 7's
-	// wait→loading transition) won't proceed until this matches.
+	// wait->loading transition) won't proceed until this matches.
 	h.bus.writeWramHU32(0x240, 0x32524459)
 
 	// BIOS-internal function pointer slots in $06000234-$0600034C.
@@ -630,13 +657,11 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 	}
 
 	// SCU priority/mask table for vectors $40-$5F. Same base+vec*4
-	// indexing; effective slots at $06000A80-$06000AFF. Real BIOS
-	// fills these with (SR_I << 16) | IMS_mask precomputed pairs;
-	// the exact derivation isn't reversed yet. $00F0FFFF =
-	// "highest priority / mask all" is a safe default - HLE doesn't
-	// replicate the dispatcher's priority-lowering logic so this
-	// table isn't actually read in HLE today; populated only so
-	// any future code that does read it gets a defined value.
+	// indexing; effective slots at $06000A80-$06000AFF. Each entry is
+	// an (SR_I << 16) | IMS_mask pair the dispatcher applies before
+	// calling a handler (see installIntStubs). $00F0FFFF (SR mask 15,
+	// all SCU sources masked = no nesting) is the default. Games
+	// overwrite the entry with their own SR/IMS pair.
 	for vec := uint32(0x40); vec <= 0x5F; vec++ {
 		h.bus.writeWramHU32(wramHPriMaskTable+vec*4, 0x00F0FFFF)
 	}
@@ -678,21 +703,31 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 // + PR to be unchanged after the IRQ - the user handler is free to
 // clobber any of them, so the dispatcher must do the preservation.
 //
+// Before calling the handler it applies the per-vector priority/mask
+// table at $06000980 (docs/bios/scu_interrupt_handling.md): SR is
+// lowered to the entry's high word so higher-priority interrupts can
+// nest, and the entry's low word (sign-extended) is ORed into the SCU
+// IMS shadow ($06000348) and IMS register ($25FE00A0) to mask the
+// source for the handler's duration. The epilogue re-masks all ($F0)
+// and restores the saved IMS.
+//
 //	STS.L PR, @-R15
 //	STC.L GBR, @-R15
 //	MOV.L R1-R7 individually @-R15
-//	MOV.L user_table_const, R1   ; R1 = $06000900
-//	SHLL2 R0                     ; R0 = vec*4
-//	MOV.L @(R0,R1), R0           ; R0 = installed handler
-//	JSR @R0
-//	NOP
+//	R4 = saved_ims = mem.L[$06000348]; push R4
+//	R0 = vec*4; R3 = pri_entry = mem.L[$06000980 + R0]
+//	new_ims = saved_ims | EXTS.W(pri_entry); write shadow + IMS reg
+//	LDC (pri_entry >> 16), SR          ; lower the mask
+//	R0 = mem.L[$06000900 + R0]         ; installed handler
+//	JSR @R0; NOP
+//	pop saved_ims; LDC #$F0,SR; restore shadow + IMS reg
 //	MOV.L @R15+, R7-R1
 //	LDC.L @R15+, GBR
 //	LDS.L @R15+, PR
 //	MOV.L @R15+, R0
 //	RTE
 //	NOP
-//	.long $06000900              ; user-handler table base
+//	.long pool: $06000348, $06000980, $25FE00A0, $06000900, $000000F0
 func (h *HLEBIOS) installIntStubs() {
 	defaultRTEAddr := uint32(0x06000000) + wramHDefaultRTE
 
@@ -712,59 +747,102 @@ func (h *HLEBIOS) installIntStubs() {
 		writeWord(h.bus, base+4, 0xE000|uint16(vec&0xFF))
 	}
 
-	// Dispatcher layout (size fixed; precomputed so the MOV.L
-	// @(disp,PC),R1 can be emitted with its final displacement
-	// rather than as a placeholder patched up afterward).
+	// Common dispatcher. R0 arrives holding the vector number (pushed
+	// by the stub, then reloaded as #vec in the stub delay slot).
+	// Stack frame built here (top first): saved_ims, R7..R1, GBR, PR,
+	// R0 (stub), then the HW-pushed PC and SR.
 	//
-	//   +$00..+$11   9 register pushes (STS PR, STC GBR, MOV.L R1-R7)
-	//   +$12         MOV.L @(disp,PC),R1   <- loads user-handler table
-	//   +$14..+$1B   SHLL2 R0; MOV.L @(R0,R1),R0; JSR @R0; NOP
-	//   +$1C..+$2B   7 pops R7-R1
-	//   +$2C..+$33   LDC.L GBR; LDS.L PR; MOV.L R0; RTE; NOP
-	//   +$34         .long $06000900 (wramHUIntTable base)
-	//
-	// 52 bytes of instructions; constant at offset 52, which is
-	// 4-aligned given the dispatcher base is 4-aligned. The PC base
-	// for MOV.L @(disp,PC) is ((+$12)+4) & ~3 = +$14; constant is
-	// at +$34, so disp = ($34-$14)/4 = $20/4 = 8.
+	// The five-long constant pool follows the instruction block. The
+	// block is a fixed 48 instructions (47 + one pad NOP) = 96 bytes;
+	// poolBase is 4-aligned because the dispatcher base is.
 	d := uint32(wramHIntDispatcher)
-	const constOffFromBase = 52
-	const movLOffFromBase = 18
-	pcBase := (movLOffFromBase + 4) &^ 3
-	movLDisp := uint16((constOffFromBase - pcBase) / 4)
+	const instrBytes = 96
+	poolBase := d + instrBytes
+	addrShadow := poolBase + 0   // .long $06000348  SCU IMS shadow
+	addrPri := poolBase + 4      // .long $06000980  priority/mask table base
+	addrScuIMS := poolBase + 8   // .long $25FE00A0  SCU IMS register
+	addrHandler := poolBase + 12 // .long $06000900  user-handler table base
+	addrSRF0 := poolBase + 16    // .long $000000F0  SR "mask all" epilogue value
 
 	off := d
 	emit := func(op uint16) {
 		writeWord(h.bus, off, op)
 		off += 2
 	}
-	emit(0x4F22)                     // STS.L PR, @-R15
-	emit(0x4F13)                     // STC.L GBR, @-R15
-	emit(0x2F16)                     // MOV.L R1, @-R15
-	emit(0x2F26)                     // MOV.L R2, @-R15
-	emit(0x2F36)                     // MOV.L R3, @-R15
-	emit(0x2F46)                     // MOV.L R4, @-R15
-	emit(0x2F56)                     // MOV.L R5, @-R15
-	emit(0x2F66)                     // MOV.L R6, @-R15
-	emit(0x2F76)                     // MOV.L R7, @-R15
-	emit(0xD100 | (movLDisp & 0xFF)) // MOV.L @(disp,PC),R1
-	emit(0x4008)                     // SHLL2 R0
-	emit(0x001E)                     // MOV.L @(R0,R1), R0
-	emit(0x400B)                     // JSR @R0
-	emit(0x0009)                     // NOP
-	emit(0x67F6)                     // MOV.L @R15+, R7
-	emit(0x66F6)                     // MOV.L @R15+, R6
-	emit(0x65F6)                     // MOV.L @R15+, R5
-	emit(0x64F6)                     // MOV.L @R15+, R4
-	emit(0x63F6)                     // MOV.L @R15+, R3
-	emit(0x62F6)                     // MOV.L @R15+, R2
-	emit(0x61F6)                     // MOV.L @R15+, R1
-	emit(0x4F17)                     // LDC.L @R15+, GBR
-	emit(0x4F26)                     // LDS.L @R15+, PR
-	emit(0x60F6)                     // MOV.L @R15+, R0
-	emit(0x002B)                     // RTE
-	emit(0x0009)                     // NOP
-	h.bus.writeWramHU32(d+constOffFromBase, uint32(0x06000000)+wramHUIntTable)
+	// emitMovLPC emits MOV.L @(disp,PC),Rn loading the pool long at
+	// poolAddr. The PC base for the displacement is (instrAddr+4) & ~3.
+	emitMovLPC := func(rn uint16, poolAddr uint32) {
+		disp := uint16((poolAddr - ((off + 4) &^ 3)) / 4)
+		emit(0xD000 | (rn << 8) | (disp & 0xFF))
+	}
+
+	// Save caller state.
+	emit(0x4F22) // STS.L PR, @-R15
+	emit(0x4F13) // STC.L GBR, @-R15
+	emit(0x2F16) // MOV.L R1, @-R15
+	emit(0x2F26) // MOV.L R2, @-R15
+	emit(0x2F36) // MOV.L R3, @-R15
+	emit(0x2F46) // MOV.L R4, @-R15
+	emit(0x2F56) // MOV.L R5, @-R15
+	emit(0x2F66) // MOV.L R6, @-R15
+	emit(0x2F76) // MOV.L R7, @-R15
+
+	// saved_ims = mem.L[shadow]; push it so it survives the handler.
+	emitMovLPC(1, addrShadow) // MOV.L @(disp,PC),R1 ; R1 = &shadow
+	emit(0x6412)              // MOV.L @R1, R4       ; R4 = saved_ims
+	emit(0x2F46)              // MOV.L R4, @-R15     ; push saved_ims
+
+	// pri_entry = mem.L[pri_table + vec*4].
+	emit(0x4008)           // SHLL2 R0            ; R0 = vec*4
+	emitMovLPC(2, addrPri) // MOV.L @(disp,PC),R2 ; R2 = &pri_table
+	emit(0x032E)           // MOV.L @(R0,R2), R3  ; R3 = pri_entry
+
+	// new_ims = saved_ims | sign_extend_word(pri_entry); write shadow + reg.
+	emit(0x6533)              // MOV R3, R5
+	emit(0x655F)              // EXTS.W R5, R5       ; R5 = ims_mask
+	emit(0x254B)              // OR R4, R5           ; R5 = new_ims
+	emit(0x2152)              // MOV.L R5, @R1       ; shadow = new_ims
+	emitMovLPC(6, addrScuIMS) // MOV.L @(disp,PC),R6 ; R6 = SCU IMS reg
+	emit(0x2652)              // MOV.L R5, @R6       ; SCU IMS = new_ims
+
+	// SR = pri_entry >> 16 (lower the mask -> allow nested preemption).
+	emit(0x6733) // MOV R3, R7
+	emit(0x4729) // SHLR16 R7           ; R7 = sr_value
+	emit(0x470E) // LDC R7, SR
+
+	// handler = mem.L[handler_table + vec*4]; call it.
+	emitMovLPC(1, addrHandler) // MOV.L @(disp,PC),R1 ; R1 = &handler_table
+	emit(0x001E)               // MOV.L @(R0,R1), R0  ; R0 = handler
+	emit(0x400B)               // JSR @R0
+	emit(0x0009)               // NOP
+
+	// Epilogue: restore SR/IMS, pop registers, RTE.
+	emit(0x64F6)              // MOV.L @R15+, R4     ; R4 = saved_ims
+	emitMovLPC(5, addrSRF0)   // MOV.L @(disp,PC),R5 ; R5 = $F0
+	emit(0x450E)              // LDC R5, SR          ; re-mask all
+	emitMovLPC(6, addrShadow) // MOV.L @(disp,PC),R6 ; R6 = &shadow
+	emit(0x2642)              // MOV.L R4, @R6       ; shadow = saved_ims
+	emitMovLPC(7, addrScuIMS) // MOV.L @(disp,PC),R7 ; R7 = SCU IMS reg
+	emit(0x2742)              // MOV.L R4, @R7       ; SCU IMS = saved_ims
+	emit(0x67F6)              // MOV.L @R15+, R7
+	emit(0x66F6)              // MOV.L @R15+, R6
+	emit(0x65F6)              // MOV.L @R15+, R5
+	emit(0x64F6)              // MOV.L @R15+, R4
+	emit(0x63F6)              // MOV.L @R15+, R3
+	emit(0x62F6)              // MOV.L @R15+, R2
+	emit(0x61F6)              // MOV.L @R15+, R1
+	emit(0x4F17)              // LDC.L @R15+, GBR
+	emit(0x4F26)              // LDS.L @R15+, PR
+	emit(0x60F6)              // MOV.L @R15+, R0
+	emit(0x002B)              // RTE
+	emit(0x0009)              // NOP
+	emit(0x0009)              // NOP (pad to 4-align the pool)
+
+	h.bus.writeWramHU32(addrShadow, uint32(0x06000000)+wramHIMSShadow)
+	h.bus.writeWramHU32(addrPri, uint32(0x06000000)+wramHPriMaskTable)
+	h.bus.writeWramHU32(addrScuIMS, 0x25FE00A0)
+	h.bus.writeWramHU32(addrHandler, uint32(0x06000000)+wramHUIntTable)
+	h.bus.writeWramHU32(addrSRF0, 0x000000F0)
 }
 
 // populateVBRTable fills the 128-entry VBR exception/interrupt

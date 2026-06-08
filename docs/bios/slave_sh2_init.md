@@ -89,7 +89,7 @@ that into a single "clear all GPRs except SP" step at the end.
 | $06000400 | slave VBR (vector table base) |
 | $06000244 | "2RDS" magic destination (slave → master) |
 | $32524453 | "2RDS" magic value |
-| $060002AC | optional SP-override slot |
+| $060002AC | slave SP slot (= IP System ID +$EC, Stack-S, copied here by the boot header copy) |
 | $06000250 | game-supplied slave-entry slot |
 
 ```python
@@ -104,7 +104,8 @@ def slave_init():           # entered at $06000600
     PR   = 0
     clrmac()                                      # MACL = MACH = 0
 
-    # Optional caller-supplied SP override at $060002AC
+    # Slave SP from $060002AC (IP System ID +$EC, Stack-S, installed
+    # there by the boot header copy). Non-zero overrides the default.
     override_sp = mem.L[0x060002AC]
     if override_sp != 0:
         SP = override_sp
@@ -130,10 +131,14 @@ The two magic values:
   init writes this at `$06000614` after VBR setup. Master code
   that needs to know slave is up reads this slot.
 
-The game's slave entry is at `mem.L[$06000250]` and an optional
-custom slave SP is at `mem.L[$060002AC]`; both are game-supplied
-by writing the slot before issuing SSHON (or in some games,
-after — the slave wait loop accommodates either order).
+The game's slave entry is at `mem.L[$06000250]` (game-supplied: the
+game writes it before issuing SSHON, or in some games after — the
+slave wait loop accommodates either order). The slave SP at
+`mem.L[$060002AC]` is normally **not** game-supplied: the boot header
+copy installs it there from the IP System ID Stack-S field (+$EC). A
+game can still overwrite the slot itself, but typically relies on the
+value the disc header carries (e.g. PDS uses $06003700, larger than
+the $06001000 default, for its coprocessor routines).
 
 ### Slave usage patterns observed in shipping games
 

@@ -95,9 +95,9 @@ What the BIOS reads from the disc that affects boot:
 | System ID offset | Field | Effect |
 |------------------|-------|--------|
 | $E0 | IP size ($1000-$8000) | How many sectors the BIOS loads as IP |
-| $E8 | Stack-M | Master SP request from disc (BIOS observed to ignore this; SP at handoff = $06002000) |
-| $EC | Stack-S | Slave SP request from disc (slave is held in reset) |
-| $F0 | 1st Read Address | Where the game binary file (file ID 2) loads |
+| $E8 | Stack-M | Master SH-2 SP. The BIOS copies the IP+$E0..$FF block to $060002A0 (so Stack-M lands at $060002A8) and the app-launch routine sets the master R15 from $060002A8 when it is non-zero, else the $06002000 default. |
+| $EC | Stack-S | Slave SH-2 SP. Copied to $060002AC; the slave-init code uses it as the slave SP (non-zero) over the $06001000 default when SSHON later starts the slave. |
+| $F0 | 1st Read Address | Where the game binary file (file ID 2) loads. Copied to $060002B0. |
 | $F4 | 1st Read Size | Size of the 1st Read file (ignored for CDs - actual size comes from ISO9660) |
 
 The IP itself contains executable code starting at IP+$100 (security

@@ -548,7 +548,11 @@ Validates disc/cartridge headers against "SEGA SEGASATURN " (16 bytes).
 1. Checks that the data size (R6) is between $1000 and $8000 bytes
 2. Reads 16 bytes from source and compares with expected header at $001B04
 3. On match, copies header data:
-   - 8 longs (32 bytes) from disc header offset $E0 to $060002A0
+   - 8 longs (32 bytes) from disc header offset $E0 to $060002A0.
+     This is the IP System ID config block: Stack-M ($E8 -> $060002A8,
+     master SP), Stack-S ($EC -> $060002AC, slave SP), and the 1st Read
+     Address ($F0 -> $060002B0). The app-launch and slave-init code
+     consume these slots (see ip_bin.md, slave_sh2_init.md).
    - 64 longs (256 bytes) from $06002000 to a buffer at $06000C00
 4. Compares $340 longwords (3328 bytes) of the loaded IP at $06002100
    against a BIOS reference at $20006200; on mismatch returns -4

@@ -104,6 +104,72 @@ func TestHLEBootWiresHooks(t *testing.T) {
 	}
 }
 
+func TestHLEDispatcherLowersSR(t *testing.T) {
+	// Execute the trampoline + common dispatcher for an SCU vector and
+	// confirm it applies the priority/mask table: the handler must run
+	// at the table entry's SR level (not the level the SH-2 set on
+	// accepting the IRQ), and SR/PC must be restored on RTE.
+	h, bus, master, _ := newHLEBIOSForTest()
+	if err := h.Boot(makeIPImage()); err != nil {
+		t.Fatalf("Boot: %v", err)
+	}
+
+	// VBlankIN (vec $40): run the handler at SR=0 (mask 0). The boot
+	// default is $00F0FFFF (mask 15); a real game writes its own pair.
+	const vec = 0x40
+	bus.writeWramHU32(wramHPriMaskTable+vec*4, 0x00000000)
+	// Handler table entry is the boot-default no-op (RTS;NOP at
+	// $0600083C), which returns straight into the dispatcher epilogue.
+
+	// Simulate the post-acceptance state: the SH-2 pushed PC then SR
+	// and set the mask to the IRQ level (15). Lay that frame down so
+	// the dispatcher's RTE has somewhere to return to.
+	const (
+		retPC    uint32 = 0x06012000
+		retSR    uint32 = 0x00000000
+		stubPC          = uint32(0x06000000) + wramHIntStubBase + (vec-0x40)*hleIntStubStride
+		frameSP  uint32 = 0x0600FEF8
+		frameOff        = frameSP - 0x06000000
+	)
+	bus.writeWramHU32(frameOff+0, retPC) // top of stack: return PC
+	bus.writeWramHU32(frameOff+4, retSR) // below: return SR
+	master.SetReg(15, frameSP)
+	master.SetSR(0x000000F0) // mask 15, as just-accepted VBlankIN
+	master.SetPC(stubPC)
+
+	mask := func(sr uint32) uint32 { return (sr >> 4) & 0xF }
+
+	srAtHandler := ^uint32(0)
+	returned := false
+	for i := 0; i < 300; i++ {
+		pc := master.Registers().PC
+		if pc == wramHNoopHandlerAddr && srAtHandler == ^uint32(0) {
+			srAtHandler = master.Registers().SR
+		}
+		if pc == retPC {
+			returned = true
+			break
+		}
+		master.Clock()
+	}
+
+	if srAtHandler == ^uint32(0) {
+		t.Fatalf("handler at %08X never reached", wramHNoopHandlerAddr)
+	}
+	if m := mask(srAtHandler); m != 0 {
+		t.Errorf("SR mask at handler entry = %d, want 0 (priority table SR=0)", m)
+	}
+	if !returned {
+		t.Fatalf("dispatcher did not RTE back to %08X", retPC)
+	}
+	if got := master.Registers().PC; got != retPC {
+		t.Errorf("post-RTE PC = %08X, want %08X", got, retPC)
+	}
+	if got := master.Registers().SR; got != retSR {
+		t.Errorf("post-RTE SR = %08X, want %08X (restored frame)", got, retSR)
+	}
+}
+
 func TestHLEMagicAddrTrapsAndReturnsViaPR(t *testing.T) {
 	// Landing on a magic address must (a) fire the registered Go
 	// service and (b) act as if RTS had executed (PC := PR), without
@@ -121,7 +187,7 @@ func TestHLEMagicAddrTrapsAndReturnsViaPR(t *testing.T) {
 	// Step once. The CPU should detect PC in the magic range, invoke
 	// the HLEHook (which runs the Go service for SYS_SETUINT), then
 	// jump to PR. We don't need to verify the service's side effect
-	// here — Boot's wiring is verified by TestHLEBootDispatchTableWired,
+	// here - Boot's wiring is verified by TestHLEBootDispatchTableWired,
 	// and the service body has its own dedicated test below.
 	master.Clock()
 
@@ -436,37 +502,80 @@ func TestHLEIntStubLayout(t *testing.T) {
 		}
 	}
 
-	// PC-relative load (patched) for the user-handler table base.
-	// Format: MOV.L @(disp,PC),R1 = 0xD100 | disp.
-	loadOff := uint32(wramHIntDispatcher) + uint32(len(wantProlog))*2
-	loadWord := readWord(loadOff)
-	if loadWord&0xFF00 != 0xD100 {
-		t.Errorf("dispatcher table-load = %04X, want D1xx (MOV.L @(disp,PC),R1)", loadWord)
+	// Dispatcher body following the prologue. Each entry is either an
+	// exact opcode (load==false) or a MOV.L @(disp,PC),Rn whose
+	// displacement is resolved at install time (load==true): for those
+	// we check the dest register and that the pool long it points at
+	// holds the expected constant.
+	const (
+		shadow  = 0x06000000 + uint32(wramHIMSShadow)
+		pri     = 0x06000000 + uint32(wramHPriMaskTable)
+		scuIMS  = uint32(0x25FE00A0)
+		handler = 0x06000000 + uint32(wramHUIntTable)
+		srF0    = uint32(0x000000F0)
+	)
+	type dword struct {
+		op   uint16
+		load bool
+		rn   uint16
+		pool uint32
 	}
-	pcBase := ((loadOff + 4) & ^uint32(3))
-	constOff := pcBase + uint32(loadWord&0xFF)*4
-	if got := bus.readWramHU32(constOff); got != 0x06000000+uint32(wramHUIntTable) {
-		t.Errorf("dispatcher table-base const = %08X, want %08X",
-			got, 0x06000000+uint32(wramHUIntTable))
+	body := []dword{
+		{load: true, rn: 1, pool: shadow},  // MOV.L @(disp,PC),R1 ; &shadow
+		{op: 0x6412},                       // MOV.L @R1,R4        ; saved_ims
+		{op: 0x2F46},                       // MOV.L R4,@-R15
+		{op: 0x4008},                       // SHLL2 R0
+		{load: true, rn: 2, pool: pri},     // MOV.L @(disp,PC),R2 ; &pri_table
+		{op: 0x032E},                       // MOV.L @(R0,R2),R3   ; pri_entry
+		{op: 0x6533},                       // MOV R3,R5
+		{op: 0x655F},                       // EXTS.W R5,R5
+		{op: 0x254B},                       // OR R4,R5
+		{op: 0x2152},                       // MOV.L R5,@R1
+		{load: true, rn: 6, pool: scuIMS},  // MOV.L @(disp,PC),R6 ; SCU IMS
+		{op: 0x2652},                       // MOV.L R5,@R6
+		{op: 0x6733},                       // MOV R3,R7
+		{op: 0x4729},                       // SHLR16 R7
+		{op: 0x470E},                       // LDC R7,SR
+		{load: true, rn: 1, pool: handler}, // MOV.L @(disp,PC),R1 ; &handler_table
+		{op: 0x001E},                       // MOV.L @(R0,R1),R0
+		{op: 0x400B},                       // JSR @R0
+		{op: 0x0009},                       // NOP
+		{op: 0x64F6},                       // MOV.L @R15+,R4 ; saved_ims
+		{load: true, rn: 5, pool: srF0},    // MOV.L @(disp,PC),R5 ; $F0
+		{op: 0x450E},                       // LDC R5,SR
+		{load: true, rn: 6, pool: shadow},  // MOV.L @(disp,PC),R6 ; &shadow
+		{op: 0x2642},                       // MOV.L R4,@R6
+		{load: true, rn: 7, pool: scuIMS},  // MOV.L @(disp,PC),R7 ; SCU IMS
+		{op: 0x2742},                       // MOV.L R4,@R7
+		{op: 0x67F6}, {op: 0x66F6}, {op: 0x65F6}, {op: 0x64F6},
+		{op: 0x63F6}, {op: 0x62F6}, {op: 0x61F6},
+		{op: 0x4F17}, // LDC.L @R15+,GBR
+		{op: 0x4F26}, // LDS.L @R15+,PR
+		{op: 0x60F6}, // MOV.L @R15+,R0
+		{op: 0x002B}, // RTE
+		{op: 0x0009}, // NOP
+		{op: 0x0009}, // NOP (pad)
 	}
-
-	// Dispatcher epilogue: pop R7..R1, GBR, PR, R0; RTE; NOP.
-	wantEpilog := []uint16{
-		0x4008, // SHLL2 R0
-		0x001E, // MOV.L @(R0,R1),R0
-		0x400B, // JSR @R0
-		0x0009, // NOP
-		0x67F6, 0x66F6, 0x65F6, 0x64F6, 0x63F6, 0x62F6, 0x61F6,
-		0x4F17, // LDC.L @R15+,GBR
-		0x4F26, // LDS.L @R15+,PR
-		0x60F6, // MOV.L @R15+,R0
-		0x002B, // RTE
-		0x0009, // NOP
-	}
-	for i, w := range wantEpilog {
-		off := loadOff + 2 + uint32(i)*2
-		if got := readWord(off); got != w {
-			t.Errorf("dispatcher epilog +%X = %04X, want %04X", off-uint32(wramHIntDispatcher), got, w)
+	bodyOff := uint32(wramHIntDispatcher) + uint32(len(wantProlog))*2
+	for i, d := range body {
+		off := bodyOff + uint32(i)*2
+		got := readWord(off)
+		rel := off - uint32(wramHIntDispatcher)
+		if d.load {
+			if got&0xFF00 != 0xD000|d.rn<<8 {
+				t.Errorf("dispatcher +%X = %04X, want D%X xx (MOV.L @(disp,PC),R%d)",
+					rel, got, d.rn, d.rn)
+				continue
+			}
+			pcBase := (off + 4) & ^uint32(3)
+			constOff := pcBase + uint32(got&0xFF)*4
+			if val := bus.readWramHU32(constOff); val != d.pool {
+				t.Errorf("dispatcher +%X pool const = %08X, want %08X", rel, val, d.pool)
+			}
+			continue
+		}
+		if got != d.op {
+			t.Errorf("dispatcher +%X = %04X, want %04X", rel, got, d.op)
 		}
 	}
 }

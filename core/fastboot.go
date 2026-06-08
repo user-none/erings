@@ -83,11 +83,8 @@ func (e *Emulator) fastBootEnterIP() {
 	// Per-disc System ID cache: first 256 B of the IP at $06000C00.
 	copy(e.bus.wramH[wramHSysIDCache:wramHSysIDCache+0x100], ip[:0x100])
 
-	// 1st-read address from System ID +$F0 ($060002B0): where the IP lands
-	// the application binary.
-	loadAddr := uint32(ip[0xF0])<<24 | uint32(ip[0xF1])<<16 |
-		uint32(ip[0xF2])<<8 | uint32(ip[0xF3])
-	e.bus.writeWramHU32(0x2B0, loadAddr)
+	// IP System ID block (IP+$E0..$FF) in the system-variable area at $060002A0..$060002BF.
+	copyIPSysBlock(e.bus, ip)
 
 	// Divert the IP's game-load pointer to fastBootLoadGame.
 	e.bus.writeWramHU32(wramHGameLoadSlot, fastBootLoadGame)
