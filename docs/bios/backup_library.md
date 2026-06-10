@@ -35,8 +35,9 @@ the published BIOS the BUP code is part of the PER driver image).
    per-entry working buffer pointer at `driver_base+$2C`,
    sets the port-1 peripheral marker at `driver_base+$54 = 1`
    (PER side), and writes the initial `BupConfig` entry
-   (`unit_id = 1, partition = 1`) into the caller's workbuff
-   (BUP side). The same routine is reached by `PER_Init` and
+   (`unit_id = 1, partition = 1`, then four zero words) into the
+   caller's `conf[]` buffer (the R6 argument; BUP side). The same
+   routine is reached by `PER_Init` and
    by `BUP_HK_INIT` because the hybrid driver shares one
    init entry.
 3. Game calls BUP_* by dispatching through the table:
@@ -500,7 +501,7 @@ representative use.
 
 | Offset | Size | Access | Role |
 |--------|------|--------|------|
-| `+$00` | 4 B | mem.L | Slot 0 function pointer - unified PER+BUP driver init / relocator. Same entry is reached by `PER_Init` (BIOS ROM `$0007D600`) and by `BUP_HK_INIT` (`mem.L[$06000358]`); sets up the slot table, PER port-1 marker (`+$54`), and initial `BupConfig` in the caller's workbuff |
+| `+$00` | 4 B | mem.L | Slot 0 function pointer - unified PER+BUP driver init / relocator. Same entry is reached by `PER_Init` (BIOS ROM `$0007D600`) and by `BUP_HK_INIT` (`mem.L[$06000358]`); sets up the slot table, PER port-1 marker (`+$54`), and initial `BupConfig` in the caller's `conf[]` buffer (R6) |
 | `+$04` | 4 B | mem.L | Slot 1 function pointer (BUP_SelPart) |
 | `+$08` | 4 B | mem.L | Slot 2 function pointer (BUP_Format) |
 | `+$0C` | 4 B | mem.L | Slot 3 function pointer (BUP_Stat) |

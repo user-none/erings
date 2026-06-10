@@ -44,10 +44,10 @@ func (h *HLEBIOS) registerServices() {
 	// PER_Init: peripheral subsystem init. Lays down the 11-slot
 	// driver function-pointer table at the caller's R4 buffer
 	// (magic addresses dispatched by hlebios_per.go services),
-	// registers driver_base in WRAM-H at $06000354, and fills the
-	// caller's R6 buffer with peripheral records — matching the
+	// registers driver_base in WRAM-H at $06000354, and writes the
+	// initial BupConfig to the caller's R6 buffer — matching the
 	// side effect of real BIOS PER_Init invoking its decompressed
-	// driver's relocator + first-peripheral fetch.
+	// driver's slot-0 relocator.
 	h.register(hleBiosPERInit, hleBiosPERInitService)
 
 	// Slave SH-2 init. Reached when slave.Reset (via SMPC SSHON)
@@ -428,7 +428,7 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 // 16 KB hybrid PER + BUP driver from $0007D660 into the buffer at
 // caller's R4 via sub_1F04, then JSRs into the driver's slot-0
 // relocator, which builds an 11-entry function-pointer table at
-// the workbuff (caller's R5), writes peripheral records to
+// the workbuff (caller's R5), writes the initial BupConfig to
 // caller's R6, and exits with R4/R5 in a specific state.
 //
 // SDK signature: PER_Init(libaddr, workbuff, conf[3]):
@@ -440,11 +440,9 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 //	                 plus the per-entry working buffer pointer
 //	                 at workbuff+$2C, plus driver-state markers
 //	                 at workbuff+$54..+$67.
-//	R6 = conf[3]   — peripheral output buffer. The HLE writes a
-//	                 4-byte digital-pad record for port 1 at
-//	                 R6+0..+7 and port 2 at R6+8..+15 (8-byte
-//	                 per-port stride matches the disassembled
-//	                 real-BIOS slot-0 layout).
+//	R6 = conf[3]   — BupConfig buffer. Slot-0 writes the device
+//	                 descriptor {unit_id=1, partition=1} followed
+//	                 by four zero words (12 bytes); see the body.
 //
 // Game code subsequently dispatches to slot N via
 // JSR @(N*4, workbuff); the magic addresses land in the SH-2
@@ -453,11 +451,8 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 // Exit register state (matches a side-by-side trace of real BIOS
 // slot 0, which the PER_Init trampoline invokes internally):
 //
-//	R4 = entry R6 + 8   (peripheral-buffer pointer advanced past
-//	                     the port-1 record to the port-2 slot;
-//	                     per slot-0 disasm at +$0268..+$026E:
-//	                     "MOV R12,R4; ...; ADD #8,R4")
-//	R5 = 0              (cleared during port-2 setup)
+//	R4 = entry R6 + 8
+//	R5 = 0
 //
 // Registers the driver by writing mem.L[$06000354] = workbuff (the
 // final step of writePerDriverTable), matching real BIOS PER_Init,
@@ -468,13 +463,7 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 // here does not disturb it.
 //
 // The workbuff may live in Work RAM-L or Work RAM-H depending on the
-// title (Cotton Boomerang uses WRAM-L, NiGHTS uses WRAM-H); see
-// isPerBufferRAM. A workbuff outside RAM is ignored.
-//
-// The R6 fill matters: game code that reads R6 immediately after
-// PER_Init (e.g. NiGHTS at $06005598 reading mem.B[R12+1] where
-// R12 = caller's R6) would otherwise get stale stack data and
-// corrupt downstream state.
+// title; see isPerBufferRAM. A workbuff outside RAM is ignored.
 func hleBiosPERInitService(cpu *sh2.CPU, bus *Bus) {
 	r := cpu.Registers()
 	workbuff := r.R[5]
@@ -483,7 +472,16 @@ func hleBiosPERInitService(cpu *sh2.CPU, bus *Bus) {
 		writePerDriverTable(bus, workbuff)
 	}
 	if isPerBufferRAM(periphBuf) {
-		writeBothPortRecords(bus, periphBuf)
+		// Slot-0 writes the initial BupConfig into the caller's R6
+		// buffer: unit_id=1 (internal backup device present), partition=1,
+		// then four zero words (12 bytes total). Games read mem.W[R6+0]
+		// to confirm a backup device is present before issuing BUP_* calls.
+		bus.Write16(periphBuf+0, 1)
+		bus.Write16(periphBuf+2, 1)
+		bus.Write16(periphBuf+4, 0)
+		bus.Write16(periphBuf+6, 0)
+		bus.Write16(periphBuf+8, 0)
+		bus.Write16(periphBuf+10, 0)
 	}
 	cpu.SetReg(4, r.R[6]+8)
 	cpu.SetReg(5, 0)

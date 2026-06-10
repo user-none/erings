@@ -214,10 +214,10 @@ disassembly progresses. The format for each entry:
   slot 1 starts at `+$02C4`).
 - **Effects**: builds the 11-entry function-pointer table at
   R4+$00..R4+$2B; registers driver in `mem.L[$06000354]`;
-  initializes driver state at `driver_base+$54..+$67`; writes
-  peripheral record header to caller's R5 buffer; dispatches on
-  current peripheral status (read from the A-bus-CS1 address
-  `$24FFFFFF` in pool[+$14C] — see note below) to
+  initializes driver state at `driver_base+$54..+$67`; writes the
+  initial BupConfig device descriptor to caller's R5 buffer;
+  dispatches on current peripheral status (read from the A-bus-CS1
+  address `$24FFFFFF` in pool[+$14C] — see note below) to
   peripheral-type-specific init for port 1; and again for port 2.
 
 ```python
@@ -239,16 +239,25 @@ def slot_0_init(driver_base, output_buf):        # R4 = driver_base, R5 = output
     # holds the per-entry working buffer base at driver_base + $78.
     mem.L[driver_base + 0x2C] = driver_base + 0x78
 
-    # Step 4: per-port init. Loops for port 1 then port 2; structure
+    # Step 4: write the initial BupConfig device descriptor to the
+    # caller's output buffer. unit_id=1 (internal backup present),
+    # partition=1, followed by four zero words (12 bytes total). This is
+    # written once, not per-port; verified by write-watch across several
+    # titles: {0001,0001,0000,0000,0000,0000}.
+    mem.W[output_buf + 0] = 1                     # unit_id
+    mem.W[output_buf + 2] = 1                     # partition
+    mem.W[output_buf + 4] = 0
+    mem.W[output_buf + 6] = 0
+    mem.W[output_buf + 8] = 0
+    mem.W[output_buf + 10] = 0
+
+    # Step 5: per-port init. Loops for port 1 then port 2; structure
     # mirrors except for marker offsets ($54 vs $56) and type constants
     # ($0400 for port 1 type-$00, $0200 for port 1 type-$20, similar
-    # but mirrored for port 2).
+    # but mirrored for port 2). Writes only driver-state markers/state;
+    # the peripheral-status fields it leaves in the output buffer were
+    # zero for the digital-pad configuration measured.
     for port in (1, 2):
-        # Write the per-port peripheral record header in the caller's
-        # output buffer: 8 bytes per port (type word, length word,
-        # port-id word, reserved word).
-        mem.W[output_buf + 0] = 1                 # type
-        mem.W[output_buf + 2] = 1                 # length
         mem.B[driver_base + 0x54 + (port - 1) * 2] = 1   # port marker (provisional)
 
         # Read the peripheral-status byte at $24FFFFFF (A-bus CS1).
@@ -279,7 +288,7 @@ def slot_0_init(driver_base, output_buf):        # R4 = driver_base, R5 = output
         # per-port init (peripheral count, button-state seed).
         sub_20C4(output_buf + 8)
 
-        # Advance to the next port's record header.
+        # Advance to the next port's peripheral-status fields.
         output_buf += 8
 
     # Epilogue: restore callee-save regs (R8-R14, PR) and return.
@@ -295,8 +304,8 @@ def slot_0_init(driver_base, output_buf):        # R4 = driver_base, R5 = output
 - `mem.L[driver_base + $58]` / `+$5C` / `+$60` / `+$64`:
   peripheral-type-specific state (R8/R10 constants by peripheral
   type)
-- `mem.W[caller_R5 + 0..7]`: port 1 record (type + length words)
-- `mem.W[caller_R5 + 8..15]`: port 2 record (similar)
+- `mem.W[caller_R5 + 0]` = 1 (unit_id), `+2` = 1 (partition),
+  `+4..+11` = 0: the initial BupConfig device descriptor
 - All callee-save registers (R8-R14, PR) restored before RTS.
 
 **Pool values (relative to driver_base)**:
@@ -340,7 +349,8 @@ def slot_0_init(driver_base, output_buf):        # R4 = driver_base, R5 = output
 - `mem.L[$06000354]` is set to the driver buffer base.
 - Driver-state markers at `driver_base+$54..+$67` reflect the
   peripheral type the SMPC reports.
-- The caller's R5 buffer holds one peripheral record per port.
+- The caller's R5 buffer holds the initial BupConfig device
+  descriptor: `+0` = 1 (unit_id), `+2` = 1 (partition), `+4..+11` = 0.
 
 The slot-0 dispatch reading from `$24FFFFFF` is unusual - that's
 inside the unmapped portion of the cache-disabled A-bus / cartridge

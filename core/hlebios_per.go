@@ -127,40 +127,6 @@ func writePerDriverTable(bus *Bus, driverBase uint32) {
 	bus.writeWramHU32(wramHPERDriverSlot-0x06000000, driverBase)
 }
 
-// writePortRecord writes one 4-byte SDK digital-pad record at the
-// given destination address. Layout matches what real BIOS produces
-// in SMPC OREG during an INTBACK:
-//
-//	+0  $F1 (multi-tap=F, connectors=1 — direct connection)
-//	+1  $02 (peripheral ID: digital pad, 2 data bytes follow)
-//	+2  pad >> 8 (button byte 1, active-low)
-//	+3  pad & $FF (button byte 2, active-low)
-func writePortRecord(bus *Bus, dst uint32, pad uint16) {
-	bus.Write8(dst+0, 0xF1)
-	bus.Write8(dst+1, 0x02)
-	bus.Write8(dst+2, uint8(pad>>8))
-	bus.Write8(dst+3, uint8(pad))
-}
-
-// writeBothPortRecords emits port-1 and port-2 records to a
-// caller-supplied buffer at the disassembled real-BIOS slot-0
-// 8-byte per-port stride (the ADD #8,R4 between port-1 and
-// port-2 setup at slot-0 +$026E confirms 8 bytes between record
-// starts). Each record itself is 4 bytes (writePortRecord); the
-// remaining 4 bytes of each 8-byte slot are left as zeros. Per
-// docs/bios/peripheral_driver.md the side-effect summary of
-// slot 0 is mem.W[caller_R5 + 0..7] = port 1, mem.W[+8..15] =
-// port 2 — this matches that layout.
-func writeBothPortRecords(bus *Bus, buf uint32) {
-	if buf == 0 {
-		return
-	}
-	for port := uint32(0); port < 2; port++ {
-		pad := bus.smpc.PadData(int(port))
-		writePortRecord(bus, buf+port*8, pad)
-	}
-}
-
 // hlePerDriverSlot0Service runs the documented slot-0 effects when
 // the game explicitly dispatches through driver_base+$00 (typically
 // via "MOV.L @($06000354),Rn ; JSR @(0,Rn)"). Effects:

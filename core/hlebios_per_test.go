@@ -136,10 +136,8 @@ func TestPERInitInitializesDriverState(t *testing.T) {
 	}
 }
 
-func TestPERInitPopulatesPortRecords(t *testing.T) {
+func TestPERInitWritesBupConfig(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
-	bus.smpc.SetPadData(0, 0xBFFD) // some pressed buttons on port 0
-	bus.smpc.SetPadData(1, 0xFEEF) // and on port 1
 
 	const periphBuf uint32 = 0x06080100
 	master.SetReg(4, 0)
@@ -148,43 +146,22 @@ func TestPERInitPopulatesPortRecords(t *testing.T) {
 
 	hleBiosPERInitService(master, bus)
 
-	// Port 0 record at periphBuf+0..+3.
-	if got := bus.Read8(periphBuf + 0); got != 0xF1 {
-		t.Errorf("port0 record[0] = %02X, want F1", got)
-	}
-	if got := bus.Read8(periphBuf + 1); got != 0x02 {
-		t.Errorf("port0 record[1] = %02X, want 02", got)
-	}
-	if got := bus.Read8(periphBuf + 2); got != 0xBF {
-		t.Errorf("port0 record[2] = %02X, want BF", got)
-	}
-	if got := bus.Read8(periphBuf + 3); got != 0xFD {
-		t.Errorf("port0 record[3] = %02X, want FD", got)
-	}
-	// Port 1 record at periphBuf+8..+11 (8-byte stride, matches the
-	// disassembled real-BIOS slot-0 layout with ADD #8,R4 between
-	// port-1 and port-2 setup).
-	if got := bus.Read8(periphBuf + 8); got != 0xF1 {
-		t.Errorf("port1 record[0] = %02X, want F1", got)
-	}
-	if got := bus.Read8(periphBuf + 9); got != 0x02 {
-		t.Errorf("port1 record[1] = %02X, want 02", got)
-	}
-	if got := bus.Read8(periphBuf + 10); got != 0xFE {
-		t.Errorf("port1 record[2] = %02X, want FE", got)
-	}
-	if got := bus.Read8(periphBuf + 11); got != 0xEF {
-		t.Errorf("port1 record[3] = %02X, want EF", got)
+	// Slot-0 writes the initial BupConfig {unit_id=1, partition=1}
+	// followed by four zero words.
+	want := []uint16{1, 1, 0, 0, 0, 0}
+	for i, w := range want {
+		off := periphBuf + uint32(i)*2
+		if got := bus.Read16(off); got != w {
+			t.Errorf("BupConfig[+%d] = %04X, want %04X", i*2, got, w)
+		}
 	}
 }
 
 func TestPERInitExitRegisterState(t *testing.T) {
 	// Per side-by-side trace with real BIOS, slot 0 (invoked
 	// internally by PER_Init's trampoline) exits with R4 = entry
-	// R5 + 8 (peripheral buffer advanced past port-1 record to the
-	// port-2 record slot) and R5 = 0. PER_Init's trampoline passes
-	// caller's R6 into slot 0 as R5, so slot 0's "entry R5" is our
-	// caller's R6.
+	// R5 + 8 and R5 = 0. PER_Init's trampoline passes caller's R6
+	// into slot 0 as R5, so slot 0's "entry R5" is our caller's R6.
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, 0)
 	master.SetReg(5, perDriverTestBase)
