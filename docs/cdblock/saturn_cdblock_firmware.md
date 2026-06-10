@@ -52,14 +52,18 @@ interface. The firmware initializes and tests these during boot.
 |-------------|-------------|----------|-------------|
 | $0A000008 | $05890008 | HIRQREQ | Interrupt request flags |
 | $0A00000A | $0589000A | HIRQMASK | Interrupt mask |
-| $0A000018 | $05890018 | CR1 | Command/Result register 1 |
-| $0A00001A | $0589001A | CR2 | Command/Result register 2 |
-| $0A00001C | $0589001C | CR3 | Command/Result register 3 |
-| $0A00001E | $0589001E | CR4 | Command/Result register 4 |
+| $0A000010 | $05890018 | CR1 | Result register 1 (response side) |
+| $0A000012 | $0589001C | CR2 | Result register 2 (response side) |
+| $0A000014 | $05890020 | CR3 | Result register 3 (response side) |
+| $0A000016 | $05890024 | CR4 | Result register 4 (response side) |
+| $0A00001E | - | - | Response notify strobe (firmware writes $0400) |
 
-Note: the SH-2 offsets above assume 16-bit register spacing. The SH-2
-accesses use word-sized reads/writes at $05890018/$0589001C/$05890020/
-$05890024 (4-byte spacing). The SH1 side uses 2-byte spacing.
+The status report publisher (see CD Status Report Generation below)
+writes responses to $0A000010-$0A000016 and then strobes $0A00001E.
+Command parameters written by the SH-2 are read back through the CDB
+ASIC mirror at $09075374, not through this register window. The
+$0A000018 word is used by the sector read path (vector 72), not as a
+CR register.
 
 ### CDB ASIC Registers ($0907xxxx)
 
@@ -431,19 +435,24 @@ CD position tracking interrupt.
 1. Saves current task context (SP to TCB+8)
 2. Switches to interrupt stack at $0F0009A8 (from constant at $22C0)
 3. Clears the timer interrupt flag
-4. Reads current CD position from the position tracking block:
-   - Words at offsets 16-22 contain absolute MSF position (BCD-encoded)
-   - Assembled into two 32-bit values via SWAP.W/XTRCT
-5. Checks status flags - if bit 0 set and track is not 5, calls
-   special handler at $22B6
-6. Otherwise, extracts the command nibble (bits 7-4 of high byte)
-   and dispatches through a 10-entry function table at $1FF0
-7. Stores updated position back
+4. Reads the four words at $0A000010-$0A000016 (base pointer from the
+   constant at $22C8 = $0A000000, offsets 16-22) and assembles them
+   into two 32-bit values via SWAP.W/XTRCT. These are the same four
+   words the status report publisher writes as CR1-CR4; whether this
+   handler interprets them as the published report or as a separate
+   mechanism-facing latch shared at the same addresses has not been
+   validated.
+5. Checks status flags - if bit 0 set and the extracted byte is not
+   5, calls special handler at $22B6
+6. Otherwise, extracts the upper nibble of the high byte and
+   dispatches through a 10-entry function table at $1FF0
+7. Stores the updated values back to $0A000010-$0A000016
 8. If R11 is nonzero, calls TRAPA 33 (yield) to allow task preemption
 
-The dispatch table at $1FF0 contains 10 function pointers, indexed by
-the upper nibble of the position command byte. These handle different
-CD operation modes (play, seek, pause, etc.).
+The dispatch table at $1FF0 contains 10 function pointers ($2030,
+$2060, $2084, $20A0, $20C4, $2104, $2138, $2170, $22A4, $21A0),
+indexed by that upper nibble. Several of the targets sub-dispatch on
+the full byte against ranges that match mechanism command codes.
 
 ### Vector 72 - Sector Read Completion ($5B48)
 
@@ -572,6 +581,100 @@ authentication and disc type detection:
 
 The authentication handler (TRAPA vector for command $E0) uses the
 `Hitachi.PublicKeyCipher` code at $99F4 for disc authentication.
+
+
+## CD Status Report Generation
+
+The host-visible CD report (status, flag/repeat, ctrl/track, index,
+FAD) is maintained by a status report task whose state block is
+addressed GBR-relative with GBR = $0F00025C throughout the
+$2700-$4500 region. The task is event-driven: it sleeps on TRAPA 35
+($27A6) and processes mechanism events (drive status, subcode
+position, command acknowledgments) as they arrive.
+
+### Report Task State Block (GBR = $0F00025C)
+
+| Offset | Size | Purpose |
+|--------|------|---------|
+| +16 | 8 | Report image bank 0 (CR1-CR4) |
+| +24 | 8 | Report image bank 1 (CR1-CR4) |
+| +32 | 1 | Report image bank selector |
+| +44 | 1 | Presentation record bank selector (XOR-flipped per update) |
+| +46 | 1 | Drive state code (4 = seek) |
+| +48 | 1 | Presented ctrl/adr |
+| +49 | 1 | Presented track number |
+| +50 | 1 | Presented index number |
+| +52 | 4 | Presented position (relative) |
+| +56 | 4 | Presented position (absolute FAD) |
+| +68 | 4 | Seek target FAD |
+| +73 | 1 | Pending drive operation code |
+| +74 | 1 | Report override flags (bits 3 and 5: drive command in flight) |
+| +75 | 1 | Secondary flags (bit 3: error report) |
+| +104 | 12 | Queued mechanism command words |
+
+The presentation record (ctrl, track, index, position) is published
+into a double-buffered block at $09000218/$09000224 in ASIC RAM
+($4398-$43B2), selected by the byte at +44.
+
+### Report Publisher ($2930-$29A2)
+
+Publishes the report to the host CR registers at $0A000010-$0A000016
+(skipped while the word at $0A000004 has bit 1 set), then strobes
+$0A00001E with $0400. Publish paths, in priority order:
+
+1. Drive communication state invalid (bit 0 of the byte at $0F0007B0
+   set): publishes CR1 = $20FF (BUSY status + periodic flag, flag
+   byte $FF) with CR2/CR3 = $FFFF - track, index, and FAD invalid.
+2. Otherwise the 8-byte report image is loaded (bank selected by the
+   byte at +32) and $2000 is ORed into CR1 (the periodic flag, bit 5
+   of the status byte). Then:
+   - If byte +74 has bit 3 or bit 5 set (a drive command is in
+     flight), the status code nibble of CR1 is masked to 0 (BUSY).
+     The position fields publish unchanged. This implements the
+     "BUSY while changing status" rule from the interface spec.
+   - Else if byte +75 has bit 3 set, CR1 becomes status ERROR ($09)
+     with flag byte $FF and CR2/CR3/CR4 = $FFFF.
+   - Otherwise the image publishes as-is.
+
+The boot-time report image is initialized to status BUSY with
+track/index/FAD = $FF/$FF/$FFFFFF ($2748-$2756). Track = $FF,
+index = $FF, FAD = $FFFFFF is the standard invalid-position report,
+used whenever the firmware has no trustworthy position.
+
+### Position Presentation During Seeks
+
+The seek-start handler ($2DD8, drive state 4 written to +46 at
+$2E38) stamps the presented position with the seek DESTINATION
+before the mechanism command is even issued:
+
+- The target FAD is stored at +68 ($2E26/$2E36). A target of
+  $FFFFFF means seek-in-place (current position is read from
+  $090001FC); a target of 0 is clamped to FAD 150.
+- $4310 (reached via the jump table at $3650) derives the
+  presentation from the target: for FAD-designated targets the
+  target's track is looked up from the TOC (the lead-out sentinel
+  $AA is remapped at $432E, confirming this is a track number) and
+  the presented index is set to 1 (track lead); for track-designated
+  targets the presented track/index come directly from the target
+  parameters ($4364-$436A). The presented position longs at +52/+56
+  are set from the target.
+
+The presented position advances ONLY during play: the per-sector
+update increments the position longs by one FAD per sector
+($43B8-$43CE). No code path generates or reports positions between a
+seek's source and destination. For the entire duration of a seek the
+reported position is the destination (with the BUSY status override
+active until the mechanism acknowledges the command, then status
+SEEK), and normal per-sector advance resumes from the destination
+once play begins.
+
+### Drive Command Queueing ($415C)
+
+Queueing a mechanism command stores the command words at +104,
+clears the byte at +115, and sets bits 3 and 5 of byte +74 - which
+forces the published status to BUSY. A mechanism acknowledgment
+event (type $83) clears the override ($27E4-$27FE). The seek-start
+path sets bit 3 via $2E3C the same way.
 
 
 ## Peripheral Initialization Details
