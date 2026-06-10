@@ -17,7 +17,7 @@ func (cb *CDBlock) leadoutFAD() uint32 {
 
 func (cb *CDBlock) cmdGetCDStatus() {
 	if cb.disc != nil {
-		fad := cb.playFAD
+		fad := cb.reportFAD()
 		if cb.curTrack == 0xFF {
 			cb.setResponse(0xFFFF, uint16(fad>>16), uint16(fad&0xFFFF))
 		} else {

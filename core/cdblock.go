@@ -801,11 +801,21 @@ func (cb *CDBlock) setResponse(cr1, cr2, cr3 uint16) {
 	cb.resultsRead = false
 }
 
+// reportFAD returns the pickup position used in every host-visible
+// position report: status reports, GetCDStatus, and subcode. While a
+// seek is in progress the destination FAD is reported.
+func (cb *CDBlock) reportFAD() uint32 {
+	if cb.seeking {
+		return cb.seekFAD
+	}
+	return cb.playFAD
+}
+
 // standardReturn fills the result registers with full status info
 // including track number and FAD position. This is the standard
 // response format for most CD Block commands.
 func (cb *CDBlock) standardReturn() {
-	fad := cb.playFAD
+	fad := cb.reportFAD()
 	trackNum := uint8(0xFF)
 	ctrlAddr := uint8(0xFF)
 	trackIdx := uint8(1)
@@ -863,7 +873,7 @@ func fadToIndex(tr *trackEntry, fad uint32) uint8 {
 // Bit 3 (0x8) = CD-ROM data track, 0 = CD-DA audio.
 // Shifted left by 4 in standardReturn, putting it at bit 7 of CR1 low byte.
 func (cb *CDBlock) cdFlag() uint8 {
-	tr := cb.trackAt(cb.playFAD)
+	tr := cb.trackAt(cb.reportFAD())
 	if tr == nil {
 		return 0
 	}

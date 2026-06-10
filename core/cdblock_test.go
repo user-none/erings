@@ -2698,6 +2698,56 @@ func TestCDBlockSeekDiscInvalidTrack(t *testing.T) {
 	}
 }
 
+func TestCDBlockReportsDestinationFADWhileSeeking(t *testing.T) {
+	cb := covCDBlock()
+	cb.playFAD = 900
+	cb.curTrack = 2
+
+	// PlayDisc FAD=200 (track 1), 50-sector range: long backward seek.
+	execCommandFull(cb, 0x10, 0x80, 200, 0x0080, 50)
+	if !cb.seeking || cb.seekFAD != 200 {
+		t.Fatalf("seeking=%v seekFAD=%d, want seeking=true seekFAD=200", cb.seeking, cb.seekFAD)
+	}
+
+	// Resolve the BUSY->SEEK transition, then advance partway so the
+	// internal sweep is mid-flight.
+	cb.TickSystemCycles(cdCmdDelay)
+	cb.TickSystemCycles(cdSeekCycles1x * 100)
+	if !cb.seeking || cb.playFAD == cb.seekFAD {
+		t.Fatalf("sweep not mid-flight: seeking=%v playFAD=%d", cb.seeking, cb.playFAD)
+	}
+
+	reportedFAD := func() uint32 {
+		return uint32(cb.res[2]&0xFF)<<16 | uint32(cb.res[3])
+	}
+
+	// GetCDStatus response carries the destination, not the sweep.
+	execCommandFull(cb, 0x00, 0x00, 0x0000, 0x0000, 0x0000)
+	if got := reportedFAD(); got != 200 {
+		t.Errorf("GetCDStatus FAD during seek = %d, want 200 (destination)", got)
+	}
+	if trk := cb.res[1] & 0xFF; trk != 1 {
+		t.Errorf("GetCDStatus track during seek = %d, want 1 (destination track)", trk)
+	}
+
+	// The standard status report (periodic and command responses)
+	// likewise.
+	cb.standardReturn()
+	if got := reportedFAD(); got != 200 {
+		t.Errorf("status report FAD during seek = %d, want 200 (destination)", got)
+	}
+
+	// Once the seek arrives the report follows the real position again.
+	cb.TickSystemCycles(cdSeekCycles1x * 800)
+	if cb.seeking {
+		t.Fatal("seek should have completed")
+	}
+	cb.standardReturn()
+	if got := reportedFAD(); got != cb.playFAD {
+		t.Errorf("post-seek reported FAD = %d, want playFAD %d", got, cb.playFAD)
+	}
+}
+
 // --- cmdGetFileInfo all-files mode ---
 
 func TestCDBlockGetFileInfoAllFiles(t *testing.T) {

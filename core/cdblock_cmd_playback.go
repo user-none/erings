@@ -59,28 +59,30 @@ func (cb *CDBlock) posToEndFAD(pos uint32) uint32 {
 	return 150
 }
 
-// buildSubCodeQ computes a 5-word SubQ buffer from current playFAD and track info.
+// buildSubCodeQ computes a 5-word SubQ buffer from the reported
+// position and track info.
 func (cb *CDBlock) buildSubCodeQ() []uint16 {
 	var ctrlAdr byte = 0x01 // audio default
 	var trackNum byte = 1
 	var relFAD uint32
 
+	fad := cb.reportFAD()
 	indexNum := byte(1)
-	tr := cb.trackAt(cb.playFAD)
+	tr := cb.trackAt(fad)
 	if tr != nil {
 		trackNum = byte(tr.number)
 		ctrlAdr = tr.control
-		if cb.playFAD >= tr.index01FAD {
-			relFAD = cb.playFAD - tr.index01FAD
+		if fad >= tr.index01FAD {
+			relFAD = fad - tr.index01FAD
 		} else {
 			// In the pregap the relative MSF counts down to INDEX 01.
-			relFAD = tr.index01FAD - cb.playFAD
+			relFAD = tr.index01FAD - fad
 		}
-		indexNum = fadToIndex(tr, cb.playFAD)
+		indexNum = fadToIndex(tr, fad)
 	}
 
 	rm, rs, rf := fad2bcd(relFAD)
-	am, as, af := fad2bcd(cb.playFAD)
+	am, as, af := fad2bcd(fad)
 	trackBCD := toBCD(trackNum)
 	indexBCD := toBCD(indexNum)
 
