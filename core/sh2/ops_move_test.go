@@ -530,6 +530,61 @@ func TestOpMOVPC(t *testing.T) {
 			t.Errorf("R0 = 0x%08X, want 0x18", cpu.reg.R[0])
 		}
 	})
+
+	// PC-relative addressing in a delay slot uses the branch
+	// destination + 2 as PC, not the slot instruction's own
+	// address + 4.
+	newDelaySlotCPU := func(slotOp uint16) (*CPU, *testBus) {
+		bus := newTestBus(0x1000)
+		bus.Write32(0x00, 0x40) // PC = 0x40
+		bus.Write32(0x04, 0xF0) // SP = 0xF0
+		cpu := New(bus, true)
+		cpu.LoadResetVectors()
+		bus.Write16(0x40, 0xAFEF) // BRA 0x22 (0x44 + 2*(-0x11))
+		bus.Write16(0x42, slotOp) // delay slot
+		bus.Write16(0x22, 0x0009) // NOP at branch target
+		return cpu, bus
+	}
+
+	t.Run("MOVLI_in_delay_slot", func(t *testing.T) {
+		// 0xD302: MOV.L @(2*4,PC),R3 in the slot of BRA 0x22.
+		// PC = 0x22 + 2; addr = (0x24 & ~3) + 8 = 0x2C
+		cpu, bus := newDelaySlotCPU(0xD302)
+		bus.Write32(0x2C, 0xCAFEBABE)
+		bus.Write32(0x4C, 0x0BADBAD0) // slot-relative address (wrong)
+		for i := 0; i < 8 && cpu.reg.R[3] == 0; i++ {
+			cpu.Clock()
+		}
+		if cpu.reg.R[3] != 0xCAFEBABE {
+			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
+		}
+	})
+
+	t.Run("MOVWI_in_delay_slot", func(t *testing.T) {
+		// 0x9302: MOV.W @(2*2,PC),R3 in the slot of BRA 0x22.
+		// PC = 0x22 + 2; addr = 0x24 + 4 = 0x28
+		cpu, bus := newDelaySlotCPU(0x9302)
+		bus.Write16(0x28, 0x8042)
+		bus.Write16(0x4A, 0x1111) // slot-relative address (wrong)
+		for i := 0; i < 8 && cpu.reg.R[3] == 0; i++ {
+			cpu.Clock()
+		}
+		if cpu.reg.R[3] != 0xFFFF8042 {
+			t.Errorf("R3 = 0x%08X, want 0xFFFF8042", cpu.reg.R[3])
+		}
+	})
+
+	t.Run("MOVA_in_delay_slot", func(t *testing.T) {
+		// 0xC702: MOVA @(2*4,PC),R0 in the slot of BRA 0x22.
+		// PC = 0x22 + 2; R0 = (0x24 & ~3) + 8 = 0x2C
+		cpu, _ := newDelaySlotCPU(0xC702)
+		for i := 0; i < 8 && cpu.reg.R[0] == 0; i++ {
+			cpu.Clock()
+		}
+		if cpu.reg.R[0] != 0x2C {
+			t.Errorf("R0 = 0x%08X, want 0x2C", cpu.reg.R[0])
+		}
+	})
 }
 
 // TestOpMOVT tests MOVT Rn

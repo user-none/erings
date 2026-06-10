@@ -60,6 +60,11 @@ func disassembleLines(w io.Writer, data []byte, baseAddr, startAddr uint32, n in
 	pool := make(map[uint32]dataEntry)
 	var lastLoad [16]regLoad
 	prevDelayed := false
+	// Branch destination of the previous (delayed-branch) instruction when
+	// statically known. A PC-relative instruction in a delay slot resolves
+	// against the branch destination + 2, not its own address + 4.
+	var prevTarget uint32
+	prevTargetKnown := false
 
 	addr := startAddr
 	for i := 0; i < n; i++ {
@@ -86,37 +91,93 @@ func disassembleLines(w io.Writer, data []byte, baseAddr, startAddr uint32, n in
 			// entry is never revisited.
 			delete(pool, addr)
 			prevDelayed = false
+			prevTargetKnown = false
 		} else {
 			text := sh2.Disassemble(addr, op)
 			rn := uint8((op >> 8) & 0xF)
+
+			// Branch destination of this instruction, when statically
+			// knowable; becomes prevTarget for the next instruction.
+			var branchTarget uint32
+			branchTargetKnown := false
+
 			switch {
 			case op&0xF0FF == 0x0003, op&0xF0FF == 0x0023:
 				// BSRF/BRAF Rn: register holds a PC-relative displacement.
 				if lastLoad[rn].valid {
-					text += fmt.Sprintf("   ; -> $%06X", addr+4+lastLoad[rn].val)
+					branchTarget = addr + 4 + lastLoad[rn].val
+					branchTargetKnown = true
+					text += fmt.Sprintf("   ; -> $%06X", branchTarget)
 					lastLoad[rn].valid = false
 				}
 			case op&0xF0FF == 0x400B, op&0xF0FF == 0x402B:
 				// JSR/JMP @Rn: register holds an absolute target address.
 				if lastLoad[rn].valid {
-					text += fmt.Sprintf("   ; -> $%06X", lastLoad[rn].val)
+					branchTarget = lastLoad[rn].val
+					branchTargetKnown = true
+					text += fmt.Sprintf("   ; -> $%06X", branchTarget)
 					lastLoad[rn].valid = false
 				}
+			case op&0xF000 == 0xA000, op&0xF000 == 0xB000:
+				// BRA/BSR: signed 12-bit displacement.
+				d := int32(op & 0x0FFF)
+				if d >= 0x800 {
+					d -= 0x1000
+				}
+				branchTarget = addr + 4 + uint32(d*2)
+				branchTargetKnown = true
+			case op&0xFD00 == 0x8D00:
+				// BT/S (8Dxx) / BF/S (8Fxx): signed 8-bit displacement.
+				branchTarget = addr + 4 + uint32(int32(int8(op&0xFF))*2)
+				branchTargetKnown = true
 			case op&0xF000 == 0x9000:
 				// MOV.W @(disp,PC),Rn - 16-bit constant pool reference.
-				target := addr + 4 + uint32(op&0xFF)*2
-				if target >= baseAddr && target-baseAddr+2 <= fileSize {
+				disp := uint32(op&0xFF) * 2
+				target := addr + 4 + disp
+				seed := true
+				if prevDelayed {
+					if prevTargetKnown {
+						target = prevTarget + 2 + disp
+						text = fmt.Sprintf("MOV.W @(H'%08X),R%d", target, rn)
+					} else {
+						seed = false
+						text = fmt.Sprintf("MOV.W @(%d,PC),R%d   ; PC-rel base unknown", disp, rn)
+					}
+				}
+				if seed && target >= baseAddr && target-baseAddr+2 <= fileSize {
 					pool[target] = dataEntry{size: 2}
 				}
 			case op&0xF000 == 0xD000:
 				// MOV.L @(disp,PC),Rn - 32-bit constant pool reference; also
 				// record the loaded value for register-indirect resolution.
-				target := (addr &^ 3) + 4 + uint32(op&0xFF)*4
-				if target >= baseAddr && target-baseAddr+4 <= fileSize {
+				disp := uint32(op&0xFF) * 4
+				target := (addr &^ 3) + 4 + disp
+				seed := true
+				if prevDelayed {
+					if prevTargetKnown {
+						target = ((prevTarget + 2) &^ 3) + disp
+						text = fmt.Sprintf("MOV.L @(H'%08X),R%d", target, rn)
+					} else {
+						seed = false
+						text = fmt.Sprintf("MOV.L @(%d,PC),R%d   ; PC-rel base unknown", disp, rn)
+						lastLoad[rn].valid = false
+					}
+				}
+				if seed && target >= baseAddr && target-baseAddr+4 <= fileSize {
 					pool[target] = dataEntry{size: 4}
 					// Second half of the 32-bit value.
 					pool[target+2] = dataEntry{size: 0}
 					lastLoad[rn] = regLoad{binary.BigEndian.Uint32(data[target-baseAddr : target-baseAddr+4]), true}
+				}
+			case op&0xFF00 == 0xC700:
+				// MOVA @(disp,PC),R0.
+				if prevDelayed {
+					disp := uint32(op&0xFF) * 4
+					if prevTargetKnown {
+						text = fmt.Sprintf("MOVA @(H'%08X),R0", ((prevTarget+2)&^3)+disp)
+					} else {
+						text = fmt.Sprintf("MOVA @(%d,PC),R0   ; PC-rel base unknown", disp)
+					}
 				}
 			}
 
@@ -125,6 +186,8 @@ func disassembleLines(w io.Writer, data []byte, baseAddr, startAddr uint32, n in
 			}
 			line = fmt.Sprintf("$%06X: %02X %02X  %s", addr, op>>8, op&0xFF, text)
 			prevDelayed = sh2.IsDelayedBranch(op)
+			prevTarget = branchTarget
+			prevTargetKnown = branchTargetKnown && prevDelayed
 		}
 
 		if _, err := fmt.Fprintln(w, line); err != nil {

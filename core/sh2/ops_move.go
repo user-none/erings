@@ -313,12 +313,22 @@ func opMOVLL4(c *CPU) {
 	c.cycles++
 }
 
+// pcRelBase returns the PC value seen by PC-relative addressing:
+// the address four bytes after the instruction (fetchPC has already
+// advanced by 2). In a delay slot the PC has been redirected, so the
+// instruction sees the branch destination + 2 instead.
+func (c *CPU) pcRelBase() uint32 {
+	if c.inDelay {
+		return c.delayPC + 2
+	}
+	return c.reg.PC + 2
+}
+
 // opMOVWI: MOV.W @(disp,PC),Rn - Rn = sign-extend(word @(PC+disp8*2))
-// PC = address of this instruction + 4 (fetchPC already advanced by 2)
 func opMOVWI(c *CPU) {
 	n := regN(c.ir)
 	disp := uint32(imm8(c.ir)) * 2
-	addr := c.reg.PC + 2 + disp
+	addr := c.pcRelBase() + disp
 	c.reg.R[n] = uint32(int32(int16(c.read16(addr))))
 	c.lastLoadReg = n
 	c.stepBus = BusRead
@@ -326,11 +336,10 @@ func opMOVWI(c *CPU) {
 }
 
 // opMOVLI: MOV.L @(disp,PC),Rn - Rn = long @((PC & ~3) + disp8*4)
-// PC = address of this instruction + 4 (fetchPC already advanced by 2)
 func opMOVLI(c *CPU) {
 	n := regN(c.ir)
 	disp := uint32(imm8(c.ir)) * 4
-	addr := ((c.reg.PC + 2) & 0xFFFFFFFC) + disp
+	addr := (c.pcRelBase() & 0xFFFFFFFC) + disp
 	c.reg.R[n] = c.read32(addr)
 	c.lastLoadReg = n
 	c.stepBus = BusRead
@@ -338,10 +347,9 @@ func opMOVLI(c *CPU) {
 }
 
 // opMOVA: MOVA @(disp,PC),R0 - R0 = (PC & ~3) + disp8*4
-// PC = address of this instruction + 4 (fetchPC already advanced by 2)
 func opMOVA(c *CPU) {
 	disp := uint32(imm8(c.ir)) * 4
-	c.reg.R[0] = ((c.reg.PC + 2) & 0xFFFFFFFC) + disp
+	c.reg.R[0] = (c.pcRelBase() & 0xFFFFFFFC) + disp
 	c.cycles++
 }
 
