@@ -550,12 +550,11 @@ func TestVDP2CRAMViaBus(t *testing.T) {
 func TestVDP2InterruptWiring(t *testing.T) {
 	bus := newBusForTest()
 
-	// Tick VDP2 to trigger VBlank-IN (advance past all active lines)
+	// Advance VDP2 past the last active line to trigger VBlank-IN
 	vdp := bus.vdp2
 	vdp.Write(0x0000, 0x8000) // DISP=1
 	vdp.vLine = 223
-	vdp.lineCycle = 0
-	vdp.TickSystemCycles(systemCyclesPerLine320)
+	vdp.EndLine()
 
 	// VBlank-IN should have raised SCU IST bit 0
 	if got := bus.Read32(0x05FE00A4); got&0x01 == 0 {

@@ -659,11 +659,24 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 	// SCU priority/mask table for vectors $40-$5F. Same base+vec*4
 	// indexing; effective slots at $06000A80-$06000AFF. Each entry is
 	// an (SR_I << 16) | IMS_mask pair the dispatcher applies before
-	// calling a handler (see installIntStubs). $00F0FFFF (SR mask 15,
-	// all SCU sources masked = no nesting) is the default. Games
-	// overwrite the entry with their own SR/IMS pair.
+	// calling a handler (see installIntStubs). Default values set
+	// by the BIOS. Some games do not change this and use the defaults.
+	priMask := [0x20]uint32{
+		0x00F0FFFF, // $40 V-Blank-IN
+		0x00E0FFFE, // $41 V-Blank-OUT
+		0x00D0FFFC, // $42 H-Blank-IN
+		0x00C0FFF8, // $43 Timer 0
+		0x00B0FFF0, // $44 Timer 1
+		0x00A0FFE0, // $45 DSP End
+		0x0090FFC0, // $46 Sound Request
+		0x0080FF80, // $47 System Manager
+		0x0080FF80, // $48 PAD Interrupt
+	}
+	for i := 0x09; i <= 0x1F; i++ { // $49-$5F DMA / Sprite-Draw-End / A-Bus
+		priMask[i] = 0x0070FE00
+	}
 	for vec := uint32(0x40); vec <= 0x5F; vec++ {
-		h.bus.writeWramHU32(wramHPriMaskTable+vec*4, 0x00F0FFFF)
+		h.bus.writeWramHU32(wramHPriMaskTable+vec*4, priMask[vec-0x40])
 	}
 
 	// Semaphore array is zero-filled (which the bus already

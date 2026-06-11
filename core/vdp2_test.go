@@ -168,16 +168,18 @@ func TestVDP2TickAdvancesHDot(t *testing.T) {
 	}
 }
 
-func TestVDP2TickWrapsLine(t *testing.T) {
+func TestVDP2EndLineAdvances(t *testing.T) {
 	v := NewVDP2(NewSCU())
 
-	// Tick past one full line
-	v.TickSystemCycles(systemCyclesPerLine320 + 10)
+	// Mid-line position accumulates, then EndLine advances the line
+	// counter and resets the intra-line position.
+	v.TickSystemCycles(10)
+	v.EndLine()
 	if v.vLine != 1 {
 		t.Errorf("vLine = %d, want 1", v.vLine)
 	}
-	if v.lineCycle != 10 {
-		t.Errorf("lineCycle = %d, want 10", v.lineCycle)
+	if v.lineCycle != 0 {
+		t.Errorf("lineCycle = %d, want 0 after EndLine", v.lineCycle)
 	}
 	// Latch then verify VCNT places vLine=1 in VCT[9:1] as 2.
 	v.Read(0x0002)
@@ -193,10 +195,9 @@ func TestVDP2VBlankINInterrupt(t *testing.T) {
 
 	// Advance to line 223 (last active line, 0-indexed)
 	v.vLine = 223
-	v.lineCycle = 0
 
 	// Complete the line to trigger transition to line 224
-	v.TickSystemCycles(systemCyclesPerLine320)
+	v.EndLine()
 
 	// IST bit 0 = V-Blank-IN
 	if scu.ist&(1<<0) == 0 {
@@ -211,10 +212,9 @@ func TestVDP2VBlankOUTInterrupt(t *testing.T) {
 
 	// Place at last line of frame
 	v.vLine = linesNTSC - 1
-	v.lineCycle = 0
 
-	// Complete the line to wrap frame
-	v.TickSystemCycles(systemCyclesPerLine320)
+	// Complete the frame
+	v.EndFrame()
 
 	// IST bit 1 = V-Blank-OUT
 	if scu.ist&(1<<1) == 0 {
@@ -230,7 +230,7 @@ func TestVDP2HBlankINInterrupt(t *testing.T) {
 	v := NewVDP2(scu)
 
 	// Complete one line from vLine=0 (active region)
-	v.TickSystemCycles(systemCyclesPerLine320)
+	v.EndLine()
 
 	// IST bit 2 = H-Blank-IN
 	if scu.ist&(1<<2) == 0 {
@@ -244,10 +244,9 @@ func TestVDP2HBlankINNotDuringVBlank(t *testing.T) {
 
 	// Place in VBlank region
 	v.vLine = 224
-	v.lineCycle = 0
 
 	// Complete one line
-	v.TickSystemCycles(systemCyclesPerLine320)
+	v.EndLine()
 
 	// IST bit 2 = H-Blank-IN should NOT be set during VBlank
 	if scu.ist&(1<<2) != 0 {
@@ -260,9 +259,12 @@ func TestVDP2FullFrameWrap(t *testing.T) {
 	v := NewVDP2(scu)
 	v.Write(0x0000, 0x8000) // DISP=1
 
-	// Tick through an entire frame
-	totalDots := uint32(linesNTSC) * systemCyclesPerLine320
-	v.TickSystemCycles(totalDots)
+	// Drive an entire frame the way the emulator does: EndLine for
+	// every line except the last, EndFrame at the frame boundary.
+	for line := 0; line < linesNTSC-1; line++ {
+		v.EndLine()
+	}
+	v.EndFrame()
 
 	if v.vLine != 0 {
 		t.Errorf("vLine = %d, want 0 after full frame", v.vLine)
@@ -287,15 +289,14 @@ func TestVDP2OddFieldToggles(t *testing.T) {
 	}
 
 	// Complete one frame
-	totalDots := uint32(linesNTSC) * systemCyclesPerLine320
-	v.TickSystemCycles(totalDots)
+	v.EndFrame()
 
 	if v.oddField {
 		t.Error("oddField should be false after first frame")
 	}
 
 	// Complete another frame
-	v.TickSystemCycles(totalDots)
+	v.EndFrame()
 
 	if !v.oddField {
 		t.Error("oddField should be true after second frame")
@@ -359,8 +360,7 @@ func TestVDP2DISPZeroInterruptsStillFire(t *testing.T) {
 
 	// DISP=0, advance past activeLines
 	v.vLine = 223
-	v.lineCycle = 0
-	v.TickSystemCycles(systemCyclesPerLine320)
+	v.EndLine()
 
 	// VBlank interrupts fire regardless of DISP - the BIOS relies on
 	// receiving VBlank IN with DISP=0 during early boot initialization.

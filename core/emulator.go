@@ -384,8 +384,15 @@ func (e *Emulator) RunFrame() {
 			vdp1.TickSystemCycles(segWidth)
 		}
 
+		// Scanline boundary: advance the raster timebase.
+		if line+1 < e.scanlines {
+			vdp2.EndLine()
+		} else {
+			vdp2.EndFrame()
+		}
+
 		// V-Blank-IN at the boundary of the last active scanline,
-		// matching when VDP2.onLineEnd raises RaiseVBlankIN to SCU.
+		// matching when VDP2.EndLine raises RaiseVBlankIN to SCU.
 		// VBlankIn handles framebuffer swap, erase, BEF/CEF latch,
 		// and LOPR update at FB change. PTM=10 auto-trigger is
 		// deferred to end-of-frame below so the game's V-blank ISR

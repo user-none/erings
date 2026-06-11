@@ -516,36 +516,36 @@ func (v *VDP2) Framebuffer() []byte { return v.framebuffer }
 // FramebufferStride returns the stride (bytes per row) of the framebuffer.
 func (v *VDP2) FramebufferStride() int { return int(v.activeWidth) * 4 }
 
-// TickSystemCycles advances the VDP2 timing engine by the given number
-// of system cycles. VDP2 and the SH-2 both run at the system clock.
+// TickSystemCycles advances the intra-line cycle position (TVSTAT
+// HBLANK, H/V latch). Line advancement is driven by EndLine/EndFrame
+// from the emulator frame loop.
 func (v *VDP2) TickSystemCycles(cycles uint32) {
-	if v.systemCyclesPerLine == 0 {
-		return
-	}
 	v.lineCycle += cycles
-	for v.lineCycle >= v.systemCyclesPerLine {
-		v.lineCycle -= v.systemCyclesPerLine
-		v.onLineEnd()
-	}
 }
 
-// onLineEnd is called when a scanline completes.
-func (v *VDP2) onLineEnd() {
+// EndLine advances the line counter at a scanline boundary. Called by
+// the frame loop for every line except the last of the frame.
+func (v *VDP2) EndLine() {
+	v.lineCycle = 0
 	v.vLine++
 
 	if v.vLine == v.activeLines {
 		v.scu.RaiseVBlankIN()
 	}
 
-	if v.vLine >= v.linesPerFrame {
-		v.vLine = 0
-		v.oddField = !v.oddField
-		v.scu.RaiseVBlankOUT()
-	}
-
 	if v.vLine < v.activeLines {
 		v.scu.RaiseHBlankIN(v.vLine)
 	}
+}
+
+// EndFrame wraps the line counter at the frame boundary. Called by
+// the frame loop after the last line of the frame.
+func (v *VDP2) EndFrame() {
+	v.lineCycle = 0
+	v.vLine = 0
+	v.oddField = !v.oddField
+	v.scu.RaiseVBlankOUT()
+	v.scu.RaiseHBlankIN(0)
 }
 
 // buildTVSTAT computes the TVSTAT register from current timing state.
