@@ -33,14 +33,14 @@ type Timing struct {
 //
 // Within each segment two tiers run:
 //
-//   Per cycle: VDP2.TickSystemCycles(1) plus one SH-2 step. With the
-//   slave enabled, master and slave alternate based on whose cycle
-//   counter is behind, giving a 1:1 per-cycle interleave.
+//   Per cycle: one SH-2 step. With the slave enabled, master and
+//   slave alternate based on whose cycle counter is behind, giving
+//   a 1:1 per-cycle interleave.
 //
-//   Per segment (after the per-cycle loop): SCU DMA deferred IRQs,
-//   SCSP (drains m68k and emits samples), CD Block, and VDP1
-//   incremental command processing. Each receives the segment's
-//   system-cycle count as its budget.
+//   Per segment (after the per-cycle loop): VDP2 intra-line position,
+//   SCU DMA deferred IRQs, SCSP (drains m68k and emits samples), CD
+//   Block, and VDP1 incremental command processing. Each receives the
+//   segment's system-cycle count as its budget.
 //
 // Frame-level events are dispatched from RunFrame at boundaries:
 // VBlank-IN at the last active scanline; VBlank-OUT and the PTM=10
@@ -339,9 +339,8 @@ func (e *Emulator) RunFrame() {
 		for seg := 0; seg < segmentsPerScanline; seg++ {
 			segWidth := e.segSystemCycles[seg]
 
-			// -- Tier 1: Per-cycle SH-2/VDP2 --
+			// -- Tier 1: Per-cycle SH-2 --
 			for cyc := uint32(0); cyc < segWidth; cyc++ {
-				vdp2.TickSystemCycles(1)
 				if slaveEnabled {
 					if e.masterCycles <= e.slaveCycles {
 						e.stepMaster()
@@ -354,6 +353,12 @@ func (e *Emulator) RunFrame() {
 					e.stepMaster()
 				}
 			}
+
+			// VDP2 intra-line position, after tier 1 so reads during a
+			// segment see the segment-start position; the HBLANK bit
+			// then transitions exactly at the active/blank segment
+			// boundary recalcSegments aligns to.
+			vdp2.TickSystemCycles(segWidth)
 
 			// -- Tier 2: SCU DMA deferred interrupts --
 			e.scu.TickSystemCycles(segWidth)
