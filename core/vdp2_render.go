@@ -4753,6 +4753,26 @@ func (v *VDP2) RenderFrame() {
 	height := int(v.activeLines)
 	stride := width * 4
 
+	// On a geometry change, blank the framebuffer: rows written under
+	// the previous stride/height are misinterpreted under the new
+	// layout and would display as garbage. Under LSMD=3 only one
+	// field's rows are written per frame, so the first frame is also
+	// line-doubled (fieldBootstrap below) to fill the other field.
+	intl := v.effectiveInterlace()
+	fieldBootstrap := false
+	if width != v.prevWidth || height != v.prevHeight || intl != v.prevIntl {
+		fieldBootstrap = intl == 3
+		for i := 0; i < len(v.framebuffer); i += 4 {
+			v.framebuffer[i] = 0
+			v.framebuffer[i+1] = 0
+			v.framebuffer[i+2] = 0
+			v.framebuffer[i+3] = 0xFF
+		}
+	}
+	v.prevWidth = width
+	v.prevHeight = height
+	v.prevIntl = intl
+
 	disp := v.regs[vdp2TVMD] & 0x8000
 
 	// DISP=0: blank output. The manual reads BDCLMD as selecting back
@@ -4878,4 +4898,15 @@ func (v *VDP2) RenderFrame() {
 
 	// Composite layers onto framebuffer
 	v.compositeFrame()
+
+	// First frame after a geometry change under LSMD=3: copy each
+	// rendered field row to its sibling row so the frame displays at
+	// full height instead of one field interleaved with blank rows.
+	if fieldBootstrap {
+		for y := 0; y < height; y++ {
+			src := v.outRow(y) * stride
+			dst := (v.outRow(y) ^ 1) * stride
+			copy(v.framebuffer[dst:dst+stride], v.framebuffer[src:src+stride])
+		}
+	}
 }

@@ -235,6 +235,12 @@ type VDP2 struct {
 	winMaskVal   [6]bool
 	winMaskValid bool
 
+	// Geometry of the previously rendered frame. RenderFrame compares
+	// against the current geometry to detect a display-mode change.
+	prevWidth  int
+	prevHeight int
+	prevIntl   uint8
+
 	// SCU reference for interrupt signaling
 	scu *SCU
 }

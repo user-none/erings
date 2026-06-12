@@ -6341,6 +6341,50 @@ func rowIsSentinel(fb []byte, row, width int, val byte) bool {
 	return true
 }
 
+// A display-geometry change blanks the framebuffer (rows written under
+// the previous stride are meaningless bytes under the new one and must
+// not display) and, under LSMD=3, the first frame writes both field
+// rows so the new mode appears at full height instead of one field
+// interleaved with stale or blank rows.
+func TestRenderFrameGeometryChangeBlanksStale(t *testing.T) {
+	v := newTestVDP2()
+
+	// 320x224 frame with a red back screen.
+	v.vram[0] = 0x00
+	v.vram[1] = 0x1F
+	v.RenderFrame()
+	if fb := v.Framebuffer(); fb[0] != 255 {
+		t.Fatalf("setup: 320-mode pixel R = %d, want 255", fb[0])
+	}
+
+	// Switch to 640x448 double-density interlace with a black back
+	// screen (table moved to zeroed VRAM).
+	v.regs[vdp2TVMD] = 0x80C2
+	v.recalcTiming()
+	v.regs[vdp2BKTAL] = 0x8000 // bkAddr = 0x10000, zeroed
+	v.RenderFrame()
+
+	fb := v.Framebuffer()
+	stride := v.FramebufferStride()
+	rows := v.DisplayHeight()
+	for row := 0; row < rows; row++ {
+		off := row * stride
+		for x := 0; x < stride/4; x++ {
+			if fb[off] == 255 {
+				t.Fatalf("row %d x %d still holds the previous mode's red pixel", row, x)
+			}
+			off += 4
+		}
+	}
+	// First new-mode frame is line-doubled: each field-row pair holds
+	// identical content.
+	for i := 0; i < stride; i++ {
+		if fb[i] != fb[stride+i] {
+			t.Fatalf("rows 0 and 1 differ at byte %d: first frame should write both field rows", i)
+		}
+	}
+}
+
 func TestRenderFrameLSMD3EvenFieldWritesEvenRowsOnly(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2TVMD] = 0x80C0 // DISP=1, LSMD=3, VRESO=0, HRESO=0 -> 320x224 per field
@@ -6353,6 +6397,11 @@ func TestRenderFrameLSMD3EvenFieldWritesEvenRowsOnly(t *testing.T) {
 	v.oddField = false // field 0 -> fieldBit 0 -> should write even rows
 
 	fb := v.Framebuffer()
+	// Render once after entering the mode: the geometry change blanks
+	// the framebuffer and line-doubles the first frame, so the per-field
+	// write discipline asserted below starts from the second frame.
+	v.RenderFrame()
+
 	fillSentinel(fb, 0xAA)
 
 	v.RenderFrame()
@@ -6382,6 +6431,11 @@ func TestRenderFrameLSMD3OddFieldWritesOddRowsOnly(t *testing.T) {
 	v.oddField = true // field 1 -> fieldBit 1 -> should write odd rows
 
 	fb := v.Framebuffer()
+	// Render once after entering the mode: the geometry change blanks
+	// the framebuffer and line-doubles the first frame, so the per-field
+	// write discipline asserted below starts from the second frame.
+	v.RenderFrame()
+
 	fillSentinel(fb, 0xAA)
 
 	v.RenderFrame()
@@ -6576,6 +6630,11 @@ func TestRenderFrameLSMD3WithMosaicWritesAllRows(t *testing.T) {
 	v.vram[1] = 0x1F
 
 	fb := v.Framebuffer()
+	// Render once after entering the mode: the geometry change blanks
+	// the framebuffer and line-doubles the first frame, so the per-field
+	// write discipline asserted below starts from the second frame.
+	v.RenderFrame()
+
 	fillSentinel(fb, 0xAA)
 
 	v.oddField = false
