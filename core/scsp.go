@@ -1625,6 +1625,19 @@ func (s *SCSP) InReset() bool {
 	return s.inReset
 }
 
+// SeedSoundStub writes a minimal MC68EC000 program to sound RAM: valid
+// reset vectors (SSP, PC) pointing at an idle loop. On hardware the
+// BIOS leaves its own sound driver resident in sound RAM during boot;
+// boot paths that skip the BIOS sound init (HLE, fast boot) call this
+// so a game that resets the SCSP (SNDOFF/SNDON) before uploading its
+// own driver runs a harmless idle loop instead of uninitialized RAM.
+// The game's own driver overwrites it when loaded.
+func (s *SCSP) SeedSoundStub() {
+	s.ram[0], s.ram[1], s.ram[2], s.ram[3] = 0x00, 0x00, 0xA0, 0x00 // SSP = 0x0000A000
+	s.ram[4], s.ram[5], s.ram[6], s.ram[7] = 0x00, 0x00, 0x04, 0x00 // PC = 0x00000400
+	s.ram[0x400], s.ram[0x401] = 0x60, 0xFE                         // BRA * (idle loop)
+}
+
 // SetInReset sets the 68K reset state. When transitioning from reset
 // to active, the 68K is reset to fetch its initial vectors.
 func (s *SCSP) SetInReset(reset bool) {

@@ -491,6 +491,7 @@ func (h *HLEBIOS) Boot(ip []byte) error {
 	h.installVirtualBIOS()
 	h.populateIntDefaultTable()
 	h.registerServices()
+	h.bus.scsp.SeedSoundStub()
 
 	h.master.HLEHook = h.dispatch(h.master)
 	h.slave.HLEHook = h.dispatch(h.slave)
