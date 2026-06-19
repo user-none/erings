@@ -3,6 +3,8 @@
 
 package sh2
 
+import "sync/atomic"
+
 // BusActivity describes what bus operation the CPU performed on a clock cycle.
 type BusActivity uint8
 
@@ -57,6 +59,12 @@ type CPU struct {
 	// surfaced through INTC.pending + peripheral IRQAsserted() queries.
 	nmiPending bool
 
+	// nmiReq holds an NMI asserted from another goroutine. It is folded
+	// into nmiPending on this CPU's own thread (Clock) so the NMI state
+	// is only ever mutated by the owner, like the IRL line. NMIRequest
+	// sets it.
+	nmiReq atomic.Bool
+
 	// intInhibit blocks maskable-interrupt acceptance on the
 	// instruction immediately following an "interrupt-disabled"
 	// instruction per manual Sec 4.6.2. One-shot: set by LDC/LDC.L/
@@ -65,10 +73,14 @@ type CPU struct {
 	// flag in processInterrupt).
 	intInhibit bool
 
-	// External IRL interrupt state (level-triggered, from SCU)
-	irlLevel uint8
-	irlVec   uint16
-	irlAck   func() // Called when SH-2 accepts an IRL interrupt
+	// External IRL interrupt state (level-triggered, from SCU). Level
+	// and vector are packed into one atomic word (level<<16 | vec):
+	// the SCU asserts and deasserts the line from whichever thread
+	// raised the interrupt, and the CPU samples it every cycle on its
+	// own thread - a packed word can never yield a torn level/vector
+	// pair.
+	irl    atomic.Uint32
+	irlAck func() // Called when SH-2 accepts an IRL interrupt
 
 	// Multi-cycle micro-op state
 	pendingOp    uint8  // which pending operation (popNone = ready)
@@ -113,11 +125,54 @@ type CPU struct {
 	// recomputeWDTEvent and the tail of tickPeripherals.
 	nextPeripheralEvent uint64
 
-	// Cache data array: 4 KB CPU-internal scratch RAM. The SH-2 exposes
-	// its cache at 0xC0000000-0xDFFFFFFF; games use it as fast per-CPU
-	// storage (stacks, tight loops). Mirrored throughout the region.
-	cacheData [4096]byte
-	ccr       uint8 // Cache Control Register (0xFFFFFE92)
+	// On-chip cache (SH7604 manual Section 8): 4-way x 64 entries x
+	// 16-byte lines. cacheData is the 4 KB data array, way-major
+	// (way*1024 + entry*16 + byte), shared by cached lines and the
+	// direct data-array region per Section 8.4.8 Figure 8.10. Cache
+	// contents are NOT initialized by a reset (Section 8.5.1) - only
+	// CCR is cleared - so none of these are touched in Reset.
+	cacheData  [4096]byte
+	cacheTag   [4][64]uint32 // tag address bits A28-A10 per way/entry
+	cacheValid [4][64]bool
+	cacheLRU   [64]uint8 // 6-bit pseudo-LRU per entry (Section 8.4.5)
+	ccr        uint8     // Cache Control Register (0xFFFFFE92)
+
+	// cachePurgePending is a cross-thread purge request (HLE service
+	// dispatched on the other CPU wrote memory). Applied between
+	// instructions on this CPU's own thread.
+	cachePurgePending atomic.Bool
+
+	// fetchLineAddr/Way/Off memoize the last cached instruction
+	// fetch's line resolution, so sequential fetches within one
+	// 16-byte line (typically 7 of 8) skip the 4-way tag search. The
+	// memo holds the resolved location, not data - write hits update
+	// the data array in place and stay visible through it. It is
+	// invalidated by anything that can change what the line address
+	// resolves to: fills, purges, address-array writes, reset.
+	// fetchLineInvalid (odd) never matches a real line address.
+	fetchLineAddr uint32
+	fetchLineWay  int
+	fetchLineOff  uint32
+
+	// busStall is bus-access wait-state debt (in CPU cycles) accumulated
+	// by the current instruction's external accesses: cache misses (line
+	// fills), cache-through and uncached accesses, and write-through
+	// writes (the CPU waits for the internal-bus write to complete,
+	// Section 8.4.2). Cache hits cost nothing (Section 8.4.1: one cycle,
+	// pipelined). Drained one cycle per Clock() before the next
+	// instruction executes.
+	busStall uint32
+
+	// busStallRead/Write/Fill give the wait-state penalty per external
+	// access, indexed by address region at 1 MB granularity
+	// ((addr>>20)&0x7F). Reads, writes, and 16-byte line fills cost
+	// differently where the memory device distinguishes them (Work
+	// RAM-H SDRAM: read 7 = burst pipeline, write 4, fill 7 - SH7604
+	// Sec 7.5.3-7.5.5). All zero by default (no stall); the emulator
+	// fills them via SetBusStallTables from the bus wait-state model.
+	busStallRead  [128]uint32
+	busStallWrite [128]uint32
+	busStallFill  [128]uint32
 
 	// sbycr is the Standby Control Register (0xFFFFFE91). Stub
 	// storage only: writes persist, reads return the stored value.
@@ -149,7 +204,8 @@ type CPU struct {
 // SR has all interrupts masked. Call LoadResetVectors() once the bus
 // has valid data to set the initial PC and SP.
 func New(bus Bus, master bool) *CPU {
-	c := &CPU{bus: bus, lastLoadReg: 0xFF, isMaster: master}
+	c := &CPU{bus: bus, lastLoadReg: 0xFF, isMaster: master,
+		fetchLineAddr: fetchLineInvalid}
 	c.reg.SR = srIMask
 	c.bcr1 = 0x03F0 // initial value per hardware manual Section 7.2.1
 	c.intc.Reset()
@@ -188,9 +244,9 @@ func (c *CPU) Reset() {
 	c.delayPC = 0
 	c.prevPC = 0
 	c.nmiPending = false
+	c.nmiReq.Store(false)
 	c.intInhibit = false
-	c.irlLevel = 0
-	c.irlVec = 0
+	c.irl.Store(0)
 	c.pendingOp = popNone
 	c.pendingStep = 0
 	c.pendingCount = 0
@@ -202,6 +258,8 @@ func (c *CPU) Reset() {
 	c.stepBus = BusNone
 	c.branchTaken = false
 	c.ccr = 0
+	c.busStall = 0
+	c.fetchLineAddr = fetchLineInvalid
 	c.sbycr = 0
 	c.bcr1 = 0x03F0
 	c.intc.Reset()
@@ -226,6 +284,19 @@ func (c *CPU) Clock() ClockState {
 		return c.stepPending()
 	}
 
+	// Bus-access wait states: drain the stall debt the previous instruction
+	// accumulated before executing the next one. Like load-use stall, no
+	// interrupt window is exposed mid-access, so this returns before the
+	// interrupt check below.
+	if c.busStall > 0 {
+		c.busStall--
+		c.cycles++
+		if c.peripheralsDue() {
+			c.tickPeripherals()
+		}
+		return ClockState{}
+	}
+
 	// DMAC bus stall: CPU cannot execute while DMA transfer is in progress.
 	if c.dmac.Stalling() {
 		c.cycles++
@@ -240,6 +311,12 @@ func (c *CPU) Clock() ClockState {
 
 	c.stepBus = BusNone
 	c.branchTaken = false
+
+	// Fold a cross-thread NMI request into the on-thread NMI state
+	// between instructions.
+	if c.nmiReq.CompareAndSwap(true, false) {
+		c.NMI()
+	}
 
 	// Don't accept interrupts during load-use stall cycles.
 	// On real SH-2, pipeline stalls resolve internally without
@@ -376,10 +453,21 @@ func (c *CPU) stepMemRMW() BusActivity {
 	}
 	return BusNone
 }
+
+// InTAS reports whether a TAS.B read-modify-write is in progress. TAS is
+// the only operation that keeps a bus claim held across cycles (SH7604
+// Sec 7.10), so a scheduler running the two CPUs on separate threads must
+// not park this CPU at a cross-thread sync point mid-TAS: the other CPU
+// would stall on the held claim while this one waits, deadlocking. The
+// scheduler lets the TAS finish (releasing the claim) before waiting.
+func (c *CPU) InTAS() bool {
+	return c.pendingOp == popTAS
+}
+
 func (c *CPU) stepTAS() BusActivity {
 	switch c.pendingStep {
 	case 1: // Cycle 2: MA read, test, set T
-		val := c.read8(c.pendingAddr)
+		val := c.tasRead8(c.pendingAddr)
 		c.reg.SetTVal(val == 0)
 		c.pendingVal = uint32(val)
 		return BusHeld
@@ -387,10 +475,54 @@ func (c *CPU) stepTAS() BusActivity {
 		c.pendingVal |= 0x80
 		return BusHeld
 	case 3: // Cycle 4: MA write
-		c.write8(c.pendingAddr, uint8(c.pendingVal))
+		c.tasWrite8(c.pendingAddr, uint8(c.pendingVal))
 		return BusHeld
 	}
 	return BusNone
+}
+
+// tasRead8 / tasWrite8 mirror read8 / write8 but route the external
+// access through the bus's read-modify-write pair so the bus claim
+// taken at TAS's read cycle is held until its write cycle completes.
+// The filtering must stay symmetric with stepTAS: an address that
+// resolves on-chip at the read resolves the same way at the write, so
+// a claim is never left unbalanced.
+func (c *CPU) tasRead8(addr uint32) uint8 {
+	if isOnChip(addr) {
+		v, _ := c.readOnChip(addr)
+		return onChipByte(addr, v)
+	}
+	switch addr >> 29 {
+	case 2, 3, 4, 5: // purge/address-array/reserved: no data
+		return 0
+	case 6: // data array
+		return c.cacheData[addr&0xFFF]
+	}
+	// TAS reads are cache-through even in the cache area - the address
+	// tag is not compared (SH7604 manual Section 8.4.4).
+	c.busStall += c.busStallReadFor(addr)
+	return c.bus.ReadRMW8(addr)
+}
+
+func (c *CPU) tasWrite8(addr uint32, val uint8) {
+	if isOnChip(addr) {
+		c.writeOnChip8(addr, val)
+		return
+	}
+	switch addr >> 29 {
+	case 0: // TAS's write compares the tag and updates the data array
+		// on a hit (Section 8.4.4) before the memory write.
+		if c.ccr&ccrCE != 0 {
+			c.cacheWriteHit8(addr, val)
+		}
+	case 2, 3, 4, 5:
+		return
+	case 6:
+		c.cacheData[addr&0xFFF] = val
+		return
+	}
+	c.busStall += c.busStallWriteFor(addr)
+	c.bus.WriteRMW8(addr, val)
 }
 func (c *CPU) stepRTE() BusActivity {
 	switch c.pendingStep {
@@ -526,6 +658,12 @@ func (c *CPU) Halted() bool {
 	return c.halted
 }
 
+// IRL returns the raw external interrupt-request word currently driven
+// by the SCU (level<<16 | vector). Counterpart to SetIRL/ClearIRL.
+func (c *CPU) IRL() uint32 {
+	return c.irl.Load()
+}
+
 // Registers returns a snapshot of the current register state.
 func (c *CPU) Registers() Registers {
 	return c.reg
@@ -567,6 +705,20 @@ func (c *CPU) SetPR(v uint32) {
 	c.reg.PR = v
 }
 
+// SetCCR seeds the cache control register without going through an
+// on-chip register write. Used by the HLE BIOS to reproduce the real
+// BIOS handoff state (docs/bios/handoff_state.md: CCR = $01, cache
+// enabled with all four ways purged). The CP semantics of a real CCR
+// write apply: a set CP bit purges and self-clears (SH7604 manual
+// Section 8.4.6).
+func (c *CPU) SetCCR(v uint8) {
+	if v&ccrCP != 0 {
+		v &^= ccrCP
+	}
+	c.cachePurge()
+	c.ccr = v & 0xDF
+}
+
 // FRT returns the CPU's free-running timer module. Used by HLE BIOS
 // services that need to configure FRT registers on a CPU whose own
 // setup code we're replacing with Go (e.g., enabling slave FRT
@@ -596,8 +748,7 @@ func (c *CPU) inhibitInterruptNext() {
 // state of the IRL pins and is sampled each cycle. When the SCU clears
 // the interrupt source, it calls ClearIRL to deassert the request.
 func (c *CPU) SetIRL(level uint8, vec uint16) {
-	c.irlLevel = level
-	c.irlVec = vec
+	c.irl.Store(uint32(level)<<16 | uint32(vec))
 }
 
 // SetIRLAck sets the callback invoked when the SH-2 accepts an IRL interrupt.
@@ -607,8 +758,7 @@ func (c *CPU) SetIRLAck(f func()) {
 
 // ClearIRL deasserts the external IRL interrupt request.
 func (c *CPU) ClearIRL() {
-	c.irlLevel = 0
-	c.irlVec = 0
+	c.irl.Store(0)
 }
 
 // NMI requests a non-maskable interrupt and asserts the NMIL bit
@@ -626,18 +776,43 @@ func (c *CPU) NMI() {
 	c.dmac.dmaor |= 0x02
 }
 
+// NMIRequest asserts an NMI from another goroutine. The CPU applies it
+// on its own thread in Clock, so the register/INTC state NMI touches is
+// only ever mutated by the owning thread.
+func (c *CPU) NMIRequest() { c.nmiReq.Store(true) }
+
 // fetchPC reads a 16-bit instruction at PC and advances PC by 2.
 func (c *CPU) fetchPC() uint16 {
 	if c.reg.PC&1 != 0 {
 		c.addressError()
 		return 0
 	}
-	val := c.bus.Read16(c.reg.PC)
+	val := c.fetchInstr(c.reg.PC)
 	c.reg.PC += 2
 	return val
 }
 
-// read16 reads a 16-bit value with alignment check.
+// fetchInstr services an instruction fetch. Fetches in the cache area
+// go through the cache when it is enabled (mixed instruction/data
+// cache, SH7604 manual Section 8.1); fetches from the data array
+// region execute from the on-chip RAM; everything else is an external
+// access charged its region's wait states.
+func (c *CPU) fetchInstr(addr uint32) uint16 {
+	switch addr >> 29 {
+	case 0: // cache area (Section 8.3 Table 8.2)
+		if c.ccr&ccrCE != 0 {
+			return c.cacheFetch16(addr)
+		}
+	case 6: // data array: code running from cache RAM
+		off := addr & 0xFFE
+		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
+	}
+	c.busStall += c.busStallReadFor(addr)
+	return c.bus.Read16(addr)
+}
+
+// read16 reads a 16-bit value with alignment check. Partition routing
+// per SH7604 manual Section 8.3 Table 8.2.
 func (c *CPU) read16(addr uint32) uint16 {
 	if addr&1 != 0 {
 		c.addressError()
@@ -647,17 +822,24 @@ func (c *CPU) read16(addr uint32) uint16 {
 		v, _ := c.readOnChip(addr)
 		return uint16(v)
 	}
-	if isCacheDataArray(addr) {
+	switch addr >> 29 {
+	case 0: // cache area
+		if c.ccr&ccrCE != 0 {
+			return c.cacheRead16(addr)
+		}
+	case 1, 7: // cache-through; I/O area
+	case 2, 3, 4, 5: // purge/address-array (no data on reads)/reserved
+		return 0
+	case 6: // data array (Section 8.4.8)
 		off := addr & 0xFFE
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
-	if isCacheRegion(addr) {
-		return 0
-	}
+	c.busStall += c.busStallReadFor(addr)
 	return c.bus.Read16(addr)
 }
 
-// read32 reads a 32-bit value with alignment check.
+// read32 reads a 32-bit value with alignment check. Partition routing
+// per SH7604 manual Section 8.3 Table 8.2.
 func (c *CPU) read32(addr uint32) uint32 {
 	if addr&3 != 0 {
 		c.addressError()
@@ -667,20 +849,30 @@ func (c *CPU) read32(addr uint32) uint32 {
 		v, _ := c.readOnChip(addr)
 		return v
 	}
-	if isCacheDataArray(addr) {
+	switch addr >> 29 {
+	case 0: // cache area
+		if c.ccr&ccrCE != 0 {
+			return c.cacheRead32(addr)
+		}
+	case 1, 7: // cache-through; I/O area
+	case 2, 4, 5: // purge area reads / reserved
+		return 0
+	case 3: // address array read (Section 8.4.9, longword only)
+		return c.addressArrayRead(addr)
+	case 6: // data array (Section 8.4.8)
 		off := addr & 0xFFC
 		return uint32(c.cacheData[off])<<24 |
 			uint32(c.cacheData[off+1])<<16 |
 			uint32(c.cacheData[off+2])<<8 |
 			uint32(c.cacheData[off+3])
 	}
-	if isCacheRegion(addr) {
-		return 0
-	}
+	c.busStall += c.busStallReadFor(addr)
 	return c.bus.Read32(addr)
 }
 
-// write16 writes a 16-bit value with alignment check.
+// write16 writes a 16-bit value with alignment check. Partition
+// routing per SH7604 manual Section 8.3 Table 8.2; cache-area writes
+// are write-through (Section 8.4.2).
 func (c *CPU) write16(addr uint32, val uint16) {
 	if addr&1 != 0 {
 		c.addressError()
@@ -690,19 +882,30 @@ func (c *CPU) write16(addr uint32, val uint16) {
 		c.writeOnChip(addr, uint32(val))
 		return
 	}
-	if isCacheDataArray(addr) {
+	switch addr >> 29 {
+	case 0: // cache area: update the data array on hit, always write memory
+		if c.ccr&ccrCE != 0 {
+			c.cacheWriteHit16(addr, val)
+		}
+	case 1, 7: // cache-through; I/O area
+	case 2: // associative purge (Section 8.4.7)
+		c.associativePurge(addr)
+		return
+	case 3, 4, 5: // address array is longword only; reserved
+		return
+	case 6: // data array (Section 8.4.8)
 		off := addr & 0xFFE
 		c.cacheData[off] = uint8(val >> 8)
 		c.cacheData[off+1] = uint8(val)
 		return
 	}
-	if isCacheRegion(addr) {
-		return
-	}
+	c.busStall += c.busStallWriteFor(addr)
 	c.bus.Write16(addr, val)
 }
 
-// write32 writes a 32-bit value with alignment check.
+// write32 writes a 32-bit value with alignment check. Partition
+// routing per SH7604 manual Section 8.3 Table 8.2; cache-area writes
+// are write-through (Section 8.4.2).
 func (c *CPU) write32(addr uint32, val uint32) {
 	if addr&3 != 0 {
 		c.addressError()
@@ -712,7 +915,21 @@ func (c *CPU) write32(addr uint32, val uint32) {
 		c.writeOnChip(addr, val)
 		return
 	}
-	if isCacheDataArray(addr) {
+	switch addr >> 29 {
+	case 0: // cache area: update the data array on hit, always write memory
+		if c.ccr&ccrCE != 0 {
+			c.cacheWriteHit32(addr, val)
+		}
+	case 1, 7: // cache-through; I/O area
+	case 2: // associative purge (Section 8.4.7)
+		c.associativePurge(addr)
+		return
+	case 3: // address array write (Section 8.4.9, longword only)
+		c.addressArrayWrite(addr, val)
+		return
+	case 4, 5: // reserved
+		return
+	case 6: // data array (Section 8.4.8)
 		off := addr & 0xFFC
 		c.cacheData[off] = uint8(val >> 24)
 		c.cacheData[off+1] = uint8(val >> 16)
@@ -720,11 +937,27 @@ func (c *CPU) write32(addr uint32, val uint32) {
 		c.cacheData[off+3] = uint8(val)
 		return
 	}
-	if isCacheRegion(addr) {
-		return
-	}
+	c.busStall += c.busStallWriteFor(addr)
 	c.bus.Write32(addr, val)
 }
+
+// SetBusStallTables installs the per-region external-access wait-state
+// tables for reads, writes, and 16-byte line fills (indexed by
+// (addr>>20)&0x7F). The emulator builds them from the memory map.
+// Zero tables (the default) disable bus-access stall.
+func (c *CPU) SetBusStallTables(read, write, fill [128]uint32) {
+	c.busStallRead = read
+	c.busStallWrite = write
+	c.busStallFill = fill
+}
+
+// busStallReadFor/WriteFor/FillFor return the wait-state penalty for
+// an external access at addr. A single masked array index -
+// region-aware at 1 MB granularity, which also folds the cache-through
+// mirror (bit 29) onto the same physical region.
+func (c *CPU) busStallReadFor(addr uint32) uint32  { return c.busStallRead[(addr>>20)&0x7F] }
+func (c *CPU) busStallWriteFor(addr uint32) uint32 { return c.busStallWrite[(addr>>20)&0x7F] }
+func (c *CPU) busStallFillFor(addr uint32) uint32  { return c.busStallFill[(addr>>20)&0x7F] }
 
 // addressError triggers a CPU address error exception.
 func (c *CPU) addressError() {
@@ -740,42 +973,25 @@ func isOnChip(addr uint32) bool {
 	return addr >= 0xFFFF8000
 }
 
-// isCacheRegion returns true if the address is in an SH-2 cache control
-// region (associative purge, address array, data array, or reserved).
-// These regions are CPU-internal and never reach the external bus on
-// real hardware. With no cache modeled, accesses are no-ops EXCEPT for
-// the data array region which is routed to per-CPU scratch RAM.
-//
-//	0x40000000-0x5FFFFFFF: associative cache purge (writes invalidate)
-//	0x60000000-0x7FFFFFFF: cache address array
-//	0x80000000-0xBFFFFFFF: reserved
-//	0xC0000000-0xDFFFFFFF: cache data array (handled separately)
-//
-// Caller must check isOnChip first; the 0xFFFFFE00+ on-chip range is
-// handled separately.
-func isCacheRegion(addr uint32) bool {
-	return addr >= 0x40000000 && addr < 0xC0000000
-}
-
-// isCacheDataArray returns true if the address is in the SH-2 cache data
-// array region. Accesses are routed to per-CPU 4KB scratch RAM with
-// mirroring.
-func isCacheDataArray(addr uint32) bool {
-	return addr >= 0xC0000000 && addr < 0xE0000000
-}
-
 // read8 reads a byte, checking for on-chip peripheral addresses first.
+// Partition routing per SH7604 manual Section 8.3 Table 8.2.
 func (c *CPU) read8(addr uint32) uint8 {
 	if isOnChip(addr) {
 		v, _ := c.readOnChip(addr)
 		return onChipByte(addr, v)
 	}
-	if isCacheDataArray(addr) {
+	switch addr >> 29 {
+	case 0: // cache area
+		if c.ccr&ccrCE != 0 {
+			return c.cacheRead8(addr)
+		}
+	case 1, 7: // cache-through; I/O area
+	case 2, 3, 4, 5: // purge/address-array (no data on reads)/reserved
+		return 0
+	case 6: // data array (Section 8.4.8)
 		return c.cacheData[addr&0xFFF]
 	}
-	if isCacheRegion(addr) {
-		return 0
-	}
+	c.busStall += c.busStallReadFor(addr)
 	return c.bus.Read8(addr)
 }
 
@@ -817,13 +1033,22 @@ func (c *CPU) write8(addr uint32, val uint8) {
 		c.writeOnChip8(addr, val)
 		return
 	}
-	if isCacheDataArray(addr) {
+	switch addr >> 29 {
+	case 0: // cache area: update the data array on hit, always write memory
+		if c.ccr&ccrCE != 0 {
+			c.cacheWriteHit8(addr, val)
+		}
+	case 1, 7: // cache-through; I/O area
+	case 2: // associative purge (Section 8.4.7)
+		c.associativePurge(addr)
+		return
+	case 3, 4, 5: // address array is longword only; reserved
+		return
+	case 6: // data array (Section 8.4.8)
 		c.cacheData[addr&0xFFF] = val
 		return
 	}
-	if isCacheRegion(addr) {
-		return
-	}
+	c.busStall += c.busStallWriteFor(addr)
 	c.bus.Write8(addr, val)
 }
 
@@ -967,11 +1192,13 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 		c.sbycr = uint8(val) & 0xDF
 		return true
 	case addr == 0xFFFFFE92:
-		// CCR - Cache Control Register
+		// CCR - Cache Control Register (Section 8.2). Writing 1 to CP
+		// clears all valid bits and LRU information; CP self-clears
+		// and always reads 0 (Section 8.4.6).
 		v := uint8(val) & 0xDF // bit 5 reserved, always 0
-		if v&0x10 != 0 {
-			// CP (cache purge): invalidate all lines, auto-clears
-			v &^= 0x10
+		if v&ccrCP != 0 {
+			c.cachePurge()
+			v &^= ccrCP
 		}
 		c.ccr = v
 		return true
@@ -1187,6 +1414,17 @@ func (c *CPU) FRTInputCapture() {
 	if c.frt.InputCapture() && c.intc.frtPriority() > 0 {
 		c.intc.AssertSource(isrcFRT)
 	}
+}
+
+// ClearFRTInputCapture clears the FRT input-capture latch and re-evaluates
+// the on-chip interrupt line. Used on a system reset (CKCHG/SYSRES): the
+// peer SH-2 that drives this CPU's cross-CPU input capture is turned off,
+// so a SINIT/MINIT capture latched just before the reset must not leave
+// ICF asserted (the request line is the AND of ICF and TIER.ICIE and is
+// otherwise held until software clears ICF).
+func (c *CPU) ClearFRTInputCapture() {
+	c.frt.ClearInputCapture()
+	c.RefreshOnChipInterrupts()
 }
 
 // routeWDTInterrupt marks the WDT source as possibly asserted after

@@ -202,8 +202,7 @@ func dirtyResettableFields(c *CPU) {
 	c.delayPC = 0x87654321
 	c.nmiPending = true
 	c.intInhibit = true
-	c.irlLevel = 7
-	c.irlVec = 0x3F
+	c.irl.Store(7<<16 | 0x3F)
 	c.pendingOp = popTAS
 	c.pendingStep = 2
 	c.pendingCount = 3
@@ -343,11 +342,11 @@ func TestReset(t *testing.T) {
 	t.Run("clears_irl_level_and_vec", func(t *testing.T) {
 		cpu := setup()
 		cpu.Reset()
-		if cpu.irlLevel != 0 {
-			t.Errorf("irlLevel = %d, want 0", cpu.irlLevel)
+		if uint8(cpu.irl.Load()>>16) != 0 {
+			t.Errorf("irlLevel = %d, want 0", uint8(cpu.irl.Load()>>16))
 		}
-		if cpu.irlVec != 0 {
-			t.Errorf("irlVec = 0x%04X, want 0", cpu.irlVec)
+		if uint16(cpu.irl.Load()) != 0 {
+			t.Errorf("irlVec = 0x%04X, want 0", uint16(cpu.irl.Load()))
 		}
 	})
 	t.Run("clears_pending_op", func(t *testing.T) {
@@ -688,28 +687,28 @@ func TestSetIRL(t *testing.T) {
 	t.Run("stores_level_and_vector", func(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)
 		cpu.SetIRL(5, 0x40)
-		if cpu.irlLevel != 5 {
-			t.Errorf("irlLevel = %d, want 5", cpu.irlLevel)
+		if uint8(cpu.irl.Load()>>16) != 5 {
+			t.Errorf("irlLevel = %d, want 5", uint8(cpu.irl.Load()>>16))
 		}
-		if cpu.irlVec != 0x40 {
-			t.Errorf("irlVec = 0x%04X, want 0x40", cpu.irlVec)
+		if uint16(cpu.irl.Load()) != 0x40 {
+			t.Errorf("irlVec = 0x%04X, want 0x40", uint16(cpu.irl.Load()))
 		}
 	})
 	t.Run("level_zero_allowed", func(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)
 		cpu.SetIRL(0, 0)
-		if cpu.irlLevel != 0 || cpu.irlVec != 0 {
-			t.Errorf("irlLevel=%d irlVec=0x%04X, want 0/0", cpu.irlLevel, cpu.irlVec)
+		if uint8(cpu.irl.Load()>>16) != 0 || uint16(cpu.irl.Load()) != 0 {
+			t.Errorf("irlLevel=%d irlVec=0x%04X, want 0/0", uint8(cpu.irl.Load()>>16), uint16(cpu.irl.Load()))
 		}
 	})
 	t.Run("level_max", func(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)
 		cpu.SetIRL(15, 0x2F)
-		if cpu.irlLevel != 15 {
-			t.Errorf("irlLevel = %d, want 15", cpu.irlLevel)
+		if uint8(cpu.irl.Load()>>16) != 15 {
+			t.Errorf("irlLevel = %d, want 15", uint8(cpu.irl.Load()>>16))
 		}
-		if cpu.irlVec != 0x2F {
-			t.Errorf("irlVec = 0x%04X, want 0x2F", cpu.irlVec)
+		if uint16(cpu.irl.Load()) != 0x2F {
+			t.Errorf("irlVec = 0x%04X, want 0x2F", uint16(cpu.irl.Load()))
 		}
 	})
 }
@@ -720,19 +719,19 @@ func TestClearIRL(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)
 		cpu.SetIRL(10, 0x20)
 		cpu.ClearIRL()
-		if cpu.irlLevel != 0 {
-			t.Errorf("irlLevel = %d, want 0", cpu.irlLevel)
+		if uint8(cpu.irl.Load()>>16) != 0 {
+			t.Errorf("irlLevel = %d, want 0", uint8(cpu.irl.Load()>>16))
 		}
-		if cpu.irlVec != 0 {
-			t.Errorf("irlVec = 0x%04X, want 0", cpu.irlVec)
+		if uint16(cpu.irl.Load()) != 0 {
+			t.Errorf("irlVec = 0x%04X, want 0", uint16(cpu.irl.Load()))
 		}
 	})
 	t.Run("idempotent", func(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)
 		cpu.ClearIRL()
 		cpu.ClearIRL()
-		if cpu.irlLevel != 0 || cpu.irlVec != 0 {
-			t.Errorf("after double-clear: irlLevel=%d irlVec=0x%04X", cpu.irlLevel, cpu.irlVec)
+		if uint8(cpu.irl.Load()>>16) != 0 || uint16(cpu.irl.Load()) != 0 {
+			t.Errorf("after double-clear: irlLevel=%d irlVec=0x%04X", uint8(cpu.irl.Load()>>16), uint16(cpu.irl.Load()))
 		}
 	})
 }

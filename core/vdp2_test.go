@@ -22,14 +22,52 @@ func TestVDP2NewDefaults(t *testing.T) {
 	if v.linesPerFrame != linesNTSC {
 		t.Errorf("linesPerFrame = %d, want %d", v.linesPerFrame, linesNTSC)
 	}
-	if v.systemCyclesPerLine != systemCyclesPerLine320 {
-		t.Errorf("systemCyclesPerLine = %d, want %d", v.systemCyclesPerLine, systemCyclesPerLine320)
+	if v.Is352Clock() {
+		t.Error("Is352Clock should be false in default 320 mode")
 	}
 	if !v.oddField {
 		t.Error("oddField should be true initially")
 	}
 	if v.pal {
 		t.Error("pal should be false initially")
+	}
+}
+
+// TestRPRCTLArmPerLine verifies the self-clearing RPRCTL re-read model:
+// a write records its re-read bits at the raster line the SH-2 is on, the
+// renderer reads them per line via rotArmBits, multiple writes on a line
+// accumulate, out-of-range lines are ignored, and ResetRotArm clears the
+// table. Per VDP2 manual Sec 6.3 the bits are per-line, not frame-scoped.
+func TestRPRCTLArmPerLine(t *testing.T) {
+	v := NewVDP2(NewSCU())
+	const rprctlOff = uint32(vdp2RPRCTL * 2)
+
+	v.vLine = 5
+	v.Write(rprctlOff, 0x0007) // arm param A Xst/Yst/KAst on line 5
+	if got := v.rotArmBits(5); got != 0x0007 {
+		t.Errorf("rotArmBits(5) = 0x%04X, want 0x0007", got)
+	}
+	if got := v.rotArmBits(6); got != 0 {
+		t.Errorf("rotArmBits(6) = 0x%04X, want 0 (only line 5 armed)", got)
+	}
+
+	// Writes within a line accumulate; non-arm bits are masked out.
+	v.vLine = 6
+	v.Write(rprctlOff, 0x0100) // param B Xst
+	v.Write(rprctlOff, 0xF801) // param A Xst + junk high bits
+	if got := v.rotArmBits(6); got != 0x0101 {
+		t.Errorf("rotArmBits(6) = 0x%04X, want 0x0101", got)
+	}
+
+	// A raster line past the table is ignored, not a panic.
+	v.vLine = uint16(len(v.rprArm) + 10)
+	v.Write(rprctlOff, 0x0007)
+
+	v.ResetRotArm()
+	for i := range v.rprArm {
+		if v.rprArm[i] != 0 {
+			t.Fatalf("ResetRotArm left rprArm[%d] = 0x%04X", i, v.rprArm[i])
+		}
 	}
 }
 
@@ -406,8 +444,8 @@ func TestVDP2TimingPAL256(t *testing.T) {
 
 func TestVDP2Timing320Mode(t *testing.T) {
 	v := NewVDP2(NewSCU())
-	if v.systemCyclesPerLine != 1708 {
-		t.Errorf("systemCyclesPerLine = %d, want 1708", v.systemCyclesPerLine)
+	if v.Is352Clock() {
+		t.Error("Is352Clock should be false in 320 mode")
 	}
 }
 
@@ -416,8 +454,8 @@ func TestVDP2Timing352Mode(t *testing.T) {
 
 	// HRESO bit 0 = 1 -> 352 mode
 	v.Write(0x0000, 0x0001)
-	if v.systemCyclesPerLine != 1820 {
-		t.Errorf("systemCyclesPerLine = %d, want 1820", v.systemCyclesPerLine)
+	if !v.Is352Clock() {
+		t.Error("Is352Clock should be true in 352 mode")
 	}
 }
 
@@ -430,8 +468,8 @@ func TestVDP2Timing640Mode(t *testing.T) {
 	if !v.hiRes {
 		t.Error("hiRes should be true")
 	}
-	if v.systemCyclesPerLine != systemCyclesPerLine320 {
-		t.Errorf("systemCyclesPerLine = %d, want %d (320 clock)", v.systemCyclesPerLine, systemCyclesPerLine320)
+	if v.Is352Clock() {
+		t.Error("Is352Clock should be false (640 uses the 320 clock)")
 	}
 }
 
@@ -444,8 +482,8 @@ func TestVDP2Timing704Mode(t *testing.T) {
 	if !v.hiRes {
 		t.Error("hiRes should be true")
 	}
-	if v.systemCyclesPerLine != systemCyclesPerLine352 {
-		t.Errorf("systemCyclesPerLine = %d, want %d (352 clock)", v.systemCyclesPerLine, systemCyclesPerLine352)
+	if !v.Is352Clock() {
+		t.Error("Is352Clock should be true (704 uses the 352 clock)")
 	}
 }
 
@@ -560,8 +598,8 @@ func TestVDP2TVMDWriteRecalcsTiming(t *testing.T) {
 	if v.activeLines != 240 {
 		t.Errorf("activeLines = %d, want 240", v.activeLines)
 	}
-	if v.systemCyclesPerLine != 1820 {
-		t.Errorf("systemCyclesPerLine = %d, want 1820", v.systemCyclesPerLine)
+	if !v.Is352Clock() {
+		t.Error("Is352Clock should be true after writing HRESO=1 (352)")
 	}
 }
 
@@ -617,8 +655,8 @@ func TestVDP2NewInitialState(t *testing.T) {
 	if v.linesPerFrame != linesNTSC {
 		t.Errorf("linesPerFrame = %d, want %d", v.linesPerFrame, linesNTSC)
 	}
-	if v.systemCyclesPerLine != systemCyclesPerLine320 {
-		t.Errorf("systemCyclesPerLine = %d, want %d", v.systemCyclesPerLine, systemCyclesPerLine320)
+	if v.Is352Clock() {
+		t.Error("Is352Clock should be false in default 320 mode")
 	}
 	if v.activeWidth != 320 {
 		t.Errorf("activeWidth = %d, want 320", v.activeWidth)
@@ -757,36 +795,36 @@ func TestVDP2EXTENLatchSkippedWhenEXLTEN1(t *testing.T) {
 	}
 }
 
-func TestVDP2FieldBitExported(t *testing.T) {
+func TestVDP2FieldBit(t *testing.T) {
 	v := NewVDP2(NewSCU())
 
 	// Non-interlace: always 0 regardless of oddField.
 	v.regs[vdp2TVMD] = 0x8000
 	v.recalcTiming()
 	v.oddField = false
-	if got := v.FieldBit(); got != 0 {
-		t.Errorf("non-interlace even-field FieldBit = %d, want 0", got)
+	if got := v.fieldBit(); got != 0 {
+		t.Errorf("non-interlace even-field fieldBit = %d, want 0", got)
 	}
 	v.oddField = true
-	if got := v.FieldBit(); got != 0 {
-		t.Errorf("non-interlace odd-field FieldBit = %d, want 0", got)
+	if got := v.fieldBit(); got != 0 {
+		t.Errorf("non-interlace odd-field fieldBit = %d, want 0", got)
 	}
 
 	// LSMD=3 even field -> 0; odd field -> 1.
 	v.regs[vdp2TVMD] = 0x80C0
 	v.recalcTiming()
 	v.oddField = false
-	if got := v.FieldBit(); got != 0 {
-		t.Errorf("LSMD=3 even-field FieldBit = %d, want 0", got)
+	if got := v.fieldBit(); got != 0 {
+		t.Errorf("LSMD=3 even-field fieldBit = %d, want 0", got)
 	}
 	v.oddField = true
-	if got := v.FieldBit(); got != 1 {
-		t.Errorf("LSMD=3 odd-field FieldBit = %d, want 1", got)
+	if got := v.fieldBit(); got != 1 {
+		t.Errorf("LSMD=3 odd-field fieldBit = %d, want 1", got)
 	}
 
-	// LSMD=3 + NBG mosaic enabled -> effective LSMD=2; FieldBit must be 0.
+	// LSMD=3 + NBG mosaic enabled -> effective LSMD=2; fieldBit must be 0.
 	v.regs[vdp2MZCTL] = 0x0001
-	if got := v.FieldBit(); got != 0 {
-		t.Errorf("LSMD=3 + mosaic FieldBit = %d, want 0 (downgrade)", got)
+	if got := v.fieldBit(); got != 0 {
+		t.Errorf("LSMD=3 + mosaic fieldBit = %d, want 0 (downgrade)", got)
 	}
 }

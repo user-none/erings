@@ -614,7 +614,7 @@ func TestCDBlockAudioSectorRateLockedAt1x(t *testing.T) {
 // 352, PAL variants) instead of using a fixed compile-time rate.
 func TestCDBlockRecalcTimingScalesAllPeriods(t *testing.T) {
 	cb := obsCDBlock()
-	const ntsc352 uint32 = 28719600
+	const ntsc352 uint32 = 28636400
 	cb.RecalcTiming(ntsc352)
 
 	cases := []struct {
@@ -664,8 +664,8 @@ func TestCDBlockAudioSectorPacingAcrossModes(t *testing.T) {
 		cyclesPerSecond  uint32
 		expectedPeriod1x int
 	}{
-		{"NTSC 320", 26952240, 26952240 / 75},
-		{"NTSC 352", 28719600, 28719600 / 75},
+		{"NTSC 320", 26874100, 26874100 / 75},
+		{"NTSC 352", 28636400, 28636400 / 75},
 	}
 	for _, m := range modes {
 		t.Run(m.name, func(t *testing.T) {

@@ -5,6 +5,7 @@ package core
 
 import (
 	"math"
+	"sync/atomic"
 
 	m68k "github.com/user-none/go-chip-m68k"
 )
@@ -335,6 +336,11 @@ type SCSP struct {
 	slots          [32]scspSlotState // Per-slot runtime state
 	dsp            scspDSP           // DSP effects processor
 	mainIntActive  bool              // Level-sensitive: true when MCIPD & MCIEB is non-zero
+
+	// Pending Sound Request raise toward the SCU, requested by
+	// checkMainInterrupt and delivered by TickSystemCycles (see
+	// checkMainInterrupt).
+	soundReqPending atomic.Bool
 
 	mixBuffer []int16 // Interleaved stereo output (L, R, L, R, ...)
 	mixPos    int     // Write position in mixBuffer
@@ -1343,6 +1349,9 @@ func (s *SCSP) StartFrame(systemCyclesPerFrame, samplesPerFrame, m68kCyclesPerFr
 // drift, and a smooth per-call distribution independent of how the
 // emulator chooses to slice the frame into segments.
 func (s *SCSP) TickSystemCycles(cycles uint32) {
+	if s.soundReqPending.Swap(false) && s.scu != nil {
+		s.scu.RaiseSoundRequest()
+	}
 	if cycles == 0 || s.frameSystemCyclesTotal == 0 {
 		return
 	}
@@ -1517,8 +1526,12 @@ func (s *SCSP) checkMainInterrupt() {
 	active := pending != 0
 	s.mainIntActive = active
 
+	// The raise claims the SCU domain, and this can be reached from a
+	// register write while the bus dispatch holds the access's B-Bus
+	// claim (the SCU -> bus acquisition order would invert). Request
+	// it here; TickSystemCycles delivers from a lock-free context.
 	if active && s.scu != nil {
-		s.scu.RaiseSoundRequest()
+		s.soundReqPending.Store(true)
 	}
 }
 
@@ -1625,14 +1638,14 @@ func (s *SCSP) InReset() bool {
 	return s.inReset
 }
 
-// SeedSoundStub writes a minimal MC68EC000 program to sound RAM: valid
+// InstallSoundDriverStub writes a minimal MC68EC000 program to sound RAM: valid
 // reset vectors (SSP, PC) pointing at an idle loop. On hardware the
 // BIOS leaves its own sound driver resident in sound RAM during boot;
 // boot paths that skip the BIOS sound init (HLE, fast boot) call this
 // so a game that resets the SCSP (SNDOFF/SNDON) before uploading its
 // own driver runs a harmless idle loop instead of uninitialized RAM.
 // The game's own driver overwrites it when loaded.
-func (s *SCSP) SeedSoundStub() {
+func (s *SCSP) InstallSoundDriverStub() {
 	s.ram[0], s.ram[1], s.ram[2], s.ram[3] = 0x00, 0x00, 0xA0, 0x00 // SSP = 0x0000A000
 	s.ram[4], s.ram[5], s.ram[6], s.ram[7] = 0x00, 0x00, 0x04, 0x00 // PC = 0x00000400
 	s.ram[0x400], s.ram[0x401] = 0x60, 0xFE                         // BRA * (idle loop)

@@ -61,7 +61,9 @@ func (v *VDP1) VBlankIn() {
 	if fcm == 0 {
 		// 1-cycle auto mode: swap then erase new drawFB. LOPR latches
 		// the most recent COPR at the FB-change boundary per VDP1
-		// manual Sec 4.7.
+		// manual Sec 4.7. A pending manual erase completes before the
+		// buffer changes roles.
+		v.PerformLateErase()
 		v.lopr = v.copr
 		v.drawFB, v.displayFB = v.displayFB, v.drawFB
 		v.eraseFrameBuffer(v.drawFB)
@@ -86,7 +88,9 @@ func (v *VDP1) VBlankIn() {
 				v.eraseFrameBuffer(v.displayFB)
 			}
 			// LOPR latches the most recent COPR at FB-change per
-			// VDP1 manual Sec 4.7.
+			// VDP1 manual Sec 4.7. A pending manual erase completes
+			// before the buffer changes roles.
+			v.PerformLateErase()
 			v.lopr = v.copr
 			v.drawFB, v.displayFB = v.displayFB, v.drawFB
 			v.fbcr &^= 0x01
@@ -99,13 +103,12 @@ func (v *VDP1) VBlankIn() {
 		case v.fbcrWritten || vbe != 0:
 			// Manual mode (erase) per Sec.4.2: "Erase/write of the
 			// display frame buffer is performed in the next specified
-			// field." Defer the actual erase via lateEraseDisplayFB
-			// so this frame's display still reads the pre-erase
-			// content; the next FCT=1 swap moves the just-erased
-			// buffer to drawFB with a clean slate. Erasing drawFB
-			// here would wipe the just-drawn content before the swap
-			// can move it to display.
-			v.lateEraseDisplayFB = true
+			// field." Capture the buffer to erase now (the display
+			// framebuffer as of the request); the erase itself runs
+			// at the next VBlankIn boundary or at an earlier swap,
+			// so the next field still displays the pre-erase content
+			// and the buffer is clean before anything draws into it.
+			v.lateEraseFB = v.displayFB
 		}
 	}
 	v.fbcrWritten = false
@@ -140,6 +143,9 @@ func (v *VDP1) VBlankOut() {
 		v.eraseFrameBuffer(v.displayFB)
 		v.vbeLatched = false
 	}
+	// A pending manual erase completes before the buffer changes
+	// roles in the swap.
+	v.PerformLateErase()
 	v.lopr = v.copr
 	v.drawFB, v.displayFB = v.displayFB, v.drawFB
 	v.fbcr &^= 0x01
@@ -203,17 +209,17 @@ func (v *VDP1) TickSystemCycles(cycles uint32) {
 		// Bus contention only delays drawing while drawing is happening;
 		// discard any stall accumulated from writes that arrived after
 		// the prior draw completed.
-		v.vramWriteStallCycles = 0
+		v.vramWriteStallCycles.Store(0)
 		return
 	}
 
 	// Bus arbitration: SH-2 / SCU-DMA writes to VRAM during this
 	// segment have priority over VDP1's command-table fetches. Charge
 	// their cumulative stall against this segment's budget; overshoot
-	// carries via systemCycleDebt to the next segment.
-	budget := int32(cycles) - v.systemCycleDebt - v.vramWriteStallCycles
+	// carries via systemCycleDebt to the next segment. Swap reads and
+	// clears the accumulator in one atomic step against the writers.
+	budget := int32(cycles) - v.systemCycleDebt - v.vramWriteStallCycles.Swap(0)
 	v.systemCycleDebt = 0
-	v.vramWriteStallCycles = 0
 	if budget <= 0 {
 		v.systemCycleDebt = -budget
 		return

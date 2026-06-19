@@ -1,6 +1,7 @@
 # Sega Saturn Memory Map
 
-Sources: SCU User's Manual (ST-097-R5) Figures 1.3/1.5/1.6, VDP1 User's Manual
+Sources: SCU User's Manual (ST-097-R5) Figures 1.3/1.5/1.6, SCU Final
+Specifications and Precautions (ST-210-110194), VDP1 User's Manual
 (ST-013-R3), VDP2 User's Manual (ST-058-R2), SCSP User's Manual (ST-077-R2),
 System Library User's Guide (ST-162-R1), Dual CPU User's Guide (ST-202-R1)
 
@@ -89,6 +90,47 @@ Access bypasses the SH-2 on-chip cache.
 | 25F80000H | 25F8011FH | 288 bytes | VDP2 Registers |
 | 25FE0000H | 25FE00CFH | 208 bytes | SCU Registers |
 | 26000000H | 260FFFFFH | 1 MB | Work RAM-H |
+
+## SCU DMA Accessible Regions
+
+The SCU-DMA controller bridges only the A-Bus, the B-Bus, and the C-Bus
+(Work RAM-H). It has no path to the SH-2 CPU-local low memory (BIOS ROM,
+SMPC, Backup RAM, Work RAM-L) or to its own register space. A transfer
+whose source or destination lies outside the reachable regions is the
+"DMA-illegal" condition the SCU reports through the DMA-illegal interrupt
+(vector 4BH); no data is moved.
+
+| Region | Range (cacheable) | Bus | DMA reachable |
+|--------|-------------------|-----|---------------|
+| BIOS ROM (IPL) | 00000000H-0007FFFFH | CPU | No |
+| SMPC Registers | 00100000H-0010007FH | CPU | No |
+| Backup RAM | 00180000H-0018FFFFH | CPU | No |
+| Work RAM-L | 00200000H-002FFFFFH | CPU | No |
+| A-Bus CS0 (Cartridge) | 02000000H-03FFFFFFH | A-Bus | Yes |
+| A-Bus CS1 | 04000000H-04FFFFFFH | A-Bus | Yes |
+| A-Bus Dummy | 05000000H-057FFFFFH | A-Bus | Yes |
+| A-Bus CS2 (CD Block) | 05800000H-058FFFFFH | A-Bus | Yes |
+| SCSP (Sound RAM + registers) | 05A00000H-05BFFFFFH | B-Bus | Yes |
+| VDP1 (VRAM / frame buffer / registers) | 05C00000H-05D7FFFFH | B-Bus | Yes |
+| VDP2 (VRAM / Color RAM / registers) | 05E00000H-05FBFFFFH | B-Bus | Yes |
+| SCU Registers | 05FE0000H-05FE00CFH | SCU | No |
+| Work RAM-H | 06000000H-060FFFFFH | C-Bus | Yes |
+
+Cache-through aliases (20000000H+) decode to the same regions and follow
+the same reachability.
+
+Additional directional restrictions from the SCU Final Specifications and
+Precautions (ST-210-110194) constrain how the reachable regions may be used:
+
+- No. 01: writing to the A-Bus by SCU-DMA is prohibited - the A-Bus is a
+  valid read source but not a write destination.
+- No. 02: reading the VDP2 area by SCU-DMA is prohibited.
+- No. 04: Work RAM-H is the only Work RAM usable by SCU-DMA; Work RAM-L
+  cannot be used.
+- No. 16/18/19: the read and write address-add-value tables enumerate the
+  reachable spaces as Work RAM-H, the A-Bus external areas, and the B-Bus
+  (VDP1, VDP2, SCSP) only - confirming the CPU-local low memory is not a
+  DMA participant.
 
 ## SH-2 Internal Registers (FFFFFE00H - FFFFFFFFH)
 

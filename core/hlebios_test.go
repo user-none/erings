@@ -322,7 +322,15 @@ func TestHLESysChgSysCkService(t *testing.T) {
 	bus.writeWramHU32(wramHIMSShadow, 0xFFFFD660)
 	master.SetReg(4, 1) // clock mode 1 (352)
 
+	// CKCHG resets the VDP2 register file on hardware. Seed a non-zero
+	// layer/priority register and confirm the service clears it.
+	bus.vdp2.Write(0x00F8, 0x0707) // PRINA: NBG0/NBG1 priority
+
 	hleSysChgSysCkService(master, bus)
+
+	if got := bus.vdp2.Read(0x00F8); got != 0 {
+		t.Errorf("PRINA after CHGSYSCK = %04X, want 0 (register file reset)", got)
+	}
 
 	// Clock-mode word at $06000324 (read by SYS_GETSYSCK).
 	if got := bus.readWramHU32(wramHSysTable + 0x24); got != 1 {

@@ -6,7 +6,7 @@ require (
 	github.com/ebitengine/oto/v3 v3.4.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
 	github.com/user-none/eblitui/coreif v0.7.0
-	github.com/user-none/eblitui/desktop v0.4.1
+	github.com/user-none/eblitui/desktop v0.4.4
 	github.com/user-none/eblitui/romloader v0.4.1
 	github.com/user-none/go-chip-m68k v0.0.0-20260316002938-35a669db4103
 )

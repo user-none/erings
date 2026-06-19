@@ -104,7 +104,7 @@ func (v *VDP1) startDistortedSprite(cmd *vdp1Command, budget int32) (consumed in
 
 	preClip := cmd.pmod&0x0800 == 0
 	if preClip && preClipReject(d.bboxMinX, d.bboxMinY, d.bboxMaxX, d.bboxMaxY, d.clipX, d.clipY) {
-		return 0, true
+		return vdp1PreClipLineCycles * int32(d.bboxMaxY-d.bboxMinY+1), true
 	}
 
 	chebAD := intAbs(d.dx - d.ax)
@@ -292,13 +292,20 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				// skipped span could hold a row-terminating end code
 				// that affects visible pixels.
 				if t0, t1, ok := clipSegParam(d.curLx, d.curLy, d.curRx, d.curRy, d.clipX, d.clipY); !ok {
+					// Wholly off-screen connecting line: detection cost
+					// only (the line is skipped, not iterated).
+					cycles += vdp1PreClipLineCycles
 					d.innerJ = d.lineLen + 1
 				} else {
 					if j1 := int(t1*float64(d.lineLen)) + 2; j1 < d.jEnd {
+						// Off-screen trailing dots still iterate on
+						// hardware; charge them like visible dots.
+						cycles += int32(d.jEnd - j1)
 						d.jEnd = j1
 					}
 					if !d.checkEcd {
 						if j0 := int(t0*float64(d.lineLen)) - 2; j0 > 0 {
+							cycles += int32(j0)
 							d.prevPx = int((d.pxFP + d.dpxFP*int64(j0-1)) >> 16)
 							d.prevPy = int((d.pyFP + d.dpyFP*int64(j0-1)) >> 16)
 							d.pxFP += d.dpxFP * int64(j0)

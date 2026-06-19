@@ -491,7 +491,7 @@ func (h *HLEBIOS) Boot(ip []byte) error {
 	h.installVirtualBIOS()
 	h.populateIntDefaultTable()
 	h.registerServices()
-	h.bus.scsp.SeedSoundStub()
+	h.bus.scsp.InstallSoundDriverStub()
 
 	h.master.HLEHook = h.dispatch(h.master)
 	h.slave.HLEHook = h.dispatch(h.slave)
@@ -521,6 +521,12 @@ func (h *HLEBIOS) Boot(ip []byte) error {
 	h.master.SetVBR(0x06000000)
 	h.master.SetSR(0x00000001)
 	h.master.SetGBR(0x25D00000)
+
+	// The real BIOS enables the cache (CCR = $01, purged) before
+	// jumping to the IP - docs/bios/handoff_state.md. Games inherit
+	// and rely on that state.
+	h.master.SetCCR(0x01)
+	h.slave.SetCCR(0x01)
 	return nil
 }
 
@@ -534,13 +540,29 @@ func (h *HLEBIOS) register(addr uint32, fn hleFunc) {
 // CPU. The closure captures both the HLEBIOS and the CPU, so even
 // though the Emulator holds no reference to HLEBIOS the struct
 // stays alive as long as the CPU keeps the hook.
+//
+// Cache coherence: a service is BIOS code that on hardware ran on the
+// calling CPU through its cache - its writes updated that cache, and
+// its code/data footprint evicted resident lines. The Go
+// implementation writes memory directly (helpers, slice copies), so
+// after every service both CPUs' caches are purged: the calling CPU
+// synchronously (its own goroutine, between instructions), the other via
+// a cross-goroutine request applied on its own goroutine. Without this a
+// CPU polls stale cached copies of the work areas the service updated
+// and never observes the change.
 func (h *HLEBIOS) dispatch(cpu *sh2.CPU) func(pc uint32) {
+	other := h.slave
+	if cpu == h.slave {
+		other = h.master
+	}
 	return func(pc uint32) {
 		if pc>>12 != 0xA0000 {
 			return
 		}
 		if fn, ok := h.hooks[pc]; ok {
 			fn(cpu, h.bus)
+			cpu.CachePurge()
+			other.RequestCachePurge()
 		}
 	}
 }

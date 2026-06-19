@@ -46,6 +46,12 @@ type MemoryDump struct {
 	SH2MasterRegs []byte // Master SH-2 programmer registers + cycles + halted
 	SH2SlaveRegs  []byte // Slave SH-2 programmer registers + cycles + halted
 
+	SH2MasterIRQ []byte // Master SH-2 IRL input + INTC registers
+	SH2SlaveIRQ  []byte // Slave SH-2 IRL input + INTC registers
+
+	SMPCState    []byte // SMPC internal command/enable/RTC state
+	Coordination []byte // cross-goroutine boundary invariants (counters, FRT-capture flags, bus locks)
+
 	M68KState []byte // MC68EC000 sound CPU state (m68k.CPU.Serialize)
 }
 
@@ -291,6 +297,82 @@ func dumpSH2Regs(c *sh2.CPU) []byte {
 	return out
 }
 
+// dumpSH2IRQ serializes a CPU's interrupt-input state - the part that
+// is internal to the sh2 package and never reaches a dumped bus region.
+// The raw IRL word (the external request the SCU drives) comes from
+// CPU.IRL(); the INTC priority/vector registers come through the
+// side-effect-free INTC.Read accessor. Layout (big-endian): irl (u32),
+// then ipra, iprb, vcra, vcrb, vcrc, vcrd, icr, vcrwdt (u16 each).
+func dumpSH2IRQ(c *sh2.CPU) []byte {
+	intc := c.INTC()
+	out := make([]byte, 0, 4+8*2)
+	out = binary.BigEndian.AppendUint32(out, c.IRL())
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFEE2)) // IPRA
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFE60)) // IPRB
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFE62)) // VCRA
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFE64)) // VCRB
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFE66)) // VCRC
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFE68)) // VCRD
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFEE0)) // ICR
+	out = binary.BigEndian.AppendUint16(out, intc.Read(0xFFFFFEE4)) // VCRWDT
+	return out
+}
+
+// dumpSMPC serializes the SMPC's internal command/enable/RTC state,
+// none of which is otherwise captured (the SMPC register space is not
+// a dumped region). Layout (big-endian): comreg (u8), sf (u8),
+// areaCode (u8), flags (u8), cmdDelay (i32), rtcFrames (u64). The flags
+// byte packs: bit0 sshEnabled, bit1 soundEnabled, bit2 cdEnabled,
+// bit3 resetEnabled, bit4 intbackContinuePending.
+func dumpSMPC(s *SMPC) []byte {
+	var flags uint8
+	if s.sshEnabled {
+		flags |= 1 << 0
+	}
+	if s.soundEnabled {
+		flags |= 1 << 1
+	}
+	if s.cdEnabled {
+		flags |= 1 << 2
+	}
+	if s.resetEnabled {
+		flags |= 1 << 3
+	}
+	if s.intbackContinuePending {
+		flags |= 1 << 4
+	}
+	out := make([]byte, 0, 4+4+8)
+	out = append(out, s.comreg, s.sf, s.areaCode, flags)
+	out = binary.BigEndian.AppendUint32(out, uint32(int32(s.cmdDelay)))
+	out = binary.BigEndian.AppendUint64(out, s.rtcFrames)
+	return out
+}
+
+// dumpCoordination serializes the cross-goroutine coordination state. The
+// dump always runs at a quiescent frame boundary with the workers
+// parked, so these read their trivial values when healthy - the point
+// of capturing them is that a non-trivial value is itself a wedge/leak
+// signal (a held bus lock, an undelivered FRT capture). All atomics are
+// read with Load(). Layout (big-endian): masterCycles, secondaryCycles,
+// vdpCycles, vdpWalkDone, vdpFramesKicked (i64 each), minitPending,
+// sinitPending, pendingSystemReset (u8 each), then busLocks[0..areaCount-1]
+// (i32 each).
+func dumpCoordination(e *Emulator) []byte {
+	out := make([]byte, 0, 5*8+3+areaCount*4)
+	out = binary.BigEndian.AppendUint64(out, uint64(e.masterCycles.Load()))
+	out = binary.BigEndian.AppendUint64(out, uint64(e.secondaryCycles.Load()))
+	out = binary.BigEndian.AppendUint64(out, uint64(e.vdpCycles.Load()))
+	out = binary.BigEndian.AppendUint64(out, uint64(e.vdpWalkDone.Load()))
+	out = binary.BigEndian.AppendUint64(out, uint64(e.vdpFramesKicked))
+	out = append(out, b2u8(e.minitPending.Load()))
+	out = append(out, b2u8(e.sinitPending.Load()))
+	out = append(out, b2u8(e.pendingSystemReset.Load()))
+	for i := range e.bus.busLocks {
+		out = binary.BigEndian.AppendUint32(out, uint32(e.bus.busLocks[i].Load()))
+	}
+	return out
+}
+
 // DumpMemory returns a deep-copy snapshot of every memory region.
 // Safe to call between frames from the emulation goroutine.
 func (e *Emulator) DumpMemory() MemoryDump {
@@ -318,6 +400,10 @@ func (e *Emulator) DumpMemory() MemoryDump {
 		SCSPTimers:    dumpSCSPTimers(e.scsp),
 		SH2MasterRegs: dumpSH2Regs(e.master),
 		SH2SlaveRegs:  dumpSH2Regs(e.slave),
+		SH2MasterIRQ:  dumpSH2IRQ(e.master),
+		SH2SlaveIRQ:   dumpSH2IRQ(e.slave),
+		SMPCState:     dumpSMPC(e.smpc),
+		Coordination:  dumpCoordination(e),
 		M68KState:     e.scsp.M68KSerialize(),
 	}
 }

@@ -25,12 +25,14 @@ func TestNewEmulator(t *testing.T) {
 func TestEmulatorTimingNTSC(t *testing.T) {
 	e := NewEmulator()
 
-	// Default is NTSC 320 mode: 1708 dots/line, 263 lines/frame
-	if e.systemCyclesPerScanline != 1708 {
-		t.Errorf("systemCyclesPerScanline = %d, want 1708", e.systemCyclesPerScanline)
-	}
+	// Default is NTSC 320 mode: 263 lines/frame. The per-scanline width is
+	// the documented clock (26,874,100 Hz) / (60 * 263) = 1703.05, so it is
+	// 1703 or 1704 depending on the carry state.
 	if e.scanlines != 263 {
 		t.Errorf("scanlines = %d, want 263", e.scanlines)
+	}
+	if e.systemCyclesPerScanline != 1703 && e.systemCyclesPerScanline != 1704 {
+		t.Errorf("systemCyclesPerScanline = %d, want 1703 or 1704", e.systemCyclesPerScanline)
 	}
 }
 
@@ -44,54 +46,57 @@ func TestEmulatorTimingPAL(t *testing.T) {
 	}
 }
 
+// TestEmulatorSystemClockConvergence verifies that the per-line cycle-width
+// carry makes the summed per-frame cycle budget converge to the documented
+// system clock (SMPC Table 1.1) over one second, for every region and
+// horizontal-clock mode. The residual is bounded by D = fps * scanlines.
+func TestEmulatorSystemClockConvergence(t *testing.T) {
+	cases := []struct {
+		name      string
+		pal       bool
+		tvmd      uint16 // HRESO bit 0 selects the 352 clock
+		fps       uint32
+		scanlines uint32
+		clock     uint64
+	}{
+		{"NTSC 320", false, 0x0000, 60, 263, systemClockNTSC320},
+		{"NTSC 352", false, 0x0001, 60, 263, systemClockNTSC352},
+		{"PAL 320", true, 0x0000, 50, 313, systemClockPAL320},
+		{"PAL 352", true, 0x0001, 50, 313, systemClockPAL352},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			e := NewEmulator()
+			e.vdp2.SetPAL(c.pal)
+			e.vdp2.Write(0x0000, c.tvmd)
+			// First recalc establishes the mode and zeroes the carry.
+			e.recalcTiming()
+			d := uint64(c.fps) * uint64(c.scanlines)
+			var total uint64
+			for i := uint32(0); i < c.fps; i++ {
+				e.recalcTiming()
+				total += uint64(e.systemCyclesPerFrame)
+			}
+			// The summed per-second budget converges to the documented clock
+			// within D (the per-line carry re-truncates by at most scanlines).
+			diff := int64(total) - int64(c.clock)
+			if diff < 0 {
+				diff = -diff
+			}
+			if uint64(diff) >= d {
+				t.Errorf("summed cycles/sec = %d, want within %d of clock %d (diff %d)",
+					total, d, c.clock, diff)
+			}
+		})
+	}
+}
+
 func TestEmulatorM68KCyclesPerFrame(t *testing.T) {
 	e := NewEmulator()
 	// Integer 60 fps NTSC: m68k receives exactly 11,289,600 / 60 = 188,160
 	// cycles per frame (SCSP target-based distribution).
 	if e.m68kCyclesPerFrame != 188160 {
 		t.Errorf("m68kCyclesPerFrame = %d, want 188160", e.m68kCyclesPerFrame)
-	}
-}
-
-func TestEmulatorSegmentDots(t *testing.T) {
-	e := NewEmulator()
-
-	// Segments must sum to systemCyclesPerScanline
-	total := e.segSystemCycles[0] + e.segSystemCycles[1] + e.segSystemCycles[2] + e.segSystemCycles[3]
-	if total != e.systemCyclesPerScanline {
-		t.Errorf("segment sum = %d, want %d", total, e.systemCyclesPerScanline)
-	}
-
-	// NTSC 320: activeSystemCycles=1280, segments should be 640+640+214+214
-	if e.segSystemCycles[0] != 640 {
-		t.Errorf("segSystemCycles[0] = %d, want 640", e.segSystemCycles[0])
-	}
-	if e.segSystemCycles[1] != 640 {
-		t.Errorf("segSystemCycles[1] = %d, want 640", e.segSystemCycles[1])
-	}
-	if e.segSystemCycles[2] != 214 {
-		t.Errorf("segSystemCycles[2] = %d, want 214", e.segSystemCycles[2])
-	}
-	if e.segSystemCycles[3] != 214 {
-		t.Errorf("segSystemCycles[3] = %d, want 214", e.segSystemCycles[3])
-	}
-}
-
-func TestEmulatorSegmentDots352(t *testing.T) {
-	e := NewEmulator()
-	// Set TVMD HRESO bit 0 to switch to 352-dot mode
-	e.vdp2.Write(0, 0x0001)
-	e.recalcTiming()
-
-	total := e.segSystemCycles[0] + e.segSystemCycles[1] + e.segSystemCycles[2] + e.segSystemCycles[3]
-	if total != 1820 {
-		t.Errorf("segment sum = %d, want 1820", total)
-	}
-
-	// 352 mode: activeSystemCycles=1408 (352*4), hblank=412
-	// segSystemCycles: 704 + 704 + 206 + 206 = 1820
-	if e.segSystemCycles[0] != 704 {
-		t.Errorf("segSystemCycles[0] = %d, want 704", e.segSystemCycles[0])
 	}
 }
 
@@ -177,8 +182,8 @@ func TestEmulatorSCSPSetInReset(t *testing.T) {
 func TestVDP2Accessors(t *testing.T) {
 	v := NewVDP2(NewSCU())
 
-	if v.SystemCyclesPerLine() != systemCyclesPerLine320 {
-		t.Errorf("SystemCyclesPerLine = %d, want %d", v.SystemCyclesPerLine(), systemCyclesPerLine320)
+	if v.Is352Clock() {
+		t.Error("Is352Clock should be false in default 320 mode")
 	}
 	if v.LinesPerFrame() != linesNTSC {
 		t.Errorf("LinesPerFrame = %d, want %d", v.LinesPerFrame(), linesNTSC)
@@ -192,25 +197,6 @@ func TestVDP2ActiveSystemCyclesPerLine(t *testing.T) {
 	v := NewVDP2(NewSCU())
 	if v.ActiveSystemCyclesPerLine() != activeSystemCycles320 {
 		t.Errorf("ActiveSystemCyclesPerLine = %d, want %d", v.ActiveSystemCyclesPerLine(), activeSystemCycles320)
-	}
-}
-
-func TestEmulatorStepMasterHazard(t *testing.T) {
-	e := NewEmulator()
-
-	// Load minimal BIOS so CPU can fetch vectors
-	bios := make([]byte, biosSize)
-	if err := e.SetBIOS("main_bios", bios); err != nil {
-		t.Fatal(err)
-	}
-
-	// Step master and observe that cycle counter advances
-	prevCycles := e.masterCycles
-	e.stepMaster()
-
-	// Should advance at least 1 cycle
-	if e.masterCycles <= prevCycles {
-		t.Error("masterCycles should advance after stepMaster")
 	}
 }
 
@@ -316,12 +302,16 @@ func TestEmulatorSetInputMapping(t *testing.T) {
 
 func TestEmulatorStartIsNoOp(t *testing.T) {
 	e := NewEmulator()
-	e.masterCycles = 100
 
-	e.Start()
+	// With a real BIOS loaded and fast-boot off, Start takes the no-op
+	// branch: it constructs nothing and returns nil.
+	bios := make([]byte, biosSize)
+	if err := e.SetBIOS("main_bios", bios); err != nil {
+		t.Fatal(err)
+	}
 
-	if e.masterCycles != 100 {
-		t.Errorf("masterCycles after Start = %d, want 100 (no-op)", e.masterCycles)
+	if err := e.Start(); err != nil {
+		t.Errorf("Start with BIOS loaded returned error: %v", err)
 	}
 }
 

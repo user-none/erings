@@ -237,8 +237,8 @@ func TestSCURaiseMethods(t *testing.T) {
 		{"VBlankIN", (*SCU).RaiseVBlankIN, 0, 0xF, 0x40},
 		{"VBlankOUT", (*SCU).RaiseVBlankOUT, 1, 0xE, 0x41},
 		{"HBlankIN", func(s *SCU) { s.RaiseHBlankIN(0) }, 2, 0xD, 0x42},
-		{"Timer0", (*SCU).RaiseTimer0, 3, 0xC, 0x43},
-		{"Timer1", (*SCU).RaiseTimer1, 4, 0xB, 0x44},
+		{"Timer0", func(s *SCU) { s.raiseTimer0() }, 3, 0xC, 0x43},
+		{"Timer1", func(s *SCU) { s.raiseTimer1() }, 4, 0xB, 0x44},
 		{"SystemManager", (*SCU).RaiseSystemManager, 7, 0x8, 0x47},
 		{"SoundRequest", (*SCU).RaiseSoundRequest, 6, 0x9, 0x46},
 		{"SpriteDrawEnd", (*SCU).RaiseSpriteDrawEnd, 13, 0x2, 0x4D},
@@ -394,28 +394,28 @@ func TestSCUDMADirectImmediate(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	// Write test data to source
-	mb.Write32(0x1000, 0xDEADBEEF)
-	mb.Write32(0x1004, 0xCAFEBABE)
-	mb.Write32(0x1008, 0x12345678)
-	mb.Write32(0x100C, 0xAAAABBBB)
+	// Write test data to source (Work RAM-H, an SCU-DMA-accessible region)
+	mb.Write32(0x06001000, 0xDEADBEEF)
+	mb.Write32(0x06001004, 0xCAFEBABE)
+	mb.Write32(0x06001008, 0x12345678)
+	mb.Write32(0x0600100C, 0xAAAABBBB)
 
-	// Configure Level 0 DMA: src=0x1000, dst=0x2000, count=16 bytes
-	s.Write(0x00, 0x1000) // D0R (source)
-	s.Write(0x04, 0x2000) // D0W (dest)
-	s.Write(0x08, 16)     // D0C (byte count)
-	s.Write(0x0C, 0x102)  // D0AD: read index=1 (+4), write index=2 (+4)
-	s.Write(0x14, 0x07)   // D0MD: start factor=7 (immediate), direct mode
+	// Configure Level 0 DMA: src=0x06001000, dst=0x06002000, count=16 bytes
+	s.Write(0x00, 0x06001000) // D0R (source)
+	s.Write(0x04, 0x06002000) // D0W (dest)
+	s.Write(0x08, 16)         // D0C (byte count)
+	s.Write(0x0C, 0x102)      // D0AD: read index=1 (+4), write index=2 (+4)
+	s.Write(0x14, 0x07)       // D0MD: start factor=7 (immediate), direct mode
 
 	// Enable DMA - should trigger immediately
 	s.Write(0x10, 0x01) // D0EN
 
 	// Both read and write increment by 4, producing a clean 1:1 copy.
-	if mb.Read32(0x2000) != 0xDEADBEEF {
-		t.Errorf("dest[0x2000] = 0x%08X, want 0xDEADBEEF", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0xDEADBEEF {
+		t.Errorf("dest[0x06002000] = 0x%08X, want 0xDEADBEEF", mb.Read32(0x06002000))
 	}
-	if mb.Read32(0x2004) != 0xCAFEBABE {
-		t.Errorf("dest[0x2004] = 0x%08X, want 0xCAFEBABE", mb.Read32(0x2004))
+	if mb.Read32(0x06002004) != 0xCAFEBABE {
+		t.Errorf("dest[0x06002004] = 0x%08X, want 0xCAFEBABE", mb.Read32(0x06002004))
 	}
 
 	// Count register preserved after transfer
@@ -434,33 +434,33 @@ func TestSCUDMADirectImmediateMatchingInc(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	// Write test data
-	mb.Write32(0x1000, 0x11111111)
-	mb.Write32(0x1004, 0x22222222)
-	mb.Write32(0x1008, 0x33333333)
-	mb.Write32(0x100C, 0x44444444)
+	// Write test data (Work RAM-H, an SCU-DMA-accessible region)
+	mb.Write32(0x06001000, 0x11111111)
+	mb.Write32(0x06001004, 0x22222222)
+	mb.Write32(0x06001008, 0x33333333)
+	mb.Write32(0x0600100C, 0x44444444)
 
 	// Read add index=1 (+4), Write add index=2 (+4)
-	s.Write(0x00, 0x1000) // D0R
-	s.Write(0x04, 0x2000) // D0W
-	s.Write(0x08, 16)     // D0C
-	s.Write(0x0C, 0x102)  // D0AD: read=1(+4), write=2(+4)
-	s.Write(0x14, 0x07)   // D0MD: factor=7, direct
+	s.Write(0x00, 0x06001000) // D0R
+	s.Write(0x04, 0x06002000) // D0W
+	s.Write(0x08, 16)         // D0C
+	s.Write(0x0C, 0x102)      // D0AD: read=1(+4), write=2(+4)
+	s.Write(0x14, 0x07)       // D0MD: factor=7, direct
 
 	s.Write(0x10, 0x01) // D0EN
 
 	// Both inc by 4, so clean copy
-	if mb.Read32(0x2000) != 0x11111111 {
-		t.Errorf("dest[0x2000] = 0x%08X, want 0x11111111", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0x11111111 {
+		t.Errorf("dest[0x06002000] = 0x%08X, want 0x11111111", mb.Read32(0x06002000))
 	}
-	if mb.Read32(0x2004) != 0x22222222 {
-		t.Errorf("dest[0x2004] = 0x%08X, want 0x22222222", mb.Read32(0x2004))
+	if mb.Read32(0x06002004) != 0x22222222 {
+		t.Errorf("dest[0x06002004] = 0x%08X, want 0x22222222", mb.Read32(0x06002004))
 	}
-	if mb.Read32(0x2008) != 0x33333333 {
-		t.Errorf("dest[0x2008] = 0x%08X, want 0x33333333", mb.Read32(0x2008))
+	if mb.Read32(0x06002008) != 0x33333333 {
+		t.Errorf("dest[0x06002008] = 0x%08X, want 0x33333333", mb.Read32(0x06002008))
 	}
-	if mb.Read32(0x200C) != 0x44444444 {
-		t.Errorf("dest[0x200C] = 0x%08X, want 0x44444444", mb.Read32(0x200C))
+	if mb.Read32(0x0600200C) != 0x44444444 {
+		t.Errorf("dest[0x0600200C] = 0x%08X, want 0x44444444", mb.Read32(0x0600200C))
 	}
 }
 
@@ -570,26 +570,26 @@ func TestSCUDMAFixedAddresses(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	mb.Write32(0x1000, 0xAAAABBBB)
+	mb.Write32(0x06001000, 0xAAAABBBB)
 
 	// Read add=0 (fixed), Write add=0 (fixed)
-	s.Write(0x00, 0x1000)
-	s.Write(0x04, 0x2000)
+	s.Write(0x00, 0x06001000)
+	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 8) // 2 longwords
 	s.Write(0x0C, 0x000)
 	s.Write(0x14, 0x07)
 	s.Write(0x10, 0x01)
 
 	// Both addresses fixed: reads same source twice, writes same dest twice
-	if mb.Read32(0x2000) != 0xAAAABBBB {
-		t.Errorf("dest[0x2000] = 0x%08X, want 0xAAAABBBB", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0xAAAABBBB {
+		t.Errorf("dest[0x06002000] = 0x%08X, want 0xAAAABBBB", mb.Read32(0x06002000))
 	}
-	// Source address should still be 0x1000 (fixed)
-	if s.dmaR[0] != 0x1000 {
-		t.Errorf("dmaR[0] = 0x%08X, want 0x1000", s.dmaR[0])
+	// Source address should still be 0x06001000 (fixed)
+	if s.dmaR[0] != 0x06001000 {
+		t.Errorf("dmaR[0] = 0x%08X, want 0x06001000", s.dmaR[0])
 	}
-	if s.dmaW[0] != 0x2000 {
-		t.Errorf("dmaW[0] = 0x%08X, want 0x2000", s.dmaW[0])
+	if s.dmaW[0] != 0x06002000 {
+		t.Errorf("dmaW[0] = 0x%08X, want 0x06002000", s.dmaW[0])
 	}
 }
 
@@ -598,11 +598,11 @@ func TestSCUDMAPendingVBlankIN(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	mb.Write32(0x1000, 0xDEADC0DE)
+	mb.Write32(0x06001000, 0xDEADC0DE)
 
 	// Start factor=0 (V-Blank-IN)
-	s.Write(0x00, 0x1000)
-	s.Write(0x04, 0x2000)
+	s.Write(0x00, 0x06001000)
+	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 4)
 	s.Write(0x0C, 0x101)
 	s.Write(0x14, 0x0000) // factor=0
@@ -610,8 +610,8 @@ func TestSCUDMAPendingVBlankIN(t *testing.T) {
 	s.Write(0x10, 0x01) // Enable - should NOT execute yet
 
 	// Data should NOT be transferred yet
-	if mb.Read32(0x2000) != 0 {
-		t.Errorf("dest should be 0 before trigger, got 0x%08X", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0 {
+		t.Errorf("dest should be 0 before trigger, got 0x%08X", mb.Read32(0x06002000))
 	}
 	if !s.dmaPending[0] {
 		t.Error("dmaPending[0] should be true")
@@ -621,8 +621,8 @@ func TestSCUDMAPendingVBlankIN(t *testing.T) {
 	s.RaiseVBlankIN()
 
 	// Now data should be transferred
-	if mb.Read32(0x2000) != 0xDEADC0DE {
-		t.Errorf("dest[0x2000] = 0x%08X, want 0xDEADC0DE", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0xDEADC0DE {
+		t.Errorf("dest[0x06002000] = 0x%08X, want 0xDEADC0DE", mb.Read32(0x06002000))
 	}
 	if s.dmaPending[0] {
 		t.Error("dmaPending[0] should be false after trigger")
@@ -683,26 +683,26 @@ func TestSCUDMAIndirectSingleEntry(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	// Source data
-	mb.Write32(0x1000, 0xDEADBEEF)
-	mb.Write32(0x1004, 0xCAFEBABE)
+	// Source data (Work RAM-H, an SCU-DMA-accessible region)
+	mb.Write32(0x06001000, 0xDEADBEEF)
+	mb.Write32(0x06001004, 0xCAFEBABE)
 
-	// Transfer table at 0x3000: one entry (count, dst, src)
-	mb.Write32(0x3000, 8)          // count: 8 bytes (2 longwords)
-	mb.Write32(0x3004, 0x2000)     // dst
-	mb.Write32(0x3008, 0x80001000) // src with end marker (bit 31)
+	// Transfer table at 0x06003000: one entry (count, dst, src)
+	mb.Write32(0x06003000, 8)          // count: 8 bytes (2 longwords)
+	mb.Write32(0x06003004, 0x06002000) // dst
+	mb.Write32(0x06003008, 0x86001000) // src 0x06001000 with end marker (bit 31)
 
 	// Configure Level 0 indirect DMA
-	s.Write(0x04, 0x3000)     // D0W = table address
+	s.Write(0x04, 0x06003000) // D0W = table address
 	s.Write(0x0C, 0x102)      // D0AD: read=1(+4), write=2(+4)
 	s.Write(0x14, 0x01000007) // D0MD: factor=7, indirect mode (bit 24)
 	s.Write(0x10, 0x01)       // D0EN: trigger
 
-	if mb.Read32(0x2000) != 0xDEADBEEF {
-		t.Errorf("indirect[0x2000] = 0x%08X, want 0xDEADBEEF", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0xDEADBEEF {
+		t.Errorf("indirect[0x06002000] = 0x%08X, want 0xDEADBEEF", mb.Read32(0x06002000))
 	}
-	if mb.Read32(0x2004) != 0xCAFEBABE {
-		t.Errorf("indirect[0x2004] = 0x%08X, want 0xCAFEBABE", mb.Read32(0x2004))
+	if mb.Read32(0x06002004) != 0xCAFEBABE {
+		t.Errorf("indirect[0x06002004] = 0x%08X, want 0xCAFEBABE", mb.Read32(0x06002004))
 	}
 }
 
@@ -711,35 +711,35 @@ func TestSCUDMAIndirectMultipleEntries(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	// Source data at two locations
-	mb.Write32(0x1000, 0x11111111)
-	mb.Write32(0x1004, 0x22222222)
-	mb.Write32(0x5000, 0x33333333)
+	// Source data at two locations (Work RAM-H, an SCU-DMA-accessible region)
+	mb.Write32(0x06001000, 0x11111111)
+	mb.Write32(0x06001004, 0x22222222)
+	mb.Write32(0x06005000, 0x33333333)
 
-	// Transfer table at 0x3000: two entries
-	// Entry 0: 8 bytes from 0x1000 to 0x2000
-	mb.Write32(0x3000, 8)      // count
-	mb.Write32(0x3004, 0x2000) // dst
-	mb.Write32(0x3008, 0x1000) // src (no end marker)
+	// Transfer table at 0x06003000: two entries
+	// Entry 0: 8 bytes from 0x06001000 to 0x06002000
+	mb.Write32(0x06003000, 8)          // count
+	mb.Write32(0x06003004, 0x06002000) // dst
+	mb.Write32(0x06003008, 0x06001000) // src (no end marker)
 
-	// Entry 1: 4 bytes from 0x5000 to 0x2008 (end marker set)
-	mb.Write32(0x300C, 4)          // count
-	mb.Write32(0x3010, 0x2008)     // dst
-	mb.Write32(0x3014, 0x80005000) // src with end marker
+	// Entry 1: 4 bytes from 0x06005000 to 0x06002008 (end marker set)
+	mb.Write32(0x0600300C, 4)          // count
+	mb.Write32(0x06003010, 0x06002008) // dst
+	mb.Write32(0x06003014, 0x86005000) // src 0x06005000 with end marker
 
-	s.Write(0x04, 0x3000)     // D0W = table
+	s.Write(0x04, 0x06003000) // D0W = table
 	s.Write(0x0C, 0x102)      // read=1(+4), write=2(+4)
 	s.Write(0x14, 0x01000007) // factor=7, indirect
 	s.Write(0x10, 0x01)       // trigger
 
-	if mb.Read32(0x2000) != 0x11111111 {
-		t.Errorf("entry0[0x2000] = 0x%08X, want 0x11111111", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0x11111111 {
+		t.Errorf("entry0[0x06002000] = 0x%08X, want 0x11111111", mb.Read32(0x06002000))
 	}
-	if mb.Read32(0x2004) != 0x22222222 {
-		t.Errorf("entry0[0x2004] = 0x%08X, want 0x22222222", mb.Read32(0x2004))
+	if mb.Read32(0x06002004) != 0x22222222 {
+		t.Errorf("entry0[0x06002004] = 0x%08X, want 0x22222222", mb.Read32(0x06002004))
 	}
-	if mb.Read32(0x2008) != 0x33333333 {
-		t.Errorf("entry1[0x2008] = 0x%08X, want 0x33333333", mb.Read32(0x2008))
+	if mb.Read32(0x06002008) != 0x33333333 {
+		t.Errorf("entry1[0x06002008] = 0x%08X, want 0x33333333", mb.Read32(0x06002008))
 	}
 }
 
@@ -785,25 +785,25 @@ func TestSCUDMAIndirectPendingVBlankIN(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	mb.Write32(0x1000, 0xFEEDFACE)
-	mb.Write32(0x3000, 4)
-	mb.Write32(0x3004, 0x2000)
-	mb.Write32(0x3008, 0x80001000)
+	mb.Write32(0x06001000, 0xFEEDFACE)
+	mb.Write32(0x06003000, 4)
+	mb.Write32(0x06003004, 0x06002000)
+	mb.Write32(0x06003008, 0x86001000)
 
 	// Start factor=0 (V-Blank-IN), indirect mode
-	s.Write(0x04, 0x3000)
+	s.Write(0x04, 0x06003000)
 	s.Write(0x0C, 0x101)
 	s.Write(0x14, 0x01000000) // factor=0, indirect (bit 24)
 	s.Write(0x10, 0x01)       // Enable - should NOT execute yet
 
-	if mb.Read32(0x2000) != 0 {
-		t.Errorf("should not transfer before trigger, got 0x%08X", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0 {
+		t.Errorf("should not transfer before trigger, got 0x%08X", mb.Read32(0x06002000))
 	}
 
 	s.RaiseVBlankIN()
 
-	if mb.Read32(0x2000) != 0xFEEDFACE {
-		t.Errorf("after trigger: 0x%08X, want 0xFEEDFACE", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0xFEEDFACE {
+		t.Errorf("after trigger: 0x%08X, want 0xFEEDFACE", mb.Read32(0x06002000))
 	}
 }
 
@@ -1050,14 +1050,14 @@ func TestSCUDMARegWriteDrainAndRetrigger(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	mb.Write32(0x1000, 0xAAAA0001)
-	mb.Write32(0x1004, 0xAAAA0002)
-	mb.Write32(0x1008, 0xBBBB0001)
-	mb.Write32(0x100C, 0xBBBB0002)
+	mb.Write32(0x06001000, 0xAAAA0001)
+	mb.Write32(0x06001004, 0xAAAA0002)
+	mb.Write32(0x06001008, 0xBBBB0001)
+	mb.Write32(0x0600100C, 0xBBBB0002)
 
-	// First transfer: 0x1000->0x2000, count=8 -> dmaDelay[0]=2
-	s.Write(0x00, 0x1000)
-	s.Write(0x04, 0x2000)
+	// First transfer: 0x06001000->0x06002000, count=8 -> dmaDelay[0]=2
+	s.Write(0x00, 0x06001000)
+	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102) // read +4, write +4
 	s.Write(0x14, 0x07)
@@ -1066,28 +1066,28 @@ func TestSCUDMARegWriteDrainAndRetrigger(t *testing.T) {
 	if s.dmaDelay[0] < 0 {
 		t.Fatal("dmaDelay[0] should be set after first kick")
 	}
-	if s.dmaR[0] != 0x1008 || s.dmaW[0] != 0x2008 {
-		t.Fatalf("post-transfer addrs R=0x%08X W=0x%08X, want 0x1008/0x2008",
+	if s.dmaR[0] != 0x06001008 || s.dmaW[0] != 0x06002008 {
+		t.Fatalf("post-transfer addrs R=0x%08X W=0x%08X, want 0x06001008/0x06002008",
 			s.dmaR[0], s.dmaW[0])
 	}
 
 	// Re-program every register and re-trigger while still operating.
 	// Each write drains the level on first contact; subsequent writes
 	// of this block see an idle level.
-	s.Write(0x00, 0x1008)
-	s.Write(0x04, 0x2008)
+	s.Write(0x00, 0x06001008)
+	s.Write(0x04, 0x06002008)
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102)
 	s.Write(0x14, 0x07)
 	s.Write(0x10, 0x01)
 
 	// Second transfer must have already executed inline.
-	if mb.Read32(0x2008) != 0xBBBB0001 {
-		t.Errorf("mem[0x2008] = 0x%08X, want 0xBBBB0001 (second transfer)",
-			mb.Read32(0x2008))
+	if mb.Read32(0x06002008) != 0xBBBB0001 {
+		t.Errorf("mem[0x06002008] = 0x%08X, want 0xBBBB0001 (second transfer)",
+			mb.Read32(0x06002008))
 	}
-	if s.dmaR[0] != 0x1010 {
-		t.Errorf("dmaR[0] = 0x%08X, want 0x1010 (second transfer advanced)",
+	if s.dmaR[0] != 0x06001010 {
+		t.Errorf("dmaR[0] = 0x%08X, want 0x06001010 (second transfer advanced)",
 			s.dmaR[0])
 	}
 	if s.dmaDelay[0] < 0 {
@@ -1195,14 +1195,14 @@ func TestSCUDMARegWriteDrainFiresPendingFactor(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	mb.Write32(0x1000, 0xAAAA0001)
-	mb.Write32(0x1004, 0xAAAA0002)
-	mb.Write32(0x1008, 0xBBBB0001)
-	mb.Write32(0x100C, 0xBBBB0002)
+	mb.Write32(0x06001000, 0xAAAA0001)
+	mb.Write32(0x06001004, 0xAAAA0002)
+	mb.Write32(0x06001008, 0xBBBB0001)
+	mb.Write32(0x0600100C, 0xBBBB0002)
 
 	// Level 0 with VBlank-IN factor; arm and run the first transfer.
-	s.Write(0x00, 0x1000)
-	s.Write(0x04, 0x2000)
+	s.Write(0x00, 0x06001000)
+	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102)
 	s.Write(0x14, 0x00) // factor=0 (VBlank-IN)
@@ -1219,7 +1219,7 @@ func TestSCUDMARegWriteDrainFiresPendingFactor(t *testing.T) {
 	if !s.dmaPending[0] {
 		t.Fatal("dmaPending[0] should stay armed while level in flight")
 	}
-	if mb.Read32(0x2008) != 0 {
+	if mb.Read32(0x06002008) != 0 {
 		t.Fatal("second transfer must not have run yet")
 	}
 
@@ -1228,9 +1228,9 @@ func TestSCUDMARegWriteDrainFiresPendingFactor(t *testing.T) {
 	// new register value lands.
 	s.Write(0x00, 0xDEADBEEF)
 
-	if mb.Read32(0x2008) != 0xBBBB0001 {
-		t.Errorf("mem[0x2008] = 0x%08X, want 0xBBBB0001 (factor-driven second transfer)",
-			mb.Read32(0x2008))
+	if mb.Read32(0x06002008) != 0xBBBB0001 {
+		t.Errorf("mem[0x06002008] = 0x%08X, want 0xBBBB0001 (factor-driven second transfer)",
+			mb.Read32(0x06002008))
 	}
 	if s.dmaPending[0] {
 		t.Error("dmaPending[0] should be consumed after factor trigger fired")
@@ -1249,12 +1249,12 @@ func TestSCUDMAHeldFactorRetrigger(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	mb.Write32(0x1000, 0x01010101)
-	mb.Write32(0x1004, 0x02020202)
+	mb.Write32(0x06001000, 0x01010101)
+	mb.Write32(0x06001004, 0x02020202)
 
 	// Level 0 DMA with start factor 0 (VBlank-IN).
-	s.Write(0x00, 0x1000)
-	s.Write(0x04, 0x2000)
+	s.Write(0x00, 0x06001000)
+	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102) // read +4, write +4
 	s.Write(0x14, 0x00)  // factor=0 (VBlank-IN), direct
@@ -1269,8 +1269,8 @@ func TestSCUDMAHeldFactorRetrigger(t *testing.T) {
 	if s.dmaDelay[0] < 0 {
 		t.Fatal("dmaDelay[0] should be set after factor triggered DMA")
 	}
-	if mb.Read32(0x2000) != 0x01010101 {
-		t.Errorf("first transfer missing: 0x%08X", mb.Read32(0x2000))
+	if mb.Read32(0x06002000) != 0x01010101 {
+		t.Errorf("first transfer missing: 0x%08X", mb.Read32(0x06002000))
 	}
 	// After execute, pending is cleared per existing checkDMATrigger.
 	if s.dmaPending[0] {
@@ -1279,17 +1279,17 @@ func TestSCUDMAHeldFactorRetrigger(t *testing.T) {
 
 	// Re-arm and re-raise the factor while still operating.
 	s.dmaPending[0] = true
-	mb.Write32(0x1008, 0xCCCC0001)
-	mb.Write32(0x100C, 0xCCCC0002)
+	mb.Write32(0x06001008, 0xCCCC0001)
+	mb.Write32(0x0600100C, 0xCCCC0002)
 	s.RaiseVBlankIN()
 
 	if !s.dmaPending[0] {
 		t.Error("dmaPending[0] should remain armed while level is operating")
 	}
 	// No second transfer yet.
-	if mb.Read32(0x2008) != 0 {
-		t.Errorf("mem[0x2008] = 0x%08X, want 0 (held trigger not fired yet)",
-			mb.Read32(0x2008))
+	if mb.Read32(0x06002008) != 0 {
+		t.Errorf("mem[0x06002008] = 0x%08X, want 0 (held trigger not fired yet)",
+			mb.Read32(0x06002008))
 	}
 
 	// Drain the delay and confirm held factor trigger runs.
@@ -1297,8 +1297,8 @@ func TestSCUDMAHeldFactorRetrigger(t *testing.T) {
 	if s.dmaPending[0] {
 		t.Error("dmaPending[0] should be consumed after held trigger fires")
 	}
-	if mb.Read32(0x2008) != 0xCCCC0001 {
-		t.Errorf("mem[0x2008] = 0x%08X, want 0xCCCC0001", mb.Read32(0x2008))
+	if mb.Read32(0x06002008) != 0xCCCC0001 {
+		t.Errorf("mem[0x06002008] = 0x%08X, want 0xCCCC0001", mb.Read32(0x06002008))
 	}
 }
 
@@ -1747,8 +1747,8 @@ func TestSCUDMAUnalignedAndPartial(t *testing.T) {
 		readInc4WriteInc8 uint32 = 0x103 // sparse: writeInc=8 → dstStep=8 RAM, 16 BBus
 	)
 	const (
-		ramSrcBase = uint32(0x00001000)
-		ramDstBase = uint32(0x00002000)
+		ramSrcBase = uint32(0x06001000) // Work RAM-H (SCU-DMA-accessible)
+		ramDstBase = uint32(0x06002000) // Work RAM-H (SCU-DMA-accessible)
 		bbusDst    = uint32(0x05C00000) // VDP1 VRAM (B-Bus)
 	)
 
@@ -1933,8 +1933,8 @@ func TestSCUDMAManualWorkedExample(t *testing.T) {
 	s.SetBus(mb)
 
 	const (
-		src   uint32 = 0x1001 // 3-byte unaligned head (matches manual's 1H)
-		dst   uint32 = 0x2006 // 2-byte unaligned head (matches manual's 6H)
+		src   uint32 = 0x06001001 // Work RAM-H, 3-byte unaligned head (manual's 1H)
+		dst   uint32 = 0x06002006 // Work RAM-H, 2-byte unaligned head (manual's 6H)
 		count uint32 = 0x50
 	)
 
@@ -1971,21 +1971,21 @@ func TestSCUDMAFastPathRegression(t *testing.T) {
 	mb := newMockBus()
 	s.SetBus(mb)
 
-	mb.Write32(0x1000, 0xDEADBEEF)
-	mb.Write32(0x1004, 0xCAFEBABE)
-	mb.Write32(0x1008, 0x12345678)
-	mb.Write32(0x100C, 0xAAAABBBB)
+	mb.Write32(0x06001000, 0xDEADBEEF)
+	mb.Write32(0x06001004, 0xCAFEBABE)
+	mb.Write32(0x06001008, 0x12345678)
+	mb.Write32(0x0600100C, 0xAAAABBBB)
 
-	runDirectDMA(s, 0x1000, 0x2000, 16, 0x102)
+	runDirectDMA(s, 0x06001000, 0x06002000, 16, 0x102)
 
 	cases := []struct {
 		addr uint32
 		want uint32
 	}{
-		{0x2000, 0xDEADBEEF},
-		{0x2004, 0xCAFEBABE},
-		{0x2008, 0x12345678},
-		{0x200C, 0xAAAABBBB},
+		{0x06002000, 0xDEADBEEF},
+		{0x06002004, 0xCAFEBABE},
+		{0x06002008, 0x12345678},
+		{0x0600200C, 0xAAAABBBB},
 	}
 	for _, c := range cases {
 		got := mb.Read32(c.addr)
@@ -1993,4 +1993,55 @@ func TestSCUDMAFastPathRegression(t *testing.T) {
 			t.Errorf("dst[0x%X] = 0x%08X, want 0x%08X", c.addr, got, c.want)
 		}
 	}
+}
+
+// TestSCUDMAIllegalRegionNoOp verifies that a transfer touching the SH-2
+// CPU-local low memory is not performed. The SCU-DMA controller reaches
+// only Work RAM-H, the A-Bus, and the B-Bus; a source or destination in
+// the boot ROM, SMPC, backup RAM, or Work RAM-L is outside its address
+// space (final-specs precautions No. 04 / No. 16/18/19) and the transfer
+// leaves memory untouched.
+func TestSCUDMAIllegalRegionNoOp(t *testing.T) {
+	t.Run("BootROMSource", func(t *testing.T) {
+		s := NewSCU()
+		mb := newMockBus()
+		s.SetBus(mb)
+
+		// Boot-ROM source -> VDP1 VRAM (B-Bus). This is the Deep Fear
+		// flush shape: a queue with srcBase=0/head=0 resolves to src=0
+		// and would otherwise copy a boot-ROM word onto the VDP1
+		// command-table header at 0x05C00000.
+		mb.Write32(0x00000000, 0x20000200)
+		runDirectDMA(s, 0x00000000, 0x05C00000, 8, 0x101)
+		if got := mb.Read32(0x05C00000); got != 0 {
+			t.Errorf("VDP1 header should be untouched by a boot-ROM-source DMA, got 0x%08X", got)
+		}
+	})
+
+	t.Run("WorkRAMLDestination", func(t *testing.T) {
+		s := NewSCU()
+		mb := newMockBus()
+		s.SetBus(mb)
+
+		// Work RAM-H source (reachable) -> Work RAM-L destination
+		// (unreachable): also a no-op.
+		mb.Write32(0x06001000, 0xDEADBEEF)
+		runDirectDMA(s, 0x06001000, 0x00200000, 4, 0x101)
+		if got := mb.Read32(0x00200000); got != 0 {
+			t.Errorf("Work RAM-L destination should be untouched, got 0x%08X", got)
+		}
+	})
+
+	t.Run("WorkRAMHToBBusAllowed", func(t *testing.T) {
+		s := NewSCU()
+		mb := newMockBus()
+		s.SetBus(mb)
+
+		// Control: a transfer between reachable regions still runs.
+		mb.Write32(0x06001000, 0xCAFEBABE)
+		runDirectDMA(s, 0x06001000, 0x05C00000, 4, 0x101)
+		if got := mb.Read32(0x05C00000); got != 0xCAFEBABE {
+			t.Errorf("Work RAM-H -> B-Bus transfer should run, got 0x%08X", got)
+		}
+	})
 }

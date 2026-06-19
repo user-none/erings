@@ -32,7 +32,7 @@ func (v *VDP1) startNormalSprite(cmd *vdp1Command, budget int32) (consumed int32
 
 	if cmd.pmod&0x0800 == 0 &&
 		preClipReject(s.drawX, s.drawY, s.drawX+s.charW-1, s.drawY+s.charH-1, s.clipX, s.clipY) {
-		return 0, true
+		return vdp1PreClipLineCycles * int32(s.charH), true
 	}
 
 	if s.cc >= 4 {

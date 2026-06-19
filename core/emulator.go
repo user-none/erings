@@ -5,61 +5,33 @@ package core
 
 import (
 	"errors"
+	"sync/atomic"
 
 	"github.com/user-none/erings/core/sh2"
 )
 
-// Timing holds frame rate and scanline count for a region.
-type Timing struct {
-	FPS       int
-	Scanlines int
+// buildSH2StallTables builds the per-region SH-2 external-access
+// wait-state tables (128 entries each, one per 1 MB block of the
+// 27-bit physical space) from the bus wait-state model: read cost,
+// write cost, and 16-byte line-fill cost, each minus the access cycle
+// the instruction's own timing already charges. The 1 MB granularity
+// captures every distinct region (BIOS, A-Bus, CD, SCSP, VDP1, VDP2,
+// CRAM/SCU, WRAM-H).
+func buildSH2StallTables(bus *Bus) (read, write, fill [128]uint32) {
+	sub1 := func(v uint32) uint32 {
+		if v > 0 {
+			return v - 1
+		}
+		return 0
+	}
+	for i := range read {
+		addr := uint32(i) << 20
+		read[i] = sub1(bus.AccessCycles(addr, 4))
+		write[i] = sub1(bus.WriteAccessCycles(addr, 4))
+		fill[i] = sub1(bus.AccessCycles(addr, 16))
+	}
+	return read, write, fill
 }
-
-// Timing model
-//
-// The Saturn system clock is 26.8741 MHz in 320-mode (NTSC) and
-// 28.6364 MHz in 352-mode (NTSC); the PAL crystals are slightly
-// slower. The SH-2, VDP1, and VDP2 all run at the system clock with
-// no division (SMPC manual). The emulator's internal cycle unit is
-// one system clock cycle: every subsystem consumes cycle budgets in
-// that unit, so systemCyclesPerScanline * scanlines * fps gives the
-// system-wide cycles-per-second and stays consistent across mode
-// changes (320/352, NTSC/PAL, hi/lo-res).
-//
-// RunFrame walks every scanline. Each scanline is split by
-// recalcSegments into segmentsPerScanline pieces: the first half
-// covers the active period, the second half covers HBlank, so the
-// HBlank boundary always lands between segments.
-//
-// Within each segment two tiers run:
-//
-//   Per cycle: one SH-2 step. With the slave enabled, master and
-//   slave alternate based on whose cycle counter is behind, giving
-//   a 1:1 per-cycle interleave.
-//
-//   Per segment (after the per-cycle loop): VDP2 intra-line position,
-//   SCU DMA deferred IRQs, SCSP (drains m68k and emits samples), CD
-//   Block, and VDP1 incremental command processing. Each receives the
-//   segment's system-cycle count as its budget.
-//
-// Frame-level events are dispatched from RunFrame at boundaries:
-// VBlank-IN at the last active scanline; VBlank-OUT and the PTM=10
-// auto-draw gate at line 0 / segment 0.
-//
-// recalcTiming refreshes per-scanline, per-segment, and per-frame
-// counts whenever VDP2 mode changes. fps is held to integer
-// (60 NTSC / 50 PAL) so 44,100/fps and 11,289,600/fps give exact
-// integer samples-per-frame and m68k-cycles-per-frame.
-// CDBlock.RecalcTiming is fed the actual system clock rate so CD-DA
-// and SCDQ pacing tracks the current mode rather than a compile-time
-// constant.
-
-// segmentsPerScanline controls how finely RunFrame slices each
-// scanline for component ticking. Must be even so the active and
-// HBlank halves can be split evenly. Increase to give other
-// subsystems more frequent advances and finer SH-2 interleaving;
-// decrease to reduce per-frame overhead.
-const segmentsPerScanline = 4
 
 // Emulator ties together all Saturn components and runs one frame at a time.
 type Emulator struct {
@@ -79,17 +51,6 @@ type Emulator struct {
 	systemCyclesPerScanline uint32
 	scanlines               uint16
 
-	// System-cycle counters for SH-2 interleaving within a scanline.
-	// "master" / "slave" refer to the CPU role, not the unit.
-	masterCycles uint32
-	slaveCycles  uint32
-
-	// Per-segment system-cycle counts. Allocated once in NewEmulator
-	// with length segmentsPerScanline; recalcSegments rewrites the
-	// values whenever VDP2 timing changes. Sum is always
-	// systemCyclesPerScanline.
-	segSystemCycles []uint32
-
 	// Per-frame target counts (recomputed when VDP2 mode changes).
 	// fps is integer (60 NTSC / 50 PAL). System cycles per frame is
 	// systemCyclesPerScanline * scanlines. Samples and m68k cycles per
@@ -99,6 +60,18 @@ type Emulator struct {
 	systemCyclesPerFrame uint32
 	samplesPerFrame      uint32
 	m68kCyclesPerFrame   uint32
+
+	// Per-line cycle-width carry. The per-scanline budget is the documented
+	// system clock divided by (fps * scanlines), which is not an integer, so
+	// the fractional remainder is accumulated here and dispensed across
+	// frames. systemCyclesPerScanline is uniform within a frame and varies by
+	// +/-1 between frames; the per-second total converges to the crystal. The
+	// accumulator persists across same-mode frames (that is the convergence
+	// mechanism) and is reset only when the mode changes, detected via
+	// lastTrueClock / lastD.
+	lineWidthAccum uint64
+	lastTrueClock  uint32
+	lastD          uint32
 
 	audioBuffer []int16
 
@@ -116,13 +89,86 @@ type Emulator struct {
 	// the read failed. Refreshed on every SetDisc so future disc-swap
 	// support stays simple.
 	ipImage []byte
+
+	// Per-goroutine progress counters: system cycles completed this frame,
+	// reset by RunFrame before the workers are kicked (both are parked at
+	// that point). Each goroutine stores its counter after every chunk and
+	// spin-waits on the counters of the goroutines constraining it (see
+	// frame.go's timing-model comment for the constraint graph). The
+	// counters bound only WHEN each goroutine's clock sits relative to the
+	// others; the ordering and safety of individual shared accesses to
+	// component registers, VRAM, and WRAM within that window is handled
+	// separately, by the per-area bus locks.
+	masterCycles    atomic.Int64
+	secondaryCycles atomic.Int64
+	vdpCycles       atomic.Int64
+
+	// Per-frame walk parameters for the workers, written before the
+	// kick channel sends so both workers see the values the main
+	// goroutine's frame loop uses even if a mid-frame SMPC reset rewrites
+	// the live timing fields.
+	frameLineWidth     uint32
+	frameScanlines     uint16
+	vdpWalkActiveLines uint16
+	vdpWalkActiveCyc   uint32
+	vdpWalkWidth       uint16
+
+	// The VDP worker cycle-walks the frame: VDP1 incremental command
+	// ticking per chunk, with VDP2 BeginFrame/RenderLine and the VDP1
+	// frame events fired at their cycle positions. Main spins for
+	// vdpWalkDone at frame end, so the framebuffer is complete and the
+	// worker parked when RunFrame returns. Both workers are spawned by
+	// Start and stopped by Close (which closes their job channels).
+	vdpJobCh        chan struct{}
+	vdpWalkDone     atomic.Int64
+	vdpFramesKicked int64
+
+	// The secondary bucket (slave SH-2 + SCU/SCSP/CD + SMPC dispatch)
+	// runs on its own worker goroutine every frame. Slave SH-2 stepping
+	// inside it is gated on SSHEnabled. The master runs on the main
+	// goroutine.
+	secondaryJobCh chan struct{}
+
+	// closed guards Close so the worker job channels are closed exactly
+	// once.
+	closed bool
+
+	// pendingSystemReset requests a full system reset (SMPC SYSRES /
+	// CKCHG). systemReset resets components owned by the workers and
+	// rewrites the timebase, so it is applied at the frame boundary
+	// where both workers are parked rather than when requested.
+	pendingSystemReset atomic.Bool
+
+	// pendingMasterNMI holds the master NMI raised by a dot-clock-change
+	// command (SMPC CKCHG320/CKCHG352) until the frame-boundary
+	// systemReset has run, then RunFrame delivers it. The SMPC User's
+	// Manual section 2.3 (Resetable System Management Commands) states
+	// that CKCHG resets VDP1, VDP2, SCU, and SCSP to their power-on
+	// values and then resumes the master. erings resumes the master with
+	// the NMI, so it must be delivered after systemReset applies that
+	// power-on reset, not before.
+	pendingMasterNMI atomic.Bool
+
+	// Cross-CPU FRT input-capture flags. A MINIT write by the master must
+	// capture the slave's FRT; a SINIT write by the slave must capture the
+	// master's. The writer sets its flag; the receiving CPU clears it and
+	// latches its own FRT at the next sync barrier (frame.go barrier),
+	// within syncChunkCycles of the write. The tight barrier supplies the
+	// relative-timing guarantee that the loose-drift design needed an
+	// explicit park-and-respond rendezvous for. A plain bool suffices: a
+	// MINIT/SINIT write is a deliberate sync, never spammed within a chunk.
+	minitPending atomic.Bool
+	sinitPending atomic.Bool
+
+	frameTotalCycles int64
+	masterLineCarry  uint32
 }
 
 // NewEmulator creates a Saturn emulator with all components wired together.
 // Call SetBIOS on the bus before running.
 func NewEmulator() *Emulator {
 	scu := NewSCU()
-	smpc := NewSMPC(scu)
+	smpc := NewSMPC()
 	vdp1 := NewVDP1(scu)
 	vdp2 := NewVDP2(scu)
 	scsp := NewSCSP(scu)
@@ -134,26 +180,43 @@ func NewEmulator() *Emulator {
 	master := sh2.New(bus, true)
 	slave := sh2.New(bus, false)
 
+	// Per-region SH-2 external-access wait states. With the cache
+	// modeled, only cache misses, cache-through accesses, and
+	// write-through writes reach the bus and pay these; cache hits are
+	// free. The tables are region- and direction-aware (WRAM-H SDRAM
+	// reads, writes, and burst fills each cost differently) at 1 MB
+	// granularity, derived from the bus wait-state model
+	// (Bus.AccessCycles / Bus.WriteAccessCycles); tune there.
+	stallRead, stallWrite, stallFill := buildSH2StallTables(bus)
+	master.SetBusStallTables(stallRead, stallWrite, stallFill)
+	slave.SetBusStallTables(stallRead, stallWrite, stallFill)
+
 	e := &Emulator{
-		bus:             bus,
-		master:          master,
-		slave:           slave,
-		scu:             scu,
-		smpc:            smpc,
-		vdp1:            vdp1,
-		vdp2:            vdp2,
-		scsp:            scsp,
-		cdblock:         cdblock,
-		segSystemCycles: make([]uint32, segmentsPerScanline),
+		bus:     bus,
+		master:  master,
+		slave:   slave,
+		scu:     scu,
+		smpc:    smpc,
+		vdp1:    vdp1,
+		vdp2:    vdp2,
+		scsp:    scsp,
+		cdblock: cdblock,
 	}
 
-	// Wire boundary-crossing callbacks. SCU drives master IRL, SMPC
-	// fires system reset (CKCHG) / NMI / slave reset.
+	// Wire boundary-crossing callbacks. SCU drives master IRL. SMPC
+	// requests the master NMI, defers its system reset to the frame
+	// boundary, and resets the slave directly.
 	scu.SetIRLHandler(master.SetIRL, master.ClearIRL)
-	smpc.systemReset = e.systemReset
-	smpc.masterNMI = master.NMI
+	smpc.systemReset = func() { e.pendingSystemReset.Store(true) }
+	smpc.masterNMI = master.NMIRequest
+	smpc.masterNMIDeferred = func() { e.pendingMasterNMI.Store(true) }
 	smpc.slaveReset = slave.Reset
 	master.SetIRLAck(scu.AcknowledgeInterrupt)
+
+	// VDP worker (VDP1 walk + VDP2 line render) and slave SH-2 worker
+	// kick channels.
+	e.vdpJobCh = make(chan struct{}, 1)
+	e.secondaryJobCh = make(chan struct{}, 1)
 
 	e.recalcTiming()
 
@@ -167,68 +230,22 @@ func (e *Emulator) systemReset() {
 	e.vdp1.Reset()
 	e.vdp2.Reset()
 	e.scu.Reset()
+	// CKCHG/SYSRES turns the slave SH-2 off (SMPC User's Manual: CKCHG320/
+	// CKCHG352 leave the slave OFF) and resets the video/sound subsystems.
+	// Drop any in-flight cross-CPU FRT input capture: a SINIT/MINIT issued
+	// just before the reset must not leave a peer CPU's ICF latched once the
+	// CPU driving it is turned off. Both workers are parked here, so the
+	// peer FRT state is reachable without a race.
+	e.minitPending.Store(false)
+	e.sinitPending.Store(false)
+	e.master.ClearFRTInputCapture()
+	e.slave.ClearFRTInputCapture()
+	// Reset the per-line cycle-width carry so timing restarts deterministically
+	// after a clock change; recalcTiming re-detects the mode below.
+	e.lineWidthAccum = 0
+	e.lastTrueClock = 0
+	e.lastD = 0
 	e.recalcTiming()
-}
-
-// recalcTiming derives per-scanline system-cycle counts, per-segment
-// boundaries, and per-frame target counts from VDP2 state. Per-frame
-// targets are exposed to SCSP via StartFrame so it emits exactly the
-// right number of samples and m68k cycles per frame regardless of
-// how the frame is sliced.
-func (e *Emulator) recalcTiming() {
-	vdp2 := e.vdp2
-	e.systemCyclesPerScanline = vdp2.SystemCyclesPerLine()
-	e.scanlines = vdp2.LinesPerFrame()
-
-	e.recalcSegments(vdp2.ActiveSystemCyclesPerLine())
-
-	// Per-frame target counts. Integer fps: 60 NTSC / 50 PAL.
-	e.systemCyclesPerFrame = e.systemCyclesPerScanline * uint32(e.scanlines)
-	var fps uint32 = 60
-	if vdp2.IsPAL() {
-		fps = 50
-	}
-	e.samplesPerFrame = 44100 / fps
-	e.m68kCyclesPerFrame = 11289600 / fps
-
-	// CD block sector / SCDQ / boot timings derive from the actual
-	// system clock rate, not a fixed compile-time constant. NTSC 320
-	// (1708), NTSC 352 (1820), PAL 320, PAL 352 each yield a different
-	// cycles-per-second; the CD block was previously hardcoded to the
-	// 352 value and ran 6.5% slow in 320 mode (audible as crunchy
-	// CD-DA / starved EXTS). Keep this hook in sync with any future
-	// timing-currency change.
-	e.cdblock.RecalcTiming(e.systemCyclesPerFrame * fps)
-}
-
-// recalcSegments rewrites e.segSystemCycles in place to split each
-// scanline into segmentsPerScanline pieces. The HBlank boundary
-// always lands between two segments: the first half of the slice
-// covers the active period, the second half covers the HBlank period.
-// Each half is divided as evenly as possible; any odd remainder lands
-// in that half's final segment so the sum stays equal to the original
-// active / HBlank system-cycle count.
-func (e *Emulator) recalcSegments(activeCycles uint32) {
-	hblank := e.systemCyclesPerScanline - activeCycles
-	half := uint32(segmentsPerScanline / 2)
-
-	if half == 0 {
-		// segmentsPerScanline == 1: whole scanline is one segment.
-		e.segSystemCycles[0] = e.systemCyclesPerScanline
-		return
-	}
-
-	activeBase := activeCycles / half
-	for i := uint32(0); i < half; i++ {
-		e.segSystemCycles[i] = activeBase
-	}
-	e.segSystemCycles[half-1] += activeCycles - activeBase*half
-
-	hblankBase := hblank / half
-	for i := uint32(0); i < half; i++ {
-		e.segSystemCycles[half+i] = hblankBase
-	}
-	e.segSystemCycles[segmentsPerScanline-1] += hblank - hblankBase*half
 }
 
 // SetDisc attaches a disc reader to the CD Block, caches the disc's
@@ -303,164 +320,10 @@ func (e *Emulator) ReadMemory(addr uint32, buf []byte) uint32 {
 	return n
 }
 
-// RunFrame executes one complete frame of emulation.
-func (e *Emulator) RunFrame() {
-	smpc := e.smpc
-	scsp := e.scsp
-	vdp2 := e.vdp2
-
-	// SNDOFF sync at frame start
-	if !smpc.SoundEnabled() && !scsp.InReset() {
-		scsp.SetInReset(true)
-	}
-
-	// Prepare audio mix buffer for this frame (stereo interleaved)
-	// ~735 samples NTSC, ~882 PAL, plus margin. * 2 for stereo.
-	scsp.ResetMixBuffer(900 * 2)
-
-	// Refresh timing in case VDP2 mode changed (CKCHG, TVMD write)
-	e.recalcTiming()
-
-	// Hand SCSP the per-frame targets so it emits an exact count
-	// regardless of how segments divide the frame.
-	scsp.StartFrame(e.systemCyclesPerFrame, e.samplesPerFrame, e.m68kCyclesPerFrame)
-
-	slaveEnabled := smpc.SSHEnabled()
-	vdp1 := e.vdp1
-	activeLines := vdp2.ActiveLines()
-
-	for line := uint16(0); line < e.scanlines; line++ {
-		e.masterCycles = 0
-		e.slaveCycles = 0
-
-		// Per-scanline SMPC command-dispatch delay tick.
-		smpc.TickScanline()
-
-		for seg := 0; seg < segmentsPerScanline; seg++ {
-			segWidth := e.segSystemCycles[seg]
-
-			// -- Tier 1: Per-cycle SH-2 --
-			for cyc := uint32(0); cyc < segWidth; cyc++ {
-				if slaveEnabled {
-					if e.masterCycles <= e.slaveCycles {
-						e.stepMaster()
-						e.stepSlave()
-					} else {
-						e.stepSlave()
-						e.stepMaster()
-					}
-				} else {
-					e.stepMaster()
-				}
-			}
-
-			// VDP2 intra-line position, after tier 1 so reads during a
-			// segment see the segment-start position; the HBLANK bit
-			// then transitions exactly at the active/blank segment
-			// boundary recalcSegments aligns to.
-			vdp2.TickSystemCycles(segWidth)
-
-			// -- Tier 2: SCU DMA deferred interrupts --
-			e.scu.TickSystemCycles(segWidth)
-
-			// -- Tier 3: SCSP (drains sound CPU and processes samples) --
-			if !smpc.SoundEnabled() && !scsp.InReset() {
-				scsp.SetInReset(true)
-			}
-			scsp.TickSystemCycles(segWidth)
-
-			// -- Tier 4: CD Block --
-			e.cdblock.TickSystemCycles(segWidth)
-
-			// -- Tier 5: VDP1 incremental command processing --
-			// VBlankOut swap and PTM=10 auto-draw fire at the start of
-			// line 0, after tier 1 of seg 0 has run so the SH-2's
-			// vbout-IRQ handler had at least a partial segment of
-			// cycles to read CEF=1 from the prior draw before VDP1
-			// clears it. Bus contention (vdp1WriteStallSystemCycles)
-			// handles the during-draw write race for writes that
-			// arrive after this gate.
-			if line == 0 && seg == 0 {
-				vdp1.VBlankOut()
-				if vdp1.PTM() == 2 && vdp1.ConsumeFBSwap() {
-					vdp1.StartAutoDraw()
-				}
-			}
-			vdp1.TickSystemCycles(segWidth)
-		}
-
-		// Scanline boundary: advance the raster timebase.
-		if line+1 < e.scanlines {
-			vdp2.EndLine()
-		} else {
-			vdp2.EndFrame()
-		}
-
-		// V-Blank-IN at the boundary of the last active scanline,
-		// matching when VDP2.EndLine raises RaiseVBlankIN to SCU.
-		// VBlankIn handles framebuffer swap, erase, BEF/CEF latch,
-		// and LOPR update at FB change. PTM=10 auto-trigger is
-		// deferred to end-of-frame below so the game's V-blank ISR
-		// (which runs after V-blank-IN and may write ENDR or new
-		// commands) lands its register writes before the auto-draw
-		// resets and starts processing.
-		if line+1 == activeLines {
-			vdp1.VBlankIn()
-		}
-	}
-
-	smpc.TickFrame()
-
-	vdp2.SetVDP1DisplayFB(vdp1.DisplayFB(vdp2.FieldBit()), vdp1.Is8bpp(), vdp1.FBWidth(), vdp1.FBHeight())
-	vdp2.RenderFrame()
-
-	// Manual-mode erase deferred from VBlankIn so this frame's display
-	// uses pre-erase content. Per Sec.4.2 the erase progresses during
-	// active scanlines on hardware after VDP2 reads each line; running
-	// it here is the atomic approximation.
-	vdp1.PerformLateErase()
-
-	e.audioBuffer = scsp.MixBuffer()
-
-	// Enable sound CPU at end of frame
-	if smpc.SoundEnabled() && scsp.InReset() {
-		scsp.SetInReset(false)
-	}
-}
-
-// stepMaster advances the master SH-2 by one cycle, applying corrections.
-func (e *Emulator) stepMaster() {
-	state := e.master.Clock()
-	e.masterCycles++
-
-	// Hazard penalty: inject 1 stall cycle
-	if state.LoadUseStall {
-		e.masterCycles++
-	}
-
-	// Check MINIT write -> trigger slave FRT input capture
-	if state.Bus == sh2.BusWrite && e.bus.MINITWritten() {
-		e.slave.FRTInputCapture()
-	}
-}
-
-// stepSlave advances the slave SH-2 by one cycle, applying corrections.
-func (e *Emulator) stepSlave() {
-	state := e.slave.Clock()
-	e.slaveCycles++
-
-	// Hazard penalty: inject 1 stall cycle
-	if state.LoadUseStall {
-		e.slaveCycles++
-	}
-
-	// Check SINIT write -> trigger master FRT input capture
-	if state.Bus == sh2.BusWrite && e.bus.SINITWritten() {
-		e.master.FRTInputCapture()
-	}
-}
-
-// GetFramebuffer returns raw RGBA pixel data for the current frame.
+// GetFramebuffer returns raw RGBA pixel data for the most recently
+// completed frame. RunFrame waits for the VDP worker's frame walk
+// before returning, so the buffer is complete and the worker parked
+// while the host reads it.
 func (e *Emulator) GetFramebuffer() []byte {
 	return e.vdp2.Framebuffer()
 }
@@ -574,14 +437,6 @@ func (e *Emulator) SetSH2Trace(master, slave func(pc uint32, op uint16)) {
 	e.slave.TraceFunc = slave
 }
 
-// GetTiming returns the frame timing derived from VDP2 state.
-func (e *Emulator) GetTiming() Timing {
-	if e.vdp2.IsPAL() {
-		return Timing{FPS: 50, Scanlines: 313}
-	}
-	return Timing{FPS: 60, Scanlines: 263}
-}
-
 // SetOption applies a core option change identified by key.
 // Values are stored and applied when Start() is called.
 func (e *Emulator) SetOption(key string, value string) {
@@ -623,16 +478,26 @@ func (e *Emulator) Start() error {
 		if err := hle.Boot(e.ipImage); err != nil {
 			return err
 		}
-		return nil
-	}
-
-	if e.pendingFastBoot {
+	} else if e.pendingFastBoot {
 		e.installFastBoot()
 	}
+
+	// Spawn the frame workers. They park on their job channels until
+	// RunFrame kicks them, and run until Close closes the channels.
+	go e.vdpWorker()
+	go e.secondaryWorker()
 
 	return nil
 }
 
-// Close releases emulator resources.
+// Close stops the frame workers spawned by Start. It must not run
+// concurrently with RunFrame, and RunFrame must not be called after
+// Close (its job-channel send would panic). Idempotent.
 func (e *Emulator) Close() {
+	if e.closed {
+		return
+	}
+	e.closed = true
+	close(e.vdpJobCh)
+	close(e.secondaryJobCh)
 }

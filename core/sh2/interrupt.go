@@ -27,7 +27,7 @@ const (
 // the Clock call site can skip the call entirely. Small enough to
 // inline.
 func (c *CPU) interruptPending() bool {
-	return c.inDelay || c.nmiPending || c.intInhibit || c.intc.pending != 0 || c.irlLevel != 0
+	return c.inDelay || c.nmiPending || c.intInhibit || c.intc.pending != 0 || c.irl.Load() != 0
 }
 
 // processInterrupt resolves the pending interrupt state and services
@@ -63,8 +63,11 @@ func (c *CPU) processInterrupt() bool {
 		return false
 	}
 
-	// Common case: nothing pending anywhere.
-	if c.intc.pending == 0 && c.irlLevel == 0 {
+	// Common case: nothing pending anywhere. The IRL word is sampled
+	// once and reused below so level and vector come from the same
+	// assertion.
+	irl := c.irl.Load()
+	if c.intc.pending == 0 && irl == 0 {
 		return false
 	}
 
@@ -94,9 +97,9 @@ func (c *CPU) processInterrupt() bool {
 	}
 
 	// External IRL (from SCU).
-	if c.irlLevel > bestLevel {
-		bestLevel = c.irlLevel
-		bestVec = c.irlVec
+	if irlLevel := uint8(irl >> 16); irlLevel > bestLevel {
+		bestLevel = irlLevel
+		bestVec = uint16(irl)
 		fromIRL = true
 	}
 

@@ -37,28 +37,33 @@ const (
 
 // Audio constants for Saturn SCSP output.
 const (
-	audioSampleRate    = 44100
-	ringBufferCapacity = 8192
-	maxPlayers         = 2
+	audioSampleRate = 44100
+	maxPlayers      = 2
 
-	// otoPlayerBufferBytes sizes the mux player buffer (~50ms at 44.1kHz
-	// stereo int16). Used both to configure oto and to derive the upper
-	// bound on demand backlog (maxPending) so a single oto burst cannot
-	// overrun the producer's catch-up window.
+	// ringBufferFrames is the audio ring depth in frames. The byte size is
+	// derived at runtime from the core's frame rate (see newAudioPlayer).
+	// Under timer-paced production the producer no longer blocks on a full
+	// ring in steady state; the ring must be deep enough to absorb oto's
+	// bursty multi-frame reads (~2 frames pulled every ~33ms, with jitter)
+	// without hitting the block-on-full path, which would re-couple it to
+	// oto's coarse read cadence.
+	ringBufferFrames = 6
+
+	// otoPlayerBufferBytes sizes the oto mux player buffer (~50ms at 44.1kHz
+	// stereo int16) via player.SetBufferSize.
 	otoPlayerBufferBytes = 19200
+)
 
-	// kickstartFrames is the number of frames the producer is allowed to
-	// run before it must wait for a consumer-drain demand signal. One
-	// frame is not enough: a core that under-produces by even a few
-	// samples on its first frame leaves drainedBytes below bytesPerFrame,
-	// so demand never fires and the loop deadlocks. Two frames give the
-	// cold-start drain enough headroom to reliably release the first
-	// real demand.
-	kickstartFrames = 2
-
-	// ntscFPS is the assumed frame rate for pacing math. The core does
-	// not yet expose region-specific timing, so we hardcode NTSC.
-	ntscFPS = 60
+// Timer-pacing controller gains. The producer runs on an absolute-deadline
+// timer at the nominal frame interval; a slow proportional controller nudges
+// that interval from the low-passed ring fill so long-term production stays
+// locked to the audio device's consumption rate without drift. Gains are
+// small and the fill is low-passed so the controller tracks only the long-term
+// rate and ignores oto's per-burst fill oscillation.
+const (
+	pacingFillAlpha = 0.05 // low-pass coefficient on ring fill (~20-frame smoothing)
+	pacingGain      = 0.05 // proportional gain on normalized fill error
+	pacingMaxAdjust = 0.02 // clamp the interval to +/-2% of nominal
 )
 
 // Saturn button bit positions (d-pad bits 0-3).
@@ -165,7 +170,11 @@ func main() {
 	ebiten.SetWindowSize(800, 600)
 	ebiten.SetWindowSizeLimits(400, 300, -1, -1)
 
-	audioPlayer, err := newAudioPlayer(ntscFPS)
+	// Frame rate comes from the core's region (60 NTSC / 50 PAL), read once
+	// after Start so the audio sizing and pacing match the loaded game.
+	fps := emu.GetTiming().FPS
+
+	audioPlayer, err := newAudioPlayer(fps)
 	if err != nil {
 		log.Printf("Warning: audio initialization failed: %v", err)
 	}
@@ -173,6 +182,7 @@ func main() {
 	g := &game{
 		emu:         emu,
 		audioPlayer: audioPlayer,
+		fps:         fps,
 		sharedInput: &sharedInput{},
 		sharedFB:    newSharedFramebuffer(maxFBWidth, maxFBHeight),
 		control:     newEmuControl(),
@@ -309,6 +319,7 @@ func printDiscInfo(disc *romloader.Disc) {
 type game struct {
 	emu         *core.Emulator
 	audioPlayer *audioPlayer
+	fps         int // core frame rate (60 NTSC / 50 PAL), for pacing
 	sharedInput *sharedInput
 	sharedFB    *sharedFramebuffer
 	control     *emuControl
@@ -352,7 +363,7 @@ type game struct {
 
 const (
 	stageIdle int32 = iota
-	stageWaitDemand
+	stagePacing
 	stageRunFrame
 	stageQueueAudio
 	stageUpdateFB
@@ -362,8 +373,8 @@ func stageName(s int32) string {
 	switch s {
 	case stageIdle:
 		return "idle (between iterations)"
-	case stageWaitDemand:
-		return "waitForDemand"
+	case stagePacing:
+		return "pacing sleep"
 	case stageRunFrame:
 		return "RunFrame"
 	case stageQueueAudio:
@@ -428,6 +439,19 @@ func (g *game) emulationLoop() {
 	frameTimeSum := time.Duration(0)
 	frameTimeCount := 0
 
+	// Path 2 timer pacing. Frames run on an absolute-deadline schedule at the
+	// nominal frame interval; a slow proportional controller nudges the
+	// interval from ring fill so long-term production locks to the audio
+	// device's consumption rate. This replaces the demand-token gate, which
+	// slaved the producer to oto's coarse, Go-scheduled ~33ms reads and made
+	// frames complete in bursts.
+	bytesPerFrame := int(math.Round(float64(audioSampleRate) * 4 / float64(g.fps)))
+	baseInterval := float64(time.Second) / float64(g.fps)
+	frameInterval := baseInterval
+	pacingTarget := float64(ringBufferFrames*bytesPerFrame) / 2
+	smoothFill := pacingTarget
+	nextDeadline := time.Now()
+
 	for {
 		if !g.control.shouldRun() {
 			return
@@ -436,9 +460,20 @@ func (g *game) emulationLoop() {
 		g.stage.Store(stageIdle)
 		g.frameTick.Add(1)
 
-		g.stage.Store(stageWaitDemand)
-		if !g.audioPlayer.waitForDemand() {
-			return
+		// Pace to the next absolute deadline. Absolute deadlines (not
+		// Sleep(interval)) keep per-sleep jitter from accumulating into rate
+		// drift: N frames span exactly N intervals regardless of individual
+		// sleep overshoot. Shutdown is handled by the shouldRun check above -
+		// the sleep is bounded by one interval, so a stopped loop exits
+		// within a frame.
+		g.stage.Store(stagePacing)
+		nextDeadline = nextDeadline.Add(time.Duration(frameInterval))
+		if d := time.Until(nextDeadline); d > 0 {
+			time.Sleep(d)
+		} else if d < -time.Duration(baseInterval) {
+			// Fell more than a full frame behind (e.g. a long RunFrame).
+			// Resync so we don't spiral trying to catch up.
+			nextDeadline = time.Now()
 		}
 
 		buttons := g.sharedInput.read()
@@ -473,6 +508,24 @@ func (g *game) emulationLoop() {
 			g.emu.GetFramebufferStride(),
 			g.emu.GetActiveHeight(),
 		)
+
+		// Slow proportional pacing feedback. Low-pass the ring fill, then
+		// nudge the frame interval from the normalized fill error: a fuller-
+		// than-target ring means we are producing faster than the device
+		// consumes, so lengthen the interval (and vice versa). The low-pass
+		// plus small clamped gain make the controller track only the long-term
+		// rate and ignore oto's per-burst fill swing.
+		if g.audioPlayer != nil {
+			fill := float64(g.audioPlayer.buffered())
+			smoothFill += (fill - smoothFill) * pacingFillAlpha
+			adjust := pacingGain * (smoothFill - pacingTarget) / pacingTarget
+			if adjust > pacingMaxAdjust {
+				adjust = pacingMaxAdjust
+			} else if adjust < -pacingMaxAdjust {
+				adjust = -pacingMaxAdjust
+			}
+			frameInterval = baseInterval * (1 + adjust)
+		}
 
 		// SH-2 PC histogram arm/dump. Toggled here, between frames, so
 		// SetSH2Trace never mutates TraceFunc while a core is executing.
@@ -515,9 +568,9 @@ func (g *game) emulationLoop() {
 		}
 
 		frameCount++
-		if frameCount%60 == 0 {
+		if frameCount%g.fps == 0 {
 			fpsElapsed := time.Since(fpsStart)
-			fps := 60.0 / fpsElapsed.Seconds()
+			fps := float64(g.fps) / fpsElapsed.Seconds()
 			// Game fps = how many times VDP1 actually swapped its
 			// framebuffer over the same window. Games that run their
 			// internal logic at half rate (or that fail to advance
@@ -616,6 +669,10 @@ func writeMemoryDump(dump core.MemoryDump, baseDir string) error {
 		{"scsp_timers.bin", dump.SCSPTimers},
 		{"sh2_master_regs.bin", dump.SH2MasterRegs},
 		{"sh2_slave_regs.bin", dump.SH2SlaveRegs},
+		{"sh2_master_irq.bin", dump.SH2MasterIRQ},
+		{"sh2_slave_irq.bin", dump.SH2SlaveIRQ},
+		{"smpc.bin", dump.SMPCState},
+		{"coordination.bin", dump.Coordination},
 		{"m68k_state.bin", dump.M68KState},
 	}
 	for _, r := range regions {
@@ -923,9 +980,6 @@ type audioRingBuffer struct {
 	mu       sync.Mutex
 	cond     *sync.Cond
 	closed   bool
-	// onDrain is invoked from Read after the buffer lock is released, so
-	// callbacks that take their own lock cannot deadlock against rb.mu.
-	onDrain func(n int)
 }
 
 func newAudioRingBuffer(capacity int) *audioRingBuffer {
@@ -1026,24 +1080,9 @@ func (rb *audioRingBuffer) Read(p []byte) (int, error) {
 		rb.cond.Signal()
 	}
 
-	cb := rb.onDrain
 	rb.mu.Unlock()
-
-	if cb != nil {
-		cb(n)
-	}
 
 	return n, nil
-}
-
-// setOnDrain installs a callback invoked after each Read completes,
-// outside the buffer lock, with the number of bytes read. Used by the
-// pacing layer to convert real-time consumer drain into producer wake
-// signals. Pass nil to clear.
-func (rb *audioRingBuffer) setOnDrain(fn func(n int)) {
-	rb.mu.Lock()
-	rb.onDrain = fn
-	rb.mu.Unlock()
 }
 
 func (rb *audioRingBuffer) Buffered() int {
@@ -1087,30 +1126,19 @@ func ensureOtoContext() (*oto.Context, error) {
 	return otoCtx, otoInitErr
 }
 
-// audioPlayer wraps oto and a ring buffer with consumer-drain pacing.
-// Pacing is driven by Read events from the audio device: each Read
-// accumulates a byte counter, and once per frame's worth of bytes the
-// producer is signalled via waitForDemand. The producer parks on
-// waitForDemand between frames so the audio device's drain rate is the
-// loop's clock.
+// audioPlayer wraps oto and a ring buffer. The producer writes one frame of
+// samples per emulated frame into the ring; oto drains it. Pacing is NOT done
+// here - the emulation loop paces itself on an absolute-deadline timer and
+// uses the ring fill (Buffered) only as a slow rate-lock reference. The ring's
+// block-on-full path remains as a backpressure safety net.
 type audioPlayer struct {
 	player     *oto.Player
 	ringBuffer *audioRingBuffer
 	audioBytes []byte
-	// silentFrame is one frame's worth of zero bytes, written to the
-	// ring when the core produces empty audio. Without this an empty
-	// cold-start frame would queue nothing, oto would have nothing to
-	// drain, and the demand signal would never fire - deadlocking the
-	// producer.
+	// silentFrame is one frame's worth of zero bytes, written to the ring
+	// when the core produces empty audio so oto always has samples to drain
+	// and does not underrun on empty cold-start frames.
 	silentFrame []byte
-
-	demandMu      sync.Mutex
-	demandCond    *sync.Cond
-	bytesPerFrame int
-	drainedBytes  int
-	pendingFrames int
-	maxPending    int
-	shutdown      bool
 }
 
 func newAudioPlayer(fps int) (*audioPlayer, error) {
@@ -1119,20 +1147,14 @@ func newAudioPlayer(fps int) (*audioPlayer, error) {
 		return nil, fmt.Errorf("oto audio not available: %w", err)
 	}
 
-	rb := newAudioRingBuffer(ringBufferCapacity)
-
 	bytesPerFrame := int(math.Round(float64(audioSampleRate) * 4 / float64(fps)))
-	maxPending := otoPlayerBufferBytes/bytesPerFrame + 1
+	rb := newAudioRingBuffer(ringBufferFrames * bytesPerFrame)
 
 	ap := &audioPlayer{
-		ringBuffer:    rb,
-		audioBytes:    make([]byte, 0, 4096),
-		silentFrame:   make([]byte, bytesPerFrame),
-		bytesPerFrame: bytesPerFrame,
-		maxPending:    maxPending,
-		pendingFrames: kickstartFrames,
+		ringBuffer:  rb,
+		audioBytes:  make([]byte, 0, 4096),
+		silentFrame: make([]byte, bytesPerFrame),
 	}
-	ap.demandCond = sync.NewCond(&ap.demandMu)
 
 	player := ctx.NewPlayer(rb)
 	player.SetBufferSize(otoPlayerBufferBytes)
@@ -1140,49 +1162,13 @@ func newAudioPlayer(fps int) (*audioPlayer, error) {
 	player.Play()
 	ap.player = player
 
-	// Install the drain callback last. The audioPlayer must be fully
-	// constructed before any consumer Read can fire handleDrain.
-	rb.setOnDrain(ap.handleDrain)
-
 	return ap, nil
 }
 
-// handleDrain is invoked by the ring buffer after each Read with the
-// number of bytes consumed. It accumulates a frame-sized counter and
-// releases producer demand once per frame's worth of drained bytes,
-// capped at maxPending so a bursty consumer (oto's first 50ms pull)
-// cannot enqueue unbounded catch-up work.
-func (a *audioPlayer) handleDrain(n int) {
-	a.demandMu.Lock()
-	a.drainedBytes += n
-	for a.drainedBytes >= a.bytesPerFrame {
-		a.drainedBytes -= a.bytesPerFrame
-		if a.pendingFrames < a.maxPending {
-			a.pendingFrames++
-		}
-	}
-	if a.pendingFrames > 0 {
-		a.demandCond.Signal()
-	}
-	a.demandMu.Unlock()
-}
-
-// waitForDemand blocks until the audio consumer has drained enough
-// bytes to request another frame, or until close is called. Returns
-// true when the caller should run the next frame, false when the
-// player is shutting down and the producer should exit.
-func (a *audioPlayer) waitForDemand() bool {
-	a.demandMu.Lock()
-	for !a.shutdown && a.pendingFrames == 0 {
-		a.demandCond.Wait()
-	}
-	if a.shutdown {
-		a.demandMu.Unlock()
-		return false
-	}
-	a.pendingFrames--
-	a.demandMu.Unlock()
-	return true
+// buffered returns the current ring fill in bytes. The timer-pacing
+// controller reads this as its rate-lock reference.
+func (a *audioPlayer) buffered() int {
+	return a.ringBuffer.Buffered()
 }
 
 func (a *audioPlayer) queueSamples(samples []int16) {
@@ -1204,15 +1190,10 @@ func (a *audioPlayer) queueSamples(samples []int16) {
 }
 
 func (a *audioPlayer) close() {
-	// Set shutdown and wake any producer parked on demand BEFORE closing
-	// the ring. Otherwise a producer signalled by a stale demand could
-	// race past waitForDemand and into ring.Write at the same moment the
-	// ring is being torn down, and there is no demand wake to follow.
-	a.demandMu.Lock()
-	a.shutdown = true
-	a.demandCond.Broadcast()
-	a.demandMu.Unlock()
-
+	// Close the ring first so a producer blocked in ring.Write (full ring)
+	// wakes and the emulation loop can observe shouldRun()==false and exit.
+	// The timer-paced producer otherwise parks only in time.Sleep (bounded by
+	// one frame interval), so no demand-side wake is needed.
 	if a.ringBuffer != nil {
 		a.ringBuffer.Close()
 	}

@@ -389,42 +389,82 @@ memory-to-memory transfers.
 
 ## Cache
 
-The SH-2 has a 4 KB on-chip cache (4-way set associative, 64 entries,
-16 bytes per line). Cache lookup is not emulated: every memory access
-goes directly to the bus. In an emulator, RAM access is already an
-array index with no latency to hide, so modeling tag comparisons, LRU,
-and line fills would add overhead with no benefit.
+The SH-2's 4 KB on-chip cache is fully modeled per SH7604 hardware
+manual Section 8: 4-way set associative, 64 entries, 16-byte lines,
+mixed instruction/data, write-through with no write allocation. Each
+CPU has its own private cache (cache.go); both instruction fetches and
+data accesses go through it when CE is set.
 
-Reading current data from the bus is actually more correct than real
-hardware in the dual-CPU case since there is no stale-data problem.
+- **Partition routing** (Sec 8.3, Table 8.2): A31-A29 select cache
+  area (000), cache-through (001), associative purge (010), address
+  array (011), data array (110), or I/O (111). Reads and writes in
+  read8/16/32 / write8/16/32 dispatch on the partition.
+- **Reads** (Sec 8.4.1): a hit is served from the data array with no
+  external access and no wait states. A miss selects a way by
+  pseudo-LRU, writes the tag and valid bit, and fills the 16-byte line
+  with four longword bus reads; the stall charged is the full
+  four-access external cost.
+- **Writes** (Sec 8.4.2): write-through - memory is always written
+  (and always pays the external cost; the CPU waits for the internal
+  bus write), the data array is updated only on a tag hit, and a write
+  miss does not allocate.
+- **Pseudo-LRU** (Sec 8.4.5, Tables 8.3/8.4): 6 bits per entry,
+  updated on read hit, write hit, and replacement. After a purge the
+  fill order is way 3 -> 2 -> 1 -> 0. OD/ID suppress replacement for
+  data/instruction misses; two-way mode (TW) replaces only ways 2-3,
+  picked by LRU bit 0 (the way2<->way3 order bit), leaving ways 0-1 as
+  RAM.
+- **CCR** (Sec 8.2): CE/ID/OD/TW/W1-W0 modeled; CP purges all valid
+  bits and LRU information, self-clears, and always reads 0
+  (Sec 8.4.6). A reset clears CCR but not the cache contents
+  (Sec 8.5.1).
+- **Associative purge** (Sec 8.4.7): a write to 0x40000000+addr
+  invalidates a line matching addr's tag in any way.
+- **Address array** (Sec 8.4.9): longword read returns tag/LRU/valid
+  for the way selected by CCR W1-W0; a write sets the tag and valid
+  bit from the address and the LRU from the data.
+- **Data array** (Sec 8.4.8): 0xC0000000+ reads and writes the 4 KB
+  cache storage directly, way-major (way 0 at +0x000, way 3 at
+  +0xC00), shared with cached lines - the same bytes hardware exposes.
+  Code can execute from it. With the cache disabled or in two-way
+  mode, games use it as on-chip RAM.
+- **TAS.B** (Sec 8.4.4): the read is cache-through even in the cache
+  area (no tag compare, no fill); the write updates the data array on
+  a tag hit before the memory write.
+- **No snoop** (Sec 8.5.3): writes by the other CPU, the SCU, or the
+  DMAC do not update or invalidate this CPU's cache. Stale data after
+  external writes is real hardware behavior; software maintains
+  coherency with cache-through addresses, associative purges, and CP.
+  The on-chip DMAC also bypasses the cache (Sec 7.11.2).
 
-### What is implemented
+### Bus-access wait states
 
-The cache data array region (0xC0000000-0xDFFFFFFF) is backed by a
-per-CPU 4 KB buffer (cacheData). Games commonly lock the cache and use
-this region as fast CPU-internal scratch RAM for stacks and tight loops.
-Each SH-2 has its own private buffer; the 4 KB is mirrored throughout
-the region.
+External accesses - cache misses (line fills), cache-through and
+uncached accesses, and every write - are charged a per-region
+wait-state penalty so memory-heavy code runs at hardware rate; cache
+hits cost nothing:
 
-Other cache control regions are no-ops:
-- 0x40000000-0x5FFFFFFF (associative purge): writes ignored
-- 0x60000000-0x7FFFFFFF (address array): reads return 0, writes ignored
-- 0x80000000-0xBFFFFFFF (reserved): reads return 0, writes ignored
-
-CCR (0xFFFFFE92) is stored but has no functional effect beyond
-read-back.
-
-### Symptoms of missing cache emulation
-
-If a game exhibits any of the following and other causes have been ruled
-out, investigate whether full cache emulation is needed:
-
-- Data corruption when both CPUs access the same memory region
-- Graphics glitches after DMA transfers (CPU reads stale pre-DMA data)
-- Game code that writes to 0x40000000+ addresses with no visible effect
-- Game code that reads/writes CCR and expects cache state changes
-- Game code that accesses 0x60000000+ for direct tag manipulation
-- Timing-sensitive code that depends on cache hit/miss cycle counts
+- Three per-CPU tables (`busStallRead/Write/Fill [128]uint32`) hold
+  the read, write, and 16-byte line-fill costs for each 1 MB block of
+  the 27-bit physical space, indexed by `(addr>>20)&0x7F` (folding
+  the cache-through mirror onto the same region). The emulator fills
+  them once from the bus wait-state model (`buildSH2StallTables` ->
+  `Bus.AccessCycles`/`WriteAccessCycles`); they are all-zero by
+  default so unit tests that build a CPU directly see no stall.
+- The costs are decoded from the boot-time BSC/SCU register values
+  with the manuals' formulas where the hardware defines them: Work
+  RAM-H SDRAM reads run the full burst pipeline (7 states whether one
+  longword or a line fill is wanted, SH7604 Sec 7.5.3-7.5.4), SDRAM
+  writes are single writes (4 states, Sec 7.5.5), CS0 ordinary space
+  is 3 states, A-Bus is 20 (68 per 16-byte burst). B-Bus device costs
+  are arbitration (e.g. VDP2 VRAM reads wait for a CPU cycle-pattern
+  slot) and carry fixed-point estimates until that machinery is
+  modeled; VDP2 writes are posted and cost only the handoff.
+- `busStall` debt is drained one cycle per `Clock()` before the next
+  instruction executes (the same deferred-cycle pattern as load-use
+  stall), so each access extends its instruction by its cost.
+- On-chip registers and data-array accesses are internal and never
+  charged.
 
 ## Memory Access / Region Routing Simplifications
 
@@ -443,12 +483,14 @@ does, and why the simplification is safe for Saturn software.
 - **D2 Associative-purge reserved alias** (Sec 8.4.7, Table 7.3).
   Hardware defines the associative purge region at
   0x40000000-0x47FFFFFF and reserves 0x48000000-0x5FFFFFFF. erings
-  folds the two ranges into one no-op block.
+  treats the full partition as the purge region: any write purges by
+  the address's tag/entry bits; reads return 0.
 - **D3 Address-array reserved alias** (Sec 8.4.9, Table 7.3).
   Hardware maps the address array at 0x60000000-0x600003FF; the rest
   of 0x60000000-0x7FFFFFFF is addressable via tag-address bit layout.
-  erings treats the full 512 MB block as a single read-0 / write-
-  ignored range because the cache is not modeled.
+  erings serves the full partition through the same entry-bit decode
+  (A9-A4), so the documented base behaves exactly and the remainder
+  mirrors it.
 - **D4 Reserved block 0x80000000-0xBFFFFFFF** (Table 7.3). Hardware
   reserves this range. erings returns 0 on read and drops writes.
 - **D5 SDRAM-mode setting area and reserved on-chip block**

@@ -1085,8 +1085,8 @@ func TestManualErase(t *testing.T) {
 	drainDrawing(v)
 
 	// VBlankIn schedules the erase but does not perform it yet.
-	if !v.lateEraseDisplayFB {
-		t.Error("lateEraseDisplayFB should be set after FCM=1 FCT=0 + fbcrWritten")
+	if v.lateEraseFB == nil {
+		t.Error("lateEraseFB should be set after FCM=1 FCT=0 + fbcrWritten")
 	}
 	// Both buffers are still untouched at this point.
 	if got := readFBPixel(v, 0, 0); got != 0x1234 {
@@ -1100,14 +1100,57 @@ func TestManualErase(t *testing.T) {
 	// display buffer; only then is the displayFB erased to EWDR.
 	v.PerformLateErase()
 
-	if v.lateEraseDisplayFB {
-		t.Error("lateEraseDisplayFB should be cleared after PerformLateErase")
+	if v.lateEraseFB != nil {
+		t.Error("lateEraseFB should be cleared after PerformLateErase")
 	}
 	if got := readDisplayFBPixel(v, 0, 0); got != 0xBBBB {
 		t.Errorf("post-late-erase display(0,0) = 0x%04X, want 0xBBBB", got)
 	}
 	if got := readFBPixel(v, 0, 0); got != 0x1234 {
 		t.Errorf("post-late-erase draw(0,0) = 0x%04X, want 0x1234 (untouched)", got)
+	}
+}
+
+// The pending erase targets the buffer captured at request time. If a
+// swap occurs between the request and the next VBlankIn boundary, the
+// erase completes on the captured buffer before the swap, never on
+// the buffer that displayFB points to afterward.
+func TestManualEraseSurvivesSwap(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x06, 0xBBBB)
+	v.Write(0x08, 0x0000)
+	v.Write(0x0A, 0x50FF)
+
+	v.Write(0x02, 0x02) // FCM=1, FCT=0; schedules the erase
+	writeDrawEnd(v, 0)
+
+	captured := &v.displayFB[0]
+	v.drawFB[0] = 0x12
+	v.drawFB[1] = 0x34
+	v.displayFB[0] = 0x56
+	v.displayFB[1] = 0x78
+
+	v.VBlankIn()
+	drainDrawing(v)
+	if v.lateEraseFB == nil || &v.lateEraseFB[0] != captured {
+		t.Fatal("erase request should capture the display buffer at request time")
+	}
+
+	// FCM=1+FCT=1 swap via VBlankOut before the erase has executed:
+	// the captured buffer is erased and then becomes drawFB; the
+	// freshly displayed buffer keeps its drawn content.
+	v.Write(0x02, 0x03)
+	v.VBlankOut()
+
+	if v.lateEraseFB != nil {
+		t.Error("swap should have flushed the pending erase")
+	}
+	if got := readFBPixel(v, 0, 0); got != 0xBBBB {
+		t.Errorf("post-swap draw(0,0) = 0x%04X, want 0xBBBB (captured buffer erased)", got)
+	}
+	if got := readDisplayFBPixel(v, 0, 0); got != 0x1234 {
+		t.Errorf("post-swap display(0,0) = 0x%04X, want 0x1234 (drawn content displayed)", got)
 	}
 }
 
@@ -1254,8 +1297,8 @@ func TestManualModeNoSwapOnErase(t *testing.T) {
 	}
 	// Deferred-erase flag set, displayFB still untouched until
 	// PerformLateErase runs.
-	if !v.lateEraseDisplayFB {
-		t.Error("lateEraseDisplayFB should be set")
+	if v.lateEraseFB == nil {
+		t.Error("lateEraseFB should be set")
 	}
 	if got := readDisplayFBPixel(v, 0, 0); got != 0xCCDD {
 		t.Errorf("pre-late-erase display(0,0) = 0x%04X, want 0xCCDD", got)
@@ -1300,7 +1343,7 @@ func TestVBlankOutManualSwap(t *testing.T) {
 // TestVBlankOutClearsFbcrWritten verifies VBlankOut clears
 // fbcrWritten after a swap. Without this, the trailing VBlankIn would
 // see FCM=1+FCT=0+fbcrWritten=true and incorrectly schedule a
-// lateEraseDisplayFB - the FCT auto-clear inside VBlankOut consumed
+// lateEraseFB - the FCT auto-clear inside VBlankOut consumed
 // the same FBCR write that drove the swap.
 func TestVBlankOutClearsFbcrWritten(t *testing.T) {
 	v := NewVDP1(NewSCU())
@@ -1314,8 +1357,8 @@ func TestVBlankOutClearsFbcrWritten(t *testing.T) {
 
 	// Confirm the trailing VBlankIn does not schedule a late erase.
 	v.VBlankIn()
-	if v.lateEraseDisplayFB {
-		t.Error("VBlankIn after VBlankOut wrongly scheduled lateEraseDisplayFB; FCT auto-clear should not look like a fresh erase request")
+	if v.lateEraseFB != nil {
+		t.Error("VBlankIn after VBlankOut wrongly scheduled lateEraseFB; FCT auto-clear should not look like a fresh erase request")
 	}
 }
 

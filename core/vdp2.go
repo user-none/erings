@@ -150,14 +150,11 @@ const (
 	tvstatHBLANK = 1 << 2
 	tvstatVBLANK = 1 << 3
 
-	// System cycles per scanline by horizontal mode. Both crystals
-	// share the ~15,734 Hz NTSC line rate; the difference is the
-	// system clock the crystal drives.
-	systemCyclesPerLine320 = 1708
-	systemCyclesPerLine352 = 1820
-
 	// Active system cycles per scanline. The pixel clock is
 	// system clock / 4 in normal modes, so active = pixels * 4.
+	// The total per-line cycle budget is owned by the Emulator
+	// (derived from the documented system clock); only the active
+	// region is needed here, for H-blank detection.
 	activeSystemCycles320 = 1280
 	activeSystemCycles352 = 1408
 
@@ -196,14 +193,15 @@ type VDP2 struct {
 	latchedVLine     uint16
 	latchedHiRes     bool
 	latchedInterlace uint8
+	latchedOddField  bool
 	exltfg           bool
 
 	// Cached timing parameters
-	systemCyclesPerLine uint32
-	activeSystemCycles  uint32
-	linesPerFrame       uint16
-	activeLines         uint16
-	pal                 bool
+	clock352           bool // horizontal mode selects the 352 system clock (else 320)
+	activeSystemCycles uint32
+	linesPerFrame      uint16
+	activeLines        uint16
+	pal                bool
 
 	// RBG layer buffers
 	rbg0Buf   []uint32
@@ -211,15 +209,43 @@ type VDP2 struct {
 	rbg0LCBuf []uint8 // per-pixel coefficient line color (bit7=valid, bits6:0=data)
 	rbg1LCBuf []uint8
 
-	// VDP1 display buffer for temporary sprite overlay
-	vdp1DisplayFB []byte
-	vdp1FB8bpp    bool
-	vdp1FBWidth   int
-	vdp1FBHeight  int
+	// Per-scanline RPRCTL re-read arm bits, indexed by raster line. An
+	// SH-2 write to RPRCTL records its bits at the line the write occurs
+	// on (v.vLine); the renderer consumes the entry for the line it is
+	// drawing. The RPRCTL re-read bits self-clear after each line per
+	// VDP2 manual Sec 6.3, so the table is the per-line arm state: bits
+	// 0-2 are parameter A (Xst/Yst/KAst), bits 8-10 parameter B. Reset
+	// each frame by RunFrame while the workers are parked. Sized to
+	// maxHeight to cover every raster line including the vertical blank.
+	rprArm [maxHeight]uint16
 
-	// Per-frame CRAM color cache. Rebuilt at the top of RenderFrame so
-	// the per-pixel color lookup is a table index instead of a CRAM read
-	// plus RGB conversion. CRAM is static for the duration of one frame.
+	// VDP1 display framebuffer for the line being rendered. Written
+	// only at BeginLine entry from its argument.
+	lineFB vdp1FBView
+
+	// Line state prepared by BeginLine and consumed by RenderTo:
+	// whether the row renders at all, the span renderer chain (enabled
+	// layers, gradation, composite) holding each renderer's per-line
+	// setup in its closure, and the render cursor.
+	//
+	// lineSpans is sized to the maximum simultaneous span count: 4 NBG +
+	// RBG0 + gradation + composite = 7. RBG1 never adds an eighth slot
+	// because BGON bit 5 (RBG1 active) forces all NBG screens off in
+	// decodeLineState, so the NBG and RBG1 spans are mutually exclusive.
+	lineActive bool
+	lineNSpans int
+	lineSpans  [7]func(x0, x1 int)
+	lineSpanX  int
+
+	// regsDirty is set by register writes; BeginLine re-decodes the
+	// register-derived line state only when set (or at a frame's first
+	// line), so quiet lines skip the decode.
+	regsDirty bool
+
+	// CRAM color cache: per-pixel color lookup is a table index
+	// instead of a CRAM read plus RGB conversion. Invalidated by CRAM
+	// writes; rebuilt at the next BeginLine, so CRAM writes take
+	// effect on the following line.
 	cramCacheR     [2048]uint8
 	cramCacheG     [2048]uint8
 	cramCacheB     [2048]uint8
@@ -227,19 +253,19 @@ type VDP2 struct {
 	cramCacheMask  uint32
 	cramCacheValid bool
 
-	// Per-frame window-mask fast path. The per-layer window control
-	// decode and the all-windows-disabled early-out depend only on
-	// registers, so the disabled-window result is precomputed once per
-	// frame per layer (0-5) instead of per pixel.
+	// Window-mask fast path. The per-layer window control decode and
+	// the all-windows-disabled early-out depend only on registers, so
+	// the disabled-window result is precomputed by the line-state
+	// decode instead of per pixel.
 	winMaskSkip  [6]bool
 	winMaskVal   [6]bool
 	winMaskValid bool
 
-	// Geometry of the previously rendered frame. RenderFrame compares
-	// against the current geometry to detect a display-mode change.
-	prevWidth  int
-	prevHeight int
-	prevIntl   uint8
+	// Render state. Frame-scoped fields (geometry, field parity,
+	// DISP, rotation parameters) are sampled by BeginFrame; the rest
+	// refreshes per line in BeginLine so register writes take effect
+	// on the following line.
+	frame vdp2Frame
 
 	// SCU reference for interrupt signaling
 	scu *SCU
@@ -262,6 +288,10 @@ func NewVDP2(scu *SCU) *VDP2 {
 		v.layerBufs[i] = make([]uint32, maxWidth*maxHeight)
 	}
 	v.recalcTiming()
+	// Prime the frame-scoped state so geometry accessors
+	// (FramebufferStride, DisplayHeight) report sane values before the
+	// first RunFrame.
+	v.BeginFrame()
 	return v
 }
 
@@ -280,6 +310,18 @@ func (v *VDP2) Reset() {
 	}
 	clear(v.vram)
 	clear(v.cram)
+	v.recalcTiming()
+}
+
+// ResetRegisters zeros the register file to power-on values, leaving VRAM,
+// CRAM, and the field/line counters intact. Models the VDP2 register reset
+// the SMPC CKCHG performs; VRAM is reloaded by the game after the clock
+// change and the line counters must survive a mid-frame reset.
+func (v *VDP2) ResetRegisters() {
+	for i := range v.regs {
+		v.regs[i] = 0
+	}
+	v.cramCacheValid = false
 	v.recalcTiming()
 }
 
@@ -342,6 +384,16 @@ func (v *VDP2) Write(offset uint32, val uint16) {
 		return
 	}
 
+	// RPRCTL re-read arm: per VDP2 manual Sec 6.3 the Xst/Yst/KAst
+	// re-read enable bits are read for the next line then self-clear, so
+	// they are captured per scanline rather than held frame-scoped.
+	// Record the armed bits at the raster line the SH-2 is on; the
+	// renderer consumes the entry for the line it draws. OR so multiple
+	// writes within a line accumulate.
+	if idx == vdp2RPRCTL && int(v.vLine) < len(v.rprArm) {
+		v.rprArm[v.vLine] |= val & 0x0707
+	}
+
 	switch idx {
 	case vdp2TVSTAT, vdp2VRSIZE, vdp2HCNT, vdp2VCNT:
 		// Read-only, ignore writes
@@ -349,9 +401,15 @@ func (v *VDP2) Write(offset uint32, val uint16) {
 	case vdp2TVMD:
 		v.regs[idx] = val
 		v.recalcTiming()
+	case vdp2RAMCTL:
+		v.regs[idx] = val
+		// The CRAM mode (bits 13:12) selects the color cache's entry
+		// format and mask.
+		v.cramCacheValid = false
 	default:
 		v.regs[idx] = val
 	}
+	v.regsDirty = true
 }
 
 // ReadVRAM reads a byte from VDP2 VRAM.
@@ -407,6 +465,7 @@ func (v *VDP2) WriteCRAM(addr uint32, val uint8) {
 	if cramMode == 0 {
 		v.cram[addr^0x800] = val // mirror to other half
 	}
+	v.cramCacheValid = false
 }
 
 // ReadCRAM16 reads a big-endian 16-bit value from VDP2 Color RAM.
@@ -441,17 +500,10 @@ func (v *VDP2) cramMode() uint8 {
 	return uint8((v.regs[vdp2RAMCTL] >> 12) & 0x03)
 }
 
-// SetVDP1DisplayFB sets the VDP1 display frame buffer and its format
-// for sprite overlay compositing.
-func (v *VDP2) SetVDP1DisplayFB(fb []byte, is8bpp bool, fbWidth, fbHeight int) {
-	v.vdp1DisplayFB = fb
-	v.vdp1FB8bpp = is8bpp
-	v.vdp1FBWidth = fbWidth
-	v.vdp1FBHeight = fbHeight
-}
-
-// SystemCyclesPerLine returns the number of system clock cycles per scanline.
-func (v *VDP2) SystemCyclesPerLine() uint32 { return v.systemCyclesPerLine }
+// Is352Clock reports whether the current horizontal mode runs on the 352
+// system clock (352/704). False means the 320 clock (320/640). The Emulator
+// uses this plus IsPAL to select the documented crystal frequency.
+func (v *VDP2) Is352Clock() bool { return v.clock352 }
 
 // LinesPerFrame returns the total number of scanlines per frame.
 func (v *VDP2) LinesPerFrame() uint16 { return v.linesPerFrame }
@@ -480,11 +532,16 @@ func (v *VDP2) effectiveInterlace() uint8 {
 // LSMD=3 double-density interlace doubles the displayed vertical
 // resolution; LSMD=3 with NBG mosaic enabled falls back to single-density
 // (non-doubled) per VDP2 manual section 4.11.
+//
+// Reads the BeginFrame sample, not live registers: the value must
+// describe the frame that was actually rendered, or a mid-frame mode
+// change would make the host interpret the framebuffer with geometry
+// the renderer did not use (sheared/garbled output for that frame).
 func (v *VDP2) DisplayHeight() int {
-	if v.effectiveInterlace() == 3 {
-		return int(v.activeLines) * 2
+	if v.frame.effIntl == 3 {
+		return v.frame.height * 2
 	}
-	return int(v.activeLines)
+	return v.frame.height
 }
 
 // fieldBit returns 1 when the current field to be drawn is odd, 0
@@ -497,21 +554,6 @@ func (v *VDP2) fieldBit() int {
 	return 0
 }
 
-// FieldBit exports the current field bit for cross-package consumers
-// (notably VDP1, which selects the parity-matched framebuffer under DIE=1).
-// Returns 0 outside effective LSMD=3.
-func (v *VDP2) FieldBit() int { return v.fieldBit() }
-
-// outRow maps a field-line index (0..activeLines-1) to the framebuffer
-// row that should be written for the current field. Identity outside
-// effective LSMD=3.
-func (v *VDP2) outRow(y int) int {
-	if v.effectiveInterlace() == 3 {
-		return y*2 + v.fieldBit()
-	}
-	return y
-}
-
 // ActiveWidth returns the number of active pixels per line.
 func (v *VDP2) ActiveWidth() uint16               { return v.activeWidth }
 func (v *VDP2) ActiveSystemCyclesPerLine() uint32 { return v.activeSystemCycles }
@@ -519,8 +561,10 @@ func (v *VDP2) ActiveSystemCyclesPerLine() uint32 { return v.activeSystemCycles 
 // Framebuffer returns the RGBA8888 pixel output buffer.
 func (v *VDP2) Framebuffer() []byte { return v.framebuffer }
 
-// FramebufferStride returns the stride (bytes per row) of the framebuffer.
-func (v *VDP2) FramebufferStride() int { return int(v.activeWidth) * 4 }
+// FramebufferStride returns the stride (bytes per row) of the
+// framebuffer. Reads the BeginFrame sample for the same reason as
+// DisplayHeight: it must match the geometry the frame was rendered at.
+func (v *VDP2) FramebufferStride() int { return v.frame.width * 4 }
 
 // TickSystemCycles advances the intra-line cycle position (TVSTAT
 // HBLANK, H/V latch). Line advancement is driven by EndLine/EndFrame
@@ -585,6 +629,7 @@ func (v *VDP2) latchHV() {
 	v.latchedVLine = v.vLine
 	v.latchedHiRes = v.hiRes
 	v.latchedInterlace = v.interlace
+	v.latchedOddField = v.oddField
 	v.exltfg = true
 }
 
@@ -604,10 +649,12 @@ func (v *VDP2) buildHCNT() uint16 {
 // buildVCNT formats the latched V counter per Table 2.4. The 9-bit
 // V[8:0] value is placed in VCT[9:1]. In double-density interlace,
 // VCT0 carries the field flag (0=odd, 1=even) which is inverted
-// relative to the TVSTAT ODD bit convention.
+// relative to the TVSTAT ODD bit convention. The field flag is part of
+// the latched snapshot (it reads as latched V counter data per the
+// manual), so it uses latchedOddField rather than the live field.
 func (v *VDP2) buildVCNT() uint16 {
 	val := uint16((v.latchedVLine & 0x01FF) << 1)
-	if v.latchedInterlace == 3 && !v.oddField {
+	if v.latchedInterlace == 3 && !v.latchedOddField {
 		val |= 0x0001
 	}
 	return val
@@ -634,12 +681,13 @@ func (v *VDP2) recalcTiming() {
 
 	v.hiRes = hreso&0x02 != 0
 
-	// System cycles per line: 640 uses 320's clock, 704 uses 352's clock
-	if hreso&0x01 != 0 {
-		v.systemCyclesPerLine = systemCyclesPerLine352
+	// System clock family: 640 shares 320's clock, 704 shares 352's clock
+	// (HRESO bit 0). The Emulator owns the per-line cycle budget and reads
+	// this via Is352Clock(); VDP2 keeps only the active-region width here.
+	v.clock352 = hreso&0x01 != 0
+	if v.clock352 {
 		v.activeSystemCycles = activeSystemCycles352
 	} else {
-		v.systemCyclesPerLine = systemCyclesPerLine320
 		v.activeSystemCycles = activeSystemCycles320
 	}
 

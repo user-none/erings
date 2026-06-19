@@ -284,8 +284,10 @@ func TestFRTFTCSRClearFlags(t *testing.T) {
 	var frt FRT
 	frt.Reset()
 
-	// Set all flags
+	// Set all flags, then read FTCSR: the SH7604 clear protocol is
+	// read-while-set followed by a 0 write.
 	frt.ftcsr = 0x8F
+	frt.Read(0xFFFFFE11)
 
 	// Write to clear only ICF (bit 7) - write 0 to clear, 1 to keep
 	// To clear bit 7 and keep bits 3-1: write 0x0E
@@ -295,6 +297,35 @@ func TestFRTFTCSRClearFlags(t *testing.T) {
 	}
 	if frt.ftcsr&ftcsrOCFA == 0 {
 		t.Error("OCFA should still be set")
+	}
+}
+
+// A flag that sets after the last FTCSR read survives a 0 write: the
+// clear is gated on the flag having been read while set (SH7604
+// manual, FTCSR clear conditions). This is what keeps an input
+// capture that lands between the consumer's read and its clear write
+// from being lost.
+func TestFRTFTCSRClearIsReadGated(t *testing.T) {
+	var frt FRT
+	frt.Reset()
+
+	// No read at all: a 0 write clears nothing.
+	frt.ftcsr = ftcsrICF
+	frt.Write(0xFFFFFE11, 0x00)
+	if frt.ftcsr&ftcsrICF == 0 {
+		t.Error("ICF cleared by a write with no preceding read")
+	}
+
+	// Read (latches ICF as observed), then a capture-like re-set of
+	// another flag, then the 0 write: ICF clears, the new flag stays.
+	frt.Read(0xFFFFFE11)
+	frt.ftcsr |= ftcsrOCFA // sets after the read
+	frt.Write(0xFFFFFE11, 0x00)
+	if frt.ftcsr&ftcsrICF != 0 {
+		t.Error("ICF should be cleared (read while set, then 0 written)")
+	}
+	if frt.ftcsr&ftcsrOCFA == 0 {
+		t.Error("OCFA set after the read must survive the 0 write")
 	}
 }
 
@@ -844,8 +875,10 @@ func TestFRTReFireAfterFlagClear(t *testing.T) {
 		t.Fatalf("setup: FRC after first match = %d, want 3", frt.frc)
 	}
 
-	// Software clears OCFA and the deadline is recomputed (production
-	// path: CPU writeOnChip calls recomputeNextEvent after Write).
+	// Software clears OCFA (read while set, then 0 written) and the
+	// deadline is recomputed (production path: CPU writeOnChip calls
+	// recomputeNextEvent after Write).
+	frt.Read(0xFFFFFE11)
 	frt.Write(0xFFFFFE11, 0x00)
 	frt.recomputeNextEvent(frt.lastSync)
 

@@ -493,11 +493,11 @@ func TestIRLStaysAssertedAcrossAccept(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("IRL not accepted")
 	}
-	if cpu.irlLevel != 5 {
-		t.Errorf("irlLevel = %d after accept, want 5 (level-triggered)", cpu.irlLevel)
+	if uint8(cpu.irl.Load()>>16) != 5 {
+		t.Errorf("irlLevel = %d after accept, want 5 (level-triggered)", uint8(cpu.irl.Load()>>16))
 	}
-	if cpu.irlVec != 0x40 {
-		t.Errorf("irlVec = 0x%X after accept, want 0x40", cpu.irlVec)
+	if uint16(cpu.irl.Load()) != 0x40 {
+		t.Errorf("irlVec = 0x%X after accept, want 0x40", uint16(cpu.irl.Load()))
 	}
 }
 

@@ -123,7 +123,7 @@ func (v *VDP1) startLine(cmd *vdp1Command, budget int32) (consumed int32, done b
 
 	preClip := cmd.pmod&0x0800 == 0
 	if preClip && preClipReject(intMin(x1, x2), intMin(y1, y2), intMax(x1, x2), intMax(y1, y2), s.clipX, s.clipY) {
-		return 0, true
+		return vdp1PreClipLineCycles, true
 	}
 
 	if s.cc >= 4 {
@@ -195,7 +195,7 @@ func (v *VDP1) startPolyline(cmd *vdp1Command, budget int32) (consumed int32, do
 		maxX := intMax(intMax(s.legAx, s.legBx), intMax(s.legCx, s.legDx))
 		maxY := intMax(intMax(s.legAy, s.legBy), intMax(s.legCy, s.legDy))
 		if preClipReject(minX, minY, maxX, maxY, s.clipX, s.clipY) {
-			return 0, true
+			return vdp1PreClipLineCycles * int32(maxY-minY+1), true
 		}
 	}
 

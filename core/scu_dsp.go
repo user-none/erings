@@ -556,7 +556,7 @@ func (d *scuDSP) execEnd(instr uint32) {
 	if instr&(1<<27) != 0 {
 		d.flagEnd = true
 		if d.scu != nil {
-			d.scu.RaiseInterrupt(5)
+			d.scu.raiseInterrupt(5)
 		}
 	}
 }

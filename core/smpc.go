@@ -67,16 +67,20 @@ type SMPC struct {
 
 	padState [2]uint16 // Active-low button data per port (0xFFFF = all released)
 
-	sshEnabled   bool // Slave SH-2 enabled (SSHON/SSHOFF)
-	soundEnabled bool // Sound CPU enabled (SNDON/SNDOFF)
-	cdEnabled    bool // CD block enabled (CDON/CDOFF)
-	resetEnabled bool // Reset button NMI enabled (RESENAB/RESDISA)
-	dotsel       bool // Dot clock select: false=320, true=352
+	sshEnabled bool // Slave SH-2 enabled (SSHON/SSHOFF)
 
-	scu         *SCU   // SCU reference for interrupt signaling
-	masterNMI   func() // NMI to master SH-2 (NMIREQ)
-	systemReset func() // System reset (SYSRES/CKCHG)
-	slaveReset  func() // Slave SH-2 reset (SSHON pulses the reset line)
+	// INTBACK continue requested by an IREG0 write; serviced at the
+	// next TickScanline (see Write).
+	intbackContinuePending bool
+	soundEnabled           bool // Sound CPU enabled (SNDON/SNDOFF)
+	cdEnabled              bool // CD block enabled (CDON/CDOFF)
+	resetEnabled           bool // Reset button NMI enabled (RESENAB/RESDISA)
+	dotsel                 bool // Dot clock select: false=320, true=352
+
+	masterNMI         func() // NMI request to master SH-2 (NMIREQ)
+	masterNMIDeferred func()
+	systemReset       func() // System reset request (SYSRES/CKCHG)
+	slaveReset        func() // Slave SH-2 reset (SSHON)
 
 	// Command dispatch is deferred to mirror real SMPC behavior where
 	// each command takes bounded wall-clock time. SF stays 1 until the
@@ -87,9 +91,8 @@ type SMPC struct {
 }
 
 // NewSMPC allocates an SMPC with correct initial state.
-func NewSMPC(scu *SCU) *SMPC {
+func NewSMPC() *SMPC {
 	s := &SMPC{
-		scu:      scu,
 		areaCode: 0x04, // North America
 		padState: [2]uint16{0xFFFF, 0xFFFF},
 	}
@@ -110,17 +113,23 @@ func (s *SMPC) TickFrame() {
 	s.rtcFrames++
 }
 
-// TickScanline advances the SMPC command-dispatch delay by one scanline.
-// When the delay reaches zero, the pending command runs (which clears
-// the SF flag). Called once per scanline from the emulator main loop.
-func (s *SMPC) TickScanline() {
-	if s.cmdDelay <= 0 {
-		return
+// TickScanline advances the command-dispatch delay by one scanline and
+// runs the pending command when it elapses (which clears SF). Returns
+// true when the command requires the SCU System Manager interrupt
+// (INTBACK); the caller raises it.
+func (s *SMPC) TickScanline() bool {
+	var raiseSysMgr bool
+	if s.intbackContinuePending {
+		s.intbackContinuePending = false
+		raiseSysMgr = s.continueINTBACK()
 	}
-	s.cmdDelay--
-	if s.cmdDelay == 0 {
-		s.dispatch()
+	if s.cmdDelay > 0 {
+		s.cmdDelay--
+		if s.cmdDelay == 0 {
+			raiseSysMgr = s.dispatch() || raiseSysMgr
+		}
 	}
+	return raiseSysMgr
 }
 
 // cmdScanlines returns the dispatch delay for the currently staged
@@ -242,9 +251,13 @@ func (s *SMPC) Write(offset uint8, val uint8) {
 	switch {
 	case offset >= 0x01 && offset <= 0x0D:
 		s.ireg[(offset-0x01)/2] = val
-		// IREG0 write triggers INTBACK continue/break
+		// IREG0 write triggers INTBACK continue/break. The continue
+		// raises the System Manager interrupt, which claims the SCU
+		// domain - deferred to TickScanline so it never runs while
+		// the bus dispatch holds this register access's CPU-Bus
+		// claim (the SCU -> bus acquisition order would invert).
 		if offset == 0x01 && s.intbackActive {
-			s.continueINTBACK()
+			s.intbackContinuePending = true
 		}
 	case offset == 0x1F:
 		s.comreg = val
@@ -270,10 +283,13 @@ func (s *SMPC) Write(offset uint8, val uint8) {
 	}
 }
 
-// dispatch executes the command stored in COMREG.
-func (s *SMPC) dispatch() {
+// dispatch executes the command in COMREG and clears SF. Returns true
+// when the command requires the SCU System Manager interrupt (INTBACK);
+// the caller raises it.
+func (s *SMPC) dispatch() bool {
 	cmd := s.comreg
 	s.oreg[31] = cmd
+	raiseSysMgr := false
 	switch cmd {
 	// Type A
 	case 0x18:
@@ -287,12 +303,12 @@ func (s *SMPC) dispatch() {
 	case 0x0E:
 		s.cmdCKCHG352()
 		s.systemReset()
-		s.masterNMI()
+		s.masterNMIDeferred()
 		s.sf = 0
 	case 0x0F:
 		s.cmdCKCHG320()
 		s.systemReset()
-		s.masterNMI()
+		s.masterNMIDeferred()
 		s.sf = 0
 
 	// Type B
@@ -338,7 +354,7 @@ func (s *SMPC) dispatch() {
 		sysData := s.ireg[0] == 0x01
 		s.cmdINTBACK()
 		if sysData || pen {
-			s.scu.RaiseSystemManager()
+			raiseSysMgr = true
 		}
 		s.sf = 0
 
@@ -346,6 +362,7 @@ func (s *SMPC) dispatch() {
 		s.sf = 0
 	}
 
+	return raiseSysMgr
 }
 
 // SSHEnabled returns whether the slave SH-2 is enabled.
@@ -364,8 +381,8 @@ func (s *SMPC) cmdMSHON() {} // 0x00 - Master SH-2 ON (no-op, always running)
 // and on-chip peripherals reset. Games rely on this when re-installing
 // the slave entry pointer at $06000250 with SSHOFF/SSHON cycles.
 func (s *SMPC) cmdSSHON() {
-	s.sshEnabled = true
 	s.slaveReset()
+	s.sshEnabled = true
 }
 
 func (s *SMPC) cmdSSHOFF()  { s.sshEnabled = false }
@@ -552,23 +569,25 @@ func (s *SMPC) collectPeripheralData() {
 	s.intbackActive = false
 }
 
-// continueINTBACK handles IREG0 continue/break signaling during INTBACK.
-// Triggered by IREG0 write, not SF write.
-func (s *SMPC) continueINTBACK() {
+// continueINTBACK handles IREG0 continue/break signaling during
+// INTBACK (triggered by an IREG0 write, not an SF write). Returns true
+// when the caller must raise the SCU System Manager interrupt
+// (continue path).
+func (s *SMPC) continueINTBACK() bool {
 	if s.ireg[0]&0x40 != 0 {
 		// Bit 6: break - terminate INTBACK
 		s.intbackActive = false
 		s.sf = 0
-		return
+		return false
 	}
 
 	if s.ireg[0]&0x80 != 0 {
 		// Bit 7: continue - collect peripheral data
 		s.collectPeripheralData()
-		s.scu.RaiseSystemManager()
 		s.sf = 0
-		return
+		return true
 	}
+	return false
 }
 
 func (s *SMPC) cmdNMIREQ() {} // 0x18 - NMI Request

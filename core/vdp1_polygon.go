@@ -72,7 +72,7 @@ func (v *VDP1) startPolygon(cmd *vdp1Command, budget int32) (consumed int32, don
 
 	preClip := cmd.pmod&0x0800 == 0
 	if preClip && preClipReject(bboxMinX, bboxMinY, bboxMaxX, bboxMaxY, p.clipX, p.clipY) {
-		return 0, true
+		return vdp1PreClipLineCycles * int32(bboxMaxY-bboxMinY+1), true
 	}
 
 	chebAD := intAbs(p.dx - p.ax)
@@ -217,12 +217,19 @@ func (v *VDP1) runPolygon(budget int32) (consumed int32, done bool) {
 				// spans are safe to skip; output is unchanged because
 				// writePixel already discarded those pixels.
 				if t0, t1, ok := clipSegParam(p.curLx, p.curLy, p.curRx, p.curRy, p.clipX, p.clipY); !ok {
+					// Wholly off-screen connecting line: detection cost
+					// only (the line is skipped, not iterated).
+					cycles += vdp1PreClipLineCycles
 					p.innerJ = p.lineLen + 1
 				} else {
 					if j1 := int(t1*float64(p.lineLen)) + 2; j1 < p.jEnd {
+						// Off-screen trailing dots still iterate on
+						// hardware; charge them like visible dots.
+						cycles += int32(p.jEnd - j1)
 						p.jEnd = j1
 					}
 					if j0 := int(t0*float64(p.lineLen)) - 2; j0 > 0 {
+						cycles += int32(j0)
 						p.prevPx = int((p.pxFP + p.dpxFP*int64(j0-1)) >> 16)
 						p.prevPy = int((p.pyFP + p.dpyFP*int64(j0-1)) >> 16)
 						p.pxFP += p.dpxFP * int64(j0)

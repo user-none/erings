@@ -68,6 +68,11 @@ type SCU struct {
 
 	// Bus reference for DMA transfers
 	bus BusReadWriter
+
+	// lockBus is the concrete system bus when available, used for the
+	// areaSCU serialization lock. Nil under register-level unit tests
+	// that wire a fake BusReadWriter; locking is skipped there.
+	lockBus *Bus
 }
 
 // intEntry describes a single SCU interrupt source.
@@ -152,6 +157,8 @@ func (s *SCU) Reset() {
 // interrupt and fires any pending start-factor trigger held during
 // the transfer.
 func (s *SCU) TickSystemCycles(cycles uint32) {
+	s.lockIRQ()
+	defer s.unlockIRQ()
 	for lvl := range 3 {
 		if s.dmaDelay[lvl] < 0 {
 			continue
@@ -181,7 +188,7 @@ func (s *SCU) TickSystemCycles(cycles uint32) {
 // level early to match the documented timing.
 func (s *SCU) finishDMA(lvl int) {
 	s.dmaDelay[lvl] = -1
-	s.RaiseInterrupt(dmaEndBit[lvl])
+	s.raiseInterrupt(dmaEndBit[lvl])
 
 	if s.dmaPending[lvl] && s.dmaEN[lvl]&1 != 0 {
 		s.dmaPending[lvl] = false
@@ -196,6 +203,7 @@ func (s *SCU) finishDMA(lvl int) {
 // SetBus gives the SCU a reference to the system bus for DMA transfers.
 func (s *SCU) SetBus(bus BusReadWriter) {
 	s.bus = bus
+	s.lockBus, _ = bus.(*Bus)
 }
 
 // readDSTA composes the DMA Status Register from live state. Only the
@@ -225,11 +233,13 @@ func (s *SCU) SetIRLHandler(set func(level uint8, vec uint16), clr func()) {
 // This prevents the same event from firing repeatedly while allowing
 // the IRL to stay asserted until acknowledged.
 func (s *SCU) AcknowledgeInterrupt() {
+	s.lockIRQ()
 	if s.pendingBit >= 0 {
 		s.ist &^= 1 << s.pendingBit
 		s.pendingBit = -1
 		s.checkInterrupts()
 	}
+	s.unlockIRQ()
 }
 
 // Read returns the 32-bit value of the SCU register at the given offset.
@@ -429,8 +439,40 @@ func (s *SCU) Write(offset uint32, val uint32) {
 	}
 }
 
-// RaiseInterrupt sets the given IST bit and checks for pending interrupts.
-func (s *SCU) RaiseInterrupt(bit int) {
+// The SCU's interrupt and DMA state is mutated from several goroutines
+// (raster raises on the main goroutine, timer/DMA/sound raises on the
+// secondary worker, sprite-draw-end on the VDP walker, register access
+// from either CPU), so every public entry point serializes on the
+// areaSCU bus lock - the same lock the bus dispatch claims for SCU
+// register access. Internal (lowercase) variants assume the lock is
+// already held; the acquisition order is always SCU before the bus
+// areas the DMA engine touches, and callers of the public methods
+// must hold no bus-area lock (components defer raises out of their
+// register-write paths to their tick paths for this reason).
+//
+// The lock guards the register file, not the data a DMA moves.
+// executeDMA / executeIndirectDMA release areaSCU for the bus-master
+// copy (which touches no register state) and reacquire it only for the
+// register writeback, so a transfer arbitrates per-bus rather than
+// freezing the register file for its full duration.
+
+// lockIRQ / unlockIRQ claim the SCU's serialization domain. The nil
+// check keeps register-level unit tests that never wire a bus working.
+func (s *SCU) lockIRQ() {
+	if s.lockBus != nil {
+		s.lockBus.lockArea(areaSCU)
+	}
+}
+
+func (s *SCU) unlockIRQ() {
+	if s.lockBus != nil {
+		s.lockBus.unlockArea(areaSCU)
+	}
+}
+
+// raiseInterrupt sets the given IST bit and checks for pending
+// interrupts. Callers hold the SCU lock.
+func (s *SCU) raiseInterrupt(bit int) {
 	if bit < 0 || bit > 31 {
 		return
 	}
@@ -438,26 +480,39 @@ func (s *SCU) RaiseInterrupt(bit int) {
 	s.checkInterrupts()
 }
 
+// RaiseInterrupt sets the given IST bit and checks for pending interrupts.
+func (s *SCU) RaiseInterrupt(bit int) {
+	s.lockIRQ()
+	s.raiseInterrupt(bit)
+	s.unlockIRQ()
+}
+
 // RaiseVBlankIN raises the V-Blank-IN interrupt (bit 0)
 // and checks for DMA start factor 0.
 func (s *SCU) RaiseVBlankIN() {
-	s.RaiseInterrupt(0)
+	s.lockIRQ()
+	s.raiseInterrupt(0)
 	s.checkDMATrigger(0)
+	s.unlockIRQ()
 }
 
 // RaiseVBlankOUT raises the V-Blank-OUT interrupt (bit 1),
 // checks for DMA start factor 1, and resets the Timer 0 counter.
 func (s *SCU) RaiseVBlankOUT() {
+	s.lockIRQ()
 	s.t0cnt = 0
-	s.RaiseInterrupt(1)
+	s.raiseInterrupt(1)
 	s.checkDMATrigger(1)
+	s.unlockIRQ()
 }
 
 // RaiseHBlankIN raises the H-Blank-IN interrupt (bit 2),
 // checks for DMA start factor 2, and advances SCU timers.
 // line is the current scanline number (0-based).
 func (s *SCU) RaiseHBlankIN(line uint16) {
-	s.RaiseInterrupt(2)
+	s.lockIRQ()
+	defer s.unlockIRQ()
+	s.raiseInterrupt(2)
 	s.checkDMATrigger(2)
 
 	if s.t1md&1 == 0 {
@@ -468,7 +523,7 @@ func (s *SCU) RaiseHBlankIN(line uint16) {
 	s.t0cnt = (s.t0cnt + 1) & 0x3FF
 	t0Fire := s.t0cnt == s.t0c&0x3FF
 	if t0Fire {
-		s.RaiseTimer0()
+		s.raiseTimer0()
 	}
 
 	// Timer 1: fire when line matches T1S.
@@ -476,40 +531,48 @@ func (s *SCU) RaiseHBlankIN(line uint16) {
 	// Mode 1 (t1md bit 8 = 1): fire only when Timer 0 also fires.
 	if uint32(line) == s.t1s&0x1FF {
 		if s.t1md&(1<<8) == 0 || t0Fire {
-			s.RaiseTimer1()
+			s.raiseTimer1()
 		}
 	}
 }
 
-// RaiseTimer0 raises the Timer 0 interrupt (bit 3)
-// and checks for DMA start factor 3.
-func (s *SCU) RaiseTimer0() {
-	s.RaiseInterrupt(3)
+// raiseTimer0 raises the Timer 0 interrupt (bit 3)
+// and checks for DMA start factor 3. Callers hold the SCU lock.
+func (s *SCU) raiseTimer0() {
+	s.raiseInterrupt(3)
 	s.checkDMATrigger(3)
 }
 
-// RaiseTimer1 raises the Timer 1 interrupt (bit 4)
-// and checks for DMA start factor 4.
-func (s *SCU) RaiseTimer1() {
-	s.RaiseInterrupt(4)
+// raiseTimer1 raises the Timer 1 interrupt (bit 4)
+// and checks for DMA start factor 4. Callers hold the SCU lock.
+func (s *SCU) raiseTimer1() {
+	s.raiseInterrupt(4)
 	s.checkDMATrigger(4)
 }
 
 // RaiseSystemManager raises the System Manager interrupt (bit 7).
-func (s *SCU) RaiseSystemManager() { s.RaiseInterrupt(7) }
+func (s *SCU) RaiseSystemManager() {
+	s.lockIRQ()
+	s.raiseInterrupt(7)
+	s.unlockIRQ()
+}
 
 // RaiseSoundRequest raises the Sound Request interrupt (bit 6)
 // and checks for DMA start factor 5.
 func (s *SCU) RaiseSoundRequest() {
-	s.RaiseInterrupt(6)
+	s.lockIRQ()
+	s.raiseInterrupt(6)
 	s.checkDMATrigger(5)
+	s.unlockIRQ()
 }
 
 // RaiseSpriteDrawEnd raises the Sprite Draw End interrupt (bit 13)
 // and checks for DMA start factor 6.
 func (s *SCU) RaiseSpriteDrawEnd() {
-	s.RaiseInterrupt(13)
+	s.lockIRQ()
+	s.raiseInterrupt(13)
 	s.checkDMATrigger(6)
+	s.unlockIRQ()
 }
 
 // dmaReadAdd maps the read address add value (bit 8 of AD register)
@@ -602,6 +665,10 @@ func (s *SCU) checkDMATrigger(factor uint32) {
 // extra cycles on byte transfers at the head/tail boundaries.
 func (s *SCU) dmaTransfer(src, dst, count, readInc, writeInc uint32) (uint32, uint32) {
 	if count == 0 {
+		return src, dst
+	}
+
+	if !scuDMAAccessible(src) || !scuDMAAccessible(dst) {
 		return src, dst
 	}
 
@@ -724,8 +791,36 @@ func isBBus(addr uint32) bool {
 	return masked >= 0x05A00000 && masked < 0x05FC0000
 }
 
+// scuDMAAccessible reports whether an address falls within the bus spaces
+// the SCU-DMA controller can reach: the A-Bus external areas (CS0, CS1,
+// CS2 and A-Bus I/O), the B-Bus (VDP1, VDP2, SCSP), and Work RAM-H
+// (C-Bus). The SH-2 CPU-local low memory (boot ROM, SMPC, backup RAM,
+// Work RAM-L) and the SCU register space are not reachable by DMA.
+//
+// SCU Final Specifications and Precautions (ST-210-110194): No. 04 states
+// Work RAM-H is the only Work RAM usable by SCU-DMA (Work RAM-L cannot be
+// used), and the read/write address-add-value tables in No. 16/18/19
+// enumerate the reachable spaces as Work RAM-H, the A-Bus external areas,
+// and the B-Bus only. A transfer touching any other region is the
+// DMA-illegal condition the controller cannot perform.
+func scuDMAAccessible(addr uint32) bool {
+	a := addr & 0x07FFFFFF
+	switch {
+	case a >= 0x02000000 && a < 0x05A00000: // A-Bus external areas 1-4
+		return true
+	case a >= 0x05A00000 && a < 0x05FC0000: // B-Bus (VDP1, VDP2, SCSP)
+		return true
+	case a >= 0x06000000: // Work RAM-H (C-Bus), mirrored through 0x07FFFFFF
+		return true
+	default:
+		return false
+	}
+}
+
 // executeDMA performs a direct-mode DMA transfer for the given level.
-// The transfer is executed instantly (not cycle-stepped).
+// The transfer is executed instantly (not cycle-stepped). The caller
+// holds areaSCU on entry; the copy phase drops it and reacquires it
+// for the register writeback (see the domain comment above).
 func (s *SCU) executeDMA(lvl int) {
 	if s.bus == nil {
 		return
@@ -755,7 +850,17 @@ func (s *SCU) executeDMA(lvl int) {
 		}
 	}
 
-	src, dst := s.dmaTransfer(s.dmaR[lvl], s.dmaW[lvl], count, readInc, writeInc)
+	srcAddr := s.dmaR[lvl]
+	dstAddr := s.dmaW[lvl]
+
+	// The transfer is a bus-master copy that touches no SCU register
+	// state - only the locals captured above and the per-access bus
+	// locks dmaTransfer claims. Drop areaSCU for its duration so the
+	// register file arbitrates per-bus instead of staying frozen for the
+	// whole transfer, then reacquire for the writeback below.
+	s.unlockIRQ()
+	src, dst := s.dmaTransfer(srcAddr, dstAddr, count, readInc, writeInc)
+	s.lockIRQ()
 
 	s.dmaR[lvl] = src
 	s.dmaW[lvl] = dst
@@ -770,7 +875,9 @@ func (s *SCU) executeDMA(lvl int) {
 // executeIndirectDMA performs an indirect-mode DMA transfer for the given level.
 // The transfer table is read from the address in the Write Address register.
 // Each table entry is 3 longwords: byte count, destination, source.
-// Bit 31 of the source address marks the final entry.
+// Bit 31 of the source address marks the final entry. The caller holds
+// areaSCU on entry; the table-walk copy drops it and reacquires it for
+// the register writeback (see the domain comment above).
 func (s *SCU) executeIndirectDMA(lvl int) {
 	if s.bus == nil {
 		return
@@ -792,6 +899,10 @@ func (s *SCU) executeIndirectDMA(lvl int) {
 		countMask = 0x3FFFF
 	}
 
+	// Bus-master copy: the table walk reads entries through the bus and
+	// dmaTransfer copies each block, none of which touches SCU register
+	// state. Drop areaSCU for the walk and reacquire for the writeback.
+	s.unlockIRQ()
 	var totalCount uint32
 	for entries := 0; entries < 4096; entries++ {
 		countRaw := s.bus.Read32(tableAddr)
@@ -819,6 +930,8 @@ func (s *SCU) executeIndirectDMA(lvl int) {
 		}
 		tableAddr += 0x0C
 	}
+
+	s.lockIRQ()
 
 	s.dmaW[lvl] = tableAddr
 

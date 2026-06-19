@@ -6,38 +6,52 @@ package sh2
 import "testing"
 
 // testBus is a minimal Bus implementation backed by a flat byte slice.
-// Big-endian byte order matches the SH-2 convention.
+// Big-endian byte order matches the SH-2 convention. Addresses are
+// masked to the (power-of-two) buffer size, so mirror addresses (e.g.
+// the 0x20000000 cache-through partition) land on the same bytes as
+// their base, like the real bus's physical-address masking.
 type testBus struct {
 	mem []byte
 }
 
 func newTestBus(size int) *testBus {
+	if size&(size-1) != 0 {
+		panic("newTestBus: size must be a power of two")
+	}
 	return &testBus{mem: make([]byte, size)}
 }
 
+func (b *testBus) mask(addr uint32) uint32 {
+	return addr & uint32(len(b.mem)-1)
+}
+
 func (b *testBus) Read8(addr uint32) uint8 {
-	return b.mem[addr]
+	return b.mem[b.mask(addr)]
 }
 
 func (b *testBus) Read16(addr uint32) uint16 {
+	addr = b.mask(addr)
 	return uint16(b.mem[addr])<<8 | uint16(b.mem[addr+1])
 }
 
 func (b *testBus) Read32(addr uint32) uint32 {
+	addr = b.mask(addr)
 	return uint32(b.mem[addr])<<24 | uint32(b.mem[addr+1])<<16 |
 		uint32(b.mem[addr+2])<<8 | uint32(b.mem[addr+3])
 }
 
 func (b *testBus) Write8(addr uint32, val uint8) {
-	b.mem[addr] = val
+	b.mem[b.mask(addr)] = val
 }
 
 func (b *testBus) Write16(addr uint32, val uint16) {
+	addr = b.mask(addr)
 	b.mem[addr] = uint8(val >> 8)
 	b.mem[addr+1] = uint8(val)
 }
 
 func (b *testBus) Write32(addr uint32, val uint32) {
+	addr = b.mask(addr)
 	b.mem[addr] = uint8(val >> 24)
 	b.mem[addr+1] = uint8(val >> 16)
 	b.mem[addr+2] = uint8(val >> 8)
@@ -45,10 +59,28 @@ func (b *testBus) Write32(addr uint32, val uint32) {
 }
 
 // AccessCycles returns a fixed minimal cost per access. Tests that
-// depend on DMA stall duration assume this constant.
+// depend on DMA stall duration assume this constant. Writes cost the
+// same as reads on the test bus.
 func (b *testBus) AccessCycles(addr uint32, size uint32) uint32 {
 	return 2
 }
+
+func (b *testBus) WriteAccessCycles(addr uint32, size uint32) uint32 {
+	return b.AccessCycles(addr, size)
+}
+
+func (b *testBus) ReadCacheLine(base uint32, dst *[16]byte) {
+	for i := uint32(0); i < 16; i += 4 {
+		v := b.Read32(base + i)
+		dst[i] = uint8(v >> 24)
+		dst[i+1] = uint8(v >> 16)
+		dst[i+2] = uint8(v >> 8)
+		dst[i+3] = uint8(v)
+	}
+}
+
+func (b *testBus) ReadRMW8(addr uint32) uint8       { return b.Read8(addr) }
+func (b *testBus) WriteRMW8(addr uint32, val uint8) { b.Write8(addr, val) }
 
 func TestFetchPC(t *testing.T) {
 	bus := newTestBus(256)
@@ -320,10 +352,10 @@ func TestNoAddressErrorAlignedAccess(t *testing.T) {
 	}
 }
 
-// --- 5.2 Region-dispatch predicates and cache-control regions ---
-// Hardware Manual Table 7.3 memory map. Predicates isOnChip,
-// isCacheRegion, and isCacheDataArray must match the documented
-// address ranges.
+// --- 5.2 Region-dispatch predicates ---
+// Hardware Manual Table 7.3 memory map. The partition routing in
+// read/write (Section 8.3 Table 8.2) is covered by the cache tests;
+// isOnChip must match the documented range.
 
 func TestIsOnChipBoundaries(t *testing.T) {
 	if isOnChip(0xFFFF7FFF) {
@@ -337,36 +369,6 @@ func TestIsOnChipBoundaries(t *testing.T) {
 	}
 }
 
-func TestIsCacheRegionBoundaries(t *testing.T) {
-	if isCacheRegion(0x3FFFFFFF) {
-		t.Error("0x3FFFFFFF classified as cache region")
-	}
-	if !isCacheRegion(0x40000000) {
-		t.Error("0x40000000 not classified as cache region")
-	}
-	if !isCacheRegion(0xBFFFFFFF) {
-		t.Error("0xBFFFFFFF not classified as cache region")
-	}
-	if isCacheRegion(0xC0000000) {
-		t.Error("0xC0000000 classified as cache region")
-	}
-}
-
-func TestIsCacheDataArrayBoundaries(t *testing.T) {
-	if isCacheDataArray(0xBFFFFFFF) {
-		t.Error("0xBFFFFFFF classified as data array")
-	}
-	if !isCacheDataArray(0xC0000000) {
-		t.Error("0xC0000000 not classified as data array")
-	}
-	if !isCacheDataArray(0xDFFFFFFF) {
-		t.Error("0xDFFFFFFF not classified as data array")
-	}
-	if isCacheDataArray(0xE0000000) {
-		t.Error("0xE0000000 classified as data array")
-	}
-}
-
 // TestAssociativePurgeRegion covers 0x40000000..0x47FFFFFF (Hardware
 // Manual Sec 8.4.7). Writes invalidate a cache line; reads are not
 // defined. Current code returns 0 on read and drops writes.
@@ -377,19 +379,6 @@ func TestAssociativePurgeRegion(t *testing.T) {
 	cpu.write32(0x40000000, 0xDEADBEEF)
 	if v := cpu.read32(0x40000000); v != 0 {
 		t.Errorf("associative purge read = 0x%08X, want 0", v)
-	}
-}
-
-// TestAddressArrayRegion covers 0x60000000..0x600003FF (Hardware Manual
-// Sec 8.4.9). The address array holds tag/LRU/valid bits. Current code
-// returns 0 on read and drops writes.
-func TestAddressArrayRegion(t *testing.T) {
-	bus := newTestBus(0x1000)
-	cpu := New(bus, true)
-
-	cpu.write32(0x60000000, 0xDEADBEEF)
-	if v := cpu.read32(0x60000000); v != 0 {
-		t.Errorf("address array read = 0x%08X, want 0", v)
 	}
 }
 
@@ -424,23 +413,6 @@ func TestAssociativePurgeReservedAliasDivergence(t *testing.T) {
 	}
 	if v := cpu.read32(0x5FFFFFFC); v != 0 {
 		t.Errorf("read at 0x5FFFFFFC = 0x%08X, want 0", v)
-	}
-}
-
-// TestAddressArrayReservedAliasDivergence locks divergence D3 from
-// README: hardware maps the address array at 0x60000000..0x600003FF
-// only. Current code treats the full 512 MB block as one no-op range.
-func TestAddressArrayReservedAliasDivergence(t *testing.T) {
-	bus := newTestBus(0x1000)
-	cpu := New(bus, true)
-
-	cpu.write32(0x60000400, 0xCAFECAFE)
-	cpu.write32(0x7FFFFFFC, 0xBABEBABE)
-	if v := cpu.read32(0x60000400); v != 0 {
-		t.Errorf("read at 0x60000400 = 0x%08X, want 0", v)
-	}
-	if v := cpu.read32(0x7FFFFFFC); v != 0 {
-		t.Errorf("read at 0x7FFFFFFC = 0x%08X, want 0", v)
 	}
 }
 

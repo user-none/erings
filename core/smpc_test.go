@@ -6,10 +6,9 @@ package core
 import "testing"
 
 // smpcDispatch writes COMREG and drains the per-scanline command-dispatch
-// delay so the command's effects are visible synchronously. The production
-// main loop calls s.TickScanline() once per scanline; this helper simulates
-// that draining inline. Use it in tests wherever the assertions depend on
-// dispatch having run.
+// delay so the command's effects are visible synchronously. Use it where
+// the assertions depend on dispatch having run but not on the System
+// Manager interrupt; use smpcDispatchRaise for the latter.
 func smpcDispatch(s *SMPC, cmd uint8) {
 	s.Write(0x1F, cmd)
 	for s.cmdDelay > 0 {
@@ -17,8 +16,19 @@ func smpcDispatch(s *SMPC, cmd uint8) {
 	}
 }
 
+// smpcDispatchRaise drains dispatch and raises the SCU System Manager
+// interrupt when the command requests it, mirroring the slave worker.
+func smpcDispatchRaise(s *SMPC, scu *SCU, cmd uint8) {
+	s.Write(0x1F, cmd)
+	for s.cmdDelay > 0 {
+		if s.TickScanline() {
+			scu.RaiseSystemManager()
+		}
+	}
+}
+
 func TestSMPCNewValues(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.comreg != 0 {
 		t.Errorf("comreg = 0x%02X, want 0", s.comreg)
 	}
@@ -56,7 +66,7 @@ func TestSMPCNewValues(t *testing.T) {
 }
 
 func TestSMPCIREGWriteOnly(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.Write(0x01, 0xAB)
 	if s.ireg[0] != 0xAB {
 		t.Errorf("ireg[0] = 0x%02X, want 0xAB", s.ireg[0])
@@ -67,7 +77,7 @@ func TestSMPCIREGWriteOnly(t *testing.T) {
 }
 
 func TestSMPCIREGIndexing(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	for i := 0; i < 7; i++ {
 		offset := uint8(0x01 + i*2)
 		val := uint8(0x10 + i)
@@ -81,7 +91,7 @@ func TestSMPCIREGIndexing(t *testing.T) {
 }
 
 func TestSMPCOREGReadOnly(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.oreg[0] = 0x42
 	if got := s.Read(0x21); got != 0x42 {
 		t.Errorf("Read OREG0 = 0x%02X, want 0x42", got)
@@ -94,7 +104,7 @@ func TestSMPCOREGReadOnly(t *testing.T) {
 }
 
 func TestSMPCOREGIndexing(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	for i := 0; i < 32; i++ {
 		s.oreg[i] = uint8(0x80 + i)
 	}
@@ -109,7 +119,7 @@ func TestSMPCOREGIndexing(t *testing.T) {
 }
 
 func TestSMPCCOMREGWriteOnly(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	smpcDispatch(s, 0x10)
 	if s.comreg != 0x10 {
 		t.Errorf("comreg = 0x%02X, want 0x10", s.comreg)
@@ -120,7 +130,7 @@ func TestSMPCCOMREGWriteOnly(t *testing.T) {
 }
 
 func TestSMPCSRReadOnly(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.sr = 0xAB
 	if got := s.Read(0x61); got != 0xAB {
 		t.Errorf("Read SR = 0x%02X, want 0xAB", got)
@@ -133,7 +143,7 @@ func TestSMPCSRReadOnly(t *testing.T) {
 }
 
 func TestSMPCSFReadWrite(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.Write(0x63, 0x01)
 	if got := s.Read(0x63); got != 0x01 {
 		t.Errorf("Read SF = 0x%02X, want 0x01", got)
@@ -150,7 +160,7 @@ func TestSMPCSFReadWrite(t *testing.T) {
 }
 
 func TestSMPCPDRReadWrite(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// PDR1
 	s.Write(0x75, 0xFF)
 	if got := s.Read(0x75); got != 0x7F {
@@ -164,7 +174,7 @@ func TestSMPCPDRReadWrite(t *testing.T) {
 }
 
 func TestSMPCDDRWriteOnly(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.Write(0x79, 0xFF)
 	if s.ddr1 != 0x7F {
 		t.Errorf("ddr1 = 0x%02X, want 0x7F", s.ddr1)
@@ -182,7 +192,7 @@ func TestSMPCDDRWriteOnly(t *testing.T) {
 }
 
 func TestSMPCIOSELWriteOnly(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.Write(0x7D, 0xFF)
 	if s.iosel != 0x03 {
 		t.Errorf("iosel = 0x%02X, want 0x03", s.iosel)
@@ -193,7 +203,7 @@ func TestSMPCIOSELWriteOnly(t *testing.T) {
 }
 
 func TestSMPCEXLEWriteOnly(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.Write(0x7F, 0xFF)
 	if s.exle != 0x03 {
 		t.Errorf("exle = 0x%02X, want 0x03", s.exle)
@@ -204,7 +214,7 @@ func TestSMPCEXLEWriteOnly(t *testing.T) {
 }
 
 func TestSMPCEvenAddressIgnored(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// Even addresses should return 0 on read
 	for _, off := range []uint8{0x00, 0x02, 0x20} {
 		if got := s.Read(off); got != 0 {
@@ -218,7 +228,7 @@ func TestSMPCEvenAddressIgnored(t *testing.T) {
 }
 
 func TestSMPCUnmappedOddAddress(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	for _, off := range []uint8{0x0F, 0x11, 0x65} {
 		if got := s.Read(off); got != 0 {
 			t.Errorf("Read unmapped odd offset 0x%02X = 0x%02X, want 0", off, got)
@@ -230,7 +240,7 @@ func TestSMPCDispatchTypeBClearsSF(t *testing.T) {
 	// Type B commands should clear SF after dispatch.
 	typeBCmds := []uint8{0x00, 0x02, 0x03, 0x06, 0x07, 0x08, 0x09, 0x19, 0x1A}
 	for _, cmd := range typeBCmds {
-		s := NewSMPC(NewSCU())
+		s := NewSMPC()
 		s.slaveReset = func() {}
 		s.sf = 1
 		smpcDispatch(s, cmd)
@@ -244,7 +254,7 @@ func TestSMPCDispatchTypeCClearsSF(t *testing.T) {
 	// Type C commands should clear SF after dispatch.
 	typeCCmds := []uint8{0x16, 0x17}
 	for _, cmd := range typeCCmds {
-		s := NewSMPC(NewSCU())
+		s := NewSMPC()
 		s.sf = 1
 		smpcDispatch(s, cmd)
 		if s.sf != 0 {
@@ -255,10 +265,10 @@ func TestSMPCDispatchTypeCClearsSF(t *testing.T) {
 
 func TestSMPCDispatchTypeDRaisesInterrupt(t *testing.T) {
 	scu := NewSCU()
-	s := NewSMPC(scu)
+	s := NewSMPC()
 	s.sf = 1
-	s.Write(0x01, 0x01)   // IREG0 = system data requested
-	smpcDispatch(s, 0x10) // INTBACK
+	s.Write(0x01, 0x01)             // IREG0 = system data requested
+	smpcDispatchRaise(s, scu, 0x10) // INTBACK
 	// IST bit 7 = System Manager
 	if scu.ist&(1<<7) == 0 {
 		t.Error("INTBACK did not raise System Manager interrupt (IST bit 7)")
@@ -272,8 +282,9 @@ func TestSMPCDispatchTypeAClearsSF(t *testing.T) {
 	// Type A commands should clear SF after execution.
 	typeACmds := []uint8{0x18, 0x0D, 0x0E, 0x0F}
 	for _, cmd := range typeACmds {
-		s := NewSMPC(NewSCU())
+		s := NewSMPC()
 		s.masterNMI = func() {}
+		s.masterNMIDeferred = func() {}
 		s.systemReset = func() {}
 		s.sf = 1
 		smpcDispatch(s, cmd)
@@ -284,7 +295,7 @@ func TestSMPCDispatchTypeAClearsSF(t *testing.T) {
 }
 
 func TestSMPCOREG31RetainsCommandCode(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.slaveReset = func() {}
 	smpcDispatch(s, 0x00) // MSHON
 	if s.oreg[31] != 0x00 {
@@ -303,7 +314,7 @@ func TestSMPCOREG31RetainsCommandCode(t *testing.T) {
 }
 
 func TestSMPCDispatchUnknownCommand(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.sf = 1
 	smpcDispatch(s, 0xFF) // unknown command
 	if s.sf != 0 {
@@ -314,30 +325,19 @@ func TestSMPCDispatchUnknownCommand(t *testing.T) {
 	}
 }
 
-func TestSMPCNewPreservesReferences(t *testing.T) {
-	scu := NewSCU()
-	s := NewSMPC(scu)
-	if s.scu == nil {
-		t.Error("scu nil after NewSMPC")
-	}
-	if s.scu != scu {
-		t.Error("scu does not match")
-	}
-}
-
 func TestSMPCDispatchWithoutSFSet(t *testing.T) {
 	// Dispatch should still run even if SF was not set first.
 	scu := NewSCU()
-	s := NewSMPC(scu)
-	s.Write(0x01, 0x01)   // IREG0 = system data requested
-	smpcDispatch(s, 0x10) // INTBACK without SF=1
+	s := NewSMPC()
+	s.Write(0x01, 0x01)             // IREG0 = system data requested
+	smpcDispatchRaise(s, scu, 0x10) // INTBACK without SF=1
 	if scu.ist&(1<<7) == 0 {
 		t.Error("dispatch did not run without SF set")
 	}
 }
 
 func TestSMPCTypeBSSH(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.slaveReset = func() {}
 	if s.SSHEnabled() {
 		t.Error("sshEnabled should be false after NewSMPC")
@@ -371,7 +371,7 @@ func TestSMPCTypeBSSH(t *testing.T) {
 }
 
 func TestSMPCTypeBSound(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.SoundEnabled() {
 		t.Error("soundEnabled should be false after NewSMPC")
 	}
@@ -404,7 +404,7 @@ func TestSMPCTypeBSound(t *testing.T) {
 }
 
 func TestSMPCTypeBCD(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.cdEnabled {
 		t.Error("cdEnabled should be false after NewSMPC")
 	}
@@ -437,7 +437,7 @@ func TestSMPCTypeBCD(t *testing.T) {
 }
 
 func TestSMPCTypeBReset(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.resetEnabled {
 		t.Error("resetEnabled should be false after NewSMPC")
 	}
@@ -470,21 +470,21 @@ func TestSMPCTypeBReset(t *testing.T) {
 }
 
 func TestSMPCDotSelectDefault(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.dotsel {
 		t.Error("DotSelect should be false (320 mode) after NewSMPC")
 	}
 }
 
 func TestSMPCNewDotselFalse(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.dotsel {
 		t.Error("DotSelect should be false after NewSMPC")
 	}
 }
 
 func TestSMPCSYSRESClearsFlags(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.systemReset = func() {}
 	s.slaveReset = func() {}
 	// Enable all subsystem flags
@@ -521,8 +521,9 @@ func TestSMPCSYSRESClearsFlags(t *testing.T) {
 }
 
 func TestSMPCCKCHG352(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.masterNMI = func() {}
+	s.masterNMIDeferred = func() {}
 	s.systemReset = func() {}
 	s.slaveReset = func() {}
 	// Enable all subsystem flags
@@ -555,8 +556,9 @@ func TestSMPCCKCHG352(t *testing.T) {
 }
 
 func TestSMPCCKCHG320(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.masterNMI = func() {}
+	s.masterNMIDeferred = func() {}
 	s.systemReset = func() {}
 	s.slaveReset = func() {}
 	// Set dotsel true first
@@ -592,8 +594,9 @@ func TestSMPCCKCHG320(t *testing.T) {
 }
 
 func TestSMPCCKCHG352ThenCKCHG320(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.masterNMI = func() {}
+	s.masterNMIDeferred = func() {}
 	s.systemReset = func() {}
 	smpcDispatch(s, 0x0E) // CKCHG352
 	if !s.dotsel {
@@ -606,7 +609,7 @@ func TestSMPCCKCHG352ThenCKCHG320(t *testing.T) {
 }
 
 func TestSMPCTypeBFlagIsolation(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.slaveReset = func() {}
 	// Enable all flags
 	smpcDispatch(s, 0x02) // SSHON
@@ -631,7 +634,7 @@ func TestSMPCTypeBFlagIsolation(t *testing.T) {
 }
 
 func TestSMPCSETTIMECopiesToRTC(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// Write IREG0-6 with RTC data: 2024/01/15 Monday 10:30:45
 	rtcData := [7]uint8{0x20, 0x24, 0x11, 0x15, 0x10, 0x30, 0x45}
 	for i, v := range rtcData {
@@ -652,7 +655,7 @@ func TestSMPCSETTIMECopiesToRTC(t *testing.T) {
 }
 
 func TestSMPCSETSMEMCopiesToSMEM(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	smemData := [4]uint8{0xAA, 0xBB, 0xCC, 0xDD}
 	for i, v := range smemData {
 		s.Write(uint8(0x01+i*2), v)
@@ -672,7 +675,7 @@ func TestSMPCSETSMEMCopiesToSMEM(t *testing.T) {
 }
 
 func TestSMPCRTCInitFromHost(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// RTC should be initialized to current host time, not zero
 	allZero := true
 	for _, v := range s.rtc {
@@ -691,7 +694,7 @@ func TestSMPCRTCInitFromHost(t *testing.T) {
 }
 
 func TestSMPCSMEMDefaultZero(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	got := s.smem
 	for i, v := range got {
 		if v != 0 {
@@ -701,7 +704,7 @@ func TestSMPCSMEMDefaultZero(t *testing.T) {
 }
 
 func TestSMPCSETTIMEOverwrite(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// First SETTIME
 	for i, v := range []uint8{0x19, 0x93, 0x5C, 0x31, 0x23, 0x59, 0x59} {
 		s.Write(uint8(0x01+i*2), v)
@@ -720,7 +723,7 @@ func TestSMPCSETTIMEOverwrite(t *testing.T) {
 }
 
 func TestSMPCSETSMEMOverwrite(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// First SETSMEM
 	for i, v := range []uint8{0x01, 0x02, 0x03, 0x04} {
 		s.Write(uint8(0x01+i*2), v)
@@ -739,7 +742,7 @@ func TestSMPCSETSMEMOverwrite(t *testing.T) {
 }
 
 func TestSMPCNewFlagsDefault(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	if s.SSHEnabled() {
 		t.Error("sshEnabled should be false after NewSMPC")
@@ -763,7 +766,7 @@ func smpcINTBACK(s *SMPC) {
 }
 
 func TestSMPCINTBACKSystemDataDefaults(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACK(s)
 
@@ -813,7 +816,7 @@ func TestSMPCINTBACKSystemDataDefaults(t *testing.T) {
 }
 
 func TestSMPCINTBACKWithSETTIME(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// SETTIME first
 	rtcData := [7]uint8{0x20, 0x26, 0x13, 0x16, 0x14, 0x30, 0x00}
@@ -837,7 +840,7 @@ func TestSMPCINTBACKWithSETTIME(t *testing.T) {
 }
 
 func TestSMPCINTBACKWithSETSMEM(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// SETSMEM
 	smemData := [4]uint8{0xAA, 0xBB, 0xCC, 0xDD}
@@ -856,7 +859,7 @@ func TestSMPCINTBACKWithSETSMEM(t *testing.T) {
 }
 
 func TestSMPCINTBACKAreaCode(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	s.areaCode = 0x04 // Japan
 
@@ -868,7 +871,7 @@ func TestSMPCINTBACKAreaCode(t *testing.T) {
 }
 
 func TestSMPCINTBACKRESD(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// Enable reset -> RESD=0
 	smpcDispatch(s, 0x19) // RESENAB
@@ -886,7 +889,7 @@ func TestSMPCINTBACKRESD(t *testing.T) {
 }
 
 func TestSMPCINTBACKDOTSEL(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// Default 320 mode -> DOTSEL=0
 	smpcINTBACK(s)
@@ -903,7 +906,7 @@ func TestSMPCINTBACKDOTSEL(t *testing.T) {
 }
 
 func TestSMPCINTBACKSNDRES(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// Sound off -> SNDRES=1
 	smpcINTBACK(s)
@@ -920,7 +923,7 @@ func TestSMPCINTBACKSNDRES(t *testing.T) {
 }
 
 func TestSMPCINTBACKCDRES(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// CD off -> CDRES=1
 	smpcINTBACK(s)
@@ -937,7 +940,7 @@ func TestSMPCINTBACKCDRES(t *testing.T) {
 }
 
 func TestSMPCINTBACKFixedBits(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// b5, b4, b2 should always be 1 regardless of state
 	smpcINTBACK(s)
@@ -958,7 +961,7 @@ func TestSMPCINTBACKFixedBits(t *testing.T) {
 }
 
 func TestSMPCINTBACKIREG0ZeroSkipsSystemData(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// Set some state that would show in OREGs
 	s.areaCode = 0x0A
@@ -979,8 +982,10 @@ func TestSMPCINTBACKIREG0ZeroSkipsSystemData(t *testing.T) {
 
 func TestSMPCINTBACKInterruptAndSF(t *testing.T) {
 	scu := NewSCU()
-	s := NewSMPC(scu)
-	smpcINTBACK(s)
+	s := NewSMPC()
+	s.Write(0x01, 0x01) // IREG0 = system data requested
+	s.sf = 1
+	smpcDispatchRaise(s, scu, 0x10)
 	if scu.ist&(1<<7) == 0 {
 		t.Error("INTBACK did not raise System Manager interrupt")
 	}
@@ -990,7 +995,7 @@ func TestSMPCINTBACKInterruptAndSF(t *testing.T) {
 }
 
 func TestSMPCSettimeDoneDefault(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACK(s)
 	// RTC initialized is hardcoded true, so STE should be set
@@ -1000,7 +1005,7 @@ func TestSMPCSettimeDoneDefault(t *testing.T) {
 }
 
 func TestSMPCNewSettimeDoneTrue(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACK(s)
 	// RTC initialized starts true (hardcoded), so STE bit should be set
@@ -1010,7 +1015,7 @@ func TestSMPCNewSettimeDoneTrue(t *testing.T) {
 }
 
 func TestSMPCNewAreaCodeDefault(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.areaCode != 0x04 {
 		t.Errorf("areaCode = 0x%02X, want 0x04 after NewSMPC", s.areaCode)
 	}
@@ -1038,7 +1043,7 @@ func smpcINTBACKSysPeripheral(s *SMPC, p1md, p2md uint8) {
 
 func TestSMPCINTBACKSystemDataOnlySR(t *testing.T) {
 	// System data only (IREG0=0x01, PEN=0): SR=0x40
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACK(s) // uses existing helper: IREG0=0x01, PEN=0
 	if s.sr != 0x40 {
@@ -1051,7 +1056,7 @@ func TestSMPCINTBACKSystemDataOnlySR(t *testing.T) {
 
 func TestSMPCINTBACKPeripheralBothPorts15Byte(t *testing.T) {
 	// Both ports 15-byte mode (P1MD=00, P2MD=00)
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKPeripheral(s, 0, 0)
 
@@ -1092,7 +1097,7 @@ func TestSMPCINTBACKPeripheralBothPorts15Byte(t *testing.T) {
 
 func TestSMPCINTBACKPeripheralPort1ZeroByte(t *testing.T) {
 	// Port 1 in 0-byte mode (P1MD=11), port 2 in 15-byte mode (P2MD=00)
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKPeripheral(s, 3, 0)
 
@@ -1117,7 +1122,7 @@ func TestSMPCINTBACKPeripheralPort1ZeroByte(t *testing.T) {
 
 func TestSMPCINTBACKPeripheralPort2ZeroByte(t *testing.T) {
 	// Port 1 in 15-byte mode (P1MD=00), port 2 in 0-byte mode (P2MD=11)
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKPeripheral(s, 0, 3)
 
@@ -1142,7 +1147,7 @@ func TestSMPCINTBACKPeripheralPort2ZeroByte(t *testing.T) {
 
 func TestSMPCINTBACKPeripheralBothZeroByte(t *testing.T) {
 	// Both ports 0-byte mode (P1MD=11, P2MD=11)
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// Pre-fill OREGs to verify they are untouched
 	for i := range s.oreg {
@@ -1165,7 +1170,7 @@ func TestSMPCINTBACKPeripheralBothZeroByte(t *testing.T) {
 
 func TestSMPCINTBACKPeripheral255ByteMode(t *testing.T) {
 	// 255-byte mode (P1MD=01, P2MD=01) behaves same as 15-byte
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKPeripheral(s, 1, 1)
 
@@ -1191,15 +1196,19 @@ func TestSMPCINTBACKPeripheral255ByteMode(t *testing.T) {
 
 func TestSMPCINTBACKPeripheralRaisesInterrupt(t *testing.T) {
 	scu := NewSCU()
-	s := NewSMPC(scu)
-	smpcINTBACKPeripheral(s, 0, 0)
+	s := NewSMPC()
+	s.Write(0x01, 0x00) // IREG0 = 0x00 (no system data)
+	s.Write(0x03, 0x08) // IREG1: PEN=1
+	s.Write(0x05, 0xF0) // IREG2
+	s.sf = 1
+	smpcDispatchRaise(s, scu, 0x10)
 	if scu.ist&(1<<7) == 0 {
 		t.Error("peripheral-only INTBACK did not raise System Manager interrupt")
 	}
 }
 
 func TestSMPCINTBACKPeripheralClearsActive(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKPeripheral(s, 0, 0)
 	if s.intbackActive {
@@ -1209,7 +1218,7 @@ func TestSMPCINTBACKPeripheralClearsActive(t *testing.T) {
 
 func TestSMPCINTBACKSysPeripheralSR(t *testing.T) {
 	// System data + peripheral (IREG0=0x01, PEN=1): SR=0x60 (PDE=1)
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKSysPeripheral(s, 0, 0)
 
@@ -1229,7 +1238,7 @@ func TestSMPCINTBACKSysPeripheralContinue(t *testing.T) {
 	t.Skip("SMPC INTBACK under development")
 	// System data response, then continue to get peripheral data
 	scu := NewSCU()
-	s := NewSMPC(scu)
+	s := NewSMPC()
 	smpcINTBACKSysPeripheral(s, 0, 0)
 
 	if scu.ist&(1<<7) == 0 {
@@ -1270,7 +1279,7 @@ func TestSMPCINTBACKSysPeripheralContinue(t *testing.T) {
 
 func TestSMPCINTBACKSysPeripheralOREG31(t *testing.T) {
 	// OREG31 retains 0x10 through both system and peripheral responses
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKSysPeripheral(s, 0, 0)
 
@@ -1290,7 +1299,7 @@ func TestSMPCINTBACKSysPeripheralOREG31(t *testing.T) {
 func TestSMPCINTBACKBreak(t *testing.T) {
 	t.Skip("SMPC INTBACK under development")
 	// Break (IREG0 bit6=1, SF=1) terminates INTBACK
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKSysPeripheral(s, 0, 0)
 
@@ -1312,7 +1321,7 @@ func TestSMPCINTBACKBreak(t *testing.T) {
 
 func TestSMPCINTBACKHold(t *testing.T) {
 	// Hold (IREG0 unchanged, SF=1) does nothing
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	smpcINTBACKSysPeripheral(s, 0, 0)
 
@@ -1337,7 +1346,7 @@ func TestSMPCINTBACKHold(t *testing.T) {
 func TestSMPCINTBACKContinueWithoutActive(t *testing.T) {
 	// SF write when intbackActive=false should not trigger continue logic
 	scu := NewSCU()
-	s := NewSMPC(scu)
+	s := NewSMPC()
 
 	// Write SF=1 without intbackActive
 	s.Write(0x01, 0x80) // would be continue toggle
@@ -1351,7 +1360,7 @@ func TestSMPCINTBACKContinueWithoutActive(t *testing.T) {
 func TestSMPCINTBACKNoOpIREG0ZeroPENZero(t *testing.T) {
 	// IREG0=0x00, PEN=0: no-op
 	scu := NewSCU()
-	s := NewSMPC(scu)
+	s := NewSMPC()
 
 	// Pre-fill OREGs
 	for i := range s.oreg {
@@ -1381,7 +1390,7 @@ func TestSMPCINTBACKNoOpIREG0ZeroPENZero(t *testing.T) {
 }
 
 func TestSMPCNewIntbackActiveDefault(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.intbackActive {
 		t.Error("intbackActive should be false after NewSMPC")
 	}
@@ -1390,7 +1399,7 @@ func TestSMPCNewIntbackActiveDefault(t *testing.T) {
 // --- Phase 9.4: SMPC Controller Input ---
 
 func TestSMPCPadStateDefault(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// Default pad state should be all released (0xFFFF)
 	if s.padState[0] != 0xFFFF {
 		t.Errorf("padState[0] = 0x%04X, want 0xFFFF", s.padState[0])
@@ -1401,7 +1410,7 @@ func TestSMPCPadStateDefault(t *testing.T) {
 }
 
 func TestSMPCSetPadData(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.SetPadData(0, 0xFBFF) // A pressed (byte1 bit2 = 0)
 	if s.padState[0] != 0xFBFF {
 		t.Errorf("padState[0] = 0x%04X, want 0xFBFF", s.padState[0])
@@ -1413,7 +1422,7 @@ func TestSMPCSetPadData(t *testing.T) {
 }
 
 func TestSMPCSetPadDataOutOfRange(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// Out of range port should not panic
 	s.SetPadData(-1, 0x0000)
 	s.SetPadData(2, 0x0000)
@@ -1424,7 +1433,7 @@ func TestSMPCSetPadDataOutOfRange(t *testing.T) {
 }
 
 func TestSMPCPeripheralDataWithButtonPress(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// Press A on port 1: byte1 bit2 = 0 -> 0xFBFF
 	s.SetPadData(0, 0xFBFF)
@@ -1445,7 +1454,7 @@ func TestSMPCPeripheralDataWithButtonPress(t *testing.T) {
 }
 
 func TestSMPCPeripheralDataMultipleButtons(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 
 	// Press Up (byte1 bit4=0), Start (byte1 bit3=0), L (byte2 bit3=0)
 	// byte1 = 0xFF & ~(1<<4) & ~(1<<3) = 0xFF ^ 0x18 = 0xE7
@@ -1463,7 +1472,7 @@ func TestSMPCPeripheralDataMultipleButtons(t *testing.T) {
 }
 
 func TestSMPCNewPadStateReleased(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	if s.padState[0] != 0xFFFF {
 		t.Errorf("padState[0] after NewSMPC = 0x%04X, want 0xFFFF", s.padState[0])
 	}
@@ -1475,7 +1484,7 @@ func TestSMPCNewPadStateReleased(t *testing.T) {
 // --- Pass 2 gap-fill tests ---
 
 func TestSMPCTickFrameAdvancesRTC(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	before := s.rtcFrames
 	s.TickFrame()
 	s.TickFrame()
@@ -1486,7 +1495,7 @@ func TestSMPCTickFrameAdvancesRTC(t *testing.T) {
 }
 
 func TestSMPCMSHONDispatchNoOp(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// Drive MSHON (command 0x00) through the full dispatch path so
 	// the cmdMSHON stub is executed from its call site.
 	before := *s
@@ -1506,7 +1515,7 @@ func TestSMPCMSHONDispatchNoOp(t *testing.T) {
 }
 
 func TestSMPCNMIREQDispatchNoOp(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	nmiCalled := false
 	s.masterNMI = func() { nmiCalled = true }
 	before := *s
@@ -1525,7 +1534,7 @@ func TestSMPCNMIREQDispatchNoOp(t *testing.T) {
 }
 
 func TestSMPCReadPDRSMPCMode(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// IOSEL port 0 = 0 -> SMPC polling mode; returns written pdr & 0x7F.
 	s.iosel = 0
 	s.pdr1 = 0xAA
@@ -1540,7 +1549,7 @@ func TestSMPCReadPDRSMPCMode(t *testing.T) {
 }
 
 func TestSMPCReadPDRDirectIOAllTHTR(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	// Direct I/O mode on port 0; DDR configures TH/TR as outputs
 	// (bits 5 and 6 set) so the written values drive the select lines.
 	s.iosel = 0x01
@@ -1559,7 +1568,7 @@ func TestSMPCReadPDRDirectIOAllTHTR(t *testing.T) {
 }
 
 func TestSMPCReadPDRDirectIOButtonData(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.iosel = 0x01
 	s.ddr1 = 0x60
 
@@ -1580,7 +1589,7 @@ func TestSMPCReadPDRDirectIOButtonData(t *testing.T) {
 func TestSMPCCmdScanlinesUnknownCommand(t *testing.T) {
 	// comreg outside the 0x00-0x1F command table falls through to the
 	// default 30us delay.
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.comreg = 0xFF
 	lines := s.cmdScanlines()
 	if lines < 1 {
@@ -1589,7 +1598,7 @@ func TestSMPCCmdScanlinesUnknownCommand(t *testing.T) {
 }
 
 func TestSMPCContinueINTBACKBreak(t *testing.T) {
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.intbackActive = true
 	s.sr = 0x60
 	// IREG0 bit 6 = break.
@@ -1607,7 +1616,7 @@ func TestSMPCContinueINTBACKNoFlags(t *testing.T) {
 	// Hit the early-return path: IREG[0] has neither break (bit 6)
 	// nor continue (bit 7). The function should return without
 	// touching sr or intbackActive.
-	s := NewSMPC(NewSCU())
+	s := NewSMPC()
 	s.intbackActive = true
 	s.sr = 0xAA
 	s.ireg[0] = 0x01 // no bit 6 or bit 7

@@ -21,8 +21,12 @@ type FRT struct {
 	// Control/status
 	tier  uint8 // Timer interrupt enable register
 	ftcsr uint8 // Timer control/status register
-	tcr   uint8 // Timer control register
-	tocr  uint8 // Timer output compare control register
+
+	// Flag bits observed set by the last FTCSR read; a 0 write clears
+	// only these (the SH7604 read-then-write-0 clear protocol).
+	readFlags uint8
+	tcr       uint8 // Timer control register
+	tocr      uint8 // Timer output compare control register
 
 	// Internal state
 	prescaler uint16 // Counts CPU cycles between FRC increments
@@ -65,6 +69,7 @@ func (f *FRT) Reset() {
 	f.icr = 0
 	f.tier = 0x01 // bit 0 is always 1
 	f.ftcsr = 0
+	f.readFlags = 0
 	f.tcr = 0
 	f.tocr = 0xE0 // upper 3 bits are always 1
 	f.prescaler = 0
@@ -188,6 +193,15 @@ func (f *FRT) IRQFlags() uint8 {
 	return f.ftcsr & f.tier & 0x8E
 }
 
+// ClearInputCapture clears the input-capture flag (ICF) and its read
+// latch. Used on a system reset (CKCHG/SYSRES), which turns off the peer
+// SH-2 that drives cross-CPU input capture, so a capture latched just
+// before the reset must not survive it.
+func (f *FRT) ClearInputCapture() {
+	f.ftcsr &^= ftcsrICF
+	f.readFlags &^= ftcsrICF
+}
+
 // InputCapture latches the current FRC value into ICR and sets
 // the input capture flag. Used by MINIT/SINIT writes.
 // Returns true if the ICF interrupt is enabled.
@@ -204,6 +218,9 @@ func (f *FRT) Read(addr uint32) uint8 {
 	case 0xFFFFFE10: // TIER
 		return f.tier
 	case 0xFFFFFE11: // FTCSR
+		// Latch the set flag bits observed by this read: a subsequent
+		// 0 write clears only these (see Write).
+		f.readFlags = f.ftcsr & 0x8E
 		return f.ftcsr
 	case 0xFFFFFE12: // FRC H
 		f.temp = uint8(f.frc)
@@ -239,10 +256,15 @@ func (f *FRT) Write(addr uint32, val uint8) {
 	case 0xFFFFFE10: // TIER
 		f.tier = (val & 0x8E) | 0x01 // bit 0 always 1
 	case 0xFFFFFE11: // FTCSR
-		// Flags (bits 7, 3-1) can only be cleared (write 0 to clear).
+		// Flag bits (7, 3-1) clear only when they were read while set
+		// and 0 is then written (SH7604 manual: "When ICF is read
+		// while set to 1, and then 0 is written"). A flag that set
+		// after the last read survives a 0 write, so a capture
+		// arriving between the read and the clear is not lost.
 		// Bit 0 (CCLRA) is normal R/W.
-		flags := val & 0x8E // flag bits mask
-		f.ftcsr = (f.ftcsr & flags) | (val & ftcsrCCLRA)
+		cleared := f.readFlags & ^val & 0x8E
+		f.ftcsr = (f.ftcsr &^ cleared &^ ftcsrCCLRA) | (val & ftcsrCCLRA)
+		f.readFlags = 0
 	case 0xFFFFFE12: // FRC H - write to temp, apply on low byte write
 		f.temp = val
 	case 0xFFFFFE13: // FRC L

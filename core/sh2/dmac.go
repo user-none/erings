@@ -13,9 +13,6 @@ type dmaChan struct {
 }
 
 // DMAC implements the SH-2 on-chip 2-channel DMA controller.
-// Data is moved instantly when triggered, but the CPU stalls for
-// TCR * 20 cycles to simulate bus occupation. TE and the optional
-// interrupt fire when the stall countdown reaches zero.
 type DMAC struct {
 	ch     [2]dmaChan
 	dmaor  uint16   // DMA Operation Register
@@ -253,11 +250,12 @@ func (d *DMAC) execute(ch int) {
 	var stall uint32
 	for count > 0 {
 		// Accumulate per-unit bus-occupation stall based on the
-		// region and size of each source and destination access.
-		// Bus.AccessCycles combines SH-2 BSC and SCU A-Bus/B-Bus
-		// timing per the Saturn BIOS configuration.
+		// region, size, and direction of each source and destination
+		// access. Bus.AccessCycles/WriteAccessCycles combine SH-2 BSC
+		// and SCU A-Bus/B-Bus timing per the Saturn BIOS
+		// configuration.
 		stall += d.bus.AccessCycles(src, unitSize)
-		stall += d.bus.AccessCycles(dst, unitSize)
+		stall += d.bus.WriteAccessCycles(dst, unitSize)
 
 		switch ts {
 		case 0:

@@ -42,16 +42,15 @@ const (
 	// Block timing thresholds at construction. The runtime values live
 	// as fields on CDBlock and are refreshed by RecalcTiming whenever
 	// the emulator's recalcTiming runs (mode change or initial
-	// bring-up), so the CD block honors the actual system clock rate
+	// bring-up), so the CD block honors the documented system clock rate
 	// rather than the compile-time constant. This default matches NTSC
 	// 320 mode; 352 and PAL produce different rates and override via
 	// RecalcTiming.
 	//
-	// NTSC 320: 1708 cycles/line * 263 lines * 60 fps = 26,952,240 Hz
-	// NTSC 352: 1820 cycles/line * 263 lines * 60 fps = 28,719,600 Hz
-	// PAL  320: 1708 cycles/line * 313 lines * 50 fps = 26,730,200 Hz
-	// PAL  352: 1820 cycles/line * 313 lines * 50 fps = 28,483,000 Hz
-	cdSystemClockHz = 26952240
+	// Documented system clocks (SMPC manual Table 1.1):
+	//   NTSC 320: 26,874,100 Hz   NTSC 352: 28,636,400 Hz
+	//   PAL  320: 26,687,500 Hz   PAL  352: 28,437,500 Hz
+	cdSystemClockHz = 26874100
 
 	// "As soon as possible" sentinels for command acceptance and
 	// InitCDSystem state transitions. Value 1 fires on the next
@@ -230,9 +229,18 @@ type CDBlock struct {
 	delStart         int
 	delCount         int
 
-	status              uint8
-	disc                *discTOC
-	trackCache          []trackEntry    // sorted by FAD, built in SetDisc
+	status     uint8
+	disc       *discTOC
+	trackCache []trackEntry // sorted by FAD, built in SetDisc
+
+	// Play-track type cache for currentTrackIsAudio: TickSystemCycles
+	// consults the play track's type every tick, but the answer only
+	// changes when playFAD leaves the cached FAD range. playTypeFADHigh
+	// is exclusive; the zero value (low==high==0) never matches, so the
+	// cache self-invalidates on SetDisc's reset of these fields.
+	playTypeFADLow      uint32
+	playTypeFADHigh     uint32
+	playTypeIsAudio     bool
 	filters             [24]cdFilter    // filter conditions and connections
 	partitions          [24]cdPartition // per-partition sector storage
 	cdDeviceFilter      uint8           // which filter CD device feeds into (0xFF=disconnected)
@@ -487,6 +495,8 @@ func (cb *CDBlock) checkIRQ() {
 func (cb *CDBlock) SetDisc(d DiscReader) {
 	cb.trackCache = nil
 	cb.discType = 0
+	cb.playTypeFADLow = 0
+	cb.playTypeFADHigh = 0
 	cb.DrainAudio()
 	if d != nil {
 		cb.disc = newDiscTOC(d)
@@ -628,8 +638,11 @@ func (cb *CDBlock) Write(offset uint32, val uint16) {
 		// HIRQREQ: write-0-to-clear
 		cb.hirqReq &= val
 	case 0x000C:
+		// The IRQ re-evaluation for the new mask happens in
+		// TickSystemCycles: raising from here would claim the SCU
+		// domain while the bus dispatch holds this register access's
+		// A-Bus claim, inverting the SCU -> bus acquisition order.
 		cb.hirqMask = val
-		cb.checkIRQ()
 	case 0x0018:
 		cb.cmd[0] = val
 	case 0x001C:
@@ -1005,10 +1018,23 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 }
 
 // currentTrackIsAudio reports whether the track containing playFAD is
-// an audio (CD-DA) track.
+// an audio (CD-DA) track. The containing track's FAD range is cached;
+// the table scan reruns only when playFAD leaves it.
 func (cb *CDBlock) currentTrackIsAudio() bool {
-	if tr := cb.trackAt(cb.playFAD); tr != nil {
-		return tr.isAudio
+	fad := cb.playFAD
+	if fad >= cb.playTypeFADLow && fad < cb.playTypeFADHigh {
+		return cb.playTypeIsAudio
+	}
+	for i := len(cb.trackCache) - 1; i >= 0; i-- {
+		if fad >= cb.trackCache[i].pregapStartFAD {
+			cb.playTypeFADLow = cb.trackCache[i].pregapStartFAD
+			cb.playTypeFADHigh = ^uint32(0)
+			if i+1 < len(cb.trackCache) {
+				cb.playTypeFADHigh = cb.trackCache[i+1].pregapStartFAD
+			}
+			cb.playTypeIsAudio = cb.trackCache[i].isAudio
+			return cb.playTypeIsAudio
+		}
 	}
 	return false
 }

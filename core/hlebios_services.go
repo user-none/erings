@@ -237,6 +237,10 @@ func hleSysChgScuimService(cpu *sh2.CPU, bus *Bus) {
 func hleSysChgSysCkService(cpu *sh2.CPU, bus *Bus) {
 	mode := cpu.Registers().R[4] & 1
 
+	// LSI reset: CKCHG clears the VDP2 register file. Done before the TVMD
+	// write so the prior mode's layer/priority setup cannot survive.
+	bus.vdp2.ResetRegisters()
+
 	// SMPC half: clock-mode word, transient AIACK/AREF clears, SCU RSEL,
 	// and the VDP2 TVMD resolution change.
 	bus.Write32(0x06000324, mode)
@@ -554,14 +558,10 @@ func hleSlaveInitService(cpu *sh2.CPU, bus *Bus) {
 
 	entry := bus.readWramHU32(0x250)
 	if entry == 0 || entry == hleSentinel {
-		// No game-installed slave entry. WW7 (and likely other titles)
-		// use the slave as a coprocessor that runs an FRT-Input-Capture
-		// IRQ handler installed in the slave VBR table; the handler at
-		// e.g. $06012AA0 polls FTCSR.ICF and dispatches commands sent
-		// by master via MINIT writes. Configure slave's on-chip
+		// Configure slave's on-chip
 		// FRT/INTC registers so the ICI IRQ can fire. These are
-		// CPU-private regs only writable by slave itself; real BIOS's
-		// $06000600/$06000690 chain writes them — our HLE skips that
+		// CPU-private regs only writable by slave itself. Real BIOS's
+		// $06000600/$06000690 chain writes them - our HLE skips that
 		// code and pokes the regs in Go.
 		//   INTC VCRC bits 14-8 = ICI vector ($64 — matches game's
 		//     handler installed at slave VBR + $64*4 = $06000590).

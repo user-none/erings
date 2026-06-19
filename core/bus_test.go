@@ -9,7 +9,7 @@ import "testing"
 // pre-inversion NewBus() behavior for test convenience.
 func newBusForTest() *Bus {
 	scu := NewSCU()
-	smpc := NewSMPC(scu)
+	smpc := NewSMPC()
 	vdp1 := NewVDP1(scu)
 	vdp2 := NewVDP2(scu)
 	scsp := NewSCSP(scu)
@@ -988,9 +988,11 @@ func TestBusAccessCyclesPerRegion(t *testing.T) {
 		{"Work RAM-L", 0x00200000, 3, 12},
 		{"MINIT", 0x01000000, 3, 12},
 		{"SINIT", 0x01800000, 3, 12},
-		{"A-Bus CS0 (cart)", 0x02000000, 20, 80},
-		{"A-Bus CS1 (cart ID)", 0x04000000, 20, 80},
-		{"A-Bus Dummy", 0x05000000, 20, 80},
+		// A-Bus burst: first access 20, three beats at the SCU
+		// burst-cycle wait (15+1) each: 20 + 3*16 = 68.
+		{"A-Bus CS0 (cart)", 0x02000000, 20, 68},
+		{"A-Bus CS1 (cart ID)", 0x04000000, 20, 68},
+		{"A-Bus Dummy", 0x05000000, 20, 68},
 		{"CD Block", 0x05800000, 10, 40},
 		{"SCSP RAM", 0x05A00000, 12, 48},
 		{"VDP1 VRAM", 0x05C00000, 8, 32},
@@ -998,7 +1000,9 @@ func TestBusAccessCyclesPerRegion(t *testing.T) {
 		{"VDP2 CRAM", 0x05F00000, 5, 20},
 		{"VDP2 regs", 0x05F80000, 5, 20},
 		{"SCU regs", 0x05FE0000, 5, 20},
-		{"Work RAM-H", 0x06000000, 3, 6}, // SDRAM burst: base + 3
+		// SDRAM: a single read runs the full burst pipeline
+		// (SH7604 Sec 7.5.4), so size 4 and size 16 cost the same.
+		{"Work RAM-H", 0x06000000, 7, 7},
 	}
 
 	for _, tt := range cases {

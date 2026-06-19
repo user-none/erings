@@ -3,7 +3,10 @@
 
 package core
 
-import "fmt"
+import (
+	"fmt"
+	"sync/atomic"
+)
 
 const (
 	biosSize   = 512 * 1024      // 512 KB
@@ -26,6 +29,112 @@ const (
 	cartID4MB  = 0x5C
 )
 
+// Bus access locks, one per hardware arbitration domain. The Saturn
+// has three buses (SCU manual Figure 1.1): the CPU-Bus carries Work
+// RAM-H, Work RAM-L, backup RAM, the IPL ROM, and the SMPC; the A-Bus
+// carries the cartridge and CD block; the B-Bus carries VDP1, VDP2,
+// and the SCSP. The buses operate in parallel ("Using the CPU-Bus,
+// the CPU can access the work area while executing the DMA of the
+// A-Bus and B-Bus"), so accesses to different buses never serialize,
+// while accesses on the same bus are atomic with respect to each
+// other. A data access claims its bus area for the duration of the
+// access - the SH7604 passes the bus at bus-cycle boundaries
+// (Sec 7.10), which is exactly an access-scoped claim.
+//
+// The SCU's own register file is a separate domain rather than part
+// of the CPU-Bus: a register write can trigger an immediate DMA
+// (start factor 7) that itself performs bus accesses, so the
+// acquisition order is SCU -> bus areas and never the reverse.
+//
+// The SMPC register file is likewise its own domain rather than part
+// of the CPU-Bus, so its accesses serialize independently of the
+// Work RAM lock.
+//
+// Every CPU access that reaches the Bus locks: the SH-2 cache model
+// serves hits internally (they never get here), so by construction
+// anything arriving on these methods is an external bus cycle - a
+// cache miss, a line fill, a cache-through access, or a write (the
+// SH-2 cache is write-through).
+//
+// The VDP1 drawing engine and VDP2 display rendering access their
+// RAM through internal device ports, not the B-Bus, so they claim
+// nothing here; their contention with B-Bus accesses is a device
+// priority rule (VDP1 manual: "the order of priority of access of
+// the VRAM is always: system controller > drawing") modeled
+// separately.
+const (
+	areaNone   uint8 = iota // BIOS ROM, trigger regions, unmapped: no lock
+	areaCPUBus              // Work RAM-H/L, backup RAM
+	areaABus                // cartridge, extended RAM, CD block
+	areaBBus                // VDP1, VDP2, SCSP
+	areaSCU                 // SCU register file
+	areaSMPC                // SMPC register file
+	areaCount
+
+	// Table sentinel for the 0x05Fxxxxx megabyte, which holds both
+	// VDP2 CRAM/registers and the SCU registers; busAreaOf resolves it.
+	areaSplitBBusSCU uint8 = 0xFF
+	// Table sentinel for the 0x001xxxxx megabyte, which holds both the
+	// SMPC and the backup RAM; busAreaOf resolves it.
+	areaSplitSMPCBup uint8 = 0xFE
+)
+
+// busAreaTable maps masked-address megabyte (addr >> 20) to bus area.
+var busAreaTable [128]uint8
+
+func init() {
+	t := &busAreaTable
+	t[0x01] = areaSplitSMPCBup // SMPC (areaSMPC) + backup RAM (areaCPUBus)
+	t[0x02] = areaCPUBus       // Work RAM-L
+	for s := 0x20; s <= 0x59; s++ {
+		t[s] = areaABus // CS0/CS1/dummy/CS2 (CD block)
+	}
+	for s := 0x5A; s <= 0x5E; s++ {
+		t[s] = areaBBus // sound RAM, SCSP, VDP1, VDP2
+	}
+	t[0x5F] = areaSplitBBusSCU
+	for s := 0x60; s <= 0x7F; s++ {
+		t[s] = areaCPUBus // Work RAM-H
+	}
+}
+
+// busAreaOf returns the lock area for a masked (addr & 0x07FFFFFF)
+// address.
+func busAreaOf(masked uint32) uint8 {
+	a := busAreaTable[masked>>20]
+	switch a {
+	case areaSplitBBusSCU:
+		if masked >= 0x05FE0000 {
+			return areaSCU
+		}
+		return areaBBus
+	case areaSplitSMPCBup:
+		if masked < 0x00180000 {
+			return areaSMPC
+		}
+		return areaCPUBus
+	}
+	return a
+}
+
+// lockArea claims the given bus area, spinning until it is free.
+func (b *Bus) lockArea(area uint8) {
+	if area == areaNone {
+		return
+	}
+	l := &b.busLocks[area]
+	for !l.CompareAndSwap(0, 1) {
+	}
+}
+
+// unlockArea releases the given bus area.
+func (b *Bus) unlockArea(area uint8) {
+	if area == areaNone {
+		return
+	}
+	b.busLocks[area].Store(0)
+}
+
 // Bus implements the Saturn system bus address decoder.
 // It maps the SH-2's 32-bit address space to hardware regions.
 // Peripherals not yet implemented return 0 on read and ignore writes.
@@ -42,9 +151,19 @@ type Bus struct {
 	scsp    *SCSP    // Saturn Custom Sound Processor
 	cdblock *CDBlock // CD Block (A-Bus CS2)
 
-	minitWritten    bool
-	sinitWritten    bool
+	// MINIT/SINIT FRT-capture signals from a CPU's bus write inside
+	// Clock() to its own step loop. Each is read on the same goroutine
+	// that writes it, so a plain bool suffices: minitWritten lives entirely
+	// on the master/main goroutine, sinitWritten on the slave/secondary
+	// worker, under the MINIT->slave / SINIT->master write convention.
+	minitWritten bool
+	sinitWritten bool
+
 	cdDataTRNSCache uint16 // cached DATATRNS word for byte reads
+
+	// Per-area access locks (see the bus area comment above). Claimed
+	// by spinning - a bus access is far shorter than a goroutine park.
+	busLocks [areaCount]atomic.Int32
 
 	// ReadTrace, when non-nil, is called for every Read8/Read16/Read32.
 	// Used for narrow-region debug tracing (e.g. discovering what a
@@ -172,16 +291,21 @@ func (b *Bus) SINITWritten() bool {
 // combined with the per-field formulas from the SH7604 and SCU
 // user manuals. See each region's comment for the exact arithmetic.
 //
-// These constants also serve as the correct defaults for a future
+// These constants also serve as the defaults for the
 // HLE BIOS, which would skip the real BIOS init - the values are
 // what every shipped Saturn BIOS configures at boot. If a specific
 // game is ever found to reprogram BSC or SCU in a way that matters
 // for DMA timing, switch to reading the live register state.
 //
-// B-Bus costs (VDP1/VDP2/SCSP/CD) are not register-driven; they
-// reflect the SCU's architectural arbitration overhead. Those
-// numbers are educated estimates aligned with reference emulator
-// behavior rather than decoded from registers.
+// CS0, A-Bus, and Work RAM-H costs are decoded from those registers
+// with the manuals' per-field formulas. The B-Bus device costs
+// (VDP1/VDP2/SCSP/CD) have no register-driven fixed number on
+// hardware - they are arbitration: a VDP2 VRAM read, for example,
+// stalls until a CPU-allotted slot in the 8-slot VRAM cycle pattern
+// comes around (VDP2 manual Sec 3, "Read/Write Access by the CPU"),
+// so the true cost varies from a few states (blanking, generous
+// patterns) to a full pattern rotation. Those entries are fixed-point
+// estimates of the arbitration until the slot machinery is modeled.
 func (b *Bus) AccessCycles(addr uint32, size uint32) uint32 {
 	masked := addr & 0x07FFFFFF
 
@@ -214,9 +338,11 @@ func (b *Bus) AccessCycles(addr uint32, size uint32) uint32 {
 	case masked < 0x05800000:
 		base = 20
 
-	// CD Block (B-Bus via SCU).
-	// BSC 3, SCU B-Bus arbitration architectural ~7 states (not
-	// register-driven; estimate from CD-block response timing).
+	// CD Block (A-Bus CS2 via SCU). CS2 is an A-Bus device configured
+	// through ASR1, but the cost here is an estimate of the CD-block
+	// interface response, not the raw ASR1 wait derivation used for
+	// CS0/CS1 - the CD block's own access latency dominates.
+	// BSC 3 + ~7 CD-block response = 10 states.
 	case masked < 0x05900000:
 		base = 10
 
@@ -237,10 +363,11 @@ func (b *Bus) AccessCycles(addr uint32, size uint32) uint32 {
 	case masked >= 0x05C00000 && masked < 0x05D00020:
 		base = 8
 
-	// VDP2 VRAM (B-Bus). Contends with VDP2 rendering during
-	// active scanlines. We use the idle-window cost; refining to
-	// active-scanline arbitration is a later improvement.
-	// BSC 3 + B-Bus ~5 = 8 states.
+	// VDP2 VRAM (B-Bus). A CPU read stalls until a CPU-allotted
+	// T-slot in the 8-slot VRAM cycle pattern arrives (VDP2 manual
+	// Sec 3): 0 to a full rotation depending on CYCA/CYCB and
+	// blanking. BSC 3 + ~5 average slot wait = 8 states as the
+	// fixed-point estimate until the slot machinery is modeled.
 	case masked >= 0x05E00000 && masked < 0x05E80000:
 		base = 8
 
@@ -254,34 +381,82 @@ func (b *Bus) AccessCycles(addr uint32, size uint32) uint32 {
 	case masked >= 0x05FE0000 && masked < 0x05FE0100:
 		base = 5
 
-	// Work RAM-H on SH-2 CS3, SDRAM mode (MCR=0x78).
-	// Initial access: 3 states (matches CS3 ordinary wait=1).
-	// Burst beats: 1 state each (SDRAM burst mode).
-	// Base non-burst cost is 3; 16-byte burst is handled below.
+	// Work RAM-H on SH-2 CS3, synchronous DRAM (MCR=0x78: RCD=1
+	// cycle, TRP=1 cycle, auto-precharge; WCR=0x5555: W31/W30=01 =
+	// CAS latency 2). Read pipeline per SH7604 Sec 7.5.3 Fig 7.15:
+	//   Tr (ACTV) + Tc (READA) + 1 CAS-latency wait + Td1..Td4
+	//   + Tap (= TRP-1 = 0 at CL>=2)            = 7 states.
+	// A single (cache-through) read costs the SAME 7: the SDRAM is
+	// in burst mode, so the device completes all four data cycles
+	// and the unneeded 12 bytes are discarded (Sec 7.5.4).
 	case masked >= 0x06000000 && masked < 0x08000000:
-		base = 3
+		base = 7
 
 	default:
 		// Unmapped or reserved. Nominal 4 states.
 		base = 4
 	}
 
-	// 16-byte burst: 4 successive longword accesses. For Work
-	// RAM-H (SDRAM) the initial longword pays the full cost, three
-	// subsequent burst beats at 1 state each. For non-SDRAM
-	// regions burst mode does not apply, so cost is 4 * base.
+	// 16-byte burst (cache line fill, 16-byte DMA unit).
 	if size == 16 {
-		if masked >= 0x06000000 && masked < 0x08000000 {
-			return base + 3
+		switch {
+		case masked >= 0x06000000 && masked < 0x08000000:
+			// SDRAM: the burst read IS the single-read pipeline with
+			// all four Td cycles fetched (Sec 7.5.3) = 7 states.
+			return base
+		case masked >= 0x02000000 && masked < 0x05800000:
+			// A-Bus: first access pays the normal-cycle cost (20);
+			// the three remaining beats pay the SCU burst-cycle wait
+			// (ASR0/ASR1 burst field 0xF = 15 waits + 1) = 16 each.
+			// 20 + 3*16 = 68 states (SCU manual Sec 3, Fig 3.24).
+			return base + 3*16
+		default:
+			// Ordinary space and B-Bus devices have no burst mode:
+			// 4 successive longword accesses.
+			return base * 4
 		}
-		return base * 4
 	}
 	return base
 }
 
-// Read8 reads a byte from the given address.
+// WriteAccessCycles returns the CPU state count consumed by a single
+// write transaction. Writes differ from reads only where the memory
+// device distinguishes them:
+//
+//   - Work RAM-H SDRAM writes are single writes (SH7604 Sec 7.5.5
+//     Fig 7.18): Tr (ACTV) + Tc (WRITA, data out with the command),
+//     then TRWL (1) + precharge (TRP = 1) before the next command to
+//     the bank = 4 states. The SH-2 has no write buffer - the CPU
+//     waits for the internal bus write to complete (Sec 8.4.2) - so
+//     the full cost lands on the writing instruction.
+//   - VDP2 VRAM/CRAM writes are accepted without the cycle-pattern
+//     slot wait that reads incur (VDP2 manual Sec 3, "Read/Write
+//     Access by the CPU": "The write access wait cycle will not be
+//     entered if the two word write access is at least two times"),
+//     so they cost only the BSC + B-Bus handoff.
+//
+// Everything else matches the read cost: ordinary-space and A-Bus
+// cycles are direction-symmetric in the BSC, and the remaining B-Bus
+// device costs are arbitration estimates with no documented
+// read/write asymmetry.
+func (b *Bus) WriteAccessCycles(addr uint32, size uint32) uint32 {
+	masked := addr & 0x07FFFFFF
+	switch {
+	case masked >= 0x06000000 && masked < 0x08000000:
+		return 4
+	case masked >= 0x05E00000 && masked < 0x05F80120:
+		return 5
+	}
+	return b.AccessCycles(addr, size)
+}
+
+// Read8 reads a byte from the given address, claiming the address's
+// bus area for the duration of the access.
 func (b *Bus) Read8(addr uint32) uint8 {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
 	val := b.read8Impl(addr)
+	b.unlockArea(area)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 1, uint32(val))
 	}
@@ -430,8 +605,16 @@ func (b *Bus) read8Impl(addr uint32) uint8 {
 	}
 }
 
-// Write8 writes a byte to the given address.
+// Write8 writes a byte to the given address, claiming the address's
+// bus area for the duration of the access.
 func (b *Bus) Write8(addr uint32, val uint8) {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
+	b.write8Impl(addr, val)
+	b.unlockArea(area)
+}
+
+func (b *Bus) write8Impl(addr uint32, val uint8) {
 	addr &= 0x07FFFFFF
 
 	switch {
@@ -558,13 +741,57 @@ func (b *Bus) Write8(addr uint32, val uint8) {
 	}
 }
 
-// Read16 reads a big-endian 16-bit value from the given address.
+// Read16 reads a big-endian 16-bit value from the given address,
+// claiming the address's bus area for the duration of the access.
 func (b *Bus) Read16(addr uint32) uint16 {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
 	val := b.read16Impl(addr)
+	b.unlockArea(area)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 2, uint32(val))
 	}
 	return val
+}
+
+// ReadRMW8 begins a TAS.B read-modify-write: it claims the address's
+// bus area and returns with the claim still held. WriteRMW8 completes
+// the sequence and releases the claim. Per SH7604 Sec 7.10 the bus is
+// not released between the read and write cycles of TAS.
+func (b *Bus) ReadRMW8(addr uint32) uint8 {
+	b.lockArea(busAreaOf(addr & 0x07FFFFFF))
+	val := b.read8Impl(addr)
+	if b.ReadTrace != nil {
+		b.ReadTrace(addr, 1, uint32(val))
+	}
+	return val
+}
+
+// WriteRMW8 completes a TAS.B read-modify-write begun by ReadRMW8,
+// writing the value and releasing the bus-area claim.
+func (b *Bus) WriteRMW8(addr uint32, val uint8) {
+	b.write8Impl(addr, val)
+	b.unlockArea(busAreaOf(addr & 0x07FFFFFF))
+}
+
+// ReadCacheLine fills dst from the 16-byte-aligned line at base,
+// holding the line's bus area across all four longwords. Per SH7604
+// Sec 8.4.1 a cache line fill reads four longwords consecutively in
+// one bus tenure (an SDRAM burst for Work RAM-H, Sec 7.5.3-7.5.4), so
+// another bus master cannot interleave a write between them - claiming
+// the area once reproduces that, where four separate Read32 calls
+// would release the bus three times mid-fill and admit a torn line.
+func (b *Bus) ReadCacheLine(base uint32, dst *[16]byte) {
+	area := busAreaOf(base & 0x07FFFFFF)
+	b.lockArea(area)
+	for i := uint32(0); i < 16; i += 4 {
+		v := b.read32Impl(base + i)
+		dst[i] = uint8(v >> 24)
+		dst[i+1] = uint8(v >> 16)
+		dst[i+2] = uint8(v >> 8)
+		dst[i+3] = uint8(v)
+	}
+	b.unlockArea(area)
 }
 
 func (b *Bus) read16Impl(addr uint32) uint16 {
@@ -649,9 +876,13 @@ func (b *Bus) read16Impl(addr uint32) uint16 {
 	}
 }
 
-// Read32 reads a big-endian 32-bit value from the given address.
+// Read32 reads a big-endian 32-bit value from the given address,
+// claiming the address's bus area for the duration of the access.
 func (b *Bus) Read32(addr uint32) uint32 {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
 	val := b.read32Impl(addr)
+	b.unlockArea(area)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 4, val)
 	}
@@ -751,8 +982,16 @@ func (b *Bus) read32Impl(addr uint32) uint32 {
 	}
 }
 
-// Write16 writes a big-endian 16-bit value to the given address.
+// Write16 writes a big-endian 16-bit value to the given address,
+// claiming the address's bus area for the duration of the access.
 func (b *Bus) Write16(addr uint32, val uint16) {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
+	b.write16Impl(addr, val)
+	b.unlockArea(area)
+}
+
+func (b *Bus) write16Impl(addr uint32, val uint16) {
 	masked := addr & 0x07FFFFFF
 	switch {
 	case masked <= 0x0007FFFF:
@@ -852,8 +1091,16 @@ func (b *Bus) Write16(addr uint32, val uint16) {
 	}
 }
 
-// Write32 writes a big-endian 32-bit value to the given address.
+// Write32 writes a big-endian 32-bit value to the given address,
+// claiming the address's bus area for the duration of the access.
 func (b *Bus) Write32(addr uint32, val uint32) {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
+	b.write32Impl(addr, val)
+	b.unlockArea(area)
+}
+
+func (b *Bus) write32Impl(addr uint32, val uint32) {
 	masked := addr & 0x07FFFFFF
 	switch {
 	case masked <= 0x0007FFFF:

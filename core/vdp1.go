@@ -3,6 +3,8 @@
 
 package core
 
+import "sync/atomic"
+
 const (
 	vdp1VRAMSize = 512 * 1024 // 512 KB
 	vdp1FBSize   = 256 * 1024 // 256 KB
@@ -16,12 +18,35 @@ const (
 const pixelsPerYieldChunk = 8
 
 // vdp1WriteStallSystemCycles is the bus-contention penalty (in system
-// cycles) charged to VDP1's per-segment cycle budget for each SH-2 or
-// SCU-DMA write to VDP1 VRAM that happens while drawActive=true.
+// cycles) charged to VDP1's per-segment cycle budget for each 16-bit
+// VRAM port transaction by the SH-2 or SCU-DMA while drawActive=true.
+// The VDP1 port is 16-bit, so a 32-bit write costs this twice.
 // Drawing slows when the SH-2 is busy writing, keeping the SH-2 ahead
 // of drawing's read position so each command lands before VDP1 reads
 // it.
-const vdp1WriteStallSystemCycles = 16
+//
+// The VDP1 User's Manual Section 2.1 (Address Map, VRAM) gives only
+// "more than 10 wait cycles" per arbitrated access, with no exact value.
+// 24 sits above that floor so VDP1's command-table reads stay behind the
+// SH-2's command-list writes. We've seen below ~22 the draw can latch
+// a stale end-bit left by a prior shorter list and truncate the command
+// list, dropping the tail sprites. A slightly larger value is used to
+// allow for some head room.
+const vdp1WriteStallSystemCycles = 24
+
+// vdp1PreClipLineCycles is the per-line pre-clipping detection cost
+// charged when a connecting line or whole command is wholly outside
+// the drawing area. Off-screen dots of a partially-visible line are
+// charged per-dot like visible dots, since the DDA iteration runs
+// regardless and only the framebuffer write is discarded.
+//
+// The VDP1 User's Manual Supplement Section 1.2 (Pre-Clipping Disable)
+// states the detection overhead is "up to five CPU clock cycles for
+// one line" - a maximum, with no formula for the actual value. 3 is
+// chosen to approximate an average over the distribution of detection
+// cases (trivial reject through full clip-edge intersection) rather
+// than charging the worst-case 5 every time.
+const vdp1PreClipLineCycles = 3
 
 // Command phase tags. Non-zero values identify which rasterizer
 // holds in-progress state and must be resumed on the next
@@ -127,15 +152,17 @@ type VDP1 struct {
 	// or SCU-DMA write to VRAM while drawActive=true; consumed and
 	// cleared at the top of TickSystemCycles where it reduces the
 	// per-segment cycle budget. Overshoot rolls into systemCycleDebt
-	// via the existing carry mechanism.
-	vramWriteStallCycles int32
+	// via the existing carry mechanism. Atomic: writers (CPU/SCU bus
+	// goroutines) increment while the VDP walker reads-and-clears, with
+	// no common lock between them.
+	vramWriteStallCycles atomic.Int32
 
 	// SCU reference for interrupt signaling
 	scu *SCU
 
 	// VBE rising-edge latch. The emulator runs all system cycles for a
 	// frame before VBlankIn samples TVMR, so games that set VBE=1 then
-	// clear it back to 0 within the same SH-2 batch would otherwise be
+	// clear it back to 0 within the same frame would otherwise be
 	// invisible. We latch any 0->1 transition of TVMR.VBE and treat
 	// VBlankIn as if VBE=1, then clear the latch.
 	vbeLatched bool
@@ -163,17 +190,17 @@ type VDP1 struct {
 	// the swap rate reflects what the player actually sees.
 	swapCount uint64
 
-	// Set true by VBlankIn when a manual-mode erase of displayFB
-	// (FCM=1+FCT=0 with a deferred-bit FBCR write or VBE rising) has
-	// been requested. Per Sec.4.2 "Erase/write of the display frame
-	// buffer is performed in the next specified field." On hardware
-	// the erase progresses incrementally during active scanlines after
-	// VDP2 reads each line; we approximate by deferring the atomic
-	// erase to PerformLateErase() (called after vdp2.RenderFrame())
-	// so this frame's display still uses the pre-erase content. The
-	// next FCT=1 swap moves the just-erased buffer to drawFB with a
-	// clean slate.
-	lateEraseDisplayFB bool
+	// lateEraseFB is the buffer captured by VBlankIn when a
+	// manual-mode erase (FCM=1+FCT=0 with a deferred-bit FBCR write
+	// or VBE rising) is requested: the display framebuffer as of the
+	// request. Per Sec.4.2 "Erase/write of the display frame buffer
+	// is performed in the next specified field": on hardware the
+	// erase-write progresses behind the beam, so the next field still
+	// shows the pre-erase content, and the buffer is clean before a
+	// swap makes it the draw target. The atomic approximation erases
+	// it at the next VBlankIn boundary, or earlier at a swap that is
+	// about to hand it over for drawing. Nil when no erase is pending.
+	lateEraseFB []byte
 
 	// cmdPhase is the resume tag. When non-zero, processCommands
 	// dispatches to the matching resume helper instead of fetching a
@@ -230,7 +257,7 @@ func (v *VDP1) Reset() {
 	// real VDP1 register state. Resetting it on SystemReset (CKCHG
 	// or user reset) would cause the host's delta calculation to
 	// underflow uint64.
-	v.lateEraseDisplayFB = false
+	v.lateEraseFB = nil
 	v.procAddr = 0
 	v.procReturnAddr = 0
 	v.systemCycleDebt = 0
@@ -281,7 +308,7 @@ func (v *VDP1) Write(offset uint32, val uint16) {
 	case 0x00:
 		// Rising edge of VBE: latch so VBlankIn still triggers the
 		// requested V-blank erase even if the SH-2 has already cleared
-		// VBE back to 0 within the same per-frame batch.
+		// VBE back to 0 within the same frame.
 		if (val&0x08) != 0 && (v.tvmr&0x08) == 0 {
 			v.vbeLatched = true
 		}
@@ -357,7 +384,7 @@ func (v *VDP1) ReadVRAM(addr uint32) uint8 {
 func (v *VDP1) WriteVRAM(addr uint32, val uint8) {
 	v.vram[addr&(vdp1VRAMSize-1)] = val
 	if v.drawActive {
-		v.vramWriteStallCycles += vdp1WriteStallSystemCycles
+		v.vramWriteStallCycles.Add(vdp1WriteStallSystemCycles)
 	}
 }
 
@@ -385,7 +412,7 @@ func (v *VDP1) WriteVRAM16(addr uint32, val uint16) {
 	v.vram[addr] = uint8(val >> 8)
 	v.vram[addr+1] = uint8(val)
 	if v.drawActive {
-		v.vramWriteStallCycles += vdp1WriteStallSystemCycles
+		v.vramWriteStallCycles.Add(vdp1WriteStallSystemCycles)
 	}
 }
 
@@ -404,7 +431,8 @@ func (v *VDP1) WriteVRAM32(addr uint32, val uint32) {
 	v.vram[addr+2] = uint8(val >> 8)
 	v.vram[addr+3] = uint8(val)
 	if v.drawActive {
-		v.vramWriteStallCycles += vdp1WriteStallSystemCycles
+		// 32-bit write = two 16-bit VRAM port transactions.
+		v.vramWriteStallCycles.Add(2 * vdp1WriteStallSystemCycles)
 	}
 }
 
@@ -562,18 +590,18 @@ func (v *VDP1) SwapCount() uint64 {
 	return v.swapCount
 }
 
-// PerformLateErase performs the deferred manual-mode erase of
-// displayFB if VBlankIn requested one. Called by the emulator after
-// vdp2.RenderFrame() so the pre-erase content of displayFB is what
-// VDP2 captured for this frame; the erase lands before the next
-// frame's swap so the just-erased buffer becomes the new drawFB on
-// the following FCT=1 swap.
+// PerformLateErase performs the pending manual-mode erase on the
+// buffer captured at request time. Called by the emulator at the next
+// frame's VBlankIn boundary (after that frame's lines have composited
+// and before the swap), and by the swap sites when the captured
+// buffer is about to become the draw target.
 func (v *VDP1) PerformLateErase() {
-	if !v.lateEraseDisplayFB {
+	if v.lateEraseFB == nil {
 		return
 	}
-	v.lateEraseDisplayFB = false
-	v.eraseFrameBuffer(v.displayFB)
+	target := v.lateEraseFB
+	v.lateEraseFB = nil
+	v.eraseFrameBuffer(target)
 }
 
 // FBWidth returns the framebuffer width in pixels.

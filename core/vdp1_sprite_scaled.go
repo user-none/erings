@@ -111,7 +111,7 @@ func (v *VDP1) startScaledSprite(cmd *vdp1Command, budget int32) (consumed int32
 	s.clipX, s.clipY = v.clipBounds()
 
 	if cmd.pmod&0x0800 == 0 && preClipReject(dstX1, dstY1, dstX2, dstY2, s.clipX, s.clipY) {
-		return 0, true
+		return vdp1PreClipLineCycles * int32(s.destH), true
 	}
 
 	if s.cc >= 4 {
