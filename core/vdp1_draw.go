@@ -31,7 +31,7 @@ func (v *VDP1) VBlankIn() {
 		v.vbeLatched = false
 	}
 
-	if v.dieDoubled() {
+	if v.dieEnabled() {
 		target := v.drawFB
 		if v.dilOdd() {
 			target = v.displayFB
@@ -127,7 +127,7 @@ func (v *VDP1) VBlankIn() {
 // a "new" write made by the vbout handler. FCM=0 auto-swap is never
 // handled here; it is fully owned by VBlankIn.
 func (v *VDP1) VBlankOut() {
-	if v.dieDoubled() {
+	if v.dieEnabled() {
 		return
 	}
 

@@ -1418,7 +1418,6 @@ func TestVBlankOutNoSwapFCT0(t *testing.T) {
 // VBlankOut runs.
 func TestVBlankOutDIESkip(t *testing.T) {
 	v := NewVDP1(NewSCU())
-	v.tvmr = 0x0001     // TVM=1 (required for dieDoubled)
 	v.Write(0x02, 0x0B) // DIE=1, FCM=1, FCT=1
 	v.latchPending()    // commit DIE into active fbcr
 
@@ -4525,70 +4524,90 @@ func TestDDAEdgeFloorDivision(t *testing.T) {
 
 // --- VDP1 DIE=1 Double-Density Interlace Tests ---
 
-// dieTestVDP1 returns a VDP1 with DIE=1 and the given DIL bit in TVM=0
-// (normal 16bpp FB). DIE=1 with TVM=0 falls back to the standard swap
-// path: DIL does not route writes between FBs, VBlankIn swaps as
-// usual, and writePixel applies neither parity filter nor Y halving.
-// Tests for the FB-pinning / parity behavior use a TVM=1 setup
-// directly (see TestDIEDoubledYRoutesByParity etc.).
+// dieTestVDP1 returns a VDP1 with DIE active and the given DIL bit in
+// TVM=0 (normal 16bpp FB) - the Thunder Force V title configuration.
+// Double interlace doubles the Y range and pins each parity to its
+// buffer regardless of color depth (manual Table 1.2), so this exercises
+// the same routing/halving as the 8bpp setups (TestDIEDoubledYRoutesByParity
+// etc.) with 16bpp pixels. FBCR DIE/DIL are shadow-deferred, so the
+// write is committed with latchPending.
 func dieTestVDP1(dil bool) (*VDP1, int, int) {
 	v := NewVDP1(NewSCU())
-	v.Write(0x02, 0x08)
+	fbcr := uint16(0x08)
 	if dil {
-		v.fbcr |= 0x04
+		fbcr |= 0x04
 	}
+	v.Write(0x02, fbcr)
+	v.latchPending()
 	clipX := v.fbWidth() - 1
 	clipY := v.fbHeightLogical() - 1
 	return v, clipX, clipY
 }
 
 func TestDIEDilRoutesToFB(t *testing.T) {
-	// DIE=1 + TVM=0: DIL bit does not reroute writes — both DIL=0
-	// and DIL=1 land in drawFB (the swap-managed buffer). DIL-based
-	// routing is only active under dieDoubled() (TVM=1, see
-	// TestDIEDoubledYRoutesByParity for the routing semantics).
-	for _, dil := range []bool{false, true} {
-		v, clipX, clipY := dieTestVDP1(dil)
-		v.writePixel(0, 5, 0x1F00, 0, 0, false, false, 0, clipX, clipY)
-		if readFBPixel(v, 0, 5) != 0x1F00 || readDisplayFBPixel(v, 0, 5) != 0 {
-			t.Errorf("DIE=1 TVM=0 DIL=%v: drawFB=0x%04X displayFB=0x%04X, want write in drawFB only",
-				dil, readFBPixel(v, 0, 5), readDisplayFBPixel(v, 0, 5))
-		}
+	// DIE=1 + TVM=0: double interlace halves Y and routes by parity even
+	// at 16bpp. DIL=0 plots even display lines into drawFB; DIL=1 plots
+	// odd display lines into displayFB. Both land at physical row Y/2.
+	// DIL=0: Y=10 (even) -> drawFB row 5.
+	v0, clipX, clipY := dieTestVDP1(false)
+	v0.writePixel(0, 10, 0x1F00, 0, 0, false, false, 0, clipX, clipY)
+	if readFBPixel(v0, 0, 5) != 0x1F00 || readDisplayFBPixel(v0, 0, 5) != 0 {
+		t.Errorf("DIE=1 TVM=0 DIL=0: drawFB=0x%04X displayFB=0x%04X, want drawFB row 5 = 0x1F00",
+			readFBPixel(v0, 0, 5), readDisplayFBPixel(v0, 0, 5))
+	}
+
+	// DIL=1: Y=11 (odd) -> displayFB row 5.
+	v1, clipX, clipY := dieTestVDP1(true)
+	v1.writePixel(0, 11, 0x1F00, 0, 0, false, false, 0, clipX, clipY)
+	if readDisplayFBPixel(v1, 0, 5) != 0x1F00 || readFBPixel(v1, 0, 5) != 0 {
+		t.Errorf("DIE=1 TVM=0 DIL=1: drawFB=0x%04X displayFB=0x%04X, want displayFB row 5 = 0x1F00",
+			readFBPixel(v1, 0, 5), readDisplayFBPixel(v1, 0, 5))
 	}
 }
 
 func TestDIECPUFBIORouting(t *testing.T) {
-	// DIE=1 + TVM=0: CPU framebuffer I/O always targets drawFB
-	// regardless of DIL. DIL-based routing is dieDoubled() only.
-	for _, dil := range []bool{false, true} {
-		v, _, _ := dieTestVDP1(dil)
-		v.WriteFB(0x0010, 0xAB)
-		if v.drawFB[0x0010] != 0xAB || v.displayFB[0x0010] != 0 {
-			t.Errorf("DIE=1 TVM=0 DIL=%v WriteFB: drawFB[0x10]=0x%02X displayFB[0x10]=0x%02X, want write in drawFB only",
-				dil, v.drawFB[0x0010], v.displayFB[0x0010])
-		}
-		if got := v.ReadFB(0x0010); got != 0xAB {
-			t.Errorf("DIE=1 TVM=0 DIL=%v ReadFB(0x10) = 0x%02X, want 0xAB", dil, got)
-		}
+	// DIE=1 + TVM=0: CPU framebuffer I/O follows the DIL-pinned buffer
+	// (currentDrawFB) - DIL=0 targets drawFB, DIL=1 targets displayFB.
+	// DIL=0: drawFB.
+	v0, _, _ := dieTestVDP1(false)
+	v0.WriteFB(0x0010, 0xAB)
+	if v0.drawFB[0x0010] != 0xAB || v0.displayFB[0x0010] != 0 {
+		t.Errorf("DIE=1 DIL=0 WriteFB: drawFB[0x10]=0x%02X displayFB[0x10]=0x%02X, want drawFB",
+			v0.drawFB[0x0010], v0.displayFB[0x0010])
+	}
+	if got := v0.ReadFB(0x0010); got != 0xAB {
+		t.Errorf("DIE=1 DIL=0 ReadFB(0x10) = 0x%02X, want 0xAB", got)
 	}
 
-	// 16/32-bit variants also target drawFB (no DIL routing).
+	// DIL=1: displayFB.
+	v1, _, _ := dieTestVDP1(true)
+	v1.WriteFB(0x0010, 0xCD)
+	if v1.displayFB[0x0010] != 0xCD || v1.drawFB[0x0010] != 0 {
+		t.Errorf("DIE=1 DIL=1 WriteFB: drawFB[0x10]=0x%02X displayFB[0x10]=0x%02X, want displayFB",
+			v1.drawFB[0x0010], v1.displayFB[0x0010])
+	}
+	if got := v1.ReadFB(0x0010); got != 0xCD {
+		t.Errorf("DIE=1 DIL=1 ReadFB(0x10) = 0x%02X, want 0xCD", got)
+	}
+
+	// 16/32-bit variants honor the same DIL pinning (DIL=1 -> displayFB).
 	v3, _, _ := dieTestVDP1(true)
 	v3.WriteFB16(0x0020, 0xBEEF)
 	v3.WriteFB32(0x0040, 0xDEADBEEF)
-	if v3.drawFB[0x0020] != 0xBE || v3.drawFB[0x0021] != 0xEF {
-		t.Error("DIE=1 TVM=0 WriteFB16 did not target drawFB")
+	if v3.displayFB[0x0020] != 0xBE || v3.displayFB[0x0021] != 0xEF {
+		t.Error("DIE=1 DIL=1 WriteFB16 did not target displayFB")
 	}
-	if v3.drawFB[0x0040] != 0xDE || v3.drawFB[0x0043] != 0xEF {
-		t.Error("DIE=1 TVM=0 WriteFB32 did not target drawFB")
+	if v3.displayFB[0x0040] != 0xDE || v3.displayFB[0x0043] != 0xEF {
+		t.Error("DIE=1 DIL=1 WriteFB32 did not target displayFB")
 	}
-	if v3.displayFB[0x0020] != 0 || v3.displayFB[0x0040] != 0 {
-		t.Error("DIE=1 TVM=0 WriteFB16/32 leaked into displayFB")
+	if v3.drawFB[0x0020] != 0 || v3.drawFB[0x0040] != 0 {
+		t.Error("DIE=1 DIL=1 WriteFB16/32 leaked into drawFB")
 	}
 }
 
 func TestDIEVBlankInNoSwap(t *testing.T) {
-	// Pinning + no-swap behavior is dieDoubled() only (TVM=1 + DIE=1).
+	// Double interlace (DIE=1) pins the buffers instead of swapping;
+	// shown here with an 8bpp (TVM=1) setup.
 	v := NewVDP1(NewSCU())
 	v.tvmr = 0x0001     // TVM=1
 	v.Write(0x02, 0x08) // DIE=1, DIL=0, FCM=0, FCT=0
@@ -4608,7 +4627,8 @@ func TestDIEVBlankInNoSwap(t *testing.T) {
 }
 
 func TestDIEVBlankInErasesOnlyDilMatchedFB(t *testing.T) {
-	// Erase-only-the-DIL-target behavior is dieDoubled() only (TVM=1).
+	// Under double interlace (DIE=1) erase clears only the DIL-matched
+	// buffer; shown here with an 8bpp (TVM=1) setup.
 	// DIL=0: erase drawFB only; displayFB preserved.
 	v := NewVDP1(NewSCU())
 	v.tvmr = 0x0001     // TVM=1
@@ -4667,15 +4687,16 @@ func TestDIEPolygonSpanClipLogicalHeight(t *testing.T) {
 		t.Errorf("doubled-Y DIE clipBounds Y = %d, want >= 447 (logical)", clipY)
 	}
 
-	// Without TVM=1 the Y range is physical (single density).
+	// TVM=0 (16bpp) double interlace doubles the Y range the same way
+	// (manual Table 1.2); color depth does not change the coordinate model.
 	v2 := NewVDP1(NewSCU())
-	v2.Write(0x02, 0x08) // DIE=1 only
+	v2.Write(0x02, 0x08) // DIE=1, TVM=0
 	v2.latchPending()
 	v2.sysClipY = 511
 	v2.sysClipX = 1023
 	_, clipY2 := v2.clipBounds()
-	if clipY2 != v2.fbHeight()-1 {
-		t.Errorf("DIE=1 + TVM=0 clipBounds Y = %d, want %d (physical)", clipY2, v2.fbHeight()-1)
+	if clipY2 != v2.fbHeight()*2-1 {
+		t.Errorf("DIE=1 + TVM=0 clipBounds Y = %d, want %d (doubled)", clipY2, v2.fbHeight()*2-1)
 	}
 }
 
@@ -4729,29 +4750,6 @@ func TestDIEDoubledYRoutesByParity(t *testing.T) {
 	v.writePixel(7, 10, 0xBB, 0, 0, false, false, 0, clipX, clipY)
 	if v.displayFB[off] != 0xAA {
 		t.Errorf("DIL=1 even-Y: displayFB[row=5,col=7] = 0x%02X, want unchanged 0xAA", v.displayFB[off])
-	}
-}
-
-func TestDIENonDoubledKeepsLiteralY(t *testing.T) {
-	// DIE=1 with TVM=0 (Sonic Jam game-select pattern): the FB-pinning
-	// special case does NOT apply — writes go to the swap-managed
-	// drawFB at literal Y, with no parity filter and no Y halving.
-	// (DIL is a no-op here; pinning is dieDoubled() only.)
-	v, clipX, clipY := dieTestVDP1(true) // DIL=1, TVM=0
-	v.writePixel(7, 10, 0x1234, 0, 0, false, false, 0, clipX, clipY)
-	if got := readFBPixel(v, 7, 10); got != 0x1234 {
-		t.Errorf("TVM=0 DIE=1: drawFB row 10 = 0x%04X, want 0x1234 (literal Y)", got)
-	}
-	if got := readFBPixel(v, 7, 5); got != 0 {
-		t.Errorf("TVM=0 DIE=1: row 5 should be empty (no Y/2): 0x%04X", got)
-	}
-	v.writePixel(7, 11, 0x5678, 0, 0, false, false, 0, clipX, clipY)
-	if got := readFBPixel(v, 7, 11); got != 0x5678 {
-		t.Errorf("TVM=0 DIE=1 odd-Y: drawFB row 11 = 0x%04X, want 0x5678 (no parity filter)", got)
-	}
-	// displayFB must remain untouched — DIL=1 does not reroute under TVM=0.
-	if readDisplayFBPixel(v, 7, 10) != 0 || readDisplayFBPixel(v, 7, 11) != 0 {
-		t.Error("TVM=0 DIE=1: writes leaked into displayFB; DIL routing should be inactive")
 	}
 }
 
@@ -4925,22 +4923,21 @@ func TestDIEDisplayFBAccessor(t *testing.T) {
 			v.DisplayFB(0)[0], v.DisplayFB(1)[0])
 	}
 
-	// DIE=1 + TVM=0: field-based pinning is inactive; both fields
-	// return the swap-managed displayFB.
+	// DIE=1 + TVM=0: field-based pinning is active regardless of color
+	// depth - field=0 (even) -> drawFB, field=1 (odd) -> displayFB.
 	v.Write(0x02, 0x08)
 	v.latchPending()
-	if v.DisplayFB(0)[0] != 0x22 || v.DisplayFB(1)[0] != 0x22 {
-		t.Errorf("DIE=1 TVM=0: DisplayFB(0)[0]=0x%02X DisplayFB(1)[0]=0x%02X, want both 0x22 (swap path)",
-			v.DisplayFB(0)[0], v.DisplayFB(1)[0])
-	}
-
-	// DIE=1 + TVM=1: field-based pinning active; field=0 -> drawFB,
-	// field=1 -> displayFB.
-	v.tvmr = 0x0001
 	if v.DisplayFB(0)[0] != 0x11 {
-		t.Errorf("DIE=1 TVM=1 field=0: DisplayFB[0]=0x%02X, want 0x11 (drawFB)", v.DisplayFB(0)[0])
+		t.Errorf("DIE=1 TVM=0 field=0: DisplayFB[0]=0x%02X, want 0x11 (drawFB)", v.DisplayFB(0)[0])
 	}
 	if v.DisplayFB(1)[0] != 0x22 {
-		t.Errorf("DIE=1 TVM=1 field=1: DisplayFB[0]=0x%02X, want 0x22 (displayFB)", v.DisplayFB(1)[0])
+		t.Errorf("DIE=1 TVM=0 field=1: DisplayFB[0]=0x%02X, want 0x22 (displayFB)", v.DisplayFB(1)[0])
+	}
+
+	// DIE=1 + TVM=1 (8bpp) pins identically; color depth is irrelevant.
+	v.tvmr = 0x0001
+	if v.DisplayFB(0)[0] != 0x11 || v.DisplayFB(1)[0] != 0x22 {
+		t.Errorf("DIE=1 TVM=1: DisplayFB(0)[0]=0x%02X DisplayFB(1)[0]=0x%02X, want 0x11/0x22",
+			v.DisplayFB(0)[0], v.DisplayFB(1)[0])
 	}
 }

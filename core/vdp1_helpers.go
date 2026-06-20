@@ -92,9 +92,9 @@ func clipSegParam(x0, y0, x1, y1, clipX, clipY int) (t0, t1 float64, ok bool) {
 }
 
 // clipBounds returns the effective system clip bounds clamped to the
-// frame buffer dimensions for the current TVM mode. Under doubled-Y
-// DIE mode (TVM=1 + DIE=1) the Y range doubles; writePixel then halves
-// surviving Y values to the physical FB row.
+// frame buffer dimensions for the current mode. Under double interlace
+// (DIE=1) the Y range doubles; writePixel then halves surviving Y
+// values to the physical FB row.
 func (v *VDP1) clipBounds() (int, int) {
 	clipX := int(v.sysClipX)
 	clipY := int(v.sysClipY)
@@ -231,13 +231,13 @@ func signExtendCoord13(v uint16) int16 {
 // calculation and MSB on processing. This is the common pixel output
 // path for all drawing commands.
 //
-// Under DIE=1 (double-density interlace draw mode), the game writes Y
-// values in pre-halved coordinates (per VDP1 manual Sec 4.3 "the actual
-// coordinate value should be set to one half"). DIL routes pixels to
-// the parity-pinned framebuffer: DIL=0 -> drawFB (even-parity field),
-// DIL=1 -> displayFB (odd-parity field). The Y is used as-is for the
-// physical FB row; VDP2 doubles each FB row to two displayed rows via
-// per-field interleaved scanout.
+// Under DIE=1 (double-density interlace draw mode), the drawing Y range
+// is doubled (VDP1 manual Table 1.2), so the game submits vertex Y in
+// 0..2*fbHeight-1. The DIL parity filter discards scanlines of the
+// opposite parity and the surviving Y is halved to the physical FB row.
+// DIL also routes pixels to the parity-pinned framebuffer: DIL=0 ->
+// drawFB (even-parity field), DIL=1 -> displayFB (odd-parity field).
+// VDP2 then recombines the two buffers via per-field interleaved scanout.
 func (v *VDP1) writePixel(fbX, fbY int, pixel uint16, cc uint16, gouraud uint16, msbOn, mesh bool, userClip uint16, clipX, clipY int) {
 	if fbX < 0 || fbX > clipX || fbY < 0 || fbY > clipY {
 		return
@@ -260,16 +260,15 @@ func (v *VDP1) writePixel(fbX, fbY int, pixel uint16, cc uint16, gouraud uint16,
 	}
 
 	fb := v.drawFB
-	if v.dieDoubled() && v.dilOdd() {
+	if v.dieEnabled() && v.dilOdd() {
 		fb = v.displayFB
 	}
 
-	// Doubled-Y DIE mode (game wrote Y in 0..2*fbHeight-1): apply DIL
-	// parity filter and halve Y to fit the physical FB row count. In
-	// non-doubled mode (DIE=0, or DIE=1 with single-density Y range)
-	// fbY is used as-is.
+	// Double interlace (DIE=1): the game wrote Y in 0..2*fbHeight-1, so
+	// apply the DIL parity filter and halve Y to fit the physical FB row
+	// count. Without DIE fbY is used as-is.
 	physY := fbY
-	if v.dieDoubled() {
+	if v.dieEnabled() {
 		if (fbY&1 == 1) != v.dilOdd() {
 			return // DIL gates this scanline parity
 		}

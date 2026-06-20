@@ -114,7 +114,7 @@ func (v *VDP1) startPolygon(cmd *vdp1Command, budget int32) (consumed int32, don
 	// excludes doubled-Y DIE (needs the writePixel parity/Y-halve
 	// path), any color calc, MSB-on, mesh, user clip, and 8bpp -
 	// identical predicate to the distorted-sprite path.
-	p.simpleMode = !v.dieDoubled() && p.cc == 0 && !p.msbOn &&
+	p.simpleMode = !v.dieEnabled() && p.cc == 0 && !p.msbOn &&
 		!p.mesh && p.userClip == 0 && !v.is8bpp()
 
 	p.leftEdge = initDDAEdge(p.ax, p.ay, p.dx, p.dy, p.dmax)

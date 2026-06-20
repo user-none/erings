@@ -140,7 +140,7 @@ func (v *VDP1) startDistortedSprite(cmd *vdp1Command, budget int32) (consumed in
 	}
 
 	d.bpp8 = v.is8bpp()
-	d.simpleMode = !v.dieDoubled() && d.cc == 0 && !d.msbOn && !d.mesh && d.userClip == 0 && !d.bpp8
+	d.simpleMode = !v.dieEnabled() && d.cc == 0 && !d.msbOn && !d.mesh && d.userClip == 0 && !d.bpp8
 	d.checkEcd = !(d.hss && d.dmax < d.charH) && !d.ecdOff
 	d.colr = cmd.colr
 

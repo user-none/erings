@@ -177,7 +177,7 @@ type VDP1 struct {
 	// manual Sec.4.3, PTM=10 fires "automatically at the start of the
 	// frame" where "frame" is the FB-swap interval per Sec.4.2 - so the
 	// auto-trigger is gated on a real swap. Consumed at vblank-OUT by
-	// the emulator's auto-draw gate. Under dieDoubled() the buffer
+	// the emulator's auto-draw gate. Under double interlace the buffer
 	// pointers do not swap but each field is a frame-change per Sec.4.2
 	// ("the fields are changed every 1/60 second") so the flag is set
 	// every field there too.
@@ -474,13 +474,13 @@ func (v *VDP1) WriteFB32(addr uint32, val uint32) {
 }
 
 // DisplayFB returns the framebuffer VDP2 should sample for the given
-// field. The parity-pinning behavior of DIE=1 only takes effect when
-// dieDoubled() is true (DIE=1 + TVM=1, the doubled-Y interlace model
-// where each FB stores half-density rows). DIE=1 with TVM=0 is the
-// "select which FB displays" pattern (e.g., Sonic Jam game-select)
-// and uses the swap-managed displayFB like normal double buffering.
+// field. Under double interlace (DIE=1) each FB stores one parity of
+// half-density rows and both are combined to form the frame (manual
+// Table 1.2 and Sec 4.2): the even field samples the buffer drawn with
+// DIL=0 and the odd field the buffer drawn with DIL=1. Without DIE the
+// swap-managed displayFB is used like normal double buffering.
 func (v *VDP1) DisplayFB(field int) []byte {
-	if v.dieDoubled() {
+	if v.dieEnabled() {
 		if field == 1 {
 			return v.displayFB
 		}
@@ -490,22 +490,19 @@ func (v *VDP1) DisplayFB(field int) []byte {
 }
 
 // dieEnabled reports whether double-density interlace draw mode is set
-// in FBCR (bit 3).
+// in FBCR (bit 3). Per the VDP1 manual Table 1.2 the Y coordinate range
+// doubles under double interlace (e.g. 352x240 gives 0<=Y<=479) for both
+// standard 16bpp and high-resolution 8bpp, so the doubled-Y coordinate
+// model follows from DIE=1 alone and is independent of TVM/color depth:
+// the game writes Y in 0..2*fbHeight-1 and the hardware halves to the
+// physical FB row, selecting the parity given by DIL.
 func (v *VDP1) dieEnabled() bool { return v.fbcr&0x08 != 0 }
 
-// dieDoubled reports whether DIE=1 is in effect AND the game is using
-// the doubled Y coordinate range (game writes Y in 0..2*fbHeight-1).
-// Empirically observed: hi-res 8bpp (TVM=1) under DIE=1 uses doubled
-// Y; standard 16bpp (TVM=0) under DIE=1 keeps single-density Y. The
-// spec describes the doubled coordinate range but games select either
-// convention based on TVM.
-func (v *VDP1) dieDoubled() bool { return v.dieEnabled() && v.tvm() == 1 }
-
-// fbHeightLogical returns the drawable Y range. Under doubled-Y DIE
-// mode the game writes Y values up to 2*fbHeight-1 expecting hardware
-// to halve them for FB row addressing.
+// fbHeightLogical returns the drawable Y range. Under double interlace
+// the game writes Y values up to 2*fbHeight-1 expecting hardware to
+// halve them for FB row addressing.
 func (v *VDP1) fbHeightLogical() int {
-	if v.dieDoubled() {
+	if v.dieEnabled() {
 		return v.fbHeight() * 2
 	}
 	return v.fbHeight()
@@ -516,11 +513,11 @@ func (v *VDP1) fbHeightLogical() int {
 func (v *VDP1) dilOdd() bool { return v.fbcr&0x04 != 0 }
 
 // currentDrawFB returns the framebuffer that draw commands and CPU
-// framebuffer I/O should target. Parity-pinned roles only apply
-// under dieDoubled() (DIE=1 + TVM=1); DIE=1 with TVM=0 falls back
-// to the swap-managed drawFB so normal double-buffering works.
+// framebuffer I/O should target. Under double interlace (DIE=1) the
+// DIL=1 field is drawn into the alternate buffer; without DIE the
+// swap-managed drawFB is used so normal double-buffering works.
 func (v *VDP1) currentDrawFB() []byte {
-	if v.dieDoubled() && v.dilOdd() {
+	if v.dieEnabled() && v.dilOdd() {
 		return v.displayFB
 	}
 	return v.drawFB
