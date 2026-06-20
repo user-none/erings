@@ -998,9 +998,9 @@ func TestDSPDMARAMToD0(t *testing.T) {
 	d.wa0 = 0x2000 >> 2
 	d.ct[1] = 0
 
-	// DMA [RAM1],D0,2: dir=1, format=0, hold=0, addMode=1 (add 4), ramSel=1, count=2
+	// DMA [RAM1],D0,2: dir=1, format=0, hold=0, addMode=2 (add 4), ramSel=1, count=2
 	instr := uint32(0xC0000000)
-	instr |= 1 << 15 // addMode=001
+	instr |= 2 << 15 // addMode=010 (add 4)
 	instr |= 1 << 12 // dir=1 (RAM-to-D0)
 	instr |= 1 << 8  // ramSel=1 (RAM1)
 	instr |= 2       // count=2
@@ -1084,9 +1084,9 @@ func TestDSPDMAAddModeRAMToD0(t *testing.T) {
 	d.wa0 = 0x2000 >> 2
 	d.ct[0] = 0
 
-	// DMA [RAM0],D0,2: addMode=2 (add 8 bytes)
+	// DMA [RAM0],D0,2: addMode=3 (add 8 bytes)
 	instr := uint32(0xC0000000)
-	instr |= 2 << 15 // addMode=010
+	instr |= 3 << 15 // addMode=011 (add 8)
 	instr |= 1 << 12 // dir=1
 	instr |= 2       // count=2
 
@@ -1100,6 +1100,27 @@ func TestDSPDMAAddModeRAMToD0(t *testing.T) {
 	}
 	if mb.Read32(0x2008) != 0xBBBBBBBB {
 		t.Errorf("DMA add8: mem[0x2008] = 0x%08X, want 0xBBBBBBBB", mb.Read32(0x2008))
+	}
+}
+
+// TestDSPCTLoadOverridesAutoIncrement verifies that an explicit D1-bus load of a
+// data-RAM address counter wins over a same-instruction X/Y-bus read that also
+// requested a post-increment on that bank: the counter ends at the loaded value,
+// not loaded+1. A matrix/lighting loop relies on this to reset its operand
+// pointer to the start of each row in the same cycle it reads the prior row.
+func TestDSPCTLoadOverridesAutoIncrement(t *testing.T) {
+	s := NewSCU()
+	d := &s.dsp
+	d.ct[1] = 0x20
+	d.data[1][0x20] = 0x12345678
+
+	// Operation command: Y-bus reads bank1 with increment (ySrc=1, yRAM=5) and
+	// the D1-bus loads CT1 (dst=0xD) with immediate 5 (d1Op=1).
+	instr := uint32((1 << 19) | (5 << 14) | (1 << 12) | (0xD << 8) | 5)
+	d.execOperation(instr)
+
+	if d.ct[1] != 5 {
+		t.Errorf("CT1 = 0x%X, want 5 (explicit D1 load must override the same-cycle read auto-increment)", d.ct[1])
 	}
 }
 
@@ -1387,14 +1408,14 @@ func TestSCUDSPExecDMADirection(t *testing.T) {
 	}
 
 	// DMA RAM bank 0 -> D0, count=4. dir=1 uses dspDMAAddRAMtoD0
-	// table; addMode=1 selects +4 bytes per write.
+	// table; addMode=2 selects +4 bytes per write.
 	d.ct[0] = 0
 	d.wa0 = 0x300000 >> 2
 	for i := uint32(0); i < 4; i++ {
 		d.data[0][i] = 0xB0000000 | i
 	}
-	// dir=1 (bit 12), addMode=1, ramSel=0, count=4
-	instr = (1 << 12) | (1 << 15) | 4
+	// dir=1 (bit 12), addMode=2 (+4), ramSel=0, count=4
+	instr = (1 << 12) | (2 << 15) | 4
 	d.execDMA(instr)
 	for i := uint32(0); i < 4; i++ {
 		got := bus.Read32(0x300000 + i*4)

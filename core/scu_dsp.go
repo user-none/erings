@@ -60,8 +60,9 @@ type scuDSP struct {
 	scu *SCU
 }
 
-// dspDMAAddRAMtoD0 maps the 3-bit add mode to byte increment for RAM-to-D0.
-var dspDMAAddRAMtoD0 = [8]uint32{0, 4, 8, 16, 32, 64, 128, 256}
+// dspDMAAddRAMtoD0 maps the 3-bit add mode to byte increment for RAM-to-D0,
+// per the documented D0-bus address add value table {0,2,4,8,16,32,64,128}.
+var dspDMAAddRAMtoD0 = [8]uint32{0, 2, 4, 8, 16, 32, 64, 128}
 
 // --- Register Port Methods ---
 
@@ -434,6 +435,15 @@ func (d *scuDSP) execD1Bus(d1Op uint32, instr uint32,
 	}
 
 	d.writeDestReg(dst, val)
+
+	// An explicit D1-bus load of a data-RAM address counter (CT0-3, dst
+	// 0xC-0xF) sets that counter directly. If the same instruction also read
+	// that bank on the X or Y bus (which requested a post-increment), the
+	// explicit load wins: the counter ends at the loaded value, not loaded+1.
+	// Suppress the pending auto-increment for that bank.
+	if dst >= 0xC && dst <= 0xF {
+		*ctInc &^= 1 << (dst - 0xC)
+	}
 }
 
 func (d *scuDSP) writeDestReg(dst uint32, val uint32) {
