@@ -165,6 +165,22 @@ type Bus struct {
 	// by spinning - a bus access is far shorter than a goroutine park.
 	busLocks [areaCount]atomic.Int32
 
+	// Inter-CPU bus contention (dual_cpu_users_guide Sec 1.2: "When the
+	// slave and master CPUs compete for external access, one of the CPUs
+	// is forced to wait for access and execution speed decreases"). When
+	// one SH-2 accesses an area, the bus is occupied for the full
+	// transaction; the other SH-2's next access to that area is charged
+	// the cycles until it frees. busyUntil[area] is the frame-relative
+	// system cycle at which the area's in-flight access completes,
+	// read-modify-written under the area lock and reset per frame. The
+	// accessing CPU's current frame cycle is passed in (CPU.frameCyc) -
+	// the frame-loop timeline the barrier keeps aligned within
+	// syncChunkCycles, NOT each CPU's executed count (which would lag
+	// across an SSH-off gap). The full per-region transaction durations
+	// the window advances by live in the package-global access-cost
+	// tables in bus_timing.go.
+	busyUntil [areaCount]int64
+
 	// ReadTrace, when non-nil, is called for every Read8/Read16/Read32.
 	// Used for narrow-region debug tracing (e.g. discovering what a
 	// game reads from BUP state buffers after a BUP slot returns).
@@ -276,178 +292,6 @@ func (b *Bus) SINITWritten() bool {
 	v := b.sinitWritten
 	b.sinitWritten = false
 	return v
-}
-
-// AccessCycles returns the CPU state count consumed by a single
-// bus transaction of the given size (bytes: 1, 2, 4, or 16) at the
-// given address. Used by the SH-2 DMAC to accumulate per-unit
-// bus-occupation stall.
-//
-//	SH-2 BSC  WCR  = 0x5555            (SH7604 manual Sec 7.2.3)
-//	SH-2 BSC  MCR  = 0x78              (SH7604 manual Sec 7.2.4)
-//	SCU       ASR0 = 0x1FF01FF0        (SCU manual Sec 3, Fig 3.24)
-//	SCU       ASR1 = 0x1FF01FF0
-//
-// combined with the per-field formulas from the SH7604 and SCU
-// user manuals. See each region's comment for the exact arithmetic.
-//
-// These constants also serve as the defaults for the
-// HLE BIOS, which would skip the real BIOS init - the values are
-// what every shipped Saturn BIOS configures at boot. If a specific
-// game is ever found to reprogram BSC or SCU in a way that matters
-// for DMA timing, switch to reading the live register state.
-//
-// CS0, A-Bus, and Work RAM-H costs are decoded from those registers
-// with the manuals' per-field formulas. The B-Bus device costs
-// (VDP1/VDP2/SCSP/CD) have no register-driven fixed number on
-// hardware - they are arbitration: a VDP2 VRAM read, for example,
-// stalls until a CPU-allotted slot in the 8-slot VRAM cycle pattern
-// comes around (VDP2 manual Sec 3, "Read/Write Access by the CPU"),
-// so the true cost varies from a few states (blanking, generous
-// patterns) to a full pattern rotation. Those entries are fixed-point
-// estimates of the arbitration until the slot machinery is modeled.
-func (b *Bus) AccessCycles(addr uint32, size uint32) uint32 {
-	masked := addr & 0x07FFFFFF
-
-	var base uint32
-	switch {
-	// CS0 partitions: BIOS ROM, SMPC, Backup RAM, Work RAM-L,
-	// MINIT/SINIT. Ordinary-space with SH-2 WCR wait_CS0 = 1:
-	//   states = 2 (base) + 1 (wait) = 3
-	// (SH7604 Sec 7.2.3 + observed WCR=0x5555.)
-	case masked < 0x02000000:
-		base = 3
-
-	// A-Bus CS0 (cartridge ROM / extended RAM).
-	// SH-2 BSC: 3 states (WCR wait_CS1 = 1).
-	// SCU A-Bus: 2 base + 15 waits = 17 states
-	// (SCU manual Sec 3 + observed ASR0 upper half = 0x1FF0:
-	//  A0EWT=1, A0BW=0xF=15, A0NW=0xF=15).
-	// Total: 3 + 17 = 20 states per access.
-	case masked < 0x04000000:
-		base = 20
-
-	// A-Bus CS1 (cartridge ID, A-Bus dummy high).
-	// Same derivation from ASR0 lower half: A1EWT=1, A1BW=0xF=15,
-	// A1NW=0xF=15. Total: 3 + 17 = 20.
-	case masked < 0x05000000:
-		base = 20
-
-	// A-Bus Dummy region. SCU ASR1 observed = 0x1FF01FF0, same
-	// decoding as ASR0. Total: 20.
-	case masked < 0x05800000:
-		base = 20
-
-	// CD Block (A-Bus CS2 via SCU). CS2 is an A-Bus device configured
-	// through ASR1, but the cost here is an estimate of the CD-block
-	// interface response, not the raw ASR1 wait derivation used for
-	// CS0/CS1 - the CD block's own access latency dominates.
-	// BSC 3 + ~7 CD-block response = 10 states.
-	case masked < 0x05900000:
-		base = 10
-
-	// SCSP sound RAM (512 KB) + registers (B-Bus). SCSP runs at
-	// 11.3 MHz vs SH-2 28.6 MHz; B-Bus arbitration adds synchronization
-	// cost. BSC 3 + B-Bus ~9 = 12 states. The 0x05A80000-0x05AFFFFF
-	// gap between sound RAM and SCSP registers is unmapped on real
-	// hardware; writes drop silently and fall to the default
-	// unmapped cost.
-	case masked >= 0x05A00000 && masked < 0x05A80000:
-		base = 12
-	case masked >= 0x05B00000 && masked < 0x05C00000:
-		base = 12
-
-	// VDP1 VRAM / framebuffer / registers (B-Bus). Contends with
-	// VDP1 command-list DMA. BSC 3 + B-Bus ~5 = 8 states typical
-	// idle.
-	case masked >= 0x05C00000 && masked < 0x05D00020:
-		base = 8
-
-	// VDP2 VRAM (B-Bus). A CPU read stalls until a CPU-allotted
-	// T-slot in the 8-slot VRAM cycle pattern arrives (VDP2 manual
-	// Sec 3): 0 to a full rotation depending on CYCA/CYCB and
-	// blanking. BSC 3 + ~5 average slot wait = 8 states as the
-	// fixed-point estimate until the slot machinery is modeled.
-	case masked >= 0x05E00000 && masked < 0x05E80000:
-		base = 8
-
-	// VDP2 CRAM and registers. Less contended than VRAM.
-	// BSC 3 + B-Bus ~2 = 5 states.
-	case masked >= 0x05F00000 && masked < 0x05F80120:
-		base = 5
-
-	// SCU registers (direct, no B-Bus arbitration).
-	// BSC 3 + negligible = 5 states.
-	case masked >= 0x05FE0000 && masked < 0x05FE0100:
-		base = 5
-
-	// Work RAM-H on SH-2 CS3, synchronous DRAM (MCR=0x78: RCD=1
-	// cycle, TRP=1 cycle, auto-precharge; WCR=0x5555: W31/W30=01 =
-	// CAS latency 2). Read pipeline per SH7604 Sec 7.5.3 Fig 7.15:
-	//   Tr (ACTV) + Tc (READA) + 1 CAS-latency wait + Td1..Td4
-	//   + Tap (= TRP-1 = 0 at CL>=2)            = 7 states.
-	// A single (cache-through) read costs the SAME 7: the SDRAM is
-	// in burst mode, so the device completes all four data cycles
-	// and the unneeded 12 bytes are discarded (Sec 7.5.4).
-	case masked >= 0x06000000 && masked < 0x08000000:
-		base = 7
-
-	default:
-		// Unmapped or reserved. Nominal 4 states.
-		base = 4
-	}
-
-	// 16-byte burst (cache line fill, 16-byte DMA unit).
-	if size == 16 {
-		switch {
-		case masked >= 0x06000000 && masked < 0x08000000:
-			// SDRAM: the burst read IS the single-read pipeline with
-			// all four Td cycles fetched (Sec 7.5.3) = 7 states.
-			return base
-		case masked >= 0x02000000 && masked < 0x05800000:
-			// A-Bus: first access pays the normal-cycle cost (20);
-			// the three remaining beats pay the SCU burst-cycle wait
-			// (ASR0/ASR1 burst field 0xF = 15 waits + 1) = 16 each.
-			// 20 + 3*16 = 68 states (SCU manual Sec 3, Fig 3.24).
-			return base + 3*16
-		default:
-			// Ordinary space and B-Bus devices have no burst mode:
-			// 4 successive longword accesses.
-			return base * 4
-		}
-	}
-	return base
-}
-
-// WriteAccessCycles returns the CPU state count consumed by a single
-// write transaction. Writes differ from reads only where the memory
-// device distinguishes them:
-//
-//   - Work RAM-H SDRAM writes are single writes (SH7604 Sec 7.5.5
-//     Fig 7.18): Tr (ACTV) + Tc (WRITA, data out with the command),
-//     then TRWL (1) + precharge (TRP = 1) before the next command to
-//     the bank = 4 states. The SH-2 has no write buffer - the CPU
-//     waits for the internal bus write to complete (Sec 8.4.2) - so
-//     the full cost lands on the writing instruction.
-//   - VDP2 VRAM/CRAM writes are accepted without the cycle-pattern
-//     slot wait that reads incur (VDP2 manual Sec 3, "Read/Write
-//     Access by the CPU": "The write access wait cycle will not be
-//     entered if the two word write access is at least two times"),
-//     so they cost only the BSC + B-Bus handoff.
-//
-// Everything else matches the read cost: ordinary-space and A-Bus
-// cycles are direction-symmetric in the BSC, and the remaining B-Bus
-// device costs are arbitration estimates with no documented
-// read/write asymmetry.
-func (b *Bus) WriteAccessCycles(addr uint32, size uint32) uint32 {
-	masked := addr & 0x07FFFFFF
-	switch {
-	case masked >= 0x06000000 && masked < 0x08000000:
-		return 4
-	case masked >= 0x05E00000 && masked < 0x05F80120:
-		return 5
-	}
-	return b.AccessCycles(addr, size)
 }
 
 // Read8 reads a byte from the given address, claiming the address's

@@ -14,12 +14,10 @@ import "testing"
 func cacheFixture(t *testing.T, read, write, fill uint32) (*CPU, *testBus) {
 	t.Helper()
 	bus := newTestBus(0x10000)
+	bus.stallRead = read
+	bus.stallWrite = write
+	bus.stallFill = fill
 	cpu := New(bus, true)
-	var rt, wt, ft [128]uint32
-	rt[0] = read
-	wt[0] = write
-	ft[0] = fill
-	cpu.SetBusStallTables(rt, wt, ft)
 	cpu.SetCCR(ccrCE)
 	return cpu, bus
 }

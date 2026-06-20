@@ -42,7 +42,15 @@ type CPU struct {
 	reg    Registers
 	bus    Bus
 	cycles uint64
-	ir     uint16 // Current instruction register (raw opcode)
+
+	// frameCyc is this CPU's current frame-relative system cycle, set by
+	// the emulator each step. Passed into the contended bus access methods
+	// so inter-CPU contention is timed against a clock both CPUs share.
+	// Kept on the CPU (written only by its own goroutine) rather than the
+	// shared bus to avoid false sharing on a per-cycle write.
+	frameCyc int64
+
+	ir uint16 // Current instruction register (raw opcode)
 
 	halted    bool // Set by SLEEP, cleared by interrupt
 	addrError bool // Set when address error occurs during instruction
@@ -161,18 +169,10 @@ type CPU struct {
 	// Section 8.4.2). Cache hits cost nothing (Section 8.4.1: one cycle,
 	// pipelined). Drained one cycle per Clock() before the next
 	// instruction executes.
+	// External bus-access wait states (region cost + slave arbitration +
+	// inter-CPU contention) are computed by the Bus implementation and
+	// returned from the SH2* access methods.
 	busStall uint32
-
-	// busStallRead/Write/Fill give the wait-state penalty per external
-	// access, indexed by address region at 1 MB granularity
-	// ((addr>>20)&0x7F). Reads, writes, and 16-byte line fills cost
-	// differently where the memory device distinguishes them (Work
-	// RAM-H SDRAM: read 7 = burst pipeline, write 4, fill 7 - SH7604
-	// Sec 7.5.3-7.5.5). All zero by default (no stall); the emulator
-	// fills them via SetBusStallTables from the bus wait-state model.
-	busStallRead  [128]uint32
-	busStallWrite [128]uint32
-	busStallFill  [128]uint32
 
 	// sbycr is the Standby Control Register (0xFFFFFE91). Stub
 	// storage only: writes persist, reads return the stored value.
@@ -500,8 +500,9 @@ func (c *CPU) tasRead8(addr uint32) uint8 {
 	}
 	// TAS reads are cache-through even in the cache area - the address
 	// tag is not compared (SH7604 manual Section 8.4.4).
-	c.busStall += c.busStallReadFor(addr)
-	return c.bus.ReadRMW8(addr)
+	v, stall := c.bus.SH2RMWRead(addr, c.frameCyc, !c.isMaster)
+	c.busStall += stall
+	return v
 }
 
 func (c *CPU) tasWrite8(addr uint32, val uint8) {
@@ -521,8 +522,7 @@ func (c *CPU) tasWrite8(addr uint32, val uint8) {
 		c.cacheData[addr&0xFFF] = val
 		return
 	}
-	c.busStall += c.busStallWriteFor(addr)
-	c.bus.WriteRMW8(addr, val)
+	c.busStall += c.bus.SH2RMWWrite(addr, val, c.frameCyc)
 }
 func (c *CPU) stepRTE() BusActivity {
 	switch c.pendingStep {
@@ -651,6 +651,15 @@ func (c *CPU) stepMACL() BusActivity {
 // Cycles returns the total number of cycles executed.
 func (c *CPU) Cycles() uint64 {
 	return c.cycles
+}
+
+// SetFrameCyc sets this CPU's current frame-relative system cycle, used to
+// time inter-CPU bus contention. The emulator calls it before each step so the
+// clock advances with the CPU; callers that drive Clock() directly and care
+// about bus timing must advance it too, or repeated Work-RAM accesses will
+// appear to contend with themselves (a stuck clock never clears its busyUntil).
+func (c *CPU) SetFrameCyc(cyc int64) {
+	c.frameCyc = cyc
 }
 
 // Halted returns true if the CPU is halted (via SLEEP instruction).
@@ -807,8 +816,9 @@ func (c *CPU) fetchInstr(addr uint32) uint16 {
 		off := addr & 0xFFE
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
-	c.busStall += c.busStallReadFor(addr)
-	return c.bus.Read16(addr)
+	v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+	c.busStall += stall
+	return v
 }
 
 // read16 reads a 16-bit value with alignment check. Partition routing
@@ -834,8 +844,9 @@ func (c *CPU) read16(addr uint32) uint16 {
 		off := addr & 0xFFE
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
-	c.busStall += c.busStallReadFor(addr)
-	return c.bus.Read16(addr)
+	v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+	c.busStall += stall
+	return v
 }
 
 // read32 reads a 32-bit value with alignment check. Partition routing
@@ -866,8 +877,9 @@ func (c *CPU) read32(addr uint32) uint32 {
 			uint32(c.cacheData[off+2])<<8 |
 			uint32(c.cacheData[off+3])
 	}
-	c.busStall += c.busStallReadFor(addr)
-	return c.bus.Read32(addr)
+	v, stall := c.bus.SH2Read32(addr, c.frameCyc, !c.isMaster)
+	c.busStall += stall
+	return v
 }
 
 // write16 writes a 16-bit value with alignment check. Partition
@@ -899,8 +911,7 @@ func (c *CPU) write16(addr uint32, val uint16) {
 		c.cacheData[off+1] = uint8(val)
 		return
 	}
-	c.busStall += c.busStallWriteFor(addr)
-	c.bus.Write16(addr, val)
+	c.busStall += c.bus.SH2Write16(addr, val, c.frameCyc, !c.isMaster)
 }
 
 // write32 writes a 32-bit value with alignment check. Partition
@@ -937,27 +948,8 @@ func (c *CPU) write32(addr uint32, val uint32) {
 		c.cacheData[off+3] = uint8(val)
 		return
 	}
-	c.busStall += c.busStallWriteFor(addr)
-	c.bus.Write32(addr, val)
+	c.busStall += c.bus.SH2Write32(addr, val, c.frameCyc, !c.isMaster)
 }
-
-// SetBusStallTables installs the per-region external-access wait-state
-// tables for reads, writes, and 16-byte line fills (indexed by
-// (addr>>20)&0x7F). The emulator builds them from the memory map.
-// Zero tables (the default) disable bus-access stall.
-func (c *CPU) SetBusStallTables(read, write, fill [128]uint32) {
-	c.busStallRead = read
-	c.busStallWrite = write
-	c.busStallFill = fill
-}
-
-// busStallReadFor/WriteFor/FillFor return the wait-state penalty for
-// an external access at addr. A single masked array index -
-// region-aware at 1 MB granularity, which also folds the cache-through
-// mirror (bit 29) onto the same physical region.
-func (c *CPU) busStallReadFor(addr uint32) uint32  { return c.busStallRead[(addr>>20)&0x7F] }
-func (c *CPU) busStallWriteFor(addr uint32) uint32 { return c.busStallWrite[(addr>>20)&0x7F] }
-func (c *CPU) busStallFillFor(addr uint32) uint32  { return c.busStallFill[(addr>>20)&0x7F] }
 
 // addressError triggers a CPU address error exception.
 func (c *CPU) addressError() {
@@ -991,8 +983,9 @@ func (c *CPU) read8(addr uint32) uint8 {
 	case 6: // data array (Section 8.4.8)
 		return c.cacheData[addr&0xFFF]
 	}
-	c.busStall += c.busStallReadFor(addr)
-	return c.bus.Read8(addr)
+	v, stall := c.bus.SH2Read8(addr, c.frameCyc, !c.isMaster)
+	c.busStall += stall
+	return v
 }
 
 // onChipByte extracts the correct byte from an on-chip register value
@@ -1048,8 +1041,7 @@ func (c *CPU) write8(addr uint32, val uint8) {
 		c.cacheData[addr&0xFFF] = val
 		return
 	}
-	c.busStall += c.busStallWriteFor(addr)
-	c.bus.Write8(addr, val)
+	c.busStall += c.bus.SH2Write8(addr, val, c.frameCyc, !c.isMaster)
 }
 
 // writeOnChip8 handles byte writes to on-chip peripherals with correct

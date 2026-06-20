@@ -10,29 +10,6 @@ import (
 	"github.com/user-none/erings/core/sh2"
 )
 
-// buildSH2StallTables builds the per-region SH-2 external-access
-// wait-state tables (128 entries each, one per 1 MB block of the
-// 27-bit physical space) from the bus wait-state model: read cost,
-// write cost, and 16-byte line-fill cost, each minus the access cycle
-// the instruction's own timing already charges. The 1 MB granularity
-// captures every distinct region (BIOS, A-Bus, CD, SCSP, VDP1, VDP2,
-// CRAM/SCU, WRAM-H).
-func buildSH2StallTables(bus *Bus) (read, write, fill [128]uint32) {
-	sub1 := func(v uint32) uint32 {
-		if v > 0 {
-			return v - 1
-		}
-		return 0
-	}
-	for i := range read {
-		addr := uint32(i) << 20
-		read[i] = sub1(bus.AccessCycles(addr, 4))
-		write[i] = sub1(bus.WriteAccessCycles(addr, 4))
-		fill[i] = sub1(bus.AccessCycles(addr, 16))
-	}
-	return read, write, fill
-}
-
 // Emulator ties together all Saturn components and runs one frame at a time.
 type Emulator struct {
 	bus    *Bus
@@ -179,17 +156,6 @@ func NewEmulator() *Emulator {
 
 	master := sh2.New(bus, true)
 	slave := sh2.New(bus, false)
-
-	// Per-region SH-2 external-access wait states. With the cache
-	// modeled, only cache misses, cache-through accesses, and
-	// write-through writes reach the bus and pay these; cache hits are
-	// free. The tables are region- and direction-aware (WRAM-H SDRAM
-	// reads, writes, and burst fills each cost differently) at 1 MB
-	// granularity, derived from the bus wait-state model
-	// (Bus.AccessCycles / Bus.WriteAccessCycles); tune there.
-	stallRead, stallWrite, stallFill := buildSH2StallTables(bus)
-	master.SetBusStallTables(stallRead, stallWrite, stallFill)
-	slave.SetBusStallTables(stallRead, stallWrite, stallFill)
 
 	e := &Emulator{
 		bus:     bus,

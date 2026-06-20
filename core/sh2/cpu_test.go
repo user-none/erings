@@ -12,6 +12,9 @@ import "testing"
 // their base, like the real bus's physical-address masking.
 type testBus struct {
 	mem []byte
+	// Per-access stall the SH2* methods report, standing in for the real
+	// bus's region cost + contention. Default 0 (no stall).
+	stallRead, stallWrite, stallFill uint32
 }
 
 func newTestBus(size int) *testBus {
@@ -81,6 +84,42 @@ func (b *testBus) ReadCacheLine(base uint32, dst *[16]byte) {
 
 func (b *testBus) ReadRMW8(addr uint32) uint8       { return b.Read8(addr) }
 func (b *testBus) WriteRMW8(addr uint32, val uint8) { b.Write8(addr, val) }
+
+// The SH2* methods model bus-access timing on the real bus; the test bus
+// reports its configured per-access stall (default 0) in place of the real
+// bus's region cost + contention.
+func (b *testBus) SH2Read8(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
+	return b.Read8(addr), b.stallRead
+}
+func (b *testBus) SH2Read16(addr uint32, frameCyc int64, slave bool) (uint16, uint32) {
+	return b.Read16(addr), b.stallRead
+}
+func (b *testBus) SH2Read32(addr uint32, frameCyc int64, slave bool) (uint32, uint32) {
+	return b.Read32(addr), b.stallRead
+}
+func (b *testBus) SH2Write8(addr uint32, val uint8, frameCyc int64, slave bool) uint32 {
+	b.Write8(addr, val)
+	return b.stallWrite
+}
+func (b *testBus) SH2Write16(addr uint32, val uint16, frameCyc int64, slave bool) uint32 {
+	b.Write16(addr, val)
+	return b.stallWrite
+}
+func (b *testBus) SH2Write32(addr uint32, val uint32, frameCyc int64, slave bool) uint32 {
+	b.Write32(addr, val)
+	return b.stallWrite
+}
+func (b *testBus) SH2FillLine(base uint32, dst *[16]byte, frameCyc int64, slave bool) uint32 {
+	b.ReadCacheLine(base, dst)
+	return b.stallFill
+}
+func (b *testBus) SH2RMWRead(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
+	return b.Read8(addr), b.stallRead
+}
+func (b *testBus) SH2RMWWrite(addr uint32, val uint8, frameCyc int64) uint32 {
+	b.Write8(addr, val)
+	return b.stallWrite
+}
 
 func TestFetchPC(t *testing.T) {
 	bus := newTestBus(256)

@@ -150,6 +150,7 @@ func TestHLEDispatcherLowersSR(t *testing.T) {
 			returned = true
 			break
 		}
+		master.SetFrameCyc(int64(i)) // advance the contention clock as the emulator does per step
 		master.Clock()
 	}
 

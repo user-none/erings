@@ -108,11 +108,10 @@ func (c *CPU) cacheReplaceWay(entry uint32) int {
 // replacement start (Section 8.4.5 - they do not wait for the memory
 // reads), then the four longwords of the line are read from memory
 // into the data array (Section 8.4.1). Hardware orders the burst so
-// the requested longword arrives last; erings fills the line whole and
-// charges the region's 16-byte burst cost (busStallFill, derived from
-// the memory device's burst timing - e.g. one SDRAM burst pipeline for
-// Work RAM-H, four singles for non-bursting regions), of which one
-// cycle is covered by the instruction's own access cycle.
+// the requested longword arrives last; erings fills the line whole via
+// SH2FillLine, which charges the region's 16-byte burst cost (one SDRAM
+// burst pipeline for Work RAM-H, four singles for non-bursting regions)
+// plus any inter-CPU contention the Bus implementation models.
 func (c *CPU) cacheFill(way int, addr uint32) {
 	// The replacement may evict the memoized fetch line.
 	c.fetchLineAddr = fetchLineInvalid
@@ -124,10 +123,10 @@ func (c *CPU) cacheFill(way int, addr uint32) {
 	// Read the 16-byte line as one transaction so it cannot be torn by
 	// a concurrent write from another bus master (Section 8.4.1).
 	var line [16]byte
-	c.bus.ReadCacheLine(base, &line)
+	stall := c.bus.SH2FillLine(base, &line, c.frameCyc, !c.isMaster)
 	copy(c.cacheData[off:off+16], line[:])
 	c.cacheTouch(entry, way)
-	c.busStall += c.busStallFillFor(addr)
+	c.busStall += stall
 }
 
 // cacheDataOff returns the data-array offset of addr's byte within
@@ -148,8 +147,9 @@ func (c *CPU) cacheRead8(addr uint32) uint8 {
 		return c.cacheData[cacheDataOff(way, addr)]
 	}
 	if c.ccr&ccrOD != 0 {
-		c.busStall += c.busStallReadFor(addr)
-		return c.bus.Read8(addr)
+		v, stall := c.bus.SH2Read8(addr, c.frameCyc, !c.isMaster)
+		c.busStall += stall
+		return v
 	}
 	way := c.cacheReplaceWay(cacheEntryOf(addr))
 	c.cacheFill(way, addr)
@@ -163,8 +163,9 @@ func (c *CPU) cacheRead16(addr uint32) uint16 {
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
 	if c.ccr&ccrOD != 0 {
-		c.busStall += c.busStallReadFor(addr)
-		return c.bus.Read16(addr)
+		v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+		c.busStall += stall
+		return v
 	}
 	way := c.cacheReplaceWay(cacheEntryOf(addr))
 	c.cacheFill(way, addr)
@@ -180,8 +181,9 @@ func (c *CPU) cacheRead32(addr uint32) uint32 {
 			uint32(c.cacheData[off+2])<<8 | uint32(c.cacheData[off+3])
 	}
 	if c.ccr&ccrOD != 0 {
-		c.busStall += c.busStallReadFor(addr)
-		return c.bus.Read32(addr)
+		v, stall := c.bus.SH2Read32(addr, c.frameCyc, !c.isMaster)
+		c.busStall += stall
+		return v
 	}
 	way := c.cacheReplaceWay(cacheEntryOf(addr))
 	c.cacheFill(way, addr)
@@ -212,8 +214,9 @@ func (c *CPU) cacheFetch16(addr uint32) uint16 {
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
 	if c.ccr&ccrID != 0 {
-		c.busStall += c.busStallReadFor(addr)
-		return c.bus.Read16(addr)
+		v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+		c.busStall += stall
+		return v
 	}
 	way := c.cacheReplaceWay(cacheEntryOf(addr))
 	c.cacheFill(way, addr)

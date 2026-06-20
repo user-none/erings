@@ -15,6 +15,21 @@ type Bus interface {
 	Write16(addr uint32, val uint16)
 	Write32(addr uint32, val uint32)
 
+	// The SH2* methods are the instruction-execution access path: each
+	// folds the full bus-access stall (region cost + slave arbitration +
+	// inter-CPU contention) into the data access and returns the cycles to
+	// add to the CPU's wait-state debt (reads also return the value). Width
+	// is in the method name, matching the plain Read*/Write* above, which
+	// are the non-timed path (on-chip DMAC, exceptions). frameCyc is the
+	// accessing CPU's frame-relative cycle (the clock both SH-2s share);
+	// slave selects the arbitration penalty.
+	SH2Read8(addr uint32, frameCyc int64, slave bool) (uint8, uint32)
+	SH2Read16(addr uint32, frameCyc int64, slave bool) (uint16, uint32)
+	SH2Read32(addr uint32, frameCyc int64, slave bool) (uint32, uint32)
+	SH2Write8(addr uint32, val uint8, frameCyc int64, slave bool) uint32
+	SH2Write16(addr uint32, val uint16, frameCyc int64, slave bool) uint32
+	SH2Write32(addr uint32, val uint32, frameCyc int64, slave bool) uint32
+
 	// AccessCycles returns the CPU state count consumed by a single
 	// read transaction of the given size (in bytes: 1, 2, 4, or 16)
 	// at the given address; WriteAccessCycles the same for a write
@@ -33,10 +48,20 @@ type Bus interface {
 	// big-endian line; dst[0] is base's high byte.
 	ReadCacheLine(base uint32, dst *[16]byte)
 
+	// SH2FillLine is the timed 16-byte line-fill variant (returns the
+	// access stall). See SH2Read32 for frameCyc/slave.
+	SH2FillLine(base uint32, dst *[16]byte, frameCyc int64, slave bool) uint32
+
 	// ReadRMW8 begins a TAS.B read-modify-write: it claims the
 	// address's bus area and returns with the claim held. WriteRMW8
 	// completes the sequence and releases it. Per SH7604 Sec 7.10 the
 	// bus is not released between the read and write cycles of TAS.
 	ReadRMW8(addr uint32) uint8
 	WriteRMW8(addr uint32, val uint8)
+
+	// Timed TAS.B pair (return the access stall). The read half charges
+	// cost+arbitration+contention and holds the bus; the write half extends
+	// the busy window and charges only the write cost.
+	SH2RMWRead(addr uint32, frameCyc int64, slave bool) (uint8, uint32)
+	SH2RMWWrite(addr uint32, val uint8, frameCyc int64) uint32
 }

@@ -440,31 +440,27 @@ data accesses go through it when CE is set.
 ### Bus-access wait states
 
 External accesses - cache misses (line fills), cache-through and
-uncached accesses, and every write - are charged a per-region
-wait-state penalty so memory-heavy code runs at hardware rate; cache
-hits cost nothing:
+uncached accesses, and every write - are charged a wait-state penalty
+so memory-heavy code runs at hardware rate; cache hits cost nothing:
 
-- Three per-CPU tables (`busStallRead/Write/Fill [128]uint32`) hold
-  the read, write, and 16-byte line-fill costs for each 1 MB block of
-  the 27-bit physical space, indexed by `(addr>>20)&0x7F` (folding
-  the cache-through mirror onto the same region). The emulator fills
-  them once from the bus wait-state model (`buildSH2StallTables` ->
-  `Bus.AccessCycles`/`WriteAccessCycles`); they are all-zero by
-  default so unit tests that build a CPU directly see no stall.
-- The costs are decoded from the boot-time BSC/SCU register values
-  with the manuals' formulas where the hardware defines them: Work
-  RAM-H SDRAM reads run the full burst pipeline (7 states whether one
-  longword or a line fill is wanted, SH7604 Sec 7.5.3-7.5.4), SDRAM
-  writes are single writes (4 states, Sec 7.5.5), CS0 ordinary space
-  is 3 states, A-Bus is 20 (68 per 16-byte burst). B-Bus device costs
-  are arbitration (e.g. VDP2 VRAM reads wait for a CPU cycle-pattern
-  slot) and carry fixed-point estimates until that machinery is
-  modeled; VDP2 writes are posted and cost only the handoff.
+- The CPU's instruction-execution accesses go through the `Bus`
+  interface's `SH2*` methods (`SH2Read8/16/32`, `SH2Write8/16/32`,
+  `SH2FillLine`, `SH2RMWRead`/`SH2RMWWrite`), each passing the CPU's
+  frame cycle (`SetFrameCyc`) and master/slave flag. The Bus
+  implementation computes the whole access stall and returns it; the CPU
+  adds it to `busStall`. This package defines the interface and applies
+  the returned stall - it holds no cost tables of its own.
+- The frame cycle and master/slave flag are passed precisely so the Bus
+  implementation can model the wait state it owns: per-region access
+  cost, the slave SH-2's per-access bus-arbitration penalty, and
+  inter-CPU bus contention (one CPU waiting on the other's in-flight
+  shared-bus access).
 - `busStall` debt is drained one cycle per `Clock()` before the next
   instruction executes (the same deferred-cycle pattern as load-use
   stall), so each access extends its instruction by its cost.
 - On-chip registers and data-array accesses are internal and never
-  charged.
+  charged. The plain `Read*/Write*` interface methods (used by callers
+  with no instruction-execution timing) are untimed.
 
 ## Memory Access / Region Routing Simplifications
 

@@ -135,9 +135,7 @@ func (e *Emulator) RunFrame() {
 	e.masterCycles.Store(0)
 	e.secondaryCycles.Store(0)
 	e.vdpCycles.Store(0)
-	// Clear the VDP2 per-scanline RPRCTL arm table for the new frame. Done
-	// here with both workers parked so the SH-2's per-line arming writes
-	// and the VDP worker's per-line consumption never race the reset.
+	e.bus.resetContention()
 	e.vdp2.ResetRotArm()
 	e.frameLineWidth = e.systemCyclesPerScanline
 	e.frameScanlines = e.scanlines
@@ -182,7 +180,7 @@ func (e *Emulator) RunFrame() {
 			}
 			e.master.ApplyPendingCachePurge()
 			for c := uint32(0); c < chunk; c++ {
-				e.stepMaster()
+				e.stepMaster(pos + int64(cyc) + int64(c))
 			}
 			vdp2.TickSystemCycles(chunk)
 			cyc += chunk
@@ -194,7 +192,7 @@ func (e *Emulator) RunFrame() {
 		// held would deadlock the slave spinning on it. Extra cycles carry
 		// into the next line.
 		for e.master.InTAS() {
-			e.stepMaster()
+			e.stepMaster(pos + int64(cyc))
 			vdp2.TickSystemCycles(1)
 			cyc++
 		}
@@ -233,9 +231,12 @@ func (e *Emulator) RunFrame() {
 }
 
 // stepMaster advances the master SH-2 by one cycle. The load-use stall is
-// modeled inside Clock(). A MINIT write flags the cross-CPU FRT capture;
-// the slave latches its own FRT at its next sync barrier, within a chunk.
-func (e *Emulator) stepMaster() {
+// modeled inside Clock(). frameCyc is the master's frame-relative cycle,
+// published to the bus for inter-CPU contention timing. A MINIT write flags
+// the cross-CPU FRT capture; the slave latches its own FRT at its next sync
+// barrier, within a chunk.
+func (e *Emulator) stepMaster(frameCyc int64) {
+	e.master.SetFrameCyc(frameCyc)
 	state := e.master.Clock()
 	if state.Bus == sh2.BusWrite && e.bus.MINITWritten() {
 		e.minitPending.Store(true)
@@ -244,7 +245,8 @@ func (e *Emulator) stepMaster() {
 
 // stepSlave advances the slave SH-2 by one cycle, mirroring stepMaster: a
 // SINIT write flags the master's FRT capture for the master's next barrier.
-func (e *Emulator) stepSlave() {
+func (e *Emulator) stepSlave(frameCyc int64) {
+	e.slave.SetFrameCyc(frameCyc)
 	state := e.slave.Clock()
 	if state.Bus == sh2.BusWrite && e.bus.SINITWritten() {
 		e.sinitPending.Store(true)
@@ -434,7 +436,7 @@ func (e *Emulator) walkSecondaryFrame() {
 			e.slave.ApplyPendingCachePurge()
 			if smpc.SSHEnabled() {
 				for c := int64(0); c < chunk; c++ {
-					e.stepSlave()
+					e.stepSlave(pos + c)
 				}
 			}
 			w := uint32(chunk)
