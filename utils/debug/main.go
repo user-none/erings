@@ -27,7 +27,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/user-none/eblitui/romloader"
 	"github.com/user-none/erings/core"
-	"github.com/user-none/erings/replay"
+	"github.com/user-none/erings/internal/replay"
 )
 
 // Maximum framebuffer dimensions for buffer allocation.

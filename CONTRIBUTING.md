@@ -115,53 +115,7 @@ them to be fixed anytime soon.
 
 ## Internal Development Tools
 
-### `cmd/debug`
-
-A command line launcher that should be used
-for development. It is decoupled from the ui and outputs
-additional information to the console. Such as frame rate
-and gameplay frame rate.
-
-It also includes a stall watchdog that will detect when the emulator
-has entered a stalled state (such as an infinite loop). It will
-dump every goroutine's stack to stderr and report says exactly what
-caused the stall.
-
-The `-cpuprofile` allows profiling the application using
-the standard go profiling system.
-
-Movement keys are:
-
-- W (up)
-- S (down)
-- A (left)
-- D (right)
-- N (left shoulder)
-- M (right shoulder)
-- J (A)
-- K (B)
-- L (C)
-- U (X)
-- I (Y)
-- O (Z)
-
-Additional keys:
-
-- Enter (start)
-- 0 (pause emulation)
-- 9 (dump top 20 PC histogram)
-- 8 (dump current memory to `dump-YYYYMMDD-HHMMSS-mmm` directory)
-
-### `sh2.TraceFunc`
-
-The SH-2 support a hook that allows tracing all SH-2 execution.
-This is used by the PC histogram feature of the `cmd/debug` launcher.
-To use this function for other purposes with that launcher, the current
-hooked in function needs to be changed or replaced for one off testing.
-Changes to this histogram capture should not be committed.
-
-### `utils/disasm`
-
-A simple SH-2 disassembler which can be used to investigate game
-execution.
+The internal development tools - the `debug` launcher, the `disasm`
+disassembler, and the `extract_bioslibs` BIOS extractor - are documented in
+`utils/README.md`.
 

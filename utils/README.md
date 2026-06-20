@@ -1,10 +1,56 @@
 # utils
 
-Standalone command-line tools for working with the emulator's data.
-Each tool is a self-contained `main` package in its own subdirectory and
-uses only the standard library (plus the in-tree `core/sh2` disassembler
-for `disasm`). Run them with `go run ./utils/<tool>` or build with
-`go build ./utils/<tool>`.
+Command-line tools for development and for working with the emulator's
+data. Each tool is a self-contained `main` package in its own subdirectory.
+Run them with `go run ./utils/<tool>` or build with `go build ./utils/<tool>`.
+
+`disasm` and `extract_bioslibs` use only the standard library (plus the
+in-tree `core/sh2` disassembler for `disasm`). `debug` is the development
+launcher and links the emulator core and its UI dependencies, so it needs a
+display to run.
+
+## debug
+
+A command line launcher that should be used for development. It is decoupled
+from the UI and outputs additional information to the console, such as the
+frame rate and the gameplay frame rate.
+
+It also includes a stall watchdog that detects when the emulator has entered
+a stalled state (such as an infinite loop). It dumps every goroutine's stack
+to stderr and reports exactly what caused the stall.
+
+The `-cpuprofile` flag allows profiling the application using the standard
+Go profiling system.
+
+Movement keys are:
+
+- W (up)
+- S (down)
+- A (left)
+- D (right)
+- N (left shoulder)
+- M (right shoulder)
+- J (A)
+- K (B)
+- L (C)
+- U (X)
+- I (Y)
+- O (Z)
+
+Additional keys:
+
+- Enter (start)
+- 0 (pause emulation)
+- 9 (dump top 20 PC histogram)
+- 8 (dump current memory to `dump-YYYYMMDD-HHMMSS-mmm` directory)
+
+### sh2.TraceFunc
+
+The SH-2 supports a hook that allows tracing all SH-2 execution. This is
+used by the PC histogram feature of the `utils/debug` launcher. To use this
+function for other purposes with that launcher, the currently hooked-in
+function needs to be changed or replaced for one-off testing. Changes to
+this histogram capture should not be committed.
 
 ## disasm
 
