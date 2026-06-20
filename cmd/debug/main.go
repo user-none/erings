@@ -27,6 +27,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/user-none/eblitui/romloader"
 	"github.com/user-none/erings/core"
+	"github.com/user-none/erings/replay"
 )
 
 // Maximum framebuffer dimensions for buffer allocation.
@@ -90,7 +91,13 @@ func main() {
 	dumpDir := flag.String("dump-dir", ".", "Directory to write memory dumps into (created if missing)")
 	savePath := flag.String("save", "", "Path to backup-RAM save file. If a directory, uses <gameid>.srm inside it. Loaded on start (if it exists) and written on close.")
 	fastBoot := flag.Bool("fast-boot", false, "Skip the real BIOS boot animation and enter the disc IP directly (real BIOS only; no effect with the HLE BIOS).")
+	record := flag.String("record", "", "Record a replay file (JSON) of per-frame input and screenshot markers.")
+	replayPath := flag.String("replay", "", "Replay a recorded input file (JSON). Recorded input is mixed with live input so you can still press buttons.")
 	flag.Parse()
+
+	if *record != "" && *replayPath != "" {
+		log.Fatal("-record and -replay are mutually exclusive")
+	}
 
 	var cpuProfileFile *os.File
 	if *cpuProfile != "" {
@@ -137,16 +144,44 @@ func main() {
 		loadSaveFile(emu, resolvedSavePath)
 	}
 
+	var recorder *replay.Recorder
+	if *record != "" {
+		recorder = replay.NewRecorder()
+		fmt.Printf("[REPLAY] recording to %s\n", *record)
+	}
+
+	var player *replay.Player
+	if *replayPath != "" {
+		rf, err := replay.Load(*replayPath)
+		if err != nil {
+			log.Fatalf("failed to load replay file %q: %v", *replayPath, err)
+		}
+		if rf.Version != replay.Version {
+			log.Printf("Warning: replay file version %d, tool expects %d", rf.Version, replay.Version)
+		}
+		if id := readGameID(disc); rf.DiscID != "" && id != "" && rf.DiscID != id {
+			log.Printf("Warning: replay disc %q does not match loaded disc %q", rf.DiscID, id)
+		}
+		player = replay.NewPlayer(rf)
+		fmt.Printf("[REPLAY] replaying %s (%d frames, %d screenshots)\n", *replayPath, rf.Frames, len(rf.Screenshots))
+	}
+
 	// SIGINT/SIGTERM handler. Flushes the save file (if -save was
-	// given) and stops the CPU profile (if -cpuprofile was given)
-	// before exiting. Without this, CTRL-C would skip both — the
-	// normal close-path only runs when ebiten exits cleanly.
+	// given), the replay file (if -record was given), and stops the CPU
+	// profile (if -cpuprofile was given) before exiting. Without this,
+	// CTRL-C would skip all three — the normal close-path only runs when
+	// ebiten exits cleanly.
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-sigCh
 		if resolvedSavePath != "" {
 			writeSaveFile(emu, resolvedSavePath)
+		}
+		if recorder != nil {
+			if err := recorder.Write(*record, readGameID(disc)); err != nil {
+				log.Printf("Warning: failed to write replay file %q: %v", *record, err)
+			}
 		}
 		if cpuProfileFile != nil {
 			pprof.StopCPUProfile()
@@ -190,6 +225,8 @@ func main() {
 		keyMap:      buildKeyMap(),
 		padMap:      buildPadMap(),
 		dumpDir:     *dumpDir,
+		recorder:    recorder,
+		player:      player,
 	}
 
 	g.startWatchdog()
@@ -205,6 +242,11 @@ func main() {
 	g.close()
 	if resolvedSavePath != "" {
 		writeSaveFile(emu, resolvedSavePath)
+	}
+	if recorder != nil {
+		if err := recorder.Write(*record, readGameID(disc)); err != nil {
+			log.Printf("Warning: failed to write replay file %q: %v", *record, err)
+		}
 	}
 	if cpuProfileFile != nil {
 		pprof.StopCPUProfile()
@@ -359,6 +401,21 @@ type game struct {
 	// timestamped subdirectory under dumpDir.
 	dumpReq atomic.Bool
 	dumpDir string
+
+	// recorder, when non-nil (-record given), captures per-frame input
+	// and screenshot markers. It is written to disk on shutdown.
+	// screenshotReq is set from Update (ebiten goroutine) on the space bar
+	// and consumed in emulationLoop between frames to append a marker.
+	recorder      *replay.Recorder
+	screenshotReq atomic.Bool
+
+	// player, when non-nil (-replay given), feeds recorded input each
+	// frame. Its input is OR'd with live input so the user can still
+	// press buttons during playback. replayDone latches the one-time
+	// "playback complete" message. Both are owned by the emulation
+	// goroutine.
+	player     *replay.Player
+	replayDone bool
 }
 
 const (
@@ -485,10 +542,35 @@ func (g *game) emulationLoop() {
 			g.stage.Store(stageQueueAudio)
 			g.audioPlayer.queueSamples(nil)
 		} else {
+			// Mix recorded replay input with the live input read above
+			// (bitwise OR), then re-apply, so the user can still press
+			// buttons during playback. Advancing the player here, in the
+			// non-paused branch, keeps it aligned with the RunFrame count
+			// the file was recorded against.
+			if g.player != nil {
+				if rp1, rp2, active := g.player.Next(); active {
+					buttons[0] |= rp1
+					buttons[1] |= rp2
+					g.emu.SetInput(0, buttons[0])
+					g.emu.SetInput(1, buttons[1])
+				} else if !g.replayDone {
+					g.replayDone = true
+					fmt.Printf("[REPLAY] playback complete (%d frames)\n", g.player.Frames())
+				}
+			}
+
 			g.stage.Store(stageRunFrame)
 			runStart := time.Now()
 			g.emu.RunFrame()
 			runDur := time.Since(runStart)
+
+			// Record the input applied to this frame. buttons is the
+			// snapshot read above and fed to SetInput, so it is exactly
+			// this frame's input. Recording only here (non-paused) keeps
+			// the recorded timeline a pure RunFrame count.
+			if g.recorder != nil {
+				g.recorder.RecordFrame(buttons[0], buttons[1])
+			}
 			if runDur < frameTimeMin {
 				frameTimeMin = runDur
 			}
@@ -556,6 +638,13 @@ func (g *game) emulationLoop() {
 				printHistogram("slave", g.histSlave)
 				g.histMaster, g.histSlave = nil, nil
 			}
+		}
+
+		// Screenshot marker request. Consumed between frames so it marks
+		// the frame just completed (recorder.frame has advanced past it).
+		if g.screenshotReq.Swap(false) && g.recorder != nil {
+			f := g.recorder.MarkScreenshot()
+			fmt.Printf("[REPLAY] screenshot marked at frame %d\n", f)
 		}
 
 		// Memory dump request. Snapshot is taken between frames so the
@@ -701,6 +790,11 @@ func (g *game) Update() error {
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyDigit8) {
 		g.dumpReq.Store(true)
+	}
+
+	// Space bar marks a screenshot point, only while recording.
+	if g.recorder != nil && inpututil.IsKeyJustPressed(ebiten.KeySpace) {
+		g.screenshotReq.Store(true)
 	}
 
 	return nil
