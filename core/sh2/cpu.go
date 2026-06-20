@@ -88,7 +88,7 @@ type CPU struct {
 	// own thread - a packed word can never yield a torn level/vector
 	// pair.
 	irl    atomic.Uint32
-	irlAck func() // Called when SH-2 accepts an IRL interrupt
+	irlAck func(vec uint16) // Called with the accepted vector when the SH-2 accepts an IRL interrupt
 
 	// Multi-cycle micro-op state
 	pendingOp    uint8  // which pending operation (popNone = ready)
@@ -761,7 +761,8 @@ func (c *CPU) SetIRL(level uint8, vec uint16) {
 }
 
 // SetIRLAck sets the callback invoked when the SH-2 accepts an IRL interrupt.
-func (c *CPU) SetIRLAck(f func()) {
+// The callback receives the vector the CPU dispatched.
+func (c *CPU) SetIRLAck(f func(vec uint16)) {
 	c.irlAck = f
 }
 

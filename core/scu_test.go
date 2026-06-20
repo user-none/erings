@@ -863,7 +863,7 @@ func TestSCUTimer0ResetsAtVBlankIN(t *testing.T) {
 	// VBlankOUT resets counter to 0
 	s.RaiseVBlankOUT()
 	// Acknowledge the VBlankOUT interrupt to clear pendingBit
-	s.AcknowledgeInterrupt()
+	s.AcknowledgeInterrupt(0x41)
 
 	// Need 3 more H-Blanks to reach T0C again
 	s.RaiseHBlankIN(0)
@@ -1472,7 +1472,7 @@ func TestSCUAcknowledgeInterruptClearsPending(t *testing.T) {
 		t.Fatal("ist bit 3 not set after raise")
 	}
 
-	s.AcknowledgeInterrupt()
+	s.AcknowledgeInterrupt(0x43)
 	if s.pendingBit != -1 {
 		t.Errorf("pendingBit = %d, want -1 after ack", s.pendingBit)
 	}
@@ -1481,7 +1481,43 @@ func TestSCUAcknowledgeInterruptClearsPending(t *testing.T) {
 	}
 
 	// Ack with no pending bit: no-op, no panic.
-	s.AcknowledgeInterrupt()
+	s.AcknowledgeInterrupt(0x43)
+}
+
+// TestSCUAcknowledgeInterruptClearsAcceptedVectorNotLastAsserted verifies the
+// SCU clears the IST bit for the vector the SH-2 dispatched, not the bit it
+// last asserted via IRL. A lower-priority interrupt is accepted, then a
+// higher-priority source re-points the last-asserted bit before the ack. The
+// ack must clear the bit for the dispatched vector, leaving the higher-
+// priority source asserted; otherwise that source's interrupt is lost.
+func TestSCUAcknowledgeInterruptClearsAcceptedVectorNotLastAsserted(t *testing.T) {
+	s := NewSCU()
+	s.SetIRLHandler(func(level uint8, vec uint16) {}, func() {})
+	s.ims = 0x0000 // unmask all internal sources
+
+	// Level-0 DMA End (bit 11, vec 0x4B, level 5): the vector the CPU samples
+	// and commits to accepting.
+	s.RaiseInterrupt(11)
+	// DSP End (bit 5, vec 0x45, level 0xA) raised after, modeling the
+	// concurrent secondary-worker raise. Higher priority, so it re-points the
+	// last-asserted bit to 5 before the CPU acks.
+	s.RaiseInterrupt(5)
+	if s.pendingBit != 5 {
+		t.Fatalf("pendingBit = %d, want 5 (DSP End is highest pending)", s.pendingBit)
+	}
+
+	// The CPU acks the vector it actually accepted (DMA End), not pendingBit.
+	s.AcknowledgeInterrupt(0x4B)
+
+	if s.ist&(1<<11) != 0 {
+		t.Error("bit 11 (accepted Level-0 DMA End) still set after ack")
+	}
+	if s.ist&(1<<5) == 0 {
+		t.Error("bit 5 (DSP End) wrongly cleared - it was never serviced")
+	}
+	if s.pendingBit != 5 {
+		t.Errorf("pendingBit = %d, want 5 (DSP End survives and re-asserts)", s.pendingBit)
+	}
 }
 
 func TestSCURaiseInterruptOutOfRange(t *testing.T) {

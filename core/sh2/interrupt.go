@@ -175,7 +175,7 @@ func (c *CPU) acceptInterrupt(level uint8, vec uint16, fromIRL bool) bool {
 	c.reg.SetIMASK(ilvl)
 
 	if fromIRL && c.irlAck != nil {
-		c.irlAck()
+		c.irlAck(vec)
 	}
 
 	c.halted = false

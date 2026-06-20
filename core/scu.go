@@ -75,31 +75,38 @@ type SCU struct {
 	lockBus *Bus
 }
 
-// intEntry describes a single SCU interrupt source.
-type intEntry struct {
+// levelVec holds a single SCU interrupt source's priority level and vector.
+type levelVec struct {
 	level uint8
 	vec   uint16
 }
 
-// intTable maps IST bit position to interrupt level and vector.
+// bitToLevelVec maps an IST bit position to its interrupt level and vector.
 // Entries for bits 14-15 are unused (level 0, vec 0).
-var intTable [32]intEntry
+var bitToLevelVec [32]levelVec
+
+// vecToBit recovers the IST bit for an SCU interrupt vector (0x40-0x5F), or
+// -1 for an unmapped vector. It is the inverse of bitToLevelVec's vector
+// field, built at init so the two stay in sync from one definition. Note the
+// reversal is not 1:1: this direction recovers only the bit, dropping the
+// level that bitToLevelVec also carries.
+var vecToBit [0x60]int8
 
 func init() {
-	intTable[0] = intEntry{0xF, 0x40}  // V-Blank-IN
-	intTable[1] = intEntry{0xE, 0x41}  // V-Blank-OUT
-	intTable[2] = intEntry{0xD, 0x42}  // H-Blank-IN
-	intTable[3] = intEntry{0xC, 0x43}  // Timer 0
-	intTable[4] = intEntry{0xB, 0x44}  // Timer 1
-	intTable[5] = intEntry{0xA, 0x45}  // DSP End
-	intTable[6] = intEntry{0x9, 0x46}  // Sound Request
-	intTable[7] = intEntry{0x8, 0x47}  // System Manager
-	intTable[8] = intEntry{0x8, 0x48}  // PAD
-	intTable[9] = intEntry{0x6, 0x49}  // Level 2 DMA End
-	intTable[10] = intEntry{0x6, 0x4A} // Level 1 DMA End
-	intTable[11] = intEntry{0x5, 0x4B} // Level 0 DMA End
-	intTable[12] = intEntry{0x3, 0x4C} // DMA Illegal
-	intTable[13] = intEntry{0x2, 0x4D} // Sprite Draw End
+	bitToLevelVec[0] = levelVec{0xF, 0x40}  // V-Blank-IN
+	bitToLevelVec[1] = levelVec{0xE, 0x41}  // V-Blank-OUT
+	bitToLevelVec[2] = levelVec{0xD, 0x42}  // H-Blank-IN
+	bitToLevelVec[3] = levelVec{0xC, 0x43}  // Timer 0
+	bitToLevelVec[4] = levelVec{0xB, 0x44}  // Timer 1
+	bitToLevelVec[5] = levelVec{0xA, 0x45}  // DSP End
+	bitToLevelVec[6] = levelVec{0x9, 0x46}  // Sound Request
+	bitToLevelVec[7] = levelVec{0x8, 0x47}  // System Manager
+	bitToLevelVec[8] = levelVec{0x8, 0x48}  // PAD
+	bitToLevelVec[9] = levelVec{0x6, 0x49}  // Level 2 DMA End
+	bitToLevelVec[10] = levelVec{0x6, 0x4A} // Level 1 DMA End
+	bitToLevelVec[11] = levelVec{0x5, 0x4B} // Level 0 DMA End
+	bitToLevelVec[12] = levelVec{0x3, 0x4C} // DMA Illegal
+	bitToLevelVec[13] = levelVec{0x2, 0x4D} // Sprite Draw End
 	// 14-15 unused
 
 	// External interrupts 0-15 (bits 16-31)
@@ -110,7 +117,18 @@ func init() {
 		0x1, 0x1, 0x1, 0x1, // Ext 12-15
 	}
 	for i := 0; i < 16; i++ {
-		intTable[16+i] = intEntry{extLevels[i], uint16(0x50 + i)}
+		bitToLevelVec[16+i] = levelVec{extLevels[i], uint16(0x50 + i)}
+	}
+
+	for i := range vecToBit {
+		vecToBit[i] = -1
+	}
+	for bit := range bitToLevelVec {
+		e := bitToLevelVec[bit]
+		if e.level == 0 && e.vec == 0 {
+			continue // unused bit
+		}
+		vecToBit[e.vec] = int8(bit)
 	}
 }
 
@@ -228,17 +246,22 @@ func (s *SCU) SetIRLHandler(set func(level uint8, vec uint16), clr func()) {
 	s.clearIRL = clr
 }
 
-// AcknowledgeInterrupt clears the IST bit for the currently dispatched
-// interrupt. Called by the SH-2 when it accepts an external interrupt.
-// This prevents the same event from firing repeatedly while allowing
-// the IRL to stay asserted until acknowledged.
-func (s *SCU) AcknowledgeInterrupt() {
+// AcknowledgeInterrupt clears the IST bit for the interrupt the SH-2
+// dispatched, identified by its vector. It clears by the accepted vector, not
+// by pendingBit (the bit last asserted via IRL), because a concurrent
+// higher-priority raise can advance pendingBit past the bit that was
+// serviced, so the two need not match. checkInterrupts then re-derives the
+// highest remaining pending interrupt, keeping any source still pending
+// (including one raised meanwhile) asserted via IRL.
+func (s *SCU) AcknowledgeInterrupt(vec uint16) {
 	s.lockIRQ()
-	if s.pendingBit >= 0 {
-		s.ist &^= 1 << s.pendingBit
-		s.pendingBit = -1
-		s.checkInterrupts()
+	if int(vec) < len(vecToBit) {
+		if bit := vecToBit[vec]; bit >= 0 {
+			s.ist &^= 1 << bit
+		}
 	}
+	s.pendingBit = -1
+	s.checkInterrupts()
 	s.unlockIRQ()
 }
 
@@ -969,7 +992,7 @@ func (s *SCU) checkInterrupts() {
 		if pending&(1<<i) == 0 {
 			continue
 		}
-		entry := intTable[i]
+		entry := bitToLevelVec[i]
 		if entry.level == 0 && entry.vec == 0 {
 			continue // unused bit
 		}
@@ -981,7 +1004,7 @@ func (s *SCU) checkInterrupts() {
 
 	if bestBit >= 0 {
 		s.pendingBit = bestBit
-		s.setIRL(intTable[bestBit].level, intTable[bestBit].vec)
+		s.setIRL(bitToLevelVec[bestBit].level, bitToLevelVec[bestBit].vec)
 	} else {
 		s.clearIRL()
 	}

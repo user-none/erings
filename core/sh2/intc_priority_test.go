@@ -507,7 +507,7 @@ func TestIRLAckCalledExactlyOnce(t *testing.T) {
 	cpu := setupIntCPU(t)
 
 	count := 0
-	cpu.SetIRLAck(func() { count++ })
+	cpu.SetIRLAck(func(vec uint16) { count++ })
 	cpu.SetIRL(8, 0x50)
 
 	if !cpu.processInterrupt() {
@@ -524,7 +524,7 @@ func TestIRLAckNotCalledOnInternalWin(t *testing.T) {
 	cpu := setupIntCPU(t)
 
 	count := 0
-	cpu.SetIRLAck(func() { count++ })
+	cpu.SetIRLAck(func(vec uint16) { count++ })
 
 	priDIVU(cpu, 10)
 	assertDIVU(cpu, 10, 0x40)
@@ -544,7 +544,7 @@ func TestIRLAckNotCalledWhenMasked(t *testing.T) {
 	cpu := setupIntCPU(t)
 
 	count := 0
-	cpu.SetIRLAck(func() { count++ })
+	cpu.SetIRLAck(func(vec uint16) { count++ })
 	cpu.reg.SetIMASK(4)
 	cpu.SetIRL(3, 0x50) // level 3 <= IMASK=4 -> reject
 

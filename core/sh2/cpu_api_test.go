@@ -740,7 +740,7 @@ func TestClearIRL(t *testing.T) {
 func TestSetIRLAck(t *testing.T) {
 	t.Run("callback_stored", func(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)
-		cb := func() {}
+		cb := func(vec uint16) {}
 		cpu.SetIRLAck(cb)
 		if cpu.irlAck == nil {
 			t.Error("irlAck nil after SetIRLAck")
@@ -765,7 +765,7 @@ func TestSetIRLAck(t *testing.T) {
 			bus.Write16(addr, nopOpcode)
 		}
 		count := 0
-		cpu.SetIRLAck(func() { count++ })
+		cpu.SetIRLAck(func(vec uint16) { count++ })
 		cpu.SetIRL(10, 0x40)
 
 		// Clock through until the IRL callback has had a chance to fire.
@@ -792,9 +792,9 @@ func TestSetIRLAck(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)
 		firstCalled := false
 		secondCalled := false
-		cpu.SetIRLAck(func() { firstCalled = true })
-		cpu.SetIRLAck(func() { secondCalled = true })
-		cpu.irlAck() // invoke whatever is currently stored
+		cpu.SetIRLAck(func(vec uint16) { firstCalled = true })
+		cpu.SetIRLAck(func(vec uint16) { secondCalled = true })
+		cpu.irlAck(0x40) // invoke whatever is currently stored
 		if firstCalled {
 			t.Error("first callback fired after replacement")
 		}

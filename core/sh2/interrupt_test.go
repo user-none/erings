@@ -1000,7 +1000,7 @@ func TestStepExceptionIRLAck(t *testing.T) {
 	bus.Write32(0x100+0x42*4, 0x500)
 
 	acks := 0
-	cpu.SetIRLAck(func() { acks++ })
+	cpu.SetIRLAck(func(vec uint16) { acks++ })
 	cpu.SetIRL(8, 0x42)
 
 	if !cpu.processInterrupt() {
