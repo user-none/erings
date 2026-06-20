@@ -7,7 +7,8 @@ Run them with `go run ./utils/<tool>` or build with `go build ./utils/<tool>`.
 `disasm` and `extract_bioslibs` use only the standard library (plus the
 in-tree `core/sh2` disassembler for `disasm`). `debug` is the development
 launcher and links the emulator core and its UI dependencies, so it needs a
-display to run.
+display to run. `capture` links the emulator core but is fully headless (no
+display or audio), so it runs anywhere.
 
 ## debug
 
@@ -51,6 +52,48 @@ used by the PC histogram feature of the `utils/debug` launcher. To use this
 function for other purposes with that launcher, the currently hooked-in
 function needs to be changed or replaced for one-off testing. Changes to
 this histogram capture should not be committed.
+
+## capture
+
+A headless runner that replays a recorded session (see `internal/replay`)
+against a disc with no display, as fast as possible, and writes framebuffer
+screenshots at the frames the replay marked. It is for regression
+comparison: run the same replay across builds and diff the images.
+
+Usage:
+
+```
+capture [flags] <disc> <replay>
+```
+
+Both positionals are required: the disc image and the recorded replay file.
+
+Flags:
+
+| Flag | Default | Meaning |
+|------|---------|---------|
+| `-bios` | (none) | Path to the Saturn BIOS ROM. If omitted, the HLE BIOS boots the disc. |
+| `-fast-boot` | false | Skip the real BIOS boot animation (real BIOS only; no effect with the HLE BIOS). |
+| `-out` | `capture_output` | Output root directory, created if missing. |
+
+Example:
+
+```
+go run ./utils/capture -bios BIOS_USA.bin game.cue session.replay
+```
+
+Screenshots are written under `<out>/screenshots/` as `id_ts_framenum.png`,
+where `id` is the disc's product number (`unknown` if it can't be read),
+`ts` is the Unix timestamp when the run started, and `framenum` is the frame
+the shot was taken on. Images are lossless PNG so pixel-exact differences
+survive for comparison.
+
+The run is unattended, so a watchdog aborts it (exit code 2) if emulation
+throughput collapses. Because the loop has no pacing, a healthy run produces
+frames far above realtime. If fewer than 10 frames complete in a one-second
+window the run is failing: no frame completing for two seconds is reported as
+frozen (with a goroutine stack dump), and a sustained sub-floor rate is
+reported as slow. A clean run exits 0 after the replay ends.
 
 ## disasm
 
