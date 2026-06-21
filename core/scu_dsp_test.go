@@ -1425,6 +1425,41 @@ func TestSCUDSPExecDMADirection(t *testing.T) {
 	}
 }
 
+// TestSCUDSPDMABBusStride verifies that a DSP DMA write to a 16-bit B-Bus
+// device (SCSP sound RAM) doubles the write-address stride: the add-value
+// table's per-16-bit-word value (addMode=001B = 2 bytes) becomes a 4-byte
+// stride per 32-bit word, so consecutive long words land contiguously instead
+// of overlapping. Without the doubling each Write32 overwrites the prior
+// word's low half, dropping every other 16-bit sample - the cause of the BIOS
+// boot-animation audio playing an octave too high. WA0 must advance by the
+// doubled stride too so a chained streaming DMA continues contiguously.
+func TestSCUDSPDMABBusStride(t *testing.T) {
+	s := NewSCU()
+	bus := newFakeSCUBus()
+	s.SetBus(bus)
+	d := &s.dsp
+
+	const dst = 0x05A50000 // SCSP sound RAM (B-Bus)
+	d.ct[0] = 0
+	d.wa0 = dst >> 2
+	for i := uint32(0); i < 4; i++ {
+		d.data[0][i] = 0xB0000000 | i
+	}
+	// dir=1 (bit 12), addMode=1 (001B = 2 bytes/word), ramSel=0, count=4
+	instr := uint32(1<<12) | (1 << 15) | 4
+	d.execDMA(instr)
+
+	for i := uint32(0); i < 4; i++ {
+		got := bus.Read32(dst + i*4)
+		if got != (0xB0000000 | i) {
+			t.Errorf("bus[dst+%d*4] = 0x%X, want 0x%X (B-Bus stride must double to 4 bytes to avoid overlap)", i, got, 0xB0000000|i)
+		}
+	}
+	if wantWA0 := uint32(dst+4*4) >> 2; d.wa0 != wantWA0 {
+		t.Errorf("wa0 = 0x%X, want 0x%X (writeback must reflect the doubled B-Bus stride)", d.wa0, wantWA0)
+	}
+}
+
 func TestSCUDSPExecDMAFormat(t *testing.T) {
 	s := NewSCU()
 	bus := newFakeSCUBus()

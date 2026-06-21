@@ -613,6 +613,16 @@ func (d *scuDSP) execDMA(instr uint32) uint32 {
 		addr := (d.wa0 << 2) & 0x07FFFFFF
 		bank := ramSel & 3
 
+		// B-Bus devices (VDP1/VDP2/SCSP) are 16 bits wide, so a 32-bit
+		// transfer takes two bus cycles and the write-address stride is
+		// doubled (see isBBus; SCU User's Manual Precaution No. 03 prohibits
+		// long-word B-Bus access). Without this the table's per-word add
+		// (e.g. 001B = 2 bytes to the SCSP) makes consecutive 32-bit writes
+		// overlap and drop every other word.
+		if isBBus(addr) {
+			addrAdd *= 2
+		}
+
 		for i := 0; i < count; i++ {
 			val := d.data[bank][d.ct[bank]]
 			d.ct[bank] = (d.ct[bank] + 1) & 0x3F
