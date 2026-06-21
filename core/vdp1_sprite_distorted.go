@@ -17,6 +17,8 @@ type distortedResumeState struct {
 	msbOn, mesh        bool
 	userClip           uint16
 	hss, hssOdd        bool
+	hssShrinkU         bool
+	hssShrinkV         bool
 	flipH, flipV       bool
 	bboxMinX, bboxMinY int
 	bboxMaxX, bboxMaxY int
@@ -144,6 +146,12 @@ func (v *VDP1) startDistortedSprite(cmd *vdp1Command, budget int32) (consumed in
 	d.checkEcd = !(d.hss && d.dmax < d.charH) && !d.ecdOff
 	d.colr = cmd.colr
 
+	// HSS subsamples the source by parity only on an axis being shrunk;
+	// at 1:1 or enlarged, sampling is unmodified. The number of dest
+	// rows is dmax+1 (inclusive), so the V axis shrinks when dmax+1 <
+	// charH. The U axis is per connecting line (set in begin-line).
+	d.hssShrinkV = d.hss && d.dmax+1 < d.charH
+
 	// Texture V interpolation using fixed-point DDA.
 	vStart := 0
 	vEnd := d.charH - 1
@@ -224,7 +232,7 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 			} else if srcY >= d.charH {
 				srcY = d.charH - 1
 			}
-			if d.hss {
+			if d.hssShrinkV {
 				if d.hssOdd {
 					srcY |= 1
 				} else {
@@ -240,6 +248,10 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				d.lineLen = intAbs(d.lineDy)
 			}
 
+			// The connecting line spans lineLen+1 dest pixels (inclusive),
+			// so the U axis shrinks when that is fewer than charW.
+			d.hssShrinkU = d.hss && d.lineLen+1 < d.charW
+
 			if d.cc >= 4 {
 				d.gsLine = initGouraudStepper(d.gsOuterLeft.value(), d.gsOuterRight.value(), d.lineLen+1)
 			}
@@ -248,7 +260,7 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				// Single-pixel line. Plot it inline; no inner loop.
 				u := d.uStart
 				srcU := u
-				if d.hss {
+				if d.hssShrinkU {
 					if d.hssOdd {
 						srcU |= 1
 					} else {
@@ -344,7 +356,7 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				}
 
 				srcU := u
-				if d.hss {
+				if d.hssShrinkU {
 					if d.hssOdd {
 						srcU |= 1
 					} else {
