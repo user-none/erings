@@ -60,9 +60,13 @@ type scuDSP struct {
 	scu *SCU
 }
 
-// dspDMAAddRAMtoD0 maps the 3-bit add mode to byte increment for RAM-to-D0,
-// per the documented D0-bus address add value table {0,2,4,8,16,32,64,128}.
-var dspDMAAddRAMtoD0 = [8]uint32{0, 2, 4, 8, 16, 32, 64, 128}
+// dspDMAAddValue maps the DSP DMA command's 3-bit address add field to the
+// external-address byte increment. The DSP DMA instruction carries one add
+// field used for both transfer directions, so the same table applies to
+// RAM-to-D0 and D0-to-RAM. Values are SCU User's Manual Table 3.3 (Write
+// Address Add Value): 000B=0, 001B=2, 010B=4, ... 111B=128 bytes. (Precaution
+// No. 27 further restricts B-Bus-to-DSP-RAM reads to 010B = 4 bytes.)
+var dspDMAAddValue = [8]uint32{0, 2, 4, 8, 16, 32, 64, 128}
 
 // --- Register Port Methods ---
 
@@ -605,7 +609,7 @@ func (d *scuDSP) execDMA(instr uint32) uint32 {
 	}
 
 	if dir {
-		addrAdd := dspDMAAddRAMtoD0[addMode]
+		addrAdd := dspDMAAddValue[addMode]
 		addr := (d.wa0 << 2) & 0x07FFFFFF
 		bank := ramSel & 3
 
@@ -619,10 +623,7 @@ func (d *scuDSP) execDMA(instr uint32) uint32 {
 			d.wa0 = addr >> 2
 		}
 	} else {
-		var addrAdd uint32
-		if addMode&2 != 0 {
-			addrAdd = 4
-		}
+		addrAdd := dspDMAAddValue[addMode]
 		addr := (d.ra0 << 2) & 0x07FFFFFF
 
 		for i := 0; i < count; i++ {

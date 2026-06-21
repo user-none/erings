@@ -965,10 +965,10 @@ func TestDSPDMAD0ToRAM(t *testing.T) {
 	d.ra0 = 0x1000 >> 2 // RA0 in longword units
 	d.ct[0] = 0
 
-	// DMA D0,[RAM0],3: dir=0, format=0, hold=0, addMode=2 (bit1=1 -> add 4 bytes), ramSel=0, count=3
-	// D0-to-RAM only uses bit 1 of addMode for address increment
+	// DMA D0,[RAM0],3: dir=0, format=0, hold=0, addMode=2 (010B -> add 4 bytes), ramSel=0, count=3
+	// Both DMA directions decode the add field via Table 3.3 (dspDMAAddValue).
 	instr := uint32(0xC0000000)
-	instr |= 2 << 15 // addMode=010 (bit1=1 -> add 4 bytes)
+	instr |= 2 << 15 // addMode=010 (add 4 bytes)
 	instr |= 3       // count=3
 
 	d.prog[0] = instr
@@ -1407,7 +1407,7 @@ func TestSCUDSPExecDMADirection(t *testing.T) {
 		}
 	}
 
-	// DMA RAM bank 0 -> D0, count=4. dir=1 uses dspDMAAddRAMtoD0
+	// DMA RAM bank 0 -> D0, count=4. dir=1 uses dspDMAAddValue
 	// table; addMode=2 selects +4 bytes per write.
 	d.ct[0] = 0
 	d.wa0 = 0x300000 >> 2
