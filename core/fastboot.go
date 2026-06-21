@@ -121,9 +121,12 @@ func (e *Emulator) fastBootLoadGame() {
 		return
 	}
 	loadAddr := e.bus.readWramHU32(0x2B0)
-	if loadAddr < 0x06000000 || loadAddr >= 0x06100000 {
+	// The 1st Read Address (System ID +$F0) may target Work RAM-H or
+	// Work RAM-L. NiGHTS uses $06004000 (WRAM-H), GROOVE ON FIGHT uses
+	// $00200000 (WRAM-L).
+	dst := e.bus.workRAMSlice(loadAddr)
+	if dst == nil {
 		return
 	}
-	dst := e.bus.wramH[loadAddr-0x06000000:]
 	e.bus.cdblock.LoadFileByFID(2, dst)
 }

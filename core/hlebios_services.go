@@ -397,8 +397,10 @@ func hleWarnHandler(name string) hleFunc {
 // across multiple VBLANK ticks, but transfers the same bytes the
 // real BIOS would have.
 //
-// Load destination = mem.L[$060002B0] (the BIOS set this to System
-// ID +$F0 = $06004000 for NiGHTS before handoff).
+// Load destination = mem.L[$060002B0], which the BIOS copies from
+// System ID +$F0 (1st Read Address). This may be in Work RAM-H
+// ($06004000 for NiGHTS) or Work RAM-L ($00200000 for GROOVE ON
+// FIGHT); the game chooses.
 func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 	if bus.cdblock == nil {
 		fmt.Println("[HLE][ERROR] sub_1C90: no CDBlock")
@@ -409,12 +411,15 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 		fmt.Println("[HLE][ERROR] sub_1C90: $060002B0 load destination is zero")
 		return
 	}
-	if loadAddr < 0x06000000 || loadAddr >= 0x06100000 {
-		fmt.Printf("[HLE][ERROR] sub_1C90: load destination $%08X outside WRAM-H\n", loadAddr)
+	// The destination is the 1st Read Address from System ID +$F0. It
+	// may target either Work RAM-H ($06000000-$060FFFFF) or Work RAM-L
+	// ($00200000-$002FFFFF); the game chooses. NiGHTS uses $06004000
+	// (WRAM-H), GROOVE ON FIGHT uses $00200000 (WRAM-L).
+	dst := bus.workRAMSlice(loadAddr)
+	if dst == nil {
+		fmt.Printf("[HLE][ERROR] sub_1C90: load destination $%08X outside Work RAM\n", loadAddr)
 		return
 	}
-	wramOff := loadAddr - 0x06000000
-	dst := bus.wramH[wramOff:]
 	const biosFID = 2
 	_, err := bus.cdblock.LoadFileByFID(biosFID, dst)
 	if err != nil {
@@ -499,8 +504,28 @@ func hleBiosPERInitService(cpu *sh2.CPU, bus *Bus) {
 // silently skipped driver registration ($06000354 stayed zero) and
 // the game's first peripheral dispatch faulted on the null driver.
 func isPerBufferRAM(addr uint32) bool {
+	return isWorkRAM(addr)
+}
+
+// isWorkRAM reports whether addr lies in Work RAM-L
+// ($00200000-$002FFFFF) or Work RAM-H ($06000000-$060FFFFF).
+func isWorkRAM(addr uint32) bool {
 	return (addr >= 0x00200000 && addr < 0x00300000) ||
 		(addr >= 0x06000000 && addr < 0x06100000)
+}
+
+// workRAMSlice returns the backing Work RAM slice starting at addr, or
+// nil if addr is not in Work RAM-L or Work RAM-H. Used by the game-load
+// services, whose destination (System ID +$F0) may target either bank.
+func (b *Bus) workRAMSlice(addr uint32) []byte {
+	switch {
+	case addr >= 0x06000000 && addr < 0x06100000:
+		return b.wramH[addr-0x06000000:]
+	case addr >= 0x00200000 && addr < 0x00300000:
+		return b.wramL[addr-0x00200000:]
+	default:
+		return nil
+	}
 }
 
 // hleSlaveInitService is the HLE handler for slave SH-2 init. The
