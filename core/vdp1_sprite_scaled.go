@@ -100,11 +100,12 @@ func (v *VDP1) startScaledSprite(cmd *vdp1Command, budget int32) (consumed int32
 		return 0, true
 	}
 
-	// HSS subsamples the source by parity (per FBCR.EOS) only on
-	// axes being shrunk; at 1:1 or enlarged, sampling is unmodified.
+	// HSS subsamples the source by parity (per FBCR.EOS) only along the
+	// horizontal (X) read direction of a line being shrunk; vertical
+	// sampling is unaffected (manual Fig 6.5 retains every source row,
+	// odd rows included). At 1:1 or enlarged, sampling is unmodified.
 	// The end-code-disable side-effect rides on the X-shrink case.
 	s.hssShrinkX = hss && s.destW < s.charW
-	s.hssShrinkY = hss && s.destH < s.charH
 	s.hssOddParity = v.fbcr&0x10 != 0
 	s.hssEcdOff = s.hssShrinkX
 
@@ -142,13 +143,6 @@ func (v *VDP1) runScaledSprite(budget int32) (consumed int32, done bool) {
 		srcY := ((2*s.outerIdx + 1) * s.charH) / (2 * s.destH)
 		if s.effFlipV {
 			srcY = s.charH - 1 - srcY
-		}
-		if s.hssShrinkY {
-			if s.hssOddParity {
-				srcY |= 1
-			} else {
-				srcY &^= 1
-			}
 		}
 
 		fbY := s.dstY1 + s.outerIdx

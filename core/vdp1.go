@@ -83,7 +83,6 @@ type spriteResumeState struct {
 	dstX1, dstY1       int
 	effFlipH, effFlipV bool
 	hssShrinkX         bool
-	hssShrinkY         bool
 	hssOddParity       bool
 	hssEcdOff          bool
 

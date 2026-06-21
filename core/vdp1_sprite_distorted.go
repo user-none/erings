@@ -18,7 +18,6 @@ type distortedResumeState struct {
 	userClip           uint16
 	hss, hssOdd        bool
 	hssShrinkU         bool
-	hssShrinkV         bool
 	flipH, flipV       bool
 	bboxMinX, bboxMinY int
 	bboxMaxX, bboxMaxY int
@@ -143,14 +142,7 @@ func (v *VDP1) startDistortedSprite(cmd *vdp1Command, budget int32) (consumed in
 
 	d.bpp8 = v.is8bpp()
 	d.simpleMode = !v.dieEnabled() && d.cc == 0 && !d.msbOn && !d.mesh && d.userClip == 0 && !d.bpp8
-	d.checkEcd = !(d.hss && d.dmax < d.charH) && !d.ecdOff
 	d.colr = cmd.colr
-
-	// HSS subsamples the source by parity only on an axis being shrunk;
-	// at 1:1 or enlarged, sampling is unmodified. The number of dest
-	// rows is dmax+1 (inclusive), so the V axis shrinks when dmax+1 <
-	// charH. The U axis is per connecting line (set in begin-line).
-	d.hssShrinkV = d.hss && d.dmax+1 < d.charH
 
 	// Texture V interpolation using fixed-point DDA.
 	vStart := 0
@@ -226,18 +218,13 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				}
 			}
 
+			// HSS does not parity-snap the vertical axis (manual Fig 6.5
+			// retains every source row); srcY follows the V DDA directly.
 			srcY := d.vFP >> 16
 			if srcY < 0 {
 				srcY = 0
 			} else if srcY >= d.charH {
 				srcY = d.charH - 1
-			}
-			if d.hssShrinkV {
-				if d.hssOdd {
-					srcY |= 1
-				} else {
-					srcY &^= 1
-				}
 			}
 			d.rowBase = d.charAddr + uint32(srcY*d.rowStride)
 
@@ -248,9 +235,14 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				d.lineLen = intAbs(d.lineDy)
 			}
 
-			// The connecting line spans lineLen+1 dest pixels (inclusive),
-			// so the U axis shrinks when that is fewer than charW.
+			// HSS subsamples the source by parity (per FBCR.EOS) only along
+			// the horizontal read direction of a line being shrunk. The
+			// connecting line spans lineLen+1 dest pixels (inclusive), so
+			// the U axis shrinks when that is fewer than charW. End codes
+			// are disabled on that same horizontal reduce (manual Sec 6.3
+			// HSS/ECD table); end codes are a horizontal-only concept.
 			d.hssShrinkU = d.hss && d.lineLen+1 < d.charW
+			d.checkEcd = !d.hssShrinkU && !d.ecdOff
 
 			if d.cc >= 4 {
 				d.gsLine = initGouraudStepper(d.gsOuterLeft.value(), d.gsOuterRight.value(), d.lineLen+1)

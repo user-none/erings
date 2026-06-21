@@ -3016,6 +3016,45 @@ func TestDrawScaledSpriteHSSEnlargeKeepsEndCodes(t *testing.T) {
 	}
 }
 
+// TestDrawScaledSpriteHSSVerticalReduceNoYSnap verifies HSS does not
+// parity-snap the vertical axis for scaled sprites. An 8x8 source shrunk
+// to 5 dest rows must sample source rows 0,2,4,5,7 (midpoint V sampling);
+// rows 5 and 7 are odd and would be lost under an (incorrect) even Y snap.
+func TestDrawScaledSpriteHSSVerticalReduceNoYSnap(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x02, 0x00) // EOS=0 (even parity, if it applied)
+
+	// Two-coord A(0,0) C(7,4): destW=8 (1:1, charW=8), destH=5 (reduce).
+	writeCmd16(v, 0x00, 0x0001)
+	writeCmd16(v, 0x04, 0x1020) // CMDPMOD: HSS=1, color mode 4
+	writeCmd16(v, 0x06, 0x0100)
+	writeCmd16(v, 0x08, 0x1000/8)
+	writeCmd16(v, 0x0A, 0x0108) // 8x8
+	writeCmd16(v, 0x0C, 0)      // XA=0
+	writeCmd16(v, 0x0E, 0)      // YA=0
+	writeCmd16(v, 0x14, 7)      // XC=7
+	writeCmd16(v, 0x16, 4)      // YC=4
+
+	writeDrawEnd(v, 0x20)
+
+	for y := 0; y < 8; y++ {
+		for x := 0; x < 8; x++ {
+			v.WriteVRAM(0x1000+uint32(y*8+x), uint8(0x10+y))
+		}
+	}
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// dest rows 0..4 sample source rows 0,2,4,5,7 (midpoint, no Y snap).
+	for dy, srcRow := range []uint16{0, 2, 4, 5, 7} {
+		want := 0x0110 | srcRow
+		if got := readFBPixel(v, 0, dy); got != want {
+			t.Errorf("px(0,%d) = 0x%04X, want 0x%04X (src row %d, no Y snap)", dy, got, want, srcRow)
+		}
+	}
+}
+
 // --- Distorted sprite command (0x2) tests ---
 
 // writeDistortedSprite sets up a distorted sprite command at the given VRAM address.
@@ -3270,8 +3309,10 @@ func TestDrawDistortedSpriteHSSEvenCoords(t *testing.T) {
 	v.Write(0x04, 2)
 	v.Write(0x02, 0x00) // EOS=0: even coordinates
 
-	// 8x2 texture, identity quad A(0,0) B(7,0) C(7,1) D(0,1)
-	// HSS=1 via CMDPMOD bit 12
+	// 8x2 texture shrunk to a 4-pixel connecting line: quad
+	// A(0,0) B(3,0) C(3,1) D(0,1). The line spans 4 dest pixels
+	// (lineLen+1=4) from an 8-wide source, so the U axis is shrunk
+	// and the HSS=1 parity snap applies.
 	ctrl := uint16(0x0002)
 	writeCmd16(v, 0x00, ctrl)
 	writeCmd16(v, 0x04, 0x1020) // CMDPMOD: HSS=1, color mode 4
@@ -3280,9 +3321,9 @@ func TestDrawDistortedSpriteHSSEvenCoords(t *testing.T) {
 	writeCmd16(v, 0x0A, 0x0102) // 8x2
 	writeCmd16(v, 0x0C, 0)      // AX=0
 	writeCmd16(v, 0x0E, 0)      // AY=0
-	writeCmd16(v, 0x10, 7)      // BX=7
+	writeCmd16(v, 0x10, 3)      // BX=3
 	writeCmd16(v, 0x12, 0)      // BY=0
-	writeCmd16(v, 0x14, 7)      // CX=7
+	writeCmd16(v, 0x14, 3)      // CX=3
 	writeCmd16(v, 0x16, 1)      // CY=1
 	writeCmd16(v, 0x18, 0)      // DX=0
 	writeCmd16(v, 0x1A, 1)      // DY=1
@@ -3297,23 +3338,56 @@ func TestDrawDistortedSpriteHSSEvenCoords(t *testing.T) {
 	v.VBlankIn()
 	drainDrawing(v)
 
-	// With EOS=0, U coordinates forced to even: 0->0, 1->0, 2->2, 3->2, ...
-	// Check a few positions on the first row
-	// px(0,0): U forced to 0 -> dot=0x10
-	if got := readFBPixel(v, 0, 0); got != 0x0110 {
-		t.Errorf("px(0,0) = 0x%04X, want 0x0110", got)
+	// U samples 0,2,4,7 across the shrunk line; EOS=0 forces even, so
+	// the read columns are 0,2,4,6 -> dots 0x10,0x12,0x14,0x16.
+	for dx, wantCol := range []uint16{0x10, 0x12, 0x14, 0x16} {
+		want := 0x0100 | wantCol
+		if got := readFBPixel(v, dx, 0); got != want {
+			t.Errorf("px(%d,0) = 0x%04X, want 0x%04X", dx, got, want)
+		}
 	}
-	// px(1,0): U forced to 0 -> dot=0x10
-	if got := readFBPixel(v, 1, 0); got != 0x0110 {
-		t.Errorf("px(1,0) = 0x%04X, want 0x0110", got)
+}
+
+// TestDrawDistortedSpriteHSSOneToOneNoSnap verifies that the HSS parity
+// snap is suppressed when an axis is not being shrunk. The identity quad
+// A(0,0) B(7,0) maps 8 dest pixels from an 8-wide source (lineLen+1 ==
+// charW), so all 8 source columns must be read sequentially despite
+// HSS=1. This mirrors the scaled-sprite 1:1 behaviour.
+func TestDrawDistortedSpriteHSSOneToOneNoSnap(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x02, 0x00) // EOS=0
+
+	ctrl := uint16(0x0002)
+	writeCmd16(v, 0x00, ctrl)
+	writeCmd16(v, 0x04, 0x1020) // CMDPMOD: HSS=1, color mode 4
+	writeCmd16(v, 0x06, 0x0100)
+	writeCmd16(v, 0x08, 0x1000/8)
+	writeCmd16(v, 0x0A, 0x0102) // 8x2
+	writeCmd16(v, 0x0C, 0)      // AX=0
+	writeCmd16(v, 0x0E, 0)      // AY=0
+	writeCmd16(v, 0x10, 7)      // BX=7 (8 dest = 1:1)
+	writeCmd16(v, 0x12, 0)      // BY=0
+	writeCmd16(v, 0x14, 7)      // CX=7
+	writeCmd16(v, 0x16, 1)      // CY=1
+	writeCmd16(v, 0x18, 0)      // DX=0
+	writeCmd16(v, 0x1A, 1)      // DY=1
+	writeDrawEnd(v, 0x20)
+
+	for y := 0; y < 2; y++ {
+		for x := 0; x < 8; x++ {
+			v.WriteVRAM(0x1000+uint32(y*8+x), uint8(0x10+x))
+		}
 	}
-	// px(2,0): U forced to 2 -> dot=0x12
-	if got := readFBPixel(v, 2, 0); got != 0x0112 {
-		t.Errorf("px(2,0) = 0x%04X, want 0x0112", got)
-	}
-	// px(3,0): U forced to 2 -> dot=0x12
-	if got := readFBPixel(v, 3, 0); got != 0x0112 {
-		t.Errorf("px(3,0) = 0x%04X, want 0x0112", got)
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// No snap: every column readable, 0x10..0x17 across the row.
+	for dx := 0; dx < 8; dx++ {
+		want := uint16(0x0110 | dx)
+		if got := readFBPixel(v, dx, 0); got != want {
+			t.Errorf("px(%d,0) = 0x%04X, want 0x%04X", dx, got, want)
+		}
 	}
 }
 
@@ -3322,8 +3396,11 @@ func TestDrawDistortedSpriteHSSReduceIgnoresEndCode(t *testing.T) {
 	v.Write(0x04, 2)
 	v.Write(0x02, 0x00) // EOS=0
 
-	// 8x2 texture with end code at position 4, identity quad (lineLen=7 < charW=8)
-	// HSS=1+reduce: end codes disabled, treated as normal pixel data
+	// 8x2 texture with end code at position 4, drawn into a 4-pixel
+	// connecting line: quad A(0,0) B(3,0) C(3,1) D(0,1). The line spans
+	// 4 dest pixels from an 8-wide source, so the U (read) axis is
+	// horizontally reduced and HSS=1 disables end codes for it - the end
+	// code is then treated as normal pixel data.
 	ctrl := uint16(0x0002)
 	writeCmd16(v, 0x00, ctrl)
 	writeCmd16(v, 0x04, 0x1020) // CMDPMOD: HSS=1, color mode 4, ECD=0
@@ -3332,9 +3409,9 @@ func TestDrawDistortedSpriteHSSReduceIgnoresEndCode(t *testing.T) {
 	writeCmd16(v, 0x0A, 0x0102) // 8x2
 	writeCmd16(v, 0x0C, 0)      // AX=0
 	writeCmd16(v, 0x0E, 0)      // AY=0
-	writeCmd16(v, 0x10, 7)      // BX=7
+	writeCmd16(v, 0x10, 3)      // BX=3
 	writeCmd16(v, 0x12, 0)      // BY=0
-	writeCmd16(v, 0x14, 7)      // CX=7
+	writeCmd16(v, 0x14, 3)      // CX=3
 	writeCmd16(v, 0x16, 1)      // CY=1
 	writeCmd16(v, 0x18, 0)      // DX=0
 	writeCmd16(v, 0x1A, 1)      // DY=1
@@ -3351,23 +3428,25 @@ func TestDrawDistortedSpriteHSSReduceIgnoresEndCode(t *testing.T) {
 	v.VBlankIn()
 	drainDrawing(v)
 
-	// With HSS=1, end codes are ignored.
-	// EOS=0 forces even coords, so U=4 stays 4 -> dot=0xFF (end code value, drawn as pixel)
-	if got := readFBPixel(v, 4, 0); got != 0x01FF {
-		t.Errorf("px(4,0) = 0x%04X, want 0x01FF (end code treated as pixel)", got)
+	// U samples 0,2,4,6 (EOS=0 even). At dest x=2 the read column is 4,
+	// the end code; with end codes disabled it is drawn as its raw value.
+	if got := readFBPixel(v, 2, 0); got != 0x01FF {
+		t.Errorf("px(2,0) = 0x%04X, want 0x01FF (end code treated as pixel)", got)
 	}
-	// U=6 -> dot=0x16, should be drawn (not stopped by end code)
-	if got := readFBPixel(v, 6, 0); got != 0x0116 {
-		t.Errorf("px(6,0) = 0x%04X, want 0x0116 (drawn past end code)", got)
+	// dest x=3 reads column 6 -> dot=0x16, drawn (not stopped by end code).
+	if got := readFBPixel(v, 3, 0); got != 0x0116 {
+		t.Errorf("px(3,0) = 0x%04X, want 0x0116 (drawn past end code)", got)
 	}
 }
 
 // TestDrawDistortedSpriteHSSEnlargeKeepsEndCode: per manual Sec 6.3 p.86
 // HSS/ECD table, HSS=1 with enlargement keeps end codes ENABLED (HSS
-// disables end codes only when reducing). The shrink proxy for distorted
-// is dmax < charH; here dmax=3, charH=2 so checkEcd stays true. The end
-// code is therefore NOT rendered as its color value, and once it is
-// counted twice along the connecting line the row terminates.
+// disables end codes only when reducing along the horizontal read
+// direction). Here the connecting line spans 16 dest pixels from an
+// 8-wide source (lineLen+1=16 > charW=8), so it is not a reduce and
+// checkEcd stays true. The end code is therefore NOT rendered as its
+// color value, and once it is counted twice along the line the row
+// terminates.
 func TestDrawDistortedSpriteHSSEnlargeKeepsEndCode(t *testing.T) {
 	v := NewVDP1(NewSCU())
 	v.Write(0x04, 2)
@@ -3416,6 +3495,53 @@ func TestDrawDistortedSpriteHSSEnlargeKeepsEndCode(t *testing.T) {
 	// Far end of the line is past the terminated end code -> not drawn.
 	if got := readFBPixel(v, 15, 0); got != 0 {
 		t.Errorf("px(15,0) = 0x%04X, want 0x0000 (row terminated by end code)", got)
+	}
+}
+
+// TestDrawDistortedSpriteHSSVerticalReduceNoYSnap verifies HSS does not
+// parity-snap the vertical axis. Per manual Fig 6.5 the parity subsample
+// applies only to the horizontal read direction; every source row is
+// retained, odd rows included. An 8x8 source drawn into a vertically
+// reduced quad (5 dest rows) must sample source rows 0,1,3,5,7 - the odd
+// rows would vanish under an (incorrect) even-parity Y snap.
+func TestDrawDistortedSpriteHSSVerticalReduceNoYSnap(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x02, 0x00) // EOS=0 (even parity, if it applied)
+
+	// Quad A(0,0) B(7,0) C(7,4) D(0,4): horizontal 1:1 (8 dest, charW=8),
+	// vertical reduce (dmax=4 -> 5 dest rows from charH=8).
+	ctrl := uint16(0x0002)
+	writeCmd16(v, 0x00, ctrl)
+	writeCmd16(v, 0x04, 0x1020) // CMDPMOD: HSS=1, color mode 4
+	writeCmd16(v, 0x06, 0x0100)
+	writeCmd16(v, 0x08, 0x1000/8)
+	writeCmd16(v, 0x0A, 0x0108) // 8x8
+	writeCmd16(v, 0x0C, 0)      // AX=0
+	writeCmd16(v, 0x0E, 0)      // AY=0
+	writeCmd16(v, 0x10, 7)      // BX=7
+	writeCmd16(v, 0x12, 0)      // BY=0
+	writeCmd16(v, 0x14, 7)      // CX=7
+	writeCmd16(v, 0x16, 4)      // CY=4
+	writeCmd16(v, 0x18, 0)      // DX=0
+	writeCmd16(v, 0x1A, 4)      // DY=4
+	writeDrawEnd(v, 0x20)
+
+	// Each source row r filled with the constant dot 0x10+r.
+	for y := 0; y < 8; y++ {
+		for x := 0; x < 8; x++ {
+			v.WriteVRAM(0x1000+uint32(y*8+x), uint8(0x10+y))
+		}
+	}
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// dest rows 0..4 sample source rows 0,1,3,5,7 (V DDA, no snap).
+	for dy, srcRow := range []uint16{0, 1, 3, 5, 7} {
+		want := 0x0110 | srcRow
+		if got := readFBPixel(v, 0, dy); got != want {
+			t.Errorf("px(0,%d) = 0x%04X, want 0x%04X (src row %d, no Y snap)", dy, got, want, srcRow)
+		}
 	}
 }
 
