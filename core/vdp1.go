@@ -19,11 +19,10 @@ const pixelsPerYieldChunk = 8
 
 // vdp1WriteStallSystemCycles is the bus-contention penalty (in system
 // cycles) charged to VDP1's per-segment cycle budget for each 16-bit
-// VRAM port transaction by the SH-2 or SCU-DMA while drawActive=true.
-// The VDP1 port is 16-bit, so a 32-bit write costs this twice.
-// Drawing slows when the SH-2 is busy writing, keeping the SH-2 ahead
-// of drawing's read position so each command lands before VDP1 reads
-// it.
+// VRAM port transaction by an SH-2 store while drawActive=true. The
+// VDP1 port is 16-bit, so a 32-bit write costs this twice. Drawing
+// slows when the SH-2 is busy writing, keeping the SH-2 ahead of
+// drawing's read position so each command lands before VDP1 reads it.
 //
 // The VDP1 User's Manual Section 2.1 (Address Map, VRAM) gives only
 // "more than 10 wait cycles" per arbitrated access, with no exact value.
@@ -33,6 +32,17 @@ const pixelsPerYieldChunk = 8
 // list, dropping the tail sprites. A slightly larger value is used to
 // allow for some head room.
 const vdp1WriteStallSystemCycles = 24
+
+// vdp1DMABurstStallPerWord is the bus-contention penalty (in system
+// cycles) charged to VDP1's per-segment cycle budget for each 16-bit
+// B-Bus word of a bus-master burst (SCU-DMA) into VRAM while
+// drawActive=true. Per the VDP1 User's Manual Section 2.1 (Address Map,
+// VRAM, p.19) a DMA burst transfers continuously in a short period, so a
+// word costs far less than the per-access arbitration wait an SH-2 single
+// store pays. The B-Bus is 16-bit and a 32-bit write moves two words. At
+// one cycle per word a full burst stalls the draw by bytes/2 system
+// cycles - bounded by the transfer size, not by per-word arbitration.
+const vdp1DMABurstStallPerWord = 1
 
 // vdp1PreClipLineCycles is the per-line pre-clipping detection cost
 // charged when a connecting line or whole command is wholly outside
@@ -147,6 +157,7 @@ type VDP1 struct {
 	systemCycleDebt int32  // system cycles owed from prior overshoot
 
 	// vramWriteStallCycles is bus-contention stall (in system cycles)
+	// accumulated since the last TickSystemCycles. It is charged by
 	// accumulated since the last TickSystemCycles. Incremented per SH-2
 	// or SCU-DMA write to VRAM while drawActive=true; consumed and
 	// cleared at the top of TickSystemCycles where it reduces the
@@ -382,9 +393,6 @@ func (v *VDP1) ReadVRAM(addr uint32) uint8 {
 // WriteVRAM writes a byte to VDP1 VRAM.
 func (v *VDP1) WriteVRAM(addr uint32, val uint8) {
 	v.vram[addr&(vdp1VRAMSize-1)] = val
-	if v.drawActive {
-		v.vramWriteStallCycles.Add(vdp1WriteStallSystemCycles)
-	}
 }
 
 // ReadFB reads a byte from the VDP1 framebuffer. Under DIE=1 it targets
@@ -410,9 +418,6 @@ func (v *VDP1) WriteVRAM16(addr uint32, val uint16) {
 	addr &= vdp1VRAMSize - 2
 	v.vram[addr] = uint8(val >> 8)
 	v.vram[addr+1] = uint8(val)
-	if v.drawActive {
-		v.vramWriteStallCycles.Add(vdp1WriteStallSystemCycles)
-	}
 }
 
 // ReadVRAM32 reads a big-endian 32-bit value from VDP1 VRAM.
@@ -429,9 +434,19 @@ func (v *VDP1) WriteVRAM32(addr uint32, val uint32) {
 	v.vram[addr+1] = uint8(val >> 16)
 	v.vram[addr+2] = uint8(val >> 8)
 	v.vram[addr+3] = uint8(val)
-	if v.drawActive {
-		// 32-bit write = two 16-bit VRAM port transactions.
-		v.vramWriteStallCycles.Add(2 * vdp1WriteStallSystemCycles)
+}
+
+// chargeDrawStall adds `cycles` of draw-contention stall to the VDP1's
+// per-segment budget when `addr` lands in VDP1 VRAM during an active
+// draw. Per the VDP1 User's Manual Section 2.1 (Address Map, VRAM, p.19)
+// VRAM access is arbitrated against drawing (priority: system
+// controller > drawing).
+func (v *VDP1) chargeDrawStall(addr uint32, cycles int32) {
+	if !v.drawActive {
+		return
+	}
+	if m := addr & 0x07FFFFFF; m >= 0x05C00000 && m <= 0x05C7FFFF {
+		v.vramWriteStallCycles.Add(cycles)
 	}
 }
 

@@ -59,9 +59,9 @@ const (
 // The VDP1 drawing engine and VDP2 display rendering access their
 // RAM through internal device ports, not the B-Bus, so they claim
 // nothing here; their contention with B-Bus accesses is a device
-// priority rule (VDP1 manual: "the order of priority of access of
-// the VRAM is always: system controller > drawing") modeled
-// separately.
+// priority rule (VDP1 User's Manual Section 2.1 (Address Map, VRAM,
+// p.19): "the order of priority of access of the VRAM is always:
+// system controller > drawing") modeled separately.
 const (
 	areaNone   uint8 = iota // BIOS ROM, trigger regions, unmapped: no lock
 	areaCPUBus              // Work RAM-H/L, backup RAM
@@ -941,6 +941,31 @@ func (b *Bus) Write32(addr uint32, val uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
 	b.write32Impl(addr, val)
+	b.unlockArea(area)
+}
+
+// DMAWrite32 performs a bus-master (SCU-DMA) 32-bit write. It mirrors
+// Write32 but, like SH2Write32 for the SH-2, charges its access-class
+// VDP1 draw contention for a B-Bus write: a continuous burst, so the
+// 16-bit port costs vdp1DMABurstStallPerWord per word, two for a longword.
+func (b *Bus) DMAWrite32(addr uint32, val uint32) {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
+	b.write32Impl(addr, val)
+	b.unlockArea(area)
+	if area == areaBBus {
+		b.vdp1.chargeDrawStall(addr, 2*vdp1DMABurstStallPerWord)
+	}
+}
+
+// DMAWrite8 performs a bus-master (SCU-DMA) byte write. A single byte is
+// a sub-word B-Bus access whose burst cost rounds to zero, so no VDP1
+// draw stall is charged; the method exists so the DMA payload path uses
+// one consistent bus-master write API.
+func (b *Bus) DMAWrite8(addr uint32, val uint8) {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
+	b.write8Impl(addr, val)
 	b.unlockArea(area)
 }
 

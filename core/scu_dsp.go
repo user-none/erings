@@ -626,7 +626,7 @@ func (d *scuDSP) execDMA(instr uint32) uint32 {
 		for i := 0; i < count; i++ {
 			val := d.data[bank][d.ct[bank]]
 			d.ct[bank] = (d.ct[bank] + 1) & 0x3F
-			d.scu.bus.Write32(addr, val)
+			d.scu.bus.DMAWrite32(addr, val)
 			addr += addrAdd
 		}
 		if !hold {

@@ -6,11 +6,9 @@ package core
 // BusReadWriter provides the read/write interface needed by SCU DMA.
 type BusReadWriter interface {
 	Read8(addr uint32) uint8
-	Read16(addr uint32) uint16
 	Read32(addr uint32) uint32
-	Write8(addr uint32, val uint8)
-	Write16(addr uint32, val uint16)
-	Write32(addr uint32, val uint32)
+	DMAWrite8(addr uint32, val uint8)
+	DMAWrite32(addr uint32, val uint32)
 }
 
 // SCU implements the System Control Unit for the Sega Saturn.
@@ -710,7 +708,7 @@ func (s *SCU) dmaTransfer(src, dst, count, readInc, writeInc uint32) (uint32, ui
 		(readInc == 4 || readInc == 0) {
 		units := count / 4
 		for i := uint32(0); i < units; i++ {
-			s.bus.Write32(dst, s.bus.Read32(src))
+			s.bus.DMAWrite32(dst, s.bus.Read32(src))
 			src += readInc
 			dst += dstStep
 		}
@@ -725,7 +723,7 @@ func (s *SCU) dmaTransfer(src, dst, count, readInc, writeInc uint32) (uint32, ui
 	if dstStep > 4 {
 		units := count / 4
 		for i := uint32(0); i < units; i++ {
-			s.bus.Write32(dst, s.bus.Read32(src))
+			s.bus.DMAWrite32(dst, s.bus.Read32(src))
 			src += readInc
 			dst += dstStep
 		}
@@ -782,14 +780,14 @@ func (s *SCU) dmaTransfer(src, dst, count, readInc, writeInc uint32) (uint32, ui
 			haveFour := count-bytesWritten >= 4
 			if bufLen == 4 && dstAligned && haveFour {
 				w := uint32(buf[0])<<24 | uint32(buf[1])<<16 | uint32(buf[2])<<8 | uint32(buf[3])
-				s.bus.Write32(dst, w)
+				s.bus.DMAWrite32(dst, w)
 				bufLen = 0
 				bytesWritten += 4
 				if dstStep != 0 {
 					dst += 4
 				}
 			} else {
-				s.bus.Write8(dst, buf[0])
+				s.bus.DMAWrite8(dst, buf[0])
 				buf[0] = buf[1]
 				buf[1] = buf[2]
 				buf[2] = buf[3]

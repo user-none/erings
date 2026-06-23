@@ -323,6 +323,9 @@ func (b *Bus) SH2Write32(addr uint32, val uint32, frameCyc int64, slave bool) ui
 	stall := b.chargeAccess(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
 	b.write32Impl(addr, val)
 	b.unlockArea(area)
+	if area == areaBBus {
+		b.vdp1.chargeDrawStall(addr, 2*vdp1WriteStallSystemCycles)
+	}
 	return stall
 }
 
@@ -332,6 +335,9 @@ func (b *Bus) SH2Write16(addr uint32, val uint16, frameCyc int64, slave bool) ui
 	stall := b.chargeAccess(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
 	b.write16Impl(addr, val)
 	b.unlockArea(area)
+	if area == areaBBus {
+		b.vdp1.chargeDrawStall(addr, vdp1WriteStallSystemCycles)
+	}
 	return stall
 }
 
@@ -341,6 +347,9 @@ func (b *Bus) SH2Write8(addr uint32, val uint8, frameCyc int64, slave bool) uint
 	stall := b.chargeAccess(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
 	b.write8Impl(addr, val)
 	b.unlockArea(area)
+	if area == areaBBus {
+		b.vdp1.chargeDrawStall(addr, vdp1WriteStallSystemCycles)
+	}
 	return stall
 }
 
@@ -386,5 +395,8 @@ func (b *Bus) SH2RMWWrite(addr uint32, val uint8, frameCyc int64) uint32 {
 	}
 	b.write8Impl(addr, val)
 	b.unlockArea(area)
+	if area == areaBBus {
+		b.vdp1.chargeDrawStall(addr, vdp1WriteStallSystemCycles)
+	}
 	return cost - 1
 }

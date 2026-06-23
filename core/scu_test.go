@@ -388,6 +388,8 @@ func (m *mockBus) Write32(addr uint32, val uint32) {
 	m.mem[addr+2] = uint8(val >> 8)
 	m.mem[addr+3] = uint8(val)
 }
+func (m *mockBus) DMAWrite8(addr uint32, val uint8)   { m.Write8(addr, val) }
+func (m *mockBus) DMAWrite32(addr uint32, val uint32) { m.Write32(addr, val) }
 
 func TestSCUDMADirectImmediate(t *testing.T) {
 	s := NewSCU()
@@ -1755,6 +1757,8 @@ func (b *fakeSCUBus) Write16(addr uint32, val uint16) {
 func (b *fakeSCUBus) Write32(addr uint32, val uint32) {
 	b.mem[addr&^3] = val
 }
+func (b *fakeSCUBus) DMAWrite8(addr uint32, val uint8)   { b.Write8(addr, val) }
+func (b *fakeSCUBus) DMAWrite32(addr uint32, val uint32) { b.Write32(addr, val) }
 
 // runDirectDMA programs SCU level 0 for an immediate direct-mode
 // transfer with the given parameters and triggers it. Helper for the
