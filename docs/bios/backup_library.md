@@ -243,18 +243,28 @@ in-range index.
 
 #### Continuation page detection
 
-A block at index B is a **continuation page** if and only if:
-1. Bytes `mem.B[B*64+$00..+$03]` are all `$00` (the sentinel), AND
-2. The 16-bit BE word at bytes `mem.B[B*64+$04..+$05]` is a valid
-   block index in `[2, 512)`.
+The driver does **not** identify a continuation page by inspecting
+the block's content. It classifies each block **structurally**, by
+its position in the file's block chain and the `$0000` terminators
+that bound each list - never by checking whether a block's first
+bytes look like a zero header plus an in-range index.
 
-The second condition (valid first index) is necessary because
-data blocks can also start with four zero bytes - for example,
-NIGHTS_02's blocks 43..50 hold zero data, and NIGHTS data blocks
-generally have a 4-byte zero header (real BIOS writes zeros at
-+$00..+$03 of every data block; see *data block* below). The
-distinguishing feature of a real continuation page is that
-bytes +$04..+$05 hold a non-zero, in-range block index.
+The read/verify walker (driver-base +$157C) keeps a phase state and a
+flat working index array. It seeds the array with the file's first
+block, then walks it: each block is consumed either as a continuation
+page (its stored 16-bit index words are folded into the working array
+as more block references) or as a data block (its +$04..+$3F bytes
+supply 60 payload bytes). A continuation page is one reached in the
+chain's index-reading phase; the trailing data blocks are reached in
+the payload phase. Each list - the in-entry list and every
+continuation page - ends at the first `$0000` word, and the data-block
+count is hard-capped at the device's total block count.
+
+Because classification is structural, a data block whose payload
+happens to begin with four zero bytes followed by an in-range block
+index (e.g. GROOVE ON FIGHT's high-score save, whose data begins
+`$00 40`) is **not** mistaken for a continuation page. A terminated
+in-entry list therefore references only data blocks.
 
 #### Data block
 
@@ -277,32 +287,36 @@ cont page has no payload tail (capacity = 0 bytes).
 
 #### Read chain assembly
 
-To read a file, traverse the in-entry list breadth-first:
+The driver reads a file by walking its block list with a phase that
+classifies each referenced block by structure (position in the chain
+and `$0000` terminators), not by content:
 
 ```
-queue = in-entry list slots (in order, up to first $0000 or all 15)
-chain = []  // ordered list of (block, startOff, endOff) tuples
-
-while queue not empty:
-    block = queue.pop_front()
-    if is_continuation_page(block):
-        parse cont list (30 slots, single-$0000 terminated)
-        if terminated:
-            chain.append(block, tail_start, 64)  // payload tail
-        for each cont-listed index in order:
-            queue.push_back(index)
-    else:
-        chain.append(block, 4, 64)  // 60-byte data payload
+list = [ first data-block index ]   // flat working array, grows in place
+chain = []                          // ordered (block, startOff, endOff) tuples
+i = 0
+while list[i] != $0000:
+    block = list[i]
+    if block is a continuation page (reached in index-reading phase):
+        // fold its stored 16-bit indices into the working array
+        // (its own list ends at the first $0000 word; if the page is
+        //  completely full, the next block continues the chain)
+        append cont-page index words to list[]
+        if the page terminated early: chain.append(block, tail_start, 64)
+    else:                           // data block
+        chain.append(block, 4, 64)  // 60 payload bytes at +$04..+$3F
+    i += 1   // bounded by the device total block count
 
 copy `datasize` bytes from `chain` into the caller's buffer.
 ```
 
-The resulting chain order is:
-- **All in-entry cont-page tails first**, in in-entry order (typically only the last cont page in the chain has a non-empty tail, since earlier cont pages fill all 30 slots).
-- **Then all in-entry data blocks**, in in-entry order (60 bytes each).
-- **Then all cont-listed data blocks**, in the order they were enqueued (cont page 0's list, then cont page 1's list, then ...).
-
-This is single-level BFS - it works for both single-cont chains and multi-cont chains, and reduces to "all data blocks" when the in-entry list is terminated.
+For a **terminated in-entry list** (a `$0000` within the 15 slots),
+every referenced block is a data block - the chain reduces to those
+blocks in order, with no continuation pages read. Continuation pages
+appear only in the **overflow layout**, where the unterminated
+in-entry list references them positionally and their stored index
+lists are folded into the chain. In neither case is a candidate
+block's payload inspected to decide its role.
 
 #### Capacity formula
 

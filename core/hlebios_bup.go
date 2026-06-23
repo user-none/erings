@@ -274,10 +274,20 @@ type bupReadChainEntry struct {
 // single-cont, multi-cont).
 func bupBuildReadChain(bus *Bus, entry int) []bupReadChainEntry {
 	inEntryOff := entry*bupBlockSize + bupDirListOff
-	seed, _ := bupParseExtentList(bus.backup, inEntryOff, bupDirListWordSlots)
+	seed, terminated := bupParseExtentList(bus.backup, inEntryOff, bupDirListWordSlots)
 
 	var chain []bupReadChainEntry
 	var contListed []uint16
+
+	if terminated {
+		for _, idx := range seed {
+			if !bupValidBlockIdx(idx) {
+				continue
+			}
+			chain = append(chain, bupReadChainEntry{idx, bupBlockHeaderSize, uint32(bupBlockSize)})
+		}
+		return chain
+	}
 
 	// Phase 1: walk the in-entry list. Each in-entry block is either a
 	// continuation page (multi-cont layout) or a data block. Cont-page
