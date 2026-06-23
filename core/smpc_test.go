@@ -815,6 +815,45 @@ func TestSMPCINTBACKSystemDataDefaults(t *testing.T) {
 	}
 }
 
+// TestSMPCINTBACKLatchesCommandParams verifies that a command's IREG
+// parameters are captured when the command is issued (COMREG write), not
+// when its deferred dispatch later runs. The SMPC User's Manual Sec 2.2
+// sets the command parameter in IREG before issuing the command, and the
+// INTBACK continue/break protocol legitimately rewrites IREG0 while the
+// command is still pending. Reading live IREG at dispatch time would let
+// those mid-command writes change the command mode.
+func TestSMPCINTBACKLatchesCommandParams(t *testing.T) {
+	s := NewSMPC()
+
+	// Issue a system + peripheral INTBACK (IREG0=0x01, IREG1=PEN).
+	s.Write(0x01, 0x01) // IREG0: system data requested
+	s.Write(0x03, 0x08) // IREG1: PEN set (peripheral data enabled)
+	s.sf = 1
+	s.Write(0x1F, 0x10) // issue INTBACK - parameters latched here
+
+	// Overwrite IREG before the deferred dispatch runs, as the INTBACK
+	// continue/break handshake does. If the mode were read live these
+	// would turn the command into IREG0=0xC0/PEN=0 (a no-op).
+	s.Write(0x01, 0xC0)
+	s.Write(0x03, 0x00)
+
+	for s.cmdDelay > 0 {
+		s.TickScanline()
+	}
+
+	// Issue-time IREG0=0x01/IREG1=0x08 = system + peripheral: status data
+	// returned with peripheral collection pending.
+	if !s.intbackActive {
+		t.Error("intbackActive = false; dispatch used overwritten IREG, not the latched parameters")
+	}
+	if s.sr != 0x60 {
+		t.Errorf("sr = 0x%02X, want 0x60 (status, peripheral data pending)", s.sr)
+	}
+	if s.oreg[0] != 0xC0 {
+		t.Errorf("oreg[0] = 0x%02X, want 0xC0 (system status - IREG0=0x01 path)", s.oreg[0])
+	}
+}
+
 func TestSMPCINTBACKWithSETTIME(t *testing.T) {
 	s := NewSMPC()
 

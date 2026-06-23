@@ -47,6 +47,15 @@ type SMPC struct {
 	ireg   [7]uint8  // Input registers 0-6 (write-only)
 	oreg   [32]uint8 // Output registers 0-31 (read-only)
 
+	// cmdIREG latches IREG0-6 at COMREG-write time. A command's
+	// dispatch is deferred (cmdDelay), and a game may overwrite IREG
+	// between issuing the command and the deferred dispatch (e.g. the
+	// INTBACK continue/break IREG0 writes). The command parameters are
+	// fixed when the command is accepted, so dispatch reads this snapshot
+	// rather than the live IREG. The live IREG still drives the separate
+	// INTBACK continue/break handshake in continueINTBACK.
+	cmdIREG [7]uint8
+
 	pdr1  uint8 // Port data register 1 (7-bit, R/W)
 	pdr2  uint8 // Port data register 2 (7-bit, R/W)
 	ddr1  uint8 // Data direction register 1 (7-bit, write-only)
@@ -261,6 +270,9 @@ func (s *SMPC) Write(offset uint8, val uint8) {
 		}
 	case offset == 0x1F:
 		s.comreg = val
+		// Latch the command parameters at issue time. Dispatch is
+		// deferred and the game may rewrite IREG before it runs.
+		s.cmdIREG = s.ireg
 		// Defer command dispatch. Real SMPC takes microseconds
 		// (or tens of milliseconds for SYSRES/CKCHG/INTBACK) to
 		// process a command; during that window SF stays 1 (busy).
@@ -350,8 +362,8 @@ func (s *SMPC) dispatch() bool {
 
 	// Type D
 	case 0x10:
-		pen := s.ireg[1]&0x08 != 0
-		sysData := s.ireg[0] == 0x01
+		pen := s.cmdIREG[1]&0x08 != 0
+		sysData := s.cmdIREG[0] == 0x01
 		s.cmdINTBACK()
 		if sysData || pen {
 			raiseSysMgr = true
@@ -423,7 +435,7 @@ func (s *SMPC) cmdCKCHG320() {
 // cmdSETTIME copies IREG0-6 into RTC storage and resets the base
 // so future ticks advance from the newly set time.
 func (s *SMPC) cmdSETTIME() {
-	copy(s.rtc[:], s.ireg[:7])
+	copy(s.rtc[:], s.cmdIREG[:7])
 	s.rtcBaseTime = s.rtcToTime()
 	s.rtcFrames = 0
 }
@@ -442,14 +454,14 @@ func (s *SMPC) rtcToTime() time.Time {
 
 // cmdSETSMEM copies IREG0-3 into SMPC memory storage.
 func (s *SMPC) cmdSETSMEM() {
-	copy(s.smem[:], s.ireg[:4])
+	copy(s.smem[:], s.cmdIREG[:4])
 }
 
 // cmdINTBACK populates OREGs with system data and/or peripheral data.
 func (s *SMPC) cmdINTBACK() {
-	pen := s.ireg[1]&0x08 != 0
+	pen := s.cmdIREG[1]&0x08 != 0
 
-	if s.ireg[0] == 0x01 {
+	if s.cmdIREG[0] == 0x01 {
 		// OREG0: status flags
 		var oreg0 uint8
 		oreg0 |= 0x80 // STE bit 7: RTC always initialized from host time
@@ -496,15 +508,15 @@ func (s *SMPC) cmdINTBACK() {
 			// Peripheral data follows after system data
 			s.sr = 0x60 // bit6=1(fixed), PDE=1
 			s.intbackActive = true
-			s.intbackP1MD = (s.ireg[1] >> 4) & 0x03
-			s.intbackP2MD = (s.ireg[1] >> 6) & 0x03
+			s.intbackP1MD = (s.cmdIREG[1] >> 4) & 0x03
+			s.intbackP2MD = (s.cmdIREG[1] >> 6) & 0x03
 		} else {
 			s.sr = 0x40 // bit6=1(fixed), PDE=0
 		}
 	} else if pen {
 		// Peripheral-only mode (IREG0=0x00, PEN=1)
-		s.intbackP1MD = (s.ireg[1] >> 4) & 0x03
-		s.intbackP2MD = (s.ireg[1] >> 6) & 0x03
+		s.intbackP1MD = (s.cmdIREG[1] >> 4) & 0x03
+		s.intbackP2MD = (s.cmdIREG[1] >> 6) & 0x03
 		s.collectPeripheralData()
 	}
 	// IREG0=0x00 + PEN=0: no-op
