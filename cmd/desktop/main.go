@@ -7,6 +7,7 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"log"
 	"os"
@@ -15,12 +16,17 @@ import (
 	"github.com/user-none/erings/adapter"
 )
 
+//go:embed icon.webp
+var icon []byte
+
 func main() {
 	biosPath := flag.String("bios", "", "path to BIOS file (direct run; requires -disc)")
 	discPath := flag.String("disc", "", "path to disc file (direct run; requires -bios)")
 	flag.Parse()
 
 	factory := &adapter.Factory{}
+
+	desktop.SetAppIcon(icon)
 
 	if *discPath != "" {
 		options := map[string]string{"fast_boot": "true"}

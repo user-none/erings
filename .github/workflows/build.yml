@@ -1,0 +1,145 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest, windows-11-arm]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Determine version
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            echo "VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+          else
+            echo "VERSION=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+          fi
+
+      - name: Determine Linux architecture
+        if: runner.os == 'Linux'
+        run: |
+          case "$RUNNER_ARCH" in
+            X64) echo "APPIMAGE_ARCH=x86_64" >> "$GITHUB_ENV" ;;
+            ARM64) echo "APPIMAGE_ARCH=aarch64" >> "$GITHUB_ENV" ;;
+            *) echo "Unsupported Linux runner arch: $RUNNER_ARCH" >&2; exit 1 ;;
+          esac
+
+      - name: Determine Windows architecture
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          case "$RUNNER_ARCH" in
+            X64) echo "WIN_ARCH=amd64" >> "$GITHUB_ENV" ;;
+            ARM64) echo "WIN_ARCH=arm64" >> "$GITHUB_ENV" ;;
+            *) echo "Unsupported Windows runner arch: $RUNNER_ARCH" >&2; exit 1 ;;
+          esac
+
+      - name: Install Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libc6-dev libgl1-mesa-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxxf86vm-dev libasound2-dev libgtk-3-dev pkg-config
+
+      - name: Install AppImage tooling (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          base=https://github.com/linuxdeploy
+          wget -q $base/linuxdeploy/releases/download/continuous/linuxdeploy-$APPIMAGE_ARCH.AppImage
+          wget -q $base/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-$APPIMAGE_ARCH.AppImage
+          chmod +x linuxdeploy-$APPIMAGE_ARCH.AppImage linuxdeploy-plugin-appimage-$APPIMAGE_ARCH.AppImage
+          sudo mv linuxdeploy-$APPIMAGE_ARCH.AppImage /usr/local/bin/linuxdeploy
+          sudo mv linuxdeploy-plugin-appimage-$APPIMAGE_ARCH.AppImage /usr/local/bin/linuxdeploy-plugin-appimage
+
+      - name: Build (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          make appimage VERSION="$VERSION" APPIMAGE_ARCH="$APPIMAGE_ARCH"
+
+      - name: Install make (Windows)
+        if: runner.os == 'Windows'
+        run: choco install make
+
+      - name: Install ARM64 C toolchain (Windows ARM64)
+        if: runner.os == 'Windows' && runner.arch == 'ARM64'
+        shell: bash
+        run: |
+          # cgo needs a GNU-ABI aarch64 compiler. The runner's gcc is
+          # x86_64-w64-mingw32 and its clang is aarch64-pc-windows-msvc, so
+          # neither can build cgo for arm64. Fetch a pinned, checksum-verified
+          # llvm-mingw toolchain that targets aarch64-w64-mingw32.
+          ver=20260616
+          sha256=312593669435bd0bfc1a43ac3fba23c8b27e0610bade88b2738e5a01702a99ba
+          curl -fL -o llvm-mingw.zip "https://github.com/mstorsjo/llvm-mingw/releases/download/$ver/llvm-mingw-$ver-ucrt-aarch64.zip"
+          echo "$sha256  llvm-mingw.zip" | sha256sum -c -
+          powershell -Command "Expand-Archive -Path llvm-mingw.zip -DestinationPath C:\\llvm-mingw -Force"
+          echo "C:\\llvm-mingw\\llvm-mingw-$ver-ucrt-aarch64\\bin" >> "$GITHUB_PATH"
+          echo "CC=aarch64-w64-mingw32-clang" >> "$GITHUB_ENV"
+          echo "CXX=aarch64-w64-mingw32-clang++" >> "$GITHUB_ENV"
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          make windows VERSION="$VERSION"
+          cd build
+          powershell -Command "Compress-Archive -Path erings.exe -DestinationPath erings-windows-$WIN_ARCH-$VERSION.zip -Force"
+
+      - name: Build (macOS app bundle)
+        if: runner.os == 'macOS'
+        run: |
+          make macos VERSION="$VERSION"
+          cd build
+          zip -r "erings-macos-$VERSION.zip" erings.app
+
+      - name: Upload artifact (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v7
+        with:
+          name: erings-linux-${{ env.APPIMAGE_ARCH }}-${{ env.VERSION }}
+          path: build/erings-${{ env.APPIMAGE_ARCH }}.AppImage
+
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v7
+        with:
+          name: erings-windows-${{ env.WIN_ARCH }}-${{ env.VERSION }}
+          path: build/erings.exe
+
+      - name: Upload artifact (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v7
+        with:
+          name: erings-macos-${{ env.VERSION }}
+          path: build/erings.app
+
+      - name: Attach binaries to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/erings-*.AppImage
+            build/erings-windows-*.zip
+            build/erings-macos-*.zip
+          fail_on_unmatched_files: false

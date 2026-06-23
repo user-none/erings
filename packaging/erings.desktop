@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=erings
+Comment=Sega Saturn emulator
+Exec=erings
+Icon=erings
+Categories=Game;Emulator;
+Terminal=false

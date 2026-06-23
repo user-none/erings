@@ -6,7 +6,7 @@ require (
 	github.com/ebitengine/oto/v3 v3.4.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
 	github.com/user-none/eblitui/coreif v0.7.0
-	github.com/user-none/eblitui/desktop v0.4.4
+	github.com/user-none/eblitui/desktop v0.4.6
 	github.com/user-none/eblitui/romloader v0.4.1
 	github.com/user-none/go-chip-m68k v0.0.0-20260316002938-35a669db4103
 )
@@ -20,7 +20,7 @@ require (
 	github.com/ebitengine/gomobile v0.0.0-20250923094054-ea854a63cce1 // indirect
 	github.com/ebitengine/hideconsole v1.0.0 // indirect
 	github.com/ebitengine/purego v0.9.0 // indirect
-	github.com/ebitenui/ebitenui v0.7.2 // indirect
+	github.com/ebitenui/ebitenui v0.7.3 // indirect
 	github.com/frustra/bbcode v0.0.0-20201127003707-6ef347fbe1c8 // indirect
 	github.com/go-text/typesetting v0.3.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect

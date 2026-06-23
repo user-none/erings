@@ -1,0 +1,4 @@
+# Substitute the $Format:...$ token in version.go when git archive creates a
+# source archive (for example the tarball GitHub generates for a tagged
+# release). The token is left untouched in a normal working-tree checkout.
+version.go export-subst
