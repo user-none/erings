@@ -883,8 +883,18 @@ func (s *SCU) executeDMA(lvl int) {
 	src, dst := s.dmaTransfer(srcAddr, dstAddr, count, readInc, writeInc)
 	s.lockIRQ()
 
-	s.dmaR[lvl] = src
-	s.dmaW[lvl] = dst
+	// Save vs Update: the D0MD read/write address update bits (D0RUP bit
+	// 16, D0WUP bit 8) select whether each address register keeps its set
+	// value after the transfer (Save, bit=0) or advances to the post
+	// transfer end address (Update, bit=1). SCU User's Manual Sec 2.3 (DMA
+	// operation, D0MD address update bits) and Fig 3.10. A game that
+	// re-fires a DMA in Save mode expects the same set address each time.
+	if s.dmaMD[lvl]&(1<<16) != 0 {
+		s.dmaR[lvl] = src
+	}
+	if s.dmaMD[lvl]&(1<<8) != 0 {
+		s.dmaW[lvl] = dst
+	}
 
 	delay := int(count / 4)
 	if delay < 1 {
@@ -954,7 +964,13 @@ func (s *SCU) executeIndirectDMA(lvl int) {
 
 	s.lockIRQ()
 
-	s.dmaW[lvl] = tableAddr
+	// Indirect Save vs Update (SCU User's Manual Sec 2.3): the write
+	// address update bit (D0WUP, bit 8) selects whether the table-access
+	// pointer is saved at its set value (Save, re-walks the same table on
+	// the next trigger) or advanced past the walked entries (Update).
+	if s.dmaMD[lvl]&(1<<8) != 0 {
+		s.dmaW[lvl] = tableAddr
+	}
 
 	delay := int(totalCount / 4)
 	if delay < 1 {

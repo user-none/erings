@@ -1061,8 +1061,8 @@ func TestSCUDMARegWriteDrainAndRetrigger(t *testing.T) {
 	s.Write(0x00, 0x06001000)
 	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 8)
-	s.Write(0x0C, 0x102) // read +4, write +4
-	s.Write(0x14, 0x07)
+	s.Write(0x0C, 0x102)   // read +4, write +4
+	s.Write(0x14, 0x10107) // factor 7 (immediate) + Update mode (D0RUP|D0WUP)
 	s.Write(0x10, 0x01)
 
 	if s.dmaDelay[0] < 0 {
@@ -1080,7 +1080,7 @@ func TestSCUDMARegWriteDrainAndRetrigger(t *testing.T) {
 	s.Write(0x04, 0x06002008)
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102)
-	s.Write(0x14, 0x07)
+	s.Write(0x14, 0x10107) // factor 7 (immediate) + Update mode (D0RUP|D0WUP)
 	s.Write(0x10, 0x01)
 
 	// Second transfer must have already executed inline.
@@ -1094,6 +1094,42 @@ func TestSCUDMARegWriteDrainAndRetrigger(t *testing.T) {
 	}
 	if s.dmaDelay[0] < 0 {
 		t.Error("dmaDelay[0] should be set for the second transfer")
+	}
+}
+
+// TestSCUDMASaveModeKeepsAddress verifies Save mode: when the D0MD
+// read/write address update bits are clear (D0RUP bit 16, D0WUP bit 8),
+// the address registers keep their set values after a transfer instead of
+// advancing to the post-transfer end. A game re-firing such a DMA expects
+// the same destination each time; Update mode (bits set) advances and is
+// covered by TestSCUDMARegWriteDrainAndRetrigger.
+func TestSCUDMASaveModeKeepsAddress(t *testing.T) {
+	s := NewSCU()
+	mb := newMockBus()
+	s.SetBus(mb)
+
+	mb.Write32(0x06001000, 0x11112222)
+	mb.Write32(0x06001004, 0x33334444)
+
+	s.Write(0x00, 0x06001000)
+	s.Write(0x04, 0x06002000)
+	s.Write(0x08, 8)
+	s.Write(0x0C, 0x102) // read +4, write +4
+	s.Write(0x14, 0x07)  // factor 7 immediate, Save mode (update bits clear)
+	s.Write(0x10, 0x01)  // trigger
+
+	// The transfer lands at the set destination.
+	if mb.Read32(0x06002000) != 0x11112222 || mb.Read32(0x06002004) != 0x33334444 {
+		t.Errorf("transfer wrong: 0x%08X 0x%08X",
+			mb.Read32(0x06002000), mb.Read32(0x06002004))
+	}
+	// In Save mode the address registers keep their set values; Update
+	// mode would have advanced them to 0x06001008 / 0x06002008.
+	if s.dmaR[0] != 0x06001000 {
+		t.Errorf("dmaR[0] = 0x%08X, want 0x06001000 (Save mode keeps read address)", s.dmaR[0])
+	}
+	if s.dmaW[0] != 0x06002000 {
+		t.Errorf("dmaW[0] = 0x%08X, want 0x06002000 (Save mode keeps write address)", s.dmaW[0])
 	}
 }
 
@@ -1207,8 +1243,8 @@ func TestSCUDMARegWriteDrainFiresPendingFactor(t *testing.T) {
 	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102)
-	s.Write(0x14, 0x00) // factor=0 (VBlank-IN)
-	s.Write(0x10, 0x01) // arm
+	s.Write(0x14, 0x10100) // factor 0 (VBlank-IN) + Update mode (D0RUP|D0WUP)
+	s.Write(0x10, 0x01)    // arm
 	s.RaiseVBlankIN()
 	if s.dmaDelay[0] < 0 {
 		t.Fatal("dmaDelay[0] should be set after factor triggered first transfer")
@@ -1258,9 +1294,9 @@ func TestSCUDMAHeldFactorRetrigger(t *testing.T) {
 	s.Write(0x00, 0x06001000)
 	s.Write(0x04, 0x06002000)
 	s.Write(0x08, 8)
-	s.Write(0x0C, 0x102) // read +4, write +4
-	s.Write(0x14, 0x00)  // factor=0 (VBlank-IN), direct
-	s.Write(0x10, 0x01)  // arm
+	s.Write(0x0C, 0x102)   // read +4, write +4
+	s.Write(0x14, 0x10100) // factor 0 (VBlank-IN), direct + Update mode (D0RUP|D0WUP)
+	s.Write(0x10, 0x01)    // arm
 
 	if !s.dmaPending[0] {
 		t.Fatal("dmaPending[0] should be set after arming with factor 0")
