@@ -4626,6 +4626,38 @@ func TestDecodeSpritePixel8BitType8(t *testing.T) {
 	}
 }
 
+func TestDecodeSpritePixelMixedRGBSpriteWindow(t *testing.T) {
+	v := newTestVDP2()
+	// Type 6, SPCLMD=1 (mixed, bit 5), SPWINEN=1 (bit 4).
+	v.regs[vdp2SPCTL] = 0x0036
+	v.regs[vdp2PRISA] = 0x0004 // sprite register 0 = priority 4
+	v.BeginFrame()
+
+	// 0x8000 is the erase value (MSB set, low 15 bits zero). With the sprite
+	// window enabled it is transparent (priority 0), not opaque RGB black.
+	if pri, _, _, _, _, _ := v.decodeSpritePixel(0x8000); pri != 0 {
+		t.Errorf("0x8000 with SPWINEN: priority = %d, want 0 (transparent)", pri)
+	}
+
+	// A genuine RGB pixel (non-zero low 15 bits) stays opaque RGB at the
+	// sprite register 0 priority.
+	pri, _, msb, r, g, b := v.decodeSpritePixel(0xFFFF)
+	if pri != 4 || !msb || r != 255 || g != 255 || b != 255 {
+		t.Errorf("0xFFFF with SPWINEN: pri=%d msb=%v rgb=(%d,%d,%d), want pri=4 msb=true rgb=(255,255,255)",
+			pri, msb, r, g, b)
+	}
+
+	// Without the sprite window, 0x8000 is opaque RGB black (the documented
+	// mixed-mode behavior is unchanged).
+	v.regs[vdp2SPCTL] = 0x0026 // type 6, SPCLMD set, SPWINEN clear
+	v.BeginFrame()
+	pri2, _, msb2, r2, g2, b2 := v.decodeSpritePixel(0x8000)
+	if pri2 != 4 || !msb2 || r2 != 0 || g2 != 0 || b2 != 0 {
+		t.Errorf("0x8000 without SPWINEN: pri=%d msb=%v rgb=(%d,%d,%d), want pri=4 msb=true rgb=(0,0,0)",
+			pri2, msb2, r2, g2, b2)
+	}
+}
+
 func TestDecodeSpritePixel8BitTypeA(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2SPCTL] = 0x000A // type A

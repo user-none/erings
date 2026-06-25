@@ -112,6 +112,20 @@ func (v *VDP2) decodeSpritePixel(pixel uint16) (priority uint8, ccBits uint8, co
 
 	// Check for RGB direct mode
 	if spclmd && pixel&0x8000 != 0 {
+		// In mixed mode (SPCLMD=1) an MSB-set pixel is RGB, but when the
+		// sprite window is enabled (SPCTL SPWINEN, bit 4) the MSB is
+		// repurposed as the sprite-window bit for sprite types 2-7 (VDP2
+		// manual section 8.1, Sprite Window: the most significant frame
+		// buffer bit selects the window when SPWINEN is set). A pixel whose
+		// low 15 bits are all zero is then the transparent erase value, not
+		// opaque RGB black. Hardware honors this even though the manual
+		// discourages pairing SPWINEN with SPCLMD=1. Priority 0 marks the
+		// dot transparent so lower layers show through.
+		sptype := spctl & 0x0F
+		spwinen := spctl&0x10 != 0
+		if sptype >= 2 && sptype <= 7 && spwinen && pixel&0x7FFF == 0 {
+			return 0, 0, false, 0, 0, 0
+		}
 		pri := uint8(v.frame.regs[vdp2PRISA]) & 0x07
 		r, g, b = rgb555ToRGB(pixel)
 		return pri, 0, true, r, g, b
