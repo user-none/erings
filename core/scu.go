@@ -206,7 +206,7 @@ func (s *SCU) finishDMA(lvl int) {
 	s.dmaDelay[lvl] = -1
 	s.raiseInterrupt(dmaEndBit[lvl])
 
-	if s.dmaPending[lvl] && s.dmaEN[lvl]&1 != 0 {
+	if s.dmaPending[lvl] && s.dmaEN[lvl]&0x100 != 0 {
 		s.dmaPending[lvl] = false
 		if s.dmaMD[lvl]&(1<<24) != 0 {
 			s.executeIndirectDMA(lvl)
@@ -410,7 +410,14 @@ func (s *SCU) Write(offset uint32, val uint32) {
 				s.dmaAD[lvl] = val
 			case 0x10:
 				s.dmaEN[lvl] = val
-				if val&1 != 0 {
+				// SCU User's Manual Fig 3.9 + Table 3.4: the enable bit
+				// (bit 8) arms the DMA. For event start factors (0-6) the
+				// transfer fires when the selected signal arrives.
+				if s.dmaMD[lvl]&0x07 == 7 {
+					if val&1 != 0 {
+						s.triggerDMA(lvl)
+					}
+				} else if val&0x100 != 0 {
 					s.triggerDMA(lvl)
 				}
 			case 0x14:
@@ -639,7 +646,7 @@ func (s *SCU) checkDMATrigger(factor uint32) {
 		if !s.dmaPending[lvl] {
 			continue
 		}
-		if s.dmaEN[lvl]&1 == 0 {
+		if s.dmaEN[lvl]&0x100 == 0 {
 			s.dmaPending[lvl] = false
 			continue
 		}

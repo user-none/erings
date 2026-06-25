@@ -609,7 +609,7 @@ func TestSCUDMAPendingVBlankIN(t *testing.T) {
 	s.Write(0x0C, 0x101)
 	s.Write(0x14, 0x0000) // factor=0
 
-	s.Write(0x10, 0x01) // Enable - should NOT execute yet
+	s.Write(0x10, 0x100) // Enable bit (bit 8) - arms but should NOT execute yet
 
 	// Data should NOT be transferred yet
 	if mb.Read32(0x06002000) != 0 {
@@ -628,6 +628,44 @@ func TestSCUDMAPendingVBlankIN(t *testing.T) {
 	}
 	if s.dmaPending[0] {
 		t.Error("dmaPending[0] should be false after trigger")
+	}
+}
+
+// TestSCUDMAEventArmsOnEnableBitNotGO verifies the SCU User's Manual
+// Fig 3.9 + Table 3.4 semantics: an event start factor (here VBlank-IN)
+// arms the DMA when the enable bit (bit 8) is written, and the GO bit
+// (bit 0) is not involved. A GO-bit-only write must NOT arm an
+// event-factor DMA.
+func TestSCUDMAEventArmsOnEnableBitNotGO(t *testing.T) {
+	s := NewSCU()
+	mb := newMockBus()
+	s.SetBus(mb)
+
+	mb.Write32(0x06001000, 0xCAFEF00D)
+
+	s.Write(0x00, 0x06001000)
+	s.Write(0x04, 0x06002000)
+	s.Write(0x08, 4)
+	s.Write(0x0C, 0x101)
+	s.Write(0x14, 0x0000) // factor 0 (VBlank-IN), direct
+
+	// GO bit alone must not arm an event-factor DMA.
+	s.Write(0x10, 0x01)
+	if s.dmaPending[0] {
+		t.Fatal("GO bit (bit 0) must not arm an event-factor DMA")
+	}
+
+	// Enable bit (bit 8) arms it; the transfer fires on VBlank-IN.
+	s.Write(0x10, 0x100)
+	if !s.dmaPending[0] {
+		t.Fatal("enable bit (bit 8) must arm the event-factor DMA")
+	}
+	if mb.Read32(0x06002000) != 0 {
+		t.Fatal("DMA must not run until the start factor occurs")
+	}
+	s.RaiseVBlankIN()
+	if mb.Read32(0x06002000) != 0xCAFEF00D {
+		t.Errorf("dest = 0x%08X, want 0xCAFEF00D after VBlank-IN", mb.Read32(0x06002000))
 	}
 }
 
@@ -796,7 +834,7 @@ func TestSCUDMAIndirectPendingVBlankIN(t *testing.T) {
 	s.Write(0x04, 0x06003000)
 	s.Write(0x0C, 0x101)
 	s.Write(0x14, 0x01000000) // factor=0, indirect (bit 24)
-	s.Write(0x10, 0x01)       // Enable - should NOT execute yet
+	s.Write(0x10, 0x100)      // Enable bit (bit 8) - arms but should NOT execute yet
 
 	if mb.Read32(0x06002000) != 0 {
 		t.Errorf("should not transfer before trigger, got 0x%08X", mb.Read32(0x06002000))
@@ -1244,7 +1282,7 @@ func TestSCUDMARegWriteDrainFiresPendingFactor(t *testing.T) {
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102)
 	s.Write(0x14, 0x10100) // factor 0 (VBlank-IN) + Update mode (D0RUP|D0WUP)
-	s.Write(0x10, 0x01)    // arm
+	s.Write(0x10, 0x100)   // arm via enable bit (bit 8)
 	s.RaiseVBlankIN()
 	if s.dmaDelay[0] < 0 {
 		t.Fatal("dmaDelay[0] should be set after factor triggered first transfer")
@@ -1296,7 +1334,7 @@ func TestSCUDMAHeldFactorRetrigger(t *testing.T) {
 	s.Write(0x08, 8)
 	s.Write(0x0C, 0x102)   // read +4, write +4
 	s.Write(0x14, 0x10100) // factor 0 (VBlank-IN), direct + Update mode (D0RUP|D0WUP)
-	s.Write(0x10, 0x01)    // arm
+	s.Write(0x10, 0x100)   // arm via enable bit (bit 8)
 
 	if !s.dmaPending[0] {
 		t.Fatal("dmaPending[0] should be set after arming with factor 0")
