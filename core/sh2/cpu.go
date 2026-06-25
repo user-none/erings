@@ -145,11 +145,6 @@ type CPU struct {
 	cacheLRU   [64]uint8 // 6-bit pseudo-LRU per entry (Section 8.4.5)
 	ccr        uint8     // Cache Control Register (0xFFFFFE92)
 
-	// cachePurgePending is a cross-thread purge request (HLE service
-	// dispatched on the other CPU wrote memory). Applied between
-	// instructions on this CPU's own thread.
-	cachePurgePending atomic.Bool
-
 	// fetchLineAddr/Way/Off memoize the last cached instruction
 	// fetch's line resolution, so sequential fetches within one
 	// 16-byte line (typically 7 of 8) skip the 4-way tag search. The

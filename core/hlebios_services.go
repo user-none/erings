@@ -563,6 +563,8 @@ func (b *Bus) workRAMSlice(addr uint32) []byte {
 // game-installed handlers.
 func hleSlaveInitService(cpu *sh2.CPU, bus *Bus) {
 	cpu.SetVBR(0x06000400)
+	// Enable the slave's cache (CCR = $01, all ways purged).
+	cpu.SetCCR(0x01)
 	// "2RDS" ($32524453) slave-ready signal at $06000244. Real BIOS
 	// slave-init code at $06000614 writes this after VBR is set;
 	// master code that polls $06000244 ("is the slave running?")

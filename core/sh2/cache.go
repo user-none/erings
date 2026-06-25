@@ -282,23 +282,6 @@ func (c *CPU) cachePurge() {
 // instructions.
 func (c *CPU) CachePurge() { c.cachePurge() }
 
-// RequestCachePurge schedules a purge to be applied on this CPU's own
-// thread (ApplyPendingCachePurge). Safe to call cross-thread: used
-// when an HLE service dispatched on the OTHER CPU writes memory this
-// CPU may have cached. The delivery delay is at most a tick chunk,
-// well inside the staleness window hardware itself allows (no snoop,
-// Section 8.5.3).
-func (c *CPU) RequestCachePurge() { c.cachePurgePending.Store(true) }
-
-// ApplyPendingCachePurge applies a cross-thread purge request, if one
-// is pending. Called from the CPU's own execution loop between
-// instructions.
-func (c *CPU) ApplyPendingCachePurge() {
-	if c.cachePurgePending.CompareAndSwap(true, false) {
-		c.cachePurge()
-	}
-}
-
 // associativePurge invalidates the line holding addr's tag at addr's
 // entry, if present (Section 8.4.7): a write to the purge area
 // (partition 010) clears the valid bit of a matching line in any way.

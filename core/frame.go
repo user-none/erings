@@ -178,7 +178,6 @@ func (e *Emulator) RunFrame() {
 			if chunk > syncChunkCycles {
 				chunk = syncChunkCycles
 			}
-			e.master.ApplyPendingCachePurge()
 			for c := uint32(0); c < chunk; c++ {
 				e.stepMaster(pos + int64(cyc) + int64(c))
 			}
@@ -433,7 +432,6 @@ func (e *Emulator) walkSecondaryFrame() {
 			if rem := lineEnd - pos; chunk > rem {
 				chunk = rem
 			}
-			e.slave.ApplyPendingCachePurge()
 			if smpc.SSHEnabled() {
 				for c := int64(0); c < chunk; c++ {
 					e.stepSlave(pos + c)

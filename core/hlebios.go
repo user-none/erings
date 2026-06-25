@@ -536,34 +536,24 @@ func (h *HLEBIOS) register(addr uint32, fn hleFunc) {
 	h.hooks[addr] = fn
 }
 
-// dispatch returns the closure wired into CPU.HLEHook for the given
-// CPU. The closure captures both the HLEBIOS and the CPU, so even
-// though the Emulator holds no reference to HLEBIOS the struct
-// stays alive as long as the CPU keeps the hook.
-//
-// Cache coherence: a service is BIOS code that on hardware ran on the
-// calling CPU through its cache - its writes updated that cache, and
-// its code/data footprint evicted resident lines. The Go
-// implementation writes memory directly (helpers, slice copies), so
-// after every service both CPUs' caches are purged: the calling CPU
-// synchronously (its own goroutine, between instructions), the other via
-// a cross-goroutine request applied on its own goroutine. Without this a
-// CPU polls stale cached copies of the work areas the service updated
-// and never observes the change.
+// dispatch returns the closure wired into CPU.HLEHook for the given CPU.
+// The closure captures the HLEBIOS and the CPU, so even though the
+// Emulator holds no reference to HLEBIOS the struct stays alive as long as
+// the CPU keeps the hook. When the CPU fetches a magic address
+// ($A0000xxx), the closure runs the Go service registered for it.
 func (h *HLEBIOS) dispatch(cpu *sh2.CPU) func(pc uint32) {
-	other := h.slave
-	if cpu == h.slave {
-		other = h.master
-	}
 	return func(pc uint32) {
 		if pc>>12 != 0xA0000 {
 			return
 		}
-		if fn, ok := h.hooks[pc]; ok {
-			fn(cpu, h.bus)
-			cpu.CachePurge()
-			other.RequestCachePurge()
+		fn, ok := h.hooks[pc]
+		if !ok {
+			return
 		}
+		fn(cpu, h.bus)
+		// The Go service wrote memory directly, bypassing this CPU's
+		// cache; purge it so later reads on this CPU see those writes.
+		cpu.CachePurge()
 	}
 }
 
