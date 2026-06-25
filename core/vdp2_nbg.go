@@ -86,13 +86,6 @@ func (v *VDP2) decodeNBGConfig(screen int) nbgConfig {
 		cfg.scrollYFP = int32(v.frame.regs[vdp2SCYIN0]&0x7FF)<<8 | int32(v.frame.regs[vdp2SCYDN0]>>8)
 		cfg.incXFP = int32(v.frame.regs[vdp2ZMXIN0]&0x07)<<8 | int32(v.frame.regs[vdp2ZMXDN0]>>8)
 		cfg.incYFP = int32(v.frame.regs[vdp2ZMYIN0]&0x07)<<8 | int32(v.frame.regs[vdp2ZMYDN0]>>8)
-		if cfg.incXFP == 0 {
-			cfg.incXFP = 0x100
-		}
-		if cfg.incYFP == 0 {
-			cfg.incYFP = 0x100
-		}
-		// ZMCTL reduction enable clamps horizontal increment
 		zmctl := v.frame.regs[vdp2ZMCTL]
 		zmhf0 := zmctl & 0x01
 		zmqt0 := (zmctl >> 1) & 0x01
@@ -141,12 +134,6 @@ func (v *VDP2) decodeNBGConfig(screen int) nbgConfig {
 		cfg.scrollYFP = int32(v.frame.regs[vdp2SCYIN1]&0x7FF)<<8 | int32(v.frame.regs[vdp2SCYDN1]>>8)
 		cfg.incXFP = int32(v.frame.regs[vdp2ZMXIN1]&0x07)<<8 | int32(v.frame.regs[vdp2ZMXDN1]>>8)
 		cfg.incYFP = int32(v.frame.regs[vdp2ZMYIN1]&0x07)<<8 | int32(v.frame.regs[vdp2ZMYDN1]>>8)
-		if cfg.incXFP == 0 {
-			cfg.incXFP = 0x100
-		}
-		if cfg.incYFP == 0 {
-			cfg.incYFP = 0x100
-		}
 		// ZMCTL reduction enable clamps horizontal increment
 		zmctl := v.frame.regs[vdp2ZMCTL]
 		zmhf1 := (zmctl >> 8) & 0x01
@@ -472,9 +459,6 @@ func (v *VDP2) nbgCellSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) fun
 			hi := v.readVRAM16(tableOff + fieldOff)
 			lo := v.readVRAM16(tableOff + fieldOff + 2)
 			lineIncXFP = int32(hi&0x07)<<8 | int32(lo>>8)
-			if lineIncXFP == 0 {
-				lineIncXFP = 0x100
-			}
 		}
 	}
 
@@ -793,9 +777,6 @@ func (v *VDP2) nbgBitmapSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) f
 			hi := v.readVRAM16(tableOff + fieldOff)
 			lo := v.readVRAM16(tableOff + fieldOff + 2)
 			lineIncXFP = int32(hi&0x07)<<8 | int32(lo>>8)
-			if lineIncXFP == 0 {
-				lineIncXFP = 0x100
-			}
 		}
 	}
 

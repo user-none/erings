@@ -9,6 +9,14 @@ import "testing"
 func newTestVDP2() *VDP2 {
 	v := NewVDP2(NewSCU())
 	v.regs[vdp2TVMD] = 0x8000 // DISP=1
+	// Coordinate increment 1.0 (integer part = 1) for NBG0 and NBG1, as a
+	// game programs for normal (unscaled) display. Increment 0 is a valid
+	// hardware setting that collapses the layer to the scroll origin, so
+	// the fixture must set 1.0 explicitly rather than rely on a default.
+	v.regs[vdp2ZMXIN0] = 0x0001
+	v.regs[vdp2ZMYIN0] = 0x0001
+	v.regs[vdp2ZMXIN1] = 0x0001
+	v.regs[vdp2ZMYIN1] = 0x0001
 	return v
 }
 
@@ -1882,7 +1890,7 @@ func TestRenderNBG_ZoomOut2x(t *testing.T) {
 	// Set X increment to 2.0 (0x200 in 3.8 fixed-point: integer=2, frac=0)
 	v.regs[vdp2ZMXIN0] = 0x0002
 	v.regs[vdp2ZMXDN0] = 0x0000
-	// Y increment = 1.0 (default: both 0 -> treated as 1.0)
+	// Y increment stays at the fixture default of 1.0.
 
 	// PND at (0,0): charNum=1, palette=0
 	v.vram[0] = 0x00
@@ -1935,7 +1943,7 @@ func TestRenderNBG_ZoomIn(t *testing.T) {
 	// X increment = 0.5 (0x080 in 3.8: integer=0, frac=0x80)
 	v.regs[vdp2ZMXIN0] = 0x0000
 	v.regs[vdp2ZMXDN0] = 0x8000 // bits 15:8 = 0x80
-	// Y = 1.0 default
+	// Y increment stays at the fixture default of 1.0.
 
 	// PND
 	v.vram[0] = 0x00
@@ -1971,6 +1979,92 @@ func TestRenderNBG_ZoomIn(t *testing.T) {
 	g2 := uint8(px2 >> 8)
 	if g2 != 255 {
 		t.Errorf("zoom 0.5x: pixel 2 G=%d, want 255 (green=dot 11)", g2)
+	}
+}
+
+// TestRenderNBG_ZoomZeroCollapses verifies that a coordinate increment of 0
+// (a valid setting per PDF Sec 5.4 Table 5.1) holds the source coordinate at
+// the scroll origin: display coordinate = increment*counter + scroll, so
+// increment 0 makes every dot sample the origin. The whole NBG collapses to
+// the single source dot rather than displaying 1:1.
+func TestRenderNBG_ZoomZeroCollapses(t *testing.T) {
+	v := newTestVDP2()
+
+	v.regs[vdp2BGON] = 0x0001
+	v.regs[vdp2CHCTLA] = 0x0010 // 256-color
+	v.regs[vdp2PNCN0] = 0x0000
+	v.regs[vdp2MPABN0] = 0x0000
+	v.regs[vdp2MPCDN0] = 0x0000
+	v.regs[vdp2PRINA] = 0x0001
+
+	// Increment 0.0 in both directions (override the fixture's 1.0).
+	v.regs[vdp2ZMXIN0] = 0x0000
+	v.regs[vdp2ZMXDN0] = 0x0000
+	v.regs[vdp2ZMYIN0] = 0x0000
+	v.regs[vdp2ZMYDN0] = 0x0000
+
+	// PND at (0,0): charNum=1
+	v.vram[3] = 0x01
+
+	// Cell 1, 256-color: origin dot (0,0)=10 (red); neighbours differ so a
+	// 1:1 render would show distinct colors. Row 0: 10,11; row 1 dot 0: 12.
+	v.vram[0x20+0] = 10 // (col0,row0)
+	v.vram[0x20+1] = 11 // (col1,row0)
+	v.vram[0x20+8] = 12 // (col0,row1)
+
+	v.cram[10*2], v.cram[10*2+1] = 0x00, 0x1F // red
+	v.cram[11*2], v.cram[11*2+1] = 0x03, 0xE0 // green
+	v.cram[12*2], v.cram[12*2+1] = 0x7C, 0x00 // blue
+
+	buf := make([]uint32, 352*256)
+	renderTestNBG(v, 0, buf)
+	w := v.frame.width
+
+	// Origin dot is red.
+	if r := uint8(buf[0] >> 16); r != 255 {
+		t.Errorf("origin px(0,0) R=%d, want 255 (red=dot 10)", r)
+	}
+	// Horizontal collapse: px(1,0) samples the origin too, not dot 11.
+	if buf[1] != buf[0] {
+		t.Errorf("zoom 0: px(1,0)=0x%08X should match origin 0x%08X (X collapsed)", buf[1], buf[0])
+	}
+	// Vertical collapse: px(0,1) samples the origin too, not dot 12.
+	if buf[w] != buf[0] {
+		t.Errorf("zoom 0: px(0,1)=0x%08X should match origin 0x%08X (Y collapsed)", buf[w], buf[0])
+	}
+}
+
+// TestRenderNBG_ZoomZeroTransparentOrigin verifies that an NBG with increment
+// 0 whose scroll-origin dot is transparent (code 0) reads transparent across
+// the whole layer, so the layer is hidden until the increment is ramped up to
+// 1.0.
+func TestRenderNBG_ZoomZeroTransparentOrigin(t *testing.T) {
+	v := newTestVDP2()
+
+	v.regs[vdp2BGON] = 0x0001
+	v.regs[vdp2CHCTLA] = 0x0010 // 256-color
+	v.regs[vdp2PNCN0] = 0x0000
+	v.regs[vdp2MPABN0] = 0x0000
+	v.regs[vdp2MPCDN0] = 0x0000
+	v.regs[vdp2PRINA] = 0x0001
+
+	v.regs[vdp2ZMXIN0] = 0x0000
+	v.regs[vdp2ZMYIN0] = 0x0000
+
+	// PND at (0,0): charNum=1. Origin dot (0,0)=0 (transparent); a visible
+	// dot exists elsewhere in the cell that a 1:1 render would show.
+	v.vram[3] = 0x01
+	v.vram[0x20+1] = 10 // (col1,row0) visible, but never sampled
+	v.cram[10*2], v.cram[10*2+1] = 0x00, 0x1F
+
+	buf := make([]uint32, 352*256)
+	renderTestNBG(v, 0, buf)
+	w := v.frame.width
+
+	for _, idx := range []int{0, 1, 2, w, w + 1} {
+		if buf[idx] != 0 {
+			t.Errorf("zoom 0 transparent origin: buf[%d]=0x%08X, want 0 (layer hidden)", idx, buf[idx])
+		}
 	}
 }
 
