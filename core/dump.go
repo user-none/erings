@@ -323,7 +323,7 @@ func dumpSH2IRQ(c *sh2.CPU) []byte {
 // a dumped region). Layout (big-endian): comreg (u8), sf (u8),
 // areaCode (u8), flags (u8), cmdDelay (i32), rtcFrames (u64). The flags
 // byte packs: bit0 sshEnabled, bit1 soundEnabled, bit2 cdEnabled,
-// bit3 resetEnabled, bit4 intbackContinuePending.
+// bit3 resetEnabled.
 func dumpSMPC(s *SMPC) []byte {
 	var flags uint8
 	if s.sshEnabled {
@@ -337,9 +337,6 @@ func dumpSMPC(s *SMPC) []byte {
 	}
 	if s.resetEnabled {
 		flags |= 1 << 3
-	}
-	if s.intbackContinuePending {
-		flags |= 1 << 4
 	}
 	out := make([]byte, 0, 4+4+8)
 	out = append(out, s.comreg, s.sf, s.areaCode, flags)

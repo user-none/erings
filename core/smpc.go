@@ -11,8 +11,8 @@ import "time"
 //
 // INTBACK (0x10) initial-dispatch time is approximated here; the full
 // peripheral-scan phase is driven separately by IREG0 continue/break
-// writes (handled in continueINTBACK), so the dispatch delay only
-// covers the setup of the first status reply.
+// writes (queued as continue/break ops, serviced in processINTBACKStep),
+// so the dispatch delay only covers the setup of the first status reply.
 var smpcCmdTimeUsec = [0x20]int{
 	0x00: 30,     // MSHON
 	0x02: 30,     // SSHON
@@ -37,6 +37,13 @@ var smpcCmdTimeUsec = [0x20]int{
 // variance between modes is insignificant for command timing.
 const smpcUsecPerLine = 64
 
+// smpcOp is one queued SMPC operation (see SMPC.pendingOps).
+type smpcOp struct {
+	cont bool     // false: COMREG command dispatch; true: INTBACK continue/break
+	val  uint8    // COMREG value (command) or IREG0 value (continue/break)
+	ireg [7]uint8 // IREG0-6 snapshot at issue (command only)
+}
+
 // SMPC implements the System Manager and Peripheral Control for the Sega Saturn.
 // It provides register storage and byte-level access on odd addresses within
 // the 0x00100000-0x0010007F range (after bit 29 stripping).
@@ -47,13 +54,11 @@ type SMPC struct {
 	ireg   [7]uint8  // Input registers 0-6 (write-only)
 	oreg   [32]uint8 // Output registers 0-31 (read-only)
 
-	// cmdIREG latches IREG0-6 at COMREG-write time. A command's
-	// dispatch is deferred (cmdDelay), and a game may overwrite IREG
-	// between issuing the command and the deferred dispatch (e.g. the
-	// INTBACK continue/break IREG0 writes). The command parameters are
-	// fixed when the command is accepted, so dispatch reads this snapshot
-	// rather than the live IREG. The live IREG still drives the separate
-	// INTBACK continue/break handshake in continueINTBACK.
+	// cmdIREG holds the IREG0-6 snapshot for the command currently being
+	// dispatched. The snapshot is taken when the command reaches the head
+	// of pendingOps (at COMREG write for the first queued command), so a
+	// game may rewrite IREG between issuing the command and its deferred
+	// dispatch without changing the command parameters.
 	cmdIREG [7]uint8
 
 	pdr1  uint8 // Port data register 1 (7-bit, R/W)
@@ -78,13 +83,15 @@ type SMPC struct {
 
 	sshEnabled bool // Slave SH-2 enabled (SSHON/SSHOFF)
 
-	// INTBACK continue requested by an IREG0 write; serviced at the
-	// next TickScanline (see Write).
-	intbackContinuePending bool
-	soundEnabled           bool // Sound CPU enabled (SNDON/SNDOFF)
-	cdEnabled              bool // CD block enabled (CDON/CDOFF)
-	resetEnabled           bool // Reset button NMI enabled (RESENAB/RESDISA)
-	dotsel                 bool // Dot clock select: false=320, true=352
+	// pendingOps is the in-order queue of SMPC operations awaiting
+	// service by TickScanline: COMREG command dispatches and INTBACK
+	// continue/break IREG0 writes, processed FIFO so their effects land
+	// in program order.
+	pendingOps   []smpcOp
+	soundEnabled bool // Sound CPU enabled (SNDON/SNDOFF)
+	cdEnabled    bool // CD block enabled (CDON/CDOFF)
+	resetEnabled bool // Reset button NMI enabled (RESENAB/RESDISA)
+	dotsel       bool // Dot clock select: false=320, true=352
 
 	masterNMI         func() // NMI request to master SH-2 (NMIREQ)
 	masterNMIDeferred func()
@@ -127,18 +134,60 @@ func (s *SMPC) TickFrame() {
 // true when the command requires the SCU System Manager interrupt
 // (INTBACK); the caller raises it.
 func (s *SMPC) TickScanline() bool {
-	var raiseSysMgr bool
-	if s.intbackContinuePending {
-		s.intbackContinuePending = false
-		raiseSysMgr = s.continueINTBACK()
+	if len(s.pendingOps) == 0 {
+		return false
 	}
+	pending := s.pendingOps[0]
+	if pending.cont {
+		// INTBACK continue/break step: serviced one per scanline so each
+		// raises its own System Manager interrupt, in program order.
+		s.pendingOps = s.pendingOps[1:]
+		raise := s.processINTBACKStep(pending.val)
+		s.primeNextDispatch()
+		return raise
+	}
+	// Command dispatch: drain its delay, then run it.
 	if s.cmdDelay > 0 {
 		s.cmdDelay--
-		if s.cmdDelay == 0 {
-			raiseSysMgr = s.dispatch() || raiseSysMgr
-		}
 	}
-	return raiseSysMgr
+	if s.cmdDelay > 0 {
+		return false
+	}
+	s.comreg = pending.val
+	s.cmdIREG = pending.ireg
+	raise := s.dispatch()
+	s.pendingOps = s.pendingOps[1:]
+	s.primeNextDispatch()
+	return raise
+}
+
+// primeNextDispatch primes the dispatch delay when a command reaches the
+// head of the queue (continue/break ops carry no delay).
+func (s *SMPC) primeNextDispatch() {
+	if len(s.pendingOps) > 0 && !s.pendingOps[0].cont {
+		s.comreg = s.pendingOps[0].val
+		s.cmdDelay = s.cmdScanlines()
+	}
+}
+
+// processINTBACKStep services one captured INTBACK continue/break value.
+// A step whose INTBACK has already ended (intbackActive cleared) is a
+// no-op drain. Returns true when the System Manager interrupt is needed.
+func (s *SMPC) processINTBACKStep(val uint8) bool {
+	if !s.intbackActive {
+		return false
+	}
+	if val&0x40 != 0 { // bit 6: break - terminate INTBACK
+		s.intbackActive = false
+		s.sf = 0
+		return false
+	}
+	if val&0x80 != 0 { // bit 7: continue - collect peripheral data
+		s.collectPeripheralData()
+		s.sf = 0
+		return true
+	}
+	return false
 }
 
 // cmdScanlines returns the dispatch delay for the currently staged
@@ -260,24 +309,16 @@ func (s *SMPC) Write(offset uint8, val uint8) {
 	switch {
 	case offset >= 0x01 && offset <= 0x0D:
 		s.ireg[(offset-0x01)/2] = val
-		// IREG0 write triggers INTBACK continue/break. The continue
-		// raises the System Manager interrupt, which claims the SCU
-		// domain - deferred to TickScanline so it never runs while
-		// the bus dispatch holds this register access's CPU-Bus
-		// claim (the SCU -> bus acquisition order would invert).
-		if offset == 0x01 && s.intbackActive {
-			s.intbackContinuePending = true
+		if offset == 0x01 && val&0xC0 != 0 && (s.intbackActive || len(s.pendingOps) > 0) {
+			s.pendingOps = append(s.pendingOps, smpcOp{cont: true, val: val})
 		}
 	case offset == 0x1F:
-		s.comreg = val
-		// Latch the command parameters at issue time. Dispatch is
-		// deferred and the game may rewrite IREG before it runs.
-		s.cmdIREG = s.ireg
-		// Defer command dispatch. Real SMPC takes microseconds
-		// (or tens of milliseconds for SYSRES/CKCHG/INTBACK) to
-		// process a command; during that window SF stays 1 (busy).
-		// TickScanline drains the counter and runs dispatch.
-		s.cmdDelay = s.cmdScanlines()
+		pending := len(s.pendingOps) == 0
+		s.pendingOps = append(s.pendingOps, smpcOp{val: val, ireg: s.ireg})
+		if pending {
+			s.comreg = val
+			s.cmdDelay = s.cmdScanlines()
+		}
 	case offset == 0x63:
 		s.sf = val & 0x01
 	case offset == 0x75:
@@ -579,27 +620,6 @@ func (s *SMPC) collectPeripheralData() {
 
 	// All data fits in one response, command complete
 	s.intbackActive = false
-}
-
-// continueINTBACK handles IREG0 continue/break signaling during
-// INTBACK (triggered by an IREG0 write, not an SF write). Returns true
-// when the caller must raise the SCU System Manager interrupt
-// (continue path).
-func (s *SMPC) continueINTBACK() bool {
-	if s.ireg[0]&0x40 != 0 {
-		// Bit 6: break - terminate INTBACK
-		s.intbackActive = false
-		s.sf = 0
-		return false
-	}
-
-	if s.ireg[0]&0x80 != 0 {
-		// Bit 7: continue - collect peripheral data
-		s.collectPeripheralData()
-		s.sf = 0
-		return true
-	}
-	return false
 }
 
 func (s *SMPC) cmdNMIREQ() {} // 0x18 - NMI Request

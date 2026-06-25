@@ -854,6 +854,41 @@ func TestSMPCINTBACKLatchesCommandParams(t *testing.T) {
 	}
 }
 
+// TestSMPCINTBACKContinueBeforeDispatch covers the CRUSADER case: the game
+// writes the INTBACK continue (IREG0 bit7) immediately after issuing the
+// command, before the deferred system-phase dispatch runs. The continue must
+// be captured in program order and serviced after the system phase so the
+// peripheral phase still runs - reading live IREG at a deferred time would
+// collapse the burst and lose the continue (the game would wait forever for
+// peripheral data).
+func TestSMPCINTBACKContinueBeforeDispatch(t *testing.T) {
+	s := NewSMPC()
+	s.SetPadData(0, 0x1234)
+	s.SetPadData(1, 0x5678)
+
+	s.Write(0x01, 0x01) // IREG0: system data
+	s.Write(0x03, 0x08) // IREG1: PEN, P1MD/P2MD = 0 (both ports collected)
+	s.sf = 1
+	s.Write(0x1F, 0x10) // issue INTBACK (dispatch deferred)
+	s.Write(0x01, 0x80) // continue, written before the deferred dispatch
+
+	for len(s.pendingOps) > 0 {
+		s.TickScanline()
+	}
+
+	// The continue must have run: peripheral data overwrites OREG and
+	// intbackActive clears (single-response collection).
+	if s.intbackActive {
+		t.Error("intbackActive still set; the continue/peripheral phase was lost")
+	}
+	if s.oreg[0] != 0xF1 {
+		t.Errorf("oreg[0] = 0x%02X, want 0xF1 (port-1 status from peripheral collection)", s.oreg[0])
+	}
+	if s.oreg[2] != 0x12 || s.oreg[3] != 0x34 {
+		t.Errorf("port-1 pad = %02X%02X, want 1234 (peripheral phase did not run)", s.oreg[2], s.oreg[3])
+	}
+}
+
 func TestSMPCINTBACKWithSETTIME(t *testing.T) {
 	s := NewSMPC()
 
@@ -1641,8 +1676,7 @@ func TestSMPCContinueINTBACKBreak(t *testing.T) {
 	s.intbackActive = true
 	s.sr = 0x60
 	// IREG0 bit 6 = break.
-	s.ireg[0] = 0x40
-	s.continueINTBACK()
+	s.processINTBACKStep(0x40)
 	if s.intbackActive {
 		t.Error("intbackActive not cleared on break")
 	}
@@ -1658,9 +1692,8 @@ func TestSMPCContinueINTBACKNoFlags(t *testing.T) {
 	s := NewSMPC()
 	s.intbackActive = true
 	s.sr = 0xAA
-	s.ireg[0] = 0x01 // no bit 6 or bit 7
 
-	s.continueINTBACK()
+	s.processINTBACKStep(0x01) // no bit 6 or bit 7
 
 	if !s.intbackActive {
 		t.Error("intbackActive cleared on neutral IREG0 write")
