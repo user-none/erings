@@ -834,9 +834,11 @@ func (c *CPU) read16(addr uint32) uint16 {
 			return c.cacheRead16(addr)
 		}
 	case 1, 7: // cache-through; I/O area
-	case 2, 3, 4, 5: // purge/address-array (no data on reads)/reserved
+	case 2, 3, 5: // purge/address-array (no data on reads)/reserved
 		return 0
-	case 6: // data array (Section 8.4.8)
+	case 4, 6: // data array (Section 8.4.8); partition 4 (0x80000000) is
+		// Reserved (Table 7.3) but games access it out-of-bounds, where
+		// hardware aliases it to the data array.
 		off := addr & 0xFFE
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
@@ -862,11 +864,13 @@ func (c *CPU) read32(addr uint32) uint32 {
 			return c.cacheRead32(addr)
 		}
 	case 1, 7: // cache-through; I/O area
-	case 2, 4, 5: // purge area reads / reserved
+	case 2, 5: // purge area reads / reserved
 		return 0
 	case 3: // address array read (Section 8.4.9, longword only)
 		return c.addressArrayRead(addr)
-	case 6: // data array (Section 8.4.8)
+	case 4, 6: // data array (Section 8.4.8); partition 4 (0x80000000) is
+		// Reserved (Table 7.3) but games access it out-of-bounds, where
+		// hardware aliases it to the data array.
 		off := addr & 0xFFC
 		return uint32(c.cacheData[off])<<24 |
 			uint32(c.cacheData[off+1])<<16 |
@@ -974,9 +978,14 @@ func (c *CPU) read8(addr uint32) uint8 {
 			return c.cacheRead8(addr)
 		}
 	case 1, 7: // cache-through; I/O area
-	case 2, 3, 4, 5: // purge/address-array (no data on reads)/reserved
+	case 2, 3, 5: // purge/address-array (no data on reads)/reserved
 		return 0
-	case 6: // data array (Section 8.4.8)
+	// Partition 4 (0x80000000-0x9FFFFFFF) is Reserved in the address map
+	// (SH7604 manual Table 7.3, note: "Do not access reserved spaces, as
+	// this will cause operating errors"). Games still reach it through
+	// out-of-bounds accesses, where hardware aliases it to the cache data
+	// array, so it is serviced here rather than returning no data.
+	case 4, 6: // data array (Section 8.4.8)
 		return c.cacheData[addr&0xFFF]
 	}
 	v, stall := c.bus.SH2Read8(addr, c.frameCyc, !c.isMaster)
