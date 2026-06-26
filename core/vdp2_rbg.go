@@ -512,42 +512,71 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 				pixelKAstFP := curLineKAstFP + pp.dkax*hcnt
 				coefAddr := rbgCoefAddrFromFP(pixelKAstFP, curKtaofBits, curCoefOneWord)
 				coefVal, coefMSB, coefLC := v.readCoefficient(coefAddr, curCoefOneWord, mode3, crkte)
+
+				// In RPMD mode 2 the MSB of parameter A's coefficient selects
+				// the rotation parameter (VDP2 manual Sec 6.1, Table 6.4): MSB 0
+				// keeps parameter A, MSB 1 switches the dot to parameter B.
+				// After switching, parameter B's own coefficient table is read;
+				// its MSB is a transparency bit and its value replaces B's kx/ky
+				// (or Xp in mode 3). Parameter A's coefficient value and line
+				// color do not apply to a switched dot.
+				if cfg.rpMode == 2 && useA && coefMSB {
+					pf = pfB
+					pp = paramB
+					xsp = xspB
+					ysp = yspB
+					kx = pp.kx
+					ky = pp.ky
+					xpVal = pf.xp
+					curMapRegs = mapRegsB
+					curMapOffset = mapOffsetB
+					if needB {
+						pcH := mapDim * planePagesHB
+						pcV := mapDim * planePagesVB
+						curPlaneCellsH = pcH
+						curPlaneCellsV = pcV
+						curTotalPixH = pcH * 4 * charPx
+						curTotalPixV = pcV * 4 * charPx
+					}
+					curScreenOver = screenOverB
+
+					if coefEnB {
+						mode3B := coefModeB == 3
+						pixelKAstFPB := lineKAstFPB + pp.dkax*hcnt
+						coefAddrB := rbgCoefAddrFromFP(pixelKAstFPB, uint32(ktaof>>8), coefOneWordB)
+						coefValB, coefMSBB, coefLCB := v.readCoefficient(coefAddrB, coefOneWordB, mode3B, crkte)
+						if klceB {
+							v.rbg0LCBuf[y*width+x] = coefLCB | 0x80
+						}
+						if coefMSBB {
+							// Parameter B transparency bit.
+							buf[y*width+x] = 0
+							continue
+						}
+						switch coefModeB {
+						case 0: // Replace both kx and ky
+							kx = coefValB
+							ky = coefValB
+						case 1: // Replace kx
+							kx = coefValB
+						case 2: // Replace ky
+							ky = coefValB
+						case 3: // Replace Xp
+							xpVal = coefValB
+						}
+					}
+					goto skipCoefApply
+				}
+
+				// Staying on the current parameter.
 				if curKLCE {
 					v.rbg0LCBuf[y*width+x] = coefLC | 0x80
 				}
-
-				// MSB handling
-				if cfg.rpMode == 2 && useA {
-					// Mode 2: MSB switches parameters
-					if coefMSB {
-						// Switch to Param B for this pixel
-						pf = pfB
-						pp = paramB
-						xsp = xspB
-						ysp = yspB
-						kx = pp.kx
-						ky = pp.ky
-						xpVal = pf.xp
-						curMapRegs = mapRegsB
-						curMapOffset = mapOffsetB
-						if needB {
-							pcH := mapDim * planePagesHB
-							pcV := mapDim * planePagesVB
-							curPlaneCellsH = pcH
-							curPlaneCellsV = pcV
-							curTotalPixH = pcH * 4 * charPx
-							curTotalPixV = pcV * 4 * charPx
-						}
-						curScreenOver = screenOverB
-						curKLCE = klceB
-						goto skipCoefApply
-					}
-				} else if coefMSB {
-					// Transparent
+				if coefMSB {
+					// Transparent dot.
 					buf[y*width+x] = 0
 					continue
 				}
-
 				switch curCoefMode {
 				case 0: // Replace both kx and ky
 					kx = coefVal

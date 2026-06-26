@@ -4248,6 +4248,87 @@ func TestRBG0ScreenOverWrap(t *testing.T) {
 	}
 }
 
+// TestRBG0RPMD2ParamBCoefficient verifies the RPMD mode 2 parameter switch
+// reads parameter B's own coefficient table once a dot has been switched to
+// parameter B (VDP2 User's Manual Sec 6.1, Table 6.4): parameter A's
+// coefficient MSB selects the parameter, and after switching, parameter B's
+// coefficient MSB is a transparency bit. A switched dot whose parameter B
+// coefficient has MSB=1 must be transparent; with MSB=0 it renders the
+// parameter B image.
+func TestRBG0RPMD2ParamBCoefficient(t *testing.T) {
+	setup := func() *VDP2 {
+		v := setupRBG0Identity(t)
+		paramA := uint32(0x10000)
+		paramB := uint32(0x10080)
+
+		// RPMD = 2: coefficient-driven A/B switching.
+		v.regs[vdp2RPMD] = 0x0002
+		// KTCTL: enable 2-word coefficient tables for both A and B, mode 0
+		// (replace kx/ky). bit0=KTE_A, bit8=KTE_B.
+		v.regs[vdp2KTCTL] = 0x0101
+		v.regs[vdp2KTAOF] = 0x0000
+
+		// Parameter B map registers point at page 0 (same cell data as A).
+		for i := 0; i < 8; i++ {
+			v.regs[vdp2MPABRB+i] = 0x0000
+		}
+
+		// Parameter B identity transform with kx/ky = 1.0 so dot (0,0) maps
+		// to cell (0,0).
+		writeRotParam32(v, paramB, 0x1C, 0x0001, 0x0000) // A = 1.0
+		writeRotParam32(v, paramB, 0x2C, 0x0001, 0x0000) // E = 1.0
+		writeRotParam32(v, paramB, 0x10, 0x0001, 0x0000) // DYst = 1.0
+		writeRotParam32(v, paramB, 0x14, 0x0001, 0x0000) // DX = 1.0
+		writeRotParam32(v, paramB, 0x4C, 0x0001, 0x0000) // kx = 1.0 (static)
+		writeRotParam32(v, paramB, 0x50, 0x0001, 0x0000) // ky = 1.0 (static)
+
+		// Coefficient table A at byte 0x18000: KAst integer = 0x18000/4.
+		// decodeFPkast: hi word holds the integer part (KAst FP = hi<<10).
+		writeRotParam32(v, paramA, 0x54, 0x6000, 0x0000) // KAst_A -> 0x18000
+		writeRotParam32(v, paramA, 0x58, 0x0000, 0x0000) // dKAst_A = 0
+		// Coefficient table B at byte 0x18100: integer = 0x18100/4 = 0x6040.
+		writeRotParam32(v, paramB, 0x54, 0x6040, 0x0000) // KAst_B -> 0x18100
+		writeRotParam32(v, paramB, 0x58, 0x0000, 0x0000) // dKAst_B = 0
+
+		// Parameter A coefficient at 0x18000: MSB=1 forces the switch to B.
+		writeVRAM16(v, 0x18000, 0x8000)
+		writeVRAM16(v, 0x18002, 0x0000)
+
+		// Red cell at (0,0) so a rendered parameter B dot is non-transparent.
+		writeVRAM16(v, 0, 0x0001) // palette=1
+		writeVRAM16(v, 2, 0x0001) // charNum=1
+		for i := 0; i < 4; i++ {
+			v.vram[0x20+i] = 0x33
+		}
+		v.cram[38] = 0x00
+		v.cram[39] = 0x1F // red
+		return v
+	}
+
+	// Parameter B coefficient MSB=0: the switched dot renders the B image.
+	v := setup()
+	writeVRAM16(v, 0x18100, 0x0001) // MSB=0, kx = 1.0
+	writeVRAM16(v, 0x18102, 0x0000)
+	buf := make([]uint32, 352*256)
+	renderTestRBG0(v, buf)
+	if buf[0] == 0 {
+		t.Fatal("RPMD2 switch to B, B coefficient MSB=0: dot(0,0) should render the B image")
+	}
+	if r := uint8(buf[0] >> 16); r != 255 {
+		t.Errorf("RPMD2 switch to B: dot(0,0) R=%d, want 255 (red)", r)
+	}
+
+	// Parameter B coefficient MSB=1: the switched dot is transparent.
+	v = setup()
+	writeVRAM16(v, 0x18100, 0x8000) // MSB=1 (transparent)
+	writeVRAM16(v, 0x18102, 0x0000)
+	clear(buf)
+	renderTestRBG0(v, buf)
+	if buf[0] != 0 {
+		t.Errorf("RPMD2 switch to B, B coefficient MSB=1: dot(0,0) should be transparent, got 0x%08X", buf[0])
+	}
+}
+
 // --- Extended Color Calculation Tests ---
 
 // setupThreeNBGLayers creates NBG0 (green, pri=priNBG0), NBG1 (red, pri=priNBG1),
