@@ -920,6 +920,11 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 	paramA, paramB := &rf.paramA, &rf.paramB
 	pfA, pfB := &rf.pfA, &rf.pfB
 	needA, needB := rf.needA, rf.needB
+	coefEnA, coefOneWordA, coefModeA := rf.coefEnA, rf.coefOneWordA, rf.coefModeA
+	coefEnB, coefOneWordB, coefModeB := rf.coefEnB, rf.coefOneWordB, rf.coefModeB
+	klceA, klceB := rf.klceA, rf.klceB
+	ktaof, crkte := rf.ktaof, rf.crkte
+	screenOverB := rf.screenOverB
 	paramABase, paramBBase := rf.paramABase, rf.paramBBase
 
 	// Bitmap base address: mapOffset (from MPOFR) * 0x20000
@@ -973,6 +978,16 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 		xspB, yspB = computePerLine(paramB, vcnt, rf.lastVcntXB, rf.lastVcntYB)
 	}
 
+	// Per-line KAst in .10 FP (see rbg0CellSpanSetup); kept as FP so the
+	// per-pixel ΔKAx x Hcnt term accumulates before integer extraction.
+	var lineKAstFPA, lineKAstFPB int64
+	if coefEnA && needA {
+		lineKAstFPA = rbgLineKAstFP(paramA.kast, paramA.dkast, vcnt, rf.lastVcntKAA)
+	}
+	if coefEnB && needB {
+		lineKAstFPB = rbgLineKAstFP(paramB.kast, paramB.dkast, vcnt, rf.lastVcntKAB)
+	}
+
 	// Per-screen color calculation enable (CCCTL) is a precondition for
 	// every special CC mode (manual Table 12.3). It is frame-constant, so
 	// compute it once per line here instead of per pixel.
@@ -994,21 +1009,114 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			var pf *rbgPerFrame
 			var pp *rotParams
 			var xsp, ysp int64
+			var curCoefEn bool
+			var curCoefOneWord bool
+			var curCoefMode uint16
+			var curLineKAstFP int64
+			var curKtaofBits uint32
+			var curKLCE bool
+			var curScreenOver uint8
 			if useA {
 				pf = pfA
 				pp = paramA
 				xsp = xspA
 				ysp = yspA
+				curCoefEn = coefEnA
+				curCoefOneWord = coefOneWordA
+				curCoefMode = coefModeA
+				curLineKAstFP = lineKAstFPA
+				curKtaofBits = uint32(ktaof)
+				curKLCE = klceA
+				curScreenOver = cfg.screenOver
 			} else {
 				pf = pfB
 				pp = paramB
 				xsp = xspB
 				ysp = yspB
+				curCoefEn = coefEnB
+				curCoefOneWord = coefOneWordB
+				curCoefMode = coefModeB
+				curLineKAstFP = lineKAstFPB
+				curKtaofBits = uint32(ktaof >> 8)
+				curKLCE = klceB
+				curScreenOver = screenOverB
 			}
 
 			kx := pp.kx
 			ky := pp.ky
 			xpVal := pf.xp
+
+			// The coefficient table modifies the rotation coordinate transform
+			// (kx/ky/Xp) per dot and supplies the transparency / parameter-switch
+			// MSB, independently of whether the surface is cell or bitmap (VDP2
+			// manual Sec 6.1 p.147). Mirrors rbg0CellSpanSetup.
+			if curCoefEn {
+				mode3 := curCoefMode == 3
+				pixelKAstFP := curLineKAstFP + pp.dkax*hcnt
+				coefAddr := rbgCoefAddrFromFP(pixelKAstFP, curKtaofBits, curCoefOneWord)
+				coefVal, coefMSB, coefLC := v.readCoefficient(coefAddr, curCoefOneWord, mode3, crkte)
+
+				// RPMD mode 2: parameter A's coefficient MSB selects the
+				// parameter; MSB 1 switches the dot to B, then B's own
+				// coefficient is read (its MSB is a transparency bit).
+				if cfg.rpMode == 2 && useA && coefMSB {
+					pf = pfB
+					pp = paramB
+					xsp = xspB
+					ysp = yspB
+					kx = pp.kx
+					ky = pp.ky
+					xpVal = pf.xp
+					curScreenOver = screenOverB
+
+					if coefEnB {
+						mode3B := coefModeB == 3
+						pixelKAstFPB := lineKAstFPB + pp.dkax*hcnt
+						coefAddrB := rbgCoefAddrFromFP(pixelKAstFPB, uint32(ktaof>>8), coefOneWordB)
+						coefValB, coefMSBB, coefLCB := v.readCoefficient(coefAddrB, coefOneWordB, mode3B, crkte)
+						if klceB {
+							v.rbg0LCBuf[y*width+x] = coefLCB | 0x80
+						}
+						if coefMSBB {
+							buf[y*width+x] = 0
+							continue
+						}
+						switch coefModeB {
+						case 0:
+							kx = coefValB
+							ky = coefValB
+						case 1:
+							kx = coefValB
+						case 2:
+							ky = coefValB
+						case 3:
+							xpVal = coefValB
+						}
+					}
+					goto bmpCoefDone
+				}
+
+				// Staying on the current parameter.
+				if curKLCE {
+					v.rbg0LCBuf[y*width+x] = coefLC | 0x80
+				}
+				if coefMSB {
+					buf[y*width+x] = 0
+					continue
+				}
+				switch curCoefMode {
+				case 0:
+					kx = coefVal
+					ky = coefVal
+				case 1:
+					kx = coefVal
+				case 2:
+					ky = coefVal
+				case 3:
+					xpVal = coefVal
+				}
+			}
+		bmpCoefDone:
 
 			xRaw := xsp + pf.dxFP*hcnt
 			yRaw := ysp + pf.dyFP*hcnt
@@ -1021,7 +1129,7 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			// cell-mode over-pattern (mode 1) and modes 2/3 all leave the
 			// out-of-bounds dot transparent.
 			if mapX < 0 || mapX >= bmpW || mapY < 0 || mapY >= bmpH {
-				switch cfg.screenOver {
+				switch curScreenOver {
 				case 0: // wrap
 					mapX = ((mapX % bmpW) + bmpW) % bmpW
 					mapY = ((mapY % bmpH) + bmpH) % bmpH

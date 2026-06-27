@@ -4329,6 +4329,136 @@ func TestRBG0RPMD2ParamBCoefficient(t *testing.T) {
 	}
 }
 
+// setupRBG0BitmapIdentity sets up RBG0 as a 256-color bitmap with identity
+// rotation (A=1, E=1, kx=ky=1.0), rotation parameter table at VRAM 0x10000, and
+// a red dot at bitmap pixel (0,0). The coefficient table is left disabled.
+func setupRBG0BitmapIdentity(t *testing.T) *VDP2 {
+	t.Helper()
+	v := newTestVDP2()
+
+	v.regs[vdp2BGON] = 1 << 4
+	// CHCTLB: RBG0 bitmap enable (bit 9) + 256-color (bits 14:12 = 001).
+	v.regs[vdp2CHCTLB] = 0x1200
+	v.regs[vdp2BMPNB] = 0x0000 // bitmap palette 0
+	v.regs[vdp2PLSZ] = 0x0000
+	v.regs[vdp2MPOFR] = 0x0000 // bitmap base = 0
+	v.regs[vdp2PRIR] = 0x0001
+	v.regs[vdp2CRAOFB] = 0x0000
+	v.regs[vdp2RPMD] = 0x0000
+	v.regs[vdp2RPRCTL] = 0x0000
+	v.regs[vdp2KTCTL] = 0x0000
+
+	// Rotation parameter table A at VRAM 0x10000.
+	v.regs[vdp2RPTAU] = 0x0000
+	v.regs[vdp2RPTAL] = 0x8000
+	paramA := uint32(0x10000)
+	writeRotParam32(v, paramA, 0x1C, 0x0001, 0x0000) // A = 1.0
+	writeRotParam32(v, paramA, 0x2C, 0x0001, 0x0000) // E = 1.0
+	writeRotParam32(v, paramA, 0x10, 0x0001, 0x0000) // DYst = 1.0
+	writeRotParam32(v, paramA, 0x14, 0x0001, 0x0000) // DX = 1.0
+	writeRotParam32(v, paramA, 0x4C, 0x0001, 0x0000) // kx = 1.0 (static)
+	writeRotParam32(v, paramA, 0x50, 0x0001, 0x0000) // ky = 1.0 (static)
+
+	// 256-color bitmap dot (0,0) = palette index 5 -> red.
+	v.vram[0] = 5
+	v.cram[10] = 0x00
+	v.cram[11] = 0x1F // red
+
+	return v
+}
+
+// TestRBG0BitmapCoefficientTransparency verifies bitmap-mode RBG0 reads the
+// coefficient table (VDP2 manual Sec 6.1 p.147: the coefficient modifies the
+// rotation coordinate transform regardless of cell/bitmap surface). A
+// coefficient with MSB=1 forces the dot transparent; MSB=0 renders the bitmap.
+func TestRBG0BitmapCoefficientTransparency(t *testing.T) {
+	setup := func() *VDP2 {
+		v := setupRBG0BitmapIdentity(t)
+		// Enable 2-word coefficient table A, mode 0 (replace kx/ky).
+		v.regs[vdp2KTCTL] = 0x0001
+		v.regs[vdp2KTAOF] = 0x0000
+		// KAst_A -> byte 0x18000 (integer 0x18000/4 = 0x6000).
+		writeRotParam32(v, 0x10000, 0x54, 0x6000, 0x0000)
+		writeRotParam32(v, 0x10000, 0x58, 0x0000, 0x0000) // dKAst_A = 0
+		return v
+	}
+
+	// MSB=0, kx = 1.0: dot renders the bitmap (red).
+	v := setup()
+	writeVRAM16(v, 0x18000, 0x0001)
+	writeVRAM16(v, 0x18002, 0x0000)
+	buf := make([]uint32, 352*256)
+	renderTestRBG0(v, buf)
+	if r := uint8(buf[0] >> 16); r != 255 {
+		t.Errorf("bitmap coefficient MSB=0: dot(0,0) R=%d, want 255 (red)", r)
+	}
+
+	// MSB=1: dot is transparent.
+	v = setup()
+	writeVRAM16(v, 0x18000, 0x8000)
+	writeVRAM16(v, 0x18002, 0x0000)
+	clear(buf)
+	renderTestRBG0(v, buf)
+	if buf[0] != 0 {
+		t.Errorf("bitmap coefficient MSB=1: dot(0,0) should be transparent, got 0x%08X", buf[0])
+	}
+}
+
+// TestRBG0BitmapRPMD2ParamBCoefficient verifies bitmap-mode RBG0 performs the
+// RPMD mode 2 parameter switch and reads parameter B's own coefficient table
+// (transparency MSB), matching the cell-mode path.
+func TestRBG0BitmapRPMD2ParamBCoefficient(t *testing.T) {
+	setup := func() *VDP2 {
+		v := setupRBG0BitmapIdentity(t)
+		paramA := uint32(0x10000)
+		paramB := uint32(0x10080)
+
+		v.regs[vdp2RPMD] = 0x0002
+		// 2-word coefficient tables for both A and B, mode 0.
+		v.regs[vdp2KTCTL] = 0x0101
+		v.regs[vdp2KTAOF] = 0x0000
+
+		// Parameter B identity transform with static kx/ky = 1.0.
+		writeRotParam32(v, paramB, 0x1C, 0x0001, 0x0000) // A = 1.0
+		writeRotParam32(v, paramB, 0x2C, 0x0001, 0x0000) // E = 1.0
+		writeRotParam32(v, paramB, 0x10, 0x0001, 0x0000) // DYst = 1.0
+		writeRotParam32(v, paramB, 0x14, 0x0001, 0x0000) // DX = 1.0
+		writeRotParam32(v, paramB, 0x4C, 0x0001, 0x0000) // kx = 1.0
+		writeRotParam32(v, paramB, 0x50, 0x0001, 0x0000) // ky = 1.0
+
+		// KAst_A -> 0x18000, KAst_B -> 0x18100.
+		writeRotParam32(v, paramA, 0x54, 0x6000, 0x0000)
+		writeRotParam32(v, paramA, 0x58, 0x0000, 0x0000)
+		writeRotParam32(v, paramB, 0x54, 0x6040, 0x0000)
+		writeRotParam32(v, paramB, 0x58, 0x0000, 0x0000)
+
+		// Parameter A coefficient MSB=1 forces the switch to B.
+		writeVRAM16(v, 0x18000, 0x8000)
+		writeVRAM16(v, 0x18002, 0x0000)
+		return v
+	}
+
+	// Parameter B coefficient MSB=0: switched dot renders the bitmap (red).
+	v := setup()
+	writeVRAM16(v, 0x18100, 0x0001)
+	writeVRAM16(v, 0x18102, 0x0000)
+	buf := make([]uint32, 352*256)
+	renderTestRBG0(v, buf)
+	if r := uint8(buf[0] >> 16); r != 255 {
+		t.Errorf("bitmap RPMD2 switch, B coefficient MSB=0: dot(0,0) R=%d, want 255 (red)", r)
+	}
+
+	// Parameter B coefficient MSB=1: switched dot is transparent.
+	v = setup()
+	writeVRAM16(v, 0x18100, 0x8000)
+	writeVRAM16(v, 0x18102, 0x0000)
+	clear(buf)
+	renderTestRBG0(v, buf)
+	if buf[0] != 0 {
+		t.Errorf("bitmap RPMD2 switch, B coefficient MSB=1: dot(0,0) should be transparent, got 0x%08X", buf[0])
+	}
+}
+
 // --- Extended Color Calculation Tests ---
 
 // setupThreeNBGLayers creates NBG0 (green, pri=priNBG0), NBG1 (red, pri=priNBG1),
