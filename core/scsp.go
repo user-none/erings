@@ -1458,14 +1458,13 @@ func (s *SCSP) TickSamples(samples int) {
 // checkSoundInterrupt evaluates SCIPD & SCIEB and delivers the highest
 // priority interrupt to the MC68EC000 via auto-vectoring.
 //
-// SCSP drives the m68k IPL2-IPL0 pins level-sensitively (SCSP User's
-// Manual Fig 4.62): the line carries the priority-encoded level derived
-// from (SCIPD & SCIEB) via SCILV0/1/2, and level 0 when nothing is pending.
-// The m68k samples that level between instructions (M68000 User's Manual
-// Sec 3.5/6.3.2), so a source cleared via SCIRE before the masked CPU
-// services it must lower the line. This routine therefore drives the line
-// to the current encoded level on every call, raising and lowering it,
-// rather than only ever raising a latched request.
+// Real SCSP drives the m68k IPL0/1/2 pins level-sensitively: the line
+// stays asserted at the priority-encoded level while (SCIPD & SCIEB) is
+// non-zero, and the m68k re-samples the line on every instruction
+// boundary, re-taking the IRQ whenever SR.I drops below the asserted
+// level. This routine therefore re-asserts the request on every call
+// (rather than only on edge transitions) so the chip's pending-IRQ
+// state stays fresh after each dispatch consumes it.
 //
 // Callers must invoke this on every state change that can affect the
 // computed level: SCIPD set/clear, SCIEB write, SCILV0/1/2 write, SCIRE
@@ -1511,7 +1510,9 @@ func (s *SCSP) checkSoundInterrupt() {
 	}
 
 	s.soundIntLevel = bestLevel
-	s.m68k.SetIPL(bestLevel, nil)
+	if bestLevel > 0 {
+		s.m68k.RequestInterrupt(bestLevel, nil)
+	}
 }
 
 // checkMainInterrupt evaluates MCIPD & MCIEB and signals the SCU. Real

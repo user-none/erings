@@ -8,7 +8,7 @@ require (
 	github.com/user-none/eblitui/coreif v0.7.0
 	github.com/user-none/eblitui/desktop v0.4.6
 	github.com/user-none/eblitui/romloader v0.4.1
-	github.com/user-none/go-chip-m68k v0.1.1
+	github.com/user-none/go-chip-m68k v0.1.0
 )
 
 require (
