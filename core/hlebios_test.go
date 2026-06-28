@@ -588,3 +588,45 @@ func TestHLEIntStubLayout(t *testing.T) {
 		}
 	}
 }
+
+// TestHLESlaveInitSetsFRTICIVector checks that hleSlaveInit sets the slave
+// FRT input-capture interrupt vector (INTC VCRC bits 14-8 = ICI vector $64)
+// when the game has installed its own slave entry. The real BIOS slave-init
+// writes the FRT vectors on every reset before jumping to the game entry,
+// and games rely on that vector while configuring FRT priority/ICIE
+// themselves.
+func TestHLESlaveInitSetsFRTICIVector(t *testing.T) {
+	_, bus, _, slave := newHLEBIOSForTest()
+
+	const gameEntry = 0x060153E8
+	bus.writeWramHU32(0x250, gameEntry)
+
+	hleSlaveInitService(slave, bus)
+
+	vcrc := slave.INTC().Read(0xFFFFFE66)
+	if got := (vcrc >> 8) & 0x7F; got != 0x64 {
+		t.Errorf("FRT ICI vector after slave init = 0x%02X, want 0x64", got)
+	}
+	if got := slave.Registers().PR; got != gameEntry {
+		t.Errorf("slave PR = 0x%08X, want game entry 0x%08X", got, gameEntry)
+	}
+}
+
+// TestHLESlaveInitHaltLoopSetsFRTICIVector verifies the FRT ICI vector is
+// also set on the halt-loop fallback path (no game slave entry installed),
+// where the slave serves only as an IRQ-driven coprocessor.
+func TestHLESlaveInitHaltLoopSetsFRTICIVector(t *testing.T) {
+	_, bus, _, slave := newHLEBIOSForTest()
+
+	bus.writeWramHU32(0x250, hleSentinel)
+
+	hleSlaveInitService(slave, bus)
+
+	vcrc := slave.INTC().Read(0xFFFFFE66)
+	if got := (vcrc >> 8) & 0x7F; got != 0x64 {
+		t.Errorf("FRT ICI vector after halt-loop slave init = 0x%02X, want 0x64", got)
+	}
+	if got := slave.Registers().PR; got != 0x2000020C {
+		t.Errorf("slave PR = 0x%08X, want halt loop 0x2000020C", got)
+	}
+}

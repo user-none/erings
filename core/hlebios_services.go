@@ -589,20 +589,27 @@ func hleSlaveInitService(cpu *sh2.CPU, bus *Bus) {
 	// halt loop cannot accept any maskable IRQ.
 	cpu.SetSR(0)
 
+	// FRT input-capture interrupt vector: INTC VCRC bits 14-8 = ICI vector
+	// ($64), matching the game's handler installed at slave VBR + $64*4 =
+	// $06000590. This is a CPU-private reg only writable by the slave
+	// itself. The real-BIOS slave-init chain ($06000600 -> sub_0600071C)
+	// writes the FRT vectors (VCRC = $6465, so ICI = $64) on every reset
+	// before reading and jumping to the game's slave entry, so it must be
+	// set unconditionally here too - not only on the halt-loop fallback.
+	// A game can install its own slave entry and configure FRT
+	// priority/ICIE itself while relying on this BIOS-set vector.
+	cpu.INTC().Write(0xFFFFFE66, 0x6400)
+
 	entry := bus.readWramHU32(0x250)
 	if entry == 0 || entry == hleSentinel {
-		// Configure slave's on-chip
-		// FRT/INTC registers so the ICI IRQ can fire. These are
-		// CPU-private regs only writable by slave itself. Real BIOS's
-		// $06000600/$06000690 chain writes them - our HLE skips that
-		// code and pokes the regs in Go.
-		//   INTC VCRC bits 14-8 = ICI vector ($64 — matches game's
-		//     handler installed at slave VBR + $64*4 = $06000590).
+		// No game slave entry yet: the slave will park at the BIOS-ROM
+		// BRA-self halt loop and serve only as an IRQ-driven coprocessor,
+		// so HLE also has to supply the FRT priority/ICIE the game would
+		// otherwise configure.
 		//   INTC IPRB bits 11-8 = FRT priority ($F — game handler's
 		//     prologue at $06012AAC clears IPRB; it expects max
 		//     priority on entry).
 		//   FRT TIER bit 7 = ICIE (input capture interrupt enable).
-		cpu.INTC().Write(0xFFFFFE66, 0x6400)
 		cpu.INTC().Write(0xFFFFFE60, 0x0F00)
 		cpu.FRT().Write(0xFFFFFE10, 0x80)
 		// These pokes bypass the CPU on-chip write path, so re-evaluate the
