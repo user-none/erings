@@ -342,6 +342,11 @@ type SCSP struct {
 	// checkMainInterrupt).
 	soundReqPending atomic.Bool
 
+	// pendingReset requests a deferred SCSP reset. Consumed at
+	// the RunFrame boundary where the workers are parked, so Reset never
+	// races.
+	pendingReset atomic.Bool
+
 	mixBuffer []int16 // Interleaved stereo output (L, R, L, R, ...)
 	mixPos    int     // Write position in mixBuffer
 
@@ -1635,6 +1640,18 @@ func (s *SCSP) M68KSerialize() []byte {
 // InReset returns whether the 68K sound CPU is held in reset.
 func (s *SCSP) InReset() bool {
 	return s.inReset
+}
+
+// RequestReset flags a deferred SCSP reset, applied at the next RunFrame
+// boundary. Used by the HLE SYS_CHGSYSCK service to reproduce the SMPC
+// CKCHG hardware reset (which silences the sound generator).
+func (s *SCSP) RequestReset() {
+	s.pendingReset.Store(true)
+}
+
+// TakePendingReset clears and returns the deferred-reset request.
+func (s *SCSP) TakePendingReset() bool {
+	return s.pendingReset.CompareAndSwap(true, false)
 }
 
 // InstallSoundDriverStub writes a minimal MC68EC000 program to sound RAM: valid

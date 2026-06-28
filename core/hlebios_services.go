@@ -241,6 +241,12 @@ func hleSysChgSysCkService(cpu *sh2.CPU, bus *Bus) {
 	// write so the prior mode's layer/priority setup cannot survive.
 	bus.vdp2.ResetRegisters()
 
+	// The SMPC CKCHG command this service stands in for also resets the
+	// sound generator (the real-BIOS path reaches it via systemReset ->
+	// SCSP.Reset). Since this service does not issue the SMPC command, it
+	// requests the same reset directly, deferred to the frame boundary.
+	bus.scsp.RequestReset()
+
 	// SMPC half: clock-mode word, transient AIACK/AREF clears, SCU RSEL,
 	// and the VDP2 TVMD resolution change.
 	bus.Write32(0x06000324, mode)

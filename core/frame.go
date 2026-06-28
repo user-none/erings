@@ -111,6 +111,10 @@ func (e *Emulator) RunFrame() {
 	if e.pendingSystemReset.CompareAndSwap(true, false) {
 		e.systemReset()
 	}
+	// Deliver the derred SMPC CKCHG reset
+	if scsp.TakePendingReset() {
+		scsp.Reset()
+	}
 	// Deliver the deferred CKCHG master NMI after systemReset, on the
 	// master goroutine (see pendingMasterNMI).
 	if e.pendingMasterNMI.CompareAndSwap(true, false) {
