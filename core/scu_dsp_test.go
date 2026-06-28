@@ -965,10 +965,10 @@ func TestDSPDMAD0ToRAM(t *testing.T) {
 	d.ra0 = 0x1000 >> 2 // RA0 in longword units
 	d.ct[0] = 0
 
-	// DMA D0,[RAM0],3: dir=0, format=0, hold=0, addMode=2 (010B -> add 4 bytes), ramSel=0, count=3
-	// Both DMA directions decode the add field via Table 3.3 (dspDMAAddValue).
+	// DMA D0,[RAM0],3: dir=0, format=0, hold=0, addMode=011 (read +4 bytes,
+	// consecutive long words), ramSel=0, count=3.
 	instr := uint32(0xC0000000)
-	instr |= 2 << 15 // addMode=010 (add 4 bytes)
+	instr |= 3 << 15 // addMode=011 (add 4 bytes)
 	instr |= 3       // count=3
 
 	d.prog[0] = instr
@@ -998,9 +998,10 @@ func TestDSPDMARAMToD0(t *testing.T) {
 	d.wa0 = 0x2000 >> 2
 	d.ct[1] = 0
 
-	// DMA [RAM1],D0,2: dir=1, format=0, hold=0, addMode=2 (add 4), ramSel=1, count=2
+	// DMA [RAM1],D0,2: dir=1, format=0, hold=0, addMode=010 (4-byte write
+	// stride, consecutive long words), ramSel=1, count=2
 	instr := uint32(0xC0000000)
-	instr |= 2 << 15 // addMode=010 (add 4)
+	instr |= 2 << 15 // addMode=010 (+2 -> 4-byte stride)
 	instr |= 1 << 12 // dir=1 (RAM-to-D0)
 	instr |= 1 << 8  // ramSel=1 (RAM1)
 	instr |= 2       // count=2
@@ -1084,9 +1085,10 @@ func TestDSPDMAAddModeRAMToD0(t *testing.T) {
 	d.wa0 = 0x2000 >> 2
 	d.ct[0] = 0
 
-	// DMA [RAM0],D0,2: addMode=3 (add 8 bytes)
+	// DMA [RAM0],D0,2: addMode=011 (8-byte write stride, one long word skipped
+	// between writes)
 	instr := uint32(0xC0000000)
-	instr |= 3 << 15 // addMode=011 (add 8)
+	instr |= 3 << 15 // addMode=011 -> 8-byte stride
 	instr |= 1 << 12 // dir=1
 	instr |= 2       // count=2
 
@@ -1395,11 +1397,12 @@ func TestSCUDSPExecDMADirection(t *testing.T) {
 		bus.Write32(0x200000+i*4, 0xA0000000|i)
 	}
 
-	// DMA D0->RAM bank 0, count=4. addMode bit 1 controls read-side +4.
+	// DMA D0->RAM bank 0, count=4. Reads advance one long word per step;
+	// addMode=011 (add 4) reads consecutive long words.
 	d.ra0 = 0x200000 >> 2
 	d.ct[0] = 0
-	// dir=0, format=0, hold=0, addMode=2 (bit1 set -> +4), ramSel=0, count=4
-	instr := uint32(0) | (2 << 15) | 4
+	// dir=0, format=0, hold=0, addMode=011 (read +4), ramSel=0, count=4
+	instr := uint32(0) | (3 << 15) | 4
 	d.execDMA(instr)
 	for i := uint32(0); i < 4; i++ {
 		if d.data[0][i] != (0xA0000000 | i) {
@@ -1407,14 +1410,14 @@ func TestSCUDSPExecDMADirection(t *testing.T) {
 		}
 	}
 
-	// DMA RAM bank 0 -> D0, count=4. dir=1 uses dspDMAAddValue
-	// table; addMode=2 selects +4 bytes per write.
+	// DMA RAM bank 0 -> D0, count=4 to a non-B-Bus target. addMode=010 is a
+	// 4-byte write stride, landing consecutive long words contiguously.
 	d.ct[0] = 0
 	d.wa0 = 0x300000 >> 2
 	for i := uint32(0); i < 4; i++ {
 		d.data[0][i] = 0xB0000000 | i
 	}
-	// dir=1 (bit 12), addMode=2 (+4), ramSel=0, count=4
+	// dir=1 (bit 12), addMode=010 (4-byte stride), ramSel=0, count=4
 	instr = (1 << 12) | (2 << 15) | 4
 	d.execDMA(instr)
 	for i := uint32(0); i < 4; i++ {
@@ -1425,14 +1428,37 @@ func TestSCUDSPExecDMADirection(t *testing.T) {
 	}
 }
 
+// TestSCUDSPDMAReadLongWordStride verifies that a DSP DMA read advances one
+// long word per step even when the add mode is below a long word. Reads
+// transfer whole long words (SCU User's Manual section 4.5), so addMode=010
+// (add 2) reads consecutive long words rather than overlapping by half a word.
+func TestSCUDSPDMAReadLongWordStride(t *testing.T) {
+	s := NewSCU()
+	bus := newFakeSCUBus()
+	s.SetBus(bus)
+	d := &s.dsp
+
+	for i := uint32(0); i < 4; i++ {
+		bus.Write32(0x200000+i*4, 0xC0000000|i)
+	}
+	d.ra0 = 0x200000 >> 2
+	d.ct[0] = 0
+	// dir=0, addMode=010 (add 2, below one long word), ramSel=0, count=4
+	instr := uint32(0) | (2 << 15) | 4
+	d.execDMA(instr)
+	for i := uint32(0); i < 4; i++ {
+		if d.data[0][i] != (0xC0000000 | i) {
+			t.Errorf("data[0][%d] = 0x%X, want 0x%X (read must advance one long word)", i, d.data[0][i], 0xC0000000|i)
+		}
+	}
+}
+
 // TestSCUDSPDMABBusStride verifies that a DSP DMA write to a 16-bit B-Bus
-// device (SCSP sound RAM) doubles the write-address stride: the add-value
-// table's per-16-bit-word value (addMode=001B = 2 bytes) becomes a 4-byte
-// stride per 32-bit word, so consecutive long words land contiguously instead
-// of overlapping. Without the doubling each Write32 overwrites the prior
-// word's low half, dropping every other 16-bit sample - the cause of the BIOS
-// boot-animation audio playing an octave too high. WA0 must advance by the
-// doubled stride too so a chained streaming DMA continues contiguously.
+// device lands consecutive long words contiguously. The addMode=001 table
+// stride is 2 bytes; a B-Bus destination doubles it to 4, one long word.
+// Without the B-Bus doubling each Write32 overwrites the prior word's low half,
+// dropping every other 16-bit half-word. WA0 must advance by the same stride
+// so a chained streaming DMA stays contiguous.
 func TestSCUDSPDMABBusStride(t *testing.T) {
 	s := NewSCU()
 	bus := newFakeSCUBus()
@@ -1445,7 +1471,8 @@ func TestSCUDSPDMABBusStride(t *testing.T) {
 	for i := uint32(0); i < 4; i++ {
 		d.data[0][i] = 0xB0000000 | i
 	}
-	// dir=1 (bit 12), addMode=1 (001B = 2 bytes/word), ramSel=0, count=4
+	// dir=1 (bit 12), addMode=001 (table stride 2, doubled to 4 on B-Bus),
+	// ramSel=0, count=4
 	instr := uint32(1<<12) | (1 << 15) | 4
 	d.execDMA(instr)
 
@@ -1474,9 +1501,9 @@ func TestSCUDSPExecDMAFormat(t *testing.T) {
 	bus.Write32(0x200004, 0xCAFEBABE)
 	d.ra0 = 0x200000 >> 2
 
-	// dir=0, format=1 (bit13), addMode=2 (read +4), ramSel=1 (bank 1),
+	// dir=0, format=1 (bit13), addMode=011 (read +4), ramSel=1 (bank 1),
 	// src-from-bank=0 (bits 2:0 = 0)
-	instr := uint32(0) | (1 << 13) | (2 << 15) | (1 << 8)
+	instr := uint32(0) | (1 << 13) | (3 << 15) | (1 << 8)
 	d.execDMA(instr)
 	if d.data[1][0] != 0xDEADBEEF || d.data[1][1] != 0xCAFEBABE {
 		t.Errorf("format DMA result: data[1] = [0x%X, 0x%X]", d.data[1][0], d.data[1][1])

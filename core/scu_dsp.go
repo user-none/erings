@@ -60,12 +60,11 @@ type scuDSP struct {
 	scu *SCU
 }
 
-// dspDMAAddValue maps the DSP DMA command's 3-bit address add field to the
-// external-address byte increment. The DSP DMA instruction carries one add
-// field used for both transfer directions, so the same table applies to
-// RAM-to-D0 and D0-to-RAM. Values are SCU User's Manual Table 3.3 (Write
-// Address Add Value): 000B=0, 001B=2, 010B=4, ... 111B=128 bytes. (Precaution
-// No. 27 further restricts B-Bus-to-DSP-RAM reads to 010B = 4 bytes.)
+// dspDMAAddValue is the SCU DSP DMA write destination's byte stride per long
+// word for a non-B-Bus target, indexed by the command Add Mode field (bits
+// 17:15; SCU User's Manual section 4.5, DMA [RAM],D0). A B-Bus target doubles
+// this stride (see execDMA). Reads do not use this table; they step one long
+// word.
 var dspDMAAddValue = [8]uint32{0, 2, 4, 8, 16, 32, 64, 128}
 
 // --- Register Port Methods ---
@@ -613,12 +612,11 @@ func (d *scuDSP) execDMA(instr uint32) uint32 {
 		addr := (d.wa0 << 2) & 0x07FFFFFF
 		bank := ramSel & 3
 
-		// B-Bus devices (VDP1/VDP2/SCSP) are 16 bits wide, so a 32-bit
-		// transfer takes two bus cycles and the write-address stride is
-		// doubled (see isBBus; SCU User's Manual Precaution No. 03 prohibits
-		// long-word B-Bus access). Without this the table's per-word add
-		// (e.g. 001B = 2 bytes to the SCSP) makes consecutive 32-bit writes
-		// overlap and drop every other word.
+		// A B-Bus destination (VDP1/VDP2/SCSP) is on the 16-bit external bus, so
+		// a long word is written as two 16-bit halves at separate addresses and
+		// the destination advances at twice the table stride (SCU User's Manual
+		// section 4.5: B-Bus write unit is 16 bits). Without this, consecutive
+		// stores overlap by half a word and every other entry is dropped.
 		if isBBus(addr) {
 			addrAdd *= 2
 		}
@@ -633,8 +631,16 @@ func (d *scuDSP) execDMA(instr uint32) uint32 {
 			d.wa0 = addr >> 2
 		}
 	} else {
-		addrAdd := dspDMAAddValue[addMode]
 		addr := (d.ra0 << 2) & 0x07FFFFFF
+
+		// SCU User's Manual section 4.5 (DMA D0,[RAM] command): a read transfers
+		// whole 32-bit long words (the transfer-word count is in long-word
+		// units), so the source advances one long word per step, or not at all
+		// when the add mode is zero (a fixed-address re-read).
+		addrAdd := uint32(0)
+		if addMode != 0 {
+			addrAdd = 4
+		}
 
 		for i := 0; i < count; i++ {
 			val := d.scu.bus.Read32(addr)
