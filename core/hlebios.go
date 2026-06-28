@@ -283,7 +283,7 @@ const (
 	hleBiosFill        = 0xA0000064 // sub_02AC: table-driven longword fill
 	hleBiosCopy        = 0xA0000068 // sub_02BC: table-driven longword copy
 	hleBiosScuISTClear = 0xA000006C // $06000664: SCU IST register clear
-	hleBiosByteExpand  = 0xA0000070 // $06000810: byte-array sign-extend to longwords
+	hleSysChgUipr      = 0xA0000070 // $06000810: SYS_CHGUIPR, copy int-priority table
 	// Warning-only handlers (not implemented yet; print on call).
 	hleBiosWarnSMPCInit   = 0xA0000074 // sub_04C8
 	hleBiosWarnGBRZero    = 0xA0000078 // sub_1800
@@ -394,7 +394,7 @@ var biosPointerSlots = []uint32{
 	0x234, 0x238, // sub_02AC fill, sub_02BC copy
 	0x250, 0x258, 0x25C, // boot-helper pointers ($06000646 halt, $0600083C sentinel x2)
 	0x268, 0x26C, 0x270, 0x274, // sub_1A18, sub_186C, sub_30DC, sub_3174
-	0x280, 0x284, 0x288, 0x28C, // $06000810 atomic memcpy, sub_1C90 int setup, sub_18A8, sub_1874
+	0x280, 0x284, 0x288, 0x28C, // $06000810 SYS_CHGUIPR int-pri copy, sub_1C90 int setup, sub_18A8, sub_1874
 	0x298, 0x29C, 0x2A0, // sub_31F4, sub_1904, sub_1800
 	0x2C4, 0x2C8, 0x2CC, 0x2D0, 0x2D4, 0x2D8, 0x2DC, // CD-block helpers
 	0x328, 0x32C, // sub_04C8 SMPC init, sub_1800 (second ref)
@@ -1017,7 +1017,7 @@ var biosPointerSlotTargets = map[uint32]uint32{
 	0x26C: hleBiosWarnCDBlock,    // CD-block helper
 	0x270: hleBiosWarnCDBlock,
 	0x274: hleBiosWarnCDBlock,
-	0x280: hleBiosByteExpand,  // $06000810 byte-expand fill
+	0x280: hleSysChgUipr,      // $06000810 SYS_CHGUIPR int-priority table copy
 	0x284: hleBiosSub1C90Load, // sub_1C90 (Go shortcut: load game from disc)
 	0x288: hleBiosWarnCDBlock,
 	0x28C: hleBiosWarnCDBlock,

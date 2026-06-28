@@ -29,7 +29,7 @@ func (h *HLEBIOS) registerServices() {
 	h.register(hleBiosFill, hleBiosFillService)
 	h.register(hleBiosCopy, hleBiosCopyService)
 	h.register(hleBiosScuISTClear, hleBiosScuISTClearService)
-	h.register(hleBiosByteExpand, hleBiosByteExpandService)
+	h.register(hleSysChgUipr, hleSysChgUiprService)
 	// Warning-only handlers for routines we haven't implemented yet.
 	h.register(hleBiosWarnSMPCInit, hleWarnHandler("sub_04C8 SMPC init"))
 	h.register(hleBiosWarnGBRZero, hleWarnHandler("sub_1800 GBR zero-fill"))
@@ -345,32 +345,23 @@ func hleBiosScuISTClearService(cpu *sh2.CPU, bus *Bus) {
 	bus.scu.Write(0xA4, cpu.Registers().R[4])
 }
 
-// hleBiosByteExpandService replaces the BIOS WRAM-H routine at
-// $06000810. Sign-extends 32 source bytes from @R4 (post-increment)
-// to 32-bit values and writes them as 32 longwords to a fixed
-// destination at $06000A7C in WRAM-H. Used by the BIOS to update a
-// per-vector data block from a packed byte representation.
-//
-// The real BIOS code masks all interrupts (SR=$00F0) around the
-// loop for atomicity; HLE doesn't need that since the entire Go
-// function runs uninterrupted between SH-2 cycles.
-//
-// Caller convention:
-//
-//	R4 (in)  = source byte array (32 bytes)
-//	R4 (out) = R4 + 32  (advanced past consumed bytes)
-//	R0 (out) = $06000A7C + 0x80  (advanced past 32 longwords written)
-func hleBiosByteExpandService(cpu *sh2.CPU, bus *Bus) {
+// hleSysChgUiprService implements SYS_CHGUIPR (the SDK dispatches it
+// through the BIOS WRAM-H function-pointer slot at $06000280, which on
+// real BIOS points to the routine at $06000810). It copies 32 longwords
+// from the caller's source table at @R4 into the SCU interrupt
+// priority/mask table for vectors $40-$5F, which the dispatcher indexes
+// as pri_base ($06000980) + vec*4 - so the vec-$40 entry lands at
+// $06000A80. Each table entry packs (SR_value << 16) | IMS_mask: the
+// dispatcher loads SR = entry>>16 before calling the handler and ORs the
+// sign-extended low word into the SCU IMS.
+func hleSysChgUiprService(cpu *sh2.CPU, bus *Bus) {
 	src := cpu.Registers().R[4]
-	const dest = uint32(0x06000A7C)
+	const dest = uint32(0x06000A80)
 	for i := uint32(0); i < 32; i++ {
-		b := bus.Read8(src + i)
-		// Sign-extend byte to 32-bit (matches MOV.B which sign-extends).
-		v := uint32(int32(int8(b)))
-		bus.Write32(dest+i*4, v)
+		bus.Write32(dest+i*4, bus.Read32(src+i*4))
 	}
-	cpu.SetReg(4, src+32)
-	cpu.SetReg(0, dest+32*4)
+	cpu.SetReg(4, src+0x80)
+	cpu.SetReg(0, dest+0x80)
 }
 
 // hleWarnHandler returns a service that prints a warning when

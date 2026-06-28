@@ -377,6 +377,39 @@ func TestHLESysChgSysCkService(t *testing.T) {
 	}
 }
 
+func TestHLESysChgUiprService(t *testing.T) {
+	// SYS_CHGUIPR copies 32 longwords verbatim from @R4 into the SCU
+	// priority/mask table at $06000A80 (matching real BIOS ROM $00000E10).
+	// Regression: it must NOT sign-extend bytes - an entry like $0000F030
+	// must stay $0000F030 (SR field 0 -> handler I-mask 0), not become
+	// $FFFFFFF0, which would run the handler at I-mask 15 and deadlock the
+	// VBlank-OUT main-loop wait.
+	_, bus, master, _ := newHLEBIOSForTest()
+	const src = uint32(0x06010000)
+	for i := uint32(0); i < 32; i++ {
+		// Low word = a plausible IMS mask with the high bit set; high word
+		// = 0. A byte sign-extend would corrupt this to $FFFFF0xx.
+		bus.Write32(src+i*4, 0x0000F030+i)
+	}
+	master.SetReg(4, src)
+
+	hleSysChgUiprService(master, bus)
+
+	const destOff = uint32(0xA80)
+	for i := uint32(0); i < 32; i++ {
+		want := uint32(0x0000F030 + i)
+		if got := bus.readWramHU32(destOff + i*4); got != want {
+			t.Fatalf("dest[%d] @0x%06X = %08X, want %08X", i, 0x06000000+destOff+i*4, got, want)
+		}
+	}
+	if got := master.Registers().R[4]; got != src+0x80 {
+		t.Errorf("R4 out = %08X, want %08X", got, src+0x80)
+	}
+	if got := master.Registers().R[0]; got != 0x06000A80+0x80 {
+		t.Errorf("R0 out = %08X, want %08X", got, uint32(0x06000A80+0x80))
+	}
+}
+
 func TestHLEBootInitializesIMSShadow(t *testing.T) {
 	h, bus, _, _ := newHLEBIOSForTest()
 	if err := h.Boot(makeIPImage()); err != nil {
