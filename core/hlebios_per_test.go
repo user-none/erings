@@ -22,7 +22,7 @@ func TestPERInitBuildsSlotTable(t *testing.T) {
 	master.SetReg(5, perDriverTestBase)
 	master.SetReg(6, 0x06080100) // peripheral output buffer
 
-	hleBiosPERInitService(master, bus)
+	hleBiosPERInitService(master)
 
 	cases := []struct {
 		slot int
@@ -67,7 +67,7 @@ func TestPERInitRegistersDriver(t *testing.T) {
 	master.SetReg(5, perDriverTestBase) // workbuff = driver_base
 	master.SetReg(6, 0)
 
-	hleBiosPERInitService(master, bus)
+	hleBiosPERInitService(master)
 
 	if got := bus.readWramHU32(wramHPERDriverSlot - 0x06000000); got != perDriverTestBase {
 		t.Errorf("after PER_Init, mem.L[$06000354] = %08X, want %08X", got, perDriverTestBase)
@@ -89,7 +89,7 @@ func TestPERInitRegistersWRAMLDriver(t *testing.T) {
 	master.SetReg(5, wramLBase)
 	master.SetReg(6, 0)
 
-	hleBiosPERInitService(master, bus)
+	hleBiosPERInitService(master)
 
 	if got := bus.readWramHU32(wramHPERDriverSlot - 0x06000000); got != wramLBase {
 		t.Errorf("after PER_Init, mem.L[$06000354] = %08X, want %08X", got, wramLBase)
@@ -105,7 +105,7 @@ func TestPERSlot0RegistersDriver(t *testing.T) {
 	// driver registration write idempotently.
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, perDriverTestBase)
-	hlePerDriverSlot0Service(master, bus)
+	hlePerDriverSlot0Service(master)
 
 	if got := bus.readWramHU32(wramHPERDriverSlot - 0x06000000); got != perDriverTestBase {
 		t.Errorf("after slot 0, mem.L[$06000354] = %08X, want %08X",
@@ -119,7 +119,7 @@ func TestPERInitInitializesDriverState(t *testing.T) {
 	master.SetReg(5, perDriverTestBase) // workbuff = driver_base
 	master.SetReg(6, 0)
 
-	hleBiosPERInitService(master, bus)
+	hleBiosPERInitService(master)
 
 	if got := bus.Read8(perDriverTestBase + perDriverPort1Marker); got != 1 {
 		t.Errorf("port-1 marker = %d, want 1", got)
@@ -144,7 +144,7 @@ func TestPERInitWritesBupConfig(t *testing.T) {
 	master.SetReg(5, perDriverTestBase) // workbuff
 	master.SetReg(6, periphBuf)
 
-	hleBiosPERInitService(master, bus)
+	hleBiosPERInitService(master)
 
 	// Slot-0 writes the initial BupConfig {unit_id=1, partition=1}
 	// followed by four zero words.
@@ -162,12 +162,12 @@ func TestPERInitExitRegisterState(t *testing.T) {
 	// internally by PER_Init's trampoline) exits with R4 = entry
 	// R5 + 8 and R5 = 0. PER_Init's trampoline passes caller's R6
 	// into slot 0 as R5, so slot 0's "entry R5" is our caller's R6.
-	_, bus, master, _ := newHLEBIOSForTest()
+	_, _, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, 0)
 	master.SetReg(5, perDriverTestBase)
 	master.SetReg(6, 0xCAFEBABE)
 
-	hleBiosPERInitService(master, bus)
+	hleBiosPERInitService(master)
 
 	r := master.Registers()
 	if r.R[4] != 0xCAFEBABE+8 {
@@ -184,7 +184,7 @@ func TestPERSlot0RewritesTable(t *testing.T) {
 	// re-entry).
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, perDriverTestBase)
-	hlePerDriverSlot0Service(master, bus)
+	hlePerDriverSlot0Service(master)
 
 	if got := bus.Read32(perDriverTestBase); got != hlePerDriverSlot0 {
 		t.Errorf("slot 0 re-entry: slot[0] = %08X, want %08X",

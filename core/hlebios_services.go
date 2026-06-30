@@ -23,7 +23,9 @@ func (h *HLEBIOS) registerServices() {
 	h.register(hleSysClrsem, hleSysClrsemService)
 	h.register(hleSysSetScuim, hleSysSetScuimService)
 	h.register(hleSysChgScuim, hleSysChgScuimService)
-	h.register(hleSysChgSysCk, hleSysChgSysCkService)
+	// CHGSYSCK needs bus for device side effects (VDP2/SCSP reset)
+	// Captured h.bus here so the service stays the lone func(cpu) hook shape.
+	h.register(hleSysChgSysCk, func(cpu *sh2.CPU) { hleSysChgSysCkService(cpu, h.bus) })
 
 	// BIOS-published WRAM-H routine replacements.
 	h.register(hleBiosFill, hleBiosFillService)
@@ -39,7 +41,7 @@ func (h *HLEBIOS) registerServices() {
 	// sub_1C90: real Go impl that reads the game executable from
 	// disc into $06004000 (HLE shortcut bypassing the BIOS CD-block
 	// API).
-	h.register(hleBiosSub1C90Load, hleBiosSub1C90LoadGameService)
+	h.register(hleBiosSub1C90Load, func(cpu *sh2.CPU) { hleBiosSub1C90LoadGameService(cpu, h.bus) })
 
 	// PER_Init: peripheral subsystem init. Lays down the 11-slot
 	// driver function-pointer table at the caller's R4 buffer
@@ -79,7 +81,7 @@ func (h *HLEBIOS) registerServices() {
 // implementation, and for the per-vector "no handler" default in
 // the SCU table. The trap in sh2/execute.go sets PC := PR after
 // the service returns, so an empty body is a clean no-op call.
-func hleSentinelService(cpu *sh2.CPU, bus *Bus) {}
+func hleSentinelService(cpu *sh2.CPU) {}
 
 // hleSysSetUintService implements SYS_SETUINT.
 //
@@ -92,7 +94,7 @@ func hleSentinelService(cpu *sh2.CPU, bus *Bus) {}
 //
 // No return value. Bounds are the caller's responsibility, same as
 // on hardware.
-func hleSysSetUintService(cpu *sh2.CPU, bus *Bus) {
+func hleSysSetUintService(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	// Match real BIOS behavior at $06000794: if the caller passes
 	// handler=0 ("clear handler"), substitute the default no-op
@@ -106,7 +108,7 @@ func hleSysSetUintService(cpu *sh2.CPU, bus *Bus) {
 	if handler == 0 {
 		handler = wramHNoopHandlerAddr
 	}
-	bus.writeWramHU32(wramHUIntTable+r.R[4]*4, handler)
+	cpu.Write32(0x06000000+wramHUIntTable+r.R[4]*4, handler)
 }
 
 // hleSysGetUintService implements SYS_GETUINT.
@@ -115,9 +117,9 @@ func hleSysSetUintService(cpu *sh2.CPU, bus *Bus) {
 //
 //	R4 = vector number (same indexing as SETUINT)
 //	R0 = handler address
-func hleSysGetUintService(cpu *sh2.CPU, bus *Bus) {
+func hleSysGetUintService(cpu *sh2.CPU) {
 	r := cpu.Registers()
-	cpu.SetReg(0, bus.readWramHU32(wramHUIntTable+r.R[4]*4))
+	cpu.SetReg(0, cpu.Read32(0x06000000+wramHUIntTable+r.R[4]*4))
 }
 
 // hleSysSetSintService implements SYS_SETSINT.
@@ -130,18 +132,18 @@ func hleSysGetUintService(cpu *sh2.CPU, bus *Bus) {
 //	     dispatcher trampoline). See docs/bios/system_services.md.
 //
 // No return value.
-func hleSysSetSintService(cpu *sh2.CPU, bus *Bus) {
+func hleSysSetSintService(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	idx := r.R[4]
 	handler := r.R[5]
 	if handler == 0 {
 		off := wramHIntDefaultTable + idx*4
-		if int(off)+4 <= len(bus.bios) {
-			handler = uint32(bus.bios[off])<<24 | uint32(bus.bios[off+1])<<16 |
-				uint32(bus.bios[off+2])<<8 | uint32(bus.bios[off+3])
+		if off+4 <= biosSize {
+			// The default-handler table is in BIOS ROM (mapped at $0).
+			handler = cpu.Read32(off)
 		}
 	}
-	bus.Write32(r.VBR+idx*4, handler)
+	cpu.Write32(r.VBR+idx*4, handler)
 }
 
 // hleSysGetSintService implements SYS_GETSINT.
@@ -150,9 +152,9 @@ func hleSysSetSintService(cpu *sh2.CPU, bus *Bus) {
 //
 //	R4 = vector index
 //	R0 = current handler address
-func hleSysGetSintService(cpu *sh2.CPU, bus *Bus) {
+func hleSysGetSintService(cpu *sh2.CPU) {
 	r := cpu.Registers()
-	cpu.SetReg(0, bus.Read32(r.VBR+r.R[4]*4))
+	cpu.SetReg(0, cpu.Read32(r.VBR+r.R[4]*4))
 }
 
 // hleSysTassemService implements SYS_TASSEM.
@@ -165,11 +167,14 @@ func hleSysGetSintService(cpu *sh2.CPU, bus *Bus) {
 //
 //	1 = semaphore was free, now acquired
 //	0 = semaphore was already held
-func hleSysTassemService(cpu *sh2.CPU, bus *Bus) {
+func hleSysTassemService(cpu *sh2.CPU) {
 	idx := cpu.Registers().R[4] & 0xFF
-	off := wramHSemArray + idx
-	if bus.wramH[off] == 0 {
-		bus.wramH[off] = 0x80
+	// Semaphore byte in WRAM-H, accessed cache-through ($26000000 alias):
+	// real SYS_TASSEM is TAS.B, an uncached atomic on hardware, and the
+	// byte is shared cross-CPU so it must not be cached on either side.
+	addr := 0x26000000 + wramHSemArray + idx
+	if cpu.Read8(addr) == 0 {
+		cpu.Write8(addr, 0x80)
 		cpu.SetReg(0, 1)
 	} else {
 		cpu.SetReg(0, 0)
@@ -183,9 +188,9 @@ func hleSysTassemService(cpu *sh2.CPU, bus *Bus) {
 //	R4 = semaphore index (0..255)
 //
 // No return value.
-func hleSysClrsemService(cpu *sh2.CPU, bus *Bus) {
+func hleSysClrsemService(cpu *sh2.CPU) {
 	idx := cpu.Registers().R[4] & 0xFF
-	bus.wramH[wramHSemArray+idx] = 0
+	cpu.Write8(0x26000000+wramHSemArray+idx, 0) // cache-through (see TASSEM)
 }
 
 // hleSysSetScuimService implements SYS_SETSCUIM.
@@ -198,11 +203,11 @@ func hleSysClrsemService(cpu *sh2.CPU, bus *Bus) {
 //	     32-bit value is kept in the shadow, matching the BIOS)
 //
 // No return value.
-func hleSysSetScuimService(cpu *sh2.CPU, bus *Bus) {
+func hleSysSetScuimService(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	val := r.R[4]
-	bus.scu.Write(0xA0, val)
-	bus.writeWramHU32(wramHIMSShadow, val)
+	cpu.Write32(0x25FE00A0, val) // SCU IMS register (cache-through MMIO)
+	cpu.Write32(0x06000000+wramHIMSShadow, val)
 }
 
 // hleSysChgScuimService implements SYS_CHGSCUIM.
@@ -215,12 +220,12 @@ func hleSysSetScuimService(cpu *sh2.CPU, bus *Bus) {
 //
 // No return value. The "current" value comes from the shadow at
 // $06000348 since the live IMS is write-only.
-func hleSysChgScuimService(cpu *sh2.CPU, bus *Bus) {
+func hleSysChgScuimService(cpu *sh2.CPU) {
 	r := cpu.Registers()
-	cur := bus.readWramHU32(wramHIMSShadow)
+	cur := cpu.Read32(0x06000000 + wramHIMSShadow)
 	newVal := (cur & r.R[4]) | r.R[5]
-	bus.scu.Write(0xA0, newVal)
-	bus.writeWramHU32(wramHIMSShadow, newVal)
+	cpu.Write32(0x25FE00A0, newVal) // SCU IMS register (cache-through MMIO)
+	cpu.Write32(0x06000000+wramHIMSShadow, newVal)
 }
 
 // hleSysChgSysCkService implements SYS_CHGSYSCK.
@@ -249,40 +254,40 @@ func hleSysChgSysCkService(cpu *sh2.CPU, bus *Bus) {
 
 	// SMPC half: clock-mode word, transient AIACK/AREF clears, SCU RSEL,
 	// and the VDP2 TVMD resolution change.
-	bus.Write32(0x06000324, mode)
-	bus.Write32(0x05FE00A8, 0)
-	bus.Write32(0x05FE00B8, 0)
-	bus.Write32(0x05FE00C4, 1)
-	bus.Write16(0x05F80000, uint16(mode))
+	cpu.Write32(0x06000324, mode)
+	cpu.Write32(0x05FE00A8, 0)
+	cpu.Write32(0x05FE00B8, 0)
+	cpu.Write32(0x05FE00C4, 1)
+	cpu.Write16(0x05F80000, uint16(mode))
 
 	// SCU half (sub_1800): disable DMA, reprogram A-bus, stop timers.
 	for lvl := uint32(0); lvl < 3; lvl++ {
 		b := uint32(0x05FE0000) + lvl*0x20
-		bus.Write32(b+0x00, 0)
-		bus.Write32(b+0x04, 0)
-		bus.Write32(b+0x08, 0)
-		bus.Write32(b+0x0C, 0)
-		bus.Write32(b+0x10, 0)
-		bus.Write32(b+0x14, 7)
+		cpu.Write32(b+0x00, 0)
+		cpu.Write32(b+0x04, 0)
+		cpu.Write32(b+0x08, 0)
+		cpu.Write32(b+0x0C, 0)
+		cpu.Write32(b+0x10, 0)
+		cpu.Write32(b+0x14, 7)
 	}
-	bus.Write32(0x05FE0060, 0)
-	bus.Write32(0x05FE0080, 0)
-	bus.Write32(0x05FE00B0, 0x1FF01FF0)
-	bus.Write32(0x05FE00B4, 0x1FF01FF0)
-	bus.Write32(0x05FE00B8, 0x1F)
-	bus.Write32(0x05FE00A8, 1)
-	bus.Write32(0x05FE0090, 0x3FF)
-	bus.Write32(0x05FE0094, 0x1FF)
-	bus.Write32(0x05FE0098, 0)
+	cpu.Write32(0x05FE0060, 0)
+	cpu.Write32(0x05FE0080, 0)
+	cpu.Write32(0x05FE00B0, 0x1FF01FF0)
+	cpu.Write32(0x05FE00B4, 0x1FF01FF0)
+	cpu.Write32(0x05FE00B8, 0x1F)
+	cpu.Write32(0x05FE00A8, 1)
+	cpu.Write32(0x05FE0090, 0x3FF)
+	cpu.Write32(0x05FE0094, 0x1FF)
+	cpu.Write32(0x05FE0098, 0)
 
 	// SETSCUIM tail: reload the SCU IMS from the $06000348 shadow.
-	shadow := bus.readWramHU32(wramHIMSShadow)
-	bus.Write32(0x06000348, shadow)
-	bus.Write32(0x05FE00A0, shadow)
+	shadow := cpu.Read32(0x06000000 + wramHIMSShadow)
+	cpu.Write32(0x06000348, shadow)
+	cpu.Write32(0x05FE00A0, shadow)
 	ist := uint32(int32(int16(uint16(shadow))))
-	bus.Write32(0x05FE00A4, ist)
+	cpu.Write32(0x05FE00A4, ist)
 	if int32(ist) >= 0 {
-		bus.Write32(0x05FE00A8, 1)
+		cpu.Write32(0x05FE00A8, 1)
 	}
 }
 
@@ -298,14 +303,14 @@ func hleSysChgSysCkService(cpu *sh2.CPU, bus *Bus) {
 //	R0 (in)  = pointer to table entries
 //	R4 (in)  = fill value
 //	R0 (out) = pointer past the consumed [count, dest] pair
-func hleBiosFillService(cpu *sh2.CPU, bus *Bus) {
+func hleBiosFillService(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	r0 := r.R[0]
-	count := bus.Read32(r0)
-	dest := bus.Read32(r0 + 4)
+	count := cpu.Read32(r0)
+	dest := cpu.Read32(r0 + 4)
 	val := r.R[4]
 	for i := uint32(0); i < count; i++ {
-		bus.Write32(dest+i*4, val)
+		cpu.Write32(dest+i*4, val)
 	}
 	cpu.SetReg(0, r0+8)
 }
@@ -320,14 +325,14 @@ func hleBiosFillService(cpu *sh2.CPU, bus *Bus) {
 //
 //	R0 (in)  = pointer to table entries
 //	R0 (out) = pointer past the consumed [count, dest, src] triple
-func hleBiosCopyService(cpu *sh2.CPU, bus *Bus) {
+func hleBiosCopyService(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	r0 := r.R[0]
-	count := bus.Read32(r0)
-	dest := bus.Read32(r0 + 4)
-	src := bus.Read32(r0 + 8)
+	count := cpu.Read32(r0)
+	dest := cpu.Read32(r0 + 4)
+	src := cpu.Read32(r0 + 8)
 	for i := uint32(0); i < count; i++ {
-		bus.Write32(dest+i*4, bus.Read32(src+i*4))
+		cpu.Write32(dest+i*4, cpu.Read32(src+i*4))
 	}
 	cpu.SetReg(0, r0+12)
 }
@@ -341,8 +346,8 @@ func hleBiosCopyService(cpu *sh2.CPU, bus *Bus) {
 // Writing to SCU IST with bits set clears those bits (SCU IST is
 // write-1-to-clear). Used for interrupt acknowledgment by routines
 // that need to clear their pending bit.
-func hleBiosScuISTClearService(cpu *sh2.CPU, bus *Bus) {
-	bus.scu.Write(0xA4, cpu.Registers().R[4])
+func hleBiosScuISTClearService(cpu *sh2.CPU) {
+	cpu.Write32(0x25FE00A4, cpu.Registers().R[4]) // SCU IST (cache-through MMIO)
 }
 
 // hleSysChgUiprService implements SYS_CHGUIPR (the SDK dispatches it
@@ -354,11 +359,11 @@ func hleBiosScuISTClearService(cpu *sh2.CPU, bus *Bus) {
 // $06000A80. Each table entry packs (SR_value << 16) | IMS_mask: the
 // dispatcher loads SR = entry>>16 before calling the handler and ORs the
 // sign-extended low word into the SCU IMS.
-func hleSysChgUiprService(cpu *sh2.CPU, bus *Bus) {
+func hleSysChgUiprService(cpu *sh2.CPU) {
 	src := cpu.Registers().R[4]
 	const dest = uint32(0x06000A80)
 	for i := uint32(0); i < 32; i++ {
-		bus.Write32(dest+i*4, bus.Read32(src+i*4))
+		cpu.Write32(dest+i*4, cpu.Read32(src+i*4))
 	}
 	cpu.SetReg(4, src+0x80)
 	cpu.SetReg(0, dest+0x80)
@@ -369,7 +374,7 @@ func hleSysChgUiprService(cpu *sh2.CPU, bus *Bus) {
 // want to know about: if an IP turns out to call one, the warning
 // surfaces the slot and we can prioritize a real implementation.
 func hleWarnHandler(name string) hleFunc {
-	return func(cpu *sh2.CPU, bus *Bus) {
+	return func(cpu *sh2.CPU) {
 		r := cpu.Registers()
 		fmt.Printf("[HLE][WARN] %s called (PR=$%08X R0=$%08X R4=$%08X R5=$%08X)\n",
 			name, r.PR, r.R[0], r.R[4], r.R[5])
@@ -403,7 +408,7 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 		fmt.Println("[HLE][ERROR] sub_1C90: no CDBlock")
 		return
 	}
-	loadAddr := bus.readWramHU32(0x2B0)
+	loadAddr := cpu.Read32(0x060002B0)
 	if loadAddr == 0 {
 		fmt.Println("[HLE][ERROR] sub_1C90: $060002B0 load destination is zero")
 		return
@@ -423,6 +428,11 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 		fmt.Printf("[HLE][ERROR] sub_1C90: LoadFileByFID(%d): %v\n", biosFID, err)
 		return
 	}
+	// The load bulk-copies into the destination via a raw slice
+	// (DMA-semantic), bypassing this CPU's cache. Purge so the caller's
+	// subsequent fetches/reads of the loaded image are not served stale
+	// lines.
+	cpu.CachePurge()
 	//fmt.Printf("[HLE] sub_1C90: loaded %d bytes of CD file ID %d into $%08X-$%08X\n",
 	//	n, biosFID, loadAddr, loadAddr+uint32(n)-1)
 }
@@ -470,24 +480,24 @@ func hleBiosSub1C90LoadGameService(cpu *sh2.CPU, bus *Bus) {
 //
 // The workbuff may live in Work RAM-L or Work RAM-H depending on the
 // title; see isPerBufferRAM. A workbuff outside RAM is ignored.
-func hleBiosPERInitService(cpu *sh2.CPU, bus *Bus) {
+func hleBiosPERInitService(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	workbuff := r.R[5]
 	periphBuf := r.R[6]
 	if isPerBufferRAM(workbuff) {
-		writePerDriverTable(bus, workbuff)
+		writePerDriverTable(cpu, workbuff)
 	}
 	if isPerBufferRAM(periphBuf) {
 		// Slot-0 writes the initial BupConfig into the caller's R6
 		// buffer: unit_id=1 (internal backup device present), partition=1,
 		// then four zero words (12 bytes total). Games read mem.W[R6+0]
 		// to confirm a backup device is present before issuing BUP_* calls.
-		bus.Write16(periphBuf+0, 1)
-		bus.Write16(periphBuf+2, 1)
-		bus.Write16(periphBuf+4, 0)
-		bus.Write16(periphBuf+6, 0)
-		bus.Write16(periphBuf+8, 0)
-		bus.Write16(periphBuf+10, 0)
+		cpu.Write16(periphBuf+0, 1)
+		cpu.Write16(periphBuf+2, 1)
+		cpu.Write16(periphBuf+4, 0)
+		cpu.Write16(periphBuf+6, 0)
+		cpu.Write16(periphBuf+8, 0)
+		cpu.Write16(periphBuf+10, 0)
 	}
 	cpu.SetReg(4, r.R[6]+8)
 	cpu.SetReg(5, 0)
@@ -558,7 +568,7 @@ func (b *Bus) workRAMSlice(addr uint32) []byte {
 // virtual BIOS ROM) so the slave parks cleanly while still being
 // able to take IRQs (FRT input-capture, etc.) and run their
 // game-installed handlers.
-func hleSlaveInitService(cpu *sh2.CPU, bus *Bus) {
+func hleSlaveInitService(cpu *sh2.CPU) {
 	cpu.SetVBR(0x06000400)
 	// Enable the slave's cache (CCR = $01, all ways purged).
 	cpu.SetCCR(0x01)
@@ -568,8 +578,8 @@ func hleSlaveInitService(cpu *sh2.CPU, bus *Bus) {
 	// proceeds only after seeing it. Writing it here matches that
 	// timing — this service IS the post-SSHON slave-startup path,
 	// so by the time it returns the slave is truly up.
-	bus.writeWramHU32(0x244, 0x32524453)
-	sp := bus.Read32(0x060002AC)
+	cpu.Write32(0x06000244, 0x32524453)
+	sp := cpu.Read32(0x060002AC)
 	if sp == 0 {
 		sp = 0x06001000
 	}
@@ -591,7 +601,7 @@ func hleSlaveInitService(cpu *sh2.CPU, bus *Bus) {
 	// priority/ICIE itself while relying on this BIOS-set vector.
 	cpu.INTC().Write(0xFFFFFE66, 0x6400)
 
-	entry := bus.readWramHU32(0x250)
+	entry := cpu.Read32(0x06000250)
 	if entry == 0 || entry == hleSentinel {
 		// No game slave entry yet: the slave will park at the BIOS-ROM
 		// BRA-self halt loop and serve only as an IRQ-driven coprocessor,

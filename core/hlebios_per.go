@@ -55,9 +55,8 @@ const (
 // at $06000354. Returns 0 if the slot hasn't been written yet (i.e.
 // PER_Init hasn't run); callers must treat zero as "driver not
 // initialized" and skip work.
-func perDriverBase(bus *Bus) uint32 {
-	off := wramHPERDriverSlot - 0x06000000
-	return bus.readWramHU32(uint32(off))
+func perDriverBase(cpu *sh2.CPU) uint32 {
+	return cpu.Read32(wramHPERDriverSlot)
 }
 
 // writePerDriverTable lays down the 11 magic-address slots at
@@ -84,7 +83,7 @@ func perDriverBase(bus *Bus) uint32 {
 //
 // Idempotent: calling this twice with the same driverBase is a
 // no-op-equivalent (overwrites with the same bytes).
-func writePerDriverTable(bus *Bus, driverBase uint32) {
+func writePerDriverTable(cpu *sh2.CPU, driverBase uint32) {
 	magic := [11]uint32{
 		hlePerDriverSlot0,
 		hlePerDriverSlot1,
@@ -99,32 +98,32 @@ func writePerDriverTable(bus *Bus, driverBase uint32) {
 		hlePerDriverSlot10,
 	}
 	for i, addr := range magic {
-		bus.Write32(driverBase+uint32(i)*4, addr)
+		cpu.Write32(driverBase+uint32(i)*4, addr)
 	}
 	// driverBase+$2C holds a pointer to driverBase+$78 — the
 	// per-entry working buffer that the BUP slot bodies use as
 	// scratch / output area (per-directory-entry status, block
 	// lists, packet staging).
-	bus.Write32(driverBase+0x2C, driverBase+perDriverPerEntryBuffer)
+	cpu.Write32(driverBase+0x2C, driverBase+perDriverPerEntryBuffer)
 
 	// Driver-state markers. Port 1 = controller pad present
 	// (positive markers so slot-1/3/etc. fall through to the
 	// peripheral-read path). Port 2 = no BUP cart (marker 0 so
 	// BUP-flavored slots take the "marker == 0" early-out and
 	// return NOT_FOUND).
-	bus.Write8(driverBase+perDriverPort1Marker, 1)
-	bus.Write8(driverBase+perDriverPort1AltMarker, 0)
-	bus.Write8(driverBase+perDriverPort2Marker, 0)
+	cpu.Write8(driverBase+perDriverPort1Marker, 1)
+	cpu.Write8(driverBase+perDriverPort1AltMarker, 0)
+	cpu.Write8(driverBase+perDriverPort2Marker, 0)
 	// Zero the remaining driver-state bytes at +$57..+$67. Real
 	// BIOS's slot-0 leaves some of these bytes populated with
 	// peripheral-type-specific data; HLE doesn't model the
 	// per-type dispatch and zero is the documented marker-absent
 	// value.
 	for i := uint32(0x57); i < 0x68; i++ {
-		bus.Write8(driverBase+i, 0)
+		cpu.Write8(driverBase+i, 0)
 	}
 
-	bus.writeWramHU32(wramHPERDriverSlot-0x06000000, driverBase)
+	cpu.Write32(wramHPERDriverSlot, driverBase)
 }
 
 // hlePerDriverSlot0Service runs the documented slot-0 effects when
@@ -142,12 +141,12 @@ func writePerDriverTable(bus *Bus, driverBase uint32) {
 // initial peripheral output buffer; slot 0 re-entry doesn't know
 // where the game's current R5 points and writing 4 bytes per port
 // to an arbitrary R5 would corrupt game state.
-func hlePerDriverSlot0Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot0Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	driver := r.R[4]
 	if driver < 0x06000000 || driver >= 0x06100000 {
 		return
 	}
-	writePerDriverTable(bus, driver)
-	bus.writeWramHU32(wramHPERDriverSlot-0x06000000, driver)
+	writePerDriverTable(cpu, driver)
+	cpu.Write32(wramHPERDriverSlot, driver)
 }

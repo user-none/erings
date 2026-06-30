@@ -32,12 +32,12 @@ func TestCacheMissFillsLineAndCachesData(t *testing.T) {
 	bus.Write32(0x100, 0x11223344)
 	bus.Write32(0x104, 0x55667788)
 
-	if got := cpu.read32(0x100); got != 0x11223344 {
+	if got := cpu.Read32(0x100); got != 0x11223344 {
 		t.Fatalf("miss read = %08X, want 11223344", got)
 	}
 	// The whole line is resident: the neighbor longword hits.
 	cpu.busStall = 0
-	if got := cpu.read32(0x104); got != 0x55667788 {
+	if got := cpu.Read32(0x104); got != 0x55667788 {
 		t.Errorf("line-neighbor read = %08X, want 55667788", got)
 	}
 	if cpu.busStall != 0 {
@@ -46,15 +46,15 @@ func TestCacheMissFillsLineAndCachesData(t *testing.T) {
 
 	// Memory changes underneath; the cached line is stale by design.
 	bus.Write32(0x100, 0xDEADBEEF)
-	if got := cpu.read32(0x100); got != 0x11223344 {
+	if got := cpu.Read32(0x100); got != 0x11223344 {
 		t.Errorf("read after external write = %08X, want stale 11223344", got)
 	}
 
 	// Sub-line access sizes read the same cached bytes.
-	if got := cpu.read16(0x102); got != 0x3344 {
+	if got := cpu.Read16(0x102); got != 0x3344 {
 		t.Errorf("read16 from cached line = %04X, want 3344", got)
 	}
-	if got := cpu.read8(0x101); got != 0x22 {
+	if got := cpu.Read8(0x101); got != 0x22 {
 		t.Errorf("read8 from cached line = %02X, want 22", got)
 	}
 }
@@ -71,25 +71,25 @@ func TestCacheMissStallCost(t *testing.T) {
 	cpu, _ := cacheFixture(t, readStall, writeStall, fillStall)
 
 	cpu.busStall = 0
-	cpu.read32(0x200)
+	cpu.Read32(0x200)
 	if cpu.busStall != fillStall {
 		t.Errorf("miss stall = %d, want %d", cpu.busStall, fillStall)
 	}
 
 	cpu.busStall = 0
-	cpu.read32(0x200) // hit
+	cpu.Read32(0x200) // hit
 	if cpu.busStall != 0 {
 		t.Errorf("hit stall = %d, want 0", cpu.busStall)
 	}
 
 	cpu.SetCCR(0) // cache disabled: plain external accesses
 	cpu.busStall = 0
-	cpu.read32(0x200)
+	cpu.Read32(0x200)
 	if cpu.busStall != readStall {
 		t.Errorf("uncached read stall = %d, want %d", cpu.busStall, readStall)
 	}
 	cpu.busStall = 0
-	cpu.write32(0x200, 0)
+	cpu.Write32(0x200, 0)
 	if cpu.busStall != writeStall {
 		t.Errorf("uncached write stall = %d, want %d", cpu.busStall, writeStall)
 	}
@@ -97,16 +97,16 @@ func TestCacheMissStallCost(t *testing.T) {
 	// Cache-through partition (Section 8.4.3): single access, no fill.
 	cpu.SetCCR(ccrCE)
 	cpu.busStall = 0
-	cpu.read32(0x20000200)
+	cpu.Read32(0x20000200)
 	if cpu.busStall != readStall {
 		t.Errorf("cache-through read stall = %d, want %d", cpu.busStall, readStall)
 	}
 
 	// Write-through writes pay the write cost even on a cache hit
 	// (Section 8.4.2: memory is always written, no write buffer).
-	cpu.read32(0x300) // fill the line
+	cpu.Read32(0x300) // fill the line
 	cpu.busStall = 0
-	cpu.write32(0x300, 1) // write hit
+	cpu.Write32(0x300, 1) // write hit
 	if cpu.busStall != writeStall {
 		t.Errorf("write-through hit stall = %d, want %d", cpu.busStall, writeStall)
 	}
@@ -119,7 +119,7 @@ func TestCacheWriteThrough(t *testing.T) {
 	cpu, bus := cacheFixture(t, 0, 0, 0)
 
 	// Write miss: memory updated, nothing cached.
-	cpu.write32(0x300, 0xAABBCCDD)
+	cpu.Write32(0x300, 0xAABBCCDD)
 	if got := bus.Read32(0x300); got != 0xAABBCCDD {
 		t.Fatalf("memory after write miss = %08X, want AABBCCDD", got)
 	}
@@ -128,22 +128,22 @@ func TestCacheWriteThrough(t *testing.T) {
 	}
 
 	// Fill the line, then a write hit updates both cache and memory.
-	cpu.read32(0x300)
-	cpu.write32(0x300, 0x01020304)
+	cpu.Read32(0x300)
+	cpu.Write32(0x300, 0x01020304)
 	if got := bus.Read32(0x300); got != 0x01020304 {
 		t.Errorf("memory after write hit = %08X, want 01020304", got)
 	}
-	if got := cpu.read32(0x300); got != 0x01020304 {
+	if got := cpu.Read32(0x300); got != 0x01020304 {
 		t.Errorf("cache after write hit = %08X, want 01020304", got)
 	}
 
 	// Byte and word write hits update the cached line in place.
-	cpu.write8(0x301, 0xEE)
-	if got := cpu.read32(0x300); got != 0x01EE0304 {
+	cpu.Write8(0x301, 0xEE)
+	if got := cpu.Read32(0x300); got != 0x01EE0304 {
 		t.Errorf("cache after write8 hit = %08X, want 01EE0304", got)
 	}
-	cpu.write16(0x302, 0xBEEF)
-	if got := cpu.read32(0x300); got != 0x01EEBEEF {
+	cpu.Write16(0x302, 0xBEEF)
+	if got := cpu.Read32(0x300); got != 0x01EEBEEF {
 		t.Errorf("cache after write16 hit = %08X, want 01EEBEEF", got)
 	}
 }
@@ -159,7 +159,7 @@ func TestCacheLRUReplacement(t *testing.T) {
 	addrs := [5]uint32{0x0010, 0x0410, 0x0810, 0x0C10, 0x1010}
 	wantWays := [4]int{3, 2, 1, 0}
 	for i, a := range addrs[:4] {
-		cpu.read32(a)
+		cpu.Read32(a)
 		w := wantWays[i]
 		if !cpu.cacheValid[w][1] || cpu.cacheTag[w][1] != cacheTagOf(a) {
 			t.Fatalf("fill %d: tag %08X not in way %d", i, cacheTagOf(a), w)
@@ -168,8 +168,8 @@ func TestCacheLRUReplacement(t *testing.T) {
 
 	// All ways valid; way 3 is the oldest. Touch it so way 2 becomes
 	// the replacement target, then miss: the new tag lands in way 2.
-	cpu.read32(addrs[0])
-	cpu.read32(addrs[4])
+	cpu.Read32(addrs[0])
+	cpu.Read32(addrs[4])
 	if cpu.cacheTag[2][1] != cacheTagOf(addrs[4]) {
 		t.Errorf("5th tag in way %v, want way 2 (LRU after touching way 3)",
 			func() int {
@@ -188,9 +188,9 @@ func TestCacheLRUReplacement(t *testing.T) {
 func TestCachePurgeViaCCR(t *testing.T) {
 	cpu, _ := cacheFixture(t, 0, 0, 0)
 
-	cpu.read32(0x100)
-	cpu.write8(0xFFFFFE92, ccrCP|ccrCE)
-	if got := cpu.read8(0xFFFFFE92); got != ccrCE {
+	cpu.Read32(0x100)
+	cpu.Write8(0xFFFFFE92, ccrCP|ccrCE)
+	if got := cpu.Read8(0xFFFFFE92); got != ccrCE {
 		t.Errorf("CCR after purge = %02X, want %02X (CP self-clears)", got, ccrCE)
 	}
 	if _, hit := cpu.cacheLookup(0x100); hit {
@@ -209,12 +209,12 @@ func TestCachePurgeViaCCR(t *testing.T) {
 func TestAssociativePurge(t *testing.T) {
 	cpu, _ := cacheFixture(t, 0, 0, 0)
 
-	cpu.read32(0x100)
-	cpu.write32(0x40000000|0x500, 0) // different tag/entry: no effect
+	cpu.Read32(0x100)
+	cpu.Write32(0x40000000|0x500, 0) // different tag/entry: no effect
 	if _, hit := cpu.cacheLookup(0x100); !hit {
 		t.Fatal("non-matching associative purge invalidated the line")
 	}
-	cpu.write32(0x40000000|0x100, 0)
+	cpu.Write32(0x40000000|0x100, 0)
 	if _, hit := cpu.cacheLookup(0x100); hit {
 		t.Error("matching associative purge left the line valid")
 	}
@@ -229,7 +229,7 @@ func TestAddressArrayAccess(t *testing.T) {
 	// Write way 1 (W1:W0 = 01), entry 2, tag 0x00000C00, valid.
 	cpu.SetCCR(0x40 | ccrCE)
 	addr := uint32(0x60000000) | 0x00000C00 | 2<<4 | 1<<2
-	cpu.write32(addr, 5<<4) // LRU = 5
+	cpu.Write32(addr, 5<<4) // LRU = 5
 	if !cpu.cacheValid[1][2] || cpu.cacheTag[1][2] != 0x00000C00 {
 		t.Fatalf("address-array write: way1 entry2 = valid %v tag %08X",
 			cpu.cacheValid[1][2], cpu.cacheTag[1][2])
@@ -239,12 +239,12 @@ func TestAddressArrayAccess(t *testing.T) {
 	}
 
 	want := uint32(0x00000C00) | 5<<4 | 1<<2
-	if got := cpu.read32(0x60000000 | 2<<4); got != want {
+	if got := cpu.Read32(0x60000000 | 2<<4); got != want {
 		t.Errorf("address-array read = %08X, want %08X", got, want)
 	}
 
 	// Clearing the valid bit through the address array invalidates.
-	cpu.write32(addr&^(1<<2), 0)
+	cpu.Write32(addr&^(1<<2), 0)
 	if cpu.cacheValid[1][2] {
 		t.Error("address-array write with V=0 left the entry valid")
 	}
@@ -258,7 +258,7 @@ func TestCacheReplacementDisable(t *testing.T) {
 
 	cpu.SetCCR(ccrOD | ccrCE)
 	bus.Write32(0x100, 0x12345678)
-	if got := cpu.read32(0x100); got != 0x12345678 {
+	if got := cpu.Read32(0x100); got != 0x12345678 {
 		t.Fatalf("OD miss read = %08X, want 12345678", got)
 	}
 	if _, hit := cpu.cacheLookup(0x100); hit {
@@ -290,7 +290,7 @@ func TestCacheTwoWayMode(t *testing.T) {
 
 	addrs := [3]uint32{0x0010, 0x0410, 0x0810}
 	for _, a := range addrs {
-		cpu.read32(a)
+		cpu.Read32(a)
 	}
 	if cpu.cacheValid[0][1] || cpu.cacheValid[1][1] {
 		t.Error("two-way mode replaced way 0 or 1")
@@ -316,12 +316,12 @@ func TestCacheTASInteraction(t *testing.T) {
 		t.Error("TAS read filled a line")
 	}
 
-	cpu.read32(0x180) // fill
+	cpu.Read32(0x180) // fill
 	cpu.tasWrite8(0x180, 0x80)
 	if got := bus.Read8(0x180); got != 0x80 {
 		t.Errorf("memory after TAS write = %02X, want 80", got)
 	}
-	if got := cpu.read8(0x180); got != 0x80 {
+	if got := cpu.Read8(0x180); got != 0x80 {
 		t.Errorf("cache after TAS write hit = %02X, want 80", got)
 	}
 }
@@ -333,17 +333,17 @@ func TestCacheDataArrayRAM(t *testing.T) {
 	bus := newTestBus(0x100)
 	cpu := New(bus, true)
 
-	cpu.write32(0xC0000000, 0xCAFEBABE)
-	if got := cpu.read32(0xC0000000); got != 0xCAFEBABE {
+	cpu.Write32(0xC0000000, 0xCAFEBABE)
+	if got := cpu.Read32(0xC0000000); got != 0xCAFEBABE {
 		t.Errorf("data array read32 = %08X, want CAFEBABE", got)
 	}
-	cpu.write8(0xC0000FFF, 0x5A)
-	if got := cpu.read8(0xC0000FFF); got != 0x5A {
+	cpu.Write8(0xC0000FFF, 0x5A)
+	if got := cpu.Read8(0xC0000FFF); got != 0x5A {
 		t.Errorf("data array read8 = %02X, want 5A", got)
 	}
 
 	// Fetch from the data array (code in cache RAM).
-	cpu.write16(0xC0000800, 0x0009) // NOP
+	cpu.Write16(0xC0000800, 0x0009) // NOP
 	if got := cpu.fetchInstr(0xC0000800); got != 0x0009 {
 		t.Errorf("data array fetch = %04X, want 0009", got)
 	}
@@ -352,7 +352,7 @@ func TestCacheDataArrayRAM(t *testing.T) {
 	// entry 0 occupies bytes 0-15 of the array.
 	cpu.SetCCR(ccrCE)
 	cpu.cacheFill(0, 0x0000)
-	if got, want := cpu.read32(0xC0000000), bus.Read32(0x0000); got != want {
+	if got, want := cpu.Read32(0xC0000000), bus.Read32(0x0000); got != want {
 		t.Errorf("data array view of way0 line = %08X, want %08X", got, want)
 	}
 }
@@ -406,7 +406,7 @@ func TestFetchLineMemoInvalidation(t *testing.T) {
 	}
 
 	// A write hit updates the line in place; the memoized fetch sees it.
-	cpu.write16(0x0012, 0x3333)
+	cpu.Write16(0x0012, 0x3333)
 	if got := cpu.fetchInstr(0x0012); got != 0x3333 {
 		t.Errorf("memoized fetch after write hit = %04X, want 3333", got)
 	}
@@ -415,7 +415,7 @@ func TestFetchLineMemoInvalidation(t *testing.T) {
 	// entry replace all ways. The next fetch must re-resolve, not
 	// serve the stale memo.
 	for _, a := range []uint32{0x0410, 0x0810, 0x0C10, 0x1010} {
-		cpu.read32(a)
+		cpu.Read32(a)
 	}
 	bus.Write16(0x0012, 0x4444)
 	if got := cpu.fetchInstr(0x0012); got != 0x4444 {
@@ -424,14 +424,14 @@ func TestFetchLineMemoInvalidation(t *testing.T) {
 
 	// Associative purge of the line drops the memo.
 	cpu.fetchInstr(0x0010)
-	cpu.write32(0x40000000|0x0010, 0)
+	cpu.Write32(0x40000000|0x0010, 0)
 	if cpu.fetchLineAddr != fetchLineInvalid {
 		t.Error("memo survived associative purge")
 	}
 
 	// CP purge drops the memo.
 	cpu.fetchInstr(0x0010)
-	cpu.write8(0xFFFFFE92, ccrCP|ccrCE)
+	cpu.Write8(0xFFFFFE92, ccrCP|ccrCE)
 	if cpu.fetchLineAddr != fetchLineInvalid {
 		t.Error("memo survived CP purge")
 	}
@@ -443,21 +443,21 @@ func TestCacheStallExemptions(t *testing.T) {
 	cpu, _ := cacheFixture(t, 7, 7, 7)
 
 	cpu.busStall = 0
-	cpu.read8(0xFFFFFE92) // CCR: on-chip
+	cpu.Read8(0xFFFFFE92) // CCR: on-chip
 	if cpu.busStall != 0 {
 		t.Errorf("on-chip read stall = %d, want 0", cpu.busStall)
 	}
 
 	cpu.busStall = 0
-	cpu.write32(0xC0000000, 1) // data array: internal
-	cpu.read32(0xC0000000)
+	cpu.Write32(0xC0000000, 1) // data array: internal
+	cpu.Read32(0xC0000000)
 	if cpu.busStall != 0 {
 		t.Errorf("data array stall = %d, want 0", cpu.busStall)
 	}
 
 	// Write-through always pays the external cost (Section 8.4.2).
 	cpu.busStall = 0
-	cpu.write32(0x400, 1)
+	cpu.Write32(0x400, 1)
 	if cpu.busStall != 7 {
 		t.Errorf("write-through stall = %d, want 7", cpu.busStall)
 	}

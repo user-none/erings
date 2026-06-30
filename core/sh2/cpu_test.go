@@ -415,8 +415,8 @@ func TestAssociativePurgeRegion(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write32(0x40000000, 0xDEADBEEF)
-	if v := cpu.read32(0x40000000); v != 0 {
+	cpu.Write32(0x40000000, 0xDEADBEEF)
+	if v := cpu.Read32(0x40000000); v != 0 {
 		t.Errorf("associative purge read = 0x%08X, want 0", v)
 	}
 }
@@ -428,12 +428,12 @@ func TestReservedRegion80_BF(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write32(0x80000000, 0xAAAAAAAA)
-	cpu.write32(0xBFFFFFFC, 0xBBBBBBBB)
-	if v := cpu.read32(0x80000000); v != 0 {
+	cpu.Write32(0x80000000, 0xAAAAAAAA)
+	cpu.Write32(0xBFFFFFFC, 0xBBBBBBBB)
+	if v := cpu.Read32(0x80000000); v != 0 {
 		t.Errorf("reserved read at 0x80000000 = 0x%08X, want 0", v)
 	}
-	if v := cpu.read32(0xBFFFFFFC); v != 0 {
+	if v := cpu.Read32(0xBFFFFFFC); v != 0 {
 		t.Errorf("reserved read at 0xBFFFFFFC = 0x%08X, want 0", v)
 	}
 }
@@ -445,12 +445,12 @@ func TestAssociativePurgeReservedAliasDivergence(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write32(0x48000000, 0xCAFECAFE)
-	cpu.write32(0x5FFFFFFC, 0xBABEBABE)
-	if v := cpu.read32(0x48000000); v != 0 {
+	cpu.Write32(0x48000000, 0xCAFECAFE)
+	cpu.Write32(0x5FFFFFFC, 0xBABEBABE)
+	if v := cpu.Read32(0x48000000); v != 0 {
 		t.Errorf("read at 0x48000000 = 0x%08X, want 0", v)
 	}
-	if v := cpu.read32(0x5FFFFFFC); v != 0 {
+	if v := cpu.Read32(0x5FFFFFFC); v != 0 {
 		t.Errorf("read at 0x5FFFFFFC = 0x%08X, want 0", v)
 	}
 }
@@ -529,7 +529,7 @@ func TestBCR1UpperHalfZero(t *testing.T) {
 func TestBCR1Read16AtBase(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
-	if got := cpu.read16(0xFFFFFFE0); got != 0x03F0 {
+	if got := cpu.Read16(0xFFFFFFE0); got != 0x03F0 {
 		t.Errorf("BCR1 read16 at base = 0x%04X, want 0x03F0", got)
 	}
 }
@@ -539,7 +539,7 @@ func TestBCR1Read16AtBase(t *testing.T) {
 func TestBCR1Read16AtSpecOffset(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
-	if got := cpu.read16(0xFFFFFFE2); got != 0x03F0 {
+	if got := cpu.Read16(0xFFFFFFE2); got != 0x03F0 {
 		t.Errorf("BCR1 read16 at spec +2 = 0x%04X, want 0x03F0 (per Table 7.2 Note 1)", got)
 	}
 }

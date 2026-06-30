@@ -435,7 +435,7 @@ func opMACL(c *CPU) {
 	m := regM(c.ir)
 
 	// Cycle 1: read @Rn, post-increment
-	c.pendingVal = uint32(c.read32(c.reg.R[n]))
+	c.pendingVal = uint32(c.Read32(c.reg.R[n]))
 	c.reg.R[n] += 4
 	c.pendingN = n | (m << 4)
 	c.stepBus = BusRead
@@ -464,7 +464,7 @@ func opMACW(c *CPU) {
 	m := regM(c.ir)
 
 	// Cycle 1: read @Rn, post-increment
-	c.pendingVal = uint32(c.read16(c.reg.R[n]))
+	c.pendingVal = uint32(c.Read16(c.reg.R[n]))
 	c.reg.R[n] += 2
 	c.pendingN = n | (m << 4)
 	c.stepBus = BusRead

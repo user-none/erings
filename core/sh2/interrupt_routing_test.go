@@ -356,10 +356,10 @@ func TestDIVUDivideByZeroRoutesInterrupt(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDIVU(cpu, 6)
 
-	cpu.write32(0xFFFFFF08, 0x02) // OVFIE=1
-	cpu.write32(0xFFFFFF0C, 0x48) // VCRDIV = 0x48
-	cpu.write32(0xFFFFFF00, 0)    // DVSR = 0
-	cpu.write32(0xFFFFFF04, 100)  // DVDNT = 100 -> triggers divide-by-zero
+	cpu.Write32(0xFFFFFF08, 0x02) // OVFIE=1
+	cpu.Write32(0xFFFFFF0C, 0x48) // VCRDIV = 0x48
+	cpu.Write32(0xFFFFFF00, 0)    // DVSR = 0
+	cpu.Write32(0xFFFFFF04, 100)  // DVDNT = 100 -> triggers divide-by-zero
 
 	if cpu.intc.pending&(1<<isrcDIVU) == 0 {
 		t.Fatal("DIVU pending bit not set after divide-by-zero")
@@ -381,10 +381,10 @@ func TestDIVUSignedOverflowRoutesInterrupt(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDIVU(cpu, 9)
 
-	cpu.write32(0xFFFFFF08, 0x02)       // OVFIE=1
-	cpu.write32(0xFFFFFF0C, 0x52)       // VCRDIV = 0x52
-	cpu.write32(0xFFFFFF00, 0xFFFFFFFF) // DVSR = -1
-	cpu.write32(0xFFFFFF04, 0x80000000) // DVDNT = INT32_MIN -> overflow
+	cpu.Write32(0xFFFFFF08, 0x02)       // OVFIE=1
+	cpu.Write32(0xFFFFFF0C, 0x52)       // VCRDIV = 0x52
+	cpu.Write32(0xFFFFFF00, 0xFFFFFFFF) // DVSR = -1
+	cpu.Write32(0xFFFFFF04, 0x80000000) // DVDNT = INT32_MIN -> overflow
 
 	if cpu.intc.pending&(1<<isrcDIVU) == 0 {
 		t.Fatal("DIVU pending bit not set after signed overflow")
@@ -402,11 +402,11 @@ func TestDIVU64By32OverflowRoutesInterrupt(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDIVU(cpu, 4)
 
-	cpu.write32(0xFFFFFF08, 0x02)       // OVFIE=1
-	cpu.write32(0xFFFFFF0C, 0x3C)       // VCRDIV = 0x3C
-	cpu.write32(0xFFFFFF00, 1)          // DVSR = 1
-	cpu.write32(0xFFFFFF10, 0x00000001) // DVDNTH = 1
-	cpu.write32(0xFFFFFF14, 0x00000000) // DVDNTL = 0 -> 0x100000000 / 1 overflow
+	cpu.Write32(0xFFFFFF08, 0x02)       // OVFIE=1
+	cpu.Write32(0xFFFFFF0C, 0x3C)       // VCRDIV = 0x3C
+	cpu.Write32(0xFFFFFF00, 1)          // DVSR = 1
+	cpu.Write32(0xFFFFFF10, 0x00000001) // DVDNTH = 1
+	cpu.Write32(0xFFFFFF14, 0x00000000) // DVDNTL = 0 -> 0x100000000 / 1 overflow
 
 	if cpu.intc.pending&(1<<isrcDIVU) == 0 {
 		t.Fatal("DIVU pending bit not set after 64/32 overflow")
@@ -426,9 +426,9 @@ func TestDIVUOverflowNoOVFIENoRoute(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDIVU(cpu, 7)
 
-	cpu.write32(0xFFFFFF08, 0x00) // OVFIE=0
-	cpu.write32(0xFFFFFF00, 0)    // DVSR=0
-	cpu.write32(0xFFFFFF04, 100)  // triggers divide-by-zero
+	cpu.Write32(0xFFFFFF08, 0x00) // OVFIE=0
+	cpu.Write32(0xFFFFFF00, 0)    // DVSR=0
+	cpu.Write32(0xFFFFFF04, 100)  // triggers divide-by-zero
 
 	if cpu.divu.dvcr&0x01 == 0 {
 		t.Error("OVF latch should be set even with OVFIE disabled")
@@ -444,9 +444,9 @@ func TestDIVUNoOverflowNoRoute(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDIVU(cpu, 7)
 
-	cpu.write32(0xFFFFFF08, 0x02) // OVFIE=1
-	cpu.write32(0xFFFFFF00, 7)
-	cpu.write32(0xFFFFFF04, 100) // 100/7 = 14 rem 2, no overflow
+	cpu.Write32(0xFFFFFF08, 0x02) // OVFIE=1
+	cpu.Write32(0xFFFFFF00, 7)
+	cpu.Write32(0xFFFFFF04, 100) // 100/7 = 14 rem 2, no overflow
 
 	if cpu.divu.dvcr&0x01 != 0 {
 		t.Error("OVF latch should not be set for normal division")
@@ -463,9 +463,9 @@ func TestDIVULatchClearReconciles(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDIVU(cpu, 5)
 
-	cpu.write32(0xFFFFFF08, 0x02) // OVFIE=1
-	cpu.write32(0xFFFFFF00, 0)
-	cpu.write32(0xFFFFFF04, 100) // divide-by-zero
+	cpu.Write32(0xFFFFFF08, 0x02) // OVFIE=1
+	cpu.Write32(0xFFFFFF00, 0)
+	cpu.Write32(0xFFFFFF04, 100) // divide-by-zero
 
 	if cpu.intc.pending&(1<<isrcDIVU) == 0 {
 		t.Fatal("DIVU pending bit not set after overflow")
@@ -474,7 +474,7 @@ func TestDIVULatchClearReconciles(t *testing.T) {
 	// Simulate handler clearing DVCR.OVF (keep OVFIE). DIVU.Write
 	// returns false for DVCR writes, so routeDIVUInterrupt is not
 	// called and the pending bit remains set until reconciled.
-	cpu.write32(0xFFFFFF08, 0x02)
+	cpu.Write32(0xFFFFFF08, 0x02)
 
 	cpu.reg.SetIMASK(15)
 	if cpu.processInterrupt() {
@@ -880,10 +880,10 @@ func TestDIVUVCRDIVHighBitsIgnored(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDIVU(cpu, 6)
 
-	cpu.write32(0xFFFFFF08, 0x02) // OVFIE=1
-	cpu.write32(0xFFFFFF0C, 0xFF) // VCRDIV with bit 7 set
-	cpu.write32(0xFFFFFF00, 0)    // DVSR = 0
-	cpu.write32(0xFFFFFF04, 1)    // trigger divide-by-zero
+	cpu.Write32(0xFFFFFF08, 0x02) // OVFIE=1
+	cpu.Write32(0xFFFFFF0C, 0xFF) // VCRDIV with bit 7 set
+	cpu.Write32(0xFFFFFF00, 0)    // DVSR = 0
+	cpu.Write32(0xFFFFFF04, 1)    // trigger divide-by-zero
 
 	if !cpu.processInterrupt() {
 		t.Fatal("DIVU interrupt not accepted")
@@ -901,7 +901,7 @@ func TestDMACVCRDMAHighBitIgnored(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priDMAC(cpu, 5)
 
-	cpu.write32(0xFFFFFFA0, 0xFF) // VCRDMA0 with bit 7 set
+	cpu.Write32(0xFFFFFFA0, 0xFF) // VCRDMA0 with bit 7 set
 	cpu.dmac.ch[0].chcr = 0x06    // TE | IE (Sec 9.2.4)
 
 	cpu.routeDMACInterrupt(0)

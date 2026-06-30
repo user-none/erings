@@ -177,11 +177,11 @@ func TestINTCByteAccessRegisters(t *testing.T) {
 			bus := newTestBus(0x1000)
 			cpu := New(bus, true)
 
-			cpu.write8(tt.addr, tt.hi)
-			cpu.write8(tt.addr+1, tt.lo)
+			cpu.Write8(tt.addr, tt.hi)
+			cpu.Write8(tt.addr+1, tt.lo)
 
-			gotHi := cpu.read8(tt.addr)
-			gotLo := cpu.read8(tt.addr + 1)
+			gotHi := cpu.Read8(tt.addr)
+			gotLo := cpu.Read8(tt.addr + 1)
 			gotWord := uint16(gotHi)<<8 | uint16(gotLo)
 			if gotWord != tt.wantWord {
 				t.Errorf("byte-access word = 0x%04X, want 0x%04X", gotWord, tt.wantWord)
@@ -205,8 +205,8 @@ func TestINTCByteAccessICR(t *testing.T) {
 
 	// Write NMIE via high byte. Only bit 0 of the high byte (bit 8
 	// of the word) is writable, per Sec 5.3.8. NMIL (bit 15) is R/O.
-	cpu.write8(0xFFFFFEE0, 0xFF)
-	hi := cpu.read8(0xFFFFFEE0)
+	cpu.Write8(0xFFFFFEE0, 0xFF)
+	hi := cpu.Read8(0xFFFFFEE0)
 	if hi&0x01 == 0 {
 		t.Errorf("ICR high byte after write 0xFF: bit 0 (NMIE) = 0, want 1")
 	}
@@ -215,8 +215,8 @@ func TestINTCByteAccessICR(t *testing.T) {
 	}
 
 	// Write VECMD via low byte. Only bit 0 is writable.
-	cpu.write8(0xFFFFFEE1, 0xFF)
-	lo := cpu.read8(0xFFFFFEE1)
+	cpu.Write8(0xFFFFFEE1, 0xFF)
+	lo := cpu.Read8(0xFFFFFEE1)
 	if lo&0x01 == 0 {
 		t.Errorf("ICR low byte after write 0xFF: VECMD = 0, want 1")
 	}
@@ -225,8 +225,8 @@ func TestINTCByteAccessICR(t *testing.T) {
 	}
 
 	// Writing only the low half must not disturb the high half.
-	cpu.write8(0xFFFFFEE0, 0x01) // NMIE=1
-	cpu.write8(0xFFFFFEE1, 0x00) // clear VECMD
+	cpu.Write8(0xFFFFFEE0, 0x01) // NMIE=1
+	cpu.Write8(0xFFFFFEE1, 0x00) // clear VECMD
 	got := cpu.intc.Read(0xFFFFFEE0)
 	if got&0x0100 == 0 {
 		t.Errorf("ICR = 0x%04X; NMIE cleared by low-byte write, want preserved", got)

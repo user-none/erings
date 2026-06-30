@@ -406,7 +406,7 @@ func (c *CPU) setPending(op uint8, count uint8) {
 
 func (c *CPU) stepSTCL() BusActivity {
 	// Cycle 2: MA write
-	c.write32(c.pendingAddr, c.pendingVal)
+	c.Write32(c.pendingAddr, c.pendingVal)
 	return BusWrite
 }
 
@@ -415,7 +415,7 @@ func (c *CPU) stepLDCL() BusActivity {
 	crType := c.pendingN >> 4
 	switch c.pendingStep {
 	case 1: // Cycle 2: MA read
-		c.pendingVal = c.read32(c.pendingAddr)
+		c.pendingVal = c.Read32(c.pendingAddr)
 		return BusRead
 	case 2: // Cycle 3: WB - write to target CR, post-increment
 		switch crType {
@@ -443,7 +443,7 @@ func (c *CPU) stepMemRMW() BusActivity {
 		}
 		return BusNone
 	case 2: // Cycle 3: MA - write result
-		c.write8(c.pendingAddr, uint8(c.pendingVal))
+		c.Write8(c.pendingAddr, uint8(c.pendingVal))
 		return BusWrite
 	}
 	return BusNone
@@ -522,11 +522,11 @@ func (c *CPU) tasWrite8(addr uint32, val uint8) {
 func (c *CPU) stepRTE() BusActivity {
 	switch c.pendingStep {
 	case 1: // Cycle 2: MA - read PC from stack
-		c.pendingVal = c.read32(c.pendingAddr)
+		c.pendingVal = c.Read32(c.pendingAddr)
 		c.reg.R[15] = c.pendingAddr + 4
 		return BusRead
 	case 2: // Cycle 3: MA - read SR from stack, set up delay branch
-		c.reg.SR = c.read32(c.pendingAddr+4) & srMask
+		c.reg.SR = c.Read32(c.pendingAddr+4) & srMask
 		c.reg.R[15] = c.pendingAddr + 8
 		c.delayBranch(c.pendingVal)
 		return BusRead
@@ -537,17 +537,17 @@ func (c *CPU) stepTRAPA() BusActivity {
 	switch c.pendingStep {
 	case 1: // Cycle 2: MA write SR
 		c.reg.R[15] -= 4
-		c.write32(c.reg.R[15], c.pendingVal)
+		c.Write32(c.reg.R[15], c.pendingVal)
 		return BusWrite
 	case 2: // Cycle 3: MA write PC
 		c.reg.R[15] -= 4
-		c.write32(c.reg.R[15], c.pendingVal2)
+		c.Write32(c.reg.R[15], c.pendingVal2)
 		return BusWrite
 	case 3: // Cycle 4: EX vector calc
 		c.pendingAddr = c.reg.VBR + (c.pendingImm << 2)
 		return BusNone
 	case 4: // Cycle 5: MA read vector
-		c.reg.PC = c.read32(c.pendingAddr)
+		c.reg.PC = c.Read32(c.pendingAddr)
 		return BusRead
 	default: // Cycles 6-8: pipeline refill
 		return BusNone
@@ -557,14 +557,14 @@ func (c *CPU) stepException() BusActivity {
 	switch c.pendingStep {
 	case 1: // Cycle 2: MA write SR
 		c.reg.R[15] -= 4
-		c.write32(c.reg.R[15], c.pendingVal)
+		c.Write32(c.reg.R[15], c.pendingVal)
 		return BusWrite
 	case 2: // Cycle 3: MA write PC
 		c.reg.R[15] -= 4
-		c.write32(c.reg.R[15], c.pendingVal2)
+		c.Write32(c.reg.R[15], c.pendingVal2)
 		return BusWrite
 	case 3: // Cycle 4: MA read vector
-		c.reg.PC = c.read32(c.reg.VBR + c.pendingAddr*4)
+		c.reg.PC = c.Read32(c.reg.VBR + c.pendingAddr*4)
 		return BusRead
 	case 4: // Cycle 5: pipeline refill
 		return BusNone
@@ -583,7 +583,7 @@ func (c *CPU) stepMACW() BusActivity {
 	// Cycle 2 (final step): read @Rm, post-increment, multiply-accumulate
 	m := c.pendingN >> 4
 
-	rmVal := int16(c.read16(c.reg.R[m]))
+	rmVal := int16(c.Read16(c.reg.R[m]))
 	c.reg.R[m] += 2
 
 	rnVal := int16(c.pendingVal)
@@ -618,7 +618,7 @@ func (c *CPU) stepMACL() BusActivity {
 	// Cycle 2 (final step): read @Rm, post-increment, multiply-accumulate
 	m := c.pendingN >> 4
 
-	rmVal := int32(c.read32(c.reg.R[m]))
+	rmVal := int32(c.Read32(c.reg.R[m]))
 	c.reg.R[m] += 4
 
 	rnVal := int32(c.pendingVal)
@@ -817,9 +817,14 @@ func (c *CPU) fetchInstr(addr uint32) uint16 {
 	return v
 }
 
-// read16 reads a 16-bit value with alignment check. Partition routing
-// per SH7604 manual Section 8.3 Table 8.2.
-func (c *CPU) read16(addr uint32) uint16 {
+// Read8/Read16/Read32 and Write8/Write16/Write32 perform a data access
+// exactly as a MOV would: partition routing per SH7604 manual Section 8.3
+// Table 8.2, cache fill/update on the cache-area path, inter-CPU bus
+// contention and stall charged to this CPU, and an address error raised on
+// misalignment. They are side-effecting, not neutral peeks.
+//
+// Read16 reads a 16-bit value with alignment check.
+func (c *CPU) Read16(addr uint32) uint16 {
 	if addr&1 != 0 {
 		c.addressError()
 		return 0
@@ -849,7 +854,7 @@ func (c *CPU) read16(addr uint32) uint16 {
 
 // read32 reads a 32-bit value with alignment check. Partition routing
 // per SH7604 manual Section 8.3 Table 8.2.
-func (c *CPU) read32(addr uint32) uint32 {
+func (c *CPU) Read32(addr uint32) uint32 {
 	if addr&3 != 0 {
 		c.addressError()
 		return 0
@@ -883,9 +888,9 @@ func (c *CPU) read32(addr uint32) uint32 {
 }
 
 // write16 writes a 16-bit value with alignment check. Partition
-// routing per SH7604 manual Section 8.3 Table 8.2; cache-area writes
+// routing per SH7604 manual Section 8.3 Table 8.2. Cache area writes
 // are write-through (Section 8.4.2).
-func (c *CPU) write16(addr uint32, val uint16) {
+func (c *CPU) Write16(addr uint32, val uint16) {
 	if addr&1 != 0 {
 		c.addressError()
 		return
@@ -915,9 +920,9 @@ func (c *CPU) write16(addr uint32, val uint16) {
 }
 
 // write32 writes a 32-bit value with alignment check. Partition
-// routing per SH7604 manual Section 8.3 Table 8.2; cache-area writes
+// routing per SH7604 manual Section 8.3 Table 8.2. Cache area writes
 // are write-through (Section 8.4.2).
-func (c *CPU) write32(addr uint32, val uint32) {
+func (c *CPU) Write32(addr uint32, val uint32) {
 	if addr&3 != 0 {
 		c.addressError()
 		return
@@ -967,7 +972,7 @@ func isOnChip(addr uint32) bool {
 
 // read8 reads a byte, checking for on-chip peripheral addresses first.
 // Partition routing per SH7604 manual Section 8.3 Table 8.2.
-func (c *CPU) read8(addr uint32) uint8 {
+func (c *CPU) Read8(addr uint32) uint8 {
 	if isOnChip(addr) {
 		v, _ := c.readOnChip(addr)
 		return onChipByte(addr, v)
@@ -1026,7 +1031,7 @@ func onChipByte(addr, v uint32) uint8 {
 }
 
 // write8 writes a byte, checking for on-chip peripheral addresses first.
-func (c *CPU) write8(addr uint32, val uint8) {
+func (c *CPU) Write8(addr uint32, val uint8) {
 	if isOnChip(addr) {
 		c.writeOnChip8(addr, val)
 		return

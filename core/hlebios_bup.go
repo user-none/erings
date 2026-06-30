@@ -13,10 +13,10 @@ import (
 // PER_Init has installed the slot table. Slot 0 (driver init) stays
 // in hlebios_per.go; slots 1-10 live here.
 //
-// The HLE works against the bus's 32 KB backup RAM byte slice
-// (bus.backup) directly. bus.backup[i] is logical byte i — the bus
-// translates bus addresses $00180001 + 2*i to backup[i] (odd-byte
-// hardware mapping) which makes the on-disk format flat-byte.
+// The HLE accesses internal backup RAM through the calling CPU at the
+// cache-through alias $20180000 via the bupRAM* helpers. Logical byte i
+// sits at bus address $20180001 + 2*i (odd-byte hardware mapping), which
+// makes the on-disk format flat-byte.
 //
 // On-disk format (32 KB, divided into 512 blocks of 64 bytes):
 //
@@ -82,8 +82,8 @@ const (
 )
 
 // Block layout constants. The 32 KB device has 512 blocks of 64
-// bytes; logical byte i in bus.backup[i] maps to bus address
-// $00180001 + 2*i.
+// bytes; logical byte i maps to bus address $00180001 + 2*i (accessed
+// via the cache-through alias $20180001 + 2*i).
 const (
 	bupBlockSize         = 64
 	bupTotalBlocks       = 512
@@ -101,9 +101,9 @@ const (
 	// pathological cycles in malformed saves)
 )
 
-// BUP magic header. The bus's NewBus calls formatBackupRAM which
-// writes 4x this string to bus.backup[0..63]. SelPart and every
-// other read path checks for the first occurrence at byte 0.
+// BUP magic header. NewBus calls formatBackupRAM which writes 4x this
+// string to backup bytes 0..63. SelPart and every other read path
+// checks for the first occurrence at byte 0.
 var bupMagic = [16]byte{
 	'B', 'a', 'c', 'k', 'U', 'p', 'R', 'a',
 	'm', ' ', 'F', 'o', 'r', 'm', 'a', 't',
@@ -137,6 +137,63 @@ func bupWriteBE32(b []byte, off int, v uint32) {
 	b[off+3] = byte(v)
 }
 
+// Internal backup RAM is accessed through the cache-through alias.
+// The bus stores backup in odd bytes, so logical byte k sits at $20180000 + 2k + 1.
+func bupRAMByte(cpu *sh2.CPU, k int) uint8       { return cpu.Read8(0x20180000 + uint32(k)*2 + 1) }
+func bupRAMSetByte(cpu *sh2.CPU, k int, v uint8) { cpu.Write8(0x20180000+uint32(k)*2+1, v) }
+
+// bupRAMRead returns n logical backup bytes starting at k.
+func bupRAMRead(cpu *sh2.CPU, k, n int) []byte {
+	b := make([]byte, n)
+	for i := 0; i < n; i++ {
+		b[i] = cpu.Read8(0x20180000 + uint32(k+i)*2 + 1)
+	}
+	return b
+}
+
+// bupRAMWrite stores src into logical backup starting at k.
+func bupRAMWrite(cpu *sh2.CPU, k int, src []byte) {
+	for i := 0; i < len(src); i++ {
+		cpu.Write8(0x20180000+uint32(k+i)*2+1, src[i])
+	}
+}
+
+// Big-endian field accessors over logical backup RAM.
+func bupRAMBE16(cpu *sh2.CPU, k int) uint16 {
+	return uint16(bupRAMByte(cpu, k))<<8 | uint16(bupRAMByte(cpu, k+1))
+}
+
+func bupRAMBE32(cpu *sh2.CPU, k int) uint32 {
+	return uint32(bupRAMByte(cpu, k))<<24 | uint32(bupRAMByte(cpu, k+1))<<16 |
+		uint32(bupRAMByte(cpu, k+2))<<8 | uint32(bupRAMByte(cpu, k+3))
+}
+
+func bupRAMSetBE16(cpu *sh2.CPU, k int, v uint16) {
+	bupRAMSetByte(cpu, k, byte(v>>8))
+	bupRAMSetByte(cpu, k+1, byte(v))
+}
+
+func bupRAMSetBE32(cpu *sh2.CPU, k int, v uint32) {
+	bupRAMSetByte(cpu, k, byte(v>>24))
+	bupRAMSetByte(cpu, k+1, byte(v>>16))
+	bupRAMSetByte(cpu, k+2, byte(v>>8))
+	bupRAMSetByte(cpu, k+3, byte(v))
+}
+
+// bupFormatRAM writes the "BackUpRam Format" header (4x) and zero-fills
+// the rest of internal backup RAM through the calling CPU - the
+// cpu-routed equivalent of formatBackupRAM, used by the BUP_Format
+// service (the bus.go formatBackupRAM stays for boot-time init).
+func bupFormatRAM(cpu *sh2.CPU) {
+	header := []byte("BackUpRam Format")
+	for rep := 0; rep < 4; rep++ {
+		bupRAMWrite(cpu, rep*16, header)
+	}
+	for i := 0x40; i < bupTotalBlocks*bupBlockSize; i++ {
+		bupRAMSetByte(cpu, i, 0)
+	}
+}
+
 // bupValidBlockIdx reports whether idx names a directory/data block
 // on disk: idx in [bupFirstDirBlock, bupTotalBlocks). Block 0 is the
 // magic header and block 1 is reserved; both are excluded. Idx 0
@@ -151,12 +208,12 @@ func bupValidBlockIdx(idx uint16) bool {
 // the magic repeated 4 times across bytes 0-63; checking only the
 // first repetition is sufficient because formatBackupRAM and real
 // BIOS both write all four atomically.
-func bupCheckFormat(bus *Bus) bool {
-	if len(bus.backup) < 16 {
+func bupCheckFormat(cpu *sh2.CPU) bool {
+	if bupTotalBlocks*bupBlockSize < 16 {
 		return false
 	}
 	for i := 0; i < 16; i++ {
-		if bus.backup[i] != bupMagic[i] {
+		if bupRAMByte(cpu, i) != bupMagic[i] {
 			return false
 		}
 	}
@@ -168,21 +225,21 @@ func bupCheckFormat(bus *Bus) bool {
 // the block start is the in-use flag; any non-zero status counts as
 // in-use to be liberal in what we accept. Write/Delete use exactly
 // $80000000 (in-use) or $00000000 (free).
-func bupEntryInUse(bus *Bus, blockIdx int) bool {
+func bupEntryInUse(cpu *sh2.CPU, blockIdx int) bool {
 	off := blockIdx * bupBlockSize
-	if off+4 > len(bus.backup) {
+	if off+4 > bupTotalBlocks*bupBlockSize {
 		return false
 	}
-	return (bus.backup[off] & 0x80) != 0
+	return (bupRAMByte(cpu, off) & 0x80) != 0
 }
 
 // bupReadFilename copies the 11-byte filename field from the
 // directory entry block into a fixed-size array. NUL padding is
 // preserved verbatim.
-func bupReadFilename(bus *Bus, blockIdx int) [11]byte {
+func bupReadFilename(cpu *sh2.CPU, blockIdx int) [11]byte {
 	var name [11]byte
 	off := blockIdx*bupBlockSize + 4
-	copy(name[:], bus.backup[off:off+11])
+	copy(name[:], bupRAMRead(cpu, off, 11))
 	return name
 }
 
@@ -199,18 +256,18 @@ func bupFilenameEqual(a, b [11]byte) bool {
 // API documents a 12-byte filename (11 ASCII + NUL); we read 11
 // to match the on-disk layout. Returns the filename and ok=false
 // if the buffer address is null or unreachable.
-func bupCallerFilename(bus *Bus, addr uint32) (name [11]byte, ok bool) {
+func bupCallerFilename(cpu *sh2.CPU, addr uint32) (name [11]byte, ok bool) {
 	if addr == 0 {
 		return name, false
 	}
 	for i := 0; i < 11; i++ {
-		name[i] = bus.Read8(addr + uint32(i))
+		name[i] = cpu.Read8(addr + uint32(i))
 	}
 	return name, true
 }
 
 // bupParseExtentList parses a sequence of 16-bit BE block indices
-// starting at byte offset `off` in bus.backup, with `maxSlots` word
+// starting at logical backup byte offset `off`, with `maxSlots` word
 // slots available. Each non-zero word is a block index appended to
 // the result; a single $0000 word terminates the list. If the slot
 // window ends without a $0000 having been seen, terminated is false
@@ -220,9 +277,9 @@ func bupCallerFilename(bus *Bus, addr uint32) (name [11]byte, ok bool) {
 // Single-zero termination matches the doc (docs/bios/backup_library.md
 // Block list semantics) and the verified NIGHTS_01 continuation page
 // at byte $0E6, which holds a single $0000 word followed by payload.
-func bupParseExtentList(b []byte, off, maxSlots int) (indices []uint16, terminated bool) {
+func bupParseExtentList(cpu *sh2.CPU, off, maxSlots int) (indices []uint16, terminated bool) {
 	for i := 0; i < maxSlots; i++ {
-		v := bupBE16(b, off+i*2)
+		v := bupRAMBE16(cpu, off+i*2)
 		if v == 0 {
 			return indices, true
 		}
@@ -272,9 +329,9 @@ type bupReadChainEntry struct {
 //
 // This single algorithm covers the three layouts (pure in-entry,
 // single-cont, multi-cont).
-func bupBuildReadChain(bus *Bus, entry int) []bupReadChainEntry {
+func bupBuildReadChain(cpu *sh2.CPU, entry int) []bupReadChainEntry {
 	inEntryOff := entry*bupBlockSize + bupDirListOff
-	seed, terminated := bupParseExtentList(bus.backup, inEntryOff, bupDirListWordSlots)
+	seed, terminated := bupParseExtentList(cpu, inEntryOff, bupDirListWordSlots)
 
 	var chain []bupReadChainEntry
 	var contListed []uint16
@@ -300,7 +357,7 @@ func bupBuildReadChain(bus *Bus, entry int) []bupReadChainEntry {
 		if !bupValidBlockIdx(idx) {
 			continue
 		}
-		if !bupIsContinuationPage(bus, int(idx)) {
+		if !bupIsContinuationPage(cpu, int(idx)) {
 			chain = append(chain, bupReadChainEntry{idx, bupBlockHeaderSize, uint32(bupBlockSize)})
 			continue
 		}
@@ -312,7 +369,7 @@ func bupBuildReadChain(bus *Bus, entry int) []bupReadChainEntry {
 		var contIndices []uint16
 		for i := 0; i < bupContWordSlots; i++ {
 			off := contBase + bupContPayloadOff + i*2
-			v := bupBE16(bus.backup, off)
+			v := bupRAMBE16(cpu, off)
 			if !bupValidBlockIdx(v) {
 				termIdx = i
 				break
@@ -356,15 +413,15 @@ func bupBuildReadChain(bus *Bus, entry int) []bupReadChainEntry {
 //
 // A zero first-index slot also rejects (empty continuation = payload
 // with all-zero data).
-func bupIsContinuationPage(bus *Bus, blockIdx int) bool {
+func bupIsContinuationPage(cpu *sh2.CPU, blockIdx int) bool {
 	base := blockIdx * bupBlockSize
-	if base+6 > len(bus.backup) {
+	if base+6 > bupTotalBlocks*bupBlockSize {
 		return false
 	}
-	if bupBE16(bus.backup, base) != 0 || bupBE16(bus.backup, base+2) != 0 {
+	if bupRAMBE16(cpu, base) != 0 || bupRAMBE16(cpu, base+2) != 0 {
 		return false
 	}
-	return bupValidBlockIdx(bupBE16(bus.backup, base+4))
+	return bupValidBlockIdx(bupRAMBE16(cpu, base+4))
 }
 
 // bupEntryBlocks walks the directory entry's block list and returns:
@@ -385,14 +442,14 @@ func bupIsContinuationPage(bus *Bus, blockIdx int) bool {
 // mis-classifying a payload block whose first 4 bytes happen to be
 // zero — HLE-written small files terminate in-entry, so their payload
 // blocks are never inspected for a sentinel.
-func bupEntryBlocks(bus *Bus, dirBlockIdx int) (payload, claimed []uint16) {
+func bupEntryBlocks(cpu *sh2.CPU, dirBlockIdx int) (payload, claimed []uint16) {
 	inEntryOff := dirBlockIdx*bupBlockSize + bupDirListOff
-	seed, terminated := bupParseExtentList(bus.backup, inEntryOff, bupDirListWordSlots)
+	seed, terminated := bupParseExtentList(cpu, inEntryOff, bupDirListWordSlots)
 	if terminated {
 		out := append([]uint16(nil), seed...)
 		return out, append([]uint16(nil), seed...)
 	}
-	return bupExpandBlockList(bus, seed)
+	return bupExpandBlockList(cpu, seed)
 }
 
 // bupExpandBlockList walks the block graph rooted at `seed` using
@@ -410,7 +467,7 @@ func bupEntryBlocks(bus *Bus, dirBlockIdx int) (payload, claimed []uint16) {
 // Phase 2 appends every cont-listed index unconditionally to both
 // `payload` and `claimed` — per spec, cont pages never name other
 // cont pages, so no re-check needed.
-func bupExpandBlockList(bus *Bus, seed []uint16) (payload, claimed []uint16) {
+func bupExpandBlockList(cpu *sh2.CPU, seed []uint16) (payload, claimed []uint16) {
 	var contListed []uint16
 	visited := make(map[uint16]bool)
 	addClaimed := func(idx uint16) bool {
@@ -427,9 +484,9 @@ func bupExpandBlockList(bus *Bus, seed []uint16) (payload, claimed []uint16) {
 		if !addClaimed(idx) {
 			continue
 		}
-		if bupIsContinuationPage(bus, int(idx)) {
+		if bupIsContinuationPage(cpu, int(idx)) {
 			base := int(idx) * bupBlockSize
-			more, _ := bupParseExtentList(bus.backup, base+bupContPayloadOff, bupContWordSlots)
+			more, _ := bupParseExtentList(cpu, base+bupContPayloadOff, bupContWordSlots)
 			contListed = append(contListed, more...)
 			continue
 		}
@@ -461,15 +518,15 @@ type bupDirEntry struct {
 	datasize uint32
 }
 
-func bupReadDirEntry(bus *Bus, blockIdx int) bupDirEntry {
+func bupReadDirEntry(cpu *sh2.CPU, blockIdx int) bupDirEntry {
 	off := blockIdx * bupBlockSize
 	var e bupDirEntry
-	e.status = bupBE32(bus.backup, off)
-	copy(e.filename[:], bus.backup[off+4:off+15])
-	e.language = bus.backup[off+15]
-	copy(e.comment[:], bus.backup[off+16:off+26])
-	e.date = bupBE32(bus.backup, off+0x1A)
-	e.datasize = bupBE32(bus.backup, off+0x1E)
+	e.status = bupRAMBE32(cpu, off)
+	copy(e.filename[:], bupRAMRead(cpu, off+4, 11))
+	e.language = bupRAMByte(cpu, off+15)
+	copy(e.comment[:], bupRAMRead(cpu, off+16, 10))
+	e.date = bupRAMBE32(cpu, off+0x1A)
+	e.datasize = bupRAMBE32(cpu, off+0x1E)
 	return e
 }
 
@@ -478,9 +535,9 @@ func bupReadDirEntry(bus *Bus, blockIdx int) bupDirEntry {
 // blocks 0 (header) and 1 (reserved). Admin/continuation blocks have
 // status word $00000000 (top bit clear) and are not iterated as dir
 // entries — but bupUsedBlocks tracks them via the entry-walk path.
-func bupWalkDir(bus *Bus, fn func(blockIdx int) bool) {
+func bupWalkDir(cpu *sh2.CPU, fn func(blockIdx int) bool) {
 	for blk := bupFirstDirBlock; blk < bupTotalBlocks; blk++ {
-		if !bupEntryInUse(bus, blk) {
+		if !bupEntryInUse(cpu, blk) {
 			continue
 		}
 		if !fn(blk) {
@@ -492,10 +549,10 @@ func bupWalkDir(bus *Bus, fn func(blockIdx int) bool) {
 // bupFindEntry searches the directory for a file whose 11-byte
 // filename matches name. Returns the dir entry block index (>=
 // bupFirstDirBlock) on success, or -1 if no entry matches.
-func bupFindEntry(bus *Bus, name [11]byte) int {
+func bupFindEntry(cpu *sh2.CPU, name [11]byte) int {
 	result := -1
-	bupWalkDir(bus, func(blockIdx int) bool {
-		if bupFilenameEqual(bupReadFilename(bus, blockIdx), name) {
+	bupWalkDir(cpu, func(blockIdx int) bool {
+		if bupFilenameEqual(bupReadFilename(cpu, blockIdx), name) {
 			result = blockIdx
 			return false
 		}
@@ -508,13 +565,13 @@ func bupFindEntry(bus *Bus, name [11]byte) int {
 // in-use directory entry, plus blocks 0 (header) and 1 (reserved).
 // "Claimed" = dir entry block itself + every block in the entry's
 // expanded block list (continuation pages + payload pages).
-func bupUsedBlocks(bus *Bus) []bool {
+func bupUsedBlocks(cpu *sh2.CPU) []bool {
 	used := make([]bool, bupTotalBlocks)
 	used[bupHeaderBlock] = true
 	used[bupReservedBlock] = true
-	bupWalkDir(bus, func(blockIdx int) bool {
+	bupWalkDir(cpu, func(blockIdx int) bool {
 		used[blockIdx] = true
-		_, claimed := bupEntryBlocks(bus, blockIdx)
+		_, claimed := bupEntryBlocks(cpu, blockIdx)
 		for _, idx := range claimed {
 			if int(idx) < bupTotalBlocks {
 				used[idx] = true
@@ -528,8 +585,8 @@ func bupUsedBlocks(bus *Bus) []bool {
 // bupCountUsedBlocks counts blocks marked in-use across all dir
 // entries (including admin + data). Equivalent to summing the
 // bupUsedBlocks bitset.
-func bupCountUsedBlocks(bus *Bus) int {
-	used := bupUsedBlocks(bus)
+func bupCountUsedBlocks(cpu *sh2.CPU) int {
+	used := bupUsedBlocks(cpu)
 	n := 0
 	for _, u := range used {
 		if u {
@@ -542,11 +599,11 @@ func bupCountUsedBlocks(bus *Bus) int {
 // bupAllocBlocks scans for n free blocks and returns their indices
 // (in ascending order). Returns nil if not enough free space.
 // Blocks 0 (header) and 1 (reserved) are never returned.
-func bupAllocBlocks(bus *Bus, n int) []uint16 {
+func bupAllocBlocks(cpu *sh2.CPU, n int) []uint16 {
 	if n <= 0 {
 		return []uint16{}
 	}
-	used := bupUsedBlocks(bus)
+	used := bupUsedBlocks(cpu)
 	free := make([]uint16, 0, n)
 	for blk := bupFirstDirBlock; blk < bupTotalBlocks && len(free) < n; blk++ {
 		if !used[blk] {
@@ -598,8 +655,7 @@ func bupIsInternal(r4 uint32) bool {
 //
 // Matches docs/bios/backup_library.md Slot 1 (+$02C4) for the
 // driver_base+$56 = 0 (no-cart) configuration.
-func hlePerDriverSlot1Service(cpu *sh2.CPU, bus *Bus) {
-	_ = bus
+func hlePerDriverSlot1Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if r.R[4] != 2 {
 		cpu.SetReg(0, bupOK)
@@ -630,7 +686,7 @@ func hlePerDriverSlot1Service(cpu *sh2.CPU, bus *Bus) {
 //
 // HLE does not maintain driver-state caching; each subsequent
 // BUP_* call re-checks the header itself.
-func hlePerDriverSlot3Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot3Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if !bupIsInternal(r.R[4]) {
 		// Real BIOS slot 3 R4!=0 early-out does NOT touch the caller's
@@ -639,7 +695,7 @@ func hlePerDriverSlot3Service(cpu *sh2.CPU, bus *Bus) {
 		cpu.SetReg(0, bupNon)
 		return
 	}
-	if !bupCheckFormat(bus) {
+	if !bupCheckFormat(cpu) {
 		cpu.SetReg(0, bupUnformat)
 		return
 	}
@@ -661,9 +717,9 @@ func hlePerDriverSlot3Service(cpu *sh2.CPU, bus *Bus) {
 	//   +$4C = $20180080  (first dir entry address)
 	out := r.R[6]
 	if out != 0 {
-		bupFillStat(bus, out, r.R[5])
+		bupFillStat(cpu, out, r.R[5])
 	}
-	bupSetInternalDriverState(bus)
+	bupSetInternalDriverState(cpu)
 	cpu.SetReg(0, bupOK)
 }
 
@@ -682,19 +738,19 @@ func hlePerDriverSlot3Service(cpu *sh2.CPU, bus *Bus) {
 // wrapper reads from this area to locate the entry's metadata
 // before invoking slot 5, so an empty buffer makes BR abort the
 // load.
-func bupSetInternalDriverState(bus *Bus) {
-	driver := perDriverBase(bus)
+func bupSetInternalDriverState(cpu *sh2.CPU) {
+	driver := perDriverBase(cpu)
 	if driver == 0 {
 		return
 	}
-	bus.Write32(driver+0x30, 0x20180000) // BUP RAM cache-through base
-	bus.Write32(driver+0x34, 0)          // mode 0 (no IRQ mask)
-	bus.Write32(driver+0x38, 0x00000200) // 512 dir entries
-	bus.Write32(driver+0x3C, 0x00000040) // 64-byte blocks
-	bus.Write32(driver+0x40, 0x00000080) // per-entry RAM stride (2 * $3C)
-	bus.Write32(driver+0x44, 0x00000002) // partition index 2
-	bus.Write32(driver+0x4C, 0x20180080) // first dir entry
-	bupPopulatePerEntryBuffer(bus, driver)
+	cpu.Write32(driver+0x30, 0x20180000) // BUP RAM cache-through base
+	cpu.Write32(driver+0x34, 0)          // mode 0 (no IRQ mask)
+	cpu.Write32(driver+0x38, 0x00000200) // 512 dir entries
+	cpu.Write32(driver+0x3C, 0x00000040) // 64-byte blocks
+	cpu.Write32(driver+0x40, 0x00000080) // per-entry RAM stride (2 * $3C)
+	cpu.Write32(driver+0x44, 0x00000002) // partition index 2
+	cpu.Write32(driver+0x4C, 0x20180080) // first dir entry
+	bupPopulatePerEntryBuffer(cpu, driver)
 }
 
 // bupPopulatePerEntryBuffer fills the per-entry working buffer
@@ -716,14 +772,14 @@ func bupSetInternalDriverState(bus *Bus) {
 //
 // Also writes driver_base+$50 = the FIRST matched entry's block
 // index (per "matched entry index" doc — slot 3/7 +$1434 hit).
-func bupPopulatePerEntryBuffer(bus *Bus, driverBase uint32) {
+func bupPopulatePerEntryBuffer(cpu *sh2.CPU, driverBase uint32) {
 	const stride = uint32(128)
 	const maxSlots = 127 // (16 KB - $78) / 128 ≈ 127
 
 	bufBase := driverBase + perDriverPerEntryBuffer
 	idx := uint32(0)
 	firstMatched := -1
-	bupWalkDir(bus, func(blockIdx int) bool {
+	bupWalkDir(cpu, func(blockIdx int) bool {
 		if idx >= maxSlots {
 			return false
 		}
@@ -734,13 +790,13 @@ func bupPopulatePerEntryBuffer(bus *Bus, driverBase uint32) {
 
 		// Zero the full slot first so trailing bytes are clean.
 		for i := uint32(0); i < stride; i++ {
-			bus.Write8(packet+i, 0)
+			cpu.Write8(packet+i, 0)
 		}
 
 		// Write the full block list: dir entry block first, then
 		// every claimed block (continuation pages + payload pages)
 		// from bupEntryBlocks.
-		_, claimed := bupEntryBlocks(bus, blockIdx)
+		_, claimed := bupEntryBlocks(cpu, blockIdx)
 		fullList := make([]uint16, 0, 1+len(claimed))
 		fullList = append(fullList, uint16(blockIdx))
 		fullList = append(fullList, claimed...)
@@ -749,12 +805,12 @@ func bupPopulatePerEntryBuffer(bus *Bus, driverBase uint32) {
 			if listOff+2 > 0x42 { // leave room before pointer table at +$44
 				break
 			}
-			bus.Write16(packet+listOff, b)
+			cpu.Write16(packet+listOff, b)
 			listOff += 2
 		}
 		// $0000 terminator (already zero from the wipe above, but
 		// write explicitly for clarity).
-		bus.Write16(packet+listOff, 0)
+		cpu.Write16(packet+listOff, 0)
 
 		// Write bus pointers for the LAST 15 blocks of the file at
 		// +$44..+$7F. Each pointer = $20180000 + block_idx * 128
@@ -772,7 +828,7 @@ func bupPopulatePerEntryBuffer(bus *Bus, driverBase uint32) {
 				break
 			}
 			ptr := uint32(0x20180000) + uint32(b)*128
-			bus.Write32(packet+0x44+uint32(i)*4, ptr)
+			cpu.Write32(packet+0x44+uint32(i)*4, ptr)
 		}
 
 		idx++
@@ -784,9 +840,9 @@ func bupPopulatePerEntryBuffer(bus *Bus, driverBase uint32) {
 	// Write the first in-use entry's block index so the SDK has
 	// something to reference. If no entries, leave at 0.
 	if firstMatched >= 0 {
-		bus.Write32(driverBase+0x50, uint32(firstMatched))
+		cpu.Write32(driverBase+0x50, uint32(firstMatched))
 	} else {
-		bus.Write32(driverBase+0x50, 0)
+		cpu.Write32(driverBase+0x50, 0)
 	}
 }
 
@@ -812,8 +868,8 @@ func bupPopulatePerEntryBuffer(bus *Bus, driverBase uint32) {
 // sane save size), treat it as "no candidate" and use R5 = 0 so
 // blocks_per_file = 1 and datanum = freeblock (matches slot 5
 // internally calling slot 3 with R5 = 0).
-func bupFillStat(bus *Bus, dst uint32, datasize uint32) {
-	used := bupCountUsedBlocks(bus)
+func bupFillStat(cpu *sh2.CPU, dst uint32, datasize uint32) {
+	used := bupCountUsedBlocks(cpu)
 	freeBlocks := bupTotalBlocks - used
 	if freeBlocks < 0 {
 		freeBlocks = 0
@@ -832,12 +888,12 @@ func bupFillStat(bus *Bus, dst uint32, datasize uint32) {
 	if freesize < 0 {
 		freesize = 0
 	}
-	bus.Write32(dst+0x00, uint32(bupTotalBlocks*bupBlockSize))
-	bus.Write32(dst+0x04, uint32(bupTotalBlocks))
-	bus.Write32(dst+0x08, uint32(bupBlockSize))
-	bus.Write32(dst+0x0C, uint32(freesize))
-	bus.Write32(dst+0x10, uint32(freeBlocks))
-	bus.Write32(dst+0x14, datanum)
+	cpu.Write32(dst+0x00, uint32(bupTotalBlocks*bupBlockSize))
+	cpu.Write32(dst+0x04, uint32(bupTotalBlocks))
+	cpu.Write32(dst+0x08, uint32(bupBlockSize))
+	cpu.Write32(dst+0x0C, uint32(freesize))
+	cpu.Write32(dst+0x10, uint32(freeBlocks))
+	cpu.Write32(dst+0x14, datanum)
 }
 
 // daysBeforeMonth holds the cumulative days-before-month-N table
@@ -867,28 +923,28 @@ var daysBeforeMonth = [11]uint32{
 // Real BIOS also emits 3 (BUP_WRITE_PROTECT, cart-status `$23`)
 // and -1 (generic) on the cart path; HLE never reaches those
 // because it short-circuits non-internal devices to BUP_NON.
-func hlePerDriverSlot5Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot5Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if !bupIsInternal(r.R[4]) {
 		cpu.SetReg(0, bupNon)
 		return
 	}
-	bupSetInternalDriverState(bus)
-	if !bupCheckFormat(bus) {
+	bupSetInternalDriverState(cpu)
+	if !bupCheckFormat(cpu) {
 		cpu.SetReg(0, bupUnformat)
 		return
 	}
-	name, ok := bupCallerFilename(bus, r.R[5])
+	name, ok := bupCallerFilename(cpu, r.R[5])
 	if !ok {
 		cpu.SetReg(0, bupNotFound)
 		return
 	}
-	entry := bupFindEntry(bus, name)
+	entry := bupFindEntry(cpu, name)
 	if entry < 0 {
 		cpu.SetReg(0, bupNotFound)
 		return
 	}
-	meta := bupReadDirEntry(bus, entry)
+	meta := bupReadDirEntry(cpu, entry)
 	dst := r.R[6]
 	if dst == 0 {
 		// Null destination: the file was found, just don't copy.
@@ -900,7 +956,7 @@ func hlePerDriverSlot5Service(cpu *sh2.CPU, bus *Bus) {
 	// Walk the on-disk chain (cont tail + per-data-block 60-byte
 	// payload) and copy datasize bytes into the caller's buffer.
 	// See bupBuildReadChain for the chain semantics.
-	chain := bupBuildReadChain(bus, entry)
+	chain := bupBuildReadChain(cpu, entry)
 	remaining := uint32(meta.datasize)
 	dstAddr := dst
 	for _, rb := range chain {
@@ -920,7 +976,7 @@ func hlePerDriverSlot5Service(cpu *sh2.CPU, bus *Bus) {
 		}
 		base := int(rb.blockIdx) * bupBlockSize
 		for i := uint32(0); i < chunk; i++ {
-			bus.Write8(dstAddr+i, bus.backup[base+int(rb.startOff)+int(i)])
+			cpu.Write8(dstAddr+i, bupRAMByte(cpu, base+int(rb.startOff)+int(i)))
 		}
 		dstAddr += chunk
 		remaining -= chunk
@@ -946,13 +1002,13 @@ func hlePerDriverSlot5Service(cpu *sh2.CPU, bus *Bus) {
 //
 //	R4 != 0 -> R0 = 1 (BUP_NON; external cart / serial not modeled)
 //	otherwise -> R0 = 0 (format complete)
-func hlePerDriverSlot2Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot2Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if !bupIsInternal(r.R[4]) {
 		cpu.SetReg(0, bupNon)
 		return
 	}
-	formatBackupRAM(bus.backup)
+	bupFormatRAM(cpu)
 	cpu.SetReg(0, bupOK)
 }
 
@@ -981,23 +1037,23 @@ func hlePerDriverSlot2Service(cpu *sh2.CPU, bus *Bus) {
 // Real BIOS also emits 3 (BUP_WRITE_PROTECT, cart-status `$23`)
 // and -1 (generic) on the cart path; HLE never reaches those
 // because it short-circuits non-internal devices to BUP_NON.
-func hlePerDriverSlot6Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot6Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if !bupIsInternal(r.R[4]) {
 		cpu.SetReg(0, bupNon)
 		return
 	}
-	bupSetInternalDriverState(bus)
-	if !bupCheckFormat(bus) {
+	bupSetInternalDriverState(cpu)
+	if !bupCheckFormat(cpu) {
 		cpu.SetReg(0, bupUnformat)
 		return
 	}
-	name, ok := bupCallerFilename(bus, r.R[5])
+	name, ok := bupCallerFilename(cpu, r.R[5])
 	if !ok {
 		cpu.SetReg(0, bupNotFound)
 		return
 	}
-	entry := bupFindEntry(bus, name)
+	entry := bupFindEntry(cpu, name)
 	if entry < 0 {
 		cpu.SetReg(0, bupNotFound)
 		return
@@ -1013,7 +1069,7 @@ func hlePerDriverSlot6Service(cpu *sh2.CPU, bus *Bus) {
 	// list) still sees the entry.
 	off := entry * bupBlockSize
 	for i := 0; i < bupBlockSize; i++ {
-		bus.backup[off+i] = 0
+		bupRAMSetByte(cpu, off+i, 0)
 	}
 	cpu.SetReg(0, bupOK)
 }
@@ -1040,28 +1096,28 @@ func hlePerDriverSlot6Service(cpu *sh2.CPU, bus *Bus) {
 // Real BIOS also emits 3 (BUP_WRITE_PROTECT, cart-status `$23`)
 // and -1 (generic) on the cart path; HLE never reaches those
 // because it short-circuits non-internal devices to BUP_NON.
-func hlePerDriverSlot8Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot8Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if !bupIsInternal(r.R[4]) {
 		cpu.SetReg(0, bupNon)
 		return
 	}
-	bupSetInternalDriverState(bus)
-	if !bupCheckFormat(bus) {
+	bupSetInternalDriverState(cpu)
+	if !bupCheckFormat(cpu) {
 		cpu.SetReg(0, bupUnformat)
 		return
 	}
-	name, ok := bupCallerFilename(bus, r.R[5])
+	name, ok := bupCallerFilename(cpu, r.R[5])
 	if !ok {
 		cpu.SetReg(0, bupNotFound)
 		return
 	}
-	entry := bupFindEntry(bus, name)
+	entry := bupFindEntry(cpu, name)
 	if entry < 0 {
 		cpu.SetReg(0, bupNotFound)
 		return
 	}
-	meta := bupReadDirEntry(bus, entry)
+	meta := bupReadDirEntry(cpu, entry)
 	src := r.R[6]
 	if src == 0 {
 		// Null source: nothing to compare against, so the verify
@@ -1071,7 +1127,7 @@ func hlePerDriverSlot8Service(cpu *sh2.CPU, bus *Bus) {
 		cpu.SetReg(0, bupNoMatch)
 		return
 	}
-	chain := bupBuildReadChain(bus, entry)
+	chain := bupBuildReadChain(cpu, entry)
 	remaining := int(meta.datasize)
 	srcAddr := src
 	for _, rb := range chain {
@@ -1092,7 +1148,7 @@ func hlePerDriverSlot8Service(cpu *sh2.CPU, bus *Bus) {
 		}
 		base := int(rb.blockIdx) * bupBlockSize
 		for i := 0; i < chunk; i++ {
-			if bus.Read8(srcAddr+uint32(i)) != bus.backup[base+int(rb.startOff)+i] {
+			if cpu.Read8(srcAddr+uint32(i)) != bupRAMByte(cpu, base+int(rb.startOff)+i) {
 				cpu.SetReg(0, bupNoMatch)
 				return
 			}
@@ -1138,7 +1194,7 @@ func hlePerDriverSlot8Service(cpu *sh2.CPU, bus *Bus) {
 //	+$1C  datasize (BE u32)
 //	+$20  blocksize (BE u16) — = (datasize + 29) / 58 + 1
 //	                            per slot 7 disasm at +$1A6A..+$1A90
-func hlePerDriverSlot7Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot7Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if !bupIsInternal(r.R[4]) {
 		// Slot 7 R4!=0 returns 0 matches. The R4=2 disasm at +$18E6
@@ -1148,12 +1204,12 @@ func hlePerDriverSlot7Service(cpu *sh2.CPU, bus *Bus) {
 		cpu.SetReg(0, bupOK)
 		return
 	}
-	bupSetInternalDriverState(bus)
-	if !bupCheckFormat(bus) {
+	bupSetInternalDriverState(cpu)
+	if !bupCheckFormat(cpu) {
 		cpu.SetReg(0, bupUnformat)
 		return
 	}
-	pattern, hasPattern := bupCallerFilename(bus, r.R[5])
+	pattern, hasPattern := bupCallerFilename(cpu, r.R[5])
 	wildcard := !hasPattern || pattern[0] == 0 || pattern[0] == '*'
 	maxEntries := int(uint16(r.R[6]))
 	out := r.R[7]
@@ -1165,14 +1221,14 @@ func hlePerDriverSlot7Service(cpu *sh2.CPU, bus *Bus) {
 	// (corrupted) entries.
 	if out != 0 && maxEntries > 0 {
 		for i := uint32(0); i < uint32(maxEntries)*bupDirOutStride; i++ {
-			bus.Write8(out+i, 0)
+			cpu.Write8(out+i, 0)
 		}
 	}
 
 	totalMatches := 0
 	written := 0
-	bupWalkDir(bus, func(blockIdx int) bool {
-		fn := bupReadFilename(bus, blockIdx)
+	bupWalkDir(cpu, func(blockIdx int) bool {
+		fn := bupReadFilename(cpu, blockIdx)
 		if !wildcard && !bupFilenameEqual(fn, pattern) {
 			return true
 		}
@@ -1180,25 +1236,25 @@ func hlePerDriverSlot7Service(cpu *sh2.CPU, bus *Bus) {
 		if out == 0 || written >= maxEntries {
 			return true
 		}
-		meta := bupReadDirEntry(bus, blockIdx)
+		meta := bupReadDirEntry(cpu, blockIdx)
 		base := out + uint32(written)*bupDirOutStride
 
 		// filename[12]: 11 ASCII + NUL
 		for i := 0; i < 11; i++ {
-			bus.Write8(base+uint32(i), fn[i])
+			cpu.Write8(base+uint32(i), fn[i])
 		}
-		bus.Write8(base+11, 0)
+		cpu.Write8(base+11, 0)
 		// comment[11]: 10 ASCII + NUL
 		for i := 0; i < 10; i++ {
-			bus.Write8(base+0x0C+uint32(i), meta.comment[i])
+			cpu.Write8(base+0x0C+uint32(i), meta.comment[i])
 		}
-		bus.Write8(base+0x16, 0)
+		cpu.Write8(base+0x16, 0)
 		// language
-		bus.Write8(base+0x17, meta.language)
+		cpu.Write8(base+0x17, meta.language)
 		// date (BE u32)
-		bus.Write32(base+0x18, meta.date)
+		cpu.Write32(base+0x18, meta.date)
 		// datasize (BE u32)
-		bus.Write32(base+0x1C, meta.datasize)
+		cpu.Write32(base+0x1C, meta.datasize)
 		// blocksize: real BIOS formula per slot 7 disasm
 		// at +$1A6A..+$1A90: `(datasize + 29) / 58 + 1` using
 		// integer (truncating) division. Verified by side-by-side
@@ -1209,7 +1265,7 @@ func hlePerDriverSlot7Service(cpu *sh2.CPU, bus *Bus) {
 		// 58-byte boundary differently than ceil.
 		effBytes := uint32(bupBlockSize - 6) // 58
 		blocks := (meta.datasize+29)/effBytes + 1
-		bus.Write16(base+0x20, uint16(blocks))
+		cpu.Write16(base+0x20, uint16(blocks))
 
 		written++
 		return true
@@ -1229,7 +1285,7 @@ func hlePerDriverSlot7Service(cpu *sh2.CPU, bus *Bus) {
 // Parses the caller's BupDir struct at R5, validates header,
 // looks up existing filename (honors owsw at R7), allocates free
 // blocks, writes a fresh directory entry plus continuation page
-// (if needed) plus payload to bus.backup in the layout that
+// (if needed) plus payload to backup RAM in the layout that
 // BUP_Read expects.
 //
 // Return codes (per disasm of +$0A78 MOV #N,R0 sites 0, 1, 2, 3, 4, 6):
@@ -1280,14 +1336,14 @@ func hlePerDriverSlot7Service(cpu *sh2.CPU, bus *Bus) {
 //	Pure in-entry (C=0, D≤14):  D * 60 bytes      (max 840 B)
 //	Multi-cont (C≥1):           58*(D + C) + 28   (max ~26.9 KB
 //	                            at D=449, C=15)
-func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot4Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	if !bupIsInternal(r.R[4]) {
 		cpu.SetReg(0, bupNon)
 		return
 	}
-	bupSetInternalDriverState(bus)
-	if !bupCheckFormat(bus) {
+	bupSetInternalDriverState(cpu)
+	if !bupCheckFormat(cpu) {
 		cpu.SetReg(0, bupUnformat)
 		return
 	}
@@ -1306,9 +1362,9 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 	}
 	var name [11]byte
 	for i := 0; i < 11; i++ {
-		name[i] = bus.Read8(dirSrc + uint32(i))
+		name[i] = cpu.Read8(dirSrc + uint32(i))
 	}
-	datasize := bus.Read32(dirSrc + 0x1C)
+	datasize := cpu.Read32(dirSrc + 0x1C)
 
 	// Decide layout: pure in-entry vs multi-page continuation. The
 	// algorithm is documented in detail in docs/bios/backup_library.md
@@ -1372,7 +1428,7 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 	// If file already exists: honor owsw. R7 == 0 -> error; non-
 	// zero -> delete existing first (so free-block math sees the
 	// freed space).
-	if existing := bupFindEntry(bus, name); existing >= 0 {
+	if existing := bupFindEntry(cpu, name); existing >= 0 {
 		// Per slot 4 disasm at +$B40..+$B54: owsw == 0 means
 		// OVERWRITE (BSR sub_17BA to erase the matched entry, then
 		// fall through to creation). owsw != 0 means DON'T
@@ -1385,11 +1441,11 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 		}
 		off := existing * bupBlockSize
 		for i := 0; i < bupBlockSize; i++ {
-			bus.backup[off+i] = 0
+			bupRAMSetByte(cpu, off+i, 0)
 		}
 	}
 
-	allocated := bupAllocBlocks(bus, totalNew)
+	allocated := bupAllocBlocks(cpu, totalNew)
 	if allocated == nil {
 		cpu.SetReg(0, bupNotEnoughMemory)
 		return
@@ -1410,13 +1466,13 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 	for _, blk := range inEntryData {
 		bOff := int(blk) * bupBlockSize
 		for i := 0; i < bupBlockSize; i++ {
-			bus.backup[bOff+i] = 0
+			bupRAMSetByte(cpu, bOff+i, 0)
 		}
 	}
 	for _, blk := range contListedData {
 		bOff := int(blk) * bupBlockSize
 		for i := 0; i < bupBlockSize; i++ {
-			bus.backup[bOff+i] = 0
+			bupRAMSetByte(cpu, bOff+i, 0)
 		}
 	}
 
@@ -1428,14 +1484,14 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 	for j, contBlk := range contPages {
 		cOff := int(contBlk) * bupBlockSize
 		for i := 0; i < bupBlockSize; i++ {
-			bus.backup[cOff+i] = 0
+			bupRAMSetByte(cpu, cOff+i, 0)
 		}
 		// $0000 $0000 sentinel at +$00..+$03 already from zero-fill.
 		if j < C-1 {
 			// Full cont page: 30 indices, no terminator.
 			start := j * (bupContWordSlots) // = j * 30
 			for i := 0; i < bupContWordSlots; i++ {
-				bupWriteBE16(bus.backup, cOff+bupContPayloadOff+i*2, contListedData[start+i])
+				bupRAMSetBE16(cpu, cOff+bupContPayloadOff+i*2, contListedData[start+i])
 			}
 		} else {
 			// Last cont page: write X remaining indices + $0000 terminator
@@ -1443,7 +1499,7 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 			X := D + 15 - 29*C
 			start := (C - 1) * bupContWordSlots
 			for i := 0; i < X; i++ {
-				bupWriteBE16(bus.backup, cOff+bupContPayloadOff+i*2, contListedData[start+i])
+				bupRAMSetBE16(cpu, cOff+bupContPayloadOff+i*2, contListedData[start+i])
 			}
 			lastContTailOff = cOff + bupContPayloadOff + (X+1)*2
 			lastContTailEnd = cOff + bupBlockSize
@@ -1452,25 +1508,25 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 
 	// Write the directory entry header.
 	off := dirBlock * bupBlockSize
-	bupWriteBE32(bus.backup, off, 0x80000000)
-	copy(bus.backup[off+4:off+15], name[:])
-	bus.backup[off+15] = bus.Read8(dirSrc + 0x17) // language
+	bupRAMSetBE32(cpu, off, 0x80000000)
+	bupRAMWrite(cpu, off+4, name[:11])
+	bupRAMSetByte(cpu, off+15, cpu.Read8(dirSrc+0x17)) // language
 	for i := 0; i < 10; i++ {
-		bus.backup[off+16+i] = bus.Read8(dirSrc + 0x0C + uint32(i))
+		bupRAMSetByte(cpu, off+16+i, cpu.Read8(dirSrc+0x0C+uint32(i)))
 	}
-	bupWriteBE32(bus.backup, off+0x1A, bus.Read32(dirSrc+0x18)) // date
-	bupWriteBE32(bus.backup, off+0x1E, datasize)
+	bupRAMSetBE32(cpu, off+0x1A, cpu.Read32(dirSrc+0x18)) // date
+	bupRAMSetBE32(cpu, off+0x1E, datasize)
 	// Zero the block list area; unused slots will act as $0000
 	// terminators (for pure in-entry) or stay zero where appropriate.
 	for i := 0x22; i < bupBlockSize; i++ {
-		bus.backup[off+i] = 0
+		bupRAMSetByte(cpu, off+i, 0)
 	}
 	listBase := off + bupDirListOff
 	if C == 0 {
 		// Pure in-entry: write D non-zero data block indices; trailing
 		// slot acts as the single $0000 terminator from zero-fill.
 		for i, idx := range inEntryData {
-			bupWriteBE16(bus.backup, listBase+i*2, idx)
+			bupRAMSetBE16(cpu, listBase+i*2, idx)
 		}
 	} else {
 		// Multi-cont: slots 0..C-1 = cont page indices; slots C..14 =
@@ -1478,10 +1534,10 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 		// so BUP_Read treats the in-entry blocks as cont pages where
 		// applicable per the per-block sentinel check.
 		for i, idx := range contPages {
-			bupWriteBE16(bus.backup, listBase+i*2, idx)
+			bupRAMSetBE16(cpu, listBase+i*2, idx)
 		}
 		for i, idx := range inEntryData {
-			bupWriteBE16(bus.backup, listBase+(C+i)*2, idx)
+			bupRAMSetBE16(cpu, listBase+(C+i)*2, idx)
 		}
 	}
 
@@ -1494,12 +1550,12 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 	//      then page 1's list ... then last page's list), 60 bytes each.
 	remaining := int(datasize)
 	srcAddr := dataSrc
-	writeChunk := func(dst []byte, n int) {
+	writeChunk := func(dstOff, n int) {
 		if dataSrc == 0 {
 			return // leave destination zero-filled
 		}
 		for i := 0; i < n; i++ {
-			dst[i] = bus.Read8(srcAddr + uint32(i))
+			bupRAMSetByte(cpu, dstOff+i, cpu.Read8(srcAddr+uint32(i)))
 		}
 		srcAddr += uint32(n)
 	}
@@ -1512,7 +1568,7 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 			chunk = remaining
 		}
 		bOff := int(blk) * bupBlockSize
-		writeChunk(bus.backup[bOff+bupBlockHeaderSize:bOff+bupBlockHeaderSize+chunk], chunk)
+		writeChunk(bOff+bupBlockHeaderSize, chunk)
 		remaining -= chunk
 	}
 	if C > 0 && remaining > 0 {
@@ -1522,7 +1578,7 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 			chunk = remaining
 		}
 		if chunk > 0 {
-			writeChunk(bus.backup[lastContTailOff:lastContTailOff+chunk], chunk)
+			writeChunk(lastContTailOff, chunk)
 			remaining -= chunk
 		}
 	}
@@ -1576,13 +1632,13 @@ func hlePerDriverSlot4Service(cpu *sh2.CPU, bus *Bus) {
 //
 // b0 = year-of-cycle (year - 1980), b1 = month (1-12),
 // b2 = day-of-month (1-31), b3 = hour (0-23), b4 = minute (0-59).
-func hlePerDriverSlot10Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot10Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
-	b0 := uint32(bus.Read8(r.R[4] + 0))
-	b1 := uint32(bus.Read8(r.R[4] + 1))
-	b2 := uint32(bus.Read8(r.R[4] + 2))
-	b3 := uint32(bus.Read8(r.R[4] + 3))
-	b4 := uint32(bus.Read8(r.R[4] + 4))
+	b0 := uint32(cpu.Read8(r.R[4] + 0))
+	b1 := uint32(cpu.Read8(r.R[4] + 1))
+	b2 := uint32(cpu.Read8(r.R[4] + 2))
+	b3 := uint32(cpu.Read8(r.R[4] + 3))
+	b4 := uint32(cpu.Read8(r.R[4] + 4))
 
 	t1 := b0 / 4
 	t2 := b0 % 4
@@ -1633,7 +1689,7 @@ func hlePerDriverSlot10Service(cpu *sh2.CPU, bus *Bus) {
 // then day-of-year → (month, day) via inline month-iteration
 // (equivalent to the BIOS table walk through +$1D96's
 // days-before-month constants). Week = (days + 2) mod 7.
-func hlePerDriverSlot9Service(cpu *sh2.CPU, bus *Bus) {
+func hlePerDriverSlot9Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	packed := r.R[4]
 	out := r.R[5]
@@ -1692,10 +1748,10 @@ func hlePerDriverSlot9Service(cpu *sh2.CPU, bus *Bus) {
 	// 1980-01-01 (day 0) was a Tuesday. Sunday=0 → Tuesday=2.
 	week := (totalDays + 2) % 7
 
-	bus.Write8(out+0, uint8(year))
-	bus.Write8(out+1, uint8(month))
-	bus.Write8(out+2, uint8(dayOfMonth))
-	bus.Write8(out+3, uint8(hour))
-	bus.Write8(out+4, uint8(minute))
-	bus.Write8(out+5, uint8(week))
+	cpu.Write8(out+0, uint8(year))
+	cpu.Write8(out+1, uint8(month))
+	cpu.Write8(out+2, uint8(dayOfMonth))
+	cpu.Write8(out+3, uint8(hour))
+	cpu.Write8(out+4, uint8(minute))
+	cpu.Write8(out+5, uint8(week))
 }

@@ -24,7 +24,7 @@ func opMOVI(c *CPU) {
 func opMOVBL(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = uint32(int32(int8(c.read8(c.reg.R[m]))))
+	c.reg.R[n] = uint32(int32(int8(c.Read8(c.reg.R[m]))))
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -34,7 +34,7 @@ func opMOVBL(c *CPU) {
 func opMOVWL(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = uint32(int32(int16(c.read16(c.reg.R[m]))))
+	c.reg.R[n] = uint32(int32(int16(c.Read16(c.reg.R[m]))))
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -44,7 +44,7 @@ func opMOVWL(c *CPU) {
 func opMOVLL(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = c.read32(c.reg.R[m])
+	c.reg.R[n] = c.Read32(c.reg.R[m])
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -54,7 +54,7 @@ func opMOVLL(c *CPU) {
 func opMOVBS(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write8(c.reg.R[n], uint8(c.reg.R[m]))
+	c.Write8(c.reg.R[n], uint8(c.reg.R[m]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -63,7 +63,7 @@ func opMOVBS(c *CPU) {
 func opMOVWS(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write16(c.reg.R[n], uint16(c.reg.R[m]))
+	c.Write16(c.reg.R[n], uint16(c.reg.R[m]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -72,7 +72,7 @@ func opMOVWS(c *CPU) {
 func opMOVLS(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write32(c.reg.R[n], c.reg.R[m])
+	c.Write32(c.reg.R[n], c.reg.R[m])
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -81,7 +81,7 @@ func opMOVLS(c *CPU) {
 func opMOVBP(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = uint32(int32(int8(c.read8(c.reg.R[m]))))
+	c.reg.R[n] = uint32(int32(int8(c.Read8(c.reg.R[m]))))
 	if n != m {
 		c.reg.R[m]++
 	}
@@ -94,7 +94,7 @@ func opMOVBP(c *CPU) {
 func opMOVWP(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = uint32(int32(int16(c.read16(c.reg.R[m]))))
+	c.reg.R[n] = uint32(int32(int16(c.Read16(c.reg.R[m]))))
 	if n != m {
 		c.reg.R[m] += 2
 	}
@@ -107,7 +107,7 @@ func opMOVWP(c *CPU) {
 func opMOVLP(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = c.read32(c.reg.R[m])
+	c.reg.R[n] = c.Read32(c.reg.R[m])
 	if n != m {
 		c.reg.R[m] += 4
 	}
@@ -120,7 +120,7 @@ func opMOVLP(c *CPU) {
 func opMOVBM(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write8(c.reg.R[n]-1, uint8(c.reg.R[m]))
+	c.Write8(c.reg.R[n]-1, uint8(c.reg.R[m]))
 	c.reg.R[n]--
 	c.stepBus = BusWrite
 	c.cycles++
@@ -130,7 +130,7 @@ func opMOVBM(c *CPU) {
 func opMOVWM(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write16(c.reg.R[n]-2, uint16(c.reg.R[m]))
+	c.Write16(c.reg.R[n]-2, uint16(c.reg.R[m]))
 	c.reg.R[n] -= 2
 	c.stepBus = BusWrite
 	c.cycles++
@@ -140,7 +140,7 @@ func opMOVWM(c *CPU) {
 func opMOVLM(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write32(c.reg.R[n]-4, c.reg.R[m])
+	c.Write32(c.reg.R[n]-4, c.reg.R[m])
 	c.reg.R[n] -= 4
 	c.stepBus = BusWrite
 	c.cycles++
@@ -150,7 +150,7 @@ func opMOVLM(c *CPU) {
 func opMOVBS0(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write8(c.reg.R[0]+c.reg.R[n], uint8(c.reg.R[m]))
+	c.Write8(c.reg.R[0]+c.reg.R[n], uint8(c.reg.R[m]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -159,7 +159,7 @@ func opMOVBS0(c *CPU) {
 func opMOVWS0(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write16(c.reg.R[0]+c.reg.R[n], uint16(c.reg.R[m]))
+	c.Write16(c.reg.R[0]+c.reg.R[n], uint16(c.reg.R[m]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -168,7 +168,7 @@ func opMOVWS0(c *CPU) {
 func opMOVLS0(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.write32(c.reg.R[0]+c.reg.R[n], c.reg.R[m])
+	c.Write32(c.reg.R[0]+c.reg.R[n], c.reg.R[m])
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -177,7 +177,7 @@ func opMOVLS0(c *CPU) {
 func opMOVBL0(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = uint32(int32(int8(c.read8(c.reg.R[0] + c.reg.R[m]))))
+	c.reg.R[n] = uint32(int32(int8(c.Read8(c.reg.R[0] + c.reg.R[m]))))
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -187,7 +187,7 @@ func opMOVBL0(c *CPU) {
 func opMOVWL0(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = uint32(int32(int16(c.read16(c.reg.R[0] + c.reg.R[m]))))
+	c.reg.R[n] = uint32(int32(int16(c.Read16(c.reg.R[0] + c.reg.R[m]))))
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -197,7 +197,7 @@ func opMOVWL0(c *CPU) {
 func opMOVLL0(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
-	c.reg.R[n] = c.read32(c.reg.R[0] + c.reg.R[m])
+	c.reg.R[n] = c.Read32(c.reg.R[0] + c.reg.R[m])
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -206,7 +206,7 @@ func opMOVLL0(c *CPU) {
 // opMOVBSG: MOV.B R0,@(disp,GBR) - Write byte R0 to @(GBR+disp8)
 func opMOVBSG(c *CPU) {
 	disp := uint32(imm8(c.ir))
-	c.write8(c.reg.GBR+disp, uint8(c.reg.R[0]))
+	c.Write8(c.reg.GBR+disp, uint8(c.reg.R[0]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -214,7 +214,7 @@ func opMOVBSG(c *CPU) {
 // opMOVWSG: MOV.W R0,@(disp,GBR) - Write word R0 to @(GBR+disp8*2)
 func opMOVWSG(c *CPU) {
 	disp := uint32(imm8(c.ir)) * 2
-	c.write16(c.reg.GBR+disp, uint16(c.reg.R[0]))
+	c.Write16(c.reg.GBR+disp, uint16(c.reg.R[0]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -222,7 +222,7 @@ func opMOVWSG(c *CPU) {
 // opMOVLSG: MOV.L R0,@(disp,GBR) - Write long R0 to @(GBR+disp8*4)
 func opMOVLSG(c *CPU) {
 	disp := uint32(imm8(c.ir)) * 4
-	c.write32(c.reg.GBR+disp, c.reg.R[0])
+	c.Write32(c.reg.GBR+disp, c.reg.R[0])
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -230,7 +230,7 @@ func opMOVLSG(c *CPU) {
 // opMOVBLG: MOV.B @(disp,GBR),R0 - R0 = sign-extend(byte @(GBR+disp8))
 func opMOVBLG(c *CPU) {
 	disp := uint32(imm8(c.ir))
-	c.reg.R[0] = uint32(int32(int8(c.read8(c.reg.GBR + disp))))
+	c.reg.R[0] = uint32(int32(int8(c.Read8(c.reg.GBR + disp))))
 	c.lastLoadReg = 0
 	c.stepBus = BusRead
 	c.cycles++
@@ -239,7 +239,7 @@ func opMOVBLG(c *CPU) {
 // opMOVWLG: MOV.W @(disp,GBR),R0 - R0 = sign-extend(word @(GBR+disp8*2))
 func opMOVWLG(c *CPU) {
 	disp := uint32(imm8(c.ir)) * 2
-	c.reg.R[0] = uint32(int32(int16(c.read16(c.reg.GBR + disp))))
+	c.reg.R[0] = uint32(int32(int16(c.Read16(c.reg.GBR + disp))))
 	c.lastLoadReg = 0
 	c.stepBus = BusRead
 	c.cycles++
@@ -248,7 +248,7 @@ func opMOVWLG(c *CPU) {
 // opMOVLLG: MOV.L @(disp,GBR),R0 - R0 = long @(GBR+disp8*4)
 func opMOVLLG(c *CPU) {
 	disp := uint32(imm8(c.ir)) * 4
-	c.reg.R[0] = c.read32(c.reg.GBR + disp)
+	c.reg.R[0] = c.Read32(c.reg.GBR + disp)
 	c.lastLoadReg = 0
 	c.stepBus = BusRead
 	c.cycles++
@@ -258,7 +258,7 @@ func opMOVLLG(c *CPU) {
 func opMOVBS4(c *CPU) {
 	n := regM(c.ir) // bits 7-4 hold Rn for group 8 instructions
 	disp := uint32(imm4(c.ir))
-	c.write8(c.reg.R[n]+disp, uint8(c.reg.R[0]))
+	c.Write8(c.reg.R[n]+disp, uint8(c.reg.R[0]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -267,7 +267,7 @@ func opMOVBS4(c *CPU) {
 func opMOVWS4(c *CPU) {
 	n := regM(c.ir) // bits 7-4 hold Rn for group 8 instructions
 	disp := uint32(imm4(c.ir)) * 2
-	c.write16(c.reg.R[n]+disp, uint16(c.reg.R[0]))
+	c.Write16(c.reg.R[n]+disp, uint16(c.reg.R[0]))
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -277,7 +277,7 @@ func opMOVLS4(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
 	disp := uint32(imm4(c.ir)) * 4
-	c.write32(c.reg.R[n]+disp, c.reg.R[m])
+	c.Write32(c.reg.R[n]+disp, c.reg.R[m])
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -286,7 +286,7 @@ func opMOVLS4(c *CPU) {
 func opMOVBL4(c *CPU) {
 	m := regM(c.ir) // bits 7-4 hold Rm for group 8 instructions
 	disp := uint32(imm4(c.ir))
-	c.reg.R[0] = uint32(int32(int8(c.read8(c.reg.R[m] + disp))))
+	c.reg.R[0] = uint32(int32(int8(c.Read8(c.reg.R[m] + disp))))
 	c.lastLoadReg = 0
 	c.stepBus = BusRead
 	c.cycles++
@@ -296,7 +296,7 @@ func opMOVBL4(c *CPU) {
 func opMOVWL4(c *CPU) {
 	m := regM(c.ir) // bits 7-4 hold Rm for group 8 instructions
 	disp := uint32(imm4(c.ir)) * 2
-	c.reg.R[0] = uint32(int32(int16(c.read16(c.reg.R[m] + disp))))
+	c.reg.R[0] = uint32(int32(int16(c.Read16(c.reg.R[m] + disp))))
 	c.lastLoadReg = 0
 	c.stepBus = BusRead
 	c.cycles++
@@ -307,7 +307,7 @@ func opMOVLL4(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
 	disp := uint32(imm4(c.ir)) * 4
-	c.reg.R[n] = c.read32(c.reg.R[m] + disp)
+	c.reg.R[n] = c.Read32(c.reg.R[m] + disp)
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -329,7 +329,7 @@ func opMOVWI(c *CPU) {
 	n := regN(c.ir)
 	disp := uint32(imm8(c.ir)) * 2
 	addr := c.pcRelBase() + disp
-	c.reg.R[n] = uint32(int32(int16(c.read16(addr))))
+	c.reg.R[n] = uint32(int32(int16(c.Read16(addr))))
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++
@@ -340,7 +340,7 @@ func opMOVLI(c *CPU) {
 	n := regN(c.ir)
 	disp := uint32(imm8(c.ir)) * 4
 	addr := (c.pcRelBase() & 0xFFFFFFFC) + disp
-	c.reg.R[n] = c.read32(addr)
+	c.reg.R[n] = c.Read32(addr)
 	c.lastLoadReg = n
 	c.stepBus = BusRead
 	c.cycles++

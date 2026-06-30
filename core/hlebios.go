@@ -426,7 +426,7 @@ func readIPImage(d DiscReader) []byte {
 // an instruction; after it returns, the SH-2 jumps to PR (the RTS
 // return path) without ever executing a real opcode at the magic
 // address.
-type hleFunc func(cpu *sh2.CPU, bus *Bus)
+type hleFunc func(cpu *sh2.CPU)
 
 // HLEBIOS replaces the real Saturn BIOS for boots that don't have a
 // licensed BIOS image attached. It owns the SH-2 magic-address hook
@@ -550,10 +550,11 @@ func (h *HLEBIOS) dispatch(cpu *sh2.CPU) func(pc uint32) {
 		if !ok {
 			return
 		}
-		fn(cpu, h.bus)
-		// The Go service wrote memory directly, bypassing this CPU's
-		// cache; purge it so later reads on this CPU see those writes.
-		cpu.CachePurge()
+		// Services perform their memory accesses through cpu.Read/Write,
+		// so the calling CPU's cache stays coherent with its own writes.
+		// The lone exception is the CD game-load shortcut,
+		// which bulk-copies via a raw slice (DMA-semantic).
+		fn(cpu)
 	}
 }
 

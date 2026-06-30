@@ -40,8 +40,8 @@ func TestOnChipSBYCRStub(t *testing.T) {
 
 	// Byte access via read8/write8 should round-trip through the
 	// on-chip dispatch cleanly.
-	cpu.write8(0xFFFFFE91, 0x80) // SBY=1 (STBY mode)
-	got := cpu.read8(0xFFFFFE91)
+	cpu.Write8(0xFFFFFE91, 0x80) // SBY=1 (STBY mode)
+	got := cpu.Read8(0xFFFFFE91)
 	if got != 0x80 {
 		t.Errorf("SBYCR via read8 = 0x%02X, want 0x80", got)
 	}
@@ -62,14 +62,14 @@ func TestOnChipVCRDByteAccess(t *testing.T) {
 	cpu.writeOnChip(0xFFFFFE68, 0x4B00)
 
 	// High byte via byte read.
-	hi := cpu.read8(0xFFFFFE68)
+	hi := cpu.Read8(0xFFFFFE68)
 	if hi != 0x4B {
 		t.Errorf("VCRD high byte = 0x%02X, want 0x4B", hi)
 	}
 
 	// Low byte via byte read - the off-by-one fix path. Reserved
 	// bits always read 0.
-	lo := cpu.read8(0xFFFFFE69)
+	lo := cpu.Read8(0xFFFFFE69)
 	if lo != 0x00 {
 		t.Errorf("VCRD low byte = 0x%02X, want 0x00", lo)
 	}
@@ -77,7 +77,7 @@ func TestOnChipVCRDByteAccess(t *testing.T) {
 	// Byte write to low byte must route through INTC (not the
 	// 32-bit default). The low byte maps to reserved bits, so the
 	// RMW write-back is masked to zero and VCRD stays at 0x4B00.
-	cpu.write8(0xFFFFFE69, 0x55)
+	cpu.Write8(0xFFFFFE69, 0x55)
 	cur, _ := cpu.readOnChip(0xFFFFFE68)
 	if uint16(cur) != 0x4B00 {
 		t.Errorf("VCRD after byte write to reserved low = 0x%04X, want 0x4B00", uint16(cur))
@@ -198,17 +198,17 @@ func TestRead8Write8OnChip(t *testing.T) {
 	cpu := New(bus, true)
 
 	// Write to FRT TIER via read8/write8 helpers
-	cpu.write8(0xFFFFFE10, 0x8E)
-	val := cpu.read8(0xFFFFFE10)
+	cpu.Write8(0xFFFFFE10, 0x8E)
+	val := cpu.Read8(0xFFFFFE10)
 	// TIER: bits 7, 3-1 writable, bit 0 always 1
 	if val != 0x8F {
 		t.Errorf("TIER via read8 = 0x%02X, want 0x8F", val)
 	}
 
 	// Verify normal bus access still works
-	cpu.write8(0x100, 0xAB)
-	if cpu.read8(0x100) != 0xAB {
-		t.Errorf("normal bus read8 = 0x%02X, want 0xAB", cpu.read8(0x100))
+	cpu.Write8(0x100, 0xAB)
+	if cpu.Read8(0x100) != 0xAB {
+		t.Errorf("normal bus read8 = 0x%02X, want 0xAB", cpu.Read8(0x100))
 	}
 }
 
@@ -217,8 +217,8 @@ func TestRead16Write16OnChip(t *testing.T) {
 	cpu := New(bus, true)
 
 	// Write to INTC IPRB via read16/write16
-	cpu.write16(0xFFFFFE60, 0x0A00)
-	val := cpu.read16(0xFFFFFE60)
+	cpu.Write16(0xFFFFFE60, 0x0A00)
+	val := cpu.Read16(0xFFFFFE60)
 	if val != 0x0A00 {
 		t.Errorf("IPRB via read16 = 0x%04X, want 0x0A00", val)
 	}
@@ -229,8 +229,8 @@ func TestRead32Write32OnChip(t *testing.T) {
 	cpu := New(bus, true)
 
 	// Write to DIVU DVSR via read32/write32
-	cpu.write32(0xFFFFFF00, 0xDEADBEEF)
-	val := cpu.read32(0xFFFFFF00)
+	cpu.Write32(0xFFFFFF00, 0xDEADBEEF)
+	val := cpu.Read32(0xFFFFFF00)
 	if val != 0xDEADBEEF {
 		t.Errorf("DVSR via read32 = 0x%08X, want 0xDEADBEEF", val)
 	}
@@ -949,8 +949,8 @@ func TestCacheDataArrayByteRoundtrip(t *testing.T) {
 	}
 	for i, a := range addrs {
 		val := uint8(i*0x10 + 1)
-		cpu.write8(a, val)
-		if got := cpu.read8(a); got != val {
+		cpu.Write8(a, val)
+		if got := cpu.Read8(a); got != val {
 			t.Errorf("byte at 0x%08X = 0x%02X, want 0x%02X", a, got, val)
 		}
 	}
@@ -966,8 +966,8 @@ func TestCacheDataArrayWordRoundtrip(t *testing.T) {
 	}
 	for i, a := range addrs {
 		val := uint16(0xAA00 + i)
-		cpu.write16(a, val)
-		if got := cpu.read16(a); got != val {
+		cpu.Write16(a, val)
+		if got := cpu.Read16(a); got != val {
 			t.Errorf("word at 0x%08X = 0x%04X, want 0x%04X", a, got, val)
 		}
 	}
@@ -983,8 +983,8 @@ func TestCacheDataArrayLongRoundtrip(t *testing.T) {
 	}
 	for i, a := range addrs {
 		val := uint32(0x11223344 + uint32(i))
-		cpu.write32(a, val)
-		if got := cpu.read32(a); got != val {
+		cpu.Write32(a, val)
+		if got := cpu.Read32(a); got != val {
 			t.Errorf("long at 0x%08X = 0x%08X, want 0x%08X", a, got, val)
 		}
 	}
@@ -994,10 +994,10 @@ func TestCacheDataArrayBigEndian(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write32(0xC0000000, 0x11223344)
+	cpu.Write32(0xC0000000, 0x11223344)
 	want := [4]uint8{0x11, 0x22, 0x33, 0x44}
 	for i, w := range want {
-		if got := cpu.read8(0xC0000000 + uint32(i)); got != w {
+		if got := cpu.Read8(0xC0000000 + uint32(i)); got != w {
 			t.Errorf("byte at 0xC000000%d = 0x%02X, want 0x%02X", i, got, w)
 		}
 	}
@@ -1008,13 +1008,13 @@ func TestCacheDataArrayMasterSlaveIsolation(t *testing.T) {
 	master := New(bus, true)
 	slave := New(bus, false)
 
-	master.write32(0xC0000000, 0xAAAAAAAA)
-	slave.write32(0xC0000000, 0x55555555)
+	master.Write32(0xC0000000, 0xAAAAAAAA)
+	slave.Write32(0xC0000000, 0x55555555)
 
-	if v := master.read32(0xC0000000); v != 0xAAAAAAAA {
+	if v := master.Read32(0xC0000000); v != 0xAAAAAAAA {
 		t.Errorf("master cache data array = 0x%08X, want 0xAAAAAAAA", v)
 	}
-	if v := slave.read32(0xC0000000); v != 0x55555555 {
+	if v := slave.Read32(0xC0000000); v != 0x55555555 {
 		t.Errorf("slave cache data array = 0x%08X, want 0x55555555", v)
 	}
 }
@@ -1027,7 +1027,7 @@ func TestCacheDataArrayMisalignedWord(t *testing.T) {
 	cpu.reg.R[15] = 0x800
 	cpu.reg.SR = 0
 
-	cpu.write16(0xC0000001, 0xABCD)
+	cpu.Write16(0xC0000001, 0xABCD)
 	if !cpu.addrError {
 		t.Error("misaligned write16 in cache data array did not raise address error")
 	}
@@ -1041,7 +1041,7 @@ func TestCacheDataArrayMisalignedLong(t *testing.T) {
 	cpu.reg.R[15] = 0x800
 	cpu.reg.SR = 0
 
-	cpu.write32(0xC0000002, 0xDEADBEEF)
+	cpu.Write32(0xC0000002, 0xDEADBEEF)
 	if !cpu.addrError {
 		t.Error("misaligned write32 in cache data array did not raise address error")
 	}
@@ -1055,11 +1055,11 @@ func TestCacheDataArrayMirroringDivergence(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write32(0xC0000000, 0xDEADBEEF)
+	cpu.Write32(0xC0000000, 0xDEADBEEF)
 
 	mirrors := []uint32{0xC0001000, 0xC0010000, 0xDFFFF000}
 	for _, m := range mirrors {
-		if v := cpu.read32(m); v != 0xDEADBEEF {
+		if v := cpu.Read32(m); v != 0xDEADBEEF {
 			t.Errorf("mirror read at 0x%08X = 0x%08X, want 0xDEADBEEF", m, v)
 		}
 	}
@@ -1077,7 +1077,7 @@ func TestOnChipByteReadDIVUBigEndian(t *testing.T) {
 	cpu.writeOnChip(0xFFFFFF00, 0x11223344)
 	want := [4]uint8{0x11, 0x22, 0x33, 0x44}
 	for i, w := range want {
-		if got := cpu.read8(0xFFFFFF00 + uint32(i)); got != w {
+		if got := cpu.Read8(0xFFFFFF00 + uint32(i)); got != w {
 			t.Errorf("DVSR byte +%d = 0x%02X, want 0x%02X", i, got, w)
 		}
 	}
@@ -1090,7 +1090,7 @@ func TestOnChipByteReadDMACBigEndian(t *testing.T) {
 	cpu.writeOnChip(0xFFFFFF80, 0x11223344)
 	want := [4]uint8{0x11, 0x22, 0x33, 0x44}
 	for i, w := range want {
-		if got := cpu.read8(0xFFFFFF80 + uint32(i)); got != w {
+		if got := cpu.Read8(0xFFFFFF80 + uint32(i)); got != w {
 			t.Errorf("SAR0 byte +%d = 0x%02X, want 0x%02X", i, got, w)
 		}
 	}
@@ -1107,7 +1107,7 @@ func TestOnChipByteWriteDIVU32OnlyDivergence(t *testing.T) {
 	cpu := New(bus, true)
 
 	cpu.writeOnChip(0xFFFFFF00, 0x11223344)
-	cpu.write8(0xFFFFFF01, 0xAA)
+	cpu.Write8(0xFFFFFF01, 0xAA)
 	got, _ := cpu.readOnChip(0xFFFFFF00)
 	if got != 0x000000AA {
 		t.Errorf("DVSR after byte-write = 0x%08X, want 0x000000AA (undefined-access clobber)", got)
@@ -1123,7 +1123,7 @@ func TestOnChipByteWriteDMAC32OnlyDivergence(t *testing.T) {
 	cpu := New(bus, true)
 
 	cpu.writeOnChip(0xFFFFFF80, 0x11223344)
-	cpu.write8(0xFFFFFF82, 0xBB)
+	cpu.Write8(0xFFFFFF82, 0xBB)
 	got, _ := cpu.readOnChip(0xFFFFFF80)
 	if got != 0x000000BB {
 		t.Errorf("SAR0 after byte-write = 0x%08X, want 0x000000BB (undefined-access clobber)", got)
@@ -1139,7 +1139,7 @@ func TestOnChipWord16WriteDIVU32OnlyDivergence(t *testing.T) {
 	cpu := New(bus, true)
 
 	cpu.writeOnChip(0xFFFFFF00, 0x11223344)
-	cpu.write16(0xFFFFFF02, 0xBEEF)
+	cpu.Write16(0xFFFFFF02, 0xBEEF)
 	got, _ := cpu.readOnChip(0xFFFFFF00)
 	if got != 0x0000BEEF {
 		t.Errorf("DVSR after word-write = 0x%08X, want 0x0000BEEF (undefined-access clobber)", got)
@@ -1153,7 +1153,7 @@ func TestOnChipWord16WriteDMAC32OnlyDivergence(t *testing.T) {
 	cpu := New(bus, true)
 
 	cpu.writeOnChip(0xFFFFFF80, 0x11223344)
-	cpu.write16(0xFFFFFF82, 0xBEEF)
+	cpu.Write16(0xFFFFFF82, 0xBEEF)
 	got, _ := cpu.readOnChip(0xFFFFFF80)
 	if got != 0x0000BEEF {
 		t.Errorf("SAR0 after word-write = 0x%08X, want 0x0000BEEF (undefined-access clobber)", got)
@@ -1169,10 +1169,10 @@ func TestOnChipWord16ReadDIVU32OnlyDivergence(t *testing.T) {
 
 	cpu.writeOnChip(0xFFFFFF00, 0x11223344)
 
-	if v := cpu.read16(0xFFFFFF00); v != 0x3344 {
+	if v := cpu.Read16(0xFFFFFF00); v != 0x3344 {
 		t.Errorf("DVSR read16 at base = 0x%04X, want 0x3344 (low-half truncation)", v)
 	}
-	if v := cpu.read16(0xFFFFFF02); v != 0x3344 {
+	if v := cpu.Read16(0xFFFFFF02); v != 0x3344 {
 		t.Errorf("DVSR read16 at +2 = 0x%04X, want 0x3344 (low-half truncation)", v)
 	}
 }
@@ -1185,10 +1185,10 @@ func TestOnChipWord16ReadDMAC32OnlyDivergence(t *testing.T) {
 
 	cpu.writeOnChip(0xFFFFFF80, 0x11223344)
 
-	if v := cpu.read16(0xFFFFFF80); v != 0x3344 {
+	if v := cpu.Read16(0xFFFFFF80); v != 0x3344 {
 		t.Errorf("SAR0 read16 at base = 0x%04X, want 0x3344 (low-half truncation)", v)
 	}
-	if v := cpu.read16(0xFFFFFF82); v != 0x3344 {
+	if v := cpu.Read16(0xFFFFFF82); v != 0x3344 {
 		t.Errorf("SAR0 read16 at +2 = 0x%04X, want 0x3344 (low-half truncation)", v)
 	}
 }
@@ -1201,8 +1201,8 @@ func TestDVCR16BitAccess(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write16(0xFFFFFF0A, 0x0003)
-	if v := cpu.read16(0xFFFFFF0A); v != 0x0003 {
+	cpu.Write16(0xFFFFFF0A, 0x0003)
+	if v := cpu.Read16(0xFFFFFF0A); v != 0x0003 {
 		t.Errorf("DVCR read16 at +2 = 0x%04X, want 0x0003", v)
 	}
 
@@ -1220,8 +1220,8 @@ func TestVCRDIV16BitAccess(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write16(0xFFFFFF0E, 0x004B)
-	if v := cpu.read16(0xFFFFFF0E); v != 0x004B {
+	cpu.Write16(0xFFFFFF0E, 0x004B)
+	if v := cpu.Read16(0xFFFFFF0E); v != 0x004B {
 		t.Errorf("VCRDIV read16 at +2 = 0x%04X, want 0x004B", v)
 	}
 
@@ -1242,20 +1242,20 @@ func TestOnChipByteINTCIPRARoundtrip(t *testing.T) {
 	// already 0 so the round-trip is not confused by the mask.
 	cpu.writeOnChip(0xFFFFFEE2, 0x5A30)
 
-	if v := cpu.read8(0xFFFFFEE2); v != 0x5A {
+	if v := cpu.Read8(0xFFFFFEE2); v != 0x5A {
 		t.Errorf("IPRA high byte = 0x%02X, want 0x5A", v)
 	}
-	if v := cpu.read8(0xFFFFFEE3); v != 0x30 {
+	if v := cpu.Read8(0xFFFFFEE3); v != 0x30 {
 		t.Errorf("IPRA low byte = 0x%02X, want 0x30", v)
 	}
 
-	cpu.write8(0xFFFFFEE3, 0xC0)
+	cpu.Write8(0xFFFFFEE3, 0xC0)
 	cur, _ := cpu.readOnChip(0xFFFFFEE2)
 	if uint16(cur) != 0x5AC0 {
 		t.Errorf("IPRA after low byte-write = 0x%04X, want 0x5AC0", uint16(cur))
 	}
 
-	cpu.write8(0xFFFFFEE2, 0x78)
+	cpu.Write8(0xFFFFFEE2, 0x78)
 	cur, _ = cpu.readOnChip(0xFFFFFEE2)
 	if uint16(cur) != 0x78C0 {
 		t.Errorf("IPRA after high byte-write = 0x%04X, want 0x78C0", uint16(cur))
@@ -1272,14 +1272,14 @@ func TestOnChipByteINTCIPRBRoundtrip(t *testing.T) {
 	hi := uint8(cur >> 8)
 	lo := uint8(cur)
 
-	if v := cpu.read8(0xFFFFFE60); v != hi {
+	if v := cpu.Read8(0xFFFFFE60); v != hi {
 		t.Errorf("IPRB high byte = 0x%02X, want 0x%02X", v, hi)
 	}
-	if v := cpu.read8(0xFFFFFE61); v != lo {
+	if v := cpu.Read8(0xFFFFFE61); v != lo {
 		t.Errorf("IPRB low byte = 0x%02X, want 0x%02X", v, lo)
 	}
 
-	cpu.write8(0xFFFFFE61, 0x00)
+	cpu.Write8(0xFFFFFE61, 0x00)
 	cur, _ = cpu.readOnChip(0xFFFFFE60)
 	if uint8(cur>>8) != hi {
 		t.Errorf("IPRB high after low byte-write = 0x%02X, want 0x%02X", uint8(cur>>8), hi)
@@ -1292,7 +1292,7 @@ func TestOnChipByteINTCIPRBRoundtrip(t *testing.T) {
 func TestOnChipByteINTCLowRangeEdge(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
-	if v := cpu.read8(0xFFFFFE6A); v != 0 {
+	if v := cpu.Read8(0xFFFFFE6A); v != 0 {
 		t.Errorf("read8 at INTC low-range edge = 0x%02X, want 0", v)
 	}
 }
@@ -1300,7 +1300,7 @@ func TestOnChipByteINTCLowRangeEdge(t *testing.T) {
 func TestOnChipByteINTCHighRangeEdge(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
-	if v := cpu.read8(0xFFFFFEE6); v != 0 {
+	if v := cpu.Read8(0xFFFFFEE6); v != 0 {
 		t.Errorf("read8 at INTC high-range edge = 0x%02X, want 0", v)
 	}
 }
@@ -1319,7 +1319,7 @@ func TestSBYCRInitialValue(t *testing.T) {
 
 	bus.Write32(0, 0x100)
 	bus.Write32(4, 0x800)
-	cpu.write8(0xFFFFFE91, 0xFF)
+	cpu.Write8(0xFFFFFE91, 0xFF)
 	cpu.Reset()
 	if v, _ := cpu.readOnChip(0xFFFFFE91); v != 0 {
 		t.Errorf("SBYCR after Reset = 0x%02X, want 0", v)
@@ -1424,11 +1424,11 @@ func TestFMRUnmappedDivergence(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	if v := cpu.read8(0xFFFFFE90); v != 0 {
+	if v := cpu.Read8(0xFFFFFE90); v != 0 {
 		t.Errorf("FMR initial read = 0x%02X, want 0", v)
 	}
-	cpu.write8(0xFFFFFE90, 0xFF)
-	if v := cpu.read8(0xFFFFFE90); v != 0 {
+	cpu.Write8(0xFFFFFE90, 0xFF)
+	if v := cpu.Read8(0xFFFFFE90); v != 0 {
 		t.Errorf("FMR after write = 0x%02X, want 0 (no storage)", v)
 	}
 }
@@ -1471,12 +1471,12 @@ func TestSDRAMModeAreaDivergence(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write32(0xFFFF8000, 0xFFFFFFFF)
-	if v := cpu.read32(0xFFFF8000); v != 0 {
+	cpu.Write32(0xFFFF8000, 0xFFFFFFFF)
+	if v := cpu.Read32(0xFFFF8000); v != 0 {
 		t.Errorf("SDRAM-mode area read at 0xFFFF8000 = 0x%08X, want 0", v)
 	}
-	cpu.write32(0xFFFFBFFC, 0xAAAAAAAA)
-	if v := cpu.read32(0xFFFFBFFC); v != 0 {
+	cpu.Write32(0xFFFFBFFC, 0xAAAAAAAA)
+	if v := cpu.Read32(0xFFFFBFFC); v != 0 {
 		t.Errorf("SDRAM-mode area read at 0xFFFFBFFC = 0x%08X, want 0", v)
 	}
 }
@@ -1488,12 +1488,12 @@ func TestReservedOnChipAreaDivergence(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write32(0xFFFFC000, 0xAAAAAAAA)
-	if v := cpu.read32(0xFFFFC000); v != 0 {
+	cpu.Write32(0xFFFFC000, 0xAAAAAAAA)
+	if v := cpu.Read32(0xFFFFC000); v != 0 {
 		t.Errorf("reserved on-chip read at 0xFFFFC000 = 0x%08X, want 0", v)
 	}
-	cpu.write32(0xFFFFFDFC, 0xBBBBBBBB)
-	if v := cpu.read32(0xFFFFFDFC); v != 0 {
+	cpu.Write32(0xFFFFFDFC, 0xBBBBBBBB)
+	if v := cpu.Read32(0xFFFFFDFC); v != 0 {
 		t.Errorf("reserved on-chip read at 0xFFFFFDFC = 0x%08X, want 0", v)
 	}
 }
@@ -1538,13 +1538,13 @@ func TestDRCRByteRoundtrip(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
-	cpu.write8(0xFFFFFE71, 0x02)
-	if v := cpu.read8(0xFFFFFE71); v != 0x02 {
+	cpu.Write8(0xFFFFFE71, 0x02)
+	if v := cpu.Read8(0xFFFFFE71); v != 0x02 {
 		t.Errorf("DRCR0 = 0x%02X, want 0x02", v)
 	}
 
-	cpu.write8(0xFFFFFE72, 0x01)
-	if v := cpu.read8(0xFFFFFE72); v != 0x01 {
+	cpu.Write8(0xFFFFFE72, 0x01)
+	if v := cpu.Read8(0xFFFFFE72); v != 0x01 {
 		t.Errorf("DRCR1 = 0x%02X, want 0x01", v)
 	}
 }

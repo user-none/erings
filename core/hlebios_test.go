@@ -204,7 +204,7 @@ func TestHLESysSetUintService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, 0x40)       // VBLANK_IN vector
 	master.SetReg(5, 0x06010234) // handler address
-	hleSysSetUintService(master, bus)
+	hleSysSetUintService(master)
 	if got := bus.readWramHU32(wramHUIntTable + 0x40*4); got != 0x06010234 {
 		t.Errorf("SETUINT(vec=$40) did not write at $0A00: got %08X", got)
 	}
@@ -218,7 +218,7 @@ func TestHLESysGetUintService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	bus.writeWramHU32(wramHUIntTable+0x41*4, 0x06020000)
 	master.SetReg(4, 0x41)
-	hleSysGetUintService(master, bus)
+	hleSysGetUintService(master)
 	if got := master.Registers().R[0]; got != 0x06020000 {
 		t.Errorf("GETUINT(vec=$41) returned %08X, want 06020000", got)
 	}
@@ -237,7 +237,7 @@ func TestHLESysSetSintService(t *testing.T) {
 	wantTramp := uint32(0x06000000) + wramHIntStubBase + (0x4B-0x40)*hleIntStubStride
 	master.SetReg(4, 0x4B)
 	master.SetReg(5, 0)
-	hleSysSetSintService(master, bus)
+	hleSysSetSintService(master)
 	if got := bus.readWramHU32(0x4B * 4); got != wantTramp {
 		t.Errorf("SETSINT($4B, 0): vector = %08X, want trampoline %08X", got, wantTramp)
 	}
@@ -246,7 +246,7 @@ func TestHLESysSetSintService(t *testing.T) {
 	wantNoop := uint32(0x06000000) + wramHDefaultRTE
 	master.SetReg(4, 0x4E)
 	master.SetReg(5, 0)
-	hleSysSetSintService(master, bus)
+	hleSysSetSintService(master)
 	if got := bus.readWramHU32(0x4E * 4); got != wantNoop {
 		t.Errorf("SETSINT($4E, 0): vector = %08X, want no-op %08X", got, wantNoop)
 	}
@@ -254,7 +254,7 @@ func TestHLESysSetSintService(t *testing.T) {
 	// A non-zero handler is written to the vector verbatim.
 	master.SetReg(4, 0x4B)
 	master.SetReg(5, 0x06043B48)
-	hleSysSetSintService(master, bus)
+	hleSysSetSintService(master)
 	if got := bus.readWramHU32(0x4B * 4); got != 0x06043B48 {
 		t.Errorf("SETSINT($4B, handler): vector = %08X, want 06043B48", got)
 	}
@@ -263,14 +263,14 @@ func TestHLESysSetSintService(t *testing.T) {
 func TestHLESysTassemService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, 3)
-	hleSysTassemService(master, bus)
+	hleSysTassemService(master)
 	if r0 := master.Registers().R[0]; r0 != 1 {
 		t.Errorf("first TASSEM returned %d, want 1 (was free, now acquired)", r0)
 	}
 	if bus.wramH[wramHSemArray+3] == 0 {
 		t.Errorf("TASSEM did not set semaphore byte")
 	}
-	hleSysTassemService(master, bus)
+	hleSysTassemService(master)
 	if r0 := master.Registers().R[0]; r0 != 0 {
 		t.Errorf("second TASSEM returned %d, want 0 (already held)", r0)
 	}
@@ -280,7 +280,7 @@ func TestHLESysClrsemService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	bus.wramH[wramHSemArray+9] = 0x80
 	master.SetReg(4, 9)
-	hleSysClrsemService(master, bus)
+	hleSysClrsemService(master)
 	if bus.wramH[wramHSemArray+9] != 0 {
 		t.Errorf("CLRSEM did not clear semaphore")
 	}
@@ -289,7 +289,7 @@ func TestHLESysClrsemService(t *testing.T) {
 func TestHLESysSetScuimService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	master.SetReg(4, 0x1234)
-	hleSysSetScuimService(master, bus)
+	hleSysSetScuimService(master)
 	// SCU IMS is write-only; verify via the shadow that SDK reads.
 	if got := bus.readWramHU32(wramHIMSShadow); got != 0x1234 {
 		t.Errorf("SETSCUIM shadow = %08X, want 1234", got)
@@ -305,7 +305,7 @@ func TestHLESysChgScuimService(t *testing.T) {
 	bus.scu.Write(0xA0, 0x00FF)
 	master.SetReg(4, 0xF0F0) // AND mask
 	master.SetReg(5, 0x0F00) // OR mask
-	hleSysChgScuimService(master, bus)
+	hleSysChgScuimService(master)
 	// (0x00FF & 0xF0F0) | 0x0F00 = 0x00F0 | 0x0F00 = 0x0FF0
 	if got := bus.readWramHU32(wramHIMSShadow); got != 0x0FF0 {
 		t.Errorf("CHGSCUIM shadow = %08X, want 0FF0", got)
@@ -393,7 +393,7 @@ func TestHLESysChgUiprService(t *testing.T) {
 	}
 	master.SetReg(4, src)
 
-	hleSysChgUiprService(master, bus)
+	hleSysChgUiprService(master)
 
 	const destOff = uint32(0xA80)
 	for i := uint32(0); i < 32; i++ {
@@ -634,7 +634,7 @@ func TestHLESlaveInitSetsFRTICIVector(t *testing.T) {
 	const gameEntry = 0x060153E8
 	bus.writeWramHU32(0x250, gameEntry)
 
-	hleSlaveInitService(slave, bus)
+	hleSlaveInitService(slave)
 
 	vcrc := slave.INTC().Read(0xFFFFFE66)
 	if got := (vcrc >> 8) & 0x7F; got != 0x64 {
@@ -653,7 +653,7 @@ func TestHLESlaveInitHaltLoopSetsFRTICIVector(t *testing.T) {
 
 	bus.writeWramHU32(0x250, hleSentinel)
 
-	hleSlaveInitService(slave, bus)
+	hleSlaveInitService(slave)
 
 	vcrc := slave.INTC().Read(0xFFFFFE66)
 	if got := (vcrc >> 8) & 0x7F; got != 0x64 {

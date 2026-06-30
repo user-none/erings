@@ -196,7 +196,7 @@ func opSTSPR(c *CPU) {
 func opLDSMMACH(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
-	c.reg.MACH = c.read32(c.reg.R[n])
+	c.reg.MACH = c.Read32(c.reg.R[n])
 	c.reg.R[n] += 4
 	c.stepBus = BusRead
 	c.cycles++
@@ -206,7 +206,7 @@ func opLDSMMACH(c *CPU) {
 func opLDSMMACL(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
-	c.reg.MACL = c.read32(c.reg.R[n])
+	c.reg.MACL = c.Read32(c.reg.R[n])
 	c.reg.R[n] += 4
 	c.stepBus = BusRead
 	c.cycles++
@@ -216,7 +216,7 @@ func opLDSMMACL(c *CPU) {
 func opLDSMPR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
-	c.reg.PR = c.read32(c.reg.R[n])
+	c.reg.PR = c.Read32(c.reg.R[n])
 	c.reg.R[n] += 4
 	c.stepBus = BusRead
 	c.cycles++
@@ -227,7 +227,7 @@ func opSTSMMACH(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
-	c.write32(c.reg.R[n], c.reg.MACH)
+	c.Write32(c.reg.R[n], c.reg.MACH)
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -237,7 +237,7 @@ func opSTSMMACL(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
-	c.write32(c.reg.R[n], c.reg.MACL)
+	c.Write32(c.reg.R[n], c.reg.MACL)
 	c.stepBus = BusWrite
 	c.cycles++
 }
@@ -247,7 +247,7 @@ func opSTSMPR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
-	c.write32(c.reg.R[n], c.reg.PR)
+	c.Write32(c.reg.R[n], c.reg.PR)
 	c.stepBus = BusWrite
 	c.cycles++
 }

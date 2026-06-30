@@ -292,7 +292,7 @@ func TestWDTByteWriteDiscarded(t *testing.T) {
 	}
 
 	// Byte write to WTCNT address.
-	cpu.write8(0xFFFFFE81, 0xFF)
+	cpu.Write8(0xFFFFFE81, 0xFF)
 	if cpu.wdt.wtcnt != 0x77 {
 		t.Errorf("byte write to WTCNT modified state: got 0x%02X, want 0x77", cpu.wdt.wtcnt)
 	}
@@ -404,7 +404,7 @@ func TestWDTByteWriteToWTCSRDiscarded(t *testing.T) {
 	}
 
 	// Byte write to write-address must not alter WTCSR.
-	cpu.write8(0xFFFFFE80, 0x00)
+	cpu.Write8(0xFFFFFE80, 0x00)
 	if cpu.wdt.wtcsr != seeded {
 		t.Errorf("byte write to 0xFFFFFE80 changed WTCSR: got 0x%02X, want 0x%02X",
 			cpu.wdt.wtcsr, seeded)

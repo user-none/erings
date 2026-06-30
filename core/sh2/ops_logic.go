@@ -61,7 +61,7 @@ func opTSTI(c *CPU) {
 func opANDB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
 	c.pendingAddr = addr
-	c.pendingVal = uint32(c.read8(addr))
+	c.pendingVal = uint32(c.Read8(addr))
 	c.pendingImm = uint32(imm8(c.ir))
 	c.pendingN = 0 // AND
 	c.stepBus = BusRead
@@ -74,7 +74,7 @@ func opANDB(c *CPU) {
 func opORB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
 	c.pendingAddr = addr
-	c.pendingVal = uint32(c.read8(addr))
+	c.pendingVal = uint32(c.Read8(addr))
 	c.pendingImm = uint32(imm8(c.ir))
 	c.pendingN = 1 // OR
 	c.stepBus = BusRead
@@ -87,7 +87,7 @@ func opORB(c *CPU) {
 func opXORB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
 	c.pendingAddr = addr
-	c.pendingVal = uint32(c.read8(addr))
+	c.pendingVal = uint32(c.Read8(addr))
 	c.pendingImm = uint32(imm8(c.ir))
 	c.pendingN = 2 // XOR
 	c.stepBus = BusRead
@@ -99,7 +99,7 @@ func opXORB(c *CPU) {
 // 3 cycles: cycle 1 EX+MA read+test, cycles 2-3 idle
 func opTSTB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
-	c.reg.SetTVal(c.read8(addr)&imm8(c.ir) == 0)
+	c.reg.SetTVal(c.Read8(addr)&imm8(c.ir) == 0)
 	c.stepBus = BusRead
 	c.cycles++
 	c.setPending(popStall, 2)

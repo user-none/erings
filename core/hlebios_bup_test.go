@@ -55,7 +55,7 @@ func TestBUPWriteVerifyDataLooksLikeContPage(t *testing.T) {
 	master.SetReg(5, dirAddr)
 	master.SetReg(6, dataAddr)
 	master.SetReg(7, 0)
-	hlePerDriverSlot4Service(master, bus)
+	hlePerDriverSlot4Service(master)
 	if got := master.Registers().R[0]; got != bupOK {
 		t.Fatalf("BUP_Write R0 = %d, want %d (bupOK)", got, bupOK)
 	}
@@ -64,7 +64,7 @@ func TestBUPWriteVerifyDataLooksLikeContPage(t *testing.T) {
 	master.SetReg(4, 0)
 	master.SetReg(5, verAddr)
 	master.SetReg(6, dataAddr)
-	hlePerDriverSlot8Service(master, bus)
+	hlePerDriverSlot8Service(master)
 	if got := master.Registers().R[0]; got != bupOK {
 		t.Fatalf("BUP_Verify R0 = %d, want %d (bupOK) - data block beginning $00 40 misread as continuation page", got, bupOK)
 	}
