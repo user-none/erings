@@ -178,6 +178,73 @@ func TestDSPWritePDDIgnoredWhileExecuting(t *testing.T) {
 	d.executing = false
 }
 
+func TestDSPPPAFWriteEXZeroStopsExecution(t *testing.T) {
+	s := NewSCU()
+	d := &s.dsp
+
+	// All-NOP program RAM: the counter wraps and execution never ends
+	// on its own, so only an EX=0 write can stop it.
+	d.writePPAF(1 << 16)
+	if !d.executing {
+		t.Fatal("EX=1 write should start execution")
+	}
+	s.TickSystemCycles(1000)
+	if !d.executing {
+		t.Fatal("NOP program should still be executing")
+	}
+
+	d.writePPAF(0)
+	if d.executing {
+		t.Error("EX=0 write should stop execution")
+	}
+	if d.readPPAF()&(1<<16) != 0 {
+		t.Error("PPAF EX read should be 0 after stop")
+	}
+}
+
+func TestDSPPPAFWriteLEIgnoredWhileExecuting(t *testing.T) {
+	s := NewSCU()
+	d := &s.dsp
+
+	d.writePPAF(1 << 16)
+	if !d.executing {
+		t.Fatal("EX=1 write should start execution")
+	}
+	pc := d.pc
+	d.writePPAF((1 << 16) | (1 << 15) | 0x40)
+	if d.pc != pc {
+		t.Errorf("LE while executing loaded pc = 0x%02X, want unchanged 0x%02X", d.pc, pc)
+	}
+}
+
+func TestDSPPPAFStopReloadRestart(t *testing.T) {
+	s := NewSCU()
+	d := &s.dsp
+
+	// The per-frame reprogram sequence: stop, load counter, rewrite
+	// parameters, start.
+	d.writePPAF(1 << 16)
+	s.TickSystemCycles(100)
+
+	d.writePPAF(0)
+	d.writePPAF((1 << 15) | 0x20)
+	if d.pc != 0x20 {
+		t.Fatalf("pc = 0x%02X after stop+LE, want 0x20", d.pc)
+	}
+	d.writePDA(0x00)
+	d.writePDD(0x12345678)
+	if d.data[0][0] != 0x12345678 {
+		t.Fatal("PDD write after stop should land in data RAM")
+	}
+
+	d.prog[0x20] = 0xF0000000 // END
+	d.writePPAF(1 << 16)
+	if !d.executing {
+		t.Fatal("EX=1 after stop should restart execution")
+	}
+	runDSP(t, s)
+}
+
 // --- ALU Tests ---
 
 func TestDSPALUAnd(t *testing.T) {
