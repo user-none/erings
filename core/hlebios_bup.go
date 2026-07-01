@@ -1213,18 +1213,6 @@ func hlePerDriverSlot7Service(cpu *sh2.CPU) {
 	wildcard := !hasPattern || pattern[0] == 0 || pattern[0] == '*'
 	maxEntries := int(uint16(r.R[6]))
 	out := r.R[7]
-
-	// Pre-zero the entire caller-provided BupDir array so that
-	// unused slots show as "empty entry" (zero filename, zero
-	// status). Otherwise BR would see stale data in the slots
-	// past the match count and may misinterpret it as additional
-	// (corrupted) entries.
-	if out != 0 && maxEntries > 0 {
-		for i := uint32(0); i < uint32(maxEntries)*bupDirOutStride; i++ {
-			cpu.Write8(out+i, 0)
-		}
-	}
-
 	totalMatches := 0
 	written := 0
 	bupWalkDir(cpu, func(blockIdx int) bool {
