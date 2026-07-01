@@ -110,15 +110,24 @@ func (d *scuDSP) readPPAFInternal() uint32 {
 }
 
 // writePPAF handles writes to the program control port (offset 0x80).
-// Setting EX arms the DSP; stepping happens from SCU.Tick at 1/2 the
-// SH-2 rate. A write of EX=1 while already executing is ignored.
+// Per SCU User's Manual Sec 3.3 Figure 3.14, EX (bit 16) starts
+// execution when written 1 and stops it when written 0, and LE (bit
+// 15) loads bits 7:0 into the program counter but cannot load while
+// the program is executing. A single write that clears EX and sets LE
+// is undefined there; the LE gate uses the pre-write execute state, so
+// it stops without loading.
 func (d *scuDSP) writePPAF(val uint32) {
-	// Bit 15: LE (Load Enable) - load PC from bits 7:0
-	if val&(1<<15) != 0 {
+	wasExecuting := d.executing
+
+	if val&(1<<16) == 0 {
+		d.executing = false
+	}
+
+	if val&(1<<15) != 0 && !wasExecuting {
 		d.pc = uint8(val)
 	}
-	// Bit 16: EX (Execute) - arm program execution
-	if val&(1<<16) != 0 && !d.executing {
+
+	if val&(1<<16) != 0 && !wasExecuting {
 		d.flagEnd = false
 		d.executing = true
 		d.debt = 0
