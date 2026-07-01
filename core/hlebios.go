@@ -492,6 +492,7 @@ func (h *HLEBIOS) Boot(ip []byte) error {
 	h.populateIntDefaultTable()
 	h.registerServices()
 	h.bus.scsp.InstallSoundDriverStub()
+	h.bus.vdp1.InitCommandEndCodes()
 
 	h.master.HLEHook = h.dispatch(h.master)
 	h.slave.HLEHook = h.dispatch(h.slave)

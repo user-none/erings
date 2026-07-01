@@ -436,6 +436,16 @@ func (v *VDP1) WriteVRAM32(addr uint32, val uint32) {
 	v.vram[addr+3] = uint8(val)
 }
 
+// InitCommandEndCodes writes a draw-end command word (CMDCTRL with the
+// end bit set, 0x8000) into the control word of every 0x20-byte command
+// slot across all of VDP1 VRAM.
+func (v *VDP1) InitCommandEndCodes() {
+	for off := 0; off < vdp1VRAMSize; off += 0x20 {
+		v.vram[off] = 0x80
+		v.vram[off+1] = 0x00
+	}
+}
+
 // chargeDrawStall adds `cycles` of draw-contention stall to the VDP1's
 // per-segment budget when `addr` lands in VDP1 VRAM during an active
 // draw. Per the VDP1 User's Manual Section 2.1 (Address Map, VRAM, p.19)

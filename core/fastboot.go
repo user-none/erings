@@ -86,10 +86,8 @@ func (e *Emulator) fastBootEnterIP() {
 	// IP System ID block (IP+$E0..$FF) in the system-variable area at $060002A0..$060002BF.
 	copyIPSysBlock(e.bus, ip)
 
-	// The skipped boot animation would have left the BIOS sound driver
-	// resident in sound RAM; seed the stub so a game that resets the
-	// SCSP before loading its own driver does not run uninitialized RAM.
 	e.scsp.InstallSoundDriverStub()
+	e.bus.vdp1.InitCommandEndCodes()
 
 	// Divert the IP's game-load pointer to fastBootLoadGame.
 	e.bus.writeWramHU32(wramHGameLoadSlot, fastBootLoadGame)

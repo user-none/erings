@@ -172,9 +172,25 @@ its PTMR=$0002 and EWRR=$50FF claims).
 | MODR | $25D00014 | $0000 |
 | (?) | $25D00016 | $1100 |
 
-VDP1 VRAM and both framebuffers contain whatever the BIOS boot
-animation drew into them and are byte-identical across both captures
-(the BIOS produces deterministic output during its boot animation).
+Both framebuffers contain whatever the BIOS boot animation drew into
+them and are byte-identical across both captures (the BIOS produces
+deterministic output during its boot animation).
+
+#### VDP1 Command VRAM - draw-end code pre-fill
+
+
+Late in boot the BIOS sets VDP1 command VRAM ($25C00000-$25C7FFFF, 512 KB) with
+a draw-end command into every command slot before it hands control to the disc
+IP. The control word (first 16 bits) of each 0x20-byte slot holds $8000
+(CMDCTRL with the end bit set). The remaining 30 bytes of each slot are
+undisturbed.
+
+This is the game-visible contract. A game writes its active command
+slots (0..N) and leaves the rest untouched, relying on the first unused
+slot already holding an end code so VDP1's command walk terminates.
+
+The BIOS routine that produces this state is sub_176C, reached from the
+boot state machine near the end of boot.
 
 ### VDP2 ($25E00000 / $25F80000)
 
