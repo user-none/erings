@@ -897,17 +897,28 @@ func (s *SCSP) processSlots() {
 		// Handle loop boundaries
 		switch lpctl {
 		case 0: // No loop
-			if samplePos > lea && lea > 0 {
-				// Per SCSP User's Manual: WFAllowAccess becomes false and the
-				// phase freezes at LEA. MSLC/CA reflects this frozen position.
+			// Per SCSP User's Manual Sec 4.2 Loop Control Register (LEA):
+			// sound memory access ends when the loop is OFF and the read
+			// point reaches the loop end point.
+			if samplePos >= lea && lea > 0 {
+				// The phase freezes at LEA (the MSLC/CA readback keeps
+				// reporting this position) and the slot produces no
+				// further output until the next key-on.
 				sl.phase = lea << phaseFracBits
 				sl.finished = true
 				sl.output = 0
 				continue
 			}
 		case 1: // Normal loop
-			if samplePos > lea && lea > lsa {
-				loopLen := lea - lsa + 1
+			// The loop wraps on reaching LEA: playback covers [LSA, LEA)
+			// and the position never dwells at LEA itself. Per SCSP User's
+			// Manual Sec 4.2 Loop Control Register (LEA / Figure 4.10):
+			// the data at SA+LSA and SA+LEA must be set to the same value
+			// for a seamless normal/reverse loop, which requires the loop
+			// length to be LEA-LSA (playing LEA and then its LSA copy
+			// would repeat a sample each lap and lower the pitch).
+			if samplePos >= lea && lea > lsa {
+				loopLen := lea - lsa
 				samplePos = lsa + (samplePos-lsa)%loopLen
 				sl.phase = samplePos<<phaseFracBits | (sl.phase & ((1 << phaseFracBits) - 1))
 			}
@@ -957,7 +968,7 @@ func (s *SCSP) processSlots() {
 		// so wrap it back into the loop region for looping slots.
 		fmSamplePos := int32(samplePos) + fmSampleOff
 		if lpctl == 1 && lea > lsa {
-			loopLen := int32(lea - lsa + 1)
+			loopLen := int32(lea - lsa)
 			rel := fmSamplePos - int32(lsa)
 			rel = ((rel % loopLen) + loopLen) % loopLen
 			fmSamplePos = int32(lsa) + rel
@@ -1044,7 +1055,8 @@ func (s *SCSP) readSlotSample(sa, samplePos uint32, pcm8b bool, phaseFrac uint32
 	nextPos := samplePos + 1
 	switch lpctl {
 	case 1: // Normal loop
-		if samplePos >= lea && lea > lsa {
+		// Position range is [LSA, LEA); the sample after LEA-1 is LSA.
+		if nextPos >= lea && lea > lsa {
 			nextPos = lsa
 		}
 	case 2, 3: // Reverse / alternating
@@ -1519,22 +1531,27 @@ func (s *SCSP) checkSoundInterrupt() {
 	s.m68k.SetIPL(bestLevel, nil)
 }
 
-// checkMainInterrupt evaluates MCIPD & MCIEB and signals the SCU. Real
-// SCSP holds the sound-request line to the SCU asserted while
-// (MCIPD & MCIEB) is non-zero. Re-raise on every call so a missed
-// edge-only delivery is not possible; the SCU's IRL handling is itself
-// level-sensitive (see core/scu.go checkInterrupts) and tracks the
-// pending bit until the master SH-2 acks it via AcknowledgeInterrupt.
+// checkMainInterrupt evaluates MCIPD & MCIEB and signals the SCU. The
+// SCSP holds its sound-request line asserted while (MCIPD & MCIEB) is
+// non-zero (SCSP User's Manual Sec 4.2: writing 1 to MCIPD bit 5
+// applies an interrupt to the main CPU; MCIRE resets the pending flag),
+// but the SCU latches the request in IST on the line's rising edge only
+// (SCU User's Manual Sec 3.5: IST bits record interrupt occurrences and
+// are cleared by software or by the interrupt acknowledge). Once the
+// master accepts vec 0x46, no new request latches until the line drops
+// and rises again. An un-acked edge is held in IST until the ack, so
+// edge delivery cannot lose a request.
 func (s *SCSP) checkMainInterrupt() {
 	pending := s.regs[scspRegMCIPD/2] & s.regs[scspRegMCIEB/2]
 	active := pending != 0
+	rising := active && !s.mainIntActive
 	s.mainIntActive = active
 
 	// The raise claims the SCU domain, and this can be reached from a
 	// register write while the bus dispatch holds the access's B-Bus
 	// claim (the SCU -> bus acquisition order would invert). Request
 	// it here; TickSystemCycles delivers from a lock-free context.
-	if active && s.scu != nil {
+	if rising && s.scu != nil {
 		s.soundReqPending.Store(true)
 	}
 }

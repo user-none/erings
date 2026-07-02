@@ -757,13 +757,158 @@ func TestSCSPNormalLoopWraps(t *testing.T) {
 	writeSlotReg(s, 0, 0x08, 0x001F) // AR=31
 	writeSlotReg(s, 0, 0x00, 0x1820) // KYONEX with LPCTL=1
 
-	// Tick 5 times. Loop range is [LSA=2, LEA=4] inclusive (length 3):
-	// positions 0,1,2,3,4 play, then at samplePos=5 wrap back to LSA.
+	// Tick 5 times. Loop range is [LSA=2, LEA=4) (length 2): positions
+	// 0,1,2,3 play, reaching samplePos=4 (LEA) wraps back to LSA=2, then
+	// one more tick advances to 3.
 	s.TickSamples(5)
 
 	samplePos := s.slots[0].phase >> phaseFracBits
-	if samplePos != 2 {
-		t.Errorf("samplePos after loop = %d, want 2 (LSA)", samplePos)
+	if samplePos != 3 {
+		t.Errorf("samplePos after loop = %d, want 3", samplePos)
+	}
+}
+
+func TestSCSPNormalLoopWrapsOnReachingLEA(t *testing.T) {
+	s := NewSCSP(NewSCU())
+
+	// LSA=0, LEA=4, one sample per tick: the position must never equal
+	// LEA. After 4 ticks the accumulated position is exactly LEA and the
+	// wrap lands on LSA.
+	writeSlotReg(s, 0, 0x00, 0x0820) // KYONB=1, LPCTL=1
+	writeSlotReg(s, 0, 0x04, 0x0000) // LSA=0
+	writeSlotReg(s, 0, 0x06, 0x0004) // LEA=4
+	writeSlotReg(s, 0, 0x10, 0x0000) // OCT=0, FNS=0
+	writeSlotReg(s, 0, 0x08, 0x001F) // AR=31
+	writeSlotReg(s, 0, 0x00, 0x1820) // KYONEX
+
+	for i := 0; i < 16; i++ {
+		s.TickSamples(1)
+		samplePos := s.slots[0].phase >> phaseFracBits
+		if samplePos >= 4 {
+			t.Fatalf("tick %d: samplePos = %d, must stay below LEA=4", i+1, samplePos)
+		}
+	}
+}
+
+func TestSCSPNormalLoopPhaseRate(t *testing.T) {
+	s := NewSCSP(NewSCU())
+
+	// OCT=0xF (-1), FNS=0x5C: increment (0x400|0x5C)>>1 = 558/1024
+	// samples per tick. Over 7350 ticks the position advances
+	// floor(7350*558/1024) = 4005 samples (24030 Hz at the 44100 Hz tick
+	// rate).
+	writeSlotReg(s, 0, 0x00, 0x0800) // KYONB=1, LPCTL=0
+	writeSlotReg(s, 0, 0x06, 0xFFFF) // LEA far away (no wrap)
+	writeSlotReg(s, 0, 0x10, 0x785C) // OCT=0xF, FNS=0x5C
+	writeSlotReg(s, 0, 0x08, 0x001F) // AR=31
+	writeSlotReg(s, 0, 0x00, 0x1800) // KYONEX
+
+	s.TickSamples(7350)
+
+	samplePos := s.slots[0].phase >> phaseFracBits
+	if samplePos != 4005 {
+		t.Errorf("samplePos = %d, want 4005", samplePos)
+	}
+}
+
+func TestSCSPNormalLoopPhasePreservedAcrossWraps(t *testing.T) {
+	s := NewSCSP(NewSCU())
+
+	// Fractional pitch through a looping ring: wraps must not gain or
+	// lose phase. Total advance over 73500 ticks is
+	// floor(73500*558/1024) = 40051 samples; with loop range
+	// [0, 0x2000) the position is 40051 mod 8192 = 7283.
+	writeSlotReg(s, 0, 0x00, 0x0820) // KYONB=1, LPCTL=1
+	writeSlotReg(s, 0, 0x04, 0x0000) // LSA=0
+	writeSlotReg(s, 0, 0x06, 0x2000) // LEA=0x2000
+	writeSlotReg(s, 0, 0x10, 0x785C) // OCT=0xF, FNS=0x5C
+	writeSlotReg(s, 0, 0x08, 0x001F) // AR=31
+	writeSlotReg(s, 0, 0x00, 0x1820) // KYONEX
+
+	s.TickSamples(73500)
+
+	samplePos := s.slots[0].phase >> phaseFracBits
+	if samplePos != 7283 {
+		t.Errorf("samplePos = %d, want 7283", samplePos)
+	}
+}
+
+func TestSCSPNoLoopEndsOnReachingLEA(t *testing.T) {
+	s := NewSCSP(NewSCU())
+
+	// LPCTL=0 at one sample per tick with LEA=3: access ends the tick
+	// the read point reaches LEA, with the phase frozen there.
+	writeSlotReg(s, 0, 0x00, 0x0800) // KYONB=1, LPCTL=0
+	writeSlotReg(s, 0, 0x06, 0x0003) // LEA=3
+	writeSlotReg(s, 0, 0x10, 0x0000) // OCT=0, FNS=0
+	writeSlotReg(s, 0, 0x08, 0x001F) // AR=31
+	writeSlotReg(s, 0, 0x00, 0x1800) // KYONEX
+
+	s.TickSamples(10)
+
+	if !s.slots[0].finished {
+		t.Error("slot not finished after passing LEA")
+	}
+	if samplePos := s.slots[0].phase >> phaseFracBits; samplePos != 3 {
+		t.Errorf("frozen samplePos = %d, want 3 (LEA)", samplePos)
+	}
+}
+
+func TestSCSPLoopSeamInterpolation(t *testing.T) {
+	s := NewSCSP(NewSCU())
+
+	// 16-bit samples at SA=0: position 2 (LSA) = 1000, position 3
+	// (LEA-1) = 3000, position 4 (LEA) = a sentinel that must never be
+	// read. Interpolating at position 3 blends toward LSA's sample.
+	put := func(pos uint32, v int16) {
+		s.ram[pos*2] = uint8(uint16(v) >> 8)
+		s.ram[pos*2+1] = uint8(uint16(v))
+	}
+	put(2, 1000)
+	put(3, 3000)
+	put(4, 0x7FFF)
+
+	// phaseFrac 256 of 1024 -> blend factor 16/64.
+	got := s.readSlotSample(0, 3, false, 256, 1, 2, 4, 1)
+	want := int16((3000*(64-16) + 1000*16) >> 6)
+	if got != want {
+		t.Errorf("seam sample = %d, want %d (next sample must wrap to LSA)", got, want)
+	}
+}
+
+func TestSCSPMainIntEdgeTriggered(t *testing.T) {
+	scu := NewSCU()
+	s := NewSCSP(scu)
+
+	const istSound = uint32(1) << 6
+
+	s.Write(scspRegMCIEB, 0x0020)
+
+	// A request (MCIPD bit 5 write) latches IST bit 6.
+	s.Write(scspRegMCIPD, 0x0020)
+	s.TickSystemCycles(0)
+	if scu.Read(0xA4)&istSound == 0 {
+		t.Fatal("IST bit 6 not latched on rising MCIPD & MCIEB")
+	}
+
+	// The master accepts; while MCIPD bit 5 is still pending the held
+	// line must not latch a new request.
+	scu.AcknowledgeInterrupt(0x46)
+	if scu.Read(0xA4)&istSound != 0 {
+		t.Fatal("IST bit 6 not cleared by acknowledge")
+	}
+	s.Write(scspRegMCIPD, 0x0020)
+	s.TickSystemCycles(0)
+	if scu.Read(0xA4)&istSound != 0 {
+		t.Error("IST bit 6 re-latched while the request line was already high")
+	}
+
+	// After MCIRE drops the line, the next request is a new rising edge.
+	s.Write(scspRegMCIRE, 0x0020)
+	s.Write(scspRegMCIPD, 0x0020)
+	s.TickSystemCycles(0)
+	if scu.Read(0xA4)&istSound == 0 {
+		t.Error("IST bit 6 not latched on a new rising edge after MCIRE")
 	}
 }
 
