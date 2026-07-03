@@ -308,8 +308,11 @@ func (c *CPU) Clock() ClockState {
 	c.branchTaken = false
 
 	// Fold a cross-thread NMI request into the on-thread NMI state
-	// between instructions.
-	if c.nmiReq.CompareAndSwap(true, false) {
+	// between instructions. Load before CAS: this runs every cycle and
+	// the flag is almost never set, while a failed CAS is still a locked
+	// read-modify-write that takes exclusive ownership of a cache line
+	// another thread writes.
+	if c.nmiReq.Load() && c.nmiReq.CompareAndSwap(true, false) {
 		c.NMI()
 	}
 
