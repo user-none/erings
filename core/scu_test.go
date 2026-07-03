@@ -902,8 +902,11 @@ func TestSCUTimer0ResetsAtVBlankIN(t *testing.T) {
 
 	// VBlankOUT resets counter to 0
 	s.RaiseVBlankOUT()
-	// Acknowledge the VBlankOUT interrupt to clear pendingBit
+	// Acknowledge the VBlankOUT interrupt to clear pendingBit, then
+	// rewrite IMS as a dispatcher would to end the acknowledge
+	// withhold and resume IRL evaluation.
 	s.AcknowledgeInterrupt(0x41)
+	s.Write(0xA0, s.ims)
 
 	// Need 3 more H-Blanks to reach T0C again
 	s.RaiseHBlankIN(0)
@@ -1591,8 +1594,79 @@ func TestSCUAcknowledgeInterruptClearsAcceptedVectorNotLastAsserted(t *testing.T
 	if s.ist&(1<<5) == 0 {
 		t.Error("bit 5 (DSP End) wrongly cleared - it was never serviced")
 	}
+	// The acknowledge withholds IRL, so DSP End stays latched but
+	// unasserted until the dispatcher's IMS write.
+	if s.pendingBit != -1 {
+		t.Errorf("pendingBit = %d, want -1 while withheld", s.pendingBit)
+	}
+	s.Write(0xA0, s.ims)
 	if s.pendingBit != 5 {
-		t.Errorf("pendingBit = %d, want 5 (DSP End survives and re-asserts)", s.pendingBit)
+		t.Errorf("pendingBit = %d, want 5 (DSP End re-asserts at the IMS write)", s.pendingBit)
+	}
+}
+
+// TestSCUAcknowledgeWithholdsIRLUntilIMSWrite verifies that no interrupt is
+// asserted via IRL between an acknowledge and the next IMS write. The BIOS
+// common dispatcher saves registers and computes the per-vector mask before
+// writing IMS; an interrupt delivered inside that prologue would suspend the
+// dispatch before its handler runs. Sources raised while withheld must latch
+// in IST and assert at the IMS write.
+func TestSCUAcknowledgeWithholdsIRLUntilIMSWrite(t *testing.T) {
+	s := NewSCU()
+	asserts := 0
+	var gotLevel uint8
+	var gotVec uint16
+	s.SetIRLHandler(func(level uint8, vec uint16) {
+		asserts++
+		gotLevel = level
+		gotVec = vec
+	}, func() {})
+	s.Write(0xA0, 0x0000) // unmask all internal sources
+
+	// Level-0 DMA End (bit 11, vec 0x4B, level 5) asserted and accepted.
+	s.RaiseInterrupt(11)
+	if asserts != 1 || gotVec != 0x4B {
+		t.Fatalf("asserts=%d vec=0x%04X, want 1/0x004B", asserts, gotVec)
+	}
+	s.AcknowledgeInterrupt(0x4B)
+
+	// V-Blank-IN (bit 0, vec 0x40, level 0xF) raised during the dispatch
+	// prologue: it must latch in IST without asserting IRL.
+	s.RaiseVBlankIN()
+	if asserts != 1 {
+		t.Fatalf("asserts=%d, want 1 (raise during withhold must not assert)", asserts)
+	}
+	if s.ist&1 == 0 {
+		t.Error("IST bit 0 not latched during withhold")
+	}
+	if s.pendingBit != -1 {
+		t.Errorf("pendingBit = %d, want -1 while withheld", s.pendingBit)
+	}
+
+	// The dispatcher's IMS write resumes IRL evaluation and delivers the
+	// latched V-Blank-IN.
+	s.Write(0xA0, 0x0000)
+	if asserts != 2 || gotLevel != 0xF || gotVec != 0x40 {
+		t.Errorf("asserts=%d level=0x%X vec=0x%04X, want 2/0xF/0x0040", asserts, gotLevel, gotVec)
+	}
+}
+
+// TestSCUResetClearsAcknowledgeWithhold verifies a reset ends the
+// post-acknowledge withhold so interrupts assert again without an IMS write.
+func TestSCUResetClearsAcknowledgeWithhold(t *testing.T) {
+	s := NewSCU()
+	asserts := 0
+	s.SetIRLHandler(func(level uint8, vec uint16) { asserts++ }, func() {})
+	s.Write(0xA0, 0x0000)
+
+	s.RaiseInterrupt(11)
+	s.AcknowledgeInterrupt(0x4B)
+	s.Reset()
+
+	s.ims = 0x0000 // Reset restores 0xBFFF; unmask directly, no IMS write
+	s.RaiseVBlankIN()
+	if asserts != 2 {
+		t.Errorf("asserts=%d, want 2 (raise after reset must assert without an IMS write)", asserts)
 	}
 }
 

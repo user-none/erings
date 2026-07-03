@@ -64,6 +64,22 @@ type SCU struct {
 
 	pendingBit int // IST bit currently asserted via IRL (-1 = none)
 
+	// irlWithheld models undocumented SCU behavior: after the SH-2
+	// acknowledges an interrupt (external vector fetch), the SCU
+	// asserts no new IRL until software next writes IMS. Sources
+	// raised in that span only latch in IST; the IMS write resumes
+	// evaluation and asserts the highest pending source. The SCU
+	// manual does not describe what happens between the vector fetch
+	// and the mask write. This behavior is established by software
+	// that requires it: the BIOS common interrupt dispatcher (ROM
+	// $0F00) writes IMS only after a preemptible register-save/
+	// vector-lookup prologue, and X-MEN VS STREET FIGHTER deadlocks
+	// when V-Blank-IN preempts that prologue during a Level-0 DMA-End
+	// dispatch. Because its in a V-Blank-IN chain then waits forever on
+	// flag $0600A820 that only the suspended handler ($0600A780)
+	// clears.
+	irlWithheld bool
+
 	// Bus reference for DMA transfers
 	bus BusReadWriter
 
@@ -151,6 +167,7 @@ func (s *SCU) Reset() {
 	s.ist = 0
 	s.ims = 0xBFFF
 	s.pendingBit = -1
+	s.irlWithheld = false
 	for i := range 3 {
 		s.dmaEN[i] = 0
 		s.dmaAD[i] = 0x101
@@ -245,12 +262,10 @@ func (s *SCU) SetIRLHandler(set func(level uint8, vec uint16), clr func()) {
 }
 
 // AcknowledgeInterrupt clears the IST bit for the interrupt the SH-2
-// dispatched, identified by its vector. It clears by the accepted vector, not
-// by pendingBit (the bit last asserted via IRL), because a concurrent
-// higher-priority raise can advance pendingBit past the bit that was
-// serviced, so the two need not match. checkInterrupts then re-derives the
-// highest remaining pending interrupt, keeping any source still pending
-// (including one raised meanwhile) asserted via IRL.
+// dispatched, identified by its vector. It clears by the accepted vector
+// The acknowledge also drops the IRL line and withholds further IRL assertion
+// until the next IMS write (see irlWithheld); interrupts raised meanwhile stay
+// latched in IST.
 func (s *SCU) AcknowledgeInterrupt(vec uint16) {
 	s.lockIRQ()
 	if int(vec) < len(vecToBit) {
@@ -259,7 +274,8 @@ func (s *SCU) AcknowledgeInterrupt(vec uint16) {
 		}
 	}
 	s.pendingBit = -1
-	s.checkInterrupts()
+	s.irlWithheld = true
+	s.clearIRLLine()
 	s.unlockIRQ()
 }
 
@@ -448,6 +464,7 @@ func (s *SCU) Write(offset uint32, val uint32) {
 		s.t1md = val
 	case 0xA0:
 		s.ims = val & 0xFFFF
+		s.irlWithheld = false
 		s.checkInterrupts()
 	case 0xA4:
 		s.ist &= val
@@ -990,8 +1007,19 @@ func (s *SCU) executeIndirectDMA(lvl int) {
 // and drives the IRL level to the master SH-2. When no interrupt is
 // pending, the IRL line is deasserted. This models the level-triggered
 // behavior of the real IRL pins.
+// clearIRLLine drops the IRL output if a CPU is wired. Callers hold
+// the SCU lock.
+func (s *SCU) clearIRLLine() {
+	if s.clearIRL != nil {
+		s.clearIRL()
+	}
+}
+
 func (s *SCU) checkInterrupts() {
 	if s.setIRL == nil {
+		return
+	}
+	if s.irlWithheld {
 		return
 	}
 
