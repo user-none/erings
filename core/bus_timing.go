@@ -26,6 +26,12 @@ package core
 //     areaCPUBus (Work RAM) via busyUntil, clamped to one transaction (the two
 //     CPUs' frame clocks are only equal within syncChunkCycles).
 //
+// Reads pay all three components on the accessing instruction. Writes drain
+// through the BSC's one-level write buffer instead (SH7604 Sec 7.11): the
+// storing instruction pays only the internal-bus handoff, and the region cost
+// becomes the buffered transaction's drain time that the CPU's NEXT
+// chip-external access waits out if it arrives early.
+//
 // Per-region penalty + run = total (single read), from AccessCycles:
 //
 //	CPU-Bus CS0 (BIOS/SMPC/Backup/WRAM-L)   2 + 1  = 3
@@ -200,9 +206,12 @@ func computeAccessCycles(addr uint32, size uint32) uint32 {
 //   - Work RAM-H SDRAM writes are single writes (SH7604 Sec 7.5.5
 //     Fig 7.18): Tr (ACTV) + Tc (WRITA, data out with the command),
 //     then TRWL (1) + precharge (TRP = 1) before the next command to
-//     the bank = 4 states. The SH-2 has no write buffer - the CPU
-//     waits for the internal bus write to complete (Sec 8.4.2) - so
-//     the full cost lands on the writing instruction.
+//     the bank = 4 states. This is the external transaction tenure:
+//     it drains through the BSC's one-level write buffer (Sec 7.11)
+//     rather than stalling the storing instruction - the CPU waits
+//     only for the internal-bus handoff (Sec 8.4.2) and pays the
+//     remainder only if its next chip-external access starts before
+//     the buffer empties (see chargeWrite).
 //   - VDP2 VRAM/CRAM writes are accepted without the cycle-pattern
 //     slot wait that reads incur (VDP2 manual Sec 3, "Read/Write
 //     Access by the CPU": "The write access wait cycle will not be
@@ -249,6 +258,75 @@ func (b *Bus) WriteAccessCycles(addr uint32, size uint32) uint32 {
 // access to busyUntil.
 func (b *Bus) resetContention() {
 	clear(b.busyUntil[:])
+	b.masterPendingWrite = pendingWrite{}
+	b.slavePendingWrite = pendingWrite{}
+}
+
+// pendingWrite is the external write currently draining through one
+// SH-2's BSC one-level write buffer (SH7604 HW manual Sec 7.11 / 8.4.2):
+// a store costs the CPU only the internal-bus handoff while the
+// external cycle completes in the background, and the CPU stalls only
+// when its next chip-external access starts before that drain ends.
+type pendingWrite struct {
+	until int64  // frame-relative cycle the buffered write completes
+	cost  uint32 // that write's transaction cost, bounding any wait on it
+}
+
+// wait returns the cycles the CPU must spend before starting another
+// chip-external access: the buffered write's remaining drain, clamped
+// to the write's own transaction cost. The buffer is one level deep,
+// so a waiter can owe at most the one in-flight write transaction,
+// not an accumulation.
+func (w *pendingWrite) wait(frameCyc int64) uint32 {
+	wait := w.until - frameCyc
+	if wait <= 0 {
+		return 0
+	}
+	if wait > int64(w.cost) {
+		wait = int64(w.cost)
+	}
+	return uint32(wait)
+}
+
+// pendingWriteOf returns the pending-write state belonging to the
+// accessing CPU.
+func (b *Bus) pendingWriteOf(slave bool) *pendingWrite {
+	if slave {
+		return &b.slavePendingWrite
+	}
+	return &b.masterPendingWrite
+}
+
+// chargeWrite models a store completing into the BSC write buffer: the
+// CPU pays only the wait for a previous buffered write (plus slave
+// arbitration), while the external transaction occupies the shared bus
+// in the background. cost is the external transaction tenure. Must be
+// called inside the area lock (the busyUntil read-modify-write shares
+// the bus tenure).
+func (b *Bus) chargeWrite(area uint8, cost uint32, frameCyc int64, slave bool) uint32 {
+	w := b.pendingWriteOf(slave)
+	stall := w.wait(frameCyc)
+	if slave {
+		stall += slaveArbCycles
+	}
+	start := frameCyc + int64(stall)
+	drain := start + int64(cost)
+	if area == areaCPUBus {
+		// The buffered write still occupies the shared CPU bus: the
+		// peer's next access waits for it, and this write waits for a
+		// peer access already in flight (clamped like chargeAccess -
+		// the two CPUs' frame clocks align only within a sync chunk).
+		wait := b.busyUntil[area] - start
+		if wait < 0 {
+			wait = 0
+		} else if wait > int64(cost) {
+			wait = int64(cost)
+		}
+		drain += wait
+		b.busyUntil[area] = drain
+	}
+	*w = pendingWrite{until: drain, cost: cost}
+	return stall
 }
 
 // chargeAccess returns the wait-state cycles an SH-2 access adds to busStall -
@@ -284,7 +362,8 @@ func (b *Bus) chargeAccess(area uint8, cost uint32, frameCyc int64, slave bool) 
 func (b *Bus) SH2Read32(addr uint32, frameCyc int64, slave bool) (uint32, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc, slave)
+	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
+	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
 	val := b.read32Impl(addr)
 	b.unlockArea(area)
 	if b.ReadTrace != nil {
@@ -296,7 +375,8 @@ func (b *Bus) SH2Read32(addr uint32, frameCyc int64, slave bool) (uint32, uint32
 func (b *Bus) SH2Read16(addr uint32, frameCyc int64, slave bool) (uint16, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc, slave)
+	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
+	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
 	val := b.read16Impl(addr)
 	b.unlockArea(area)
 	if b.ReadTrace != nil {
@@ -308,7 +388,8 @@ func (b *Bus) SH2Read16(addr uint32, frameCyc int64, slave bool) (uint16, uint32
 func (b *Bus) SH2Read8(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc, slave)
+	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
+	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
 	val := b.read8Impl(addr)
 	b.unlockArea(area)
 	if b.ReadTrace != nil {
@@ -320,7 +401,7 @@ func (b *Bus) SH2Read8(addr uint32, frameCyc int64, slave bool) (uint8, uint32) 
 func (b *Bus) SH2Write32(addr uint32, val uint32, frameCyc int64, slave bool) uint32 {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
+	stall := b.chargeWrite(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
 	b.write32Impl(addr, val)
 	b.unlockArea(area)
 	if area == areaBBus {
@@ -332,7 +413,7 @@ func (b *Bus) SH2Write32(addr uint32, val uint32, frameCyc int64, slave bool) ui
 func (b *Bus) SH2Write16(addr uint32, val uint16, frameCyc int64, slave bool) uint32 {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
+	stall := b.chargeWrite(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
 	b.write16Impl(addr, val)
 	b.unlockArea(area)
 	if area == areaBBus {
@@ -344,7 +425,7 @@ func (b *Bus) SH2Write16(addr uint32, val uint16, frameCyc int64, slave bool) ui
 func (b *Bus) SH2Write8(addr uint32, val uint8, frameCyc int64, slave bool) uint32 {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
+	stall := b.chargeWrite(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
 	b.write8Impl(addr, val)
 	b.unlockArea(area)
 	if area == areaBBus {
@@ -356,7 +437,8 @@ func (b *Bus) SH2Write8(addr uint32, val uint8, frameCyc int64, slave bool) uint
 func (b *Bus) SH2FillLine(base uint32, dst *[16]byte, frameCyc int64, slave bool) uint32 {
 	area := busAreaOf(base & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessReadBurst[(base>>20)&0x7F], frameCyc, slave)
+	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
+	stall := bufWait + b.chargeAccess(area, accessReadBurst[(base>>20)&0x7F], frameCyc+int64(bufWait), slave)
 	for i := uint32(0); i < 16; i += 4 {
 		v := b.read32Impl(base + i)
 		dst[i] = uint8(v >> 24)
@@ -375,7 +457,8 @@ func (b *Bus) SH2FillLine(base uint32, dst *[16]byte, frameCyc int64, slave bool
 func (b *Bus) SH2RMWRead(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
 	b.lockArea(area)
-	stall := b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc, slave)
+	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
+	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
 	val := b.read8Impl(addr)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 1, uint32(val))

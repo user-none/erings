@@ -181,6 +181,9 @@ type Bus struct {
 	// tables in bus_timing.go.
 	busyUntil [areaCount]int64
 
+	masterPendingWrite pendingWrite
+	slavePendingWrite  pendingWrite
+
 	// ReadTrace, when non-nil, is called for every Read8/Read16/Read32.
 	// Used for narrow-region debug tracing (e.g. discovering what a
 	// game reads from BUP state buffers after a BUP slot returns).
