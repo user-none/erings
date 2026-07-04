@@ -52,6 +52,13 @@ type rbgPerFrame struct {
 	dyFP   int64 // .10 FP (per-pixel Y increment)
 }
 
+// lineCoef holds a line-start coefficient table entry.
+type lineCoef struct {
+	val int64
+	msb bool
+	lc  uint8
+}
+
 // rbgFrame holds the per-frame rotation state for one RBG screen.
 // The paramA/paramB xst, yst, and kast fields are overwritten per
 // line from VRAM when the corresponding RPRCTL re-read flag is set;
@@ -67,6 +74,8 @@ type rbgFrame struct {
 
 	ktaof uint16
 	crkte bool
+
+	coefDotOK [4]bool
 
 	coefEnA, coefOneWordA bool
 	coefModeA             uint16
@@ -149,6 +158,28 @@ func rbgCoefAddrFromFP(kastFP int64, ktaofBits uint32, oneWord bool) uint32 {
 		return (ktaofBits&0x07)*0x20000 + uint32(kastInt)*2
 	}
 	return (ktaofBits&0x03)*0x40000 + uint32(kastInt)*4
+}
+
+// rbgCoefDotBanks decodes which VRAM banks allow per-dot coefficient
+// table reads from the RAMCTL rotation data bank select bits. Per VDP2
+// User's Manual Sec 6.2, coefficient data needed per dot must be stored
+// in a bank designated as coefficient table RAM (RDBSxn = 01), while
+// per-line coefficient data can be stored in any bank. An unpartitioned
+// VRAM-A or VRAM-B is governed by its bank-0 select bits.
+func (v *VDP2) rbgCoefDotBanks() [4]bool {
+	ramctl := v.frame.regs[vdp2RAMCTL]
+	var ok [4]bool
+	for bank := range ok {
+		eff := bank
+		if bank == 1 && ramctl&0x0100 == 0 {
+			eff = 0
+		}
+		if bank == 3 && ramctl&0x0200 == 0 {
+			eff = 2
+		}
+		ok[bank] = (ramctl>>(eff*2))&3 == 1
+	}
+	return ok
 }
 
 // readRotParams reads a rotation parameter table from VRAM at the given address.
@@ -413,6 +444,21 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 		lineKAstFPB = rbgLineKAstFP(paramB.kast, paramB.dkast, vcnt, rf.lastVcntKAB)
 	}
 
+	// Line-start coefficient for each parameter. Per manual Sec 6.2 only
+	// per-dot coefficient reads require a designated bank (rf.coefDotOK);
+	// the per-line read works from any bank, and a dot whose coefficient
+	// address falls in an undesignated bank keeps this value.
+	coefDotOK := rf.coefDotOK
+	var lineCoefA, lineCoefB lineCoef
+	if coefEnA && needA {
+		addr := rbgCoefAddrFromFP(lineKAstFPA, uint32(ktaof), coefOneWordA)
+		lineCoefA.val, lineCoefA.msb, lineCoefA.lc = v.readCoefficient(addr, coefOneWordA, coefModeA == 3, crkte)
+	}
+	if coefEnB && needB {
+		addr := rbgCoefAddrFromFP(lineKAstFPB, uint32(ktaof>>8), coefOneWordB)
+		lineCoefB.val, lineCoefB.msb, lineCoefB.lc = v.readCoefficient(addr, coefOneWordB, coefModeB == 3, crkte)
+	}
+
 	// Per-screen color calculation enable (CCCTL) is a precondition for
 	// every special CC mode (manual Table 12.3). It is frame-constant, so
 	// compute it once per line here instead of per pixel.
@@ -511,7 +557,16 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 				// by Hcnt.
 				pixelKAstFP := curLineKAstFP + pp.dkax*hcnt
 				coefAddr := rbgCoefAddrFromFP(pixelKAstFP, curKtaofBits, curCoefOneWord)
-				coefVal, coefMSB, coefLC := v.readCoefficient(coefAddr, curCoefOneWord, mode3, crkte)
+				var coefVal int64
+				var coefMSB bool
+				var coefLC uint8
+				if crkte || coefDotOK[(coefAddr&(vdp2VRAMSize-1))>>17] {
+					coefVal, coefMSB, coefLC = v.readCoefficient(coefAddr, curCoefOneWord, mode3, crkte)
+				} else if useA {
+					coefVal, coefMSB, coefLC = lineCoefA.val, lineCoefA.msb, lineCoefA.lc
+				} else {
+					coefVal, coefMSB, coefLC = lineCoefB.val, lineCoefB.msb, lineCoefB.lc
+				}
 
 				// In RPMD mode 2 the MSB of parameter A's coefficient selects
 				// the rotation parameter (VDP2 manual Sec 6.1, Table 6.4): MSB 0
@@ -544,7 +599,14 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 						mode3B := coefModeB == 3
 						pixelKAstFPB := lineKAstFPB + pp.dkax*hcnt
 						coefAddrB := rbgCoefAddrFromFP(pixelKAstFPB, uint32(ktaof>>8), coefOneWordB)
-						coefValB, coefMSBB, coefLCB := v.readCoefficient(coefAddrB, coefOneWordB, mode3B, crkte)
+						var coefValB int64
+						var coefMSBB bool
+						var coefLCB uint8
+						if crkte || coefDotOK[(coefAddrB&(vdp2VRAMSize-1))>>17] {
+							coefValB, coefMSBB, coefLCB = v.readCoefficient(coefAddrB, coefOneWordB, mode3B, crkte)
+						} else {
+							coefValB, coefMSBB, coefLCB = lineCoefB.val, lineCoefB.msb, lineCoefB.lc
+						}
 						if klceB {
 							v.rbg0LCBuf[y*width+x] = coefLCB | 0x80
 						}
@@ -988,6 +1050,17 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 		lineKAstFPB = rbgLineKAstFP(paramB.kast, paramB.dkast, vcnt, rf.lastVcntKAB)
 	}
 
+	coefDotOK := rf.coefDotOK
+	var lineCoefA, lineCoefB lineCoef
+	if coefEnA && needA {
+		addr := rbgCoefAddrFromFP(lineKAstFPA, uint32(ktaof), coefOneWordA)
+		lineCoefA.val, lineCoefA.msb, lineCoefA.lc = v.readCoefficient(addr, coefOneWordA, coefModeA == 3, crkte)
+	}
+	if coefEnB && needB {
+		addr := rbgCoefAddrFromFP(lineKAstFPB, uint32(ktaof>>8), coefOneWordB)
+		lineCoefB.val, lineCoefB.msb, lineCoefB.lc = v.readCoefficient(addr, coefOneWordB, coefModeB == 3, crkte)
+	}
+
 	// Per-screen color calculation enable (CCCTL) is a precondition for
 	// every special CC mode (manual Table 12.3). It is frame-constant, so
 	// compute it once per line here instead of per pixel.
@@ -1054,7 +1127,16 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 				mode3 := curCoefMode == 3
 				pixelKAstFP := curLineKAstFP + pp.dkax*hcnt
 				coefAddr := rbgCoefAddrFromFP(pixelKAstFP, curKtaofBits, curCoefOneWord)
-				coefVal, coefMSB, coefLC := v.readCoefficient(coefAddr, curCoefOneWord, mode3, crkte)
+				var coefVal int64
+				var coefMSB bool
+				var coefLC uint8
+				if crkte || coefDotOK[(coefAddr&(vdp2VRAMSize-1))>>17] {
+					coefVal, coefMSB, coefLC = v.readCoefficient(coefAddr, curCoefOneWord, mode3, crkte)
+				} else if useA {
+					coefVal, coefMSB, coefLC = lineCoefA.val, lineCoefA.msb, lineCoefA.lc
+				} else {
+					coefVal, coefMSB, coefLC = lineCoefB.val, lineCoefB.msb, lineCoefB.lc
+				}
 
 				// RPMD mode 2: parameter A's coefficient MSB selects the
 				// parameter; MSB 1 switches the dot to B, then B's own
@@ -1073,7 +1155,14 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 						mode3B := coefModeB == 3
 						pixelKAstFPB := lineKAstFPB + pp.dkax*hcnt
 						coefAddrB := rbgCoefAddrFromFP(pixelKAstFPB, uint32(ktaof>>8), coefOneWordB)
-						coefValB, coefMSBB, coefLCB := v.readCoefficient(coefAddrB, coefOneWordB, mode3B, crkte)
+						var coefValB int64
+						var coefMSBB bool
+						var coefLCB uint8
+						if crkte || coefDotOK[(coefAddrB&(vdp2VRAMSize-1))>>17] {
+							coefValB, coefMSBB, coefLCB = v.readCoefficient(coefAddrB, coefOneWordB, mode3B, crkte)
+						} else {
+							coefValB, coefMSBB, coefLCB = lineCoefB.val, lineCoefB.msb, lineCoefB.lc
+						}
 						if klceB {
 							v.rbg0LCBuf[y*width+x] = coefLCB | 0x80
 						}
@@ -1322,6 +1411,13 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 		lineKAstFP = rbgLineKAstFP(paramB.kast, paramB.dkast, vcnt, rf.lastVcntKAB)
 	}
 
+	coefDotOK := rf.coefDotOK
+	var lineCoefB lineCoef
+	if coefEn {
+		addr := rbgCoefAddrFromFP(lineKAstFP, uint32(ktaof>>8), coefOneWord)
+		lineCoefB.val, lineCoefB.msb, lineCoefB.lc = v.readCoefficient(addr, coefOneWord, coefMode == 3, crkteB)
+	}
+
 	// Per-screen color calculation enable (CCCTL) is a precondition for
 	// every special CC mode (manual Table 12.3). It is frame-constant, so
 	// compute it once per line here instead of per pixel.
@@ -1343,7 +1439,14 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 				mode3 := coefMode == 3
 				pixelKAstFP := lineKAstFP + paramB.dkax*hcnt
 				coefAddr := rbgCoefAddrFromFP(pixelKAstFP, uint32(ktaof>>8), coefOneWord)
-				coefVal, coefMSB, coefLC := v.readCoefficient(coefAddr, coefOneWord, mode3, crkteB)
+				var coefVal int64
+				var coefMSB bool
+				var coefLC uint8
+				if crkteB || coefDotOK[(coefAddr&(vdp2VRAMSize-1))>>17] {
+					coefVal, coefMSB, coefLC = v.readCoefficient(coefAddr, coefOneWord, mode3, crkteB)
+				} else {
+					coefVal, coefMSB, coefLC = lineCoefB.val, lineCoefB.msb, lineCoefB.lc
+				}
 				if klce {
 					v.rbg1LCBuf[y*width+x] = coefLC | 0x80
 				}
@@ -1715,6 +1818,13 @@ func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 		lineKAstFP = rbgLineKAstFP(paramB.kast, paramB.dkast, vcnt, rf.lastVcntKAB)
 	}
 
+	coefDotOK := rf.coefDotOK
+	var lineCoefB lineCoef
+	if coefEn {
+		addr := rbgCoefAddrFromFP(lineKAstFP, uint32(ktaof>>8), coefOneWord)
+		lineCoefB.val, lineCoefB.msb, lineCoefB.lc = v.readCoefficient(addr, coefOneWord, coefMode == 3, rf.crkte)
+	}
+
 	// Per-screen color calculation enable (CCCTL) is a precondition for
 	// every special CC mode (manual Table 12.3). It is frame-constant, so
 	// compute it once per line here instead of per pixel.
@@ -1736,7 +1846,14 @@ func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 				mode3 := coefMode == 3
 				pixelKAstFP := lineKAstFP + paramB.dkax*hcnt
 				coefAddr := rbgCoefAddrFromFP(pixelKAstFP, uint32(ktaof>>8), coefOneWord)
-				coefVal, coefMSB, coefLC := v.readCoefficient(coefAddr, coefOneWord, mode3, rf.crkte)
+				var coefVal int64
+				var coefMSB bool
+				var coefLC uint8
+				if rf.crkte || coefDotOK[(coefAddr&(vdp2VRAMSize-1))>>17] {
+					coefVal, coefMSB, coefLC = v.readCoefficient(coefAddr, coefOneWord, mode3, rf.crkte)
+				} else {
+					coefVal, coefMSB, coefLC = lineCoefB.val, lineCoefB.msb, lineCoefB.lc
+				}
 				if klce {
 					v.rbg1LCBuf[y*width+x] = coefLC | 0x80
 				}

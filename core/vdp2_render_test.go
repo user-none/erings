@@ -3920,6 +3920,100 @@ func TestRBGCoefAddrPerPixelDKAxBoundary(t *testing.T) {
 	}
 }
 
+// TestRBGCoefDotBanks verifies the RAMCTL rotation data bank select
+// decode used to gate per-dot coefficient table reads (VDP2 User's
+// Manual Sec 6.2). A bank allows per-dot reads only when designated as
+// coefficient table RAM (01); an unpartitioned VRAM-A or VRAM-B is
+// governed by its bank-0 select bits.
+func TestRBGCoefDotBanks(t *testing.T) {
+	cases := []struct {
+		name   string
+		ramctl uint16
+		want   [4]bool
+	}{
+		{"NoDesignation", 0x0000, [4]bool{false, false, false, false}},
+		{"UnpartitionedAWholeBank", 0x0001, [4]bool{true, true, false, false}},
+		{"PartitionedAOnlyA0", 0x0101, [4]bool{true, false, false, false}},
+		{"PartitionedBOnlyB0", 0x0210, [4]bool{false, false, true, false}},
+		{"UnpartitionedBWholeBank", 0x0010, [4]bool{false, false, true, true}},
+		{"PatternNameIsNotCoef", 0x000A, [4]bool{false, false, false, false}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			v := newTestVDP2()
+			v.regs[vdp2RAMCTL] = tc.ramctl
+			v.frame.regs = v.regs
+			if got := v.rbgCoefDotBanks(); got != tc.want {
+				t.Errorf("rbgCoefDotBanks(RAMCTL=%04X) = %v, want %v", tc.ramctl, got, tc.want)
+			}
+		})
+	}
+}
+
+// TestRBG0CoefPerDotBankGating verifies that per-dot coefficient table
+// reads only occur from VRAM banks designated as coefficient table RAM
+// (VDP2 User's Manual Sec 6.2). With a designated bank, a nonzero dKAx
+// walks the table per dot and each dot honors its own entry's MSB.
+// Without a designation the per-dot read does not happen and every dot
+// of the line keeps the line-start coefficient, which is read from any
+// bank.
+func TestRBG0CoefPerDotBankGating(t *testing.T) {
+	setup := func(ramctl uint16) *VDP2 {
+		v := setupRBG0Identity(t)
+		paramA := uint32(0x10000)
+
+		// 2-word coefficient table for parameter A, mode 0 (replace kx/ky).
+		v.regs[vdp2KTCTL] = 0x0001
+		v.regs[vdp2KTAOF] = 0x0000
+		v.regs[vdp2RAMCTL] = ramctl
+
+		// Coefficient table at byte 0x18000 (bank A0), one entry per dot.
+		writeRotParam32(v, paramA, 0x54, 0x6000, 0x0000) // KAst -> 0x18000
+		writeRotParam32(v, paramA, 0x58, 0x0000, 0x0000) // dKAst = 0
+		writeRotParam32(v, paramA, 0x5C, 0x0001, 0x0000) // dKAx = 1.0
+
+		// Dot 0 entry: MSB=0, kx = 1.0. Dot 1 entry: MSB=1 (transparent).
+		writeVRAM16(v, 0x18000, 0x0001)
+		writeVRAM16(v, 0x18002, 0x0000)
+		writeVRAM16(v, 0x18004, 0x8001)
+		writeVRAM16(v, 0x18006, 0x0000)
+
+		// Red cell at (0,0) so rendered dots are non-transparent.
+		writeVRAM16(v, 0, 0x0001) // palette=1
+		writeVRAM16(v, 2, 0x0001) // charNum=1
+		for i := 0; i < 4; i++ {
+			v.vram[0x20+i] = 0x33
+		}
+		v.cram[38] = 0x00
+		v.cram[39] = 0x1F // red
+		return v
+	}
+
+	// Bank A0 designated as coefficient table RAM: dot 1 reads its own
+	// entry and that entry's MSB makes it transparent.
+	v := setup(0x0001)
+	buf := make([]uint32, 352*256)
+	renderTestRBG0(v, buf)
+	if buf[0] == 0 {
+		t.Fatal("designated bank: dot(0,0) should render")
+	}
+	if buf[1] != 0 {
+		t.Errorf("designated bank: dot(1,0) should be transparent from its own entry MSB, got 0x%08X", buf[1])
+	}
+
+	// No bank designated: the per-dot read is suppressed and dot 1 keeps
+	// the line-start coefficient (MSB=0), so it renders.
+	v = setup(0x0000)
+	clear(buf)
+	renderTestRBG0(v, buf)
+	if buf[0] == 0 {
+		t.Fatal("undesignated bank: dot(0,0) should render from the line-start coefficient")
+	}
+	if buf[1] == 0 {
+		t.Error("undesignated bank: dot(1,0) should keep the line-start coefficient and render")
+	}
+}
+
 func TestRBG0Identity(t *testing.T) {
 	v := setupRBG0Identity(t)
 

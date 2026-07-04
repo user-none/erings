@@ -221,6 +221,7 @@ func (v *VDP2) buildRBG0Frame(cfg *rbgConfig) rbgFrame {
 	ktctl := v.frame.regs[vdp2KTCTL]
 	rf.ktaof = v.frame.regs[vdp2KTAOF]
 	rf.crkte = v.frame.regs[vdp2RAMCTL]&0x8000 != 0 && v.frame.cramMode == 1
+	rf.coefDotOK = v.rbgCoefDotBanks()
 	rf.coefEnA = ktctl&0x01 != 0
 	rf.coefOneWordA = ktctl&0x02 != 0
 	rf.coefModeA = (ktctl >> 2) & 0x03
@@ -312,6 +313,7 @@ func (v *VDP2) buildRBG1Frame() rbgFrame {
 	ktctl := v.frame.regs[vdp2KTCTL]
 	rf.ktaof = v.frame.regs[vdp2KTAOF]
 	rf.crkte = v.frame.regs[vdp2RAMCTL]&0x8000 != 0 && v.frame.cramMode == 1
+	rf.coefDotOK = v.rbgCoefDotBanks()
 	rf.coefEnB = ktctl&0x0100 != 0
 	rf.coefOneWordB = ktctl&0x0200 != 0
 	rf.coefModeB = (ktctl >> 10) & 0x03
