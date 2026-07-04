@@ -76,6 +76,8 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           make appimage VERSION="$VERSION" APPIMAGE_ARCH="$APPIMAGE_ARCH"
+          cd build
+          zip "erings-$VERSION-linux-$APPIMAGE_ARCH.zip" "erings-$VERSION-$APPIMAGE_ARCH.AppImage"
 
       - name: Install make (Windows)
         if: runner.os == 'Windows'
@@ -104,42 +106,39 @@ jobs:
         run: |
           make windows VERSION="$VERSION"
           cd build
-          powershell -Command "Compress-Archive -Path erings.exe -DestinationPath erings-windows-$WIN_ARCH-$VERSION.zip -Force"
+          powershell -Command "Compress-Archive -Path erings.exe -DestinationPath erings-$VERSION-windows-$WIN_ARCH.zip -Force"
 
       - name: Build (macOS app bundle)
         if: runner.os == 'macOS'
         run: |
           make macos VERSION="$VERSION"
           cd build
-          zip -r "erings-macos-$VERSION.zip" erings.app
+          zip -r "erings-$VERSION-macos.zip" erings.app
 
       - name: Upload artifact (Linux)
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v7
         with:
-          name: erings-linux-${{ env.APPIMAGE_ARCH }}-${{ env.VERSION }}
-          path: build/erings-${{ env.APPIMAGE_ARCH }}.AppImage
+          name: erings-${{ env.VERSION }}-linux-${{ env.APPIMAGE_ARCH }}
+          path: build/erings-${{ env.VERSION }}-${{ env.APPIMAGE_ARCH }}.AppImage
 
       - name: Upload artifact (Windows)
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
-          name: erings-windows-${{ env.WIN_ARCH }}-${{ env.VERSION }}
+          name: erings-${{ env.VERSION }}-windows-${{ env.WIN_ARCH }}
           path: build/erings.exe
 
       - name: Upload artifact (macOS)
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v7
         with:
-          name: erings-macos-${{ env.VERSION }}
+          name: erings-${{ env.VERSION }}-macos
           path: build/erings.app
 
       - name: Attach binaries to release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            build/erings-*.AppImage
-            build/erings-windows-*.zip
-            build/erings-macos-*.zip
+          files: build/erings-*.zip
           fail_on_unmatched_files: false

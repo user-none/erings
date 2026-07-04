@@ -12,7 +12,6 @@ APPDIR := $(BUILD_DIR)/AppDir
 # to label cross-runner artifacts. The value follows the AppImage/linuxdeploy
 # naming convention (x86_64, aarch64).
 APPIMAGE_ARCH ?= $(shell uname -m)
-APPIMAGE := $(BUILD_DIR)/$(APP_NAME)-$(APPIMAGE_ARCH).AppImage
 
 # Source files
 ICON_MASTER := cmd/desktop/icon.webp
@@ -33,6 +32,14 @@ ifneq ($(VERSION),)
 VERSION_LDFLAGS := -X github.com/user-none/erings.Version=$(VERSION)
 endif
 
+# The version segment is dropped when no VERSION is supplied (plain local builds).
+ifneq ($(VERSION),)
+APPIMAGE_NAME := $(APP_NAME)-$(VERSION)-$(APPIMAGE_ARCH).AppImage
+else
+APPIMAGE_NAME := $(APP_NAME)-$(APPIMAGE_ARCH).AppImage
+endif
+APPIMAGE := $(BUILD_DIR)/$(APPIMAGE_NAME)
+
 # Build all targets
 all: desktop
 
@@ -49,14 +56,14 @@ windows:
 appimage:
 	go build -ldflags "-s -w $(VERSION_LDFLAGS)" -o $(BUILD_DIR)/erings ./cmd/desktop/
 	@rm -rf $(APPDIR)
-	APPIMAGE_EXTRACT_AND_RUN=1 ARCH=$(APPIMAGE_ARCH) OUTPUT=$(APP_NAME)-$(APPIMAGE_ARCH).AppImage $(LINUXDEPLOY) \
+	APPIMAGE_EXTRACT_AND_RUN=1 ARCH=$(APPIMAGE_ARCH) OUTPUT=$(APPIMAGE_NAME) $(LINUXDEPLOY) \
 		--appdir $(APPDIR) \
 		--executable $(BUILD_DIR)/erings \
 		--desktop-file $(DESKTOP_FILE) \
 		--icon-file $(ICON_PNG) \
 		--icon-filename $(APP_NAME) \
 		--output appimage
-	@mv $(APP_NAME)-$(APPIMAGE_ARCH).AppImage $(APPIMAGE)
+	@mv $(APPIMAGE_NAME) $(APPIMAGE)
 	@echo "Created $(APPIMAGE)"
 
 # Build macOS .app bundle.
