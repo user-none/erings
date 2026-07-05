@@ -4,8 +4,9 @@ Command-line tools for development and for working with the emulator's
 data. Each tool is a self-contained `main` package in its own subdirectory.
 Run them with `go run ./utils/<tool>` or build with `go build ./utils/<tool>`.
 
-`disasm` and `extract_bioslibs` use only the standard library (plus the
-in-tree `core/sh2` disassembler for `disasm`). `debug` is the development
+`disasm`, `m68kdisasm`, and `extract_bioslibs` use only the standard
+library (plus the in-tree `core/sh2` disassembler for `disasm` and the
+`go-chip-m68k` disassembler for `m68kdisasm`). `debug` is the development
 launcher and links the emulator core and its UI dependencies, so it needs a
 display to run. `capture` links the emulator core but is fully headless (no
 display or audio), so it runs anywhere.
@@ -127,6 +128,40 @@ go run ./utils/disasm -file body.bin -addr 0 -all
 
 Note: the input length must be even (instructions are 16-bit).
 
+## m68kdisasm
+
+An MC68000 disassembler built on the `go-chip-m68k` package's
+`Disassemble`. It decodes a raw binary in Motorola syntax and prints one
+formatted line per instruction: address, raw instruction words, text.
+Instructions are variable length (2-10 bytes), so `-count` counts
+instructions and the sweep advances by each instruction's decoded length.
+Opcodes the execution core treats as illegal print as `DC.W $xxxx`, branch
+targets and PC-relative operands are resolved to absolute addresses, and
+an instruction truncated by the end of the file is rendered as `DC.W`
+lines, one per remaining word.
+
+Flags (same interface as `disasm`):
+
+| Flag | Default | Meaning |
+|------|---------|---------|
+| `-file` | (required) | Path to the binary to disassemble |
+| `-base` | `0` | Hex base address the file is mapped at; the base plus the file size must stay within the 68000's 24-bit address space |
+| `-addr` | (required unless `-all`) | Hex start address (`$`, `0x`, or bare hex) |
+| `-count` | `20` | Number of instructions to disassemble |
+| `-all` | false | Disassemble from `-addr` to end of file |
+
+Examples:
+
+```
+# 30 instructions at the sound driver reset entry
+go run ./utils/m68kdisasm -file bios_sounddrv.bin -addr 0x1000 -count 30
+
+# whole file from offset 0
+go run ./utils/m68kdisasm -file body.bin -addr 0 -all
+```
+
+Note: the input length must be even (instructions are word-aligned).
+
 ## extract_bioslibs
 
 Extracts and decompresses the compressed bodies stored inside the US Sega
@@ -140,7 +175,7 @@ Output files (10 bodies):
 |------|-----------|----------|
 | `bios_fonts.bin` | `$005240` | Bitmap font / glyph bitmaps |
 | `bootlib.bin` | `$007000` | Boot library: Saturn logo / disc-check animation |
-| `bios_cdfs.bin` | `$01D000` | BIOS-internal CD filesystem driver (SH-2 host side; not the SH-1 CD-block firmware) |
+| `bios_sounddrv.bin` | `$01D000` | BIOS sound driver package ("BOOT ROM(S) V2" ver1.11): MC68EC000 driver program, area map, sound data banks, DSP effect banks; uploaded to sound RAM by sub_15D4 |
 | `app_videocd.bin` | `$040448` | SEGA PLAYER app: Video-CD / MPEG + disc security |
 | `app_cdg.bin` | `$04B134` | SEGA PLAYER app: CD+G player |
 | `app_graphics.bin` | `$058F64` | SEGA PLAYER shared graphics resources |
