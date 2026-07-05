@@ -6,9 +6,10 @@
 //
 //	bios_fonts.bin   - bitmap font / glyph bitmaps, ROM $005240
 //	bootlib.bin      - boot library: Saturn logo / disc-check animation, ROM $007000
-//	bios_cdfs.bin    - BIOS-internal CD filesystem driver (SH-2 host-side, runs
-//	                   in WRAM-H on the CD-game boot path; NOT the SH-1 CD-block
-//	                   controller firmware), ROM $01D000
+//	bios_sounddrv.bin - BIOS sound driver package ("BOOT ROM(S) V2" ver1.11):
+//	                   MC68EC000 driver program, area map, sound data banks,
+//	                   and DSP effect banks; uploaded to sound RAM by
+//	                   sub_15D4, ROM $01D000
 //	app_videocd.bin  - SEGA PLAYER app: Video-CD/MPEG + disc security (dir 0),  ROM $040448
 //	app_cdg.bin      - SEGA PLAYER app: CD+G player (dir 1),                    ROM $04B134
 //	app_graphics.bin - SEGA PLAYER shared graphics resources (dir 13),          ROM $058F64
@@ -56,7 +57,7 @@ type libSpec struct {
 var libs = []libSpec{
 	{"bios_fonts.bin", 0x005240, 0x00001000},
 	{"bootlib.bin", 0x007000, 0x00040000},
-	{"bios_cdfs.bin", 0x01D000, 0x00040000},
+	{"bios_sounddrv.bin", 0x01D000, 0x00040000},
 	{"app_videocd.bin", 0x040448, 0x00040000},
 	{"app_cdg.bin", 0x04B134, 0x00040000},
 	{"app_graphics.bin", 0x058F64, 0x00040000},
