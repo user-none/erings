@@ -1,0 +1,386 @@
+# MPEG (Video CD) Cartridge Subsystem
+
+Companion to [saturn_cdblock_firmware.md](saturn_cdblock_firmware.md),
+which covers the shared context this subsystem builds on: the host
+command dispatch, the interrupt/task model, the extension/hook mechanism,
+and the memory map. This file documents the MPEG-specific behavior only.
+
+Everything in the $A020-$F712 region plus DMAC2/3, ITU0-2, and vectors
+76/78/88/89 serves the MPEG cartridge. On a stock unit this subsystem is
+initialized and probed at boot, then never runs: task 8 waits forever,
+and the DMA/capture interrupts never fire.
+
+This is the host-facing interface for MPEG-1 video/audio decode. When a
+Video CD or Movie Card cartridge is present, the game (running on the
+SH-2) drives playback entirely through CD block host commands $90-$AF:
+the game issues an MPEG command in the CR registers, the CD block
+firmware translates it into register writes and command packets for the
+two decoder LSIs on the cartridge, and reports decoder status and
+interrupts back through the same CR/HIRQ path. The CD block also routes
+the MPEG sector stream off the disc into the decoder. The firmware itself
+does no decoding - it is the command relay and status aggregator between
+the host and the cartridge silicon.
+
+## Architecture
+
+A structural fact that governs the rest of this document: **the CDB-106
+ROM does not contain the MPEG command logic.** It contains the dispatch
+plumbing, a set of default handlers, and the LSI transport, but the
+authoritative command behavior lives in the cartridge's own firmware
+image - a separate ROM loaded from the cartridge, not part of cdb106.bin.
+
+The load path (firmware doc, Extension / Patch Mechanism): at boot the
+CD block reads a length + image from the window at $0E000000, copies it
+to buffer DRAM at $0907B000, and calls the image entry point at
+$0907B004. That image populates the RAM dispatch table at $0907B008 -
+**the CDB-106 ROM never writes that table itself** (the only reference to
+$0907B008 in the whole ROM is the read in the dispatch tail). Every MPEG
+host command dispatches through $0907B008, so with no cartridge the table
+is empty and MPEG commands cannot run; $93 MpegInit even rejects unless
+the image-id byte at $0907B000 is nonzero.
+
+The ROM's $F938 table is an export directory of default handlers the
+cartridge image clones into $0907B008 and selectively overrides. So the
+ROM defaults documented below are the reference behavior a stock card
+falls back to, not necessarily the exact behavior of any given title's
+cartridge.
+
+Scope of what cdb106.bin reveals: the command dispatch, the host CR/HIRQ
+contract, the status-report assembly, the interrupt/event model, the
+state variables, and the LSI transport. The command parameter, status,
+and interrupt bit fields - which the firmware only moves as opaque values
+- are documented in the sections below from the published CD block MPEG
+interface definitions and cross-checked against the firmware where it
+acts on them.
+
+The one layer still not documented here is the internal encoding of the
+raw decoder-LSI registers (the individual bits written into the
+$0A100000/$0A180000 windows), which belongs to the decoder-LSI datasheet;
+the host command interface built on top of it is fully covered.
+
+### The two decoder LSIs
+
+The cartridge carries two decoder LSIs, addressed through register
+windows at $0A100000 (LSI A) and $0A180000 (LSI B) on the SH-1 bus. The
+firmware talks to them two ways:
+
+- **Register access**: direct word reads/writes into the windows (used by
+  $AE/$AF raw access and the status polling).
+- **4-byte command packets**: staged at SH-1 RAM $0F000840 and pushed by
+  DMAC2 (to LSI A at $0A10001E) or DMAC3 (to LSI B at $0A180000).
+  Completion raises vector 76 (LSI A) / 78 (LSI B).
+
+Typical division of labor on a Video CD card: LSI A = video decode +
+display, LSI B = audio decode. The firmware treats them symmetrically at
+the transport level (mirrored DMAC channels, shadow blocks, status bits).
+
+## Command dispatch and response pattern
+
+Every MPEG command follows the same shape:
+
+1. The SH-2 writes CR1-CR4 (command $90-$AF in CR1 high byte) and IRQ6
+   fires on the SH-1 (firmware doc, Host Command Processing).
+2. The dispatcher gates the command: it requires MPEG hardware present
+   ($0F00027D bit 1) and MPEG active ($0F000892 bit 7), except $93 which
+   skips the active check. It then jumps through the extension table at
+   $0907B008 + (code & $3F - 16)*4.
+3. The handler reads its parameters out of CR1-CR4 (passed in R1 =
+   CR1:CR2, R2 = CR3:CR4), mutates the MPEG state RAM ($0F000840-$0F00089F)
+   and/or writes the LSI register windows, and where needed stages a
+   command packet for DMAC2/3.
+4. Almost every handler ends by calling the **GetStatus service** (ROM
+   index 68, $AEB4) to build the response CRs. So the default response to
+   nearly all MPEG commands is the current MPEG status report (see MPEG
+   Status Report Format below); commands that read something specific
+   (Get Interrupt, Get Connection, Get picture info) override individual
+   CR fields on top of that.
+5. The handler returns; the IRQ6 tail writes the CRs and asserts CMOK,
+   and (for the deferred/async parts) task 8 processes LSI events and
+   asserts MPCM/MPST.
+
+## MPEG Command Set ($90-$AF)
+
+Host commands $90-$AF dispatch through the extension table
+($0907B008 + (code - $90)*4). Commands $93/$AE/$AF are ROM-resident
+(handlers $A060/$A158/$A100); the rest use the ROM default handlers
+listed under ROM dispatch table defaults ($F938 entries 0-31), which an
+extension image may override. Behavior traced from those defaults:
+
+| Code | Handler | Traced behavior |
+|------|---------|-----------------|
+| $90 | $AEEA | Read decoder status via service $F89A; return it (Get Status) |
+| $91 | $AEFA | Read and clear the interrupt-status long $0F000848 (Get Interrupt) |
+| $92 | $AF2A | Write CR to the interrupt-mask $0F00084C (Set Interrupt Mask) |
+| $93 | $A060 | Init/reset the subsystem (ROM-resident; see below) |
+| $94 | $A5EC | Program LSI A parameter block $0F000854 / window $0A100000 (Set Mode) |
+| $95 | $A760 | Update subsystem state $0F000890 and LSI A params; start/stop decode (Play) |
+| $96 | $A834 | Configure decode method flags in $0F000890 (Set Decode Method) |
+| $97 | $A99C | Read back LSI A control word +20 (status/get) |
+| $98 | $9D54 | Store CR to $09075384, service $F8EE (get, via extension work area) |
+| $99 | $9E6C | Read the second long of the MPEG work area $090752A0 |
+| $9A-$9C | $AF74/$B3B8/$B2D4 | Stream connection routing (node index 0-31) |
+| $9D | $B2D4 | Set connection (validates node <= 31) |
+| $9E | $B45C | Get connection: store selector byte, service $F8EE |
+| $9F | $9E84 | Read work-area byte (get) |
+| $A0 | $AA74 | Toggle display-enable bits in LSI control word +20 (Display) |
+| $A1 | $9EE8 | Window/stream select |
+| $A2 | $B688 | Write attribute word to LSI shadow +18 (border color) |
+| $A3 | $B696 | Write attribute (fade), gated on LSI-ready $0F000890 bit 1 |
+| $A4 | $B6E6 | Write window/effect words to LSI shadow +24 |
+| $A5 | $B7DA | Additional display attribute |
+| $A6 | $C44E | Get picture/decode info |
+| $AE | $A158 | Raw read of an LSI shadow register (window select by CR1) |
+| $AF | $A100 | Raw write CR4 to an LSI register window |
+
+The exact SDK names are inferred from behavior; the command codes,
+handler addresses, and register effects are from the ROM. Codes with no
+default entry reject until an extension image installs a handler.
+
+Notes on specific commands:
+
+- **$93 MpegInit ($A060)** rejects with status $FF unless the image-id
+  byte at $0907B000 is nonzero (no cartridge -> no init). Its reset path
+  shuts the DMAC/capture comm units down ($A4A0), clears the request
+  flags $09075388-$0907538A, and sends reset messages to task 8 (events
+  $89/$8A/$8C/$81) and task 9 ($81). The actual bring-up is done by hook
+  33/34 (below), which the cartridge image supplies.
+- **$95 Play ($A760)** builds the decode-run mode from CR1 bits into the
+  subsystem state byte at $0F000890 (bit masks for run/pause and the
+  audio/video enables), reads/writes the LSI A control word at
+  $0F000854+20 / window $0A100000, then returns MPEG status. This is the
+  start/stop/pause of decoding.
+- **$AE / $AF raw LSI access** are ROM-resident primitives: $AF writes
+  CR4 into window[CR2 low byte & ~1] (window selected by CR1 bit 1,
+  read-back mode by CR1 bit 0); $AE reads the RAM shadow blocks instead
+  ($0F000854 for LSI A parameters, $0F000884 for the LSI B control
+  shadow). These are the escape hatch a cartridge image or diagnostic
+  uses to poke the LSIs directly.
+
+The bring-up services the cartridge image installs (ROM defaults shown):
+
+- **Hook 33 ($A53C)** programs LSI A from a parameter block at $0F000854:
+  the block's words go to window A offsets 0, 2, 20, 26, 32 (values
+  $88FE, $0096, $FFF3, $FF7E, $47AF, plus $01E0/1/1 lengths), and two
+  config words are mirrored to $09075320.
+- **Hook 34 ($A500)** resets the subsystem state: LSI B control = $8209
+  (shadow $0F000884), $0F000890 = $67818022 (which sets MPEG-active bit 7
+  of $0F000892), $0F000850 = $FFFFFFFF, $0F000898 = three words $0101,
+  and $090752E0 = 20.
+
+## Command Parameter Encodings
+
+The firmware moves these parameters as opaque values; their published
+meanings (part of the CD block MPEG interface definition, cross-checked
+against the firmware where it acts on them) are:
+
+**$94 Set Mode** - operation mode: 0 = normal movie, 1 = still picture,
+2 = hi-res movie (unsupported), 3 = hi-res still, 4 = MPEG sector-buffer
+mode. Decode timing: 0 = VSYNC-synchronized, 1 = host-synchronized.
+Output destination: 0 = VDP2, 1 = host transfer.
+
+**$95 Play** - play mode: 0 = AV, 1 = video-only, 2 = audio-only.
+Per-layer termination condition: 0 = none, 1 = EOR bit detected, 2 =
+system end code detected. Pause mode: 0 = pause, 1 = normal, 2 = slow.
+Freeze mode: 0 = freeze, 1 = normal, 2 = strobe.
+
+**$96 Set Decode** - audio mute: 0x04 default (unmuted), 0x01 mute right,
+0x02 mute left; plus pause-time and freeze-time counts.
+
+**$9D / $9F Set / Change Connection** - connection-mode bits: 0x01 switch
+on EOR, 0x02 switch on system-end, 0x04 delete sector, 0x08 ignore PTS,
+0x10 clear VBV, 0x20 clear VBV+write-back cache, 0x40 evaluate end
+condition before the back aperture. Layer: 0 = system, 1 = audio/video.
+Picture search: 0x00 off, 0x80 video, 0xC0 video + discard audio.
+
+**Stream parameter** (Set Stream): 0x01 set stream number, 0x02 identify
+stream number, 0x10 set channel number, 0x20 identify channel number.
+
+**$A3 Set Fade** - Y gain and C gain.
+
+**$A4 Set Video Effect** - interpolation bits: 0x01 Y-horizontal, 0x02
+C-horizontal, 0x04 Y-vertical, 0x08 C-vertical. Transparent-bit mode:
+0 = off, 1 = luma 64, 2 = luma 96, 3 = luma 128, 0x04 magnify transparent
+area. Blur (soft-switch): 0x01 on.
+
+**Picture geometry** - NTSC 352x240 normal / 704x480 hi-res; PAL 352x288
+normal / 704x576 hi-res. Scan mode: 0 = NTSC non-interlaced, 1 = NTSC
+interlaced, 2 = PAL non-interlaced, 3 = PAL interlaced.
+
+**Picture type** (in timecode / status): 1 = I, 2 = P, 3 = B, 4 = D.
+
+## MPEG Status Report Format
+
+The GetStatus service (ROM index 68, $AEB4) - which nearly every command
+tail-calls - assembles the response CRs from CD status plus MPEG state:
+
+- It first calls the CD block's own status responder (ROM index 89,
+  $91B8) to seed CR1:CR2 with the drive/CD status.
+- It then ORs in the MPEG fields: the mode word at $0F00089C (nibble-
+  packed into the CR1 status byte), bit 3 from $0F000891 bit 0, the word
+  at $0F000842 into CR2, and sets CR3:CR4 = the long at $0F000844 (the
+  MPEG status/flag longword).
+
+So the host sees a combined CD-plus-MPEG status. The published bit
+assignments of the MPEG portion:
+
+**MPEG operation status byte** (packed into the CR1 status area; this is
+what $0F00089C feeds):
+
+- bits 0-2, video run state: 1 = stopped, 2 = prep-1, 3 = prep-2,
+  4 = transferring/playing, 5 = switching stream, 6 = recovery
+- bit 3: MPEG decode stopped (0x08)
+- bits 4-6, audio run state: 0x10 stopped, 0x20 prep-1, 0x30 prep-2,
+  0x40 transferring/playing, 0x50 switching, 0x60 recovery
+
+(This matches the firmware's observed $0F00089C values 4/5 =
+playing/switching.)
+
+**Video status word** (16-bit): 0x0001 decoding, 0x0002 displaying,
+0x0004 paused, 0x0008 frozen, 0x0010 last picture shown, 0x0020 odd
+field, 0x0040 picture updated, 0x0080 video error, 0x0100 output ready,
+0x0800 first picture shown, 0x1000 video buffer-partition empty.
+
+**Audio status byte**: 0x01 decoding, 0x08 illegal, 0x10 buffer empty,
+0x20 error, 0x40 left-channel output, 0x80 right-channel output.
+
+## Interrupts and event flow
+
+Four SH-1 interrupts serve the MPEG card; all convert hardware events
+into task-8 messages and host HIRQ asserts:
+
+| Vector | Source | Action |
+|--------|--------|--------|
+| 76 | DMAC2 done (LSI A packet sent) | sets $0F000892 bit 1, messages task 8 event $89 |
+| 78 | DMAC3 done (LSI B packet sent) | sets $0F000892 bit 2, messages task 8 event $8A |
+| 88 | ITU2 capture (LSI cart line) | calls extension hook 56, returns |
+| 89 | ITU2 capture (LSI A status change) | decodes the LSI A status word (below) |
+
+Vector 89 ($A1A0) is the important one for host feedback. It reads the
+LSI A status word at $0A100000 three times and ANDs them (debounce),
+latches the events into $0F000850 masked by $0F000852, then:
+
+- a bit-6 event calls extension hook 40; a bit-4 event calls hooks 38/39
+  (the cartridge image's per-event handlers);
+- certain status bits assert host HIRQ **MPCM ($1000, bit 12)** or
+  **MPST ($2000, bit 13)** when enabled by the mask bytes at
+  $0F00084E/$0F00084F (see the HIRQ table in saturn_cdblock_commands.md);
+- pending event bits accumulate at $0F000896 and task 8 is notified with
+  event $8C payload $10.
+
+Before MPEG startup ($0F000892 bit 7 clear) vector 89 only counts capture
+edges into the word at $0F00089E (used by the boot probe).
+
+**$91 GetInterrupt ($AEFA)** reads and clears the pending interrupt-status
+long at $0F000848; **$92 SetInterruptMask ($AF2A)** writes CR into the
+mask at $0F00084C. Together these are the host's poll/ack interface. The
+two HIRQ summary bits are: **MPCM (bit 12)** = the MPEG operation-undefined
+interval ended (status has settled and is safe to read), **MPST (bit 13)**
+= an MPEG interrupt-status change is pending (the host should read
+GetInterrupt).
+
+The interrupt-status long at $0F000848 is a 24-bit cause register (the
+published bit assignments):
+
+| Bit | Cause | Bit | Cause |
+|-----|-------|-----|-------|
+| 0x000001 | video stream ready | 0x001000 | video sector trigger bit |
+| 0x000002 | video stream switch done | 0x002000 | video sector EOR bit |
+| 0x000004 | video output ready | 0x004000 | audio sector trigger bit |
+| 0x000008 | video output start | 0x008000 | audio sector EOR bit |
+| 0x000010 | video decode error | 0x010000 | audio stream ready |
+| 0x000020 | video stream data error | 0x020000 | audio stream switch done |
+| 0x000040 | video buffer-partition conn error | 0x040000 | audio output ready |
+| 0x000080 | next video stream data error | 0x080000 | audio output start |
+| 0x000100 | picture start detected | 0x100000 | audio decode error |
+| 0x000200 | GOP start detected | 0x200000 | audio stream data error |
+| 0x000400 | sequence end detected | 0x400000 | audio buffer-partition conn error |
+| 0x000800 | sequence start detected | 0x800000 | next audio stream data error |
+
+## Data path
+
+The compressed MPEG stream (video + audio, multiplexed) is a track of
+sectors on the disc. It reaches the decoder through the CD block's normal
+sector pipeline, not a separate channel:
+
+1. The game sets up a filter + buffer partition (Set Filter / connection
+   commands, firmware doc) so the MPEG track's sectors land in a
+   partition.
+2. A stream-connection MPEG command ($9A-$9E, node index 0-31) binds that
+   partition (or the CD device output) to the decoder input.
+3. The decoder consumes the sectors; the firmware's role is transport
+   (the DMAC2/3 packet channel carries LSI commands, and the sector data
+   is delivered from buffer DRAM).
+
+Decoded output is not returned through the CR/DATATRNS path - the video
+LSI drives the Saturn's video path (composited via VDP2's external image
+input), and audio goes to the card's audio output. The $A0-$A5 commands
+(Display, window, border color, fade, video effects) configure that
+output.
+
+Note: the exact sector-to-LSI delivery mechanism (whether the LSI reads
+buffer DRAM directly or the firmware DMAs it) is not fully traced from
+cdb106.bin; the connection commands and the partition binding are the
+part the ROM makes visible.
+
+## MPEG State RAM
+
+SH-1 on-chip RAM $0F000840-$0F00089F (cleared by $A4E0 together with DRAM
+$090752A0-$090753E7):
+
+| Address | Purpose |
+|---------|---------|
+| $0F000840 | 4-byte LSI command packet (DMAC2/3 source) |
+| $0F000844-$0F000847 | Status/flag bytes; $0F000846 = signal level shadow word |
+| $0F000848 | Interrupt status long (merged into responses by hook 1, then cleared) |
+| $0F00084A-$0F00084F | Event enable bytes gating the HIRQ $1000/$2000 asserts |
+| $0F000850 | Latched LSI A event word ($FFFFFFFF after reset) |
+| $0F000852 | Event mask shadow |
+| $0F000854+ | LSI A parameter block (first word $88FE) |
+| $0F000884 | LSI B control shadow ($8209) |
+| $0F000890-$0F000893 | Subsystem state long ($67818022 after init) |
+| $0F000892 | Bit 7 = MPEG active; bits 1/2 set by the LSI A/B packet-DMA completion ISRs (vectors 76/78) |
+| $0F000896 | Pending notify bits for task 8 |
+| $0F00089C | MPEG mode byte (values 4/5 observed in vector 89) |
+| $0F00089E | Pre-init capture edge counter |
+
+## Extension Dispatch Defaults ($F938 indices 0-88)
+
+The firmware's extension/hook mechanism (RAM table at $0907B008, ROM
+defaults at $F938, the trampolines and image loader) is described in the
+firmware doc. Indices 0-88 default to targets in the MPEG code region; an
+extension image clones them into the RAM table and selectively overrides.
+Indices 0-31 are the $90-$AF command handlers already listed in the
+command table above (index = code - $90). Indices 32-88 are internal MPEG
+service points; only the indices below have a ROM default (the rest are
+unpopulated until an extension installs a handler):
+
+| Index | Default | Index | Default | Index | Default |
+|-------|---------|-------|---------|-------|---------|
+| 32 | $A032 | 42 | $ADC8 | 76 | $BAE6 |
+| 33 | $A53C | 56 | $B89E | 81 | $C200 |
+| 34 | $A500 | 57 | $B8F0 | 82 | $C22E |
+| 35 | $AB88 | 58 | $B96C | 83 | $C24C |
+| 36 | $AE78 | 59 | $B9A4 | 84 | $C21A |
+| 37 | $AE3C | 60 | $B9FC | 86 | $C180 |
+| 38 | $AADC | 61 | $B9C2 | 87 | $C266 |
+| 39 | $AB08 | 66 | $AE9C | 88 | $B5E2 |
+| 40 | $AB44 | 67 | $AEA2 | | |
+| 41 | $AD50 | 68 | $AEB4 | | |
+
+(Index 32 = $A032 is task 8's message-loop re-entry, the fall-back an
+extension overrides to intercept that task.)
+
+## MPEG Card Authentication ($E0/$E1 subcommand 1, $E2)
+
+These host commands share the disc authentication dispatch ($C2C6/$C3AA
+for $E0/$E1, see the firmware doc) but subcommand 1 acts on the cartridge:
+
+- $E0 subcommand 1: requires MPEG hardware ($0F00027D bit 1), sets
+  $0907538A = 1, and sends message $09810002 to task 9. Shares the tail
+  at $C31E (immediate response = current report, $0F0007B0 bit 0 set).
+- $E1 subcommand 1 (MPEG present required): returns the MPEG auth result
+  words at $0F0007AC/$0F0007AE.
+- Get MPEG Card Boot ROM ($E2, $C344): requires MPEG present, a loaded
+  image (byte $0F0002FD), and MPEG active ($0F000892 bit 7). It validates
+  the requested address/length against a $07FF window, stages it at
+  $0907538C, and sends message $09810004 to task 9.

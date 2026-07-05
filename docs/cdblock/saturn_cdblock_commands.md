@@ -61,13 +61,17 @@ DATATRNS returns consecutive FIFO words on 32-bit reads.
 | 9   | EFLS | File system operation ended                         |
 | 10  | SCDQ | Subcode Q update                                    |
 | 11  | MPED | MPEG operation ended                                |
+| 12  | MPCM | MPEG operation-undefined interval ended - status settled (MPEG card only) |
+| 13  | MPST | MPEG interrupt-status notification pending (MPEG card only) |
 
 Note: The C library PDF (ST-38-R1-121093) only documents bits 0-6 and puts
 MPEG at bit 6. Production CDB-106 firmware reassigned MPEG to bit 11 (MPED)
 and added ESEL/EHST/ECPY/EFLS/SCDQ at bits 6-10 for selector, host I/O,
-copy, file-system, and subcode-Q completion events. The table above is the
-production hardware layout; the PDF's bit 6 = MPEG is the older preliminary
-spec.
+copy, file-system, and subcode-Q completion events. Bits 12 (MPCM) and 13
+(MPST) are asserted only by the MPEG cartridge path - the vector-89 status
+handler writes 0x1000/0x2000 to the HIRQ port ($0A00001E on the SH-1 side).
+The table above is the production hardware layout; the PDF's bit 6 = MPEG
+is the older preliminary spec.
 
 Only write-0-to-clear on HIRQ (writing a 0 bit clears it, writing 1 preserves).
 
@@ -166,6 +170,12 @@ Returns:
 | CR4 | Drive version(HB), Drive revision(LB)   |
 
 HIRQ: N/A. MPEG version returns 0 if card not authenticated.
+
+Firmware note: CDB-106 ($9284) sets CR2 = (hardware status byte) << 8 | 2
+(hardware version 2), and fills CR3:CR4 from a single 32-bit field at SH-1
+RAM $0F0002FC (the extension/MPEG image id), which reads 0 with no card.
+The CR3 "MPEG version" / CR4 "drive version/revision" split above is the C
+library's interpretation of that field.
 
 ### 0x02 - Get TOC
 
@@ -275,6 +285,10 @@ HIRQ: CSCT set per sector read. BFUL set if buffer fills (status -> PAUSE).
 
 Position encoding: If bit 23 set, value is FAD. Otherwise track number.
 FAD 0xFFFFFF = pause at current position (stop playing).
+Position 0x000000 = stop (CD_SEEK_home): the drive parks in STANDBY, a
+distinct case from the 0xFFFFFF pause. Confirmed in firmware: $9400 routes
+target 0 to its own handler ($3188) that writes drive state STANDBY and
+clears the seek target, whereas 0xFFFFFF routes to the pause handler.
 Invalid track = status immediately changes to STANDBY.
 
 Returns: CD status data. HIRQ: N/A
@@ -779,23 +793,32 @@ Returns: CD status data. HIRQ: EFLS
 
 ### 0xE0 - Authenticate Device
 
-| CR1 | 0xE000 |
+| CR1 | 0xE0, subcommand(LB) |
 | CR2 | 0x0000 |
 | CR3 | 0x0000 |
 | CR4 | 0x0000 |
 
-Starts disc authentication. Drive seeks to inner ring area for copy
-protection check.
+The CR1 low byte selects the target: 0 = disc, 1 = MPEG card. Firmware
+($C2C6): subcommand 0 stages the request and messages the drive task
+(task 7), which seeks the disc's inner security ring and validates the
+`SEGA SEGASATURN ` / `SEGASYSTEM` header signatures; subcommand 1 requires
+MPEG hardware present and messages the MPEG task (task 9). Almost all
+software uses subcommand 0 (CR1 = 0xE000) for the disc copy-protection
+check.
 
 Returns: CD status data. HIRQ: EFLS (when authentication complete).
 Status briefly shows BUSY, then returns to PAUSE.
 
 ### 0xE1 - Get Device Authentication Status
 
-| CR1 | 0xE100 |
+| CR1 | 0xE1, subcommand(LB) |
 | CR2 | 0x0000 |
 | CR3 | 0x0000 |
 | CR4 | 0x0000 |
+
+Same subcommand selector as 0xE0. Firmware ($C3AA): subcommand 0 returns
+the disc auth result; subcommand 1 (MPEG present required) returns the
+MPEG card auth result.
 
 Returns:
 
@@ -804,7 +827,7 @@ Returns:
 | CR3 | 0x0000     |
 | CR4 | 0x0000     |
 
-Auth status values:
+Auth status values (subcommand 0, disc):
 - 0x00: No disc or not authenticated
 - 0x01: Audio CD (unlocked)
 - 0x02: Regular data CD, not Saturn (unlocked)

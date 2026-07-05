@@ -195,7 +195,7 @@ func (cb *CDBlock) cmdSeekDisc() {
 			cb.seeking = true
 			cb.seekTarget = cdStatusPause
 		} else if pos == 0 {
-			// Pos 0x000000: Stop (CD_SEEK_home per PDF). Park in
+			// Pos 0x000000: Stop. Park in
 			// STANDBY with curTrack=0xFF so cmdGetCDStatus returns
 			// the "no track" response (0xFFFF) which the BIOS CD
 			// player interprets as "show total tracks / total time".
