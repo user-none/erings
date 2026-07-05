@@ -115,25 +115,34 @@ extension image may override. Behavior traced from those defaults:
 | $94 | $A5EC | Program LSI A parameter block $0F000854 / window $0A100000 (Set Mode) |
 | $95 | $A760 | Update subsystem state $0F000890 and LSI A params; start/stop decode (Play) |
 | $96 | $A834 | Configure decode method flags in $0F000890 (Set Decode Method) |
-| $97 | $A99C | Read back LSI A control word +20 (status/get) |
-| $98 | $9D54 | Store CR to $09075384, service $F8EE (get, via extension work area) |
-| $99 | $9E6C | Read the second long of the MPEG work area $090752A0 |
-| $9A-$9C | $AF74/$B3B8/$B2D4 | Stream connection routing (node index 0-31) |
-| $9D | $B2D4 | Set connection (validates node <= 31) |
-| $9E | $B45C | Get connection: store selector byte, service $F8EE |
-| $9F | $9E84 | Read work-area byte (get) |
-| $A0 | $AA74 | Toggle display-enable bits in LSI control word +20 (Display) |
-| $A1 | $9EE8 | Window/stream select |
-| $A2 | $B688 | Write attribute word to LSI shadow +18 (border color) |
-| $A3 | $B696 | Write attribute (fade), gated on LSI-ready $0F000890 bit 1 |
-| $A4 | $B6E6 | Write window/effect words to LSI shadow +24 |
-| $A5 | $B7DA | Additional display attribute |
-| $A6 | $C44E | Get picture/decode info |
+| $97 | $A99C | Out Decoding Sync (host-timed decode step; touches LSI A control +20) |
+| $98 | $9D54 | Get Timecode (stages request to $09075384, service $F8EE) |
+| $99 | $9E6C | Get PTS (reads work area $090752A0) |
+| $9A | $AF74 | Set Connection (bind a buffer partition to a decoder input) |
+| $9B | $B3B8 | Get Connection |
+| $9C | $B538 | Change Connection (validates, then reconfigures the connection) |
+| $9D | $B2D4 | Set Stream (stream/channel number; validates <= 31) |
+| $9E | $B45C | Get Stream |
+| $9F | $9E84 | Get Picture Size |
+| $A0 | $AA74 | Display (display-enable + frame bank; LSI control +20) |
+| $A1 | $9EE8 | Set Window (window position/size) |
+| $A2 | $B688 | Set Border Color (LSI shadow +18) |
+| $A3 | $B696 | Set Fade (gated on LSI-ready $0F000890 bit 1) |
+| $A4 | $B6E6 | Set Video Effect (LSI shadow +24) |
+| $A5 | $B7DA | Additional display attribute (window sub-parameter) |
+| $A6 | $C44E | Get image / picture info |
 | $AE | $A158 | Raw read of an LSI shadow register (window select by CR1) |
 | $AF | $A100 | Raw write CR4 to an LSI register window |
 
-The exact SDK names are inferred from behavior; the command codes,
-handler addresses, and register effects are from the ROM. Codes with no
+Command codes $90-$A4 and their names are confirmed by disassembling the
+host-side command builders (each writes the opcode into CR1); the earlier
+firmware-only labels for $97-$9F and $A1 were corrected against them. $A5,
+$A6, and the $A7-$AD range (no ROM default) were not individually
+confirmed.
+
+The command codes and names for $90-$A4 are confirmed by disassembling
+the host-side command builders (each writes its opcode into CR1); the
+handler addresses and register effects are from the ROM. Codes with no
 default entry reject until an extension image installs a handler.
 
 Notes on specific commands:
@@ -173,27 +182,32 @@ The firmware moves these parameters as opaque values; their published
 meanings (part of the CD block MPEG interface definition, cross-checked
 against the firmware where it acts on them) are:
 
-**$94 Set Mode** - operation mode: 0 = normal movie, 1 = still picture,
-2 = hi-res movie (unsupported), 3 = hi-res still, 4 = MPEG sector-buffer
-mode. Decode timing: 0 = VSYNC-synchronized, 1 = host-synchronized.
-Output destination: 0 = VDP2, 1 = host transfer.
+**$94 Set Mode** - four parameters: operation mode (0 = normal movie,
+1 = still picture, 2 = hi-res movie (unsupported), 3 = hi-res still,
+4 = MPEG sector-buffer mode), decode timing (0 = VSYNC-synchronized,
+1 = host-synchronized), output destination (0 = VDP2, 1 = host transfer),
+and scan mode (see Picture geometry below).
 
-**$95 Play** - play mode: 0 = AV, 1 = video-only, 2 = audio-only.
-Per-layer termination condition: 0 = none, 1 = EOR bit detected, 2 =
-system end code detected. Pause mode: 0 = pause, 1 = normal, 2 = slow.
-Freeze mode: 0 = freeze, 1 = normal, 2 = strobe.
+**$95 Play** - play mode: 0 = AV (audio + video), 1 = audio-only,
+2 = video-only. Per-layer termination condition: 0 = none, 1 = EOR bit
+detected, 2 = system end code detected. Pause mode: 0 = pause, 1 = normal,
+2 = slow. Freeze mode: 0 = freeze, 1 = normal, 2 = strobe.
 
 **$96 Set Decode** - audio mute: 0x04 default (unmuted), 0x01 mute right,
 0x02 mute left; plus pause-time and freeze-time counts.
 
-**$9D / $9F Set / Change Connection** - connection-mode bits: 0x01 switch
-on EOR, 0x02 switch on system-end, 0x04 delete sector, 0x08 ignore PTS,
-0x10 clear VBV, 0x20 clear VBV+write-back cache, 0x40 evaluate end
-condition before the back aperture. Layer: 0 = system, 1 = audio/video.
-Picture search: 0x00 off, 0x80 video, 0xC0 video + discard audio.
+**Connection commands** (Set Connection $9A, Change Connection $9C) - the
+decoder connection-destination parameter (one record per audio and video
+layer: connection-mode byte, layer+picture-search byte, buffer partition
+number) uses these connection-mode bits: 0x01 switch on EOR, 0x02 switch
+on system-end, 0x04 delete sector, 0x08 ignore PTS, 0x10 clear VBV,
+0x20 clear VBV + write-back cache, 0x40 evaluate end condition before the
+back aperture. Layer: 0 = system, 1 = audio/video. Picture search:
+0x00 off, 0x80 video, 0xC0 video + discard audio.
 
-**Stream parameter** (Set Stream): 0x01 set stream number, 0x02 identify
-stream number, 0x10 set channel number, 0x20 identify channel number.
+**Set Stream $9D** - stream parameter (per layer): stream-mode byte
+(0x01 set stream number, 0x02 identify stream number, 0x10 set channel
+number, 0x20 identify channel number), stream number, channel number.
 
 **$A3 Set Fade** - Y gain and C gain.
 
@@ -220,8 +234,22 @@ tail-calls - assembles the response CRs from CD status plus MPEG state:
   at $0F000842 into CR2, and sets CR3:CR4 = the long at $0F000844 (the
   MPEG status/flag longword).
 
-So the host sees a combined CD-plus-MPEG status. The published bit
-assignments of the MPEG portion:
+The full Get Status response is four words (eight bytes) with this field
+layout, which matches the firmware assembly above:
+
+| CR | High byte | Low byte |
+|----|-----------|----------|
+| CR1 | CD status code | MPEG operation-status byte (see below) |
+| CR2 | picture-info byte | audio-status byte |
+| CR3 | video-status word (16-bit) | (same word) |
+| CR4 | operation-interval (VSYNC) counter word | (same word) |
+
+(The video-status word occupies all of CR3; the VSYNC counter all of CR4.
+The video-status word is the `$0F000844` long's high half, the counter its
+low half - the state-RAM entry earlier calls `$0F000846` a "signal-level
+shadow" but the response uses it as the operation-interval counter.)
+
+The published bit assignments of the MPEG portion:
 
 **MPEG operation status byte** (packed into the CR1 status area; this is
 what $0F00089C feeds):
@@ -242,6 +270,86 @@ field, 0x0040 picture updated, 0x0080 video error, 0x0100 output ready,
 
 **Audio status byte**: 0x01 decoding, 0x08 illegal, 0x10 buffer empty,
 0x20 error, 0x40 left-channel output, 0x80 right-channel output.
+
+## Get-command Response Layouts
+
+The other read-back commands return fixed-size records in CR1-CR4. The
+command codes are confirmed from the host-side command builders; the
+record layouts are the published interface definitions a host driver
+parses.
+
+**Get Timecode ($98)** - a 4-byte time record plus three side values:
+hour, minute, second, and picture (frame) number; separately the buffer
+bank, the picture type (1=I, 2=P, 3=B, 4=D), and the track number.
+
+**Get PTS ($99)** - the audio presentation timestamp (a 32-bit count).
+
+**Get Connection ($9B)** (per layer, one record for audio and one for
+video) - 3 bytes: connection-mode byte, layer + picture-search byte,
+buffer partition number. (Same field set the Set Connection command takes.)
+
+**Get Stream ($9E)** (per layer) - 3 bytes: stream-mode byte, stream
+number, channel number.
+
+**Get Picture Size ($9F)** - two values: horizontal and vertical pixel
+size (e.g. 352x240 / 704x480 NTSC, 352x288 / 704x576 PAL).
+
+## Display and Window Model
+
+MPEG video output is placed on screen through a display-window model the
+host configures with the $A0-$A5 commands. The parameters (published
+field set; the firmware moves them to the display LSI as opaque values):
+
+- **Display on/off + frame bank** ($A0 Display): a display-enable switch
+  and the frame-buffer bank number to show.
+- **Frame-buffer window** (the source region taken from the decoded
+  frame): an origin and size within the decoded picture, a magnification
+  ratio (X and Y), and a separate Y/C (luma/chroma) scaling ratio.
+- **Display window** (where it lands on screen): a display reference
+  position, a display size, and a relative-position offset.
+- **Border color** ($A2) and a luminance level / border value.
+- **Fade** ($A3): independent Y gain and C gain.
+- **Video effects** ($A4): horizontal/vertical interpolation for Y and C,
+  a transparent-bit mode (off / luma-64 / luma-96 / luma-128 / magnify),
+  horizontal and vertical mosaic ratios, and horizontal/vertical soft
+  (blur) switches.
+- **Output mode**: direct to VDP2 (the decoded image is composited into
+  the Saturn's video via VDP2's external-image input) or transferred to
+  a host buffer.
+
+The window geometry is expressed as signed 16-bit X/Y coordinate and size
+pairs; scan mode (NTSC/PAL, interlaced or not) selects the coordinate
+maxima (see Command Parameter Encodings). Multiple windows can be
+composited (the software model supports up to four per movie).
+
+### CR packing of the display/window commands
+
+The host-side builders for $A0-$A4 all assemble the same 8-byte
+CR1-CR4 command block (confirmed by disassembling the command builders):
+
+- **CR1 high byte** = the command opcode ($A0-$A4).
+- **CR1 low byte / CR2 high byte** = command-specific selector bytes
+  (which window, which sub-parameter), written as bytes.
+- **CR3 and CR4** = the 16-bit parameter values.
+
+Per command:
+
+- **$A0 Display** - a display-enable/switch byte and the frame-bank
+  number in the CR1 low / CR2 area.
+- **$A1 Set Window** - a sub-function selector (position, size, offset,
+  frame-buffer position, frame-buffer ratio) plus one 16-bit value; the
+  X and Y of a coordinate/size pair are carried as the CR3 and CR4 words.
+  The five window sub-parameters (display position, display size, display
+  offset, frame-buffer position, frame-buffer ratio) are separate calls,
+  each issuing $A1 with its selector.
+- **$A2 Set Border Color** - the 16-bit border color in CR2.
+- **$A3 Set Fade** - the Y gain and C gain bytes.
+- **$A4 Set Video Effect** - the effect bytes (interpolation,
+  transparent-bit mode, mosaic H/V, soft H/V), packed into the block.
+
+So an implementation reads the opcode from CR1's high byte, the
+selector(s) from the CR1-low/CR2 bytes, and the geometry/value words from
+CR3/CR4.
 
 ## Interrupts and event flow
 

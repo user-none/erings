@@ -104,7 +104,7 @@ standard response format:
 The CR1 high byte is structured as: status code in the low nibble + flag
 bits in the high nibble.
 
-Status code (low 5 bits):
+Status code (low nibble, mask 0x0F):
 
 | Value | Status   | Meaning                              |
 |-------|----------|--------------------------------------|
@@ -124,6 +124,8 @@ Status code (low 5 bits):
 Flag bits OR'd into the high nibble:
 - Bit 5 (0x20): periodic response (set when the CD Block updates CR1-CR4
   on its own between commands)
+- Bit 6 (0x40): data transfer request (a transfer-type command has
+  prepared data / expects a DATATRNS transfer)
 - Bit 7 (0x80): WAIT (command received but not yet executed)
 
 Note: The C library PDF (ST-38-R1-121093) documents the status codes as
@@ -172,10 +174,10 @@ Returns:
 HIRQ: N/A. MPEG version returns 0 if card not authenticated.
 
 Firmware note: CDB-106 ($9284) sets CR2 = (hardware status byte) << 8 | 2
-(hardware version 2), and fills CR3:CR4 from a single 32-bit field at SH-1
-RAM $0F0002FC (the extension/MPEG image id), which reads 0 with no card.
-The CR3 "MPEG version" / CR4 "drive version/revision" split above is the C
-library's interpretation of that field.
+(hardware version 2), and fills CR3:CR4 from a 32-bit field at SH-1 RAM
+$0F0002FC, which reads 0 with no card. That field encodes the CR3 low byte
+= MPEG version and CR4 = drive version(HB) / revision(LB) exactly as the
+response table shows; the MPEG version is 0 when no card is present.
 
 ### 0x02 - Get TOC
 
@@ -217,7 +219,7 @@ HIRQ: N/A
 ### 0x04 - Initialize CD System
 
 | CR1 | 0x04, init flags(LB)             |
-| CR2 | Standby time (seconds, 0=180s default, 0xFFFF=no change) |
+| CR2 | Standby time (seconds; valid range 60-900, 0=180s default, 0xFFFF=no change) |
 | CR3 | 0x0000                           |
 | CR4 | ECC repetitions(HB), retry count(LB) |
 
