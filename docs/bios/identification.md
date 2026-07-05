@@ -26,7 +26,7 @@ The font, peripheral driver, and BIOS-ROM public routine table
 addresses are identical between the two variants (see
 [bios_font.md](bios_font.md), [peripheral_driver.md](peripheral_driver.md),
 [rom_layout.md](rom_layout.md)). The boot library, logo / menu
-graphics, CD-block firmware, and security-check code regions differ
+graphics, sound driver, and security-check code regions differ
 between regions; only the version string at `$000800` is required
 to distinguish images at runtime.
 

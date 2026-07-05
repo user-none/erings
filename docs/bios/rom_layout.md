@@ -78,7 +78,7 @@ ROM where the next instruction encountered eventually returns.
 The BIOS ROM contains ten LZSS-compressed bodies. Each starts with a
 2-byte header (low bit = compressed flag); the format is documented in
 bios_decompression.md. Four are standalone bodies (table below): the
-font, boot library, and CD filesystem driver are decompressed by
+font, boot library, and sound driver are decompressed by
 sub_1F04 callers in the main BIOS code, and the PER + BUP driver is
 decompressed by its own subsystem. The other six are the SEGA PLAYER
 application modules ($040438+), decompressed on demand by the SEGA
@@ -93,7 +93,7 @@ $07D660-$080000 window):
 |------------|-----------------|-------------------|--------|----------|
 | $005240 | ~1.3 KB | 4,096 B ($1000) | none in BIOS internal code; reached externally via routine-table slot $05E4 (sub_50EA) | Font / glyph bitmaps (8-pixel-wide monochrome). |
 | $007000 | ~88 KB | 180,224 B ($2C000); cap $40000 (256 KB) | sub_173C, on no-game / fall-through boot path | Boot library: Saturn logo / disc-check animation only. NOT the CD player or settings - those are the SEGA PLAYER shell (see system_applications.md). Decompressed output begins with a function-dispatch table of `STS.L PR,@-R15; MOV.L pool,R3; JMP @R3; LDS.L @R15+,PR` trampolines. |
-| $01D000 | ~28 KB | 59,136 B ($E700); cap $40000 (256 KB) | sub_15D4, on CD-game boot path | BIOS-internal CD filesystem driver (SH-2 host-side code that runs in WRAM-H and drives the CR1-CR4 interface; NOT the SH-1 CD-block controller firmware): directory traversal, file lookup, sector-transfer management. |
+| $01D000 | ~28 KB | 59,136 B ($E700); cap $40000 (256 KB) | sub_15D4, from the boot state machine (all cold-boot paths past the HEMU/HCGG early-outs) | BIOS sound driver package ("BOOT ROM(S) V2" ver1.11): MC68EC000 driver program (68k vectors + code), area map, sound data banks, and DSP effect banks. Decompressed to $06010000 as a staging copy, then copied block-by-block into sound RAM ($25A00000) by sub_15D4. |
 | $07D660 | ~10 KB | ~16 KB | PER subsystem (not invoked through sub_1F04 from main BIOS code) | PER + BUP (peripheral / backup-memory) driver. 11-slot function-pointer table at the decompressed base; provides PER_* and BUP_* services. See peripheral_driver.md and backup_library.md. |
 
 ### BIOS-Resident Code Exposed to Game Code
@@ -149,7 +149,7 @@ for the BIOS inventory.
 | $001874 | Cartridge/disc header read |
 | $0013C0 | VDP1 register initialization |
 | $001408 | VDP2 register initialization |
-| $0015D4 | CD Block and SCSP initialization |
+| $0015D4 | SCSP initialization and sound driver upload |
 | $001A18 | Security code copy and jump |
 | $001A3C | "SEGA SEGASATURN " header validation |
 | $001B50 | Security area comparison |
@@ -177,7 +177,7 @@ for the BIOS inventory.
 | $005240 | $006F00 | ~7 KB | Font region. Begins with a compressed font body at $5240 (header $1001, block_count $0027 = 39; decompresses to 4,096 B of 8-pixel-wide monochrome glyph bitmaps, reached externally via routine-table slot $05E4 / sub_50EA). The remainder of the region (after the compressed body ends, roughly past $5780) holds uncompressed font tiles, UI glyphs, and "PRODUCED BY..." / "SEGA ENTERPRISES,LTD." strings (per the BIOS-Resident table above). |
 | $006F00 | $007000 | 256 B | Region text strings ("For JAPAN.", "For USA and CANADA.", etc.) |
 | $007000 | $01D000 | ~88 KB | Compressed boot library: Saturn logo / disc-check animation only (the CD player and settings are the SEGA PLAYER shell, system_applications.md). Header $1001 at $7000, block_count = 2534. sub_173C decompresses to $06010000 (180,224 B) with output cap $40000 (256 KB). |
-| $01D000 | $040000 | ~28 KB used | Compressed CD Block firmware. Header $1001 at $1D000, block_count = 827. sub_15D4 decompresses to $06010000 with output cap $40000 (256 KB). Compressed body consumes ~28 KB starting at $1D000; the remainder of $1D000-$040000 (~115 KB) is unused by this body. |
+| $01D000 | $040000 | ~28 KB used | Compressed sound driver package. Header $1001 at $1D000, block_count = 827. sub_15D4 decompresses to $06010000 with output cap $40000 (256 KB), then uploads the image to sound RAM. Compressed body consumes ~28 KB starting at $1D000; the remainder of $1D000-$040000 (~115 KB) is unused by this body. |
 | $040000 | $040400 | 1 KB | SEGA PLAYER shell bootstrap (raw SH-2; the BIOS copies the first 4 KB to $06020000 and enters it) |
 | $040400 | $07D600 | ~244 KB | SEGA PLAYER module directory ($040400: id->offset pairs) + 6 compressed application modules ($040438+: Video-CD, CD+G, Settings/Memory-Manager, player UI, graphics, data). See system_applications.md. |
 | $07D600 | $07D660 | 96 B | PER_Init trampoline / driver entry table (routine-table slot $06000358) |

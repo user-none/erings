@@ -2,7 +2,7 @@
 
 sub_1F04 at BIOS `$00001F04` is the only LZSS decompression entry
 in the BIOS. All three compressed bodies in the ROM (font at
-`$5240`, boot library at `$7000`, CD-block firmware at `$1D000`)
+`$5240`, boot library at `$7000`, sound driver at `$1D000`)
 expand through it. This file documents the LZSS format,
 sub_1F04's calling convention, and the load sites that invoke
 it.
@@ -29,18 +29,21 @@ are documented in "BIOS Decompression Format (sub_1F04)".
 Two of the three compressed bodies are loaded automatically by the
 BIOS before game code runs. The game does not request these:
 
-1. **CD Block firmware** ($01D000 -> $06010000). Loaded on the CD-game
-   boot path, max-output cap $00040000 (generous upper bound; actual
-   decompressed size is determined by the stream content).
-   Unconditional on this path.
+1. **Sound driver package** ($01D000 -> $06010000). Loaded by sub_15D4
+   from the boot state machine on all cold-boot paths past the
+   HEMU/HCGG early-outs, max-output cap $00040000 (generous upper
+   bound; actual decompressed size is determined by the stream
+   content). The image is a staging copy; sub_15D4 copies it into
+   sound RAM ($25A00000) and the driver runs there.
 2. **Boot library** ($007000 -> $06010000). Loaded on the no-game /
    fall-through path, max-output cap $00040000 (same generous bound).
    Drives the Saturn logo, audio CD player, and system-settings
    screens.
 
-Both target the same Work RAM-H region; only one is resident at a time
-because the boot library path and the CD-game path are mutually
-exclusive.
+Both target the same Work RAM-H region. The sound driver copy there is
+only a staging buffer (the driver runs from sound RAM), so the boot
+library overwrites it on the no-game path; on the CD-game path the
+staging copy is simply left behind.
 
 #### Game-driven loads after handoff
 
@@ -362,18 +365,19 @@ with an SH-2 trampoline at $06010000
 (`STS.L PR,@-R15; MOV.L pool,R3; JMP @R3; LDS.L @R15+,PR`) that
 dispatches to $0601066C.
 
-### $01D000 - CD Block Firmware
+### $01D000 - Sound Driver Package
 
 - Header: $1001 at $1D000, block_count: 827
 - Compressed size: ~28 KB
 - Decompressed size: 59,136 bytes ($E700); the `R6 = $40000` cap from
   sub_15D4 is a generous upper bound, not the actual decompressed length
-- Loader: sub_15D4 ($0015D4), called on the CD-game boot path
+- Loader: sub_15D4 ($0015D4), called from the boot state machine on all
+  cold-boot paths past the HEMU/HCGG early-outs
 
-Contents: CD Block filesystem code - directory traversal, file lookup,
-sector-transfer management. Decompressed to $06010000, overwriting any
-prior boot-library copy that may have been loaded.
-
-The CD Block firmware drives the CR1-CR4 register interface documented
-in [cd_block_interface.md](cd_block_interface.md). The firmware itself
-is regular SH-2 code that runs out of WRAM-H once decompressed.
+Contents: the BIOS sound driver package ("BOOT ROM(S) V2" ver1.11) -
+MC68EC000 vector table and driver program, an area map, sound data
+banks, and DSP effect banks. Decompressed to $06010000 as a staging
+copy; sub_15D4 then copies it block-by-block into sound RAM
+($25A00000) per its copy table at ROM $16C4 and starts the 68k via
+SMPC SNDON. The driver runs from sound RAM, not WRAM-H. The driver
+itself is documented in [sound_driver.md](sound_driver.md).

@@ -25,6 +25,7 @@ and Work-RAM regions the BIOS exposes to disc-supplied code.
 | [scu_interrupt_handling.md](scu_interrupt_handling.md) | SCU interrupt VBR table layout in WRAM-H, trampoline mechanism, dispatcher. |
 | [cd_block_interface.md](cd_block_interface.md) | CD-block register surface, command-code reference, BIOS boot command sequence, sub_2F48 chain. |
 | [bios_decompression.md](bios_decompression.md) | sub_1F04 LZSS format reference, compressed bodies in the ROM, load sites. |
+| [sound_driver.md](sound_driver.md) | The MC68EC000 sound driver the BIOS uploads to sound RAM: memory map, host command interface, sequencer, area map, CD-DA routing. |
 
 ### Services exposed to disc/game code
 

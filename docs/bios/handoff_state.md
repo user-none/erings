@@ -128,7 +128,7 @@ inferred.
 
 | Register | Address | Value | Description |
 |----------|---------|-------|-------------|
-| D0R | $25FE0000 | $260FC8FC | DMA L0 read addr (CD-block firmware end) |
+| D0R | $25FE0000 | $260FC8FC | DMA L0 read addr (WRAM-H) |
 | D0W | $25FE0004 | $25C0C8FC | DMA L0 write addr (VDP1 VRAM area) |
 | D0C | $25FE0008 | $000008FC | DMA L0 transfer count |
 | D0AD | $25FE000C | $00000101 | DMA L0 address add |
@@ -314,7 +314,7 @@ games):
 | $06002000 | IP+0 - "SEGA SEGASATURN " (System ID hardware identifier from disc) |
 | $06002040 | IP+$40 - compatible area codes ("JTU       " for NiGHTS) |
 | $06002100 | IP+$100 - security code (SYS_SEC.OBJ from disc); this is where master PC starts at handoff |
-| $06010000-$0602FFFF | Decompressed CD-block firmware (from BIOS $01D000) |
+| $06010000-$0602FFFF | Decompressed sound driver package staging copy (from BIOS $01D000; uploaded to sound RAM by sub_15D4) |
 
 ### Backup RAM ($00180000)
 
@@ -350,8 +350,8 @@ of the handoff state and must exist for game code to function:
 | $06001100-$060017FF | 1792 B | Phase 4 copy of BIOS $001100 (table entry at $0350, count=$1C0 longs) | System init code that runs from RAM after Phase 5 jumps to $06000680 |
 
 After boot, $06010000 holds whichever compressed body was last loaded
-(CD Block firmware on the CD-game path, or boot library on the no-game
-path). The IP loads at the fixed $06002000 buffer, and the BIOS always
+(sound driver package staging on the CD-game path, or boot library on
+the no-game path). The IP loads at the fixed $06002000 buffer, and the BIOS always
 hands off to its security-code entry at $06002100 (IP+$100). The game's
 main binary (the 1st-read file) loads at the address given in System ID
 $F0, which is the part that varies by disc. See the Work RAM-H layout

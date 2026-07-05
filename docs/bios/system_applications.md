@@ -64,7 +64,7 @@ Work-RAM-H `$0600024C` and routes on it:
 | `HCGG`           | `$48434747`| load SEGA PLAYER shell (CD+G disc) |
 | `HCDM`           | `$4843444D`| load SEGA PLAYER shell |
 | (status)         | `$22`      | load SEGA PLAYER shell |
-| (CD-game)        | -          | `BSR $0015D4` -> decompress CD filesystem ($01D000) |
+| (CD-game)        | -          | `BSR $0015D4` -> SCSP init + sound driver upload ($01D000) |
 | (otherwise)      | -          | `BSR $00173C` -> decompress boot library ($007000) |
 
 The shell branch goes to `$001320`, which jumps through the handler pointer
@@ -111,8 +111,8 @@ exclusive paths off the same dispatcher:
 
 - Boot library (`$007000` -> `$06010000`): logo / disc-check animation. The
   default no-game path. See boot_library.md.
-- CD filesystem (`$01D000` -> `$06010000`): CD-game boot / file access. See
-  rom_layout.md.
+- Sound driver package (`$01D000` -> `$06010000` staging): decompressed by
+  sub_15D4 and copied into sound RAM. See rom_layout.md.
 - SEGA PLAYER shell (`$040000` -> `$06020000`): the multimedia and
   settings applications, loaded on the `HCDM` / `HCGG` / `$22` tag path
   (this document).

@@ -615,7 +615,8 @@ The state machine:
 1. Checks boot state at $0600024C
 2. If "HEMU": jumps to $06000690 (already initialized; main loop)
 3. If "HCGG": jumps to sub_18E8 for cartridge game start
-4. Calls sub_15D4 (CD Block init), then re-reads the boot state
+4. Calls sub_15D4 (SCSP init and sound driver upload), then re-reads
+   the boot state
 5. If "HCDM": jumps to sub_1A18, which block-copies into the IP load
    window and jumps to $06020000 (the loaded game)
 6. Otherwise: JSRs sub_1A62 (cartridge header validation, reading
@@ -710,10 +711,11 @@ System code ($001120 in Work RAM-H)
        v
 Boot state machine
        |
-       +-- CD Block init (sub_15D4)
-       |     - SCSP init
-       |     - CD Block communication setup
-       |     - Disc detection
+       +-- SCSP init and sound driver upload (sub_15D4)
+       |
+       +-- CD Block communication setup
+       |
+       +-- Disc detection
        |
        +-- Header validation ("SEGA SEGASATURN ")
        |

@@ -8,8 +8,9 @@ the disc is checked.
 It does NOT contain the CD player, CD+G, Video-CD, system-settings, or
 memory-manager applications. Those are a separate program - the SEGA PLAYER
 shell at ROM `$040000`, loaded to `$06020000` on a different dispatch path;
-see system_applications.md. On a CD-game boot path the CD filesystem driver
-(`$01D000`), loaded at the same `$06010000`, takes the boot library's place.
+see system_applications.md. On a CD-game boot path the sound driver package
+(`$01D000`), staged at the same `$06010000` by sub_15D4 before being copied
+into sound RAM, takes the boot library's place.
 
 ## Saturn Logo Animation
 
