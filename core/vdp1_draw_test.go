@@ -3195,6 +3195,43 @@ func TestDrawDistortedSpriteSinglePixel(t *testing.T) {
 	}
 }
 
+func TestDrawDistortedSpriteZeroHeightLine(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+
+	// Zero-height quad: A==D and B==C on the same scanline, texture 8x1.
+	// The A->D and B->C side edges collapse (dmax=0), but the A->B
+	// connecting line spans 8 dest pixels. The whole textured line must
+	// draw, not just a single pixel. Doom's span renderer submits every
+	// floor/wall strip this way.
+	writeDistortedSprite(v, 0x00, 10, 20, 17, 20, 17, 20, 10, 20, 4, 0x0100, 0x1000, 8, 1)
+	writeDrawEnd(v, 0x20)
+
+	for x := 0; x < 8; x++ {
+		v.WriteVRAM(0x1000+uint32(x), uint8(0x10+x))
+	}
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// First texel at the left end.
+	if got := readFBPixel(v, 10, 20); got != 0x0110 {
+		t.Errorf("px(10,20) = 0x%04X, want 0x0110", got)
+	}
+	// Mid-span must be drawn (the pre-fix single-pixel collapse left this 0).
+	if got := readFBPixel(v, 13, 20); got == 0 {
+		t.Errorf("px(13,20) = 0x%04X, want non-zero mid-span texel", got)
+	}
+	// Right end (fixed-point U interpolation may land one texel short).
+	got := readFBPixel(v, 17, 20)
+	if got != 0x0117 && got != 0x0116 {
+		t.Errorf("px(17,20) = 0x%04X, want 0x0117 or 0x0116", got)
+	}
+	// Nothing on the row below.
+	if got := readFBPixel(v, 13, 21); got != 0 {
+		t.Errorf("px(13,21) = 0x%04X, want 0x0000", got)
+	}
+}
+
 func TestDrawDistortedSpriteFlipH(t *testing.T) {
 	v := NewVDP1(NewSCU())
 	v.Write(0x04, 2)

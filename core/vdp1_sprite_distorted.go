@@ -125,21 +125,6 @@ func (v *VDP1) startDistortedSprite(cmd *vdp1Command, budget int32) (consumed in
 		d.gt = v.readGouraudTable(cmd.grda)
 	}
 
-	if d.dmax == 0 {
-		// Degenerate quad collapses to a single pixel at (ax, ay).
-		dot := v.readCharDot(d.charAddr, 0, 0, d.charW, d.colorMode)
-		if !d.spdOn && dot == 0 {
-			return 1, true
-		}
-		pixel := v.dotToPixel(dot, cmd.colr, d.colorMode)
-		var gouraud uint16
-		if d.cc >= 4 {
-			gouraud = d.gt[0]
-		}
-		v.writePixel(d.ax, d.ay, pixel, d.cc, gouraud, d.msbOn, d.mesh, d.userClip, d.clipX, d.clipY)
-		return 1, true
-	}
-
 	d.bpp8 = v.is8bpp()
 	d.simpleMode = !v.dieEnabled() && d.cc == 0 && !d.msbOn && !d.mesh && d.userClip == 0 && !d.bpp8
 	d.colr = cmd.colr
@@ -151,7 +136,11 @@ func (v *VDP1) startDistortedSprite(cmd *vdp1Command, budget int32) (consumed in
 		vStart, vEnd = vEnd, vStart
 	}
 	d.vFP = vStart << 16
-	d.dvFP = ((vEnd - vStart) << 16) / d.dmax
+	if d.dmax == 0 {
+		d.dvFP = 0
+	} else {
+		d.dvFP = ((vEnd - vStart) << 16) / d.dmax
+	}
 
 	// Texture U range
 	d.uStart = 0
