@@ -402,7 +402,11 @@ func (v *VDP1) processCommands(budget int32) (consumed int32, endBit bool) {
 			v.localY = cmd.ya
 			done = true
 		default:
-			done = true
+			// Undefined/prohibited Comm (observed: 0xF). The manual does
+			// not define what the VDP1 does with one. Halt was chosen
+			// from observed game behavior requiring it.
+			v.drawActive = false
+			return consumed, true
 		}
 		consumed += c
 		if !done {
