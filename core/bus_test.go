@@ -815,9 +815,10 @@ func TestSCSPAccessorNotNil(t *testing.T) {
 func TestCDBlockRegsViaBus(t *testing.T) {
 	bus := newBusForTest()
 
-	// HIRQREQ at $05890008 is 0 after init (CMOK not set until SH-1 completes)
-	if got := bus.Read16(0x05890008); got != 0 {
-		t.Errorf("HIRQREQ via bus = 0x%04X, want 0x0000", got)
+	// HIRQREQ at $05890008 after init: CMOK not set until SH-1
+	// completes; MPED reads 1 at idle (no MPEG operation in flight).
+	if got := bus.Read16(0x05890008); got != hirqMPED {
+		t.Errorf("HIRQREQ via bus = 0x%04X, want 0x%04X (idle MPED)", got, hirqMPED)
 	}
 
 	// Write HIRQMSK via bus
@@ -852,9 +853,9 @@ func TestNewBusCDBlockDefaults(t *testing.T) {
 	if got := bus.Read16(0x0589000C); got != 0x0000 {
 		t.Errorf("HIRQMSK = 0x%04X, want 0x0000", got)
 	}
-	// HIRQREQ is 0 after init
-	if got := bus.Read16(0x05890008); got != 0 {
-		t.Errorf("HIRQREQ = 0x%04X, want 0x0000", got)
+	// HIRQREQ after init: only the idle MPED bit is set
+	if got := bus.Read16(0x05890008); got != hirqMPED {
+		t.Errorf("HIRQREQ = 0x%04X, want 0x%04X (idle MPED)", got, hirqMPED)
 	}
 	// CR1 contains CDBLOCK signature: status=Busy(0x00) | 'C'(0x43)
 	if got := bus.Read16(0x05890018); got != 0x0043 {
@@ -885,9 +886,10 @@ func TestCDBlockCommandViaBus(t *testing.T) {
 		t.Errorf("HIRQREQ after command = 0x%04X, want CMOK set", got)
 	}
 
-	// Check response
-	if got := bus.Read16(0x0589001C); got != 0x0001 {
-		t.Errorf("CR2 response = 0x%04X, want 0x0001", got)
+	// Check response: hardware status byte 0x02 (MPEG hardware
+	// detected) | hardware version 1.
+	if got := bus.Read16(0x0589001C); got != 0x0201 {
+		t.Errorf("CR2 response = 0x%04X, want 0x0201", got)
 	}
 	if got := bus.Read16(0x05890024); got != 0x0400 {
 		t.Errorf("CR4 response = 0x%04X, want 0x0400", got)

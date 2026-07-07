@@ -50,6 +50,13 @@ type vdp2Frame struct {
 	nbgOn [4]bool
 	nbg   [4]nbgConfig
 
+	// EXBG occupies NBG1's slot: NBG1's priority, color calculation,
+	// and window registers apply, and NBG1's own rendering is
+	// suppressed while it is displayed.
+	exbgOn  bool
+	exbgPri uint8
+	exbgCC  bool
+
 	rbg0On bool
 	rbg0   rbgConfig
 	rbg0F  rbgFrame
@@ -391,6 +398,17 @@ func (v *VDP2) BeginFrame() {
 		return
 	}
 
+	// EXBG: poll the external-image source once per frame. Latched
+	// here (render-walker context) so per-line state and spans read
+	// stable pixels for the whole frame.
+	v.exbgOK = false
+	if v.exbgSrc != nil && fs.regs[vdp2EXTEN]&1 != 0 {
+		if rgb, w, h, ok := v.exbgSrc.MpegFrameRGB(); ok {
+			v.exbgBuf, v.exbgW, v.exbgH = rgb, w, h
+			v.exbgOK = true
+		}
+	}
+
 	// RBG0/RBG1: configuration and rotation state are frame-scoped.
 	// The rotation parameter tables are read from VRAM once per frame
 	// (RPRCTL selects per-line re-reads of individual fields), and the
@@ -461,6 +479,19 @@ func (v *VDP2) decodeLineState() {
 			if on {
 				fs.nbg[s] = cfg
 			}
+		}
+	}
+
+	// EXBG: on when EXBGEN is set, a frame is latched, and NBG1's
+	// priority (its slot) is nonzero.
+	fs.exbgOn = false
+	if v.exbgOK {
+		pri := uint8(fs.regs[vdp2PRINA]>>8) & 0x07
+		if pri != 0 {
+			fs.exbgOn = true
+			fs.exbgPri = pri
+			fs.exbgCC = isCCEnabled(fs.regs[vdp2CCCTL], 1)
+			fs.nbgOn[1] = false
 		}
 	}
 
@@ -553,6 +584,10 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 			n++
 		}
 	}
+	if fs.exbgOn {
+		v.lineSpans[n] = v.exbgSpanSetup(v.layerBufs[1], y)
+		n++
+	}
 	if fs.rbg0On {
 		// The line color buffer's per-pixel writes are conditional on
 		// coefficient state; clear the row so unwritten pixels read as
@@ -575,6 +610,43 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 	v.lineSpans[n] = v.compositeSpanSetup(y)
 	n++
 	v.lineNSpans = n
+}
+
+// exbgSpanSetup prepares row y of the EXBG external-image screen: the
+// latched frame's row is copied into the NBG1 layer buffer as direct
+// RGB with the screen priority (and color-calculation flag) packed per
+// pixel. Pixels outside the frame are transparent. The frame is mapped
+// 1:1 from the screen origin; the display-window transforms of the
+// $A1-$A4 command set are not applied.
+func (v *VDP2) exbgSpanSetup(buf []uint32, y int) func(x0, x1 int) {
+	width := v.frame.width
+	base := uint32(v.frame.exbgPri) << 24
+	if v.frame.exbgCC {
+		base |= layerCCBit
+	}
+	var src []uint32
+	if y < v.exbgH {
+		src = v.exbgBuf[y*v.exbgW : y*v.exbgW+v.exbgW]
+	}
+	row := y * width
+	return func(x0, x1 int) {
+		// Clamp the span to the frame row once; pixels beyond it (and
+		// whole rows below the frame, where src is empty) are
+		// transparent.
+		end := x1
+		if end > len(src) {
+			end = len(src)
+		}
+		if end < x0 {
+			end = x0
+		}
+		for x := x0; x < end; x++ {
+			buf[row+x] = base | src[x]
+		}
+		for x := end; x < x1; x++ {
+			buf[row+x] = 0
+		}
+	}
 }
 
 // RenderTo renders the prepared row's pixels up to x (exclusive),

@@ -44,7 +44,16 @@ func (cb *CDBlock) cmdGetCDStatus() {
 }
 
 func (cb *CDBlock) cmdGetHardwareInfo() {
-	cb.setResponse(0x0001, 0, 0x0400)
+	// CR2 high byte is the hardware status byte: bit 1 = MPEG/Video CD
+	// hardware detected (the card is always present). CR3 low byte
+	// (MPEG version) reads 0 until the card is authenticated ($E0
+	// subcommand 1): reporting it nonzero from boot diverts the real
+	// BIOS's boot flow and it no longer recognizes the disc.
+	var mpegVer uint16
+	if cb.mpegCardAuth.Load() {
+		mpegVer = 1
+	}
+	cb.setResponse(0x02<<8|0x0001, mpegVer, 0x0400)
 	cb.hirqReq |= hirqCMOK
 }
 

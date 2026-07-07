@@ -153,6 +153,7 @@ func NewEmulator() *Emulator {
 	bus := NewBus(scu, smpc, vdp1, vdp2, scsp, cdblock)
 	scu.SetBus(bus)
 	scsp.SetCDAudioSource(cdblock)
+	vdp2.SetEXBGSource(cdblock)
 
 	master := sh2.New(bus, true)
 	slave := sh2.New(bus, false)

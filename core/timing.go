@@ -99,7 +99,7 @@ func (e *Emulator) recalcTiming() {
 	// CD block sector / SCDQ / boot timings track the documented system clock
 	// directly (constant within a mode), not the per-frame budget which now
 	// wobbles by the carry.
-	e.cdblock.RecalcTiming(trueClock)
+	e.cdblock.RecalcTiming(trueClock, fps)
 }
 
 // GetTiming returns the frame timing derived from VDP2 state.

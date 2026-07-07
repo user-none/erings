@@ -218,7 +218,9 @@ area. Blur (soft-switch): 0x01 on.
 
 **Picture geometry** - NTSC 352x240 normal / 704x480 hi-res; PAL 352x288
 normal / 704x576 hi-res. Scan mode: 0 = NTSC non-interlaced, 1 = NTSC
-interlaced, 2 = PAL non-interlaced, 3 = PAL interlaced.
+interlaced, 2 = PAL non-interlaced, 3 = PAL interlaced. These are the
+per-scan-mode maxima; a stream's encoded picture can be smaller (a
+320x224 stream has been measured from a title's discs).
 
 **Picture type** (in timecode / status): 1 = I, 2 = P, 3 = B, 4 = D.
 
@@ -336,16 +338,44 @@ Per command:
 
 - **$A0 Display** - a display-enable/switch byte and the frame-bank
   number in the CR1 low / CR2 area.
-- **$A1 Set Window** - a sub-function selector (position, size, offset,
-  frame-buffer position, frame-buffer ratio) plus one 16-bit value; the
-  X and Y of a coordinate/size pair are carried as the CR3 and CR4 words.
-  The five window sub-parameters (display position, display size, display
-  offset, frame-buffer position, frame-buffer ratio) are separate calls,
-  each issuing $A1 with its selector.
+- **$A1 Set Window** - the CR1 low byte selects the sub-parameter; the
+  X and Y of the coordinate/size pair are carried as the CR3 and CR4
+  words. The selector numbering is pinned by the builders' five
+  consecutive branch stubs, each loading its selector immediate in
+  order:
+
+  | Selector | Sub-parameter |
+  |----------|---------------|
+  | 0 | frame-buffer position |
+  | 1 | frame-buffer ratio |
+  | 2 | display position |
+  | 3 | display size |
+  | 4 | display offset |
+
+  A traced title's full-screen movie setup issues frame-buffer
+  position (22, 0), frame-buffer ratio (15, 1), display position
+  (0, 8), and display size (320, 224) for a stream whose encoded
+  picture is 320x224 (measured from the decoded frames; MPEG picture
+  sizes are not fixed to the 352x240 Video CD geometry) shown 1:1 on
+  a 320x224 display mode. The display size equals the picture size,
+  and the position values read as placing the picture within the
+  card's NTSC output raster so it aligns with the console's active
+  display area: vertically 8 = (240-224)/2 centers 224 lines in the
+  240-line active frame, and the horizontal 22 is inferred (not
+  validated) to be the 320-mode active-area inset in decoder dot
+  clocks. The frame-buffer ratio encoding is unknown; (15, 1)
+  accompanies unscaled output. All observed $A1 issues carry 0x0001
+  in CR2; that byte's meaning is unknown.
 - **$A2 Set Border Color** - the 16-bit border color in CR2.
-- **$A3 Set Fade** - the Y gain and C gain bytes.
+- **$A3 Set Fade** - the Y gain and C gain bytes in CR2 (high, low).
+  Gain 0/0 is observed with unfaded output, so 0 means no fade rather
+  than zero output; the gain scale is otherwise unknown.
 - **$A4 Set Video Effect** - the effect bytes (interpolation,
   transparent-bit mode, mosaic H/V, soft H/V), packed into the block.
+  The interpolation bits occupy the CR2 high byte (observed 0x0F00
+  with CR3 and CR4 zero = all four interpolation switches on,
+  everything else off); where the transparent-bit mode, mosaic, and
+  soft fields sit among the remaining bytes is not confirmed.
 
 So an implementation reads the opcode from CR1's high byte, the
 selector(s) from the CR1-low/CR2 bytes, and the geometry/value words from

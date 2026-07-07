@@ -167,6 +167,15 @@ const (
 	maxHeight = 512
 )
 
+// exbgSource provides decoded external-image frames for EXBG (the
+// MPEG card's video output). Implemented by CDBlock.
+type exbgSource interface {
+	// MpegFrameRGB returns the newest frame as packed 0x00RRGGBB, read
+	// in place: the slice is owned by the caller until the next call.
+	// ok is false when no displayable frame exists.
+	MpegFrameRGB() (rgb []uint32, w, h int, ok bool)
+}
+
 // VDP2 implements the Sega Saturn Video Display Processor 2.
 type VDP2 struct {
 	regs [vdp2RegCount]uint16
@@ -177,6 +186,17 @@ type VDP2 struct {
 	framebuffer []byte      // RGBA8888 output, max maxWidth*maxHeight*4
 	layerBufs   [4][]uint32 // per-NBG layer, packed priority<<24|R<<16|G<<8|B
 	activeWidth uint16      // 320, 352, 640, or 704
+
+	// EXBG external image input (MPEG card decoded video). The source
+	// is polled once per frame; the pixels feed the NBG1 slot when
+	// EXBGEN (EXTEN bit 0) is set. exbgBuf references the source's
+	// consumer-owned triple-buffer slot: stable until the next poll,
+	// never copied.
+	exbgSrc exbgSource
+	exbgBuf []uint32 // packed 0x00RRGGBB, exbgW*exbgH
+	exbgW   int
+	exbgH   int
+	exbgOK  bool // frame latched this frame
 
 	// Display mode state
 	hiRes     bool  // HRESO bit 1 set (640/704 mode)
@@ -323,6 +343,12 @@ func (v *VDP2) ResetRegisters() {
 	}
 	v.cramCacheValid = false
 	v.recalcTiming()
+}
+
+// SetEXBGSource wires the external-image provider (the CD block's
+// MPEG frame latch). Called once at emulator construction.
+func (v *VDP2) SetEXBGSource(src exbgSource) {
+	v.exbgSrc = src
 }
 
 // SetPAL sets the PAL/NTSC mode and recalculates timing parameters.

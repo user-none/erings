@@ -288,7 +288,10 @@ const (
 	hleBiosWarnSMPCInit   = 0xA0000074 // sub_04C8
 	hleBiosWarnGBRZero    = 0xA0000078 // sub_1800
 	hleBiosWarnRegionInit = 0xA000007C // sub_1A18
-	hleBiosWarnCDBlock    = 0xA0000084 // shared across 13 CD-block helpers
+	hleBiosWarnCDBlock    = 0xA0000084 // shared across 12 CD-block helpers
+
+	// SYS_CHKMPEG ($06000274 slot, real BIOS body at $3174).
+	hleBiosChkMpeg = 0xA0000088
 
 	// sub_1C90: a Go shortcut that reads
 	// the game executable directly from disc into $06004000 (the
@@ -1018,7 +1021,7 @@ var biosPointerSlotTargets = map[uint32]uint32{
 	0x268: hleBiosWarnRegionInit, // sub_1A18 (warn)
 	0x26C: hleBiosWarnCDBlock,    // CD-block helper
 	0x270: hleBiosWarnCDBlock,
-	0x274: hleBiosWarnCDBlock,
+	0x274: hleBiosChkMpeg,     // SYS_CHKMPEG
 	0x280: hleSysChgUipr,      // $06000810 SYS_CHGUIPR int-priority table copy
 	0x284: hleBiosSub1C90Load, // sub_1C90 (Go shortcut: load game from disc)
 	0x288: hleBiosWarnCDBlock,

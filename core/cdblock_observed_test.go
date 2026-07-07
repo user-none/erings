@@ -615,7 +615,7 @@ func TestCDBlockAudioSectorRateLockedAt1x(t *testing.T) {
 func TestCDBlockRecalcTimingScalesAllPeriods(t *testing.T) {
 	cb := obsCDBlock()
 	const ntsc352 uint32 = 28636400
-	cb.RecalcTiming(ntsc352)
+	cb.RecalcTiming(ntsc352, 60)
 
 	cases := []struct {
 		name string
@@ -629,11 +629,25 @@ func TestCDBlockRecalcTimingScalesAllPeriods(t *testing.T) {
 		{"periCycles", cb.periCycles, int(ntsc352) / 200},
 		{"bootDelayCycles", cb.bootDelayCycles, int(ntsc352) * 109 / 1000},
 		{"busyPauseCycles", cb.busyPauseCycles, int(ntsc352) * 333 / 10000},
+		{"mpegVsyncCycles", cb.mpegVsyncCycles, int(ntsc352) / 60},
 	}
 	for _, c := range cases {
 		if c.got != c.want {
 			t.Errorf("%s = %d, want %d", c.name, c.got, c.want)
 		}
+	}
+}
+
+// TestCDBlockRecalcTimingPALFieldRate verifies the MPEG VSYNC
+// operation-interval counter paces at the display field rate: the card
+// genlocks to the console's video sync, so a PAL mode counts at 50Hz
+// rather than a hardcoded 60.
+func TestCDBlockRecalcTimingPALFieldRate(t *testing.T) {
+	cb := obsCDBlock()
+	const pal320 uint32 = 26687500
+	cb.RecalcTiming(pal320, 50)
+	if want := int(pal320) / 50; cb.mpegVsyncCycles != want {
+		t.Errorf("mpegVsyncCycles = %d, want %d", cb.mpegVsyncCycles, want)
 	}
 }
 
@@ -644,7 +658,7 @@ func TestCDBlockRecalcTimingScalesAllPeriods(t *testing.T) {
 func TestCDBlockRecalcTimingZeroIsNoOp(t *testing.T) {
 	cb := obsCDBlock()
 	before := cb.sectorCycles1x
-	cb.RecalcTiming(0)
+	cb.RecalcTiming(0, 60)
 	if cb.sectorCycles1x != before {
 		t.Errorf("RecalcTiming(0) mutated sectorCycles1x: %d, want %d", cb.sectorCycles1x, before)
 	}
@@ -670,7 +684,7 @@ func TestCDBlockAudioSectorPacingAcrossModes(t *testing.T) {
 	for _, m := range modes {
 		t.Run(m.name, func(t *testing.T) {
 			cb := obsCDBlockWith(obsAudioPlusData())
-			cb.RecalcTiming(m.cyclesPerSecond)
+			cb.RecalcTiming(m.cyclesPerSecond, 60)
 			if cb.sectorCycles1x != m.expectedPeriod1x {
 				t.Fatalf("sectorCycles1x = %d, want %d", cb.sectorCycles1x, m.expectedPeriod1x)
 			}
@@ -1046,16 +1060,22 @@ func TestCDBlockMPEGAuthStub(t *testing.T) {
 
 // TestCDBlockGetHardwareInfoValues verifies GetHardwareInfo returns
 // the byte pattern the BIOS checks at boot to confirm the CD block
-// hardware revision. The values are CR2=0x0001 (MPEG-card bit cleared,
-// no MPEG card present), CR4=0x0400; mismatch causes the BIOS to
-// refuse to use the CD block.
+// hardware revision. The values are CR2=0x0201 (hardware status byte
+// 0x02 = MPEG hardware detected - the card is always present -
+// hardware version 1), CR4=0x0400; mismatch causes the BIOS to refuse
+// to use the CD block. CR3's low byte is the MPEG version, 0 until
+// the card is authenticated: nonzero at boot diverts the real BIOS
+// into its card-boot path and disc recognition fails.
 func TestCDBlockGetHardwareInfoValues(t *testing.T) {
 	cb := obsCDBlock()
 
 	obsExec(cb, 0x01, 0x00, 0x0000, 0x0000, 0x0000)
 
-	if cb.res[1] != 0x0001 {
-		t.Errorf("GetHardwareInfo CR2 = 0x%04X, want 0x0001", cb.res[1])
+	if cb.res[1] != 0x0201 {
+		t.Errorf("GetHardwareInfo CR2 = 0x%04X, want 0x0201", cb.res[1])
+	}
+	if cb.res[2] != 0x0000 {
+		t.Errorf("GetHardwareInfo CR3 = 0x%04X, want 0x0000 (version 0 pre-auth)", cb.res[2])
 	}
 	if cb.res[3] != 0x0400 {
 		t.Errorf("GetHardwareInfo CR4 = 0x%04X, want 0x0400", cb.res[3])

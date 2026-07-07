@@ -11,8 +11,10 @@ import (
 func TestNewCDBlockDefaults(t *testing.T) {
 	cb := NewCDBlock(nil)
 
-	if cb.hirqReq != 0 {
-		t.Errorf("hirqReq = 0x%04X, want 0x0000", cb.hirqReq)
+	// MPED reads 1 at idle ("no MPEG operation in flight"); the BIOS
+	// MPEG command issuer requires it before issuing.
+	if cb.hirqReq != hirqMPED {
+		t.Errorf("hirqReq = 0x%04X, want 0x%04X (idle MPED)", cb.hirqReq, hirqMPED)
 	}
 	if cb.status != cdStatusNoDisc {
 		t.Errorf("status = 0x%02X, want 0x%02X (NODISC)", cb.status, cdStatusNoDisc)
@@ -35,8 +37,8 @@ func TestNewCDBlockDefaults(t *testing.T) {
 func TestCDBlockNewInitialState(t *testing.T) {
 	cb := NewCDBlock(nil)
 
-	if cb.hirqReq != 0 {
-		t.Errorf("hirqReq = 0x%04X, want 0x0000", cb.hirqReq)
+	if cb.hirqReq != hirqMPED {
+		t.Errorf("hirqReq = 0x%04X, want 0x%04X (idle MPED)", cb.hirqReq, hirqMPED)
 	}
 	// HIRQMSK = 0
 	if cb.hirqMask != 0 {
@@ -154,8 +156,10 @@ func TestCDBlockGetHardwareInfo(t *testing.T) {
 	if cb.hirqReq&hirqCMOK == 0 {
 		t.Error("CMOK should be set")
 	}
-	if cb.res[1] != 0x0001 {
-		t.Errorf("CR2 = 0x%04X, want 0x0001", cb.res[1])
+	// Hardware status byte 0x02 (MPEG hardware detected - the card is
+	// always present) | hardware version 1.
+	if cb.res[1] != 0x0201 {
+		t.Errorf("CR2 = 0x%04X, want 0x0201", cb.res[1])
 	}
 	if cb.res[3] != 0x0400 {
 		t.Errorf("CR4 = 0x%04X, want 0x0400", cb.res[3])
@@ -268,11 +272,14 @@ func TestCDBlockAuthenticateDisc(t *testing.T) {
 	cb := NewCDBlock(nil)
 	cb.SetDisc(newMockDisc2Track())
 	// Pre-set a bit not in the post-auth pattern to verify the auth
-	// command replaces hirqReq entirely rather than OR-ing into it.
+	// command ORs its completion bits into hirqReq: hardware never
+	// clears HIRQ bits on its own (host write-0-to-clear only), and
+	// the idle MPED bit must survive BIOS boot for the MPEG-command
+	// issue guard.
 	cb.hirqReq = hirqBFUL
 	execCommand(cb, 0xE0)
 
-	want := uint16(hirqCMOK | hirqCSCT | hirqESEL | hirqEHST | hirqECPY | hirqEFLS | hirqSCDQ)
+	want := uint16(hirqBFUL | hirqCMOK | hirqCSCT | hirqESEL | hirqEHST | hirqECPY | hirqEFLS | hirqSCDQ)
 	if cb.hirqReq != want {
 		t.Errorf("hirqReq = %#04x, want %#04x", cb.hirqReq, want)
 	}

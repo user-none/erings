@@ -795,12 +795,14 @@ Returns: CD status data. HIRQ: EFLS
 
 ### 0xE0 - Authenticate Device
 
-| CR1 | 0xE0, subcommand(LB) |
-| CR2 | 0x0000 |
+| CR1 | 0xE000 |
+| CR2 | subcommand(LB) |
 | CR3 | 0x0000 |
 | CR4 | 0x0000 |
 
-The CR1 low byte selects the target: 0 = disc, 1 = MPEG card. Firmware
+The CR2 low byte selects the target: 0 = disc, 1 = MPEG card (the BIOS
+issuer at ROM $4998 writes the subcommand into command block byte 3,
+CR2's low byte). Firmware
 ($C2C6): subcommand 0 stages the request and messages the drive task
 (task 7), which seeks the disc's inner security ring and validates the
 `SEGA SEGASATURN ` / `SEGASYSTEM` header signatures; subcommand 1 requires
@@ -813,12 +815,12 @@ Status briefly shows BUSY, then returns to PAUSE.
 
 ### 0xE1 - Get Device Authentication Status
 
-| CR1 | 0xE1, subcommand(LB) |
-| CR2 | 0x0000 |
+| CR1 | 0xE100 |
+| CR2 | subcommand(LB) |
 | CR3 | 0x0000 |
 | CR4 | 0x0000 |
 
-Same subcommand selector as 0xE0. Firmware ($C3AA): subcommand 0 returns
+Same subcommand selector as 0xE0 (CR2 low byte). Firmware ($C3AA): subcommand 0 returns
 the disc auth result; subcommand 1 (MPEG present required) returns the
 MPEG card auth result.
 

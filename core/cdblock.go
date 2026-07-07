@@ -3,6 +3,8 @@
 
 package core
 
+import "sync/atomic"
+
 const (
 	cdStatusBusy    = 0x00
 	cdStatusPause   = 0x01
@@ -28,6 +30,8 @@ const (
 	hirqEFLS = 1 << 9
 	hirqSCDQ = 1 << 10
 	hirqMPED = 1 << 11
+	hirqMPCM = 1 << 12
+	hirqMPST = 1 << 13
 
 	cdMaxSectors = 200
 
@@ -259,6 +263,7 @@ type CDBlock struct {
 	putBufNum           uint8  // target partition for put transfer
 	putSectorsRemaining int    // sectors left to accept
 	authenticated       bool
+	mpegCardAuth        atomic.Bool
 	discType            uint8 // detected disc type (0=none, 1=audio, 2=data, 4=Saturn)
 
 	fsFiles       []cdcFile
@@ -304,6 +309,11 @@ type CDBlock struct {
 	periCycles      int
 	bootDelayCycles int
 	busyPauseCycles int
+	sysCyclesPerSec int // system clock rate backing the MPEG decode pacing
+	mpegVsyncCycles int // cycles per VSYNC for the MPEG operation-interval counter
+
+	mpeg      cdMpeg         // MPEG cartridge subsystem state ($90-$AF commands)
+	mpegFrame mpegFrameLatch // decoded-picture handoff to VDP2 EXBG
 
 	scu *SCU // SCU reference for raising external interrupts
 }
@@ -315,7 +325,7 @@ type CDBlock struct {
 // Busy+PERI status (with disc) or NoDisc+PERI (without disc).
 func NewCDBlock(scu *SCU) *CDBlock {
 	cb := &CDBlock{
-		hirqReq:         0,
+		hirqReq:         hirqMPED, // no MPEG operation in flight
 		hirqMask:        0,
 		status:          cdStatusNoDisc,
 		curTrack:        0xFF,
@@ -330,8 +340,16 @@ func NewCDBlock(scu *SCU) *CDBlock {
 		periCycles:      cdPeriCycles,
 		bootDelayCycles: cdBootDelayCycles,
 		busyPauseCycles: cdBusyPauseCycles,
+		sysCyclesPerSec: cdSystemClockHz,
+		mpegVsyncCycles: cdSystemClockHz / 60,
 		scu:             scu,
 	}
+	// Frame-latch triple buffer: distribute the three slots between
+	// producer, consumer, and mailbox (the zero value would alias all
+	// three to slot 0).
+	cb.mpegFrame.prod = 0
+	cb.mpegFrame.cons = 1
+	cb.mpegFrame.mailbox.Store(2)
 	cb.initSelectors()
 	cb.res[0] = 0x0043 // status=Busy(0x00) | 'C'
 	cb.res[1] = 0x4442 // 'D','B'
@@ -792,6 +810,12 @@ func (cb *CDBlock) ExecuteCommand() {
 	case 0xE1:
 		cb.cmdGetAuthStatus()
 	default:
+		if cmd >= 0x90 && cmd <= 0xAF {
+			// MPEG cartridge commands dispatch as a range, like the
+			// firmware's extension table ($0907B008 + (code-$90)*4).
+			cb.cmdMpeg(cmd)
+			break
+		}
 		cb.standardReturn()
 		cb.resultsRead = false
 		cb.hirqReq |= hirqCMOK
@@ -988,7 +1012,11 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 		}
 	}
 
-	// 5. SCDQ: one Q frame per sector, 75 Hz at 1x, 150 Hz at 2x.
+	// 5. MPEG subsystem: drain connected partitions, demux, decode.
+	// After sector reading so sectors read this tick flow immediately.
+	cb.mpegTick(c)
+
+	// 6. SCDQ: one Q frame per sector, 75 Hz at 1x, 150 Hz at 2x.
 	if cb.disc != nil && cb.initialized {
 		cb.scdqCounter -= c
 		if cb.scdqCounter <= 0 {
@@ -1001,7 +1029,7 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 		}
 	}
 
-	// 6. Periodic status: update response registers at periodic rate.
+	// 7. Periodic status: update response registers at periodic rate.
 	// Skipped when a command is pending to prevent overwriting CR registers
 	// between the game's CR1-CR4 write sequence.
 	if cb.initialized && cb.resultsRead && cb.cmdDelay <= 0 {
@@ -1091,10 +1119,12 @@ func (cb *CDBlock) DrainAudio() {
 }
 
 // RecalcTiming refreshes the CD block's cycle thresholds from the
-// emulator's current system clock rate. Called by Emulator.recalcTiming
-// at construction and whenever VDP2 mode changes, so CD pacing tracks
-// the actual system clock rate (NTSC/PAL, 320/352) rather than a fixed
-// compile-time assumption.
+// emulator's current system clock rate and display field rate. Called by
+// Emulator.recalcTiming at construction and whenever VDP2 mode changes,
+// so CD pacing tracks the actual system clock rate (NTSC/PAL, 320/352).
+//
+// fieldRateHz (60 NTSC, 50 PAL) paces the MPEG card's VSYNC
+// operation-interval counter at the display field rate.
 //
 // All physical CD events (sector reads, SCDQ frames, periodic status,
 // boot/busy delays) are scaled from the new rate. In-flight countdowns
@@ -1103,8 +1133,8 @@ func (cb *CDBlock) DrainAudio() {
 // would otherwise warp pending events forward or backward, which is
 // worse than letting them complete on the prior rate. New events use
 // the refreshed values.
-func (cb *CDBlock) RecalcTiming(systemCyclesPerSecond uint32) {
-	if systemCyclesPerSecond == 0 {
+func (cb *CDBlock) RecalcTiming(systemCyclesPerSecond, fieldRateHz uint32) {
+	if systemCyclesPerSecond == 0 || fieldRateHz == 0 {
 		return
 	}
 	// Widen to uint64 so systemCyclesPerSecond * 333 (up to ~9.6e9 at
@@ -1117,6 +1147,8 @@ func (cb *CDBlock) RecalcTiming(systemCyclesPerSecond uint32) {
 	cb.periCycles = int(h / 200)
 	cb.bootDelayCycles = int(h * 109 / 1000)
 	cb.busyPauseCycles = int(h * 333 / 10000)
+	cb.sysCyclesPerSec = int(h)
+	cb.mpegVsyncCycles = int(h / uint64(fieldRateHz))
 }
 
 // readOneSector reads a single sector from disc at the current playFAD,

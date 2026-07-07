@@ -89,6 +89,10 @@ func (v *VDP2) compositeSpanSetup(y int) func(x0, x1 int) {
 	ccctl := v.frame.regs[vdp2CCCTL]
 	rbg0On, rbg1On := v.frame.rbg0On, v.frame.rbg1On
 	nbgOn := v.frame.nbgOn
+	// EXBG renders into NBG1's layer buffer and competes in NBG1's
+	// slot; decodeLineState forced nbgOn[1] off so NBG1's own span
+	// did not run.
+	nbgOn[1] = nbgOn[1] || v.frame.exbgOn
 	r1on := v.frame.rbg1Active
 
 	// Back screen color for this row. BKCLMD (BKTAU bit 15) selects one

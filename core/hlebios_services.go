@@ -37,6 +37,7 @@ func (h *HLEBIOS) registerServices() {
 	h.register(hleBiosWarnGBRZero, hleWarnHandler("sub_1800 GBR zero-fill"))
 	h.register(hleBiosWarnRegionInit, hleWarnHandler("sub_1A18 region-init copy"))
 	h.register(hleBiosWarnCDBlock, hleWarnHandler("CD-block BIOS helper"))
+	h.register(hleBiosChkMpeg, func(cpu *sh2.CPU) { hleBiosChkMpegService(cpu, h.bus) })
 
 	// sub_1C90: real Go impl that reads the game executable from
 	// disc into $06004000 (HLE shortcut bypassing the BIOS CD-block
@@ -109,6 +110,25 @@ func hleSysSetUintService(cpu *sh2.CPU) {
 		handler = wramHNoopHandlerAddr
 	}
 	cpu.Write32(0x06000000+wramHUIntTable+r.R[4]*4, handler)
+}
+
+// hleBiosChkMpegService implements SYS_CHKMPEG ($06000274 slot).
+//
+// The real BIOS routine ($3174) authenticates the MPEG card through
+// the CD block - $E0 subcommand 1, an MPED wait, then $E1 subcommand 1
+// - and returns 0 when the auth result is 2, or a negative error. The
+// MPEG card is always present so authentication always succeeds, but
+// the CD block must still be left in the authenticated state: a game
+// that verifies the card itself afterward ($E1 subcommand 1, or the
+// hardware-info MPEG version byte) must see the same state the real
+// BIOS routine leaves behind.
+//
+//	R0 = 0
+func hleBiosChkMpegService(cpu *sh2.CPU, bus *Bus) {
+	if bus.cdblock != nil {
+		bus.cdblock.mpegCardAuth.Store(true)
+	}
+	cpu.SetReg(0, 0)
 }
 
 // hleSysGetUintService implements SYS_GETUINT.

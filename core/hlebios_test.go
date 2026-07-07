@@ -410,6 +410,34 @@ func TestHLESysChgUiprService(t *testing.T) {
 	}
 }
 
+func TestHLEBiosChkMpegService(t *testing.T) {
+	// SYS_CHKMPEG must leave the CD block authenticated ($E1
+	// subcommand 1 result 2) with R0 = 0: a game that verifies the
+	// card itself after the call must see the authenticated state.
+	// The service runs in the CPU-hook context, so it stores only the
+	// atomic auth flag and never touches hirqReq (owned by the tick
+	// context; MPED is idle-set and nothing in this flow clears it).
+	_, bus, master, _ := newHLEBIOSForTest()
+	master.SetReg(0, 0xDEAD)
+	hirqBefore := bus.cdblock.hirqReq
+
+	hleBiosChkMpegService(master, bus)
+
+	if got := master.Registers().R[0]; got != 0 {
+		t.Errorf("R0 = %08X, want 0", got)
+	}
+	if !bus.cdblock.mpegCardAuth.Load() {
+		t.Error("mpegCardAuth should be set after SYS_CHKMPEG")
+	}
+	if bus.cdblock.hirqReq != hirqBefore {
+		t.Errorf("hirqReq = 0x%04X, want 0x%04X (untouched)", bus.cdblock.hirqReq, hirqBefore)
+	}
+	execCommandFull(bus.cdblock, 0xE1, 0x00, 0x0001, 0x0000, 0x0000)
+	if bus.cdblock.res[1] != 2 {
+		t.Errorf("$E1 sub1 CR2 = 0x%04X, want 2", bus.cdblock.res[1])
+	}
+}
+
 func TestHLEBootInitializesIMSShadow(t *testing.T) {
 	h, bus, _, _ := newHLEBIOSForTest()
 	if err := h.Boot(makeIPImage()); err != nil {
