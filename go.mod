@@ -7,7 +7,7 @@ require (
 	github.com/gen2brain/mpeg v0.6.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
 	github.com/user-none/eblitui/coreif v0.7.0
-	github.com/user-none/eblitui/desktop v0.4.6
+	github.com/user-none/eblitui/desktop v0.4.7
 	github.com/user-none/eblitui/romloader v0.4.1
 	github.com/user-none/go-chip-m68k v0.1.1
 )
