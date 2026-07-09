@@ -66,6 +66,7 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 		DataDirName:      "erings",
 		CoreName:         erings.Name,
 		CoreVersion:      erings.Version,
+		SerializeSize:    core.SerializeSize(),
 		MetadataVariants: []coreif.MetadataVariant{
 			{
 				Name:          "Sega Saturn",
@@ -200,6 +201,18 @@ func (e *emulator) Close()                              { e.emu.Close() }
 // the rcheevos flat Saturn address space onto Work RAM.
 func (e *emulator) ReadMemory(addr uint32, buf []byte) uint32 {
 	return e.emu.ReadMemory(addr, buf)
+}
+
+// Serialize implements coreif.SaveStater; the returned bytes are the
+// complete state file, written to disk verbatim by the UI.
+func (e *emulator) Serialize() ([]byte, error) {
+	return e.emu.Serialize()
+}
+
+// Deserialize implements coreif.SaveStater, restoring from raw state
+// file bytes.
+func (e *emulator) Deserialize(data []byte) error {
+	return e.emu.Deserialize(data)
 }
 
 func (e *emulator) SetDisc(disc coreif.DiscReader) {

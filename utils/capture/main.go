@@ -48,6 +48,7 @@ func main() {
 	biosPath := flag.String("bios", "", "Path to Saturn BIOS ROM (512KB). Optional - if omitted, the HLE BIOS boots the disc directly.")
 	fastBoot := flag.Bool("fast-boot", false, "Skip the real BIOS boot animation and enter the disc IP directly (real BIOS only; no effect with the HLE BIOS).")
 	outDir := flag.String("out", "capture_output", "Output root directory for captured artifacts (created if missing).")
+	loadState := flag.String("load-state", "", "Path to a save state file to load at startup, replaying inputs from there. Requires the same disc and BIOS the state was captured with; the replay must have been recorded from this state.")
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: capture [flags] <disc> <replay>")
 		flag.PrintDefaults()
@@ -98,6 +99,21 @@ func main() {
 
 	if err := emu.Start(); err != nil {
 		log.Fatalf("emulator start failed: %v", err)
+	}
+
+	// State load happens after Start so the boot path has run (HLE
+	// service hooks wired, workers spawned but parked) and before the
+	// first RunFrame, satisfying Deserialize's frame-boundary
+	// constraint.
+	if *loadState != "" {
+		stateData, err := os.ReadFile(*loadState)
+		if err != nil {
+			log.Fatalf("failed to read save state %q: %v", *loadState, err)
+		}
+		if err := emu.Deserialize(stateData); err != nil {
+			log.Fatalf("failed to load save state %q: %v", *loadState, err)
+		}
+		fmt.Printf("[CAPTURE] loaded state %s\n", *loadState)
 	}
 
 	// The product number comes from an arbitrary disc image, so sanitize it

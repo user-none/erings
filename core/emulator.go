@@ -139,6 +139,15 @@ type Emulator struct {
 
 	frameTotalCycles int64
 	masterLineCarry  uint32
+
+	// Save-state scratch, reused across Serialize calls: rewind
+	// captures at up to every-other-frame rates, and fresh 12+ MB
+	// allocations per capture caused GC stutter. Serialize runs only
+	// at the frame boundary on one goroutine, so plain fields suffice;
+	// only the returned state bytes are freshly allocated.
+	stateBody    []byte
+	statePayload []byte
+	stateComp    stateCompressor
 }
 
 // NewEmulator creates a Saturn emulator with all components wired together.

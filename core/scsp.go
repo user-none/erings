@@ -1654,6 +1654,12 @@ func (s *SCSP) M68KSerialize() []byte {
 	return buf
 }
 
+// M68KDeserialize restores the sound CPU from a block produced by
+// M68KSerialize. The chip validates size and format version itself.
+func (s *SCSP) M68KDeserialize(buf []byte) error {
+	return s.m68k.Deserialize(buf)
+}
+
 // InReset returns whether the 68K sound CPU is held in reset.
 func (s *SCSP) InReset() bool {
 	return s.inReset

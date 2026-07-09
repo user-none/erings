@@ -93,6 +93,7 @@ func main() {
 	fastBoot := flag.Bool("fast-boot", false, "Skip the real BIOS boot animation and enter the disc IP directly (real BIOS only; no effect with the HLE BIOS).")
 	record := flag.String("record", "", "Record a replay file (JSON) of per-frame input and screenshot markers.")
 	replayPath := flag.String("replay", "", "Replay a recorded input file (JSON). Recorded input is mixed with live input so you can still press buttons.")
+	loadState := flag.String("load-state", "", "Path to a save state file to load at startup. Requires the same disc and BIOS the state was captured with; a replay played on top must have been recorded from this state.")
 	flag.Parse()
 
 	if *record != "" && *replayPath != "" {
@@ -196,6 +197,21 @@ func main() {
 
 	if err := emu.Start(); err != nil {
 		log.Fatalf("emulator start failed: %v", err)
+	}
+
+	// State load happens after Start so the boot path has run (HLE
+	// service hooks wired, workers spawned but parked) and before the
+	// first RunFrame, satisfying Deserialize's frame-boundary
+	// constraint.
+	if *loadState != "" {
+		stateData, err := os.ReadFile(*loadState)
+		if err != nil {
+			log.Fatalf("failed to read save state %q: %v", *loadState, err)
+		}
+		if err := emu.Deserialize(stateData); err != nil {
+			log.Fatalf("failed to load save state %q: %v", *loadState, err)
+		}
+		fmt.Printf("[STATE] loaded %s\n", *loadState)
 	}
 
 	ebiten.SetWindowTitle("Saturn")
@@ -647,11 +663,14 @@ func (g *game) emulationLoop() {
 			fmt.Printf("[REPLAY] screenshot marked at frame %d\n", f)
 		}
 
-		// Memory dump request. Snapshot is taken between frames so the
-		// region contents are stable while writeMemoryDump runs.
+		// Dump request. The state is captured between frames so all
+		// component state is stable, then exploded to disk alongside
+		// the loadable state file itself.
 		if g.dumpReq.Swap(false) {
-			dump := g.emu.DumpMemory()
-			if err := writeMemoryDump(dump, g.dumpDir); err != nil {
+			state, err := g.emu.Serialize()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "[DUMP] serialize failed: %v\n", err)
+			} else if err := writeStateDump(state, g.dumpDir); err != nil {
 				fmt.Fprintf(os.Stderr, "[DUMP] failed: %v\n", err)
 			}
 		}
@@ -719,58 +738,6 @@ func printHistogram(label string, h map[uint32]uint64) {
 		}
 		fmt.Printf("  0x%08X  %12d  %6.2f%%\n", rows[i].pc, rows[i].cnt, pct)
 	}
-}
-
-// writeMemoryDump writes every region of dump to its own .bin file in
-// a timestamped subdirectory of baseDir. Millisecond resolution in the
-// directory name lets multiple dumps within the same second coexist
-// (one Saturn frame is ~16.7 ms at 60 fps).
-func writeMemoryDump(dump core.MemoryDump, baseDir string) error {
-	stamp := strings.Replace(time.Now().Format("20060102-150405.000"), ".", "-", 1)
-	dir := filepath.Join(baseDir, "dump-"+stamp)
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return err
-	}
-	regions := []struct {
-		name string
-		data []byte
-	}{
-		{"bios.bin", dump.BIOS},
-		{"wramh.bin", dump.WRAMH},
-		{"wraml.bin", dump.WRAML},
-		{"backup.bin", dump.BackupRAM},
-		{"extram.bin", dump.ExtRAM},
-		{"vdp1_vram.bin", dump.VDP1VRAM},
-		{"vdp1_draw_fb.bin", dump.VDP1DrawFB},
-		{"vdp1_display_fb.bin", dump.VDP1DisplayFB},
-		{"vdp2_vram.bin", dump.VDP2VRAM},
-		{"vdp2_cram.bin", dump.VDP2CRAM},
-		{"vdp2_regs.bin", dump.VDP2Regs},
-		{"vdp1_regs.bin", dump.VDP1Regs},
-		{"vdp1_shadow.bin", dump.VDP1Shadow},
-		{"sound_ram.bin", dump.SoundRAM},
-		{"scu_regs.bin", dump.SCURegs},
-		{"scu_internal.bin", dump.SCUInternal},
-		{"scu_dsp.bin", dump.SCUDSP},
-		{"scsp_regs.bin", dump.SCSPRegs},
-		{"scsp_slots.bin", dump.SCSPSlots},
-		{"scsp_dsp.bin", dump.SCSPDSP},
-		{"scsp_timers.bin", dump.SCSPTimers},
-		{"sh2_master_regs.bin", dump.SH2MasterRegs},
-		{"sh2_slave_regs.bin", dump.SH2SlaveRegs},
-		{"sh2_master_irq.bin", dump.SH2MasterIRQ},
-		{"sh2_slave_irq.bin", dump.SH2SlaveIRQ},
-		{"smpc.bin", dump.SMPCState},
-		{"coordination.bin", dump.Coordination},
-		{"m68k_state.bin", dump.M68KState},
-	}
-	for _, r := range regions {
-		if err := os.WriteFile(filepath.Join(dir, r.name), r.data, 0o644); err != nil {
-			return err
-		}
-	}
-	fmt.Printf("[DUMP] wrote %d regions to %s\n", len(regions), dir)
-	return nil
 }
 
 func (g *game) Update() error {

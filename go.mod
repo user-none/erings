@@ -6,6 +6,7 @@ require (
 	github.com/ebitengine/oto/v3 v3.4.0
 	github.com/gen2brain/mpeg v0.6.0
 	github.com/hajimehoshi/ebiten/v2 v2.9.9
+	github.com/klauspost/compress v1.18.4
 	github.com/user-none/eblitui/coreif v0.7.0
 	github.com/user-none/eblitui/desktop v0.4.7
 	github.com/user-none/eblitui/romloader v0.4.1
@@ -26,7 +27,6 @@ require (
 	github.com/go-text/typesetting v0.3.0 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
-	github.com/klauspost/compress v1.18.4 // indirect
 	github.com/nwaples/rardecode/v2 v2.2.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.25 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect

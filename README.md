@@ -21,6 +21,22 @@ What you will find is a clean UI allowing you organize and play games. With
 a controller first navigation system. Make erings full screen, sit back and
 have fun playing some amazing classic games.
 
+## Current State and Major Features
+
+- Runs through the eblitui desktop UI
+- RetroAchievements
+- NTSC and PAL region
+- A 4MB extended RAM cartridge
+- Single player digital controller only (the core supports a second
+  controller, but the UI does not)
+- Internal backup RAM (console saves) persists between sessions
+- Save states
+- MPEG card (for Lunar)
+
+BIOS region patching is supported. Meaning you can use a US BIOS to play
+Japanese games or a Japanese BIOS to play US games. Or just use the HLE BIOS
+and not worry about it.
+
 ## Disc formats
 
 Several disc image formats are supported
@@ -36,40 +52,19 @@ included with the emulator and needs to be user sourced.
 
 ## Building
 
-Build the desktop binary with make: `make`
+Build the desktop binary with make: `make`. This provides a binary that
+can be run locally on the command line. This produces a debug build.
+Release builds are created when building OS packages.
 
-On macOS, a `.app` bundle can be produced with: `make macos`
+### Packages
 
-## Running
+Proper OS specific packages can be built using make targets.
 
-With no arguments, erings opens the UI for selecting a disc (and,
-optionally, a BIOS):
+- `windows`
+- `macos`
+- `appimage`
 
-```
-./build/erings
-```
-
-### Direct Run
-
-You can launch a game directly without opening the full UI. However,
-features like shaders, achievements and pretty much everything else won't
-be available.
-
-To launch a game directly without going through the UI, pass a disc
-image on the command line. A BIOS is optional; if omitted, the built-in
-HLE BIOS boots the game:
-
-```
-./build/erings -disc /path/to/game.chd
-./build/erings -disc /path/to/game.cue
-```
-
-To use a real BIOS instead, add `-bios`:
-
-```
-./build/erings -bios /path/to/bios.bin -disc /path/to/game.chd
-./build/erings -bios /path/to/bios.bin -disc /path/to/game.cue
-```
+All builds are put into the `./build` directory.
 
 ## UI Controls
 
@@ -88,23 +83,6 @@ Game controls (D-pad, buttons) are configured in the UI's input settings.
 | F11 | Toggle fullscreen |
 | F12 | Screenshot |
 
-**Note** Rewind, and save states need save state support which is a future feature
-
-## Current State
-
-- Runs through the eblitui desktop UI
-- RetroAchievements supported
-- NTSC and PAL region
-- A 4MB extended RAM cartridge is always present
-- Single player digital controller only (the core supports a second
-  controller, but the UI does not)
-- Internal backup RAM (console saves) persists between sessions
-- MPEG card (for Lunar)
-
-BIOS region patching is supported. Meaning you can use a US BIOS to play
-Japanese games or a Japanese BIOS to play US games. Or just use the HLE BIOS
-and not worry about it.
-
 ## Won't be Supported
 
 - ROM cartridges
@@ -117,7 +95,12 @@ and not worry about it.
 - Disc swapping for multi-disc games
   - Right now you have to rely on the game saving, exiting the game
     and selecting the next game from the ui
-- Save states
+- GPU compute shaders
+  - Internal resolution upscaling
+  - Other graphical enhancements
+- Possible performance enhancements
+- Bug fixes
+- Better game compatibility
 
 ## Game Compatibility
 
