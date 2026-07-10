@@ -21,6 +21,21 @@ What you will find is a clean UI allowing you organize and play games. With
 a controller first navigation system. Make erings full screen, sit back and
 have fun playing some amazing classic games.
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="screenshots/ui_library_icon.webp" width="270"><br>Library (icon)</td>
+    <td align="center"><img src="screenshots/ui_library_list.webp" width="270"><br>Library (list)</td>
+    <td align="center"><img src="screenshots/ui_details.webp" width="270"><br>Game details</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/bulk_slash.webp" width="270"><br>Bulk Slash</td>
+    <td align="center"><img src="screenshots/burning_rangers.webp" width="270"><br>Burning Rangers</td>
+    <td align="center"><img src="screenshots/waku_waku_7.webp" width="270"><br>Waku Waku 7</td>
+  </tr>
+</table>
+
 ## Current State and Major Features
 
 - Runs through the eblitui desktop UI
