@@ -100,12 +100,11 @@ func TestVDP2TVSTATReadOnly(t *testing.T) {
 	v.Write(0x0004, 0xFFFF)
 
 	// TVSTAT should reflect timing state, not written value.
-	// Initial state: NTSC, odd field, lineCycle=0, vLine=0
-	// Expected: ODD=1, others 0
-	wantStat := uint16(tvstatODD)
+	// Initial state: NTSC, display off, lineCycle=0, vLine=0
+	// Expected: all bits 0 (ODD reports no field scan while DISP=0)
 	got := v.Read(0x0004)
-	if got != wantStat {
-		t.Errorf("TVSTAT after write = 0x%04X, want 0x%04X", got, wantStat)
+	if got != 0 {
+		t.Errorf("TVSTAT after write = 0x%04X, want 0x0000", got)
 	}
 }
 
@@ -154,9 +153,16 @@ func TestVDP2TVSTATPALBit(t *testing.T) {
 func TestVDP2TVSTATODDBit(t *testing.T) {
 	v := NewVDP2(NewSCU())
 
-	// Initially odd
+	// TVMD.DISP=0 at reset: no field scan, ODD reads 0. Games poll ODD
+	// with the display off to block until their VBlank handler sets DISP.
+	if v.Read(0x0004)&tvstatODD != 0 {
+		t.Error("ODD bit should be 0 while TVMD.DISP=0")
+	}
+
+	// Display on, non-interlace: odd fields only, ODD reads 1.
+	v.Write(0x0000, 0x8000)
 	if v.Read(0x0004)&tvstatODD == 0 {
-		t.Error("ODD bit should be 1 initially")
+		t.Error("ODD bit should be 1 with display on in non-interlace")
 	}
 }
 
@@ -622,10 +628,9 @@ func TestVDP2NewInitialState(t *testing.T) {
 	if v.Read(0x0000) != 0 {
 		t.Errorf("TVMD = 0x%04X, want 0", v.Read(0x0000))
 	}
-	// TVSTAT: ODD=1
-	wantStat := uint16(tvstatODD)
-	if v.Read(0x0004) != wantStat {
-		t.Errorf("TVSTAT = 0x%04X, want 0x%04X", v.Read(0x0004), wantStat)
+	// TVSTAT: ODD=0 (no field scan while TVMD.DISP=0)
+	if v.Read(0x0004) != 0 {
+		t.Errorf("TVSTAT = 0x%04X, want 0x0000", v.Read(0x0004))
 	}
 	// VRAM zeroed
 	if v.ReadVRAM(0) != 0 {

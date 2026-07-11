@@ -569,9 +569,9 @@ func TestNewBusVDP2Defaults(t *testing.T) {
 	if got := bus.Read16(0x05F80000); got != 0 {
 		t.Errorf("TVMD = 0x%04X, want 0x0000", got)
 	}
-	// TVSTAT: ODD=1 (oddField starts true), PAL=0
-	if got := bus.Read16(0x05F80004); got != tvstatODD {
-		t.Errorf("TVSTAT = 0x%04X, want 0x%04X", got, tvstatODD)
+	// TVSTAT: ODD=0 (no field scan while TVMD.DISP=0), PAL=0
+	if got := bus.Read16(0x05F80004); got != 0 {
+		t.Errorf("TVSTAT = 0x%04X, want 0x0000", got)
 	}
 	// VRAM zeroed
 	if got := bus.Read8(0x05E00000); got != 0 {

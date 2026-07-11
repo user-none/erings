@@ -631,8 +631,13 @@ func (v *VDP2) buildTVSTAT() uint16 {
 	if v.pal {
 		stat |= tvstatPAL
 	}
-	if v.interlace == 0 || v.oddField {
-		stat |= tvstatODD // always 1 in non-interlace
+	// ODD reports the field scan in progress (VDP2 manual, TVSTAT;
+	// non-interlace scans odd fields only). With TVMD.DISP = 0 the chip
+	// is "in the blank condition" (TVMD, DISP bit) - no field scan, so
+	// ODD reads 0. Games poll ODD with the display off to block until
+	// their VBlank handler sets DISP.
+	if v.regs[vdp2TVMD]&0x8000 != 0 && (v.interlace == 0 || v.oddField) {
+		stat |= tvstatODD
 	}
 	if v.lineCycle >= v.activeSystemCycles {
 		stat |= tvstatHBLANK
