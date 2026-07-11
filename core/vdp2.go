@@ -243,6 +243,16 @@ type VDP2 struct {
 	// only at BeginLine entry from its argument.
 	lineFB vdp1FBView
 
+	// Rotated-read coordinates for the line's sprite framebuffer
+	// samples, prepared by BeginLine when lineFB is rotated: .10 FP
+	// read coordinate at Hcnt=0 and per-dot movement from rotation
+	// parameter A.
+	lineSprRot struct {
+		enabled      bool
+		baseX, baseY int64
+		dx, dy       int64
+	}
+
 	// Line state prepared by BeginLine and consumed by RenderTo:
 	// whether the row renders at all, the span renderer chain (enabled
 	// layers, gradation, composite) holding each renderer's per-line

@@ -634,3 +634,11 @@ func (v *VDP1) FBWidth() int {
 func (v *VDP1) FBHeight() int {
 	return v.fbHeight()
 }
+
+// FBRotated returns true when TVMR selects a rotation TV mode
+// (TVM=010 rotation 16-bit or TVM=011 rotation 8-bit). Per VDP1
+// manual Sec 1.2, in these modes the display framebuffer read
+// coordinates come from the VDP2.
+func (v *VDP1) FBRotated() bool {
+	return v.tvm() == 2 || v.tvm() == 3
+}

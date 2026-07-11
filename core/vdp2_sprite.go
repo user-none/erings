@@ -28,7 +28,15 @@ func (v *VDP2) readVDP1Pixel(x, y int) (uint16, bool) {
 	}
 	spX := x
 	spY := y
-	if v.frame.hiRes && !v.lineFB.is8bpp {
+	if v.lineSprRot.enabled {
+		// Rotated read (VDP1 manual Sec 1.2): the coordinate is
+		// rotation parameter A's line start plus per-dot movement, not
+		// the screen position. Out-of-range coordinates read as
+		// transparent via the bounds check below. Rotation is
+		// prohibited in hi-res, so the X halving never applies.
+		spX = int((v.lineSprRot.baseX + v.lineSprRot.dx*int64(x)) >> 10)
+		spY = int((v.lineSprRot.baseY + v.lineSprRot.dy*int64(x)) >> 10)
+	} else if v.frame.hiRes && !v.lineFB.is8bpp {
 		spX = x / 2
 	}
 	if spX < 0 || spX >= v.lineFB.width || spY < 0 || spY >= v.lineFB.height {

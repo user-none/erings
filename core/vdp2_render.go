@@ -5,12 +5,15 @@ package core
 
 // vdp1FBView describes the VDP1 display framebuffer a line samples:
 // pixel data, format, and dimensions. A nil data slice means no
-// sprite layer.
+// sprite layer. rotated is set when VDP1 is in a rotation TV mode:
+// the sprite layer samples at coordinates from rotation parameter A
+// instead of the screen position.
 type vdp1FBView struct {
-	data   []byte
-	is8bpp bool
-	width  int
-	height int
+	data    []byte
+	is8bpp  bool
+	width   int
+	height  int
+	rotated bool
 }
 
 // vdp2Frame holds the working render state.
@@ -64,6 +67,15 @@ type vdp2Frame struct {
 	rbg1On bool
 	rbg1   rbgConfig
 	rbg1F  rbgFrame
+
+	// Sprite framebuffer rotated read: in a VDP1 rotation TV mode the
+	// framebuffer read coordinates come from rotation parameter A
+	// (VDP1 manual Sec 1.2; VDP2 manual Sec 6). Latched frame-scoped
+	// like the RBG state; BeginLine steps it per line and honors the
+	// RPRCTL Xst/Yst re-read arms.
+	sprRotA                          rotParams
+	sprRotBase                       uint32
+	sprRotLastVcntX, sprRotLastVcntY int64
 
 	// fieldBootstrap: this is the first frame after a geometry change
 	// under LSMD=3; the composite span copies each produced row to the
@@ -433,6 +445,13 @@ func (v *VDP2) BeginFrame() {
 		}
 	}
 
+	// Sprite framebuffer rotated read: latch rotation parameter A
+	// independently of the RBG0 state - the read is driven by VDP1's
+	// TV mode, and RPMD mode 1 leaves the RBG frame's A half unread.
+	fs.sprRotBase, _ = v.rotParamBases()
+	fs.sprRotA = v.readRotParams(fs.sprRotBase)
+	fs.sprRotLastVcntX, fs.sprRotLastVcntY = 0, 0
+
 	// Force the line-state decode at the frame's first BeginLine.
 	v.regsDirty = true
 }
@@ -575,6 +594,32 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 	if v.regsDirty {
 		v.regsDirty = false
 		v.decodeLineState()
+	}
+
+	// Sprite framebuffer rotated read: this line's read coordinate is
+	// Xst + dXst*Vcnt, not the full rotation matrix pipeline - per
+	// VDP1 manual Sec 1.2 only the read start coordinates and movement
+	// values are received from the VDP2. RPRCTL Xst/Yst arms re-read
+	// and rebase the advance as in the RBG0 span setup.
+	v.lineSprRot.enabled = fb.rotated
+	if fb.rotated {
+		vcnt := int64(y)
+		if fs.effIntl == 3 {
+			vcnt = int64(y*2 + fs.field)
+		}
+		arm := v.rotArmBits(y)
+		if arm&0x01 != 0 {
+			fs.sprRotA.xst = signExtendFP(v.readVRAM16(fs.sprRotBase+0x00), v.readVRAM16(fs.sprRotBase+0x02), 12)
+			fs.sprRotLastVcntX = vcnt
+		}
+		if arm&0x02 != 0 {
+			fs.sprRotA.yst = signExtendFP(v.readVRAM16(fs.sprRotBase+0x04), v.readVRAM16(fs.sprRotBase+0x06), 12)
+			fs.sprRotLastVcntY = vcnt
+		}
+		v.lineSprRot.baseX = fs.sprRotA.xst + fs.sprRotA.dxst*(vcnt-fs.sprRotLastVcntX)
+		v.lineSprRot.baseY = fs.sprRotA.yst + fs.sprRotA.dyst*(vcnt-fs.sprRotLastVcntY)
+		v.lineSprRot.dx = fs.sprRotA.dx
+		v.lineSprRot.dy = fs.sprRotA.dy
 	}
 
 	n := 0

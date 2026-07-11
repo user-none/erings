@@ -331,10 +331,11 @@ func (e *Emulator) walkVDPFrame() {
 	}
 	fbView := func() vdp1FBView {
 		return vdp1FBView{
-			data:   vdp1.DisplayFB(vdp2.FrameFieldBit()),
-			is8bpp: vdp1.Is8bpp(),
-			width:  vdp1.FBWidth(),
-			height: vdp1.FBHeight(),
+			data:    vdp1.DisplayFB(vdp2.FrameFieldBit()),
+			is8bpp:  vdp1.Is8bpp(),
+			width:   vdp1.FBWidth(),
+			height:  vdp1.FBHeight(),
+			rotated: vdp1.FBRotated(),
 		}
 	}
 	for pos := int64(0); pos < e.frameTotalCycles; {
