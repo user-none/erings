@@ -2106,6 +2106,102 @@ func TestSCUDMALOOFMVTail(t *testing.T) {
 	}
 }
 
+// fifoMockBus serves a word-stream FIFO at fifoAddr the way the bus
+// serves the CD block data transfer register: each 16-bit read pops
+// the next word and a 32-bit read pops two. A byte read of the
+// register base consumes a word and can only return one of its
+// bytes, so the DMA read side must never issue one; the test fails
+// if it does. All other addresses behave as plain memory.
+type fifoMockBus struct {
+	*mockBus
+	t        *testing.T
+	fifoAddr uint32
+	words    []uint16
+	pos      int
+}
+
+func (f *fifoMockBus) isFIFO(addr uint32) bool { return addr&^3 == f.fifoAddr }
+
+func (f *fifoMockBus) pop() uint16 {
+	if f.pos >= len(f.words) {
+		return 0
+	}
+	w := f.words[f.pos]
+	f.pos++
+	return w
+}
+
+func (f *fifoMockBus) Read8(addr uint32) uint8 {
+	if f.isFIFO(addr) {
+		f.t.Errorf("byte read of FIFO register at 0x%08X", addr)
+		return uint8(f.pop() >> 8)
+	}
+	return f.mockBus.Read8(addr)
+}
+
+func (f *fifoMockBus) Read16(addr uint32) uint16 {
+	if f.isFIFO(addr) {
+		return f.pop()
+	}
+	return f.mockBus.Read16(addr)
+}
+
+func (f *fifoMockBus) Read32(addr uint32) uint32 {
+	if f.isFIFO(addr) {
+		hi := f.pop()
+		lo := f.pop()
+		return uint32(hi)<<16 | uint32(lo)
+	}
+	return f.mockBus.Read32(addr)
+}
+
+// TestSCUDMAFIFOSource covers slow-path transfers from a fixed
+// (readInc=0) A-Bus FIFO source, the CD-to-RAM load shape. The byte
+// stream must arrive intact for a non-multiple-of-4 count (tail) and
+// for an unaligned destination, both of which route the whole
+// transfer through the buffered slow path.
+func TestSCUDMAFIFOSource(t *testing.T) {
+	const (
+		fifoAddr          = uint32(0x05818000) // A-Bus CS2 data register
+		readInc0WriteInc4 = uint32(0x002)
+	)
+
+	cases := []struct {
+		name  string
+		dst   uint32
+		count uint32
+	}{
+		{name: "TailCount10", dst: 0x06002000, count: 10},
+		{name: "UnalignedDst", dst: 0x06002002, count: 32},
+		{name: "UnalignedDstOddCount", dst: 0x06002002, count: 21},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			stream := make([]byte, 64)
+			for i := range stream {
+				stream[i] = byte(i + 1)
+			}
+			words := make([]uint16, len(stream)/2)
+			for i := range words {
+				words[i] = uint16(stream[i*2])<<8 | uint16(stream[i*2+1])
+			}
+
+			s := NewSCU()
+			fb := &fifoMockBus{mockBus: newMockBus(), t: t, fifoAddr: fifoAddr, words: words}
+			s.SetBus(fb)
+
+			runDirectDMA(s, fifoAddr, tc.dst, tc.count, readInc0WriteInc4)
+
+			for i := uint32(0); i < tc.count; i++ {
+				if got := fb.mockBus.Read8(tc.dst + i); got != stream[i] {
+					t.Errorf("dst[%d] = 0x%02X, want 0x%02X", i, got, stream[i])
+				}
+			}
+		})
+	}
+}
+
 // TestSCUDMAManualWorkedExample reproduces the alignment shape from
 // SCU User's Manual Sec 2.1: source with a 3-byte unaligned head
 // (offset 1) and destination with a 2-byte unaligned head (offset

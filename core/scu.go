@@ -6,6 +6,7 @@ package core
 // BusReadWriter provides the read/write interface needed by SCU DMA.
 type BusReadWriter interface {
 	Read8(addr uint32) uint8
+	Read16(addr uint32) uint16
 	Read32(addr uint32) uint32
 	DMAWrite8(addr uint32, val uint8)
 	DMAWrite32(addr uint32, val uint32)
@@ -754,38 +755,45 @@ func (s *SCU) dmaTransfer(src, dst, count, readInc, writeInc uint32) (uint32, ui
 		return src, dst
 	}
 
-	// Slow path: byte-streaming through a 4-byte buffer per Sec 2.1.
-	// Activates whenever count is not a multiple of 4, or src or dst
-	// is not long-word aligned. The read side and the write side each
-	// independently choose long-word vs byte access based on their
-	// own alignment.
-	var buf [4]byte
+	// Slow path: byte-streaming through the controller buffer per
+	// Sec 2.1. Activates whenever count is not a multiple of 4, or
+	// src or dst is not long-word aligned. Read granularity is set by
+	// the source alignment alone: long-word when 4-aligned, one
+	// 16-bit bus cycle when 2-aligned, byte reads only for a
+	// byte-misaligned source. A readInc=0 A-Bus FIFO source (CD data
+	// register) must never be byte-read: each byte read of the
+	// register base consumes a full FIFO word and its other byte is
+	// lost. The write side drains the buffer independently, so byte i
+	// read from the source lands at dst+i.
+	var buf [8]byte
 	var bufLen uint32
 	var bytesRead uint32
 	var bytesWritten uint32
 
 	for bytesWritten < count {
-		// Read phase: top up the buffer if there are bytes left to
-		// read and the buffer has space. Use a long-word read when
-		// src is aligned, the buffer is empty, and at least 4 bytes
-		// remain to read; otherwise read a single byte. readInc=0
-		// is the fixed-source case used by A-Bus FIFO peripherals;
-		// src does not advance across reads.
-		if bufLen < 4 && bytesRead < count {
-			srcAligned := src%4 == 0
-			haveFour := count-bytesRead >= 4
-			if bufLen == 0 && srcAligned && haveFour {
+		if bytesRead < count {
+			switch {
+			case src%4 == 0 && count-bytesRead >= 4 && bufLen <= 4:
 				w := s.bus.Read32(src)
-				buf[0] = byte(w >> 24)
-				buf[1] = byte(w >> 16)
-				buf[2] = byte(w >> 8)
-				buf[3] = byte(w)
-				bufLen = 4
+				buf[bufLen] = byte(w >> 24)
+				buf[bufLen+1] = byte(w >> 16)
+				buf[bufLen+2] = byte(w >> 8)
+				buf[bufLen+3] = byte(w)
+				bufLen += 4
 				bytesRead += 4
 				if readInc == 4 {
 					src += 4
 				}
-			} else {
+			case src%2 == 0 && bufLen <= 6:
+				v := s.bus.Read16(src)
+				buf[bufLen] = byte(v >> 8)
+				buf[bufLen+1] = byte(v)
+				bufLen += 2
+				bytesRead += 2
+				if readInc == 4 {
+					src += 2
+				}
+			case src%2 != 0 && bufLen < 8:
 				buf[bufLen] = s.bus.Read8(src)
 				bufLen++
 				bytesRead++
@@ -795,26 +803,22 @@ func (s *SCU) dmaTransfer(src, dst, count, readInc, writeInc uint32) (uint32, ui
 			}
 		}
 
-		// Write phase: drain the buffer FIFO-order so byte i from
-		// src lands at dst+i. Use a long-word write when dst is
-		// aligned, the buffer is full, and at least 4 bytes remain
+		// Write phase: use a long-word write when dst is aligned, the
+		// buffer holds at least 4 bytes, and at least 4 bytes remain
 		// to write; otherwise write a single byte.
 		if bufLen > 0 {
-			dstAligned := dst%4 == 0
-			haveFour := count-bytesWritten >= 4
-			if bufLen == 4 && dstAligned && haveFour {
+			if bufLen >= 4 && dst%4 == 0 && count-bytesWritten >= 4 {
 				w := uint32(buf[0])<<24 | uint32(buf[1])<<16 | uint32(buf[2])<<8 | uint32(buf[3])
 				s.bus.DMAWrite32(dst, w)
-				bufLen = 0
+				copy(buf[:], buf[4:])
+				bufLen -= 4
 				bytesWritten += 4
 				if dstStep != 0 {
 					dst += 4
 				}
 			} else {
 				s.bus.DMAWrite8(dst, buf[0])
-				buf[0] = buf[1]
-				buf[1] = buf[2]
-				buf[2] = buf[3]
+				copy(buf[:], buf[1:])
 				bufLen--
 				bytesWritten++
 				if dstStep != 0 {
