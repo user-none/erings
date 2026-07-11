@@ -44,7 +44,7 @@ type SCU struct {
 	t1md uint32 // Timer 1 mode (write-only): bit 0 = enable, bit 8 = mode
 
 	// Timer state
-	t0cnt uint32 // Timer 0 H-Blank counter (resets at VBlank-IN)
+	t0cnt uint32 // Timer 0 H-Blank counter (resets at VBlank-OUT)
 
 	// Interrupt control
 	ims uint32 // Interrupt Mask (write-only)
@@ -565,9 +565,9 @@ func (s *SCU) RaiseHBlankIN(line uint16) {
 		return // Timers disabled
 	}
 
-	// Timer 0: increment H-Blank counter, fire when it matches T0C
-	s.t0cnt = (s.t0cnt + 1) & 0x3FF
+	// Timer 0: fire when the counter matches T0C, then increment.
 	t0Fire := s.t0cnt == s.t0c&0x3FF
+	s.t0cnt = (s.t0cnt + 1) & 0x3FF
 	if t0Fire {
 		s.raiseTimer0()
 	}

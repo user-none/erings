@@ -860,20 +860,21 @@ func TestSCUTimer0FiresOnMatch(t *testing.T) {
 	}, func() {})
 	s.ims = s.ims &^ (1 << 3) // Unmask Timer 0 (bit 3)
 
-	// Set T0C = 3 (fire after 3 H-Blanks)
+	// Set T0C = 3 (fire at the H-Blank of line 3)
 	s.Write(0x90, 3)
 	// Enable timers via T1MD bit 0
 	s.Write(0x98, 1)
 
-	// H-Blank 1, 2: no fire
+	// Lines 0-2: counter is 0, 1, 2 at each compare - no fire
 	s.RaiseHBlankIN(0)
 	s.RaiseHBlankIN(1)
+	s.RaiseHBlankIN(2)
 	if called {
 		t.Fatal("Timer 0 should not fire before match")
 	}
 
-	// H-Blank 3: counter reaches 3, should fire
-	s.RaiseHBlankIN(2)
+	// Line 3: counter is 3, should fire
+	s.RaiseHBlankIN(3)
 	if !called {
 		t.Fatal("Timer 0 should fire when counter matches T0C")
 	}
@@ -882,7 +883,7 @@ func TestSCUTimer0FiresOnMatch(t *testing.T) {
 	}
 }
 
-func TestSCUTimer0ResetsAtVBlankIN(t *testing.T) {
+func TestSCUTimer0ResetsAtVBlankOUT(t *testing.T) {
 	s := NewSCU()
 
 	called := false
@@ -908,16 +909,17 @@ func TestSCUTimer0ResetsAtVBlankIN(t *testing.T) {
 	s.AcknowledgeInterrupt(0x41)
 	s.Write(0xA0, s.ims)
 
-	// Need 3 more H-Blanks to reach T0C again
+	// Counter compares 0, 1, 2 on the next three H-Blanks - no fire
 	s.RaiseHBlankIN(0)
 	s.RaiseHBlankIN(1)
+	s.RaiseHBlankIN(2)
 	if called {
 		t.Fatal("Timer 0 should not fire - counter was reset by VBlank")
 	}
 
-	s.RaiseHBlankIN(2)
+	s.RaiseHBlankIN(3)
 	if !called {
-		t.Error("Timer 0 should fire after 3 H-Blanks post-reset")
+		t.Error("Timer 0 should fire when the counter reaches T0C post-reset")
 	}
 }
 
@@ -984,15 +986,15 @@ func TestSCUTimer1Mode1RequiresTimer0(t *testing.T) {
 	s.SetIRLHandler(func(level uint8, vec uint16) {}, func() {})
 	s.ims = s.ims &^ ((1 << 3) | (1 << 4)) // Unmask Timer 0 and Timer 1
 
-	s.Write(0x90, 5)        // T0C = 5 (Timer 0 fires after 5 H-Blanks)
+	s.Write(0x90, 4)        // T0C = 4 (Timer 0 fires at line 4)
 	s.Write(0x94, 4)        // T1S = line 4
 	s.Write(0x98, 1|(1<<8)) // Enable, mode 1 (bit 8 = 1)
 
-	// Counter increments: 1,2,3,4,5 after 5 calls to RaiseHBlankIN
+	// Counter compares 0,1,2,3,4 across 5 calls to RaiseHBlankIN
 	for i := uint16(0); i < 5; i++ {
 		s.RaiseHBlankIN(i)
 	}
-	// On 5th call (line 4): counter=5=T0C so Timer 0 fires.
+	// On 5th call (line 4): counter=4=T0C so Timer 0 fires.
 	// Line 4 also matches T1S=4. Mode 1 requires both -> Timer 1 fires.
 	// Check IST directly since Timer 0 has higher IRL priority.
 	if s.ist&(1<<4) == 0 {
