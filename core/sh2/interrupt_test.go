@@ -68,6 +68,42 @@ func TestServiceException(t *testing.T) {
 	}
 }
 
+// TestServiceExceptionCacheCoherency verifies that exception stacking
+// updates a valid cached stack line. The pushes are ordinary
+// write-through stores (SH7604 manual Section 8.4.2: a write hit
+// updates the data array), so a handler's RTE popping through the
+// cache must see the pushed PC/SR, not stale line contents.
+func TestServiceExceptionCacheCoherency(t *testing.T) {
+	bus := newTestBus(0x1000)
+	cpu := New(bus, true)
+	cpu.SetCCR(ccrCE)
+
+	cpu.reg.VBR = 0x0100
+	cpu.reg.PC = 0x0400
+	cpu.reg.SR = 0x000000F0
+	cpu.reg.R[15] = 0x0800
+
+	bus.Write32(0x0180, 0x00000600) // vecTRAP handler address
+
+	// Warm the cache line covering the stack slots the exception
+	// pushes to (0x07F8 and 0x07FC share the 16-byte line at 0x07F0).
+	bus.Write32(0x07F8, 0xCAFEBABE)
+	bus.Write32(0x07FC, 0xDEADBEEF)
+	_ = cpu.Read32(0x07F8)
+
+	cpu.serviceException(vecTRAP)
+
+	if got := cpu.Read32(0x07F8); got != 0x0400 {
+		t.Errorf("cached pushed PC = 0x%08X, want 0x00000400", got)
+	}
+	if got := cpu.Read32(0x07FC); got != 0x000000F0 {
+		t.Errorf("cached pushed SR = 0x%08X, want 0x000000F0", got)
+	}
+	if got := bus.Read32(0x07F8); got != 0x0400 {
+		t.Errorf("memory pushed PC = 0x%08X, want 0x00000400", got)
+	}
+}
+
 func TestCheckInterruptMasked(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
