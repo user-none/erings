@@ -1035,10 +1035,6 @@ func TestBIOSConfig(t *testing.T) {
 	v.regs[vdp2PRINA] = 0x0201 // NBG0=1, NBG1=2
 	v.regs[vdp2PRINB] = 0x0403 // NBG2=3, NBG3=4
 
-	// Frame boundary: EndFrame captures SCYN to seed the vertical
-	// counters for the next frame's render.
-	v.EndFrame()
-
 	// Verify config decode for each screen
 	v.BeginFrame()
 	cfg0 := v.decodeNBGConfig(0)
@@ -1861,11 +1857,9 @@ func TestRenderNBG_PlaneSize2x2(t *testing.T) {
 	v.cram[19*2] = 0x7C
 	v.cram[19*2+1] = 0x00 // blue
 
-	// Scroll to (512, 512): should read from page 3 (BR). The frame
-	// boundary captures SCYN for the next frame's vertical counter.
+	// Scroll to (512, 512): should read from page 3 (BR)
 	v.regs[vdp2SCXIN0] = 512
 	v.regs[vdp2SCYIN0] = 512
-	v.EndFrame()
 
 	buf := make([]uint32, 352*256)
 	renderTestNBG(v, 0, buf)
@@ -6776,24 +6770,23 @@ func TestLineTableY(t *testing.T) {
 		t.Errorf("single-density lineTableY(3) = %d, want 1", got)
 	}
 
-	// Double-density: displayed-line index = 2*y + fieldBit, with the
-	// odd field on the upper rows (parity 0).
+	// Double-density: displayed-line index = 2*y + fieldBit
 	v.interlace = 3
-	v.oddField = true
-	v.BeginFrame()
-	if got := v.lineTableY(5); got != 10 {
-		t.Errorf("double-density odd-field lineTableY(5) = %d, want 10", got)
-	}
-	if got := v.lineTableY(0); got != 0 {
-		t.Errorf("double-density odd-field lineTableY(0) = %d, want 0", got)
-	}
 	v.oddField = false
 	v.BeginFrame()
+	if got := v.lineTableY(5); got != 10 {
+		t.Errorf("double-density even-field lineTableY(5) = %d, want 10", got)
+	}
+	if got := v.lineTableY(0); got != 0 {
+		t.Errorf("double-density even-field lineTableY(0) = %d, want 0", got)
+	}
+	v.oddField = true
+	v.BeginFrame()
 	if got := v.lineTableY(5); got != 11 {
-		t.Errorf("double-density even-field lineTableY(5) = %d, want 11", got)
+		t.Errorf("double-density odd-field lineTableY(5) = %d, want 11", got)
 	}
 	if got := v.lineTableY(0); got != 1 {
-		t.Errorf("double-density even-field lineTableY(0) = %d, want 1", got)
+		t.Errorf("double-density odd-field lineTableY(0) = %d, want 1", got)
 	}
 }
 
@@ -6820,20 +6813,27 @@ func TestSingleDensityInterlaceBackScreenPerLine(t *testing.T) {
 	fb := v.Framebuffer()
 	width := int(v.activeWidth)
 
-	// Each table entry covers two field lines (VDP2 manual Sec 7.2
-	// Figure 7.4), and each field line weaves into two output rows:
-	// entry 0 (red) covers output rows 0-3, entry 1 (green) rows 4-7.
-	for row := 0; row < 4; row++ {
-		off := row * width * 4
-		if fb[off] != 255 || fb[off+1] != 0 || fb[off+2] != 0 {
-			t.Errorf("row %d = (%d,%d,%d), want (255,0,0)", row, fb[off], fb[off+1], fb[off+2])
-		}
+	// Line 0: should be red
+	if fb[0] != 255 || fb[1] != 0 || fb[2] != 0 {
+		t.Errorf("line 0 = (%d,%d,%d), want (255,0,0)", fb[0], fb[1], fb[2])
 	}
-	for row := 4; row < 8; row++ {
-		off := row * width * 4
-		if fb[off] != 0 || fb[off+1] != 255 || fb[off+2] != 0 {
-			t.Errorf("row %d = (%d,%d,%d), want (0,255,0)", row, fb[off], fb[off+1], fb[off+2])
-		}
+
+	// Line 1: should also be red (same entry as line 0)
+	off1 := width * 4
+	if fb[off1] != 255 || fb[off1+1] != 0 || fb[off1+2] != 0 {
+		t.Errorf("line 1 = (%d,%d,%d), want (255,0,0)", fb[off1], fb[off1+1], fb[off1+2])
+	}
+
+	// Line 2: should be green
+	off2 := width * 4 * 2
+	if fb[off2] != 0 || fb[off2+1] != 255 || fb[off2+2] != 0 {
+		t.Errorf("line 2 = (%d,%d,%d), want (0,255,0)", fb[off2], fb[off2+1], fb[off2+2])
+	}
+
+	// Line 3: should also be green (same entry as line 2)
+	off3 := width * 4 * 3
+	if fb[off3] != 0 || fb[off3+1] != 255 || fb[off3+2] != 0 {
+		t.Errorf("line 3 = (%d,%d,%d), want (0,255,0)", fb[off3], fb[off3+1], fb[off3+2])
 	}
 }
 
@@ -6987,13 +6987,13 @@ func TestDisplayHeightNonInterlace(t *testing.T) {
 	}
 }
 
-func TestDisplayHeightSingleDensityDoubled(t *testing.T) {
+func TestDisplayHeightSingleDensityUnchanged(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2TVMD] = 0x8080 // LSMD=2
 	v.recalcTiming()
 	v.BeginFrame()
-	if got, want := v.DisplayHeight(), int(v.activeLines)*2; got != want {
-		t.Errorf("single-density DisplayHeight() = %d, want %d (fields woven)", got, want)
+	if got, want := v.DisplayHeight(), int(v.activeLines); got != want {
+		t.Errorf("single-density DisplayHeight() = %d, want %d (not doubled)", got, want)
 	}
 }
 
@@ -7007,14 +7007,14 @@ func TestDisplayHeightDoubleDensity(t *testing.T) {
 	}
 }
 
-func TestDisplayHeightLSMD3WithMosaicStaysDoubled(t *testing.T) {
+func TestDisplayHeightLSMD3WithMosaicFallsBack(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2TVMD] = 0x80C0
 	v.recalcTiming()
-	v.regs[vdp2MZCTL] = 0x0001 // N0MZE -> downgrade to single-density
+	v.regs[vdp2MZCTL] = 0x0001 // N0MZE -> hardware downgrade
 	v.BeginFrame()
-	if got, want := v.DisplayHeight(), int(v.activeLines)*2; got != want {
-		t.Errorf("LSMD=3 + mosaic DisplayHeight() = %d, want %d (single-density still weaves)", got, want)
+	if got, want := v.DisplayHeight(), int(v.activeLines); got != want {
+		t.Errorf("LSMD=3 + mosaic DisplayHeight() = %d, want %d (not doubled)", got, want)
 	}
 }
 
@@ -7071,7 +7071,7 @@ func rowIsSentinel(fb []byte, row, width int, val byte) bool {
 	return true
 }
 
-func TestRenderLSMD3OddFieldWritesEvenRowsOnly(t *testing.T) {
+func TestRenderLSMD3EvenFieldWritesEvenRowsOnly(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2TVMD] = 0x80C0 // DISP=1, LSMD=3, VRESO=0, HRESO=0 -> 320x224 per field
 	v.recalcTiming()
@@ -7080,7 +7080,7 @@ func TestRenderLSMD3OddFieldWritesEvenRowsOnly(t *testing.T) {
 	v.vram[0] = 0x00
 	v.vram[1] = 0x1F
 
-	v.oddField = true // odd field -> row parity 0 -> writes even rows
+	v.oddField = false // field 0 -> fieldBit 0 -> should write even rows
 
 	fb := v.Framebuffer()
 	// Latch the LSMD=3 geometry once: entering the mode blanks the
@@ -7098,15 +7098,15 @@ func TestRenderLSMD3OddFieldWritesEvenRowsOnly(t *testing.T) {
 		evenRow := 2 * y
 		oddRow := 2*y + 1
 		if rowIsSentinel(fb, evenRow, width, 0xAA) {
-			t.Fatalf("odd field: row %d should be written, still sentinel", evenRow)
+			t.Fatalf("field=0: row %d should be written, still sentinel", evenRow)
 		}
 		if !rowIsSentinel(fb, oddRow, width, 0xAA) {
-			t.Fatalf("odd field: row %d should be untouched, was overwritten", oddRow)
+			t.Fatalf("field=0: row %d should be untouched, was overwritten", oddRow)
 		}
 	}
 }
 
-func TestRenderLSMD3EvenFieldWritesOddRowsOnly(t *testing.T) {
+func TestRenderLSMD3OddFieldWritesOddRowsOnly(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2TVMD] = 0x80C0
 	v.recalcTiming()
@@ -7114,7 +7114,7 @@ func TestRenderLSMD3EvenFieldWritesOddRowsOnly(t *testing.T) {
 	v.vram[0] = 0x00
 	v.vram[1] = 0x1F
 
-	v.oddField = false // even field -> row parity 1 -> writes odd rows
+	v.oddField = true // field 1 -> fieldBit 1 -> should write odd rows
 
 	fb := v.Framebuffer()
 	// Latch the LSMD=3 geometry once: entering the mode blanks the
@@ -7132,10 +7132,10 @@ func TestRenderLSMD3EvenFieldWritesOddRowsOnly(t *testing.T) {
 		evenRow := 2 * y
 		oddRow := 2*y + 1
 		if !rowIsSentinel(fb, evenRow, width, 0xAA) {
-			t.Fatalf("even field: row %d should be untouched, was overwritten", evenRow)
+			t.Fatalf("field=1: row %d should be untouched, was overwritten", evenRow)
 		}
 		if rowIsSentinel(fb, oddRow, width, 0xAA) {
-			t.Fatalf("even field: row %d should be written, still sentinel", oddRow)
+			t.Fatalf("field=1: row %d should be written, still sentinel", oddRow)
 		}
 	}
 }
@@ -7190,29 +7190,29 @@ func TestRenderLSMD3BackScreenPerLineDisplayedLineAddressing(t *testing.T) {
 	fb := v.Framebuffer()
 	width := int(v.activeWidth)
 
-	// Odd field: writes rows 0,2,4,... reading entries 0,2,4,...
-	fillSentinel(fb, 0xAA)
-	v.oddField = true
-	renderTestFrame(v)
-	if fb[0] != 255 || fb[1] != 0 || fb[2] != 0 {
-		t.Errorf("odd-field row 0 = (%d,%d,%d), want red", fb[0], fb[1], fb[2])
-	}
-	off2 := 2 * width * 4
-	if fb[off2] != 0 || fb[off2+1] != 0 || fb[off2+2] != 255 {
-		t.Errorf("odd-field row 2 = (%d,%d,%d), want blue", fb[off2], fb[off2+1], fb[off2+2])
-	}
-
-	// Even field: writes rows 1,3,5,... reading entries 1,3,5,...
+	// Even field: writes rows 0,2,4,... reading entries 0,2,4,...
 	fillSentinel(fb, 0xAA)
 	v.oddField = false
 	renderTestFrame(v)
+	if fb[0] != 255 || fb[1] != 0 || fb[2] != 0 {
+		t.Errorf("even-field row 0 = (%d,%d,%d), want red", fb[0], fb[1], fb[2])
+	}
+	off2 := 2 * width * 4
+	if fb[off2] != 0 || fb[off2+1] != 0 || fb[off2+2] != 255 {
+		t.Errorf("even-field row 2 = (%d,%d,%d), want blue", fb[off2], fb[off2+1], fb[off2+2])
+	}
+
+	// Odd field: writes rows 1,3,5,... reading entries 1,3,5,...
+	fillSentinel(fb, 0xAA)
+	v.oddField = true
+	renderTestFrame(v)
 	off1 := width * 4
 	if fb[off1] != 0 || fb[off1+1] != 255 || fb[off1+2] != 0 {
-		t.Errorf("even-field row 1 = (%d,%d,%d), want green", fb[off1], fb[off1+1], fb[off1+2])
+		t.Errorf("odd-field row 1 = (%d,%d,%d), want green", fb[off1], fb[off1+1], fb[off1+2])
 	}
 	off3 := 3 * width * 4
 	if fb[off3] != 255 || fb[off3+1] != 255 || fb[off3+2] != 255 {
-		t.Errorf("even-field row 3 = (%d,%d,%d), want white", fb[off3], fb[off3+1], fb[off3+2])
+		t.Errorf("odd-field row 3 = (%d,%d,%d), want white", fb[off3], fb[off3+1], fb[off3+2])
 	}
 }
 
@@ -7307,7 +7307,7 @@ func TestLineTableYLSMD3WithMosaicHalvesInsteadOfDoubles(t *testing.T) {
 	}
 }
 
-func TestRenderLSMD3WithMosaicWeavesFieldRows(t *testing.T) {
+func TestRenderLSMD3WithMosaicWritesAllRows(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2TVMD] = 0x80C0
 	v.recalcTiming()
@@ -7318,26 +7318,29 @@ func TestRenderLSMD3WithMosaicWeavesFieldRows(t *testing.T) {
 	v.vram[1] = 0x1F
 
 	fb := v.Framebuffer()
-	// Latch the geometry once: entering the mode blanks the
+	// Latch the LSMD=3 geometry once: entering the mode blanks the
 	// framebuffer and line-doubles the first frame, so the per-field
 	// write discipline asserted below starts from the second frame.
 	v.BeginFrame()
 
 	fillSentinel(fb, 0xAA)
 
-	v.oddField = true // odd field -> row parity 0 -> writes even rows
+	v.oddField = false
 	renderTestFrame(v)
 
-	// The downgrade is still an interlace mode: the field weaves into
-	// its parity's output rows and the sibling rows are untouched.
+	// Under the downgrade the renderer treats the frame as single-density:
+	// rows 0..activeLines-1 are all written; rows beyond activeLines stay
+	// sentinel because DisplayHeight falls back to non-doubled.
 	width := int(v.activeWidth)
 	activeLines := int(v.activeLines)
-	for y := 0; y < activeLines; y++ {
-		if rowIsSentinel(fb, 2*y, width, 0xAA) {
-			t.Fatalf("downgrade: row %d should be written", 2*y)
+	for row := 0; row < activeLines; row++ {
+		if rowIsSentinel(fb, row, width, 0xAA) {
+			t.Fatalf("downgrade: row %d should be written", row)
 		}
-		if !rowIsSentinel(fb, 2*y+1, width, 0xAA) {
-			t.Fatalf("downgrade: row %d should be untouched", 2*y+1)
+	}
+	for row := activeLines; row < 2*activeLines; row++ {
+		if !rowIsSentinel(fb, row, width, 0xAA) {
+			t.Fatalf("downgrade: row %d should be untouched (no doubling)", row)
 		}
 	}
 }

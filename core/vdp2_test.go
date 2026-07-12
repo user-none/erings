@@ -831,27 +831,21 @@ func TestVDP2FieldBit(t *testing.T) {
 		t.Errorf("non-interlace odd-field fieldBit = %d, want 0", got)
 	}
 
-	// LSMD=3: the odd field scans the upper rows (parity 0), the even
-	// field the lower rows (parity 1).
+	// LSMD=3 even field -> 0; odd field -> 1.
 	v.regs[vdp2TVMD] = 0x80C0
 	v.recalcTiming()
 	v.oddField = false
-	if got := v.fieldBit(); got != 1 {
-		t.Errorf("LSMD=3 even-field fieldBit = %d, want 1", got)
+	if got := v.fieldBit(); got != 0 {
+		t.Errorf("LSMD=3 even-field fieldBit = %d, want 0", got)
 	}
 	v.oddField = true
-	if got := v.fieldBit(); got != 0 {
-		t.Errorf("LSMD=3 odd-field fieldBit = %d, want 0", got)
+	if got := v.fieldBit(); got != 1 {
+		t.Errorf("LSMD=3 odd-field fieldBit = %d, want 1", got)
 	}
 
-	// LSMD=3 + NBG mosaic enabled -> effective LSMD=2: still an
-	// interlace mode, so the field parity mapping stays in effect.
+	// LSMD=3 + NBG mosaic enabled -> effective LSMD=2; fieldBit must be 0.
 	v.regs[vdp2MZCTL] = 0x0001
 	if got := v.fieldBit(); got != 0 {
-		t.Errorf("LSMD=3 + mosaic odd-field fieldBit = %d, want 0", got)
-	}
-	v.oddField = false
-	if got := v.fieldBit(); got != 1 {
-		t.Errorf("LSMD=3 + mosaic even-field fieldBit = %d, want 1", got)
+		t.Errorf("LSMD=3 + mosaic fieldBit = %d, want 0 (downgrade)", got)
 	}
 }

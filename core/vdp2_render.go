@@ -35,12 +35,8 @@ type vdp2Frame struct {
 	width   int   // active pixels per line at frame start
 	height  int   // active field lines; layer buffers indexed y*width
 	effIntl uint8 // effectiveInterlace() at frame start
-	field   int   // fieldBit() at frame start: output-row parity
+	field   int   // fieldBit() at frame start
 	hiRes   bool  // hi-res horizontal mode at frame start
-
-	// Raw odd-field flag under LSMD=3, for VDP1 DIE framebuffer
-	// selection.
-	vdp1Field int
 
 	// Snapshot of the register file, refreshed by BeginFrame and by
 	// every BeginLine. Register reads in the decode and render paths
@@ -56,14 +52,6 @@ type vdp2Frame struct {
 
 	nbgOn [4]bool
 	nbg   [4]nbgConfig
-
-	// Effective vertical-scroll base per NBG screen, 11.8 fixed point:
-	// base + dispY*incY gives a line's vertical position (VDP2 manual
-	// Sec 5.2 display coordinate formula). A SCYN write during the
-	// display sets the position directly from the following line, so
-	// BeginLine rebases; without mid-display writes the base equals
-	// the SCYN registers.
-	nbgYBaseFP [4]int32
 
 	// EXBG occupies NBG1's slot: NBG1's priority, color calculation,
 	// and window registers apply, and NBG1's own rendering is
@@ -369,28 +357,20 @@ func (v *VDP2) BeginFrame() {
 	fs.height = int(v.activeLines)
 	fs.effIntl = v.effectiveInterlace()
 	fs.field = v.fieldBit()
-	fs.vdp1Field = 0
-	if fs.effIntl == 3 && v.oddField {
-		fs.vdp1Field = 1
-	}
-
-	// NBG vertical counters load from the top-of-display SCYN capture;
-	// mid-display SCYN writes rebase them per line in BeginLine.
-	fs.nbgYBaseFP = v.scynFrame
 
 	// A geometry change reinterprets the framebuffer's row layout:
 	// pixels written under the previous stride/height are meaningless
 	// bytes under the new one. Hardware has no persistent framebuffer
 	// (each scanline is generated during the scan), so a mode switch
 	// cannot show remnants of the previous mode. Blank the buffer so
-	// it does not show them either. Under interlace the first frame
-	// also writes both field rows (fieldBootstrap): only one field has
+	// it does not show them either. Under LSMD=3 the first frame also
+	// writes both field rows (fieldBootstrap): only one field has
 	// been generated in the new mode, and displaying it interleaved
 	// with blank rows would show a half-bright frame that hardware's
 	// continuous scan does not produce.
 	fs.fieldBootstrap = false
 	if fs.width != prevWidth || fs.height != prevHeight || fs.effIntl != prevIntl {
-		fs.fieldBootstrap = fs.effIntl >= 2
+		fs.fieldBootstrap = fs.effIntl == 3
 		for i := 0; i < len(v.framebuffer); i += 4 {
 			v.framebuffer[i] = 0
 			v.framebuffer[i+1] = 0
@@ -408,13 +388,13 @@ func (v *VDP2) BeginFrame() {
 	// transition while still mutating back-screen / palette state in
 	// VRAM - honoring BDCLMD here exposes those transient values as a
 	// 1-frame color flash that does not occur on hardware. Under
-	// interlace paint every displayed row so the screen-off state is
+	// LSMD=3 paint every displayed row so the screen-off state is
 	// truly blank rather than leaving stale pixels from the prior
 	// field visible.
 	if !fs.disp {
 		stride := fs.width * 4
 		displayRows := fs.height
-		if fs.effIntl >= 2 {
+		if fs.effIntl == 3 {
 			displayRows = fs.height * 2
 		}
 		for row := 0; row < displayRows; row++ {
@@ -616,31 +596,6 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 		v.decodeLineState()
 	}
 
-	// NBG vertical-scroll counter reloads: a SCYN write during line y-1
-	// reloads the screen's vertical counter, and line y displays the
-	// written position verbatim. Rebase the effective Y base so
-	// base + dispY*incY yields the written position here and keeps
-	// stepping by incY on later lines.
-	if y > 0 && y-1 < len(v.scynSet) {
-		dispY := int32(y)
-		if fs.effIntl == 3 {
-			dispY = int32(y*2 + fs.field)
-		}
-		for s := 0; s < 4; s++ {
-			if !v.scynSet[y-1][s] {
-				continue
-			}
-			incY := int32(0x100)
-			switch s {
-			case 0:
-				incY = int32(fs.regs[vdp2ZMYIN0]&0x07)<<8 | int32(fs.regs[vdp2ZMYDN0]>>8)
-			case 1:
-				incY = int32(fs.regs[vdp2ZMYIN1]&0x07)<<8 | int32(fs.regs[vdp2ZMYDN1]>>8)
-			}
-			fs.nbgYBaseFP[s] = v.scynRec[y-1][s] - dispY*incY
-		}
-	}
-
 	// Sprite framebuffer rotated read: this line's read coordinate is
 	// Xst + dXst*Vcnt, not the full rotation matrix pipeline - per
 	// VDP1 manual Sec 1.2 only the read start coordinates and movement
@@ -771,17 +726,15 @@ func (v *VDP2) RenderLine(y int, fb vdp1FBView) {
 }
 
 // frameOutRow maps a field-line index (0..height-1) to the framebuffer
-// row for the field latched by BeginFrame: y*2 + field under either
-// interlace mode (the fields weave into alternating output rows),
-// identity for non-interlace.
+// row for the field latched by BeginFrame: y*2 + field under LSMD=3,
+// identity otherwise.
 func (v *VDP2) frameOutRow(y int) int {
-	if v.frame.effIntl >= 2 {
+	if v.frame.effIntl == 3 {
 		return y*2 + v.frame.field
 	}
 	return y
 }
 
-// FrameFieldBit returns 1 when the frame latched by BeginFrame is the
-// odd field under double-density interlace, 0 otherwise. Selects the
-// VDP1 display framebuffer for the field being rendered.
-func (v *VDP2) FrameFieldBit() int { return v.frame.vdp1Field }
+// FrameFieldBit returns the field bit latched by BeginFrame: the
+// parity of the field being rendered this frame.
+func (v *VDP2) FrameFieldBit() int { return v.frame.field }

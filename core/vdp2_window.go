@@ -35,14 +35,14 @@ func (v *VDP2) windowY(raw uint16) int {
 	return int(raw & 0x01FF)
 }
 
-// lineTableY returns the per-line table index for field-line y.
-// Single-density interlace (LSMD=2) halves y: per VDP2 manual Sec 7.2
-// Figure 7.4, each table entry covers two lines in that mode.
-// Double-density interlace (LSMD=3) maps the caller's field-line y to
-// the displayed-line index 2*y + field so the per-displayed-line
-// tables (line scroll, line color, back screen, line window) are read
-// at the correct offset. Interlace mode and field parity come from
-// the BeginFrame latch.
+// lineTableY returns the per-line table index for scanline y.
+// Single-density interlace (LSMD=2) halves y since each entry covers
+// two field-lines. Double-density interlace (LSMD=3) maps the caller's
+// field-line y to the displayed-line index 2*y + field so the per-
+// displayed-line tables (line scroll, line color, back screen, line
+// window) are read at the correct offset. LSMD=3 with NBG mosaic
+// enabled downgrades to LSMD=2 semantics per VDP2 manual section 4.11.
+// Interlace mode and field parity come from the BeginFrame latch.
 func (v *VDP2) lineTableY(y int) int {
 	switch v.frame.effIntl {
 	case 2:
