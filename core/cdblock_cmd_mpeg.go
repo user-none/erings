@@ -30,9 +30,12 @@ package core
 //     return like a missing extension handler.
 //   - $97 frame-bank parameter: not modeled (no bank model); only the
 //     decode step is.
-//   - $A1-$A4 output configuration (display window, border color,
-//     fade, video effect): stored for the EXBG render path but not
-//     applied; the decoded picture maps 1:1 from the screen origin.
+//   - $A2 border color, $A3 fade, and $A4 video effect: stored, not
+//     applied. The $A1 display window (frame-buffer position/ratio,
+//     display position, display size) is applied by the EXBG render
+//     path (nearest-neighbor stepping; the $A4 interpolation flags
+//     are not honored); with no window configured the picture maps
+//     1:1 from the screen origin.
 //   - $A0 frame bank: stored; decoded pictures go straight to the
 //     frame latch with no bank model.
 //   - Connection records: the layer byte (a single system-layer
@@ -63,9 +66,8 @@ package core
 //     the CR4 byte's meaning is untraced - the host library always
 //     sends 0xFF for it.
 //   - When the firmware asserts operation-status bit 3.
-//   - The $A1 frame-buffer ratio encoding and its 0x0001 CR2 byte;
-//     the $A3 fade gain scale; the $A4 field layout beyond the
-//     interpolation byte.
+//   - The $A1 0x0001 CR2 change-flag byte; the $A3 fade gain scale;
+//     the $A4 field layout beyond the interpolation byte.
 //   - Whether MPST evaluates level or edge against the cause mask
 //     (modeled level: pending causes assert on $92 unmask).
 //   - The VSYNC operation-interval counter's reset semantics (modeled
@@ -487,6 +489,7 @@ func (cb *CDBlock) cmdMpegDisplay() {
 func (cb *CDBlock) cmdMpegSetWindow() {
 	sub := uint8(cb.cmd[0]) & 7
 	cb.mpeg.window[sub] = [3]uint16{cb.cmd[1], cb.cmd[2], cb.cmd[3]}
+	cb.mpegSyncWindowLatch()
 	cb.mpegStatusReturn()
 }
 

@@ -861,6 +861,7 @@ func buildCDState(w *fieldWriter, cb *CDBlock) {
 	w.raw("putBuf", cb.putBuf)
 	w.u8("putBufNum", cb.putBufNum)
 	w.i64("putSectorsRemaining", int64(cb.putSectorsRemaining))
+	w.u32("putWords", cb.putWords)
 	w.flag("authenticated", cb.authenticated)
 	w.flag("mpegCardAuth", cb.mpegCardAuth.Load())
 	w.flag("peri", cb.peri)
@@ -2450,6 +2451,7 @@ func decodeCDState(e *Emulator, r *fieldReader) func() {
 	putBufData := r.take("putBuf", -1)
 	putBufNum := r.u8("putBufNum")
 	putSectorsRemaining := r.i64("putSectorsRemaining")
+	putWords := r.u32("putWords")
 	authenticated := r.flag("authenticated")
 	mpegCardAuth := r.flag("mpegCardAuth")
 	peri := r.flag("peri")
@@ -2500,6 +2502,7 @@ func decodeCDState(e *Emulator, r *fieldReader) func() {
 		cb.putBuf = append([]byte(nil), putBufData...)
 		cb.putBufNum = putBufNum
 		cb.putSectorsRemaining = int(putSectorsRemaining)
+		cb.putWords = putWords
 		cb.authenticated = authenticated
 		cb.mpegCardAuth.Store(mpegCardAuth)
 		cb.peri = peri
@@ -2787,6 +2790,7 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 		for i := range m.window {
 			copy(m.window[i][:], window[i*3:])
 		}
+		cb.mpegSyncWindowLatch()
 		m.borderColor = borderColor
 		m.fade = fade
 		m.videoEffect = videoEffect

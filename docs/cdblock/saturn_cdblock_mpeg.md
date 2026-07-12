@@ -248,7 +248,19 @@ on), CR2 low byte = frame bank number.
 0 = frame-buffer position, 1 = frame-buffer ratio, 2 = display
 position, 3 = display size, 4 = display offset (all five selectors go
 through this one command). CR2 low byte = change flag, CR3 = X value,
-CR4 = Y value.
+CR4 = Y value. The display position places the picture's top-left on
+screen (signed values; the display size is an exclusive extent) in a
+coordinate space whose Y origin sits 8 lines above the visible frame:
+titles wanting the picture at the top of the screen program Y = 8
+(traced across five titles). The frame-buffer position anchors the
+source picture: each display pixel advances the source coordinate by
+the frame-buffer ratio. The ratio wire encoding (disassembled from the
+host library's converter): bits 4-13 = integer magnification in units,
+low nibble = a fraction table index (0, .500, .666, .750, .800, .833,
+.857 for indexes 1-7; 1.000, .500, .333, .250, .200, .166, .142 for
+9-15), bit 15 set = the value is the source step directly, clear = the
+step is the reciprocal 1/(value+1). $8011 = 1:1; $000F = an 8/7
+enlargement (source step 7/8).
 
 **$A3 Set Fade** - Y gain and C gain.
 
@@ -485,7 +497,10 @@ sector pipeline, not a separate channel:
    commands, firmware doc) so the MPEG track's sectors land in a
    partition.
 2. A stream-connection MPEG command ($9A-$9E, node index 0-31) binds that
-   partition (or the CD device output) to the decoder input.
+   partition (or the CD device output) to the decoder input. The
+   partition does not have to be disc-fed: a traced title demuxes the
+   disc stream on the host and delivers the decoder's video elementary
+   stream into its partition with Put Sector Data ($64).
 3. The decoder consumes the sectors; the firmware's role is transport
    (the DMAC2/3 packet channel carries LSI commands, and the sector data
    is delivered from buffer DRAM).

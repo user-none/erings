@@ -430,6 +430,13 @@ func (v *VDP2) BeginFrame() {
 		if rgb, w, h, ok := v.exbgSrc.MpegFrameRGB(); ok {
 			v.exbgBuf, v.exbgW, v.exbgH = rgb, w, h
 			v.exbgOK = true
+			v.exbgSized = false
+			if wsrc, has := v.exbgSrc.(interface {
+				MpegWindow() (int, int, int, int, int, int, int, int, bool)
+			}); has {
+				v.exbgDX, v.exbgDY, v.exbgDW, v.exbgDH,
+					v.exbgSX, v.exbgSY, v.exbgRatX, v.exbgRatY, v.exbgSized = wsrc.MpegWindow()
+			}
 		}
 	}
 
@@ -697,35 +704,69 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 // exbgSpanSetup prepares row y of the EXBG external-image screen: the
 // latched frame's row is copied into the NBG1 layer buffer as direct
 // RGB with the screen priority (and color-calculation flag) packed per
-// pixel. Pixels outside the frame are transparent. The frame is mapped
-// 1:1 from the screen origin; the display-window transforms of the
-// $A1-$A4 command set are not applied.
+// pixel. Pixels outside the frame are transparent. The $A1 display
+// window places the picture: screen position = display position,
+// visible extent = display size, and the frame-buffer position and
+// ratio anchor and step the source (nearest-neighbor). Without a
+// configured window the frame maps 1:1 from the screen origin. The
+// $A2-$A4 output controls are not applied.
 func (v *VDP2) exbgSpanSetup(buf []uint32, y int) func(x0, x1 int) {
 	width := v.frame.width
 	base := uint32(v.frame.exbgPri) << 24
 	if v.frame.exbgCC {
 		base |= layerCCBit
 	}
+	// Screen-to-source mapping for this row: window pixels [wx0, wx1)
+	// show source pixels srcX + (x-wx0)*ratX/1000 of source row
+	// srcY (the frame-buffer anchor plus the ratio-stepped offset).
+	wx0, wx1 := 0, v.exbgW
+	srcX, srcY := 0, y
+	ratX := 1000
+	if v.exbgSized {
+		wx0 = v.exbgDX
+		wx1 = v.exbgDX + v.exbgDW
+		srcX = v.exbgSX
+		ratX = v.exbgRatX
+		srcY = -1
+		if y >= v.exbgDY && y < v.exbgDY+v.exbgDH {
+			srcY = v.exbgSY + (y-v.exbgDY)*v.exbgRatY/1000
+		}
+	}
 	var src []uint32
-	if y < v.exbgH {
-		src = v.exbgBuf[y*v.exbgW : y*v.exbgW+v.exbgW]
+	if srcY >= 0 && srcY < v.exbgH {
+		src = v.exbgBuf[srcY*v.exbgW : srcY*v.exbgW+v.exbgW]
+	}
+	if wx0 < 0 {
+		srcX -= wx0 * ratX / 1000
+		wx0 = 0
 	}
 	row := y * width
 	return func(x0, x1 int) {
-		// Clamp the span to the frame row once; pixels beyond it (and
-		// whole rows below the frame, where src is empty) are
-		// transparent.
-		end := x1
-		if end > len(src) {
-			end = len(src)
+		// Clamp the span to the visible picture region; everything
+		// else on the row (including window pixels past the source
+		// row's end) is transparent.
+		lo, hi := x0, x1
+		if lo < wx0 {
+			lo = wx0
 		}
-		if end < x0 {
-			end = x0
+		if hi > wx1 {
+			hi = wx1
 		}
-		for x := x0; x < end; x++ {
-			buf[row+x] = base | src[x]
+		if hi < lo {
+			lo, hi = x0, x0
 		}
-		for x := end; x < x1; x++ {
+		for x := x0; x < lo; x++ {
+			buf[row+x] = 0
+		}
+		for x := lo; x < hi; x++ {
+			sx := srcX + (x-wx0)*ratX/1000
+			if sx >= 0 && sx < len(src) {
+				buf[row+x] = base | src[sx]
+			} else {
+				buf[row+x] = 0
+			}
+		}
+		for x := hi; x < x1; x++ {
 			buf[row+x] = 0
 		}
 	}

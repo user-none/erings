@@ -198,6 +198,15 @@ type VDP2 struct {
 	exbgH   int
 	exbgOK  bool // frame latched this frame
 
+	// Display-window placement latched with the frame ($A1): picture
+	// top-left on screen, visible extent, and source-side offset.
+	// exbgSized false = no window configured, map 1:1 from the origin.
+	exbgDX, exbgDY     int
+	exbgDW, exbgDH     int
+	exbgSX, exbgSY     int
+	exbgRatX, exbgRatY int // source step per display pixel, thousandths
+	exbgSized          bool
+
 	// Display mode state
 	hiRes     bool  // HRESO bit 1 set (640/704 mode)
 	interlace uint8 // 0=non-interlace, 2=single-density, 3=double-density

@@ -988,6 +988,67 @@ func TestCDBlockMpegEndConditionsGatedByConnMode(t *testing.T) {
 	}
 }
 
+// TestCDBlockMpegDecodeRatio verifies the frame-buffer ratio wire
+// decoding: $8011 is the 1:1 default, $000F is the 7/8 source step of
+// an 8/7 enlargement (reciprocal form), $0001 decodes to 1:1 through
+// the reciprocal of 1.000, and unusable table entries fall back to
+// 1:1.
+func TestCDBlockMpegDecodeRatio(t *testing.T) {
+	cases := []struct {
+		fr   uint32
+		want uint32
+	}{
+		{0x8011, 1000}, // direct 1.000: the library default
+		{0x000F, 875},  // reciprocal of 1+1/7: 7/8 source step
+		{0x0001, 1000}, // reciprocal of 1.000
+		{0x0000, 1000}, // unused table entry: fall back to 1:1
+		{0x8021, 2000}, // direct 2.000
+	}
+	for _, c := range cases {
+		if got := mpegDecodeRatio(c.fr); got != c.want {
+			t.Errorf("mpegDecodeRatio(%04X) = %d, want %d", c.fr, got, c.want)
+		}
+	}
+}
+
+// TestCDBlockMpegWindowPlacement verifies MpegWindow converts the $A1
+// sub-parameters for the render walker: signed display position with
+// the Y origin 8 lines above the visible frame, exclusive extent,
+// source anchor, and per-axis ratios.
+func TestCDBlockMpegWindowPlacement(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	if _, _, _, _, _, _, _, _, sized := cb.MpegWindow(); sized {
+		t.Fatal("window should be unconfigured after $93")
+	}
+
+	// The boxed-video shape: position (39, 40), size 240x160,
+	// fb anchor (22, 0), ratio X 7/8 step, Y 1:1.
+	execCommandFull(cb, 0xA1, mpegWinFbPos, 0x0001, 22, 0)
+	execCommandFull(cb, 0xA1, mpegWinFbRatio, 0x0001, 0x000F, 0x8011)
+	execCommandFull(cb, 0xA1, mpegWinDispPos, 0x0001, 39, 40)
+	execCommandFull(cb, 0xA1, mpegWinDispSiz, 0x0001, 240, 160)
+	dx, dy, dw, dh, sx, sy, ratX, ratY, sized := cb.MpegWindow()
+	if !sized {
+		t.Fatal("window should be configured")
+	}
+	if dx != 39 || dy != 40-8 || dw != 240 || dh != 160 {
+		t.Errorf("placement = (%d,%d) %dx%d, want (39,32) 240x160", dx, dy, dw, dh)
+	}
+	if sx != 22 || sy != 0 {
+		t.Errorf("fb anchor = (%d,%d), want (22,0)", sx, sy)
+	}
+	if ratX != 875 || ratY != 1000 {
+		t.Errorf("ratios = %d/%d, want 875/1000", ratX, ratY)
+	}
+
+	// Signed display positions (a traced title uses X = -1).
+	execCommandFull(cb, 0xA1, mpegWinDispPos, 0x0001, 0xFFFF, 8)
+	if dx, dy, _, _, _, _, _, _, _ := cb.MpegWindow(); dx != -1 || dy != 0 {
+		t.Errorf("signed position = (%d,%d), want (-1,0)", dx, dy)
+	}
+}
+
 // TestCDBlockMpegSetWindowStoresSelectors verifies $A1 stores CR2-CR4
 // under the CR1 low-byte selector (numbering pinned by the host
 // library's builder stubs: 0 fb-position, 1 fb-ratio, 2 display

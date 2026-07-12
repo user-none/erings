@@ -270,6 +270,86 @@ type mpegFrameLatch struct {
 	cons    int           // consumer-owned slot (render walker only)
 	consHas bool          // consumer has taken a frame (render walker only)
 	dispOn  atomic.Bool   // $A0 display switch
+
+	// $A1 display-window values for the render walker, each packed
+	// X<<16 | Y (int16 halves; positions are signed). dispSize zero
+	// means the window was never configured: the picture maps 1:1
+	// from the screen origin.
+	dispPos  atomic.Uint32 // display position: picture top-left on screen
+	dispSize atomic.Uint32 // display size: visible extent (exclusive)
+	fbPos    atomic.Uint32 // frame-buffer position: source-side anchor
+	fbRatio  atomic.Uint32 // frame-buffer ratio: raw X<<16 | Y wire values
+}
+
+// mpegSyncWindowLatch publishes the stored $A1 window sub-parameters
+// to the render walker. Called on $A1 writes, $93 reset, and state
+// restore.
+func (cb *CDBlock) mpegSyncWindowLatch() {
+	l := &cb.mpegFrame
+	w := &cb.mpeg.window
+	l.fbPos.Store(uint32(w[mpegWinFbPos][1])<<16 | uint32(w[mpegWinFbPos][2]))
+	l.fbRatio.Store(uint32(w[mpegWinFbRatio][1])<<16 | uint32(w[mpegWinFbRatio][2]))
+	l.dispPos.Store(uint32(w[mpegWinDispPos][1])<<16 | uint32(w[mpegWinDispPos][2]))
+	l.dispSize.Store(uint32(w[mpegWinDispSiz][1])<<16 | uint32(w[mpegWinDispSiz][2]))
+}
+
+// mpegRatioFrac is the fraction table of the frame-buffer ratio
+// encoding, in thousandths, indexed by the wire value's low nibble
+// (host library reference: fraction values for the direct form, 1/n
+// values for the reciprocal form; 0xFFFF entries are unused).
+var mpegRatioFrac = [16]uint32{
+	0xFFFF, 0, 500, 666, 750, 800, 833, 857,
+	0xFFFF, 1000, 500, 333, 250, 200, 166, 142,
+}
+
+// mpegDecodeRatio converts one frame-buffer ratio wire value to the
+// source step per display pixel in thousandths: bits 4-13 are the
+// integer part, the low nibble indexes the fraction table, and a
+// clear bit 15 selects the reciprocal form 1000000/(v+1000). The
+// library's 1:1 default encodes as $8011. Unusable values decode to
+// 1000 (1:1).
+func mpegDecodeRatio(fr uint32) uint32 {
+	frac := mpegRatioFrac[fr&0xF]
+	if frac == 0xFFFF {
+		return 1000
+	}
+	v := ((fr>>4)&0x3FF)*1000 + frac
+	if fr&0x8000 == 0 {
+		v = 1000000 / (v + 1000)
+	}
+	if v == 0 {
+		return 1000
+	}
+	return v
+}
+
+// mpegWindowYOrigin is the display-position Y of the visible frame's
+// top line: the decoder's display coordinates start 8 lines above the
+// VDP2 frame (traced: titles wanting the picture at the top of the
+// screen program Y=8, and a title placing a boxed window at Y=40
+// lands at frame line 32).
+const mpegWindowYOrigin = 8
+
+// MpegWindow returns the display-window placement for the current
+// picture: screen position (signed, converted to visible-frame
+// coordinates), visible extent, the source-side anchor, and the
+// source step per display pixel in thousandths per axis (1000 = 1:1).
+// sized is false when no window has been configured (the picture maps
+// 1:1 from the origin). Called by VDP2 from the render walker.
+func (cb *CDBlock) MpegWindow() (dx, dy, dw, dh, sx, sy, ratX, ratY int, sized bool) {
+	pos := cb.mpegFrame.dispPos.Load()
+	size := cb.mpegFrame.dispSize.Load()
+	fb := cb.mpegFrame.fbPos.Load()
+	rat := cb.mpegFrame.fbRatio.Load()
+	dx = int(int16(pos >> 16))
+	dy = int(int16(pos)) - mpegWindowYOrigin
+	dw = int(size >> 16)
+	dh = int(size & 0xFFFF)
+	sx = int(int16(fb >> 16))
+	sy = int(int16(fb))
+	ratX = int(mpegDecodeRatio(rat >> 16))
+	ratY = int(mpegDecodeRatio(rat & 0xFFFF))
+	return dx, dy, dw, dh, sx, sy, ratX, ratY, size != 0
 }
 
 // mpegLatchFrame converts a decoded picture into the producer slot and
@@ -318,6 +398,7 @@ func (cb *CDBlock) mpegSetDisplay(on bool) {
 func (cb *CDBlock) mpegResetLatch() {
 	l := &cb.mpegFrame
 	l.dispOn.Store(false)
+	cb.mpegSyncWindowLatch()
 	s := &l.slots[l.prod]
 	s.w, s.h = 0, 0
 	old := l.mailbox.Swap(uint32(l.prod) | mpegMailboxFresh)
