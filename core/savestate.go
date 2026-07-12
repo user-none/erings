@@ -2928,6 +2928,14 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 						p.audEsWritten = len(audEsTail)
 					}
 				}
+				if i == mpegLayerVideo &&
+					(l.phase == mpegPhaseRunning || l.phase == mpegPhaseEnding) {
+					// The decoder re-enters the stream at a GOP whose
+					// leading B-pictures may reference the anchor
+					// before the entry point; gate them off the display
+					// (see mpegPicScan).
+					l.resyncPics = &mpegPicScan{}
+				}
 				if l.psEnded {
 					l.ps.SignalEnd()
 				}

@@ -105,6 +105,20 @@ type mpegLayer struct {
 	// payload bytes, which are not start-code-free).
 	psWritten int   // total bytes written to ps
 	psBounds  []int // record boundary offsets; consecutive pairs delimit records
+
+	// resyncPics gates the entry GOP's non-decodable leading
+	// B-pictures after a state restore (see mpegPicScan). Armed only
+	// by restore on the video layer; dropped once settled.
+	resyncPics *mpegPicScan
+}
+
+// esWrite feeds the layer's elementary stream, keeping the restore
+// picture scan (when armed) in step with every byte the decoder sees.
+func (l *mpegLayer) esWrite(b []byte) {
+	if l.resyncPics != nil {
+		l.resyncPics.feed(b)
+	}
+	l.es.Write(b)
 }
 
 // psWrite appends one record (a sector payload, or a restore-seeded
@@ -213,6 +227,121 @@ func (s *mpegPackScan) feed(payload []byte) bool {
 		}
 	}
 	return ended
+}
+
+// mpegPicScan walks the video elementary stream positionally as it is
+// fed, recording each picture header's coding type and the entry GOP's
+// closed flag. State restore arms one on the video layer: a decoder
+// entering the stream at a group whose closed_gop bit is clear cannot
+// reconstruct the group's leading B-pictures - they reference the
+// anchor before the entry point, the condition ISO 11172-2 defines
+// broken_link to mark - so those decoded frames are dropped instead of
+// displayed until the second anchor picture reconstructs.
+type mpegPicScan struct {
+	code      int     // start-code matcher: 0-2 zeros seen, 3 = 00 00 01 seen
+	pendKind  byte    // start code whose header bytes are being collected
+	pendBuf   [4]byte // collected header bytes
+	pendCap   int     // header bytes wanted
+	pendN     int     // header bytes still to collect
+	written   int     // cumulative bytes fed
+	pics      []mpegPicInfo
+	seqSeen   bool // first sequence header reached: the decoder's entry point
+	gopSeen   bool // entry GOP header parsed
+	gopClosed bool // entry GOP closed_gop flag
+	anchors   int  // I/P pictures the decoder has consumed
+}
+
+// mpegPicInfo is one scanned picture header: the stream offset just
+// past its type bits and the 3-bit picture coding type (1 I, 2 P, 3 B).
+type mpegPicInfo struct {
+	off int
+	typ byte
+}
+
+func (s *mpegPicScan) feed(b []byte) {
+	for i, v := range b {
+		if s.pendN > 0 {
+			s.pendBuf[s.pendCap-s.pendN] = v
+			s.pendN--
+			if s.pendN > 0 {
+				continue
+			}
+			if s.pendKind == 0x00 {
+				// Picture header: temporal_reference (10 bits), then
+				// picture_coding_type (3 bits).
+				s.pics = append(s.pics, mpegPicInfo{off: s.written + i + 1, typ: s.pendBuf[1] >> 3 & 7})
+			} else if !s.gopSeen {
+				// GOP header: time_code (25 bits), closed_gop (1 bit),
+				// broken_link (1 bit).
+				s.gopSeen = true
+				s.gopClosed = s.pendBuf[3]&0x40 != 0
+			}
+			continue
+		}
+		switch {
+		case s.code < 2:
+			if v == 0 {
+				s.code++
+			} else {
+				s.code = 0
+			}
+		case s.code == 2:
+			switch v {
+			case 0:
+				// A third zero byte still prefixes a start code.
+			case 1:
+				s.code = 3
+			default:
+				s.code = 0
+			}
+		default:
+			s.code = 0
+			switch v {
+			case 0xB3:
+				// The decoder's sequence-header hunt skips everything
+				// before the first B3 without decoding it; pictures in
+				// that region must not be recorded or counted.
+				s.seqSeen = true
+			case 0x00:
+				if s.seqSeen {
+					s.pendKind, s.pendCap, s.pendN = 0x00, 2, 2
+				}
+			case 0xB8:
+				if s.seqSeen && !s.gopSeen {
+					s.pendKind, s.pendCap, s.pendN = 0xB8, 4, 4
+				}
+			}
+		}
+	}
+	s.written += len(b)
+}
+
+// unsafeReturn advances the scan past the pictures the decoder has
+// consumed (its read position derived from the unread byte count) and
+// reports whether the frame the decoder just returned is a
+// non-decodable leading B-picture of the entry GOP. A returned anchor
+// is always reconstructible: the first is intra, and later ones
+// reference reconstructed anchors only.
+func (s *mpegPicScan) unsafeReturn(esRemaining int) bool {
+	esRead := s.written - esRemaining
+	unsafe := false
+	for len(s.pics) > 0 && s.pics[0].off <= esRead {
+		pic := s.pics[0]
+		s.pics = s.pics[1:]
+		if pic.typ == 3 {
+			unsafe = s.anchors < 2 && !(s.gopSeen && s.gopClosed)
+		} else {
+			s.anchors++
+			unsafe = false
+		}
+	}
+	return unsafe
+}
+
+// settled reports that no further pictures can be non-decodable: the
+// entry GOP was closed, or two anchors have reconstructed.
+func (s *mpegPicScan) settled() bool {
+	return s.anchors >= 2 || (s.gopSeen && s.gopClosed)
 }
 
 // mpegScanStartCode advances a rolling start-code matcher over payload
@@ -626,13 +755,13 @@ func (cb *CDBlock) mpegFeedLayer(layer int) {
 			// data past it belongs to the next stream and is not fed.
 			// The XA submode end marks apply as on the pack path.
 			if end := mpegScanStartCode(&l.esScan, payload, 0xB7); end >= 0 {
-				l.es.Write(payload[:end])
+				l.esWrite(payload[:end])
 				mpegEndVideoES(l)
 				l.phase = mpegPhaseEnding
 				l.psEnded = true
 				break
 			}
-			l.es.Write(payload)
+			l.esWrite(payload)
 			// EOR gated on connection-mode bit 0x01 as on the pack
 			// path; EOF always ends the layer.
 			if sec.submode&0x80 != 0 || (sec.submode&0x01 != 0 && conn.mode&0x01 != 0) {
@@ -732,7 +861,7 @@ func (cb *CDBlock) mpegPumpDemux(layer int) {
 			// this bitstream event. Data past it is not the same
 			// sequence and is not fed.
 			if end := mpegScanStartCode(&l.esScan, pkt.Data, 0xB7); end >= 0 {
-				l.es.Write(pkt.Data[:end])
+				l.esWrite(pkt.Data[:end])
 				mpegEndVideoES(l)
 				if l.phase == mpegPhaseRunning {
 					l.phase = mpegPhaseEnding
@@ -753,7 +882,7 @@ func (cb *CDBlock) mpegPumpDemux(layer int) {
 				p.audEsPTS = append(p.audEsPTS[:0], p.audEsPTS[1:]...)
 			}
 		}
-		l.es.Write(pkt.Data)
+		l.esWrite(pkt.Data)
 	}
 }
 
@@ -765,7 +894,7 @@ func (cb *CDBlock) mpegPumpDemux(layer int) {
 // length to equal the recorded total, which discarding breaks), so
 // without a bounding code the true final picture would never decode.
 func mpegEndVideoES(l *mpegLayer) {
-	l.es.Write([]byte{0x00, 0x00, 0x01, 0x00})
+	l.esWrite([]byte{0x00, 0x00, 0x01, 0x00})
 	l.es.SignalEnd()
 	l.esEnded = true
 }
@@ -1048,7 +1177,20 @@ func (cb *CDBlock) mpegTick(c int) {
 			if p.resyncHold && p.resyncVidPTS >= 0 {
 				p.resyncVidPics++
 			}
-			cb.mpegLatchFrame(f)
+			// Restore entry-GOP gate: a non-decodable leading B-picture
+			// occupies its presentation slot (the pacing and status
+			// above are untouched) but is not displayed; the held
+			// picture repeats instead.
+			drop := false
+			if vl.resyncPics != nil {
+				drop = vl.resyncPics.unsafeReturn(vl.es.Remaining())
+				if vl.resyncPics.settled() {
+					vl.resyncPics = nil
+				}
+			}
+			if !drop {
+				cb.mpegLatchFrame(f)
+			}
 			m.vidState = mpegRunPlaying
 			m.vidStatus |= mpegVidDecoding | mpegVidUpdated | mpegVidOutReady | mpegVidFirstShown
 			if m.dispSwitch != 0 {
