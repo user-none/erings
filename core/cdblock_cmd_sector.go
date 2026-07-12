@@ -139,9 +139,16 @@ func (cb *CDBlock) cmdGetSectorInfo() {
 	cb.hirqReq |= hirqCMOK
 }
 
+// cmdSetSectorLength sets the get/put transfer sector lengths. 0xFF
+// keeps the current value (traced: hosts set one direction at a time
+// with 0xFF in the other, the CDC keep-current convention).
 func (cb *CDBlock) cmdSetSectorLength() {
-	cb.getSectorLen = int(cb.cmd[0] & 0xFF)
-	cb.putSectorLen = int(cb.cmd[1] >> 8)
+	if get := uint8(cb.cmd[0]); get != 0xFF {
+		cb.getSectorLen = int(get)
+	}
+	if put := uint8(cb.cmd[1] >> 8); put != 0xFF {
+		cb.putSectorLen = int(put)
+	}
 	cb.standardReturn()
 	cb.resultsRead = false
 	cb.hirqReq |= hirqCMOK | hirqESEL
@@ -221,6 +228,7 @@ func (cb *CDBlock) cmdPutSectorData() {
 	cb.putBuf = nil
 	cb.putBufNum = bufNum
 	cb.putSectorsRemaining = count
+	cb.putWords = 0
 	cb.transferActive = true
 	cb.dataTransferType = cdCmdPutSectorData
 	cb.standardReturn()

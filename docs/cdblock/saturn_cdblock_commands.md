@@ -35,7 +35,9 @@ Writing to CR4 (offset 0x25 within the register block) triggers command
 execution.
 
 All registers are 16-bit but can be accessed as 32-bit longwords.
-DATATRNS returns consecutive FIFO words on 32-bit reads.
+DATATRNS moves consecutive FIFO words on 32-bit accesses: a long read
+returns two words and a long write delivers two words, in order
+(traced: a title feeds Put Sector Data entirely through long writes).
 
 ### DATASTAT bits
 
@@ -259,7 +261,9 @@ Returns:
 | CR3 | 0x0000                                          |
 | CR4 | 0x0000                                          |
 
-Transfer word count is 0xFFFFFF if no transfer was in progress.
+Transfer word count is 0xFFFFFF if no transfer was in progress. After
+a Put Sector Data transfer the count reports the words the host
+delivered (traced: a title verifies its put with this value).
 HIRQ: EHST (only for Get Sector, Get Then Delete, Put Sector transfers)
 
 ### 0x10 - Play Disc
@@ -627,6 +631,8 @@ Sector length types:
 - 1 = 2336 bytes
 - 2 = 2340 bytes
 - 3 = 2352 bytes (full sector)
+- 0xFF = no change (traced: hosts set one direction at a time with
+  0xFF in the other)
 
 Returns: CD status data. HIRQ: ESEL
 

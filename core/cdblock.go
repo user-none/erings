@@ -262,6 +262,7 @@ type CDBlock struct {
 	putBuf              []byte // accumulates incoming DATATRNS writes
 	putBufNum           uint8  // target partition for put transfer
 	putSectorsRemaining int    // sectors left to accept
+	putWords            uint32 // 16-bit words received this put ($06 reports them)
 	authenticated       bool
 	mpegCardAuth        atomic.Bool
 	discType            uint8 // detected disc type (0=none, 1=audio, 2=data, 4=Saturn)
@@ -650,6 +651,7 @@ func (cb *CDBlock) Write(offset uint32, val uint16) {
 		// DATATRNS write - accept data during put transfer
 		if cb.putSectorsRemaining > 0 {
 			cb.putBuf = append(cb.putBuf, uint8(val>>8), uint8(val))
+			cb.putWords++
 			cb.checkPutSector()
 		}
 	case 0x0008:
@@ -674,7 +676,15 @@ func (cb *CDBlock) Write(offset uint32, val uint16) {
 }
 
 // Write32 handles a 32-bit write as two consecutive 16-bit writes.
+// The registers sit on 4-byte boundaries, so a long access spans the
+// register and its neighbor - except DATATRNS, a FIFO: both halves of
+// a long access feed it in order, mirroring ReadDataTRNS32.
 func (cb *CDBlock) Write32(offset uint32, val uint32) {
+	if offset == 0x0000 {
+		cb.Write(0x0000, uint16(val>>16))
+		cb.Write(0x0000, uint16(val))
+		return
+	}
 	cb.Write(offset, uint16(val>>16))
 	cb.Write(offset+4, uint16(val))
 }

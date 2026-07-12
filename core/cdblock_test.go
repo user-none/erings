@@ -2246,6 +2246,67 @@ func TestCDBlockPutSectorDataBasic(t *testing.T) {
 	}
 }
 
+// TestCDBlockPutSectorDataWrite32 verifies a put transfer fed through
+// 32-bit DATATRNS writes: both halves of each long access enter the
+// FIFO in order (mirroring ReadDataTRNS32), completing the sector in
+// the destination partition with its bytes intact.
+func TestCDBlockPutSectorDataWrite32(t *testing.T) {
+	cb := covCDBlock()
+	cb.putSectorLen = 0 // 2048-byte mode
+
+	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x0300, 0x0001)
+	for i := 0; i < 2048/4; i++ {
+		v := uint32(i)<<16 | uint32(i) ^ 0xFFFF
+		cb.Write32(0x0000, v)
+	}
+	if got := len(cb.partitions[3].sectors); got != 1 {
+		t.Fatalf("partition 3 sectors = %d, want 1", got)
+	}
+	if cb.putSectorsRemaining != 0 {
+		t.Errorf("putSectorsRemaining = %d, want 0", cb.putSectorsRemaining)
+	}
+	sec := &cb.partitions[3].sectors[0]
+	if sec.userSize != 2048 || sec.userOffset != 0 {
+		t.Errorf("sector geometry = off %d size %d, want 0/2048", sec.userOffset, sec.userSize)
+	}
+	// Word order: hi half then lo half of each long.
+	if sec.data[0] != 0x00 || sec.data[1] != 0x00 || sec.data[2] != 0xFF || sec.data[3] != 0xFF {
+		t.Errorf("first long stored as % X, want 00 00 FF FF", sec.data[:4])
+	}
+
+	// End Data Transfer reports the words the host delivered; 0xFFFFFF
+	// is only for no transfer in progress.
+	execCommandFull(cb, 0x06, 0x00, 0x0000, 0x0000, 0x0000)
+	words := uint32(cb.res[0]&0xFF)<<16 | uint32(cb.res[1])
+	if words != 2048/2 {
+		t.Errorf("end-transfer word count = 0x%06X, want 0x%04X", words, 2048/2)
+	}
+}
+
+// TestCDBlockSetSectorLengthKeepCurrent verifies the 0xFF sector-length
+// codes keep the current value: hosts set one direction at a time with
+// 0xFF in the other.
+func TestCDBlockSetSectorLengthKeepCurrent(t *testing.T) {
+	cb := covCDBlock()
+
+	execCommandFull(cb, 0x60, 0x02, 0x0100, 0x0000, 0x0000)
+	if cb.getSectorLen != 2 || cb.putSectorLen != 1 {
+		t.Fatalf("lengths = %d/%d, want 2/1", cb.getSectorLen, cb.putSectorLen)
+	}
+
+	// get 0xFF keeps 2; put changes to 0.
+	execCommandFull(cb, 0x60, 0xFF, 0x0000, 0x0000, 0x0000)
+	if cb.getSectorLen != 2 || cb.putSectorLen != 0 {
+		t.Errorf("after get-keep = %d/%d, want 2/0", cb.getSectorLen, cb.putSectorLen)
+	}
+
+	// get changes to 0; put 0xFF keeps 0.
+	execCommandFull(cb, 0x60, 0x00, 0xFF00, 0x0000, 0x0000)
+	if cb.getSectorLen != 0 || cb.putSectorLen != 0 {
+		t.Errorf("after put-keep = %d/%d, want 0/0", cb.getSectorLen, cb.putSectorLen)
+	}
+}
+
 func TestCDBlockPutSectorDataOverflow(t *testing.T) {
 	cb := covCDBlock()
 

@@ -176,9 +176,19 @@ func (cb *CDBlock) cmdInitCDSystem() {
 func (cb *CDBlock) cmdEndDataTransfer() {
 	cb.transferActive = false
 	var words uint32
-	if cb.dataBuf == nil && cb.dataPos == 0 && cb.putSectorsRemaining == 0 {
+	switch {
+	case cb.dataTransferType == cdCmdPutSectorData:
+		// A put reports the words the host delivered. Any stale get
+		// buffer from an unterminated read is discarded with it.
+		words = cb.putWords
+		cb.dataBuf = nil
+		cb.dataPos = 0
+		cb.putBuf = nil
+		cb.putSectorsRemaining = 0
+		cb.putWords = 0
+	case cb.dataBuf == nil && cb.dataPos == 0:
 		words = 0xFFFFFF
-	} else {
+	default:
 		words = uint32(len(cb.dataBuf))
 		cb.dataBuf = nil
 		cb.dataPos = 0
