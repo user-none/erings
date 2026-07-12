@@ -4,12 +4,13 @@ Command-line tools for development and for working with the emulator's
 data. Each tool is a self-contained `main` package in its own subdirectory.
 Run them with `go run ./utils/<tool>` or build with `go build ./utils/<tool>`.
 
-`disasm`, `m68kdisasm`, and `extract_bioslibs` use only the standard
-library (plus the in-tree `core/sh2` disassembler for `disasm` and the
-`go-chip-m68k` disassembler for `m68kdisasm`). `debug` is the development
-launcher and links the emulator core and its UI dependencies, so it needs a
-display to run. `capture` links the emulator core but is fully headless (no
-display or audio), so it runs anywhere.
+`disasm`, `m68kdisasm`, `extract_bioslibs`, and `statedump` use only the
+standard library (plus the in-tree `core/sh2` disassembler for `disasm`,
+the `go-chip-m68k` disassembler for `m68kdisasm`, and the S2 decompressor
+for `statedump`). `debug` is the development launcher and links the
+emulator core and its UI dependencies, so it needs a display to run.
+`capture` links the emulator core but is fully headless (no display or
+audio), so it runs anywhere.
 
 ## debug
 
@@ -44,7 +45,8 @@ Additional keys:
 - Enter (start)
 - 0 (pause emulation)
 - 9 (dump top 20 PC histogram)
-- 8 (dump current memory to `dump-YYYYMMDD-HHMMSS-mmm` directory)
+- 8 (dump the current save state, exploded per field, to a
+  `dump-YYYYMMDD-HHMMSS-mmm` directory)
 
 ### sh2.TraceFunc
 
@@ -95,6 +97,31 @@ frames far above realtime. If fewer than 10 frames complete in a one-second
 window the run is failing: no frame completing for two seconds is reported as
 frozen (with a goroutine stack dump), and a sustained sub-floor rate is
 reported as slow. A clean run exits 0 after the replay ends.
+
+## statedump
+
+Explodes a save state file into a directory of per-field binaries without
+running the emulator: a `header.txt` with the decoded state header
+(version, game ID, BIOS hash, CRC) and one `<field>.bin` per chunk field
+under a subdirectory named after the chunk tag (`CD_MPEG/latch.slots.bin`,
+`SH2M_CORE/pc.bin`, and so on). It exists to inspect states saved by any
+frontend after the fact; the `debug` launcher's in-session dump key
+produces the same layout (plus the state file itself) through the shared
+`internal/statedump` package.
+
+Usage:
+
+```
+statedump <state-file> <output-dir>
+```
+
+Both arguments are required; the output directory is created if missing.
+
+Example:
+
+```
+go run ./utils/statedump state-0.state exploded
+```
 
 ## disasm
 
