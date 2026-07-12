@@ -592,20 +592,18 @@ func TestDeserializeErrors(t *testing.T) {
 	}
 }
 
-// rebuildStateWithField reserializes a valid state after replacing one
-// field's bytes inside one chunk, keeping framing and CRC valid, so
-// value-level validation paths can be exercised.
-func rebuildStateWithField(t *testing.T, e *Emulator, chunkTag, fieldName string, newData []byte) []byte {
+// rebuildState reserializes a valid state after the edit hook mutates
+// the parsed chunk fields, keeping framing and CRC valid, with the
+// given header version. Fields the hook deletes are omitted from the
+// rebuilt body.
+func rebuildState(t *testing.T, e *Emulator, version uint32, edit func(chunks map[string]map[string][]byte)) []byte {
 	t.Helper()
 	body := e.buildStateBody()
 	chunks, err := parseStateChunks(body)
 	if err != nil {
 		t.Fatalf("parse own body: %v", err)
 	}
-	if _, ok := chunks[chunkTag][fieldName]; !ok {
-		t.Fatalf("field %s.%s not found", chunkTag, fieldName)
-	}
-	chunks[chunkTag][fieldName] = newData
+	edit(chunks)
 
 	// Rebuild the body in the original chunk order by re-walking it.
 	var out []byte
@@ -622,7 +620,9 @@ func rebuildStateWithField(t *testing.T, e *Emulator, chunkTag, fieldName string
 			name := string(payload[fp+1 : fp+1+nlen])
 			fsize := int(binary.BigEndian.Uint32(payload[fp+1+nlen:]))
 			fp += 1 + nlen + 4 + fsize
-			w.raw(name, chunks[tag][name])
+			if data, ok := chunks[tag][name]; ok {
+				w.raw(name, data)
+			}
 		}
 		out = appendChunk(out, tag, w.b)
 		bp += stateTagLen + 4 + clen
@@ -636,12 +636,59 @@ func rebuildStateWithField(t *testing.T, e *Emulator, chunkTag, fieldName string
 	payload = append(payload, comp...)
 	hdr := make([]byte, 0, 64)
 	hdr = append(hdr, stateMagic...)
-	hdr = binary.BigEndian.AppendUint32(hdr, stateVersion)
+	hdr = binary.BigEndian.AppendUint32(hdr, version)
 	hdr = append(hdr, 0) // empty gameID
 	var zeroHash [sha256.Size]byte
 	hdr = append(hdr, zeroHash[:]...)
 	hdr = binary.BigEndian.AppendUint32(hdr, crc32.ChecksumIEEE(payload))
 	return append(hdr, payload...)
+}
+
+// rebuildStateWithField reserializes a valid state after replacing one
+// field's bytes inside one chunk, so value-level validation paths can
+// be exercised.
+func rebuildStateWithField(t *testing.T, e *Emulator, chunkTag, fieldName string, newData []byte) []byte {
+	t.Helper()
+	return rebuildState(t, e, stateVersion, func(chunks map[string]map[string][]byte) {
+		if _, ok := chunks[chunkTag][fieldName]; !ok {
+			t.Fatalf("field %s.%s not found", chunkTag, fieldName)
+		}
+		chunks[chunkTag][fieldName] = newData
+	})
+}
+
+// TestDeserializeOldStateSkipsMissingFields verifies a state from an
+// older format version - inside the supported version window but
+// missing fields added since - loads cleanly, with the absent fields
+// reading as zero values.
+func TestDeserializeOldStateSkipsMissingFields(t *testing.T) {
+	added := []string{
+		"playMode", "tmodA", "tmodV", "decV", "audioMute",
+		"vidPaused", "vidFrozen", "layer.esProbed", "layer.esDirect",
+	}
+	e := NewEmulator()
+	old := rebuildState(t, e, stateMinVersion, func(chunks map[string]map[string][]byte) {
+		for _, name := range added {
+			if _, ok := chunks[tagCDMpeg][name]; !ok {
+				t.Fatalf("field %s.%s not found", tagCDMpeg, name)
+			}
+			delete(chunks[tagCDMpeg], name)
+		}
+	})
+
+	e2 := NewEmulator()
+	// Junk in the live fields shows the load still overwrites them.
+	e2.cdblock.mpeg.playMode = 7
+	e2.cdblock.mpeg.vidPaused = true
+	e2.cdblock.mpeg.vidFrozen = true
+	if err := e2.Deserialize(old); err != nil {
+		t.Fatalf("Deserialize old-version state: %v", err)
+	}
+	m := &e2.cdblock.mpeg
+	if m.playMode != 0 || m.vidPaused || m.vidFrozen {
+		t.Errorf("skipped fields = %d/%v/%v, want 0/false/false",
+			m.playMode, m.vidPaused, m.vidFrozen)
+	}
 }
 
 // TestDeserializeHostileValues verifies range validation on values that

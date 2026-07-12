@@ -579,6 +579,415 @@ func TestCDBlockMpegPlayKeepsLivePlayback(t *testing.T) {
 	}
 }
 
+// TestCDBlockMpegPlayStoresParameters verifies $95 stores the play
+// parameters with 0xFF keep-current semantics (packing from the host
+// library's command builder: CR1 low = play mode, CR2 high/low =
+// audio/video transfer modes, CR4 low = the untraced fourth byte).
+func TestCDBlockMpegPlayStoresParameters(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+
+	execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+	if cb.mpeg.playMode != 1 {
+		t.Errorf("playMode = %d, want 1", cb.mpeg.playMode)
+	}
+	if cb.mpeg.tmodA != 0 || cb.mpeg.tmodV != 0 {
+		t.Errorf("tmod = %d/%d, want 0/0 (audio kept, video set)",
+			cb.mpeg.tmodA, cb.mpeg.tmodV)
+	}
+
+	// 0xFF keeps every current value; explicit bytes update.
+	execCommandFull(cb, 0x95, 0xFF, 0x01FF, 0x0000, 0x0012)
+	if cb.mpeg.playMode != 1 {
+		t.Errorf("playMode = %d, want 1 (kept)", cb.mpeg.playMode)
+	}
+	if cb.mpeg.tmodA != 1 || cb.mpeg.tmodV != 0 {
+		t.Errorf("tmod = %d/%d, want 1/0", cb.mpeg.tmodA, cb.mpeg.tmodV)
+	}
+	if cb.mpeg.decV != 0x12 {
+		t.Errorf("decV = 0x%02X, want 0x12", cb.mpeg.decV)
+	}
+}
+
+// TestCDBlockMpegIndependentPlaySkipsStartHold verifies play mode 1
+// (independent playback) releases the video start hold immediately:
+// there is no A/V presentation sync to wait for. Synchronized mode
+// keeps the bounded hold.
+func TestCDBlockMpegIndependentPlaySkipsStartHold(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+
+	execCommandFull(cb, 0x95, 0x00, 0xFF00, 0x0000, 0x00FF)
+	if cb.mpegVideoStartDue(1) {
+		t.Error("synchronized play should hold video at first")
+	}
+
+	execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+	if !cb.mpegVideoStartDue(1) {
+		t.Error("independent play should not hold video")
+	}
+}
+
+// TestCDBlockMpegSetDecodeMethodStoresParameters verifies $96 stores
+// mute and the pause/freeze states with keep-current semantics (0xFF
+// mute byte, 0xFFFF time words) over the $93 defaults. Time value 0 =
+// pause/freeze on; 1 or a slow/strobe interval = normal playback.
+func TestCDBlockMpegSetDecodeMethodStoresParameters(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	if cb.mpeg.audioMute != 0x04 || cb.mpeg.vidPaused || cb.mpeg.vidFrozen {
+		t.Errorf("defaults = 0x%02X/%v/%v, want 0x04/false/false",
+			cb.mpeg.audioMute, cb.mpeg.vidPaused, cb.mpeg.vidFrozen)
+	}
+
+	execCommandFull(cb, 0x96, 0x03, 0x0000, 0x0000, 0x0000)
+	if cb.mpeg.audioMute != 0x03 || !cb.mpeg.vidPaused || !cb.mpeg.vidFrozen {
+		t.Errorf("stored = 0x%02X/%v/%v, want 0x03/true/true",
+			cb.mpeg.audioMute, cb.mpeg.vidPaused, cb.mpeg.vidFrozen)
+	}
+
+	execCommandFull(cb, 0x96, 0xFF, 0xFFFF, 0x0000, 0xFFFF)
+	if cb.mpeg.audioMute != 0x03 || !cb.mpeg.vidPaused || !cb.mpeg.vidFrozen {
+		t.Errorf("after keep = 0x%02X/%v/%v, want 0x03/true/true (unchanged)",
+			cb.mpeg.audioMute, cb.mpeg.vidPaused, cb.mpeg.vidFrozen)
+	}
+
+	// A slow/strobe interval (>1) resumes normal playback.
+	execCommandFull(cb, 0x96, 0xFF, 0x0002, 0x0000, 0x0002)
+	if cb.mpeg.vidPaused || cb.mpeg.vidFrozen {
+		t.Errorf("interval = %v/%v, want false/false (normal playback)",
+			cb.mpeg.vidPaused, cb.mpeg.vidFrozen)
+	}
+}
+
+// TestCDBlockMpegMuteSample verifies the $96 mute byte gates the
+// stereo channels: bit 0 mutes right, bit 1 mutes left, 0x04 is the
+// unmuted default.
+func TestCDBlockMpegMuteSample(t *testing.T) {
+	cases := []struct {
+		mute         uint8
+		wantL, wantR int16
+	}{
+		{0x04, 100, -100},
+		{0x01, 100, 0},
+		{0x02, 0, -100},
+		{0x03, 0, 0},
+	}
+	for _, c := range cases {
+		l, r := mpegMuteSample(c.mute, 100, -100)
+		if l != c.wantL || r != c.wantR {
+			t.Errorf("mute 0x%02X = %d/%d, want %d/%d", c.mute, l, r, c.wantL, c.wantR)
+		}
+	}
+}
+
+// TestCDBlockMpegOutDecodingSyncArmsSteps verifies $97 arms one
+// decode step per command in host-synchronized decode timing, capped
+// at the anti-burst limit, and is accepted-but-ignored in VSYNC
+// decode timing or with no playback.
+func TestCDBlockMpegOutDecodingSyncArmsSteps(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+
+	// No playback yet: accepted, nothing to arm.
+	execCommandFull(cb, 0x94, 0xFF, 0x01FF, 0xFF00, 0x0000)
+	execCommandFull(cb, 0x97, 0x00, 0x0000, 0x0000, 0x0000)
+
+	execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+	for i := 0; i < 6; i++ {
+		execCommandFull(cb, 0x97, 0x00, 0x0000, 0x0000, 0x0000)
+	}
+	if got := cb.mpeg.play.hostSteps; got != 4 {
+		t.Errorf("hostSteps = %d, want 4 (capped)", got)
+	}
+
+	// VSYNC decode timing: $97 arms nothing.
+	execCommandFull(cb, 0x94, 0xFF, 0x00FF, 0xFF00, 0x0000)
+	execCommandFull(cb, 0x97, 0x00, 0x0000, 0x0000, 0x0000)
+	if got := cb.mpeg.play.hostSteps; got != 4 {
+		t.Errorf("hostSteps = %d, want 4 (VSYNC mode ignores $97)", got)
+	}
+}
+
+// TestCDBlockMpegHostSyncHoldsSteps verifies host-synchronized decode
+// pacing: once playing, the picture accumulator does not free-run, and
+// a pending step is held (not consumed) while the decoder is starved
+// of data.
+func TestCDBlockMpegHostSyncHoldsSteps(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	execCommandFull(cb, 0x94, 0xFF, 0x01FF, 0xFF00, 0x0000)
+	execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+	p := cb.mpeg.play
+	p.pictCycles = 1000
+	p.vidStarted = true
+	cb.mpeg.vidState = mpegRunPlaying
+
+	cb.mpegTick(5000)
+	if p.pictAccum != 0 {
+		t.Errorf("pictAccum = %d, want 0 (no free-run in host-sync mode)", p.pictAccum)
+	}
+
+	execCommandFull(cb, 0x97, 0x00, 0x0000, 0x0000, 0x0000)
+	execCommandFull(cb, 0x97, 0x00, 0x0000, 0x0000, 0x0000)
+	cb.mpegTick(5000)
+	if p.hostSteps != 2 {
+		t.Errorf("hostSteps = %d, want 2 (steps held while starved)", p.hostSteps)
+	}
+}
+
+// TestCDBlockMpegPauseHaltsDecodePacing verifies pause-time 0 stops
+// the picture-rate accumulator (decode pauses) and pause-time 1
+// resumes it.
+func TestCDBlockMpegPauseHaltsDecodePacing(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	execCommandFull(cb, 0x95, 0x00, 0xFF00, 0x0000, 0x00FF)
+	p := cb.mpeg.play
+	p.pictCycles = 1000
+	p.vidStarted = true
+
+	execCommandFull(cb, 0x96, 0xFF, 0x0000, 0x0000, 0xFFFF)
+	cb.mpegTick(500)
+	if p.pictAccum != 0 {
+		t.Errorf("paused pictAccum = %d, want 0", p.pictAccum)
+	}
+
+	execCommandFull(cb, 0x96, 0xFF, 0x0001, 0x0000, 0xFFFF)
+	cb.mpegTick(500)
+	if p.pictAccum != 500 {
+		t.Errorf("resumed pictAccum = %d, want 500", p.pictAccum)
+	}
+}
+
+// TestCDBlockMpegFreezeHoldsPicture verifies freeze-time 0 keeps the
+// displayed picture: decoded frames are not published while frozen,
+// and publishing resumes when freeze lifts.
+func TestCDBlockMpegFreezeHoldsPicture(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	cb.mpegSetDisplay(true)
+	cb.mpegLatchFrame(mpegTestFrame(2, 2, 0x50, 0x90, 0x70))
+
+	execCommandFull(cb, 0x96, 0xFF, 0xFFFF, 0x0000, 0x0000)
+	cb.mpegLatchFrame(mpegTestFrame(4, 2, 0x80, 0x80, 0x80))
+	if _, w, _, ok := cb.MpegFrameRGB(); !ok || w != 2 {
+		t.Errorf("frozen frame = width %d ok=%v, want held 2x2 true", w, ok)
+	}
+
+	execCommandFull(cb, 0x96, 0xFF, 0xFFFF, 0x0000, 0x0001)
+	cb.mpegLatchFrame(mpegTestFrame(4, 2, 0x80, 0x80, 0x80))
+	if _, w, _, ok := cb.MpegFrameRGB(); !ok || w != 4 {
+		t.Errorf("unfrozen frame = width %d ok=%v, want 4x2 true", w, ok)
+	}
+}
+
+// mpegTestSector builds a data-track buffered sector whose 2048-byte
+// user area starts with payload.
+func mpegTestSector(payload []byte, submode uint8) bufferedSector {
+	data := make([]byte, 2048)
+	copy(data, payload)
+	return bufferedSector{data: data, size: 2048, userOffset: 0, userSize: 2048, submode: submode}
+}
+
+// mpegConnectVideoDelete binds the video decoder to partition 0 in
+// delete mode (conn-mode 0x07) with the audio layer disconnected - the
+// video-only connection shape traced from a raw-ES title.
+func mpegConnectVideoDelete(cb *CDBlock) {
+	execCommandFull(cb, 0x9A, 0xFF, 0x00FF, 0x0007, 0x0000)
+}
+
+// TestCDBlockMpegRawESIdentification verifies stream-type
+// identification on the first fed sector: a video sequence header
+// start code (00 00 01 B3) at the stream head marks a raw video
+// elementary stream, which feeds the decoder's elementary stream
+// directly with no pack-stream/demux stage.
+func TestCDBlockMpegRawESIdentification(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+	mpegConnectVideoDelete(cb)
+	cb.partitions[0].sectors = append(cb.partitions[0].sectors,
+		mpegTestSector([]byte{0x00, 0x00, 0x01, 0xB3, 0x16, 0x00, 0xF0, 0xC4}, 0))
+	cb.mpegFeedLayer(mpegLayerVideo)
+
+	vl := &cb.mpeg.play.layers[mpegLayerVideo]
+	if !vl.esProbed || !vl.esDirect {
+		t.Fatalf("probe = probed:%v direct:%v, want both", vl.esProbed, vl.esDirect)
+	}
+	if vl.es.Remaining() != 2048 {
+		t.Errorf("es remaining = %d, want 2048 (payload fed directly)", vl.es.Remaining())
+	}
+	if vl.ps.Remaining() != 0 || vl.demux != nil {
+		t.Errorf("pack path touched: ps=%d demux=%v, want untouched", vl.ps.Remaining(), vl.demux)
+	}
+	if len(cb.partitions[0].sectors) != 0 {
+		t.Error("delete mode should consume the fed sector")
+	}
+}
+
+// TestCDBlockMpegPackStreamKeepsDemuxPath verifies the identification
+// leaves a program stream (pack start code 00 00 01 BA) on the
+// pack-stream/demux path.
+func TestCDBlockMpegPackStreamKeepsDemuxPath(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	execCommandFull(cb, 0x95, 0x00, 0xFF00, 0x0000, 0x00FF)
+	mpegConnectVideoDelete(cb)
+	cb.partitions[0].sectors = append(cb.partitions[0].sectors,
+		mpegTestSector([]byte{0x00, 0x00, 0x01, 0xBA, 0x21, 0x00, 0x01, 0x00}, 0))
+	cb.mpegFeedLayer(mpegLayerVideo)
+
+	vl := &cb.mpeg.play.layers[mpegLayerVideo]
+	if !vl.esProbed || vl.esDirect {
+		t.Fatalf("probe = probed:%v direct:%v, want probed, not direct", vl.esProbed, vl.esDirect)
+	}
+	if vl.ps.Remaining() != 2048 {
+		t.Errorf("ps remaining = %d, want 2048 (pack path)", vl.ps.Remaining())
+	}
+	if vl.es.Remaining() != 0 {
+		t.Errorf("es remaining = %d, want 0", vl.es.Remaining())
+	}
+}
+
+// TestCDBlockMpegRawESEndsOnSubmode verifies a raw elementary stream
+// terminates through the normal completion path on the XA submode end
+// mark: the elementary stream ends, the layer latches Done, and the
+// sequence-end cause fires.
+func TestCDBlockMpegRawESEndsOnSubmode(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+	mpegConnectVideoDelete(cb)
+	cb.partitions[0].sectors = append(cb.partitions[0].sectors,
+		mpegTestSector([]byte{0x00, 0x00, 0x01, 0xB3, 0x16, 0x00, 0xF0, 0xC4}, 0),
+		mpegTestSector(nil, 0x01)) // EOR sector
+	cb.mpegFeedLayer(mpegLayerVideo)
+
+	vl := &cb.mpeg.play.layers[mpegLayerVideo]
+	if vl.phase != mpegPhaseEnding || !vl.esEnded || !vl.psEnded {
+		t.Fatalf("after EOR: phase=%d esEnded=%v psEnded=%v, want Ending/true/true",
+			vl.phase, vl.esEnded, vl.psEnded)
+	}
+
+	for i := 0; i < 8 && vl.phase != mpegPhaseDone; i++ {
+		cb.mpegTick(cb.sysCyclesPerSec)
+	}
+	if vl.phase != mpegPhaseDone {
+		t.Fatalf("phase = %d, want Done", vl.phase)
+	}
+	if cb.mpeg.vidState != mpegRunStopped {
+		t.Errorf("vidState = %d, want stopped", cb.mpeg.vidState)
+	}
+	if cb.mpeg.intStatus&mpegIntSequenceEnd == 0 {
+		t.Error("sequence-end cause should latch")
+	}
+}
+
+// TestCDBlockMpegRawESEndsOnSequenceEndCode verifies the video
+// sequence end code (00 00 01 B7) inside the raw elementary stream
+// terminates it: data past the code is not fed.
+func TestCDBlockMpegRawESEndsOnSequenceEndCode(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+	execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+	mpegConnectVideoDelete(cb)
+	sec := mpegTestSector([]byte{0x00, 0x00, 0x01, 0xB3, 0x16, 0x00, 0xF0, 0xC4}, 0)
+	copy(sec.data[8:], []byte{0x00, 0x00, 0x01, 0xB7, 0xDE, 0xAD})
+	cb.partitions[0].sectors = append(cb.partitions[0].sectors, sec)
+	cb.mpegFeedLayer(mpegLayerVideo)
+
+	vl := &cb.mpeg.play.layers[mpegLayerVideo]
+	if vl.phase != mpegPhaseEnding || !vl.esEnded {
+		t.Fatalf("after end code: phase=%d esEnded=%v, want Ending/true", vl.phase, vl.esEnded)
+	}
+	// Fed bytes: 12 through the end code, plus the 4-byte synthetic
+	// bounding picture start code; the DE AD tail is not fed.
+	if got := vl.es.Remaining(); got != 16 {
+		t.Errorf("es remaining = %d, want 16 (ends at the sequence end code)", got)
+	}
+}
+
+// TestCDBlockMpegPackScanPositional verifies the program-end scanner
+// parses the system layer positionally: an end-code byte pattern
+// inside a packet payload is skipped as payload, while a genuine
+// system-layer end code reports, including when split across feeds.
+func TestCDBlockMpegPackScanPositional(t *testing.T) {
+	packHdr := []byte{0x00, 0x00, 0x01, 0xBA, 0x21, 0x00, 0x01, 0x00, 0x01, 0x80, 0x1F, 0x40}
+	// Audio packet whose 6-byte payload embeds the end-code pattern.
+	pes := []byte{0x00, 0x00, 0x01, 0xC0, 0x00, 0x06, 0x00, 0x00, 0x01, 0xB9, 0xAA, 0xBB}
+	end := []byte{0x00, 0x00, 0x01, 0xB9}
+
+	var s mpegPackScan
+	if s.feed(packHdr) || s.feed(pes) {
+		t.Fatal("end code inside packet payload must not report")
+	}
+	if !s.feed(end) {
+		t.Fatal("system-layer end code should report")
+	}
+
+	// The same stream split mid-packet-length still skips the payload.
+	s = mpegPackScan{}
+	stream := append(append(append([]byte{}, packHdr...), pes...), end...)
+	if s.feed(stream[:len(packHdr)+5]) {
+		t.Fatal("split feed: no end code yet")
+	}
+	if !s.feed(stream[len(packHdr)+5:]) {
+		t.Fatal("split feed: end code should report")
+	}
+}
+
+// TestCDBlockMpegEndConditionsGatedByConnMode verifies the layer end
+// conditions follow the connection-mode bits: EOR (submode bit 0)
+// ends the layer only with mode bit 0x01, the system-end code only
+// with mode bit 0x02, and EOF (submode bit 7) unconditionally.
+func TestCDBlockMpegEndConditionsGatedByConnMode(t *testing.T) {
+	endCode := []byte{0x00, 0x00, 0x01, 0xB9}
+	setup := func(cmod uint16) *CDBlock {
+		cb := NewCDBlock(nil)
+		mpegInit(cb)
+		execCommandFull(cb, 0x95, 0x00, 0xFF00, 0x0000, 0x00FF)
+		// Video record: partition 0, the given conn-mode; audio
+		// disconnected. A pack header keeps the ES probe on the
+		// demux path.
+		execCommandFull(cb, 0x9A, 0xFF, 0x00FF, cmod, 0x0000)
+		return cb
+	}
+	feed := func(cb *CDBlock, payload []byte, submode uint8) mpegLayerPhase {
+		cb.partitions[0].sectors = append(cb.partitions[0].sectors, mpegTestSector(payload, submode))
+		cb.mpegFeedLayer(mpegLayerVideo)
+		return cb.mpeg.play.layers[mpegLayerVideo].phase
+	}
+
+	// EOR with bit 0x01 clear: a record boundary, stream continues.
+	cb := setup(0x0006)
+	if got := feed(cb, nil, 0x01); got != mpegPhaseRunning {
+		t.Errorf("EOR with mode 06: phase = %d, want Running", got)
+	}
+	// System-end code with bit 0x02 set ends it.
+	if got := feed(cb, endCode, 0x00); got != mpegPhaseEnding {
+		t.Errorf("end code with mode 06: phase = %d, want Ending", got)
+	}
+
+	// EOR with bit 0x01 set ends the layer.
+	cb = setup(0x0007)
+	if got := feed(cb, nil, 0x01); got != mpegPhaseEnding {
+		t.Errorf("EOR with mode 07: phase = %d, want Ending", got)
+	}
+
+	// System-end code with bit 0x02 clear is ignored.
+	cb = setup(0x0005)
+	if got := feed(cb, endCode, 0x00); got != mpegPhaseRunning {
+		t.Errorf("end code with mode 05: phase = %d, want Running", got)
+	}
+
+	// EOF ends the layer regardless of the mode bits.
+	cb = setup(0x0004)
+	if got := feed(cb, nil, 0x80); got != mpegPhaseEnding {
+		t.Errorf("EOF with mode 04: phase = %d, want Ending", got)
+	}
+}
+
 // TestCDBlockMpegSetWindowStoresSelectors verifies $A1 stores CR2-CR4
 // under the CR1 low-byte selector (numbering pinned by the host
 // library's builder stubs: 0 fb-position, 1 fb-ratio, 2 display

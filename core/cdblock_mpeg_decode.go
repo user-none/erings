@@ -4,6 +4,7 @@
 package core
 
 import (
+	"encoding/binary"
 	"image/color"
 	"sync/atomic"
 
@@ -12,7 +13,9 @@ import (
 
 // MPEG playback engine. Sectors routed into the connected buffer
 // partitions are drained into per-layer MPEG-PS streams, demuxed, and
-// decoded. Decode is paced against the stream's own picture rate in
+// decoded; a stream identified at its head as a raw video elementary
+// stream instead feeds the video decoder directly (see mpegFeedLayer).
+// Decode is paced against the stream's own picture rate in
 // system cycles, mirroring the card's VSYNC-synchronized decode mode.
 // Decoded frames are held for the VDP2 EXBG path; decoded audio feeds
 // the same queue SCSP EXTS pulls for CD-DA.
@@ -77,17 +80,90 @@ const (
 )
 
 // mpegLayer is one decoder input path: the pack stream drained from a
-// buffer partition, demuxed into an elementary stream.
+// buffer partition, demuxed into an elementary stream. A stream
+// identified as a raw video elementary stream at its first sector
+// (sequence header start code instead of a pack start code) bypasses
+// the pack stream and demuxer and feeds the decoder directly.
 type mpegLayer struct {
-	ps      *mpeg.Buffer   // multiplexed pack stream from the partition
-	demux   *mpeg.Demux    // created by mpegPumpDemux or the end-of-stream drain
-	es      *mpeg.Buffer   // elementary stream feeding the decoder
-	fed     int            // partition sectors already fed (non-delete mode)
-	phase   mpegLayerPhase // lifecycle; see the phase constants
-	endScan int            // matcher state: PS end code in the pack stream
-	esScan  int            // matcher state: sequence end code in the video ES
-	psEnded bool           // SignalEnd issued on ps (Ending)
-	esEnded bool           // SignalEnd issued on es (drained, end code, or unidentifiable)
+	ps       *mpeg.Buffer   // multiplexed pack stream from the partition
+	demux    *mpeg.Demux    // created by mpegPumpDemux or the end-of-stream drain
+	es       *mpeg.Buffer   // elementary stream feeding the decoder
+	fed      int            // partition sectors already fed (non-delete mode)
+	phase    mpegLayerPhase // lifecycle; see the phase constants
+	packScan mpegPackScan   // positional program-end scanner over the pack stream
+	esScan   int            // matcher state: sequence end code in the video ES
+	psEnded  bool           // SignalEnd issued on ps (Ending)
+	esEnded  bool           // SignalEnd issued on es (drained, end code, or unidentifiable)
+	esProbed bool           // stream type identified from the first fed sector
+	esDirect bool           // raw video elementary stream: feed es, bypass ps/demux
+}
+
+// mpegPackScan walks the system layer of a pack stream positionally:
+// pack and packet headers are parsed and packet payloads are skipped
+// via their length fields, so payload bytes can never be mistaken for
+// a start code (audio frames are not start-code-free; a traced title
+// carries the end-code byte pattern inside its audio payload
+// mid-movie). feed reports whether the program-end code (ISO 11172-1
+// iso_11172_end_code, 00 00 01 B9) was reached at the system layer.
+// The zero value is the scanning state.
+type mpegPackScan struct {
+	skip   int // bytes left to skip (pack header body or packet payload)
+	code   int // start-code matcher: 0-2 = zero bytes matched, 3 = 00 00 01 matched
+	length int // packet-length word being assembled
+	lenN   int // 0 = not assembling, 1 = awaiting high byte, 2 = awaiting low byte
+}
+
+func (s *mpegPackScan) feed(payload []byte) bool {
+	ended := false
+	for _, b := range payload {
+		if s.skip > 0 {
+			s.skip--
+			continue
+		}
+		if s.lenN > 0 {
+			s.length = s.length<<8 | int(b)
+			if s.lenN == 2 {
+				s.skip = s.length
+				s.length = 0
+				s.lenN = 0
+			} else {
+				s.lenN++
+			}
+			continue
+		}
+		switch {
+		case s.code < 2:
+			if b == 0 {
+				s.code++
+			} else {
+				s.code = 0
+			}
+		case s.code == 2:
+			switch b {
+			case 0:
+				// A third zero byte still prefixes a start code.
+			case 1:
+				s.code = 3
+			default:
+				s.code = 0
+			}
+		default: // 00 00 01 matched; b is the start code
+			s.code = 0
+			switch {
+			case b == 0xB9:
+				ended = true
+			case b == 0xBA:
+				// MPEG-1 pack header: 8 bytes follow the start code.
+				s.skip = 8
+			case b >= 0xBB:
+				// System header or packet: a 16-bit length of the
+				// bytes that follow it comes next.
+				s.lenN = 1
+			}
+			// Any other code is not system-layer: resume scanning.
+		}
+	}
+	return ended
 }
 
 // mpegScanStartCode advances a rolling start-code matcher over payload
@@ -127,8 +203,9 @@ type mpegPlayback struct {
 	video  *mpeg.Video
 	audio  *mpeg.Audio
 
-	pictAccum  int // cycle accumulator toward the next picture
+	pictAccum  int // cycle accumulator toward the next picture (VSYNC decode timing)
 	pictCycles int // cycles per picture; 0 until the sequence header
+	hostSteps  int // pending $97 decode steps (host-synchronized decode timing)
 
 	// A/V start alignment. The program stream delivers video ahead of
 	// its presentation time by the VBV lead while audio is muxed with
@@ -197,8 +274,13 @@ type mpegFrameLatch struct {
 
 // mpegLatchFrame converts a decoded picture into the producer slot and
 // publishes it. The decoder reuses its frame structs on the next
-// Decode call, so pixels are converted (not referenced) here.
+// Decode call, so pixels are converted (not referenced) here. While
+// the host has the picture frozen ($96 freeze-time 0), decode
+// continues but the displayed picture does not update.
 func (cb *CDBlock) mpegLatchFrame(f *mpeg.Frame) {
+	if cb.mpeg.vidFrozen {
+		return
+	}
 	l := &cb.mpegFrame
 	s := &l.slots[l.prod]
 	w, h := f.Width, f.Height
@@ -301,7 +383,12 @@ const mpegPSLowWater = 16 * 1024
 // the demux stage.
 const mpegESLowWater = 64 * 1024
 
-// mpegFeedLayer feeds partition sectors into the layer's pack stream.
+// mpegFeedLayer feeds partition sectors into the layer's pack stream,
+// or - for a raw video elementary stream - straight into the decoder's
+// elementary stream. The stream type is identified once from the first
+// fed sector by its ISO 11172 start code: a video sequence header
+// (00 00 01 B3) at the stream head is a raw video ES with no system
+// layer to demux; anything else takes the pack-stream/demux path.
 // Connection-mode bit 0x04 deletes consumed sectors (the hardware's
 // normal streaming mode); without it sectors stay buffered and only
 // newly arrived ones are fed.
@@ -319,16 +406,53 @@ func (cb *CDBlock) mpegFeedLayer(layer int) {
 		// Host commands shrank the partition underneath us.
 		l.fed = len(part.sectors)
 	}
-	for l.fed < len(part.sectors) && l.ps.Remaining() < mpegPSLowWater {
+	if !l.esProbed && layer == mpegLayerVideo && l.fed < len(part.sectors) {
+		sec := &part.sectors[l.fed]
+		head := sec.data[sec.userOffset : sec.userOffset+sec.userSize]
+		l.esProbed = true
+		l.esDirect = len(head) >= 4 && binary.BigEndian.Uint32(head) == 0x000001B3
+	}
+	buf, lowWater := l.ps, mpegPSLowWater
+	if l.esDirect {
+		buf, lowWater = l.es, mpegESLowWater
+	}
+	for l.fed < len(part.sectors) && buf.Remaining() < lowWater {
 		sec := &part.sectors[l.fed]
 		l.fed++
 		payload := sec.data[sec.userOffset : sec.userOffset+sec.userSize]
+		if l.esDirect {
+			// The video sequence end code (ISO 11172-2
+			// sequence_end_code, 00 00 01 B7) terminates the stream;
+			// data past it belongs to the next stream and is not fed.
+			// The XA submode end marks apply as on the pack path.
+			if end := mpegScanStartCode(&l.esScan, payload, 0xB7); end >= 0 {
+				l.es.Write(payload[:end])
+				mpegEndVideoES(l)
+				l.phase = mpegPhaseEnding
+				l.psEnded = true
+				break
+			}
+			l.es.Write(payload)
+			// EOR gated on connection-mode bit 0x01 as on the pack
+			// path; EOF always ends the layer.
+			if sec.submode&0x80 != 0 || (sec.submode&0x01 != 0 && conn.mode&0x01 != 0) {
+				mpegEndVideoES(l)
+				l.phase = mpegPhaseEnding
+				l.psEnded = true
+				break
+			}
+			continue
+		}
 		l.ps.Write(payload)
-		// XA submode bit 0 (EOR) or bit 7 (EOF) marks the stream's
-		// final sector; plain data tracks carry no submode marks, so
-		// the PS end code (ISO 11172-1 iso_11172_end_code, 00 00 01 B9)
-		// is scanned for as well.
-		if sec.submode&0x81 != 0 || mpegScanStartCode(&l.endScan, payload, 0xB9) >= 0 {
+		// End conditions per the connection mode: XA submode EOR
+		// (bit 0) ends the layer only with connection-mode bit 0x01
+		// (switch on EOR) - otherwise EOR is a record boundary inside
+		// a continuing stream. The program-end code applies with
+		// connection-mode bit 0x02 (switch on system end). XA EOF
+		// (submode bit 7) always ends the layer.
+		b9 := l.packScan.feed(payload) && conn.mode&0x02 != 0
+		eor := sec.submode&0x01 != 0 && conn.mode&0x01 != 0
+		if eor || b9 || sec.submode&0x80 != 0 {
 			l.phase = mpegPhaseEnding
 			break
 		}
@@ -345,6 +469,11 @@ func (cb *CDBlock) mpegFeedLayer(layer int) {
 // cannot half-consume a pack.
 func (cb *CDBlock) mpegPumpDemux(layer int) {
 	l := &cb.mpeg.play.layers[layer]
+	if l.esDirect {
+		// Raw elementary stream: the feed writes the decoder's es
+		// directly; there is no system layer to demux.
+		return
+	}
 	if l.phase != mpegPhaseRunning && l.phase != mpegPhaseEnding {
 		return
 	}
@@ -504,6 +633,11 @@ func (cb *CDBlock) mpegApplyNextConnections() {
 // elapsed hold, so discovering audio late does not restart the wait.
 func (cb *CDBlock) mpegVideoStartDue(c int) bool {
 	p := cb.mpeg.play
+	if cb.mpeg.playMode != 0 {
+		// Independent playback ($95 play mode 1): the decoders run
+		// without A/V presentation sync, so there is no start hold.
+		return true
+	}
 	if p.firstAudPTS >= 0 && !p.audStarted {
 		// Audio exists but has not produced samples yet; its start is
 		// the clock origin, so keep holding (bounded below).
@@ -605,20 +739,38 @@ func (cb *CDBlock) mpegTick(c int) {
 		cb.mpegIntCause(mpegIntSequenceStart)
 	}
 
-	// Video: decode paced at the stream's picture rate. The accumulator
-	// is capped so a data stall does not burst-decode a backlog.
+	// Video: decode paced at the stream's picture rate (VSYNC decode
+	// timing) or advanced one picture per $97 (host-synchronized
+	// decode timing), halted while the host has decode paused ($96
+	// pause-time 0). The accumulator is capped so a data stall does
+	// not burst-decode a backlog. Host stepping takes over only after
+	// the first picture: the host learns decode is ready from the
+	// picture-start cause, so that picture decodes autonomously in
+	// both timing modes (traced: a host-synchronized title waits for
+	// picture-start before its first $97).
 	if p.pictCycles > 0 && !p.vidStarted {
 		p.vidStarted = cb.mpegVideoStartDue(c)
 		if p.vidStarted {
 			p.pictAccum = p.pictCycles // present the first picture now
 		}
 	}
-	if p.pictCycles > 0 && p.vidStarted && (vl.phase == mpegPhaseRunning || vl.phase == mpegPhaseEnding) {
-		p.pictAccum += c
-		if limit := 4 * p.pictCycles; p.pictAccum > limit {
-			p.pictAccum = limit
+	if p.pictCycles > 0 && p.vidStarted && !m.vidPaused &&
+		(vl.phase == mpegPhaseRunning || vl.phase == mpegPhaseEnding) {
+		hostStepped := m.decodeTiming == 1 && m.vidState == mpegRunPlaying
+		if !hostStepped {
+			p.pictAccum += c
+			if limit := 4 * p.pictCycles; p.pictAccum > limit {
+				p.pictAccum = limit
+			}
 		}
-		for p.pictAccum >= p.pictCycles {
+		for {
+			if hostStepped {
+				if p.hostSteps == 0 {
+					break
+				}
+			} else if p.pictAccum < p.pictCycles {
+				break
+			}
 			f := p.video.Decode()
 			if f == nil {
 				if vl.esEnded {
@@ -629,12 +781,17 @@ func (cb *CDBlock) mpegTick(c int) {
 					cb.mpegVideoStreamDone(vl)
 				}
 				// Not enough data for a picture: retry a picture
-				// period later. Retrying every tick rescans the
-				// buffered stream to no effect.
+				// period later (a pending host step is held instead).
+				// Retrying every tick rescans the buffered stream to
+				// no effect.
 				p.pictAccum = 0
 				break
 			}
-			p.pictAccum -= p.pictCycles
+			if hostStepped {
+				p.hostSteps--
+			} else {
+				p.pictAccum -= p.pictCycles
+			}
 			cb.mpegLatchFrame(f)
 			m.vidState = mpegRunPlaying
 			m.vidStatus |= mpegVidDecoding | mpegVidUpdated | mpegVidOutReady | mpegVidFirstShown
@@ -675,10 +832,24 @@ func (cb *CDBlock) mpegTick(c int) {
 				p.vidHoldCyc = 0
 			}
 			for i := 0; i < len(smp.Interleaved); i += 2 {
-				cb.pushAudioPair(mpegF32ToS16(smp.Interleaved[i]), mpegF32ToS16(smp.Interleaved[i+1]))
+				left, right := mpegMuteSample(m.audioMute,
+					mpegF32ToS16(smp.Interleaved[i]), mpegF32ToS16(smp.Interleaved[i+1]))
+				cb.pushAudioPair(left, right)
 			}
 		}
 	}
+}
+
+// mpegMuteSample applies the $96 audio-mute byte to one stereo pair:
+// bit 0 mutes the right channel, bit 1 the left.
+func mpegMuteSample(mute uint8, left, right int16) (int16, int16) {
+	if mute&0x02 != 0 {
+		left = 0
+	}
+	if mute&0x01 != 0 {
+		right = 0
+	}
+	return left, right
 }
 
 func mpegF32ToS16(v float32) int16 {

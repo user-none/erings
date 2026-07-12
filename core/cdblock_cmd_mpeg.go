@@ -13,19 +13,23 @@ package core
 //
 // Known behavior deliberately not modeled:
 //
-//   - $95 Play parameters (play/pause/freeze modes, per-layer
-//     termination): accepted and ignored. Decode always runs and ends
-//     on EOR/EOF submode or stream end codes.
-//   - $96 Set Decode Method (audio mute, pause/freeze-time counts):
-//     accepted, stored nowhere.
-//   - $94 modes other than scan mode: movie mode (still, hi-res,
-//     sector buffer), decode timing (host-synchronized), and output
-//     destination (host transfer) are stored but only VSYNC-paced
-//     normal-movie decode to VDP2 EXBG is implemented.
-//   - $97 Out Decoding Sync, $98 Get Timecode, $99 Get PTS, $A5
-//     (display attribute), $A6 (get image), the $A7-$AD sector-buffer
-//     group, and $E2 (card boot ROM read): unimplemented; they answer
-//     with the standard return like a missing extension handler.
+//   - $95 transfer modes (auto vs force) and the CR4 byte: stored,
+//     not acted on. Play mode is modeled only as the A/V start-sync
+//     switch (independent playback skips the video start hold); decode
+//     always runs and ends on EOR/EOF submode or stream end codes.
+//   - $96 slow-play and strobe intervals (pause/freeze-time > 1):
+//     treated as normal playback; the interval values are not kept.
+//     Mute, pause (0), and freeze (0) are modeled.
+//   - $94 modes other than scan mode and decode timing: movie mode
+//     (still, hi-res, sector buffer) and output destination (host
+//     transfer) are stored but only normal-movie decode to VDP2 EXBG
+//     is implemented (VSYNC-paced or $97-stepped per decode timing).
+//   - $98 Get Timecode, $99 Get PTS, $A5 (display attribute), $A6
+//     (get image), the $A7-$AD sector-buffer group, and $E2 (card
+//     boot ROM read): unimplemented; they answer with the standard
+//     return like a missing extension handler.
+//   - $97 frame-bank parameter: not modeled (no bank model); only the
+//     decode step is.
 //   - $A1-$A4 output configuration (display window, border color,
 //     fade, video effect): stored for the EXBG render path but not
 //     applied; the decoded picture maps 1:1 from the screen origin.
@@ -34,9 +38,10 @@ package core
 //   - Connection records: the layer byte (a single system-layer
 //     connection feeding both decoders) and the picture-search bits
 //     are not acted on - each layer needs its own partition.
-//     Connection-mode bits 0x01/0x02 (end switch) and 0x04 (delete
-//     sector) are modeled; 0x08 (ignore PTS), 0x10/0x20 (clear VBV),
-//     and 0x40 (end before back aperture) are not.
+//     Connection-mode bits 0x01/0x02 (gating the EOR / system-end
+//     end conditions and the end switch) and 0x04 (delete sector)
+//     are modeled; 0x08 (ignore PTS), 0x10/0x20 (clear VBV), and
+//     0x40 (end before back aperture) are not.
 //   - Stream records: the audio stream number selects among the first
 //     four audio streams; video always takes the first video stream;
 //     the mode bits (set vs identify) and channel numbers are ignored.
@@ -52,9 +57,11 @@ package core
 //
 // Unknown (untraced) behavior, modeled by assumption where needed:
 //
-//   - The $95 wire encoding: the ROM handler consumes four byte
-//     parameters (bit 7 = keep current, bit 0 = value), but the host
-//     library's enum-to-bit translation has not been disassembled.
+//   - The $95 CR4 low-byte parameter: the wire packing is known (CR1
+//     low = playback mode 0 sync/1 independent, CR2 high/low = audio/
+//     video transfer mode 0 auto/1 force, bit 7 = keep current), but
+//     the CR4 byte's meaning is untraced - the host library always
+//     sends 0xFF for it.
 //   - When the firmware asserts operation-status bit 3.
 //   - The $A1 frame-buffer ratio encoding and its 0x0001 CR2 byte;
 //     the $A3 fade gain scale; the $A4 field layout beyond the
@@ -109,6 +116,19 @@ type cdMpeg struct {
 	decodeTiming uint8 // 0 VSYNC-synchronized, 1 host-synchronized
 	outDest      uint8 // 0 VDP2 (EXBG), 1 host transfer
 	scanMode     uint8 // 0/1 NTSC, 2/3 PAL; odd = interlaced
+
+	// $95 Play parameters. 0xFF in a command byte means keep the
+	// current value.
+	playMode uint8 // 0 A/V-synchronized, 1 independent playback
+	tmodA    uint8 // audio decoder transfer mode: 0 auto, 1 force
+	tmodV    uint8 // video decoder transfer mode: 0 auto, 1 force
+	decV     uint8 // CR4 low byte; meaning untraced (hosts send 0xFF)
+
+	// $96 Set Decode Method parameters. 0xFF (mute) / 0xFFFF (times)
+	// mean keep the current value.
+	audioMute uint8 // bit 0 mute right, bit 1 mute left (0x04 = default, unmuted)
+	vidPaused bool  // pause-time 0: picture decode halted
+	vidFrozen bool  // freeze-time 0: displayed picture held while decode continues
 
 	// Connections and streams, indexed [selector][layer]: selector 0 =
 	// current, 1 = next (CR3 high byte of $9A/$9B/$9D/$9E); layer 0 =
@@ -200,6 +220,8 @@ func (cb *CDBlock) cmdMpeg(op uint16) {
 		cb.cmdMpegPlay()
 	case 0x96:
 		cb.cmdMpegSetDecodeMethod()
+	case 0x97:
+		cb.cmdMpegOutDecodingSync()
 	case 0x9A:
 		cb.cmdMpegSetConnection()
 	case 0x9B:
@@ -227,7 +249,7 @@ func (cb *CDBlock) cmdMpeg(op uint16) {
 	case 0xAF:
 		cb.cmdMpegSetLsi()
 	default:
-		// $97-$99, $A5-$AD: no handler installed.
+		// $98, $99, $A5-$AD: no handler installed.
 		cb.standardReturn()
 		cb.resultsRead = false
 	}
@@ -240,9 +262,10 @@ func (cb *CDBlock) cmdMpeg(op uint16) {
 // valid - true here as soon as the command completes.
 func (cb *CDBlock) cmdMpegInit() {
 	cb.mpeg = cdMpeg{
-		active:   true,
-		vidState: mpegRunStopped,
-		audState: mpegRunStopped,
+		active:    true,
+		vidState:  mpegRunStopped,
+		audState:  mpegRunStopped,
+		audioMute: 0x04, // default: unmuted
 	}
 	cb.mpegResetLatch()
 	// No decoder connections after reset: partition number 0xFF means
@@ -256,13 +279,18 @@ func (cb *CDBlock) cmdMpegInit() {
 	cb.hirqReq |= hirqCMOK | hirqMPED | hirqMPCM
 }
 
-// cmdMpegPlay handles $95 MpegPlay. Parameters are not modeled (file
-// header). A spent pipeline is replaced: the hardware has no per-play
-// object - the decoder decodes whatever the connected partition
-// supplies - so $95 after a $9A reconnection starts a new play
-// sequence without a $93 re-init, dropping the previous stream's
-// end-status bits.
+// cmdMpegPlay handles $95 MpegPlay (byte packing traced from
+// CDC_MpPlay: CR1 low = play mode, CR2 = audio/video transfer modes,
+// CR4 low = an untraced fourth byte). A spent pipeline is replaced:
+// the hardware has no per-play object - the decoder decodes whatever
+// the connected partition supplies - so $95 after a $9A reconnection
+// starts a new play sequence without a $93 re-init, dropping the
+// previous stream's end-status bits.
 func (cb *CDBlock) cmdMpegPlay() {
+	mpegSetByte(&cb.mpeg.playMode, uint8(cb.cmd[0]))
+	mpegSetByte(&cb.mpeg.tmodA, uint8(cb.cmd[1]>>8))
+	mpegSetByte(&cb.mpeg.tmodV, uint8(cb.cmd[1]))
+	mpegSetByte(&cb.mpeg.decV, uint8(cb.cmd[3]))
 	if cb.mpeg.play == nil || cb.mpeg.play.spent() {
 		cb.mpeg.play = newMpegPlayback()
 		cb.mpeg.vidState = mpegRunStopped
@@ -279,9 +307,34 @@ func (cb *CDBlock) cmdMpegPlay() {
 	cb.mpegStatusReturn()
 }
 
-// cmdMpegSetDecodeMethod handles $96 MpegSetDecodeMethod. Parameters
-// are not modeled (file header).
+// cmdMpegOutDecodingSync handles $97 MpegOutDecodingSync, the
+// host-synchronized decode step (CR2 low byte = frame bank, not
+// modeled). With $94 decode timing 1 each command arms one picture
+// decode; the step is held until the decoder has a picture's worth of
+// data. Pending steps are capped like the VSYNC pacing accumulator so
+// a backlog cannot burst-decode. In VSYNC decode timing the command
+// only returns status.
+func (cb *CDBlock) cmdMpegOutDecodingSync() {
+	if cb.mpeg.decodeTiming == 1 && cb.mpeg.play != nil && cb.mpeg.play.hostSteps < 4 {
+		cb.mpeg.play.hostSteps++
+	}
+	cb.mpegStatusReturn()
+}
+
+// cmdMpegSetDecodeMethod handles $96 MpegSetDecodeMethod (byte packing
+// traced from CDC_MpSetDec: CR1 low = audio mute, CR2 = pause-time
+// word, CR4 = freeze-time word).
+// Pause time 0 pauses, 1 plays normally, >1 is a slow-play interval
+// (not modeled; treated as normal). Freeze time follows the same
+// scheme with strobe playback for >1.
 func (cb *CDBlock) cmdMpegSetDecodeMethod() {
+	mpegSetByte(&cb.mpeg.audioMute, uint8(cb.cmd[0]))
+	if cb.cmd[1] != 0xFFFF {
+		cb.mpeg.vidPaused = cb.cmd[1] == 0
+	}
+	if cb.cmd[3] != 0xFFFF {
+		cb.mpeg.vidFrozen = cb.cmd[3] == 0
+	}
 	cb.mpegStatusReturn()
 }
 
@@ -311,8 +364,8 @@ func (cb *CDBlock) cmdMpegSetInterruptMask() {
 	cb.mpegStatusReturn()
 }
 
-// mpegSetByte applies one $94 parameter byte: 0xFF means keep the
-// current value.
+// mpegSetByte applies one keep-current parameter byte ($94/$95/$96):
+// 0xFF means keep the current value.
 func mpegSetByte(dst *uint8, v uint8) {
 	if v != 0xFF {
 		*dst = v

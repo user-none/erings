@@ -182,19 +182,37 @@ The firmware moves these parameters as opaque values; their published
 meanings (part of the CD block MPEG interface definition, cross-checked
 against the firmware where it acts on them) are:
 
-**$94 Set Mode** - four parameters: operation mode (0 = normal movie,
-1 = still picture, 2 = hi-res movie (unsupported), 3 = hi-res still,
-4 = MPEG sector-buffer mode), decode timing (0 = VSYNC-synchronized,
-1 = host-synchronized), output destination (0 = VDP2, 1 = host transfer),
-and scan mode (see Picture geometry below).
+**$94 Set Mode** - four byte parameters (disassembled from the
+host-side command builder): CR1 low byte = operation mode (0 = normal
+movie, 1 = still picture, 2 = hi-res movie (unsupported), 3 = hi-res
+still, 4 = MPEG sector-buffer mode), CR2 high byte = decode timing
+(0 = VSYNC-synchronized, 1 = host-synchronized), CR2 low byte = output
+destination (0 = VDP2, 1 = host transfer), CR3 high byte = scan mode
+(see Picture geometry below). $FF in any byte keeps the current value.
 
-**$95 Play** - play mode: 0 = AV (audio + video), 1 = audio-only,
-2 = video-only. Per-layer termination condition: 0 = none, 1 = EOR bit
-detected, 2 = system end code detected. Pause mode: 0 = pause, 1 = normal,
-2 = slow. Freeze mode: 0 = freeze, 1 = normal, 2 = strobe.
+**$95 Play** - four byte parameters (disassembled from the host-side
+command builder): CR1 low byte = playback mode (0 = A/V-synchronized
+playback, 1 = independent playback with no A/V sync), CR2 high byte =
+audio-decoder transfer mode, CR2 low byte = video-decoder transfer mode
+(0 = automatic transfer, 1 = forced transfer), CR3 = 0, CR4 low byte = a
+fourth parameter whose meaning is untraced (the host library always
+sends $FF for it). $FF in any parameter byte keeps the current value,
+matching the ROM handler's bit-7 = keep-current convention.
 
-**$96 Set Decode** - audio mute: 0x04 default (unmuted), 0x01 mute right,
-0x02 mute left; plus pause-time and freeze-time counts.
+**$96 Set Decode** - CR1 low byte = audio mute (0x04 default/unmuted,
+0x01 mute right, 0x02 mute left), CR2 = pause-time word, CR4 =
+freeze-time word (CR3 = 0). Pause time: 0 = pause (frame advance),
+1 = normal playback, other values = slow-playback interval. Freeze
+time: 0 = freeze, 1 = normal playback, other values = strobe-playback
+interval.
+
+**$97 Out Decoding Sync** - CR2 low byte = frame bank number
+(disassembled from the host-side command builder). In host-synchronized
+decode timing ($94) the decoder advances one picture per command.
+Stream identification, the sequence header, and the first picture
+proceed without it: a traced host-synchronized title waits for the
+picture-start interrupt cause before issuing its first $97, then steps
+at the stream's picture rate.
 
 **Connection commands** (Set Connection $9A, Change Connection $9C) - the
 decoder connection-destination parameter (one record per audio and video
@@ -203,11 +221,34 @@ number) uses these connection-mode bits: 0x01 switch on EOR, 0x02 switch
 on system-end, 0x04 delete sector, 0x08 ignore PTS, 0x10 clear VBV,
 0x20 clear VBV + write-back cache, 0x40 evaluate end condition before the
 back aperture. Layer: 0 = system, 1 = audio/video. Picture search:
-0x00 off, 0x80 video, 0xC0 video + discard audio.
+0x00 off, 0x80 video, 0xC0 video + discard audio. Partition number $FF
+disconnects the layer. The system-end code is recognized at the system
+layer of the stream, not by byte pattern: the 00 00 01 B9 sequence
+occurring inside packet payloads does not terminate playback (traced: a
+title's audio packet payload carries the pattern mid-movie and plays
+through it - audio data is not start-code-free). $9A wire layout (disassembled from the host-side
+command builder): CR1 low byte = audio connection-mode, CR2 = audio
+layer:partition, CR3 high byte = record selector (0 = current, 1 =
+next), CR3 low byte = video connection-mode, CR4 = video
+layer:partition. $9B reads back the selected records in the same
+layout.
 
 **Set Stream $9D** - stream parameter (per layer): stream-mode byte
 (0x01 set stream number, 0x02 identify stream number, 0x10 set channel
 number, 0x20 identify channel number), stream number, channel number.
+Wire layout mirrors $9A: CR1 low byte = audio stream-mode, CR2 = audio
+stream:channel, CR3 high byte = record selector, CR3 low byte = video
+stream-mode, CR4 = video stream:channel; $9E reads back the same
+layout.
+
+**$A0 Display** - CR2 high byte = display switch (0 = off, nonzero =
+on), CR2 low byte = frame bank number.
+
+**$A1 Set Window** - CR1 low byte = window sub-parameter selector:
+0 = frame-buffer position, 1 = frame-buffer ratio, 2 = display
+position, 3 = display size, 4 = display offset (all five selectors go
+through this one command). CR2 low byte = change flag, CR3 = X value,
+CR4 = Y value.
 
 **$A3 Set Fade** - Y gain and C gain.
 

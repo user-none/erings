@@ -38,13 +38,15 @@ const (
 
 	// stateVersion is written into every state header. Deserialize
 	// rejects a file whose version is greater (written by a newer
-	// erings) with a "state is from a newer version" error.
-	stateVersion = uint32(1)
+	// erings) with a "state is from a newer version" error. Raised
+	// when fields are added; older files simply lack the new fields,
+	// which read as zero values on load.
+	stateVersion = uint32(2)
 
 	// stateMinVersion is the oldest state-file version Deserialize
 	// accepts. A file below it is rejected with a distinct "state is
-	// too old" error. Raised when a format change drops compatibility
-	// with older files.
+	// too old" error. Raised only when a format change drops
+	// compatibility with older files entirely.
 	stateMinVersion = uint32(1)
 
 	stateTagLen = 16
@@ -965,6 +967,13 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 	w.u8("decodeTiming", m.decodeTiming)
 	w.u8("outDest", m.outDest)
 	w.u8("scanMode", m.scanMode)
+	w.u8("playMode", m.playMode)
+	w.u8("tmodA", m.tmodA)
+	w.u8("tmodV", m.tmodV)
+	w.u8("decV", m.decV)
+	w.u8("audioMute", m.audioMute)
+	w.flag("vidPaused", m.vidPaused)
+	w.flag("vidFrozen", m.vidFrozen)
 
 	// conn/stream records flattened [selector*2 + layer].
 	var connMode, connLayer, connBuf, strMode, strStm, strChn [4]byte
@@ -1013,12 +1022,15 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 	// nil and ignored on restore with playActive false.
 	w.flag("playActive", m.play != nil)
 	var (
-		fed             [2]int64
-		phase           [2]byte
-		endScan, esScan [2]int64
-		psEnded, esEnd  [2]bool
+		fed                [2]int64
+		phase              [2]byte
+		esScan             [2]int64
+		packSkip, packCode [2]int64
+		packLen, packLenN  [2]int64
+		psEnded, esEnd     [2]bool
+		esProbed, esDirect [2]bool
 	)
-	var pictAccum, pictCycles, vidHoldCyc int64
+	var pictAccum, pictCycles, hostSteps, vidHoldCyc int64
 	var firstVidPTS, firstAudPTS uint64
 	var audStarted, vidStarted bool
 	if p := m.play; p != nil {
@@ -1026,13 +1038,19 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 			l := &p.layers[i]
 			fed[i] = int64(l.fed)
 			phase[i] = byte(l.phase)
-			endScan[i] = int64(l.endScan)
 			esScan[i] = int64(l.esScan)
+			packSkip[i] = int64(l.packScan.skip)
+			packCode[i] = int64(l.packScan.code)
+			packLen[i] = int64(l.packScan.length)
+			packLenN[i] = int64(l.packScan.lenN)
 			psEnded[i] = l.psEnded
 			esEnd[i] = l.esEnded
+			esProbed[i] = l.esProbed
+			esDirect[i] = l.esDirect
 		}
 		pictAccum = int64(p.pictAccum)
 		pictCycles = int64(p.pictCycles)
+		hostSteps = int64(p.hostSteps)
 		firstVidPTS = math.Float64bits(p.firstVidPTS)
 		firstAudPTS = math.Float64bits(p.firstAudPTS)
 		audStarted = p.audStarted
@@ -1041,12 +1059,18 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 	}
 	w.i64s("layer.fed", fed[:])
 	w.raw("layer.phase", phase[:])
-	w.i64s("layer.endScan", endScan[:])
 	w.i64s("layer.esScan", esScan[:])
+	w.i64s("layer.packSkip", packSkip[:])
+	w.i64s("layer.packCode", packCode[:])
+	w.i64s("layer.packLen", packLen[:])
+	w.i64s("layer.packLenN", packLenN[:])
 	w.flags("layer.psEnded", psEnded[:])
 	w.flags("layer.esEnded", esEnd[:])
+	w.flags("layer.esProbed", esProbed[:])
+	w.flags("layer.esDirect", esDirect[:])
 	w.i64("pictAccum", pictAccum)
 	w.i64("pictCycles", pictCycles)
+	w.i64("hostSteps", hostSteps)
 	w.u64("firstVidPTS", firstVidPTS)
 	w.u64("firstAudPTS", firstAudPTS)
 	w.flag("audStarted", audStarted)
@@ -1337,10 +1361,12 @@ func SerializeSize() int {
 	return 4 * 1024 * 1024
 }
 
-// fieldReader reads tagged field records out of one parsed chunk with
-// strict validation: a missing field, a size mismatch, or a leftover
-// unread field is an error. The first error wins; all getters return
-// zero values after it so decoders can read straight through.
+// fieldReader reads tagged field records out of one parsed chunk. A
+// size mismatch, an invalid value, or a leftover unread field is an
+// error; a missing field is not - it reads as the zero value, so a
+// file from an older version that predates the field loads cleanly.
+// The first error wins; all getters return zero values after it so
+// decoders can read straight through.
 type fieldReader struct {
 	chunk  string
 	fields map[string][]byte
@@ -1359,15 +1385,16 @@ func (r *fieldReader) fail(format string, args ...any) {
 }
 
 // take returns a field's data, requiring exactly want bytes (want < 0
-// accepts any size). The returned slice aliases the decompressed body;
-// callers that retain it must copy.
+// accepts any size). A missing field returns nil without error: the
+// file predates the field and the value is skipped (getters read it
+// as zero). The returned slice aliases the decompressed body; callers
+// that retain it must copy.
 func (r *fieldReader) take(name string, want int) []byte {
 	if r.err != nil {
 		return nil
 	}
 	data, ok := r.fields[name]
 	if !ok {
-		r.fail("missing field %s", name)
 		return nil
 	}
 	r.read[name] = true
@@ -2617,6 +2644,13 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 	decodeTiming := r.u8("decodeTiming")
 	outDest := r.u8("outDest")
 	scanMode := r.u8("scanMode")
+	playMode := r.u8("playMode")
+	tmodA := r.u8("tmodA")
+	tmodV := r.u8("tmodV")
+	decV := r.u8("decV")
+	audioMute := r.u8("audioMute")
+	vidPaused := r.flag("vidPaused")
+	vidFrozen := r.flag("vidFrozen")
 	connMode := r.take("conn.mode", 4)
 	connLayer := r.take("conn.layer", 4)
 	connBuf := r.take("conn.bufNum", 4)
@@ -2656,12 +2690,22 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 			}
 		}
 	}
-	endScan := r.i64s("layer.endScan", 2)
+	// layer.endScan was the pre-positional-scanner end-code matcher
+	// state; consumed so states carrying it still load (its scanning
+	// position is not recoverable, matching the resync restore).
+	r.i64s("layer.endScan", 2)
 	esScan := r.i64s("layer.esScan", 2)
+	packSkip := r.i64s("layer.packSkip", 2)
+	packCode := r.i64s("layer.packCode", 2)
+	packLen := r.i64s("layer.packLen", 2)
+	packLenN := r.i64s("layer.packLenN", 2)
 	psEnded := r.flags("layer.psEnded", 2)
 	esEnded := r.flags("layer.esEnded", 2)
+	esProbed := r.flags("layer.esProbed", 2)
+	esDirect := r.flags("layer.esDirect", 2)
 	pictAccum := r.i64("pictAccum")
 	pictCycles := r.i64("pictCycles")
+	hostSteps := r.i64("hostSteps")
 	firstVidPTS := r.u64("firstVidPTS")
 	firstAudPTS := r.u64("firstAudPTS")
 	audStarted := r.flag("audStarted")
@@ -2724,6 +2768,13 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 		m.decodeTiming = decodeTiming
 		m.outDest = outDest
 		m.scanMode = scanMode
+		m.playMode = playMode
+		m.tmodA = tmodA
+		m.tmodV = tmodV
+		m.decV = decV
+		m.audioMute = audioMute
+		m.vidPaused = vidPaused
+		m.vidFrozen = vidFrozen
 		for sel := 0; sel < 2; sel++ {
 			for layer := 0; layer < 2; layer++ {
 				i := sel*2 + layer
@@ -2762,10 +2813,15 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 				l := &p.layers[i]
 				l.fed = int(fed[i])
 				l.phase = mpegLayerPhase(phase[i])
-				l.endScan = int(endScan[i])
 				l.esScan = int(esScan[i])
+				l.packScan.skip = int(packSkip[i])
+				l.packScan.code = int(packCode[i])
+				l.packScan.length = int(packLen[i])
+				l.packScan.lenN = int(packLenN[i])
 				l.psEnded = psEnded[i]
 				l.esEnded = esEnded[i]
+				l.esProbed = esProbed[i]
+				l.esDirect = esDirect[i]
 				if l.psEnded {
 					l.ps.SignalEnd()
 				}
@@ -2775,6 +2831,7 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 			}
 			p.pictAccum = int(pictAccum)
 			p.pictCycles = int(pictCycles)
+			p.hostSteps = int(hostSteps)
 			p.firstVidPTS = math.Float64frombits(firstVidPTS)
 			p.firstAudPTS = math.Float64frombits(firstAudPTS)
 			p.audStarted = audStarted
