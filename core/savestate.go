@@ -782,6 +782,8 @@ func buildVDP2State(w *fieldWriter, v *VDP2) {
 	w.flag("latchedOddField", v.latchedOddField)
 	w.flag("exltfg", v.exltfg)
 	w.flag("pal", v.pal)
+	scynFrame := [4]int64{int64(v.scynFrame[0]), int64(v.scynFrame[1]), int64(v.scynFrame[2]), int64(v.scynFrame[3])}
+	w.i64s("scynFrame", scynFrame[:])
 }
 
 func buildSMPC(w *fieldWriter, s *SMPC) {
@@ -2280,6 +2282,7 @@ func decodeVDP2State(e *Emulator, r *fieldReader) func() {
 	latchedOddField := r.flag("latchedOddField")
 	exltfg := r.flag("exltfg")
 	pal := r.flag("pal")
+	scynFrame := r.i64s("scynFrame", 4)
 	return func() {
 		v := e.vdp2
 		copy(v.regs[:], regs)
@@ -2293,6 +2296,9 @@ func decodeVDP2State(e *Emulator, r *fieldReader) func() {
 		v.latchedOddField = latchedOddField
 		v.exltfg = exltfg
 		v.pal = pal
+		for i := range v.scynFrame {
+			v.scynFrame[i] = int32(scynFrame[i])
+		}
 	}
 }
 

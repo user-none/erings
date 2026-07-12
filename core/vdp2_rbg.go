@@ -101,11 +101,13 @@ type rbgFrame struct {
 	screenOverB                uint8
 }
 
-// ResetRotArm clears the per-scanline RPRCTL re-read arm table. Called by
+// ResetRotArm clears the per-scanline register-write capture tables
+// (RPRCTL re-read arms and NBG vertical-scroll reloads). Called by
 // RunFrame at frame start with both workers parked so it cannot race the
 // SH-2's arming writes or the VDP worker's per-line consumption.
 func (v *VDP2) ResetRotArm() {
 	clear(v.rprArm[:])
+	clear(v.scynSet[:])
 }
 
 // signExtendFP decodes a two-word fixed-point value from VRAM.

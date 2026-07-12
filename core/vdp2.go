@@ -240,6 +240,22 @@ type VDP2 struct {
 	// maxHeight to cover every raster line including the vertical blank.
 	rprArm [maxHeight]uint16
 
+	// Per-scanline SCYN write capture, 11.8 fixed point per NBG screen,
+	// indexed by the raster line the write occurred on; scynSet marks
+	// recorded entries. BeginLine consumes them as vertical counter
+	// reloads. Reset each frame.
+	scynRec [maxHeight][4]int32
+	scynSet [maxHeight][4]bool
+
+	// SCYN values captured by EndFrame, 11.8 fixed point per NBG
+	// screen. The NBG vertical counters load from SCYN at the top of
+	// the display, so the load value is the register content at the
+	// frame boundary. By the time BeginFrame reads the register file
+	// for the new frame it may already hold that frame's mid-display
+	// raster writes, so BeginFrame seeds the counters from this
+	// capture instead.
+	scynFrame [4]int32
+
 	// VDP1 display framebuffer for the line being rendered. Written
 	// only at BeginLine entry from its argument.
 	lineFB vdp1FBView
@@ -429,6 +445,31 @@ func (v *VDP2) Write(offset uint32, val uint16) {
 	// writes within a line accumulate.
 	if idx == vdp2RPRCTL && int(v.vLine) < len(v.rprArm) {
 		v.rprArm[v.vLine] |= val & 0x0707
+	}
+
+	// NBG vertical-scroll counter reload: per VDP2 manual Sec 5.1 the
+	// screen scroll value can be changed during the horizontal retrace
+	// to take effect in the middle of the image screen, so a
+	// mid-display SCYN write sets the layer's internal vertical
+	// position directly, effective on the following line. Record the
+	// write at the raster line it occurred on; BeginLine rebases the
+	// screen's effective Y base from it. The last write within a line
+	// wins.
+	if int(v.vLine) < len(v.scynRec) {
+		switch idx {
+		case vdp2SCYIN0:
+			v.scynRec[v.vLine][0] = int32(val&0x7FF)<<8 | int32((v.regs[vdp2SCYDN0]>>8)&0xFF)
+			v.scynSet[v.vLine][0] = true
+		case vdp2SCYIN1:
+			v.scynRec[v.vLine][1] = int32(val&0x7FF)<<8 | int32((v.regs[vdp2SCYDN1]>>8)&0xFF)
+			v.scynSet[v.vLine][1] = true
+		case vdp2SCYN2:
+			v.scynRec[v.vLine][2] = int32(val&0x7FF) << 8
+			v.scynSet[v.vLine][2] = true
+		case vdp2SCYN3:
+			v.scynRec[v.vLine][3] = int32(val&0x7FF) << 8
+			v.scynSet[v.vLine][3] = true
+		}
 	}
 
 	switch idx {
@@ -647,6 +688,13 @@ func (v *VDP2) EndFrame() {
 	v.hblankRaised = false
 	v.vLine = 0
 	v.oddField = !v.oddField
+
+	// Top-of-display capture for the NBG vertical counters
+	v.scynFrame[0] = int32(v.regs[vdp2SCYIN0]&0x7FF)<<8 | int32(v.regs[vdp2SCYDN0]>>8)
+	v.scynFrame[1] = int32(v.regs[vdp2SCYIN1]&0x7FF)<<8 | int32(v.regs[vdp2SCYDN1]>>8)
+	v.scynFrame[2] = int32(v.regs[vdp2SCYN2]&0x7FF) << 8
+	v.scynFrame[3] = int32(v.regs[vdp2SCYN3]&0x7FF) << 8
+
 	v.scu.RaiseVBlankOUT()
 }
 

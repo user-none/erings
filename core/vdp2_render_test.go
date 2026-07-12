@@ -1035,6 +1035,10 @@ func TestBIOSConfig(t *testing.T) {
 	v.regs[vdp2PRINA] = 0x0201 // NBG0=1, NBG1=2
 	v.regs[vdp2PRINB] = 0x0403 // NBG2=3, NBG3=4
 
+	// Frame boundary: EndFrame captures SCYN to seed the vertical
+	// counters for the next frame's render.
+	v.EndFrame()
+
 	// Verify config decode for each screen
 	v.BeginFrame()
 	cfg0 := v.decodeNBGConfig(0)
@@ -1857,9 +1861,11 @@ func TestRenderNBG_PlaneSize2x2(t *testing.T) {
 	v.cram[19*2] = 0x7C
 	v.cram[19*2+1] = 0x00 // blue
 
-	// Scroll to (512, 512): should read from page 3 (BR)
+	// Scroll to (512, 512): should read from page 3 (BR). The frame
+	// boundary captures SCYN for the next frame's vertical counter.
 	v.regs[vdp2SCXIN0] = 512
 	v.regs[vdp2SCYIN0] = 512
+	v.EndFrame()
 
 	buf := make([]uint32, 352*256)
 	renderTestNBG(v, 0, buf)
@@ -1871,6 +1877,56 @@ func TestRenderNBG_PlaneSize2x2(t *testing.T) {
 	bb := uint8(px)
 	if bb != 255 {
 		t.Errorf("page 3 pixel B=%d, want 255 (blue)", bb)
+	}
+}
+
+func TestNBGVerticalScrollCounterReload(t *testing.T) {
+	v := newTestVDP2()
+	v.recalcTiming()
+
+	// Top-of-display load: EndFrame captures SCYN, ResetRotArm clears
+	// the per-line capture (RunFrame's frame-start order), BeginFrame
+	// seeds the counters.
+	v.regs[vdp2SCYIN0] = 0x0040
+	v.regs[vdp2SCYN2] = 0x0020
+	v.EndFrame()
+	v.ResetRotArm()
+	v.BeginFrame()
+
+	v.BeginLine(0, vdp1FBView{})
+	if got, want := v.frame.nbgYBaseFP[0], int32(0x0040)<<8; got != want {
+		t.Errorf("NBG0 top-of-display base = %#x, want %#x", got, want)
+	}
+	if got, want := v.frame.nbgYBaseFP[2], int32(0x0020)<<8; got != want {
+		t.Errorf("NBG2 top-of-display base = %#x, want %#x", got, want)
+	}
+
+	// A mid-display SCYIN0 write reloads the vertical counter: the
+	// following line displays the written position verbatim, so the
+	// rebased base plus the line's dispY*incY advance equals it.
+	v.vLine = 10
+	v.Write(vdp2SCYIN0*2, 0x0100)
+	v.BeginLine(11, vdp1FBView{})
+	incY := int32(0x100) // ZMYIN0 = 1.0 from the fixture
+	if got, want := v.frame.nbgYBaseFP[0]+11*incY, int32(0x0100)<<8; got != want {
+		t.Errorf("NBG0 line 11 position = %#x, want %#x (reloaded)", got, want)
+	}
+
+	// Later lines keep stepping by the coordinate increment: the base
+	// is unchanged so positions advance one line per line.
+	base := v.frame.nbgYBaseFP[0]
+	v.BeginLine(12, vdp1FBView{})
+	if got := v.frame.nbgYBaseFP[0]; got != base {
+		t.Errorf("NBG0 base changed without a write: %#x, want %#x", got, base)
+	}
+
+	// NBG2 has no coordinate increment register; it advances 1.0 per
+	// line and reloads the same way.
+	v.vLine = 20
+	v.Write(vdp2SCYN2*2, 0x0080)
+	v.BeginLine(21, vdp1FBView{})
+	if got, want := v.frame.nbgYBaseFP[2]+21*incY, int32(0x0080)<<8; got != want {
+		t.Errorf("NBG2 line 21 position = %#x, want %#x (reloaded)", got, want)
 	}
 }
 
