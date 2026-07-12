@@ -412,6 +412,8 @@ func buildSCUCore(w *fieldWriter, s *SCU) {
 	w.u32("t1s", s.t1s)
 	w.u32("t1md", s.t1md)
 	w.u32("t0cnt", s.t0cnt)
+	w.i64("t1Delay", int64(s.t1Delay))
+	w.flag("t1Gate", s.t1Gate)
 	w.u32("ims", s.ims)
 	w.u32("ist", s.ist)
 	w.u32("aiak", s.aiak)
@@ -780,6 +782,8 @@ func buildVDP2State(w *fieldWriter, v *VDP2) {
 	w.flag("latchedOddField", v.latchedOddField)
 	w.flag("exltfg", v.exltfg)
 	w.flag("pal", v.pal)
+	scynFrame := [4]int64{int64(v.scynFrame[0]), int64(v.scynFrame[1]), int64(v.scynFrame[2]), int64(v.scynFrame[3])}
+	w.i64s("scynFrame", scynFrame[:])
 }
 
 func buildSMPC(w *fieldWriter, s *SMPC) {
@@ -1763,6 +1767,8 @@ func decodeSCUCore(e *Emulator, r *fieldReader) func() {
 	t1s := r.u32("t1s")
 	t1md := r.u32("t1md")
 	t0cnt := r.u32("t0cnt")
+	t1Delay := r.i64("t1Delay")
+	t1Gate := r.flag("t1Gate")
 	ims := r.u32("ims")
 	ist := r.u32("ist")
 	aiak := r.u32("aiak")
@@ -1790,6 +1796,8 @@ func decodeSCUCore(e *Emulator, r *fieldReader) func() {
 		s.t1s = t1s
 		s.t1md = t1md
 		s.t0cnt = t0cnt
+		s.t1Delay = int(t1Delay)
+		s.t1Gate = t1Gate
 		s.ims = ims
 		s.ist = ist
 		s.aiak = aiak
@@ -2274,6 +2282,7 @@ func decodeVDP2State(e *Emulator, r *fieldReader) func() {
 	latchedOddField := r.flag("latchedOddField")
 	exltfg := r.flag("exltfg")
 	pal := r.flag("pal")
+	scynFrame := r.i64s("scynFrame", 4)
 	return func() {
 		v := e.vdp2
 		copy(v.regs[:], regs)
@@ -2287,6 +2296,9 @@ func decodeVDP2State(e *Emulator, r *fieldReader) func() {
 		v.latchedOddField = latchedOddField
 		v.exltfg = exltfg
 		v.pal = pal
+		for i := range v.scynFrame {
+			v.scynFrame[i] = int32(scynFrame[i])
+		}
 	}
 }
 

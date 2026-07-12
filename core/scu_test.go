@@ -946,37 +946,56 @@ func TestSCUTimer0DisabledByDefault(t *testing.T) {
 	}
 }
 
-func TestSCUTimer1Mode0FiresOnLine(t *testing.T) {
+func TestSCUTimer1Mode0CountdownFires(t *testing.T) {
 	s := NewSCU()
 
-	var gotVec uint16
+	s.SetIRLHandler(func(level uint8, vec uint16) {}, func() {})
+	s.ims = s.ims &^ (1 << 4) // Unmask Timer 1 (bit 4)
+
+	s.Write(0x94, 5) // T1S = 5 dot clocks = 20 system cycles
+	s.Write(0x98, 1) // Enable, mode 0 (bit 8 = 0)
+
+	// H-Blank-IN loads the countdown; no fire until it expires.
+	s.RaiseHBlankIN(0)
+	if s.ist&(1<<4) != 0 {
+		t.Fatal("Timer 1 should not fire at H-Blank-IN with T1S > 0")
+	}
+	s.TickSystemCycles(19)
+	if s.ist&(1<<4) != 0 {
+		t.Fatal("Timer 1 should not fire before the countdown expires")
+	}
+	s.TickSystemCycles(1)
+	if s.ist&(1<<4) == 0 {
+		t.Fatal("Timer 1 should fire when the countdown expires")
+	}
+
+	// Mode 0 fires every line: the next H-Blank-IN reloads and fires again.
+	s.ist = 0
+	s.RaiseHBlankIN(1)
+	s.TickSystemCycles(20)
+	if s.ist&(1<<4) == 0 {
+		t.Error("Timer 1 should fire again on the next line in mode 0")
+	}
+}
+
+func TestSCUTimer1ZeroSetDataFiresAtHBlank(t *testing.T) {
+	s := NewSCU()
+
 	called := false
 	s.SetIRLHandler(func(level uint8, vec uint16) {
 		if vec == 0x44 {
-			gotVec = vec
 			called = true
 		}
 	}, func() {})
-	s.ims = s.ims &^ (1 << 4) // Unmask Timer 1 (bit 4)
+	s.ims = s.ims &^ (1 << 4)
 
-	s.Write(0x94, 5) // T1S = line 5
-	s.Write(0x98, 1) // Enable, mode 0 (bit 8 = 0)
+	// T1S left at 0: the loaded countdown is already 0, so the
+	// interrupt fires at the H-Blank-IN itself.
+	s.Write(0x98, 1) // Enable, mode 0
 
-	// Lines 0-4: no fire
-	for i := uint16(0); i < 5; i++ {
-		s.RaiseHBlankIN(i)
-	}
-	if called {
-		t.Fatal("Timer 1 should not fire before line match")
-	}
-
-	// Line 5: should fire
-	s.RaiseHBlankIN(5)
+	s.RaiseHBlankIN(0)
 	if !called {
-		t.Fatal("Timer 1 should fire on line match")
-	}
-	if gotVec != 0x44 {
-		t.Errorf("vec = 0x%04X, want 0x0044", gotVec)
+		t.Error("Timer 1 with T1S=0 should fire at H-Blank-IN")
 	}
 }
 
@@ -986,19 +1005,27 @@ func TestSCUTimer1Mode1RequiresTimer0(t *testing.T) {
 	s.SetIRLHandler(func(level uint8, vec uint16) {}, func() {})
 	s.ims = s.ims &^ ((1 << 3) | (1 << 4)) // Unmask Timer 0 and Timer 1
 
-	s.Write(0x90, 4)        // T0C = 4 (Timer 0 fires at line 4)
-	s.Write(0x94, 4)        // T1S = line 4
+	s.Write(0x90, 4)        // T0C = 4 (Timer 0 fires at the 5th H-Blank)
+	s.Write(0x94, 4)        // T1S = 4 dot clocks = 16 system cycles
 	s.Write(0x98, 1|(1<<8)) // Enable, mode 1 (bit 8 = 1)
 
-	// Counter compares 0,1,2,3,4 across 5 calls to RaiseHBlankIN
-	for i := uint16(0); i < 5; i++ {
+	// Counter compares 0,1,2,3 across the first 4 H-Blanks: Timer 0
+	// does not match, so the mode-1 gate holds each countdown silent.
+	for i := uint16(0); i < 4; i++ {
 		s.RaiseHBlankIN(i)
+		s.TickSystemCycles(16)
 	}
-	// On 5th call (line 4): counter=4=T0C so Timer 0 fires.
-	// Line 4 also matches T1S=4. Mode 1 requires both -> Timer 1 fires.
-	// Check IST directly since Timer 0 has higher IRL priority.
+	if s.ist&(1<<4) != 0 {
+		t.Fatal("Timer 1 mode 1 should not fire before the Timer 0 match")
+	}
+
+	// 5th H-Blank: counter=4=T0C, Timer 0 fires, gating Timer 1's
+	// countdown to fire on expiry. Check IST directly since Timer 0
+	// has higher IRL priority.
+	s.RaiseHBlankIN(4)
+	s.TickSystemCycles(16)
 	if s.ist&(1<<4) == 0 {
-		t.Error("Timer 1 mode 1: IST bit 4 should be set when Timer 0 fires and line matches")
+		t.Error("Timer 1 mode 1: IST bit 4 should be set after the Timer 0 match line")
 	}
 }
 
@@ -1014,12 +1041,13 @@ func TestSCUTimer1Mode1BlockedWithoutTimer0(t *testing.T) {
 	s.ims = s.ims &^ ((1 << 3) | (1 << 4))
 
 	s.Write(0x90, 100)      // T0C = 100 (won't fire during this test)
-	s.Write(0x94, 2)        // T1S = line 2
+	s.Write(0x94, 2)        // T1S = 2 dot clocks = 8 system cycles
 	s.Write(0x98, 1|(1<<8)) // Enable, mode 1
 
-	// Line 2 matches T1S but Timer 0 won't fire (T0C=100)
+	// Timer 0 never matches (T0C=100), so no countdown may fire.
 	for i := uint16(0); i < 5; i++ {
 		s.RaiseHBlankIN(i)
+		s.TickSystemCycles(8)
 	}
 	if t1Called {
 		t.Error("Timer 1 mode 1 should NOT fire without Timer 0 match")

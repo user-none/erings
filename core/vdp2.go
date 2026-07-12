@@ -203,9 +203,10 @@ type VDP2 struct {
 	interlace uint8 // 0=non-interlace, 2=single-density, 3=double-density
 
 	// Timing state
-	lineCycle uint32 // Current system clock position within line
-	vLine     uint16 // Current scanline
-	oddField  bool   // Current field (true=odd)
+	lineCycle    uint32 // Current system clock position within line
+	vLine        uint16 // Current scanline
+	oddField     bool   // Current field (true=odd)
+	hblankRaised bool   // this line's H-Blank-IN delivered; cleared with lineCycle
 
 	// HV counter latch. HCNT/VCNT return latched snapshots captured
 	// on CPU read of EXTEN (with EXLTEN=0), not live values.
@@ -238,6 +239,22 @@ type VDP2 struct {
 	// each frame by RunFrame while the workers are parked. Sized to
 	// maxHeight to cover every raster line including the vertical blank.
 	rprArm [maxHeight]uint16
+
+	// Per-scanline SCYN write capture, 11.8 fixed point per NBG screen,
+	// indexed by the raster line the write occurred on; scynSet marks
+	// recorded entries. BeginLine consumes them as vertical counter
+	// reloads. Reset each frame.
+	scynRec [maxHeight][4]int32
+	scynSet [maxHeight][4]bool
+
+	// SCYN values captured by EndFrame, 11.8 fixed point per NBG
+	// screen. The NBG vertical counters load from SCYN at the top of
+	// the display, so the load value is the register content at the
+	// frame boundary. By the time BeginFrame reads the register file
+	// for the new frame it may already hold that frame's mid-display
+	// raster writes, so BeginFrame seeds the counters from this
+	// capture instead.
+	scynFrame [4]int32
 
 	// VDP1 display framebuffer for the line being rendered. Written
 	// only at BeginLine entry from its argument.
@@ -430,6 +447,28 @@ func (v *VDP2) Write(offset uint32, val uint16) {
 		v.rprArm[v.vLine] |= val & 0x0707
 	}
 
+	// NBG vertical-scroll counter reload: a mid-display SCYN write sets
+	// the layer's internal vertical position directly, effective on the
+	// following line. Record the write at the raster line it occurred
+	// on; BeginLine rebases the screen's effective Y base from it. The
+	// last write within a line wins.
+	if int(v.vLine) < len(v.scynRec) {
+		switch idx {
+		case vdp2SCYIN0:
+			v.scynRec[v.vLine][0] = int32(val&0x7FF)<<8 | int32((v.regs[vdp2SCYDN0]>>8)&0xFF)
+			v.scynSet[v.vLine][0] = true
+		case vdp2SCYIN1:
+			v.scynRec[v.vLine][1] = int32(val&0x7FF)<<8 | int32((v.regs[vdp2SCYDN1]>>8)&0xFF)
+			v.scynSet[v.vLine][1] = true
+		case vdp2SCYN2:
+			v.scynRec[v.vLine][2] = int32(val&0x7FF) << 8
+			v.scynSet[v.vLine][2] = true
+		case vdp2SCYN3:
+			v.scynRec[v.vLine][3] = int32(val&0x7FF) << 8
+			v.scynSet[v.vLine][3] = true
+		}
+	}
+
 	switch idx {
 	case vdp2TVSTAT, vdp2VRSIZE, vdp2HCNT, vdp2VCNT:
 		// Read-only, ignore writes
@@ -565,26 +604,33 @@ func (v *VDP2) effectiveInterlace() uint8 {
 }
 
 // DisplayHeight returns the number of rows in the output framebuffer.
-// LSMD=3 double-density interlace doubles the displayed vertical
-// resolution; LSMD=3 with NBG mosaic enabled falls back to single-density
-// (non-doubled) per VDP2 manual section 4.11.
+// Both interlace modes weave the fields into alternating output rows,
+// doubling the displayed vertical resolution: under LSMD=3 each field
+// carries distinct lines, and under LSMD=2 the fields carry the same
+// line count but sit half a raster line apart on the CRT - games
+// alternate per-field content (scroll and rotation phase) expecting
+// that spatial interleave, so displaying each field as a full frame
+// would shift the picture up and down by a line every frame.
 //
 // Reads the BeginFrame sample, not live registers: the value must
 // describe the frame that was actually rendered, or a mid-frame mode
 // change would make the host interpret the framebuffer with geometry
 // the renderer did not use (sheared/garbled output for that frame).
 func (v *VDP2) DisplayHeight() int {
-	if v.frame.effIntl == 3 {
+	if v.frame.effIntl >= 2 {
 		return v.frame.height * 2
 	}
 	return v.frame.height
 }
 
-// fieldBit returns 1 when the current field to be drawn is odd, 0
-// otherwise. Always returns 0 outside effective LSMD=3 so callers can use
-// the result unconditionally in row index math.
+// fieldBit returns the output-row parity of the field being drawn:
+// the odd field scans the upper set of raster lines, so it maps to
+// parity 0 (rows 0, 2, 4, ...) and the even field to parity 1 (rows
+// 1, 3, 5, ..., half a line lower). Always returns 0 outside the
+// interlace modes so callers can use the result unconditionally in
+// row index math.
 func (v *VDP2) fieldBit() int {
-	if v.effectiveInterlace() == 3 && v.oddField {
+	if v.effectiveInterlace() >= 2 && !v.oddField {
 		return 1
 	}
 	return 0
@@ -602,25 +648,40 @@ func (v *VDP2) Framebuffer() []byte { return v.framebuffer }
 // DisplayHeight: it must match the geometry the frame was rendered at.
 func (v *VDP2) FramebufferStride() int { return v.frame.width * 4 }
 
+// inHBlank reports whether the line has passed the end of its active
+// display area and is in horizontal blanking (the TVSTAT HBLANK
+// condition).
+func (v *VDP2) inHBlank() bool {
+	return v.lineCycle >= v.activeSystemCycles
+}
+
 // TickSystemCycles advances the intra-line cycle position (TVSTAT
-// HBLANK, H/V latch). Line advancement is driven by EndLine/EndFrame
+// HBLANK, H/V latch) and raises H-Blank-IN as the line enters
+// horizontal blanking. Line advancement is driven by EndLine/EndFrame
 // from the emulator frame loop.
 func (v *VDP2) TickSystemCycles(cycles uint32) {
 	v.lineCycle += cycles
+
+	// H-Blank-IN is delivered once per display line as the line enters
+	// horizontal blanking, not at the line boundary: the SCU timers key
+	// off it, and per SCU manual Sec 2.2 Figures 2.12/2.13 they operate
+	// across the display area with the non-display area outside the
+	// count.
+	if v.inHBlank() && !v.hblankRaised && v.vLine < v.activeLines {
+		v.hblankRaised = true
+		v.scu.RaiseHBlankIN(v.vLine)
+	}
 }
 
 // EndLine advances the line counter at a scanline boundary. Called by
 // the frame loop for every line except the last of the frame.
 func (v *VDP2) EndLine() {
 	v.lineCycle = 0
+	v.hblankRaised = false
 	v.vLine++
 
 	if v.vLine == v.activeLines {
 		v.scu.RaiseVBlankIN()
-	}
-
-	if v.vLine < v.activeLines {
-		v.scu.RaiseHBlankIN(v.vLine)
 	}
 }
 
@@ -628,10 +689,17 @@ func (v *VDP2) EndLine() {
 // the frame loop after the last line of the frame.
 func (v *VDP2) EndFrame() {
 	v.lineCycle = 0
+	v.hblankRaised = false
 	v.vLine = 0
 	v.oddField = !v.oddField
+
+	// Top-of-display capture for the NBG vertical counters
+	v.scynFrame[0] = int32(v.regs[vdp2SCYIN0]&0x7FF)<<8 | int32(v.regs[vdp2SCYDN0]>>8)
+	v.scynFrame[1] = int32(v.regs[vdp2SCYIN1]&0x7FF)<<8 | int32(v.regs[vdp2SCYDN1]>>8)
+	v.scynFrame[2] = int32(v.regs[vdp2SCYN2]&0x7FF) << 8
+	v.scynFrame[3] = int32(v.regs[vdp2SCYN3]&0x7FF) << 8
+
 	v.scu.RaiseVBlankOUT()
-	v.scu.RaiseHBlankIN(0)
 }
 
 // buildTVSTAT computes the TVSTAT register from current timing state.
@@ -649,7 +717,7 @@ func (v *VDP2) buildTVSTAT() uint16 {
 	if v.regs[vdp2TVMD]&0x8000 != 0 && (v.interlace == 0 || v.oddField) {
 		stat |= tvstatODD
 	}
-	if v.lineCycle >= v.activeSystemCycles {
+	if v.inHBlank() {
 		stat |= tvstatHBLANK
 	}
 	if v.vLine >= v.activeLines {

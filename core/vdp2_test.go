@@ -273,12 +273,24 @@ func TestVDP2HBlankINInterrupt(t *testing.T) {
 	scu := NewSCU()
 	v := NewVDP2(scu)
 
-	// Complete one line from vLine=0 (active region)
-	v.EndLine()
+	// H-Blank-IN fires when a display line's cycle position enters
+	// horizontal blanking, not at the line boundary.
+	v.TickSystemCycles(v.activeSystemCycles - 1)
+	if scu.ist&(1<<2) != 0 {
+		t.Error("HBlank-IN should not fire inside the active display area")
+	}
+	v.TickSystemCycles(1)
 
 	// IST bit 2 = H-Blank-IN
 	if scu.ist&(1<<2) == 0 {
-		t.Error("HBlank-IN should fire after completing an active line")
+		t.Error("HBlank-IN should fire at the end of the active display area")
+	}
+
+	// One delivery per line: further cycles on the same line are quiet.
+	scu.ist = 0
+	v.TickSystemCycles(64)
+	if scu.ist&(1<<2) != 0 {
+		t.Error("HBlank-IN should fire only once per line")
 	}
 }
 
@@ -289,7 +301,8 @@ func TestVDP2HBlankINNotDuringVBlank(t *testing.T) {
 	// Place in VBlank region
 	v.vLine = 224
 
-	// Complete one line
+	// Walk the full line
+	v.TickSystemCycles(v.activeSystemCycles)
 	v.EndLine()
 
 	// IST bit 2 = H-Blank-IN should NOT be set during VBlank
@@ -303,11 +316,14 @@ func TestVDP2FullFrameWrap(t *testing.T) {
 	v := NewVDP2(scu)
 	v.Write(0x0000, 0x8000) // DISP=1
 
-	// Drive an entire frame the way the emulator does: EndLine for
-	// every line except the last, EndFrame at the frame boundary.
+	// Drive an entire frame the way the emulator does: tick each
+	// line's cycles, EndLine for every line except the last, EndFrame
+	// at the frame boundary.
 	for line := 0; line < linesNTSC-1; line++ {
+		v.TickSystemCycles(v.activeSystemCycles)
 		v.EndLine()
 	}
+	v.TickSystemCycles(v.activeSystemCycles)
 	v.EndFrame()
 
 	if v.vLine != 0 {
@@ -815,21 +831,27 @@ func TestVDP2FieldBit(t *testing.T) {
 		t.Errorf("non-interlace odd-field fieldBit = %d, want 0", got)
 	}
 
-	// LSMD=3 even field -> 0; odd field -> 1.
+	// LSMD=3: the odd field scans the upper rows (parity 0), the even
+	// field the lower rows (parity 1).
 	v.regs[vdp2TVMD] = 0x80C0
 	v.recalcTiming()
 	v.oddField = false
-	if got := v.fieldBit(); got != 0 {
-		t.Errorf("LSMD=3 even-field fieldBit = %d, want 0", got)
+	if got := v.fieldBit(); got != 1 {
+		t.Errorf("LSMD=3 even-field fieldBit = %d, want 1", got)
 	}
 	v.oddField = true
-	if got := v.fieldBit(); got != 1 {
-		t.Errorf("LSMD=3 odd-field fieldBit = %d, want 1", got)
+	if got := v.fieldBit(); got != 0 {
+		t.Errorf("LSMD=3 odd-field fieldBit = %d, want 0", got)
 	}
 
-	// LSMD=3 + NBG mosaic enabled -> effective LSMD=2; fieldBit must be 0.
+	// LSMD=3 + NBG mosaic enabled -> effective LSMD=2: still an
+	// interlace mode, so the field parity mapping stays in effect.
 	v.regs[vdp2MZCTL] = 0x0001
 	if got := v.fieldBit(); got != 0 {
-		t.Errorf("LSMD=3 + mosaic fieldBit = %d, want 0 (downgrade)", got)
+		t.Errorf("LSMD=3 + mosaic odd-field fieldBit = %d, want 0", got)
+	}
+	v.oddField = false
+	if got := v.fieldBit(); got != 1 {
+		t.Errorf("LSMD=3 + mosaic even-field fieldBit = %d, want 1", got)
 	}
 }

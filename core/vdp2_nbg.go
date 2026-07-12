@@ -421,7 +421,7 @@ func (v *VDP2) nbgCellSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) fun
 	// is only applied when the line interval is two lines or greater
 	// (LSS >= 1); within a single-line entry it contributes zero.
 	lineScrollXFP := cfg.scrollXFP
-	lineScrollYFP := cfg.scrollYFP
+	lineScrollYFP := v.frame.nbgYBaseFP[screen]
 	lineIncXFP := cfg.incXFP
 	if hasLineScroll {
 		srcY := y
@@ -452,7 +452,7 @@ func (v *VDP2) nbgCellSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) fun
 			hi := v.readVRAM16(tableOff + fieldOff)
 			lo := v.readVRAM16(tableOff + fieldOff + 2)
 			lsyDelta := int32(hi&0x07FF)<<8 | int32(lo>>8)
-			lineScrollYFP = cfg.scrollYFP + lsyDelta
+			lineScrollYFP = v.frame.nbgYBaseFP[screen] + lsyDelta
 			fieldOff += 4
 		}
 		if cfg.lineZoomX {
@@ -800,7 +800,7 @@ func (v *VDP2) nbgBitmapSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) f
 	} else if hasLineScroll && cfg.lineScrollY {
 		yAdvance = 0
 	}
-	syFP := cfg.scrollYFP + lsyDelta + yAdvance*cfg.incYFP
+	syFP := v.frame.nbgYBaseFP[screen] + lsyDelta + yAdvance*cfg.incYFP
 	sy := int(syFP >> 8)
 	if cfg.bmpHeight > 0 {
 		sy = sy % cfg.bmpHeight

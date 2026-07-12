@@ -40,11 +40,20 @@ type SCU struct {
 
 	// Timer registers
 	t0c  uint32 // Timer 0 compare value (write-only)
-	t1s  uint32 // Timer 1 line match value (write-only)
+	t1s  uint32 // Timer 1 set data: countdown loaded at each H-Blank-IN (write-only)
 	t1md uint32 // Timer 1 mode (write-only): bit 0 = enable, bit 8 = mode
 
 	// Timer state
 	t0cnt uint32 // Timer 0 H-Blank counter (resets at VBlank-OUT)
+
+	// Timer 1 countdown in system cycles (-1 = inactive). Per SCU manual
+	// Sec 2.2 the set-data register is loaded into the counter at each
+	// H-Blank-IN and decremented at the dot clock (about 1/4 the system
+	// clock); the Timer 1 interrupt occurs when it reaches 0. t1Gate
+	// records whether expiry raises the interrupt: always in mode 0,
+	// only on the Timer 0 match line in mode 1.
+	t1Delay int
+	t1Gate  bool
 
 	// Interrupt control
 	ims uint32 // Interrupt Mask (write-only)
@@ -153,6 +162,7 @@ func NewSCU() *SCU {
 		ims:        0xBFFF,
 		pendingBit: -1,
 		dmaDelay:   [3]int{-1, -1, -1},
+		t1Delay:    -1,
 	}
 	for i := range 3 {
 		s.dmaAD[i] = 0x101
@@ -180,6 +190,8 @@ func (s *SCU) Reset() {
 		s.dmaPending[i] = false
 	}
 	s.dspCycleCarry = 0
+	s.t1Delay = -1
+	s.t1Gate = false
 	if s.clearIRL != nil {
 		s.clearIRL()
 	}
@@ -202,6 +214,16 @@ func (s *SCU) TickSystemCycles(cycles uint32) {
 			continue
 		}
 		s.finishDMA(lvl)
+	}
+
+	if s.t1Delay >= 0 {
+		s.t1Delay -= int(cycles)
+		if s.t1Delay <= 0 {
+			s.t1Delay = -1
+			if s.t1Gate {
+				s.raiseTimer1()
+			}
+		}
 	}
 
 	if s.dsp.executing {
@@ -463,6 +485,9 @@ func (s *SCU) Write(offset uint32, val uint32) {
 		s.t1s = val
 	case 0x98:
 		s.t1md = val
+		if val&1 == 0 {
+			s.t1Delay = -1
+		}
 	case 0xA0:
 		s.ims = val & 0xFFFF
 		s.irlWithheld = false
@@ -572,13 +597,21 @@ func (s *SCU) RaiseHBlankIN(line uint16) {
 		s.raiseTimer0()
 	}
 
-	// Timer 1: fire when line matches T1S.
-	// Mode 0 (t1md bit 8 = 0): fire independently on line match.
-	// Mode 1 (t1md bit 8 = 1): fire only when Timer 0 also fires.
-	if uint32(line) == s.t1s&0x1FF {
-		if s.t1md&(1<<8) == 0 || t0Fire {
+	// Timer 1: the set-data value is loaded into the countdown at every
+	// H-Blank-IN and decremented at the dot clock, about 1/4 the system
+	// clock; the interrupt occurs when the value is 0 (SCU manual
+	// Sec 2.2), so a set data of 0 fires at the H-Blank itself. Mode 0
+	// (T1MD bit 8 = 0) delivers it every line - the per-scanline raster
+	// interrupt - while mode 1 delivers it only on the line where
+	// Timer 0 matched.
+	s.t1Gate = s.t1md&(1<<8) == 0 || t0Fire
+	if delay := int(s.t1s&0x1FF) * 4; delay == 0 {
+		s.t1Delay = -1
+		if s.t1Gate {
 			s.raiseTimer1()
 		}
+	} else {
+		s.t1Delay = delay
 	}
 }
 
