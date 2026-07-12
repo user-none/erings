@@ -96,6 +96,55 @@ type mpegLayer struct {
 	esEnded  bool           // SignalEnd issued on es (drained, end code, or unidentifiable)
 	esProbed bool           // stream type identified from the first fed sector
 	esDirect bool           // raw video elementary stream: feed es, bypass ps/demux
+
+	// Pack-stream record accounting for state capture: cumulative
+	// boundary offsets of every ps write (a leading start plus one end
+	// per record), pruned as the demuxer consumes. A save serializes
+	// the unread ps bytes trimmed back to a record boundary (a
+	// mid-record splice would make the restored demuxer blind-scan
+	// payload bytes, which are not start-code-free).
+	psWritten int   // total bytes written to ps
+	psBounds  []int // record boundary offsets; consecutive pairs delimit records
+}
+
+// psWrite appends one record (a sector payload, or a restore-seeded
+// block) to the layer's pack stream, recording its boundaries.
+func (l *mpegLayer) psWrite(b []byte) {
+	l.ps.Write(b)
+	if len(l.psBounds) == 0 {
+		l.psBounds = append(l.psBounds, l.psWritten)
+	}
+	l.psWritten += len(b)
+	l.psBounds = append(l.psBounds, l.psWritten)
+}
+
+// psPrune drops record boundaries the demuxer has fully consumed,
+// keeping the boundary pair around its current read position.
+func (l *mpegLayer) psPrune() {
+	consumed := l.psWritten - l.ps.Remaining()
+	i := 0
+	for i+1 < len(l.psBounds) && l.psBounds[i+1] <= consumed {
+		i++
+	}
+	if i > 0 {
+		l.psBounds = append(l.psBounds[:0], l.psBounds[i:]...)
+	}
+}
+
+// psUnreadRecords returns the unread pack-stream records: the byte
+// range of every whole record past the demuxer's read position. A
+// record the demuxer is partway through is excluded.
+func (l *mpegLayer) psUnreadRecords() [][]byte {
+	consumed := l.psWritten - l.ps.Remaining()
+	unread := l.ps.Bytes()[l.ps.Index():]
+	var recs [][]byte
+	for k := 0; k+1 < len(l.psBounds); k++ {
+		s, e := l.psBounds[k], l.psBounds[k+1]
+		if s >= consumed {
+			recs = append(recs, unread[s-consumed:e-consumed])
+		}
+	}
+	return recs
 }
 
 // mpegPackScan walks the system layer of a pack stream positionally:
@@ -218,6 +267,61 @@ type mpegPlayback struct {
 	audStarted  bool    // first audio samples pushed to the EXTS queue
 	vidStarted  bool    // video pacing released
 	vidHoldCyc  int     // cycles accumulated toward the start hold
+
+	// Audio elementary-stream content clock: cumulative bytes written
+	// to the audio es and the PES PTS at each write offset, pruned as
+	// the decoder consumes. A save maps the decoder's read position
+	// through this ring to the content time playback resumes at.
+	audEsWritten int
+	audEsPTS     []mpegEsPTS
+
+	// State-restore A/V realignment. Restored audio resumes at the
+	// save point (its pipeline bytes are captured) while video can
+	// only restart at a sequence header, so the two resume misaligned.
+	// While the hold is armed, audio behind the video restart point is
+	// decoded and dropped up to it, and audio ahead of it is held
+	// until enough pictures have been presented. Armed only by state
+	// restore; never serialized (a save during the hold re-arms from
+	// its own restore).
+	resyncHold    bool    // audio alignment active
+	resyncVidScan int     // matcher: first sequence header in re-fed video PES
+	resyncVidSeen bool    // sequence header located; awaiting a packet PTS
+	resyncVidPTS  float64 // PTS at the re-fed video restart point; -1 until seen
+	resyncAudPTS  float64 // audio content time at the restore point; -1 until seen
+	resyncVidPics int     // pictures latched since the video restart point
+	resyncAudSmp  int     // audio sample pairs dropped toward alignment
+	resyncHoldCyc int     // cycles spent holding, bounding the wait
+}
+
+// mpegEsPTS ties an elementary-stream write offset to the PES PTS of
+// the packet written there.
+type mpegEsPTS struct {
+	off int
+	pts float64
+}
+
+// audResumePTS maps the audio decoder's elementary-stream read
+// position to a content time: the PTS at the nearest recorded offset
+// at or before it, interpolated toward the next recorded offset when
+// one exists. Returns -1 when no PTS is on record.
+func (p *mpegPlayback) audResumePTS() float64 {
+	esRead := p.audEsWritten - p.layers[mpegLayerAudio].es.Remaining()
+	r := p.audEsPTS
+	i := -1
+	for j := range r {
+		if r[j].off > esRead {
+			break
+		}
+		i = j
+	}
+	if i < 0 {
+		return -1
+	}
+	pts := r[i].pts
+	if i+1 < len(r) && r[i+1].off > r[i].off {
+		pts += (r[i+1].pts - r[i].pts) * float64(esRead-r[i].off) / float64(r[i+1].off-r[i].off)
+	}
+	return pts
 }
 
 // spent reports whether this playback can no longer produce output:
@@ -464,6 +568,20 @@ const mpegPSLowWater = 16 * 1024
 // the demux stage.
 const mpegESLowWater = 64 * 1024
 
+// mpegDemuxPreamble is a minimal ISO 11172-1 system-layer prefix: a
+// pack header (SCR 0, mux rate 1) followed by a system header (rate
+// bound 1, one audio and one video stream) and its reserved byte. The
+// demuxer refuses to construct until it has parsed both headers, and a
+// mux carries them only at its head - sectors that delete-mode
+// connections have consumed by the time a mid-stream state is saved.
+// State restore seeds each rebuilt pack stream with this preamble so
+// the demuxer locks immediately and reads on from the sector-aligned
+// mid-stream feed; the pipeline never consults the field values.
+var mpegDemuxPreamble = []byte{
+	0x00, 0x00, 0x01, 0xBA, 0x21, 0x00, 0x01, 0x00, 0x01, 0x80, 0x00, 0x03,
+	0x00, 0x00, 0x01, 0xBB, 0x00, 0x06, 0x80, 0x00, 0x03, 0x04, 0xE1, 0xFF,
+}
+
 // mpegFeedLayer feeds partition sectors into the layer's pack stream,
 // or - for a raw video elementary stream - straight into the decoder's
 // elementary stream. The stream type is identified once from the first
@@ -483,6 +601,7 @@ func (cb *CDBlock) mpegFeedLayer(layer int) {
 	if l.phase != mpegPhaseRunning {
 		return
 	}
+	l.psPrune()
 	if l.fed > len(part.sectors) {
 		// Host commands shrank the partition underneath us.
 		l.fed = len(part.sectors)
@@ -524,7 +643,7 @@ func (cb *CDBlock) mpegFeedLayer(layer int) {
 			}
 			continue
 		}
-		l.ps.Write(payload)
+		l.psWrite(payload)
 		// End conditions per the connection mode: XA submode EOR
 		// (bit 0) ends the layer only with connection-mode bit 0x01
 		// (switch on EOR) - otherwise EOR is a record boundary inside
@@ -588,6 +707,24 @@ func (cb *CDBlock) mpegPumpDemux(layer int) {
 				cb.mpeg.play.firstAudPTS = pkt.Pts
 			}
 		}
+		// Restore-resync PTS capture. The video restart point is the
+		// first sequence header in the re-fed stream (the decoder can
+		// only resume there); its time is the PTS of the packet
+		// carrying it, or the next stamped packet when that one has no
+		// PTS.
+		if p := cb.mpeg.play; p.resyncHold {
+			if layer == mpegLayerAudio && p.resyncAudPTS < 0 && pkt.Pts >= 0 {
+				p.resyncAudPTS = pkt.Pts
+			}
+			if layer == mpegLayerVideo && p.resyncVidPTS < 0 {
+				if !p.resyncVidSeen && mpegScanStartCode(&p.resyncVidScan, pkt.Data, 0xB3) >= 0 {
+					p.resyncVidSeen = true
+				}
+				if p.resyncVidSeen && pkt.Pts >= 0 {
+					p.resyncVidPTS = pkt.Pts
+				}
+			}
+		}
 		if layer == mpegLayerVideo {
 			// The video sequence end code (ISO 11172-2
 			// sequence_end_code, 00 00 01 B7) terminates the video
@@ -601,6 +738,19 @@ func (cb *CDBlock) mpegPumpDemux(layer int) {
 					l.phase = mpegPhaseEnding
 				}
 				return
+			}
+		}
+		if layer == mpegLayerAudio {
+			p := cb.mpeg.play
+			if pkt.Pts >= 0 {
+				p.audEsPTS = append(p.audEsPTS, mpegEsPTS{off: p.audEsWritten, pts: pkt.Pts})
+			}
+			p.audEsWritten += len(pkt.Data)
+			// Prune entries the decoder has read past, keeping the one
+			// bracketing its current position.
+			esRead := p.audEsWritten - l.es.Remaining() - len(pkt.Data)
+			for len(p.audEsPTS) >= 2 && p.audEsPTS[1].off <= esRead {
+				p.audEsPTS = append(p.audEsPTS[:0], p.audEsPTS[1:]...)
 			}
 		}
 		l.es.Write(pkt.Data)
@@ -700,6 +850,28 @@ func (cb *CDBlock) mpegApplyNextConnections() {
 		m.audStatus |= mpegAudBufEmpty
 	}
 	cb.mpegIntCause(mpegIntVidSwitchDone | mpegIntAudSwitchDone)
+}
+
+// audioRate returns the audio sample rate for content-clock math,
+// defaulting to 44.1kHz until the stream header supplies it.
+func (p *mpegPlayback) audioRate() float64 {
+	if r := p.audio.Samplerate(); r > 0 {
+		return float64(r)
+	}
+	return 44100
+}
+
+// mpegResyncClocks returns the restore-alignment content clocks in
+// seconds: a is the audio content time about to be decoded next, v the
+// video content time presented so far. ok is false until both restart
+// points are known and the picture rate is set.
+func (cb *CDBlock) mpegResyncClocks(p *mpegPlayback) (a, v float64, ok bool) {
+	if p.resyncAudPTS < 0 || p.resyncVidPTS < 0 || p.pictCycles == 0 {
+		return 0, 0, false
+	}
+	a = p.resyncAudPTS + float64(p.resyncAudSmp)/p.audioRate()
+	v = p.resyncVidPTS + float64(p.resyncVidPics*p.pictCycles)/float64(cb.sysCyclesPerSec)
+	return a, v, true
 }
 
 // mpegVideoStartDue advances the video start hold by c cycles and
@@ -873,6 +1045,9 @@ func (cb *CDBlock) mpegTick(c int) {
 			} else {
 				p.pictAccum -= p.pictCycles
 			}
+			if p.resyncHold && p.resyncVidPTS >= 0 {
+				p.resyncVidPics++
+			}
 			cb.mpegLatchFrame(f)
 			m.vidState = mpegRunPlaying
 			m.vidStatus |= mpegVidDecoding | mpegVidUpdated | mpegVidOutReady | mpegVidFirstShown
@@ -883,10 +1058,45 @@ func (cb *CDBlock) mpegTick(c int) {
 		}
 	}
 
+	// State-restore audio alignment (see the resync fields): audio
+	// content behind the video restart point is decoded and dropped up
+	// to it; audio ahead of it stays idle while pictures present; the
+	// hold releases within one audio frame of the video clock. Bounded,
+	// and dropped once the video layer can no longer advance, so audio
+	// can never be silenced indefinitely.
+	if p.resyncHold {
+		p.resyncHoldCyc += c
+		if p.resyncHoldCyc >= 5*cb.sysCyclesPerSec ||
+			vl.phase == mpegPhaseDone || vl.phase == mpegPhaseHalted {
+			p.resyncHold = false
+		} else if p.audio.HasHeader() &&
+			(al.phase == mpegPhaseRunning || al.phase == mpegPhaseEnding) {
+			for p.resyncHold {
+				a, v, ok := cb.mpegResyncClocks(p)
+				if !ok || a > v {
+					break // clocks unknown or audio ahead: wait
+				}
+				if v-a < float64(mpeg.SamplesPerFrame)/p.audioRate() {
+					p.resyncHold = false // aligned within one audio frame
+					break
+				}
+				if al.es.Remaining() < 2048 && !al.esEnded {
+					break
+				}
+				smp := p.audio.Decode()
+				if smp == nil {
+					break
+				}
+				p.resyncAudSmp += len(smp.Interleaved) / 2
+			}
+		}
+	}
+
 	// Audio: decode a frame whenever the EXTS queue has room for one
 	// (1152 stereo pairs). Output is normalized float32; convert to the
 	// int16 pairs SCSP EXTS consumes.
-	if p.audio.HasHeader() && (al.phase == mpegPhaseRunning || al.phase == mpegPhaseEnding) {
+	if p.audio.HasHeader() && !p.resyncHold &&
+		(al.phase == mpegPhaseRunning || al.phase == mpegPhaseEnding) {
 		for cdAudioQueueMax-cb.audioCount >= 2*mpeg.SamplesPerFrame {
 			// A full MP2 frame is at most 1728 bytes; below that the
 			// decode attempt can only rescan and fail, so wait for

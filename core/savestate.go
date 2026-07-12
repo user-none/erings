@@ -41,7 +41,7 @@ const (
 	// erings) with a "state is from a newer version" error. Raised
 	// when fields are added; older files simply lack the new fields,
 	// which read as zero values on load.
-	stateVersion = uint32(2)
+	stateVersion = uint32(3)
 
 	// stateMinVersion is the oldest state-file version Deserialize
 	// accepts. A file below it is rejected with a distinct "state is
@@ -1034,6 +1034,8 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 	var pictAccum, pictCycles, hostSteps, vidHoldCyc int64
 	var firstVidPTS, firstAudPTS uint64
 	var audStarted, vidStarted bool
+	var psTails, audEsTail []byte
+	audResume := math.Float64bits(-1)
 	if p := m.play; p != nil {
 		for i := range p.layers {
 			l := &p.layers[i]
@@ -1048,7 +1050,24 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 			esEnd[i] = l.esEnded
 			esProbed[i] = l.esProbed
 			esDirect[i] = l.esDirect
+			// Unread pack-stream records: the pipeline data the restore
+			// re-seeds so playback resumes at the save point rather
+			// than the drive position.
+			recs := l.psUnreadRecords()
+			psTails = binary.BigEndian.AppendUint32(psTails, uint32(len(recs)))
+			for _, rec := range recs {
+				psTails = binary.BigEndian.AppendUint32(psTails, uint32(len(rec)))
+				psTails = append(psTails, rec...)
+			}
 		}
+		// Unread audio elementary stream and the content time at its
+		// head; the video ES is not captured (its decoder can only
+		// restart at a sequence header, found in the pack tail, and
+		// keeping video restart in the PES path preserves the restart
+		// PTS capture).
+		al := &p.layers[mpegLayerAudio]
+		audEsTail = al.es.Bytes()[al.es.Index():]
+		audResume = math.Float64bits(p.audResumePTS())
 		pictAccum = int64(p.pictAccum)
 		pictCycles = int64(p.pictCycles)
 		hostSteps = int64(p.hostSteps)
@@ -1057,6 +1076,10 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 		audStarted = p.audStarted
 		vidStarted = p.vidStarted
 		vidHoldCyc = int64(p.vidHoldCyc)
+	} else {
+		// Zero record counts for both layers keep the field parseable.
+		psTails = binary.BigEndian.AppendUint32(psTails, 0)
+		psTails = binary.BigEndian.AppendUint32(psTails, 0)
 	}
 	w.i64s("layer.fed", fed[:])
 	w.raw("layer.phase", phase[:])
@@ -1077,6 +1100,9 @@ func buildCDMpeg(w *fieldWriter, cb *CDBlock) {
 	w.flag("audStarted", audStarted)
 	w.flag("vidStarted", vidStarted)
 	w.i64("vidHoldCyc", vidHoldCyc)
+	w.raw("layer.psTail", psTails)
+	w.raw("audEsTail", audEsTail)
+	w.u64("audResumePTS", audResume)
 
 	// Frame latch: per slot u32 width, u32 height, then width*height
 	// pixels (the slot's backing slice can be larger from a previous
@@ -2715,6 +2741,57 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 	vidStarted := r.flag("vidStarted")
 	vidHoldCyc := r.i64("vidHoldCyc")
 
+	// psTail: per layer u32 record count, then per record u32 length +
+	// bytes. Records are whole pack-stream writes (sector payloads or
+	// restore-seeded blocks), so lengths are bounded. A state without
+	// the field restores with no tails: the demuxer re-locks from the
+	// partition backlog alone.
+	var psTails [2][][]byte
+	if tb := r.take("layer.psTail", -1); r.err == nil && len(tb) > 0 {
+		tp := 0
+		for i := 0; i < 2 && r.err == nil; i++ {
+			if tp+4 > len(tb) {
+				r.fail("field layer.psTail truncated at layer %d", i)
+				break
+			}
+			count := int(binary.BigEndian.Uint32(tb[tp:]))
+			tp += 4
+			if count > 1024 {
+				r.fail("field layer.psTail record count %d invalid", count)
+				break
+			}
+			recs := make([][]byte, 0, count)
+			for j := 0; j < count && r.err == nil; j++ {
+				if tp+4 > len(tb) {
+					r.fail("field layer.psTail record header truncated")
+					break
+				}
+				rlen := int(binary.BigEndian.Uint32(tb[tp:]))
+				tp += 4
+				if rlen == 0 || rlen > 4096 || tp+rlen > len(tb) {
+					r.fail("field layer.psTail record length %d invalid", rlen)
+					break
+				}
+				recs = append(recs, tb[tp:tp+rlen])
+				tp += rlen
+			}
+			psTails[i] = recs
+		}
+		if r.err == nil && tp != len(tb) {
+			r.fail("field layer.psTail has %d trailing bytes", len(tb)-tp)
+		}
+	}
+	audEsTail := r.take("audEsTail", -1)
+	if len(audEsTail) > 1<<20 {
+		r.fail("field audEsTail size %d invalid", len(audEsTail))
+	}
+	// A missing content time must read as -1 (unknown), not as the
+	// zero-bits time 0.0: the alignment falls back to the PES capture.
+	audResume := -1.0
+	if d := r.take("audResumePTS", 8); d != nil {
+		audResume = math.Float64frombits(binary.BigEndian.Uint64(d))
+	}
+
 	// Latch: per slot u32 w, u32 h, w*h pixels. prod/cons/mailbox slot
 	// must be a permutation of {0,1,2} (the latch ownership invariant;
 	// an invalid index would read out of the slot array).
@@ -2826,6 +2903,31 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 				l.esEnded = esEnded[i]
 				l.esProbed = esProbed[i]
 				l.esDirect = esDirect[i]
+				// The re-fed pack stream starts mid-mux, past the
+				// pack/system headers the demuxer must parse before it
+				// will construct, so seed them (see mpegDemuxPreamble)
+				// followed by the captured unread records; the audio
+				// elementary stream gets its captured tail back the
+				// same way. Seeding must precede SignalEnd: the buffer
+				// latches its end position there, and a write after it
+				// would break the demux end-of-stream drain.
+				if l.phase == mpegPhaseRunning || l.phase == mpegPhaseEnding {
+					if !l.esDirect {
+						// The preamble is written without a record
+						// boundary: it is re-seeded on every restore,
+						// so capturing it would grow the state on each
+						// save/restore cycle.
+						l.ps.Write(mpegDemuxPreamble)
+						l.psWritten += len(mpegDemuxPreamble)
+						for _, rec := range psTails[i] {
+							l.psWrite(rec)
+						}
+					}
+					if i == mpegLayerAudio && len(audEsTail) > 0 {
+						l.es.Write(audEsTail)
+						p.audEsWritten = len(audEsTail)
+					}
+				}
 				if l.psEnded {
 					l.ps.SignalEnd()
 				}
@@ -2841,6 +2943,25 @@ func decodeCDMpeg(e *Emulator, r *fieldReader) func() {
 			p.audStarted = audStarted
 			p.vidStarted = vidStarted
 			p.vidHoldCyc = int(vidHoldCyc)
+			// Seed the audio content clock at the restored tail's head
+			// so a save taken before alignment finishes still maps its
+			// read position to a content time.
+			if audResume >= 0 {
+				p.audEsPTS = append(p.audEsPTS, mpegEsPTS{off: 0, pts: audResume})
+			}
+			// Restored audio resumes at the save point while video can
+			// only restart at a sequence header, so align them (see
+			// the resync fields on mpegPlayback). Only a steady-state
+			// A/V-synchronized playback is aligned, and the restart
+			// PTS capture needs the PS demux path on both layers.
+			if playMode == 0 && audStarted && vidStarted &&
+				p.layers[mpegLayerAudio].phase == mpegPhaseRunning &&
+				p.layers[mpegLayerVideo].phase == mpegPhaseRunning &&
+				!p.layers[mpegLayerVideo].esDirect {
+				p.resyncHold = true
+				p.resyncVidPTS = -1
+				p.resyncAudPTS = audResume
+			}
 			m.play = p
 		} else {
 			m.play = nil
