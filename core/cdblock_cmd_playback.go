@@ -155,6 +155,8 @@ func (cb *CDBlock) cmdPlayDisc() {
 	cb.playing = true
 	cb.fileRead = false
 	cb.sectorAccum = 0
+	// A new play supersedes any buffer-full stall
+	cb.bufferStall = false
 
 	// BUSY -> SEEK -> PLAY transition
 	cb.status = cdStatusBusy
@@ -181,6 +183,7 @@ func (cb *CDBlock) cmdPlayDisc() {
 
 func (cb *CDBlock) cmdSeekDisc() {
 	cb.playing = false
+	cb.bufferStall = false
 	if cb.disc != nil {
 		pos := (uint32(cb.cmd[0]&0xFF) << 16) | uint32(cb.cmd[1])
 		cb.status = cdStatusBusy

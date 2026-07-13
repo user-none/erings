@@ -157,6 +157,7 @@ func (cb *CDBlock) cmdInitCDSystem() {
 	cb.seeking = false
 	cb.busyDelay = 0
 	cb.pendingStatus = 0
+	cb.bufferStall = false
 
 	// Reset FAD to disc start with BUSY->PAUSE transition
 	if cb.disc != nil {

@@ -1563,6 +1563,43 @@ func TestCDBlockTickBufferFullResume(t *testing.T) {
 	}
 }
 
+func TestCDBlockBufferStallClearsOnCommands(t *testing.T) {
+	// Play, Seek, and Init all supersede the play session a buffer-full
+	// stall belongs to, so each must drop the stall latch. If the buffer
+	// is still full the sector tick re-latches it on its own.
+	cases := []struct {
+		name  string
+		issue func(cb *CDBlock)
+	}{
+		{"PlayDisc", func(cb *CDBlock) {
+			execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0005)
+		}},
+		{"SeekDisc", func(cb *CDBlock) {
+			execCommandFull(cb, 0x11, 0xFF, 0xFFFF, 0x0000, 0x0000)
+		}},
+		{"InitCDSystem", func(cb *CDBlock) {
+			execCommandFull(cb, 0x04, 0x00, 0x0000, 0x0000, 0x0000)
+		}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			cb, _ := newCDBlockWithDisc()
+			for i := 0; i < cdMaxSectors; i++ {
+				cb.partitions[0].sectors = append(cb.partitions[0].sectors, bufferedSector{data: make([]byte, 2352), fad: uint32(i)})
+			}
+			execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0005)
+			tickN(cb, 2)
+			if !cb.bufferStall {
+				t.Fatal("bufferStall should be latched before the command")
+			}
+			tc.issue(cb)
+			if cb.bufferStall {
+				t.Error("bufferStall should clear when the command supersedes the stalled play")
+			}
+		})
+	}
+}
+
 func TestCDBlockTickSCDQ(t *testing.T) {
 	cb, _ := newCDBlockWithDisc()
 	cb.bootDelay = 0
