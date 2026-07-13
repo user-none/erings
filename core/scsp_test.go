@@ -3,7 +3,13 @@
 
 package core
 
-import "testing"
+import (
+	"runtime"
+	"sync"
+	"sync/atomic"
+	"testing"
+	"time"
+)
 
 func TestSCSPNewDefaults(t *testing.T) {
 	s := NewSCSP(NewSCU())
@@ -2906,4 +2912,67 @@ func TestSCSPFMModulationAdditive(t *testing.T) {
 	if out < -1000 || out > 1000 {
 		t.Errorf("FM additive combine: output = %d, want near 0 (mid-sample interpolation between +32000 and -32000)", out)
 	}
+}
+
+// TestSCSPInterruptRegisterConcurrency exercises the interrupt-pending
+// register file's two concurrent writers: main-CPU-side register access
+// (doorbell sets, enable writes) and sound-CPU-side acks (SCIRE
+// write-to-clear), which run on different goroutines in the emulator.
+// Both sides read-modify-write the same pending word; the
+// interrupt-register claim serializes them. The unordered phase gives
+// the race detector concurrent access to flag if the claim is ever
+// dropped; the handshake phase checks doorbells are delivered and
+// acknowledged under contention.
+func TestSCSPInterruptRegisterConcurrency(t *testing.T) {
+	s := NewSCSP(NewSCU())
+
+	// Unordered hammer: raw concurrent doorbell sets and acks with no
+	// cross-goroutine ordering beyond the claim itself.
+	const hammer = 5000
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < hammer; i++ {
+			s.Write(scspRegSCIPD, scspIntCPU)
+			s.Write(scspRegSCIEB, scspIntCPU)
+		}
+	}()
+	go func() {
+		defer wg.Done()
+		for i := 0; i < hammer; i++ {
+			s.Write(scspRegSCIRE, scspIntCPU)
+			_ = s.Read(scspRegSCIPD)
+		}
+	}()
+	wg.Wait()
+	s.Write(scspRegSCIRE, 0x07FF)
+
+	// Ordered handshake: each doorbell must be observed and acked.
+	const rounds = 20000
+	deadline := time.Now().Add(10 * time.Second)
+	var acked atomic.Int64
+	done := make(chan struct{})
+
+	go func() {
+		defer close(done)
+		for acked.Load() < rounds {
+			if s.Read(scspRegSCIPD)&scspIntCPU != 0 {
+				s.Write(scspRegSCIRE, scspIntCPU)
+				acked.Add(1)
+			}
+			runtime.Gosched()
+		}
+	}()
+
+	for i := int64(0); i < rounds; i++ {
+		s.Write(scspRegSCIPD, scspIntCPU)
+		for acked.Load() <= i {
+			if time.Now().After(deadline) {
+				t.Fatalf("doorbell %d lost: ack stalled (acked=%d)", i, acked.Load())
+			}
+			runtime.Gosched()
+		}
+	}
+	<-done
 }

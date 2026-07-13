@@ -355,6 +355,11 @@ type SCSP struct {
 	// transition (0->N or N->M>N) to mirror real hardware.
 	soundIntLevel uint8
 
+	// intrLock serializes the interrupt-pending register file (SCIPD/
+	// MCIPD and every path that modifies them or derives the IRQ lines
+	// from them).
+	intrLock atomic.Uint32
+
 	lfsr uint32 // 17-bit LFSR for noise generator (SSCTL=1)
 
 	// FM slot output history: 64-entry circular buffer for phase modulation.
@@ -577,6 +582,14 @@ func (s *SCSP) Read(offset uint32) uint16 {
 		return s.readDSPReg(offset)
 	}
 
+	// The interrupt-pending words are concurrently modified under intrLock.
+	if offset == scspRegSCIPD || offset == scspRegMCIPD {
+		s.lockIntr()
+		v := s.regs[offset/2]
+		s.unlockIntr()
+		return v
+	}
+
 	return s.regs[offset/2]
 }
 
@@ -597,32 +610,44 @@ func (s *SCSP) Write(offset uint32, val uint16) {
 		return
 	case scspRegSCIRE:
 		// Write-to-clear: clear corresponding bits in SCIPD
+		s.lockIntr()
 		s.regs[scspRegSCIPD/2] &^= val & 0x07FF
 		s.checkSoundInterrupt()
+		s.unlockIntr()
 		return
 	case scspRegMCIRE:
 		// Write-to-clear: clear corresponding bits in MCIPD
+		s.lockIntr()
 		s.regs[scspRegMCIPD/2] &^= val & 0x07FF
 		s.checkMainInterrupt()
+		s.unlockIntr()
 		return
 	case scspRegSCIPD:
 		// Per SCSP User's Manual Sec 4.2 page 96: only bit 5 (CPU manual)
 		// is writable, and writing 0B is invalid (cannot clear via
 		// direct write; use SCIRE).
+		s.lockIntr()
 		s.regs[offset/2] |= val & scspIntCPU
 		s.checkSoundInterrupt()
+		s.unlockIntr()
 		return
 	case scspRegMCIPD:
+		s.lockIntr()
 		s.regs[offset/2] |= val & scspIntCPU
 		s.checkMainInterrupt()
+		s.unlockIntr()
 		return
 	case scspRegSCIEB:
+		s.lockIntr()
 		s.regs[offset/2] = val & 0x07FF
 		s.checkSoundInterrupt()
+		s.unlockIntr()
 		return
 	case scspRegMCIEB:
+		s.lockIntr()
 		s.regs[offset/2] = val & 0x07FF
 		s.checkMainInterrupt()
+		s.unlockIntr()
 		return
 	case scspRegSCILV0, scspRegSCILV1, scspRegSCILV2:
 		// SCILV priority changes can change the asserted IRQ level
@@ -631,8 +656,10 @@ func (s *SCSP) Write(offset uint32, val uint16) {
 		// (used by the priority encoder via scilvBit clamp); the high
 		// byte is preserved on write to match the bus's 16-bit
 		// storage behavior.
+		s.lockIntr()
 		s.regs[offset/2] = val
 		s.checkSoundInterrupt()
+		s.unlockIntr()
 		return
 	case scspRegDMACtl:
 		s.regs[offset/2] = val
@@ -645,10 +672,12 @@ func (s *SCSP) Write(offset uint32, val uint16) {
 		s.timerCounter[0] = uint8(val)
 		s.regs[offset/2] = val
 		if uint8(val) == 0xFF {
+			s.lockIntr()
 			s.regs[scspRegSCIPD/2] |= scspIntTimerA
 			s.regs[scspRegMCIPD/2] |= scspIntTimerA
 			s.checkSoundInterrupt()
 			s.checkMainInterrupt()
+			s.unlockIntr()
 		}
 		return
 	case scspRegTimerB:
@@ -656,10 +685,12 @@ func (s *SCSP) Write(offset uint32, val uint16) {
 		s.timerCounter[1] = uint8(val)
 		s.regs[offset/2] = val
 		if uint8(val) == 0xFF {
+			s.lockIntr()
 			s.regs[scspRegSCIPD/2] |= scspIntTimerB
 			s.regs[scspRegMCIPD/2] |= scspIntTimerB
 			s.checkSoundInterrupt()
 			s.checkMainInterrupt()
+			s.unlockIntr()
 		}
 		return
 	case scspRegTimerC:
@@ -667,10 +698,12 @@ func (s *SCSP) Write(offset uint32, val uint16) {
 		s.timerCounter[2] = uint8(val)
 		s.regs[offset/2] = val
 		if uint8(val) == 0xFF {
+			s.lockIntr()
 			s.regs[scspRegSCIPD/2] |= scspIntTimerC
 			s.regs[scspRegMCIPD/2] |= scspIntTimerC
 			s.checkSoundInterrupt()
 			s.checkMainInterrupt()
+			s.unlockIntr()
 		}
 		return
 	}
@@ -688,6 +721,19 @@ func (s *SCSP) Write(offset uint32, val uint16) {
 	if offset >= dspRegCOEF {
 		s.syncDSPRegWrite(offset, val)
 	}
+}
+
+// lockIntr claims the interrupt-register file, spinning until it is
+// free. Critical sections are a few register operations; hold times are
+// far below a bus access.
+func (s *SCSP) lockIntr() {
+	for !s.intrLock.CompareAndSwap(0, 1) {
+	}
+}
+
+// unlockIntr releases the interrupt-register file.
+func (s *SCSP) unlockIntr() {
+	s.intrLock.Store(0)
 }
 
 // slotReg reads a 16-bit slot register. slotOffset is the byte offset within
@@ -1381,6 +1427,9 @@ func (s *SCSP) TickSystemCycles(cycles uint32) {
 	deltaM68k := expectedM68k - s.frameM68kEmitted
 	s.frameM68kEmitted = expectedM68k
 	if !s.inReset && deltaM68k > 0 {
+		s.lockIntr()
+		s.checkSoundInterrupt()
+		s.unlockIntr()
 		for deltaM68k > 0 {
 			used := s.m68k.StepCycles(deltaM68k)
 			if used == 0 {
@@ -1416,9 +1465,8 @@ func (s *SCSP) TickSamples(samples int) {
 		// 1-sample interrupt: SCIPD/MCIPD latch the source regardless
 		// of SCIEB/MCIEB enable state. SCIEB only gates whether the
 		// pending bit asserts the IRQ line (handled in
-		// checkSoundInterrupt / checkMainInterrupt).
-		s.regs[scspRegSCIPD/2] |= scspIntSample
-		s.regs[scspRegMCIPD/2] |= scspIntSample
+		// checkSoundInterrupt / checkMainInterrupt). Latched in the
+		// locked section below with the timer bits.
 
 		// Pull one stereo pair from the CD audio source into EXTS.
 		// Empty queue or no source: silent for this tick.
@@ -1448,6 +1496,11 @@ func (s *SCSP) TickSamples(samples int) {
 		// Advance all three timers (free-running from power on).
 		// Per SCSP User's Manual Sec 4.2 page 93: interrupt fires when the
 		// counter reaches FFH. Formula: (255 - TIMx) * count_cycle.
+		// The pending-bit latches and line re-evaluation share the
+		// interrupt-register claim with the CPU-side register writes.
+		s.lockIntr()
+		s.regs[scspRegSCIPD/2] |= scspIntSample
+		s.regs[scspRegMCIPD/2] |= scspIntSample
 		for t := 0; t < 3; t++ {
 			ctl := (s.regs[timerRegOff[t]/2] >> 8) & 7
 			div := uint16(1) << ctl
@@ -1469,6 +1522,7 @@ func (s *SCSP) TickSamples(samples int) {
 
 		s.checkSoundInterrupt()
 		s.checkMainInterrupt()
+		s.unlockIntr()
 	}
 }
 
@@ -1486,7 +1540,8 @@ func (s *SCSP) TickSamples(samples int) {
 //
 // Callers must invoke this on every state change that can affect the
 // computed level: SCIPD set/clear, SCIEB write, SCILV0/1/2 write, SCIRE
-// write, timer overflow, sample tick, DMA end.
+// write, timer overflow, sample tick, DMA end. Callers must hold
+// intrLock.
 func (s *SCSP) checkSoundInterrupt() {
 	pending := s.regs[scspRegSCIPD/2] & s.regs[scspRegSCIEB/2]
 
@@ -1540,7 +1595,7 @@ func (s *SCSP) checkSoundInterrupt() {
 // are cleared by software or by the interrupt acknowledge). Once the
 // master accepts vec 0x46, no new request latches until the line drops
 // and rises again. An un-acked edge is held in IST until the ack, so
-// edge delivery cannot lose a request.
+// edge delivery cannot lose a request. Callers must hold intrLock.
 func (s *SCSP) checkMainInterrupt() {
 	pending := s.regs[scspRegMCIPD/2] & s.regs[scspRegMCIEB/2]
 	active := pending != 0
@@ -1600,10 +1655,12 @@ func (s *SCSP) executeDMA() {
 	s.regs[scspRegDMACtl/2] &^= 0x1000
 
 	// Set DMA transfer end interrupt
+	s.lockIntr()
 	s.regs[scspRegSCIPD/2] |= scspIntDMA
 	s.regs[scspRegMCIPD/2] |= scspIntDMA
 	s.checkSoundInterrupt()
 	s.checkMainInterrupt()
+	s.unlockIntr()
 }
 
 // ReadRAM reads a byte from sound RAM.
