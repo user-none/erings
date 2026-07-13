@@ -213,11 +213,24 @@ func hleSysClrsemService(cpu *sh2.CPU) {
 	cpu.Write8(0x26000000+wramHSemArray+idx, 0) // cache-through (see TASSEM)
 }
 
+// hleScuimTail replaces the shared SYS_SETSCUIM / SYS_CHGSCUIM tail
+// at $060007D6: write the sign-extended pattern to IST, clearing the
+// pending bits of every interrupt the pattern leaves unmasked, then pulse
+// AIACK when the pattern keeps the A-bus bit clear.
+func hleScuimTail(cpu *sh2.CPU, pattern uint32) {
+	ist := uint32(int32(int16(uint16(pattern))))
+	cpu.Write32(0x25FE00A4, ist) // SCU IST register (cache-through MMIO)
+	if int32(ist) >= 0 {
+		cpu.Write32(0x25FE00A8, 1) // AIACK
+	}
+}
+
 // hleSysSetScuimService implements SYS_SETSCUIM.
 //
 // Overwrite the SCU IMS (Interrupt Mask Set) register and the
 // shadow at $06000348 that SDK code reads for SYS_GETSCUIM (the
-// live IMS register is write-only on hardware).
+// live IMS register is write-only on hardware), then run the
+// IST-clear / AIACK tail with the new mask as the pattern.
 //
 //	R4 = new IMS value (low 16 bits drive the live mask; the full
 //	     32-bit value is kept in the shadow, matching the BIOS)
@@ -228,12 +241,15 @@ func hleSysSetScuimService(cpu *sh2.CPU) {
 	val := r.R[4]
 	cpu.Write32(0x25FE00A0, val) // SCU IMS register (cache-through MMIO)
 	cpu.Write32(0x06000000+wramHIMSShadow, val)
+	hleScuimTail(cpu, val)
 }
 
 // hleSysChgScuimService implements SYS_CHGSCUIM.
 //
 // Modify the SCU IMS register: new = (current & R4) | R5. Lets
-// callers clear specific mask bits and set others atomically.
+// callers clear specific mask bits and set others atomically. The
+// IST-clear / AIACK tail runs with pattern R4 | R5, so the pending
+// bits of interrupts unmasked by the AND mask are cleared.
 //
 //	R4 = AND mask (bits to keep)
 //	R5 = OR mask (bits to add)
@@ -246,6 +262,7 @@ func hleSysChgScuimService(cpu *sh2.CPU) {
 	newVal := (cur & r.R[4]) | r.R[5]
 	cpu.Write32(0x25FE00A0, newVal) // SCU IMS register (cache-through MMIO)
 	cpu.Write32(0x06000000+wramHIMSShadow, newVal)
+	hleScuimTail(cpu, r.R[4]|r.R[5])
 }
 
 // hleSysChgSysCkService implements SYS_CHGSYSCK.
@@ -304,11 +321,7 @@ func hleSysChgSysCkService(cpu *sh2.CPU, bus *Bus) {
 	shadow := cpu.Read32(0x06000000 + wramHIMSShadow)
 	cpu.Write32(0x06000348, shadow)
 	cpu.Write32(0x05FE00A0, shadow)
-	ist := uint32(int32(int16(uint16(shadow))))
-	cpu.Write32(0x05FE00A4, ist)
-	if int32(ist) >= 0 {
-		cpu.Write32(0x05FE00A8, 1)
-	}
+	hleScuimTail(cpu, shadow)
 }
 
 // hleBiosFillService replaces BIOS sub_02AC.

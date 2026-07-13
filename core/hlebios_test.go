@@ -288,6 +288,10 @@ func TestHLESysClrsemService(t *testing.T) {
 
 func TestHLESysSetScuimService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
+	// A pending interrupt whose mask bit the new value leaves clear
+	// must have its IST bit cleared by the service tail ($060007D6):
+	// a stale latched cause must not deliver at unmask time.
+	bus.scu.RaiseSpriteDrawEnd()
 	master.SetReg(4, 0x1234)
 	hleSysSetScuimService(master)
 	// SCU IMS is write-only; verify via the shadow that SDK reads.
@@ -297,18 +301,35 @@ func TestHLESysSetScuimService(t *testing.T) {
 	if got := bus.scu.ReadInternal(0xA0); got != 0x1234 {
 		t.Errorf("SETSCUIM live IMS = %08X, want 1234", got)
 	}
+	if got := bus.scu.ReadInternal(0xA4); got&0x2000 != 0 {
+		t.Errorf("SETSCUIM IST = %08X, want sprite-draw-end pending cleared", got)
+	}
 }
 
 func TestHLESysChgScuimService(t *testing.T) {
 	_, bus, master, _ := newHLEBIOSForTest()
 	bus.writeWramHU32(wramHIMSShadow, 0x00FF)
 	bus.scu.Write(0xA0, 0x00FF)
+	// The tail clears IST bits left clear in (AND | OR) = 0xFFF0:
+	// V-Blank IN (bit 0) is cleared, sprite draw end (bit 13) is kept.
+	bus.scu.RaiseVBlankIN()
+	bus.scu.RaiseSpriteDrawEnd()
 	master.SetReg(4, 0xF0F0) // AND mask
 	master.SetReg(5, 0x0F00) // OR mask
 	hleSysChgScuimService(master)
 	// (0x00FF & 0xF0F0) | 0x0F00 = 0x00F0 | 0x0F00 = 0x0FF0
 	if got := bus.readWramHU32(wramHIMSShadow); got != 0x0FF0 {
 		t.Errorf("CHGSCUIM shadow = %08X, want 0FF0", got)
+	}
+	if got := bus.scu.ReadInternal(0xA0); got != 0x0FF0 {
+		t.Errorf("CHGSCUIM live IMS = %08X, want 0FF0", got)
+	}
+	ist := bus.scu.ReadInternal(0xA4)
+	if ist&0x0001 != 0 {
+		t.Errorf("CHGSCUIM IST = %08X, want v-blank-in pending cleared", ist)
+	}
+	if ist&0x2000 == 0 {
+		t.Errorf("CHGSCUIM IST = %08X, want sprite-draw-end pending kept", ist)
 	}
 }
 
