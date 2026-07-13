@@ -2271,14 +2271,33 @@ func TestCDBlockGetSectorInfoValid(t *testing.T) {
 func TestCDBlockGetSectorInfoInvalid(t *testing.T) {
 	cb := covCDBlock()
 
-	// Empty partition; secNum=0 is out of range. Reject path sets
-	// res[0] to 0xFF00 and clears the rest.
+	// Empty partition; secNum=0 is out of range. Answers WAIT with
+	// standard status data.
 	execCommandFull(cb, 0x54, 0x00, 0x0000, 0x0000, 0x0000)
-	if cb.res[0]>>8 != 0xFF {
-		t.Errorf("reject status = 0x%02X, want 0xFF", cb.res[0]>>8)
+	if cb.res[0]>>8&0x80 == 0 || cb.res[0]>>8 == 0xFF {
+		t.Errorf("status = 0x%02X, want WAIT flag (not REJECT)", cb.res[0]>>8)
 	}
-	if cb.res[1] != 0 || cb.res[2] != 0 || cb.res[3] != 0 {
-		t.Errorf("reject CR2-4 = 0x%04X 0x%04X 0x%04X, want all 0", cb.res[1], cb.res[2], cb.res[3])
+	if cb.res[1] == 0 && cb.res[2] == 0 && cb.res[3] == 0 {
+		t.Error("WAIT response should carry standard status data, got all zeros")
+	}
+
+	// Invalid buffer number rejects.
+	execCommandFull(cb, 0x54, 0x00, 0x0000, 0x1800, 0x0000)
+	if cb.res[0]>>8 != 0xFF {
+		t.Errorf("invalid-buffer status = 0x%02X, want 0xFF", cb.res[0]>>8)
+	}
+}
+
+func TestCDBlockGetSectorInfoLastSectorSentinel(t *testing.T) {
+	cb := covCDBlock()
+	cb.partitions[0].sectors = append(cb.partitions[0].sectors,
+		bufferedSector{fad: 0x000100},
+		bufferedSector{fad: 0x000200})
+
+	// Sector number 0xFFFF resolves to the last sector.
+	execCommandFull(cb, 0x54, 0x00, 0xFFFF, 0x0000, 0x0000)
+	if cb.res[1] != 0x0200 {
+		t.Errorf("FAD low = 0x%04X, want 0x0200 (last sector)", cb.res[1])
 	}
 }
 
@@ -2370,24 +2389,77 @@ func TestCDBlockPutSectorDataOverflow(t *testing.T) {
 	}
 
 	// PutSectorData asking for 1 more sector exceeds cdMaxSectors and
-	// answers WAIT (status | 0x80) with EHST: hosts streaming against a
-	// full buffer retry the put. REJECT is reserved for an invalid
-	// buffer number.
+	// answers WAIT (status | 0x80): hosts streaming against a full
+	// buffer retry the put. REJECT is reserved for an invalid buffer
+	// number. Failure answers raise CMOK only.
 	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x0100, 0x0001)
 	if cb.res[0]>>8&0x80 == 0 || cb.res[0]>>8 == 0xFF {
 		t.Errorf("status = 0x%02X, want WAIT flag (not REJECT)", cb.res[0]>>8)
 	}
-	if cb.hirqReq&hirqEHST == 0 {
-		t.Error("EHST should be set when put allocation fails")
+	if cb.hirqReq&hirqEHST != 0 {
+		t.Error("EHST should not be set when put allocation fails")
 	}
 	if cb.putSectorsRemaining != 0 {
 		t.Errorf("putSectorsRemaining = %d, want 0 (deferred)", cb.putSectorsRemaining)
 	}
 
-	// An invalid buffer number rejects outright.
+	// An invalid buffer number rejects outright. The REJECT goes
+	// through the standard responder with 0xFF ORed into the status
+	// byte, so CR1 low byte and CR2-CR4 still carry status data.
+	cb.standardReturn()
+	wantLo, want2, want3, want4 := cb.res[0]&0xFF, cb.res[1], cb.res[2], cb.res[3]
 	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x1800, 0x0001)
 	if cb.res[0]>>8 != 0xFF {
 		t.Errorf("invalid-buffer status = 0x%02X, want 0xFF", cb.res[0]>>8)
+	}
+	if cb.res[0]&0xFF != wantLo || cb.res[1] != want2 || cb.res[2] != want3 || cb.res[3] != want4 {
+		t.Errorf("REJECT response = %04X %04X %04X %04X, want status data xx%02X %04X %04X %04X",
+			cb.res[0], cb.res[1], cb.res[2], cb.res[3], wantLo, want2, want3, want4)
+	}
+}
+
+func TestCDBlockPutSectorDataZeroCount(t *testing.T) {
+	cb := covCDBlock()
+
+	// A zero sector count answers WAIT; no transfer is armed and no
+	// completion HIRQ beyond CMOK is raised.
+	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x0100, 0x0000)
+	if cb.res[0]>>8&0x80 == 0 || cb.res[0]>>8 == 0xFF {
+		t.Errorf("status = 0x%02X, want WAIT flag (not REJECT)", cb.res[0]>>8)
+	}
+	if cb.hirqReq&hirqEHST != 0 {
+		t.Error("EHST should not be set on zero-count put")
+	}
+	if cb.transferActive {
+		t.Error("zero-count put should not arm a transfer")
+	}
+	if cb.hirqReq&hirqDRDY != 0 {
+		t.Error("DRDY should not be set on zero-count put")
+	}
+}
+
+func TestCDBlockPutSectorDataTransferInProgress(t *testing.T) {
+	cb := covCDBlock()
+	cb.putSectorLen = 0 // 2048-byte mode
+
+	// Arm a put transfer, then issue a second put while it is still in
+	// progress. The second answers WAIT and leaves the armed transfer
+	// untouched.
+	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x0200, 0x0001)
+	if !cb.transferActive || cb.putSectorsRemaining != 1 {
+		t.Fatal("setup: first PutSectorData not accepted")
+	}
+
+	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x0300, 0x0002)
+	if cb.res[0]>>8&0x80 == 0 || cb.res[0]>>8 == 0xFF {
+		t.Errorf("status = 0x%02X, want WAIT flag (not REJECT)", cb.res[0]>>8)
+	}
+	if cb.hirqReq&hirqEHST != 0 {
+		t.Error("EHST should not be set when a transfer is already in progress")
+	}
+	if cb.putBufNum != 2 || cb.putSectorsRemaining != 1 {
+		t.Errorf("armed transfer changed: bufNum=%d remaining=%d, want 2/1",
+			cb.putBufNum, cb.putSectorsRemaining)
 	}
 }
 
@@ -2450,13 +2522,18 @@ func TestCDBlockCopySectorDataOverflow(t *testing.T) {
 			bufferedSector{data: make([]byte, 2352)})
 	}
 
-	// Asking to copy 1 sector when the buffer is full is rejected.
+	// Asking to copy 1 sector when the buffer is full answers WAIT
+	// with standard status data; the copy never starts, so ECPY is
+	// not raised.
 	execCommandFull(cb, 0x65, 0x05, 0x0000, 0x0000, 0x0001)
-	if cb.res[0]>>8 != 0xFF {
-		t.Errorf("reject status = 0x%02X, want 0xFF", cb.res[0]>>8)
+	if cb.res[0]>>8&0x80 == 0 || cb.res[0]>>8 == 0xFF {
+		t.Errorf("status = 0x%02X, want WAIT flag (not REJECT)", cb.res[0]>>8)
 	}
-	if cb.hirqReq&hirqECPY == 0 {
-		t.Error("ECPY should still be set on overflow reject")
+	if cb.res[1] == 0 && cb.res[2] == 0 && cb.res[3] == 0 {
+		t.Error("WAIT response should carry standard status data, got all zeros")
+	}
+	if cb.hirqReq&hirqECPY != 0 {
+		t.Error("ECPY should not be set on a buffer-full copy answer")
 	}
 }
 
@@ -2475,6 +2552,150 @@ func TestCDBlockMoveSectorData(t *testing.T) {
 	}
 	if got := len(cb.partitions[6].sectors); got != 3 {
 		t.Errorf("dest partition 6 sectors = %d, want 3", got)
+	}
+}
+
+// The sector get/delete/copy/move commands share one parameter check:
+// an invalid buffer number rejects; an empty partition, out-of-range
+// offset, zero count, or a range overrunning the partition answer WAIT.
+// All failure responses carry standard status data.
+func TestCDBlockSectorRangeValidation(t *testing.T) {
+	isWait := func(cb *CDBlock) bool {
+		return cb.res[0]>>8&0x80 != 0 && cb.res[0]>>8 != 0xFF
+	}
+	isReject := func(cb *CDBlock) bool {
+		return cb.res[0]>>8 == 0xFF
+	}
+	cases := []struct {
+		name string
+		cmd  uint8
+	}{
+		{"GetSectorData", 0x61},
+		{"DeleteSectorData", 0x62},
+		{"GetThenDelete", 0x63},
+		{"CopySectorData", 0x65},
+		{"MoveSectorData", 0x66},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			// Copy/move carry the destination filter in CR1 low byte.
+			var cr1lo uint8
+			if tc.cmd == 0x65 || tc.cmd == 0x66 {
+				cr1lo = 0x05
+			}
+
+			// Invalid buffer number (24) rejects.
+			cb := covCDBlock()
+			execCommandFull(cb, tc.cmd, cr1lo, 0x0000, 0x1800, 0x0001)
+			if !isReject(cb) {
+				t.Errorf("invalid buffer: status = 0x%02X, want REJECT", cb.res[0]>>8)
+			}
+			if cb.transferActive {
+				t.Error("invalid buffer: no transfer should be armed")
+			}
+
+			// Empty partition answers WAIT.
+			cb = covCDBlock()
+			execCommandFull(cb, tc.cmd, cr1lo, 0x0000, 0x0000, 0x0001)
+			if !isWait(cb) {
+				t.Errorf("empty partition: status = 0x%02X, want WAIT", cb.res[0]>>8)
+			}
+
+			// Zero count answers WAIT.
+			cb = covCDBlock()
+			cb.partitions[0].sectors = append(cb.partitions[0].sectors,
+				bufferedSector{data: make([]byte, 2352), size: 2352})
+			execCommandFull(cb, tc.cmd, cr1lo, 0x0000, 0x0000, 0x0000)
+			if !isWait(cb) {
+				t.Errorf("zero count: status = 0x%02X, want WAIT", cb.res[0]>>8)
+			}
+
+			// Range overrunning the partition answers WAIT and leaves
+			// the partition untouched.
+			cb = covCDBlock()
+			cb.partitions[0].sectors = append(cb.partitions[0].sectors,
+				bufferedSector{data: make([]byte, 2352), size: 2352})
+			execCommandFull(cb, tc.cmd, cr1lo, 0x0000, 0x0000, 0x0002)
+			if !isWait(cb) {
+				t.Errorf("range overrun: status = 0x%02X, want WAIT", cb.res[0]>>8)
+			}
+			if got := len(cb.partitions[0].sectors); got != 1 {
+				t.Errorf("range overrun: partition sectors = %d, want 1 (unchanged)", got)
+			}
+		})
+	}
+}
+
+func TestCDBlockGetSectorDataTransferInProgress(t *testing.T) {
+	cb := covCDBlock()
+	cb.getSectorLen = 0
+	sec := bufferedSector{data: make([]byte, 2352), size: 2352, userOffset: 16, userSize: 2048}
+	cb.partitions[0].sectors = append(cb.partitions[0].sectors, sec, sec)
+
+	execCommandFull(cb, 0x61, 0x00, 0x0000, 0x0000, 0x0001)
+	if !cb.transferActive {
+		t.Fatal("setup: first GetSectorData not accepted")
+	}
+	bufLen := len(cb.dataBuf)
+
+	// A second get while the transfer is in progress answers WAIT and
+	// leaves the armed transfer untouched.
+	execCommandFull(cb, 0x61, 0x00, 0x0000, 0x0000, 0x0002)
+	if cb.res[0]>>8&0x80 == 0 || cb.res[0]>>8 == 0xFF {
+		t.Errorf("status = 0x%02X, want WAIT flag (not REJECT)", cb.res[0]>>8)
+	}
+	if len(cb.dataBuf) != bufLen {
+		t.Errorf("dataBuf len = %d, want %d (unchanged)", len(cb.dataBuf), bufLen)
+	}
+}
+
+func TestCDBlockSectorRangeSentinels(t *testing.T) {
+	cb := covCDBlock()
+	cb.getSectorLen = 0
+	sec := bufferedSector{data: make([]byte, 2352), size: 2352, userOffset: 16, userSize: 2048}
+	cb.partitions[0].sectors = append(cb.partitions[0].sectors, sec, sec, sec)
+
+	// Count 0xFFFF gets from the offset to the end of the partition.
+	execCommandFull(cb, 0x61, 0x00, 0x0001, 0x0000, 0xFFFF)
+	if len(cb.dataBuf) != 2048 {
+		t.Errorf("dataBuf len = %d, want 2048 (2 sectors)", len(cb.dataBuf))
+	}
+	execCommand(cb, 0x06)
+
+	// Offset 0xFFFF resolves to the last sector.
+	execCommandFull(cb, 0x61, 0x00, 0xFFFF, 0x0000, 0x0001)
+	if len(cb.dataBuf) != 1024 {
+		t.Errorf("dataBuf len = %d, want 1024 (1 sector)", len(cb.dataBuf))
+	}
+	execCommand(cb, 0x06)
+
+	// Delete with count 0xFFFF removes from the offset to the end.
+	execCommandFull(cb, 0x62, 0x00, 0x0001, 0x0000, 0xFFFF)
+	if got := len(cb.partitions[0].sectors); got != 1 {
+		t.Errorf("sectors after delete-to-end = %d, want 1", got)
+	}
+
+	// Delete with offset 0xFFFF removes the last sector.
+	execCommandFull(cb, 0x62, 0x00, 0xFFFF, 0x0000, 0x0001)
+	if got := len(cb.partitions[0].sectors); got != 0 {
+		t.Errorf("sectors after delete-last = %d, want 0", got)
+	}
+}
+
+func TestCDBlockCopyMoveInvalidDestFilter(t *testing.T) {
+	for _, cmd := range []uint8{0x65, 0x66} {
+		cb := covCDBlock()
+		cb.partitions[0].sectors = append(cb.partitions[0].sectors,
+			bufferedSector{data: make([]byte, 2352), size: 2352})
+
+		// Destination filter numbers 24 and up reject.
+		execCommandFull(cb, cmd, 0x18, 0x0000, 0x0000, 0x0001)
+		if cb.res[0]>>8 != 0xFF {
+			t.Errorf("cmd 0x%02X invalid dest filter: status = 0x%02X, want 0xFF", cmd, cb.res[0]>>8)
+		}
+		if got := len(cb.partitions[0].sectors); got != 1 {
+			t.Errorf("cmd 0x%02X: source partition changed on reject", cmd)
+		}
 	}
 }
 

@@ -888,6 +888,25 @@ func (cb *CDBlock) standardReturn() {
 	cb.res[3] = uint16(fad & 0xFFFF)
 }
 
+// respondWait answers a retryable command failure: the standard status
+// data with the WAIT flag ORed into the status byte. Failure answers
+// raise no completion HIRQ beyond CMOK.
+func (cb *CDBlock) respondWait() {
+	cb.standardReturn()
+	cb.res[0] |= 0x80 << 8
+	cb.resultsRead = false
+	cb.hirqReq |= hirqCMOK
+}
+
+// respondReject answers a structurally invalid command parameter: the
+// standard status data with 0xFF ORed into the status byte.
+func (cb *CDBlock) respondReject() {
+	cb.standardReturn()
+	cb.res[0] |= 0xFF << 8
+	cb.resultsRead = false
+	cb.hirqReq |= hirqCMOK
+}
+
 // trackAt returns the track entry containing the given FAD, or nil if none.
 // Membership uses pregapStartFAD so a track's pregap is attributed to that
 // track (not the previous one), matching CD subchannel reporting.

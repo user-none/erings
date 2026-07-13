@@ -10,6 +10,46 @@ func (cb *CDBlock) getPartition(bufNum uint8) *cdPartition {
 	return nil
 }
 
+// Sector-range validation outcomes shared by the sector commands.
+type rangeResult int
+
+const (
+	rangeOK rangeResult = iota
+	rangeWait
+	rangeReject
+)
+
+// validateSectorRange applies the parameter check shared by the sector
+// get/delete/get-then-delete/copy/move commands: an invalid buffer
+// number rejects; an empty partition, an out-of-range offset, a zero
+// count, or a range overrunning the partition answer WAIT (retryable).
+// Offset 0xFFFF resolves to the last sector, count 0xFFFF to the rest
+// of the partition from the offset; the resolved values are returned.
+func (cb *CDBlock) validateSectorRange(bufNum uint8, offset, count int) (int, int, rangeResult) {
+	if int(bufNum) >= len(cb.partitions) {
+		return 0, 0, rangeReject
+	}
+	n := len(cb.partitions[bufNum].sectors)
+	if n == 0 {
+		return 0, 0, rangeWait
+	}
+	if offset >= n {
+		if offset != 0xFFFF {
+			return 0, 0, rangeWait
+		}
+		offset = n - 1
+	}
+	if count == 0 {
+		return 0, 0, rangeWait
+	}
+	if count == 0xFFFF {
+		count = n - offset
+	} else if offset+count > n {
+		return 0, 0, rangeWait
+	}
+	return offset, count, rangeOK
+}
+
 // sectorSlice returns the data slice for a sector based on the requested
 // getSectorLen. For raw disc sectors (size 2352), applies the correct
 // offset to skip sync/header. For put sectors (size matches requested
@@ -119,23 +159,28 @@ func (cb *CDBlock) cmdGetActualSize() {
 
 func (cb *CDBlock) cmdGetSectorInfo() {
 	bufNum := uint8(cb.cmd[2] >> 8)
-	secNum := int(cb.cmd[1] & 0xFF)
+	secNum := int(cb.cmd[1])
 	part := cb.getPartition(bufNum)
-	if part != nil && secNum < len(part.sectors) {
-		sec := part.sectors[secNum]
-		cb.setResponse(
-			uint16(sec.fad&0xFFFF),
-			uint16(sec.fileNum)<<8|uint16(sec.chanNum),
-			uint16(sec.submode)<<8|uint16(sec.codinfo),
-		)
-		cb.res[0] |= uint16((sec.fad >> 16) & 0xFF)
-	} else {
-		// Reject
-		cb.res[0] = 0xFF << 8
-		cb.res[1] = 0
-		cb.res[2] = 0
-		cb.res[3] = 0
+	if part == nil {
+		cb.respondReject()
+		return
 	}
+	// An empty partition or an out-of-range sector number answers
+	// WAIT. Sector number 0xFFFF resolves to the last sector.
+	if secNum >= len(part.sectors) {
+		if secNum != 0xFFFF || len(part.sectors) == 0 {
+			cb.respondWait()
+			return
+		}
+		secNum = len(part.sectors) - 1
+	}
+	sec := part.sectors[secNum]
+	cb.setResponse(
+		uint16(sec.fad&0xFFFF),
+		uint16(sec.fileNum)<<8|uint16(sec.chanNum),
+		uint16(sec.submode)<<8|uint16(sec.codinfo),
+	)
+	cb.res[0] |= uint16((sec.fad >> 16) & 0xFF)
 	cb.hirqReq |= hirqCMOK
 }
 
@@ -155,9 +200,20 @@ func (cb *CDBlock) cmdSetSectorLength() {
 }
 
 func (cb *CDBlock) cmdGetSectorData() {
+	if cb.transferActive {
+		cb.respondWait()
+		return
+	}
 	bufNum := uint8(cb.cmd[2] >> 8)
-	startIdx := int(cb.cmd[1])
-	count := int(cb.cmd[3])
+	startIdx, count, chk := cb.validateSectorRange(bufNum, int(cb.cmd[1]), int(cb.cmd[3]))
+	if chk == rangeReject {
+		cb.respondReject()
+		return
+	}
+	if chk == rangeWait {
+		cb.respondWait()
+		return
+	}
 	cb.extractSectorData(cb.getPartition(bufNum), startIdx, count)
 	cb.transferActive = true
 	cb.dataTransferType = cdCmdGetSectorData
@@ -168,35 +224,36 @@ func (cb *CDBlock) cmdGetSectorData() {
 
 func (cb *CDBlock) cmdDeleteSectorData() {
 	bufNum := uint8(cb.cmd[2] >> 8)
-	startIdx := int(cb.cmd[1])
-	count := int(cb.cmd[3])
-	part := cb.getPartition(bufNum)
-	if part != nil {
-		// Handle special values
-		if startIdx == 0xFFFF && (count == 1 || count == 0xFFFF) {
-			// Delete from end
-			if len(part.sectors) > 0 {
-				part.sectors = part.sectors[:len(part.sectors)-1]
-			}
-		} else if count == 0xFFFF {
-			// Delete from startIdx to end
-			if startIdx < len(part.sectors) {
-				part.sectors = part.sectors[:startIdx]
-			}
-		} else {
-			cb.deleteSectors(part, startIdx, count)
-		}
+	startIdx, count, chk := cb.validateSectorRange(bufNum, int(cb.cmd[1]), int(cb.cmd[3]))
+	if chk == rangeReject {
+		cb.respondReject()
+		return
 	}
-
+	if chk == rangeWait {
+		cb.respondWait()
+		return
+	}
+	cb.deleteSectors(&cb.partitions[bufNum], startIdx, count)
 	cb.standardReturn()
 	cb.resultsRead = false
 	cb.hirqReq |= hirqCMOK | hirqEHST
 }
 
 func (cb *CDBlock) cmdGetThenDelete() {
+	if cb.transferActive {
+		cb.respondWait()
+		return
+	}
 	bufNum := uint8(cb.cmd[2] >> 8)
-	startIdx := int(cb.cmd[1])
-	count := int(cb.cmd[3])
+	startIdx, count, chk := cb.validateSectorRange(bufNum, int(cb.cmd[1]), int(cb.cmd[3]))
+	if chk == rangeReject {
+		cb.respondReject()
+		return
+	}
+	if chk == rangeWait {
+		cb.respondWait()
+		return
+	}
 	part := cb.getPartition(bufNum)
 	cb.extractSectorData(part, startIdx, count)
 
@@ -216,20 +273,19 @@ func (cb *CDBlock) cmdPutSectorData() {
 	bufNum := uint8(cb.cmd[2] >> 8)
 	count := int(cb.cmd[3])
 
-	if int(bufNum) >= len(cb.partitions) {
-		cb.res[0] = 0xFF << 8
-		cb.res[1] = 0
-		cb.res[2] = 0
-		cb.res[3] = 0
-		cb.hirqReq |= hirqCMOK | hirqEHST
+	// WAIT (retryable) for a host transfer already in progress, a zero
+	// sector count, or a count exceeding the free buffer count; REJECT
+	// only for an invalid buffer number.
+	if cb.transferActive {
+		cb.respondWait()
 		return
 	}
-
-	// A put that exceeds the free buffer count answers WAIT.
-	if cb.totalSectors()+count > cdMaxSectors {
-		cb.standardReturn()
-		cb.res[0] |= 0x80 << 8
-		cb.hirqReq |= hirqCMOK | hirqEHST
+	if int(bufNum) >= len(cb.partitions) {
+		cb.respondReject()
+		return
+	}
+	if count == 0 || cb.totalSectors()+count > cdMaxSectors {
+		cb.respondWait()
 		return
 	}
 
@@ -247,28 +303,28 @@ func (cb *CDBlock) cmdPutSectorData() {
 func (cb *CDBlock) cmdCopySectorData() {
 	dstFilter := uint8(cb.cmd[0] & 0xFF)
 	srcBuf := uint8(cb.cmd[2] >> 8)
-	startIdx := int(cb.cmd[1])
-	count := int(cb.cmd[3])
-	if cb.totalSectors()+count > cdMaxSectors {
-		cb.res[0] = 0xFF << 8
-		cb.res[1] = 0
-		cb.res[2] = 0
-		cb.res[3] = 0
-		cb.hirqReq |= hirqCMOK | hirqECPY
+	if int(dstFilter) >= len(cb.filters) {
+		cb.respondReject()
 		return
 	}
-	if part := cb.getPartition(srcBuf); part != nil {
-		end := startIdx + count
-		if end > len(part.sectors) {
-			end = len(part.sectors)
-		}
-		for i := startIdx; i < end; i++ {
-			sec := part.sectors[i]
-			cp := make([]byte, len(sec.data))
-			copy(cp, sec.data)
-			sec.data = cp
-			cb.routeSector(sec, dstFilter)
-		}
+	startIdx, count, chk := cb.validateSectorRange(srcBuf, int(cb.cmd[1]), int(cb.cmd[3]))
+	if chk == rangeReject {
+		cb.respondReject()
+		return
+	}
+	// A copy exceeding the free buffer count answers WAIT; moves free
+	// their source sectors and skip this check.
+	if chk == rangeWait || cb.totalSectors()+count > cdMaxSectors {
+		cb.respondWait()
+		return
+	}
+	part := &cb.partitions[srcBuf]
+	for i := startIdx; i < startIdx+count; i++ {
+		sec := part.sectors[i]
+		cp := make([]byte, len(sec.data))
+		copy(cp, sec.data)
+		sec.data = cp
+		cb.routeSector(sec, dstFilter)
 	}
 	cb.standardReturn()
 	cb.resultsRead = false
@@ -281,21 +337,28 @@ func (cb *CDBlock) cmdCopySectorData() {
 func (cb *CDBlock) cmdMoveSectorData() {
 	dstFilter := uint8(cb.cmd[0] & 0xFF)
 	srcBuf := uint8(cb.cmd[2] >> 8)
-	startIdx := int(cb.cmd[1])
-	count := int(cb.cmd[3])
-	if part := cb.getPartition(srcBuf); part != nil {
-		end := startIdx + count
-		if end > len(part.sectors) {
-			end = len(part.sectors)
-		}
-		// Remove from source before routing to handle self-referencing filters
-		moved := make([]bufferedSector, end-startIdx)
-		copy(moved, part.sectors[startIdx:end])
-		part.sectors = append(part.sectors[:startIdx], part.sectors[end:]...)
-		// Route through filter chain
-		for _, sec := range moved {
-			cb.routeSector(sec, dstFilter)
-		}
+	if int(dstFilter) >= len(cb.filters) {
+		cb.respondReject()
+		return
+	}
+	startIdx, count, chk := cb.validateSectorRange(srcBuf, int(cb.cmd[1]), int(cb.cmd[3]))
+	if chk == rangeReject {
+		cb.respondReject()
+		return
+	}
+	if chk == rangeWait {
+		cb.respondWait()
+		return
+	}
+	part := &cb.partitions[srcBuf]
+	end := startIdx + count
+	// Remove from source before routing to handle self-referencing filters
+	moved := make([]bufferedSector, count)
+	copy(moved, part.sectors[startIdx:end])
+	part.sectors = append(part.sectors[:startIdx], part.sectors[end:]...)
+	// Route through filter chain
+	for _, sec := range moved {
+		cb.routeSector(sec, dstFilter)
 	}
 	cb.standardReturn()
 	cb.resultsRead = false

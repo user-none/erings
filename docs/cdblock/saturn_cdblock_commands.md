@@ -588,7 +588,7 @@ HIRQ: ESEL
 ### 0x54 - Get Sector Info
 
 | CR1 | 0x5400                   |
-| CR2 | Sector number(LB)        |
+| CR2 | Sector number            |
 | CR3 | Buffer number(HB)        |
 | CR4 | 0x0000                   |
 
@@ -599,7 +599,10 @@ Returns:
 | CR3 | File number(HB), channel number(LB)                   |
 | CR4 | Submode(HB), coding information(LB)                   |
 
-Rejects if buffer number > max selectors or sector number > sectors in buffer.
+Sector number 0xFFFF = last sector in the partition. Buffer number
+>= 24 answers REJECT; an empty partition or an out-of-range sector
+number answers WAIT (both with standard status data in the remaining
+words, firmware handler $75F0).
 HIRQ: N/A
 
 ### 0x55 - Execute FAD Search
@@ -645,6 +648,36 @@ Sector length types:
 
 Returns: CD status data. HIRQ: ESEL
 
+### Sector command failure semantics (0x61-0x66)
+
+The buffer-sector commands share one parameter check (firmware $6DBC)
+and one set of failure answers built by the shared status responder
+($9210 tail): REJECT ORs 0xFF into the status byte, WAIT ORs 0x80,
+and both carry standard status data in the remaining words. Failure
+answers raise no HIRQ beyond CMOK (the completion bits EHST/ECPY/DRDY
+come from the worker tasks, which never start on a failed command).
+
+- Buffer number >= 24: REJECT. For Copy/Move a destination filter
+  number >= 24 also REJECTs.
+- Empty partition, out-of-range sector offset, zero sector count, or
+  offset+count overrunning the partition: WAIT (retryable).
+- Sector offset 0xFFFF = the last sector in the partition. Sector
+  count 0xFFFF = from the offset to the end of the partition.
+- Get Sector Data, Get Then Delete, and Put Sector Data answer WAIT
+  while a host transfer is already in progress (the $230A command
+  wrapper checks $0F00025B before the handler runs; the handlers also
+  check the transfer-state byte $0F000724 bits 1-3). Delete, Copy,
+  and Move are not host transfers and have no such check.
+- Put Sector Data (which allocates instead of addressing existing
+  sectors) replaces the range check with: sector count exceeding the
+  free buffer count, or a zero count, answers WAIT. WAIT is the
+  retryable case - streaming hosts put concurrently with drive
+  delivery into the same buffer pool, can lose the race for the last
+  free sector, and reissue the put after draining.
+- Copy Sector Data additionally answers WAIT when the count exceeds
+  the free buffer count. Move frees its source sectors and has no
+  free-count check.
+
 ### 0x61 - Get Sector Data
 
 | CR1 | 0x6100                   |
@@ -665,7 +698,6 @@ HIRQ: EHST, DRDY
 | CR3 | Buffer number(HB)        |
 | CR4 | Sector count             |
 
-Sector position 0xFFFF = delete from end. Sector count 0xFFFF = delete to end.
 Returns: CD status data. HIRQ: EHST
 
 ### 0x63 - Get Then Delete Sector Data
@@ -688,18 +720,7 @@ Returns: CD status data. HIRQ: EHST, DRDY
 | CR4 | Sector count             |
 
 Writes sector data from host to CD buffer via DATATRNS.
-Returns: CD status data. HIRQ: DRDY, EHST (only if allocation fails)
-
-Failure semantics (firmware handler $68E0):
-- Buffer number >= 24: REJECT (CR1 high byte 0xFF).
-- Sector count exceeding the free buffer count, a zero sector count,
-  or a host transfer already in progress: the command answers with
-  the WAIT flag (CR1 status | 0x80, standard status data in the
-  remaining words) and EHST; no transfer is armed. WAIT is the
-  retryable case - streaming hosts put concurrently with drive
-  delivery into the same buffer pool, can lose the race for the last
-  free sector, and reissue the put after draining. Only the invalid
-  buffer number rejects.
+Returns: CD status data. HIRQ: DRDY
 
 ### 0x65 - Copy Sector Data
 
@@ -709,7 +730,6 @@ Failure semantics (firmware handler $68E0):
 | CR4 | Sector count                        |
 
 Copies sectors through filter chain (proper filtering applied).
-Rejects if buffer full.
 
 Returns: CD status data. HIRQ: ECPY
 
