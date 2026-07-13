@@ -880,6 +880,7 @@ func buildCDState(w *fieldWriter, cb *CDBlock) {
 	w.u8("pendingStatus", cb.pendingStatus)
 	w.i64("scdqCounter", int64(cb.scdqCounter))
 	w.i64("periCounter", int64(cb.periCounter))
+	w.flag("bufferStall", cb.bufferStall)
 }
 
 func buildCDBuffers(w *fieldWriter, cb *CDBlock) {
@@ -2496,6 +2497,7 @@ func decodeCDState(e *Emulator, r *fieldReader) func() {
 	pendingStatus := r.u8("pendingStatus")
 	scdqCounter := r.i64("scdqCounter")
 	periCounter := r.i64("periCounter")
+	bufferStall := r.flag("bufferStall")
 	return func() {
 		cb := e.cdblock
 		cb.hirqReq = hirqReq
@@ -2547,6 +2549,7 @@ func decodeCDState(e *Emulator, r *fieldReader) func() {
 		cb.pendingStatus = pendingStatus
 		cb.scdqCounter = int(scdqCounter)
 		cb.periCounter = int(periCounter)
+		cb.bufferStall = bufferStall
 	}
 }
 

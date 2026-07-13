@@ -282,6 +282,15 @@ Play mode byte:
 Returns: CD status data (changes to SEEK then PLAY).
 HIRQ: CSCT set per sector read. BFUL set if buffer fills (status -> PAUSE).
 
+Buffer-full flow control: when the buffer fills mid-play, the drive
+pauses in place with BFUL asserted (firmware: the sector pipeline's
+next-buffer allocation fails, BFUL is raised, and the drive task is
+told to stop). Once the host frees buffer space, playback resumes
+automatically from the stalled position through a new seek+play cycle;
+the resume is requested on the free-buffer count's 0 -> 1 transition.
+While paused this way the play range is not abandoned - PEND is not
+raised - and status reports PAUSE until the resume seek begins.
+
 ### 0x11 - Seek Disc
 
 | CR1 | 0x11, upper position byte(LB) |
@@ -680,6 +689,17 @@ Returns: CD status data. HIRQ: EHST, DRDY
 
 Writes sector data from host to CD buffer via DATATRNS.
 Returns: CD status data. HIRQ: DRDY, EHST (only if allocation fails)
+
+Failure semantics (firmware handler $68E0):
+- Buffer number >= 24: REJECT (CR1 high byte 0xFF).
+- Sector count exceeding the free buffer count, a zero sector count,
+  or a host transfer already in progress: the command answers with
+  the WAIT flag (CR1 status | 0x80, standard status data in the
+  remaining words) and EHST; no transfer is armed. WAIT is the
+  retryable case - streaming hosts put concurrently with drive
+  delivery into the same buffer pool, can lose the race for the last
+  free sector, and reissue the put after draining. Only the invalid
+  buffer number rejects.
 
 ### 0x65 - Copy Sector Data
 

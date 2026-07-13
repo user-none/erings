@@ -788,6 +788,7 @@ On-chip RAM structures:
 | Address | Purpose |
 |---------|---------|
 | $0F00034A | Free buffer count (200 max) |
+| $0F00034B | Buffer-wait flag: $FF while the sector pipeline is stalled on an empty free list (see buffer exhaustion below) |
 | $0F000354-$0F00041B | Buffer chain table: next buffer index per buffer, $FF = end |
 | $0F000420-$0F00059F | 24 filter entries, 16 bytes each |
 | $0F000600-$0F00068F | 24 partition entries, 6 bytes each (byte +2 = sector count) |
@@ -884,6 +885,46 @@ def dei0_sector_arrived():             # $5B48
     trapa45_send(0x05840010)           # notify task 5
 ```
 
+### Buffer Exhaustion and Resume
+
+Buffer allocation ($4EA8, ROM dispatch index 95) pops the free-list
+head and decrements the free count at $0F00034A; it returns index $FF
+when the list is empty. The free routine ($4EE4, index 97) pushes the
+index back and increments the count; when the count transitions 0 -> 1
+it calls the buffer-available hook ($520A).
+
+Task 5's per-sector work re-arms the arrival queue after routing each
+sector. When that allocation fails (no next buffer, CD state block +12
+= $FF), the exhaustion path ($49D6) runs:
+
+- sets the buffer-wait flag $0F00034B to $FF (once per episode),
+- asserts BFUL by writing 8 to the HIRQ assert port $0A00001E,
+- unless CD state block +5 bit $40 is set, messages the report task
+  with event 4 payload 1 (drive stop request).
+
+With no destination armed, the next sector arrival stops the DMA
+channel (the CHCR0 = $4368 branch above) instead of storing the
+sector, so playback pauses at the stalled position.
+
+The buffer-available hook ($520A) is the resume side: if the
+buffer-wait flag is set it clears it and, unless drive-state byte
+$0F000319 bit 5 is set, re-arms the pending play request from the
+working copy at $0F0002AC (masked into $0F0002C0) and messages the
+report task with event 4 payload 0 - a play request that seeks back to
+the stalled position and continues the range. With the flag clear it
+instead re-arms via $0F0002B4 and sends event 5 payload 4 (gated on
+$0F000319 bit 1). Because the trigger is the free count's 0 -> 1 edge,
+one freed buffer is enough to start the resume; the mechanical
+seek-back provides the latency before delivery restarts.
+
+Host-side consequence: Put Sector Data allocates from the same pool
+the arrival queue drains. The put handler ($68E0) answers with the
+WAIT status flag (through the $91FC responder tail) when the requested
+count exceeds the free count, when the count is zero, or when the
+transfer-state byte $0F000724 has any of bits 1-3 set; only a buffer
+number >= 24 rejects (through $91F8). The status responder tail at
+$9210 is shared: entry $920E ORs $00 into the status byte (normal),
+$91FC ORs $80 (WAIT), $91F8 ORs $FF (REJECT).
 
 ## Extension / Patch Mechanism
 

@@ -1509,14 +1509,16 @@ func TestCDBlockTickBufferFull(t *testing.T) {
 	execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0005)
 	tickN(cb, 2)
 
-	// Buffer-full does not change the drive's logical status (it stays
-	// PLAY); the BFUL flag is raised and sector reads are gated until
-	// the host drains a partition slot.
-	if cb.status != cdStatusPlay {
-		t.Errorf("status = 0x%02X, want PLAY (BFUL gates reads but not status)", cb.status)
+	// Buffer-full pauses the drive: BFUL is raised and status
+	// transitions to PAUSE until the host frees space.
+	if cb.status != cdStatusPause {
+		t.Errorf("status = 0x%02X, want PAUSE (BFUL pauses the drive)", cb.status)
 	}
 	if cb.hirqReq&hirqBFUL == 0 {
 		t.Error("BFUL should be set when buffer full")
+	}
+	if !cb.bufferStall {
+		t.Error("bufferStall should be set when buffer full")
 	}
 }
 
@@ -1527,23 +1529,37 @@ func TestCDBlockTickBufferFullResume(t *testing.T) {
 		cb.partitions[0].sectors = append(cb.partitions[0].sectors, bufferedSector{data: make([]byte, 2352), fad: uint32(i)})
 	}
 
-	// Start play; status remains PLAY while BFUL gates reads.
+	// Start play; buffer-full pauses the drive.
 	execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0005)
 	tickN(cb, 2)
 
-	if cb.status != cdStatusPlay {
-		t.Fatalf("status = 0x%02X, want PLAY (BFUL does not stop the drive)", cb.status)
+	if cb.status != cdStatusPause {
+		t.Fatalf("status = 0x%02X, want PAUSE (BFUL pauses the drive)", cb.status)
 	}
 	if cb.hirqReq&hirqBFUL == 0 {
 		t.Fatal("BFUL should be set with full partition")
 	}
 
-	// Free up partition slots; the next tick should produce a sector read.
-	cb.partitions[0].sectors = cb.partitions[0].sectors[:cdMaxSectors-2]
+	// Free up partition slots; the drive resumes through a re-seek
+	// (SEEK for the transition delay, then PLAY) before reading again.
+	// Enough slots are freed that the resume-delay tick's deliveries
+	// do not immediately re-fill the buffer and re-pause.
+	cb.partitions[0].sectors = cb.partitions[0].sectors[:cdMaxSectors-20]
 	before := len(cb.partitions[0].sectors)
+	cb.TickSystemCycles(1)
+	if cb.status != cdStatusSeek {
+		t.Fatalf("status = 0x%02X, want SEEK (resume transition)", cb.status)
+	}
+	if cb.bufferStall {
+		t.Error("bufferStall should clear when the resume starts")
+	}
+	cb.TickSystemCycles(uint32(cb.busyPauseCycles))
+	if cb.status != cdStatusPlay {
+		t.Fatalf("status = 0x%02X, want PLAY after resume delay", cb.status)
+	}
 	tickN(cb, 1)
 	if len(cb.partitions[0].sectors) <= before {
-		t.Errorf("no sector read after partition drain: before=%d after=%d", before, len(cb.partitions[0].sectors))
+		t.Errorf("no sector read after resume: before=%d after=%d", before, len(cb.partitions[0].sectors))
 	}
 }
 
@@ -2317,13 +2333,24 @@ func TestCDBlockPutSectorDataOverflow(t *testing.T) {
 	}
 
 	// PutSectorData asking for 1 more sector exceeds cdMaxSectors and
-	// must be rejected.
+	// answers WAIT (status | 0x80) with EHST: hosts streaming against a
+	// full buffer retry the put. REJECT is reserved for an invalid
+	// buffer number.
 	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x0100, 0x0001)
-	if cb.res[0]>>8 != 0xFF {
-		t.Errorf("reject status = 0x%02X, want 0xFF", cb.res[0]>>8)
+	if cb.res[0]>>8&0x80 == 0 || cb.res[0]>>8 == 0xFF {
+		t.Errorf("status = 0x%02X, want WAIT flag (not REJECT)", cb.res[0]>>8)
+	}
+	if cb.hirqReq&hirqEHST == 0 {
+		t.Error("EHST should be set when put allocation fails")
 	}
 	if cb.putSectorsRemaining != 0 {
-		t.Errorf("putSectorsRemaining = %d, want 0 (rejected)", cb.putSectorsRemaining)
+		t.Errorf("putSectorsRemaining = %d, want 0 (deferred)", cb.putSectorsRemaining)
+	}
+
+	// An invalid buffer number rejects outright.
+	execCommandFull(cb, 0x64, 0x00, 0x0000, 0x1800, 0x0001)
+	if cb.res[0]>>8 != 0xFF {
+		t.Errorf("invalid-buffer status = 0x%02X, want 0xFF", cb.res[0]>>8)
 	}
 }
 

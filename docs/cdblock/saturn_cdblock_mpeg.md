@@ -500,7 +500,13 @@ sector pipeline, not a separate channel:
    partition (or the CD device output) to the decoder input. The
    partition does not have to be disc-fed: a traced title demuxes the
    disc stream on the host and delivers the decoder's video elementary
-   stream into its partition with Put Sector Data ($64).
+   stream into its partition with Put Sector Data ($64). Such a title
+   runs the shared buffer pool at capacity for most of a long stream
+   (delivery outpaces realtime consumption), so it depends on the
+   buffer-full flow control - drive pause with BFUL, resume on freed
+   space - and on $64 answering WAIT rather than REJECT when a put
+   races the drive for the last free sectors (both in
+   saturn_cdblock_commands.md).
 3. The decoder consumes the sectors; the firmware's role is transport
    (the DMAC2/3 packet channel carries LSI commands, and the sector data
    is delivered from buffer DRAM).

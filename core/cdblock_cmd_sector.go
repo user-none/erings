@@ -216,11 +216,19 @@ func (cb *CDBlock) cmdPutSectorData() {
 	bufNum := uint8(cb.cmd[2] >> 8)
 	count := int(cb.cmd[3])
 
-	if int(bufNum) >= len(cb.partitions) || cb.totalSectors()+count > cdMaxSectors {
+	if int(bufNum) >= len(cb.partitions) {
 		cb.res[0] = 0xFF << 8
 		cb.res[1] = 0
 		cb.res[2] = 0
 		cb.res[3] = 0
+		cb.hirqReq |= hirqCMOK | hirqEHST
+		return
+	}
+
+	// A put that exceeds the free buffer count answers WAIT.
+	if cb.totalSectors()+count > cdMaxSectors {
+		cb.standardReturn()
+		cb.res[0] |= 0x80 << 8
 		cb.hirqReq |= hirqCMOK | hirqEHST
 		return
 	}

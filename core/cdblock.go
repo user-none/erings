@@ -290,6 +290,7 @@ type CDBlock struct {
 	pendingStatus uint8  // Target status when busyDelay expires
 	scdqCounter   int    // Cycles until next SCDQ flag (75 Hz at 1x, 150 Hz at 2x)
 	periCounter   int    // Cycles until next periodic status update
+	bufferStall   bool   // True while play is paused on a full partition buffer (BFUL)
 
 	// CD-DA audio queue feeding SCSP EXTS. Decoded from raw audio
 	// sectors during readOneSector() when the current track is AUDIO.
@@ -979,7 +980,17 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 		}
 	}
 
-	// 3. Seek step: advance playFAD toward seekFAD one FAD per seek period
+	// 3. Buffer-full stall resume: once the host frees buffer space,
+	// the drive returns to the stalled position
+	if cb.bufferStall && cb.playing && cb.status == cdStatusPause &&
+		cb.busyDelay == 0 && cb.totalSectors() < cdMaxSectors {
+		cb.bufferStall = false
+		cb.status = cdStatusSeek
+		cb.busyDelay = cb.busyPauseCycles
+		cb.pendingStatus = cdStatusPlay
+	}
+
+	// 4. Seek step: advance playFAD toward seekFAD one FAD per seek period
 	if cb.seeking && cb.status == cdStatusSeek {
 		period := cdSeekCycles1x
 		if cb.cdSpeed == 2 {
@@ -1005,7 +1016,7 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 		}
 	}
 
-	// 4. Sector reading: integer-countdown accumulator at CD speed rate.
+	// 5. Sector reading: integer-countdown accumulator at CD speed rate.
 	// Accumulate before checking play range exhaustion so the last sector
 	// is available in the partition before status transitions to Pause.
 	// Audio tracks always read at 1x because CD-DA is time-locked to
@@ -1022,11 +1033,11 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 		}
 	}
 
-	// 5. MPEG subsystem: drain connected partitions, demux, decode.
+	// 6. MPEG subsystem: drain connected partitions, demux, decode.
 	// After sector reading so sectors read this tick flow immediately.
 	cb.mpegTick(c)
 
-	// 6. SCDQ: one Q frame per sector, 75 Hz at 1x, 150 Hz at 2x.
+	// 7. SCDQ: one Q frame per sector, 75 Hz at 1x, 150 Hz at 2x.
 	if cb.disc != nil && cb.initialized {
 		cb.scdqCounter -= c
 		if cb.scdqCounter <= 0 {
@@ -1039,7 +1050,7 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 		}
 	}
 
-	// 7. Periodic status: update response registers at periodic rate.
+	// 8. Periodic status: update response registers at periodic rate.
 	// Skipped when a command is pending to prevent overwriting CR registers
 	// between the game's CR1-CR4 write sequence.
 	if cb.initialized && cb.resultsRead && cb.cmdDelay <= 0 {
@@ -1209,11 +1220,13 @@ func (cb *CDBlock) readOneSector() {
 		cb.playFAD++
 		return
 	}
-	// Partition buffer full gates data sectors only. The play head
-	// stalls until the host drains a sector, matching real hardware.
+	// Partition buffer full gates data sectors only. The drive pauses in
+	// place and resumes through a re-seek once the host frees space.
 	// Audio uses its own circular queue with drop-oldest overflow.
 	if !isAudio && cb.totalSectors() >= cdMaxSectors {
 		cb.hirqReq |= hirqBFUL
+		cb.status = cdStatusPause
+		cb.bufferStall = true
 		return
 	}
 	lba := int(cb.playFAD) - 150
