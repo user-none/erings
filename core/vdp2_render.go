@@ -436,6 +436,32 @@ func (v *VDP2) BeginFrame() {
 			}); has {
 				v.exbgDX, v.exbgDY, v.exbgDW, v.exbgDH,
 					v.exbgSX, v.exbgSY, v.exbgRatX, v.exbgRatY, v.exbgSized = wsrc.MpegWindow()
+				// The decoder's display-position Y origin is fixed in
+				// the video signal at the top line of the full raster
+				// (traced: titles wanting the picture at the visible
+				// top of a 224-line screen program Y=8, a boxed window
+				// at Y=40 on a 224-line screen lands at frame line 32,
+				// and a boxed window at Y=49 on a 240-line screen lands
+				// at frame line 49). The VDP2 manual's TVMD VRESO
+				// section states resolution-increment lines are added
+				// to the top and bottom without changing the screen's
+				// center, so the frame top sits (raster - lines)/2
+				// below the raster top (raster 240 NTSC, 256 PAL - the
+				// PAL half is inferred from the same symmetry,
+				// untraced).
+				raster := 240
+				if v.pal {
+					raster = 256
+				}
+				v.exbgDY -= (raster - fs.height) / 2
+				// The X origin sits one dot left of the frame edge
+				// (traced on 320-wide screens: a flush-left title
+				// programs X=-1, and a boxed window at X=23 lands at
+				// frame column 24). The traced 352-wide titles play
+				// full-screen video only - no single-dot reference -
+				// so the offset is unmeasured there and the faster
+				// dot clock could make it differ.
+				v.exbgDX++
 			}
 		}
 	}
@@ -705,11 +731,12 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 // latched frame's row is copied into the NBG1 layer buffer as direct
 // RGB with the screen priority (and color-calculation flag) packed per
 // pixel. Pixels outside the frame are transparent. The $A1 display
-// window places the picture: screen position = display position,
-// visible extent = display size, and the frame-buffer position and
-// ratio anchor and step the source (nearest-neighbor). Without a
-// configured window the frame maps 1:1 from the screen origin. The
-// $A2-$A4 output controls are not applied.
+// window places the picture: the latched placement (already in frame
+// coordinates) gives the position and visible extent, and the
+// frame-buffer position and ratio anchor and step the source
+// (nearest-neighbor). Without a configured window the frame maps 1:1
+// from the screen origin. The $A2-$A4 output controls are not
+// applied.
 func (v *VDP2) exbgSpanSetup(buf []uint32, y int) func(x0, x1 int) {
 	width := v.frame.width
 	base := uint32(v.frame.exbgPri) << 24

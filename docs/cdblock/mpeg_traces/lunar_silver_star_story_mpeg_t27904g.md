@@ -56,7 +56,8 @@ programmed before $95, unlike the raw-ES titles):
 Window values: frame-buffer position $16/0, frame-buffer ratio $000F
 (7/8 source step) horizontal with $0001 vertical, display position
 0/8, display size $140 x $E0 (320x224). $A4 carries $0F00
-(interpolation flags).
+(interpolation flags). The FMV screen mode is 320x224: the window
+fills it, flush top.
 
 Play burst and steady state:
 

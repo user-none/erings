@@ -485,38 +485,36 @@ type mpegFrameSlot struct {
 	w, h int
 }
 
-// mpegFrameLatch is the decoded-picture handoff to the VDP2 EXBG path:
-// a wait-free single-producer/single-consumer triple buffer. The CD
-// block's tick context (producer) converts into its owned slot and
-// publishes with one atomic swap; the render walker (consumer) takes
-// the newest slot with one atomic swap and reads it in place. Neither
-// side ever blocks: the emulation goroutines spin at cycle barriers,
-// so a parked goroutine here would stall the whole lockstep pipeline.
+// mpegFrameLatch is the decoded-picture handoff for the card's video
+// output: a wait-free single-producer/single-consumer triple buffer.
+// The CD block's tick context (producer) converts into its owned slot
+// and publishes with one atomic swap; the consumer takes the newest
+// slot with one atomic swap and reads it in place. Neither side ever
+// blocks: the emulation goroutines spin at cycle barriers, so a parked
+// goroutine here would stall the whole lockstep pipeline.
 //
 // Ownership invariant: at all times prod, cons, and the mailbox hold a
 // permutation of the three slot indices. prod is touched only by the
-// tick context, cons and consHas only by the render walker.
+// producer, cons and consHas only by the consumer.
 type mpegFrameLatch struct {
 	slots   [3]mpegFrameSlot
 	mailbox atomic.Uint32 // in-transit slot index | mpegMailboxFresh
-	prod    int           // producer-owned slot (tick context only)
-	cons    int           // consumer-owned slot (render walker only)
-	consHas bool          // consumer has taken a frame (render walker only)
+	prod    int           // producer-owned slot
+	cons    int           // consumer-owned slot
+	consHas bool          // consumer has taken a frame
 	dispOn  atomic.Bool   // $A0 display switch
 
-	// $A1 display-window values for the render walker, each packed
-	// X<<16 | Y (int16 halves; positions are signed). dispSize zero
-	// means the window was never configured: the picture maps 1:1
-	// from the screen origin.
-	dispPos  atomic.Uint32 // display position: picture top-left on screen
+	// $A1 display-window values, each packed X<<16 | Y (int16 halves;
+	// positions are signed). dispSize zero means the window was never
+	// configured: the picture maps 1:1 from the screen origin.
+	dispPos  atomic.Uint32 // display position: picture top-left, decoder coordinates
 	dispSize atomic.Uint32 // display size: visible extent (exclusive)
 	fbPos    atomic.Uint32 // frame-buffer position: source-side anchor
 	fbRatio  atomic.Uint32 // frame-buffer ratio: raw X<<16 | Y wire values
 }
 
 // mpegSyncWindowLatch publishes the stored $A1 window sub-parameters
-// to the render walker. Called on $A1 writes, $93 reset, and state
-// restore.
+// to the frame latch.
 func (cb *CDBlock) mpegSyncWindowLatch() {
 	l := &cb.mpegFrame
 	w := &cb.mpeg.window
@@ -556,26 +554,21 @@ func mpegDecodeRatio(fr uint32) uint32 {
 	return v
 }
 
-// mpegWindowYOrigin is the display-position Y of the visible frame's
-// top line: the decoder's display coordinates start 8 lines above the
-// VDP2 frame (traced: titles wanting the picture at the top of the
-// screen program Y=8, and a title placing a boxed window at Y=40
-// lands at frame line 32).
-const mpegWindowYOrigin = 8
-
-// MpegWindow returns the display-window placement for the current
-// picture: screen position (signed, converted to visible-frame
-// coordinates), visible extent, the source-side anchor, and the
-// source step per display pixel in thousandths per axis (1000 = 1:1).
-// sized is false when no window has been configured (the picture maps
-// 1:1 from the origin). Called by VDP2 from the render walker.
+// MpegWindow returns the latched $A1 display-window placement:
+// display position (signed, in decoder raster coordinates - the
+// origin is fixed in the card's output raster, not the VDP2 frame,
+// so the consumer converts both axes per the screen mode), visible
+// extent (exclusive), the source-side anchor, and the source step per
+// display pixel in thousandths per axis (1000 = 1:1). sized is false
+// when no window has been configured (the picture maps 1:1 from the
+// origin).
 func (cb *CDBlock) MpegWindow() (dx, dy, dw, dh, sx, sy, ratX, ratY int, sized bool) {
 	pos := cb.mpegFrame.dispPos.Load()
 	size := cb.mpegFrame.dispSize.Load()
 	fb := cb.mpegFrame.fbPos.Load()
 	rat := cb.mpegFrame.fbRatio.Load()
 	dx = int(int16(pos >> 16))
-	dy = int(int16(pos)) - mpegWindowYOrigin
+	dy = int(int16(pos))
 	dw = int(size >> 16)
 	dh = int(size & 0xFFFF)
 	sx = int(int16(fb >> 16))
@@ -642,7 +635,7 @@ func (cb *CDBlock) mpegResetLatch() {
 // returned slice is the consumer-owned slot: valid until the next
 // call, never written by the producer while owned. ok is false when
 // nothing has been decoded or the host has the display switched off
-// ($A0). Called by VDP2 from the render walker.
+// ($A0).
 func (cb *CDBlock) MpegFrameRGB() (rgb []uint32, w, h int, ok bool) {
 	l := &cb.mpegFrame
 	if l.mailbox.Load()&mpegMailboxFresh != 0 {

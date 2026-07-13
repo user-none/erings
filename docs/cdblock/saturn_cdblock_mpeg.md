@@ -249,18 +249,22 @@ on), CR2 low byte = frame bank number.
 position, 3 = display size, 4 = display offset (all five selectors go
 through this one command). CR2 low byte = change flag, CR3 = X value,
 CR4 = Y value. The display position places the picture's top-left on
-screen (signed values; the display size is an exclusive extent) in a
-coordinate space whose Y origin sits 8 lines above the visible frame:
-titles wanting the picture at the top of the screen program Y = 8
-(traced across five titles). The frame-buffer position anchors the
+screen (signed values; the display size is an exclusive extent) in the
+decoder's output-raster coordinates: the X origin sits one dot left of
+the visible frame and the Y origin at the top of the full raster, 8
+lines above a 224-line frame (see "Display-position coordinate origin"
+under the Display and Window Model). The frame-buffer position anchors the
 source picture: each display pixel advances the source coordinate by
 the frame-buffer ratio. The ratio wire encoding (disassembled from the
 host library's converter): bits 4-13 = integer magnification in units,
 low nibble = a fraction table index (0, .500, .666, .750, .800, .833,
 .857 for indexes 1-7; 1.000, .500, .333, .250, .200, .166, .142 for
 9-15), bit 15 set = the value is the source step directly, clear = the
-step is the reciprocal 1/(value+1). $8011 = 1:1; $000F = an 8/7
-enlargement (source step 7/8).
+step is the reciprocal 1/(value+1). All three observed wire values:
+$8011 (direct form, integer 1 + fraction 0 = step 1.000) = 1:1;
+$0001 (reciprocal form, value 0, step 1/(0+1)) = 1:1 through the
+other form; $000F (reciprocal form, nibble 15 = 1/7, step
+1/(1+1/7) = 7/8) = an 8/7 enlargement.
 
 **$A3 Set Fade** - Y gain and C gain.
 
@@ -377,6 +381,55 @@ pairs; scan mode (NTSC/PAL, interlaced or not) selects the coordinate
 maxima (see Command Parameter Encodings). Multiple windows can be
 composited (the software model supports up to four per movie).
 
+### Display-position coordinate origin
+
+The display position is expressed in the decoder's output-raster
+coordinates, not in the console's visible-frame coordinates. Both axes
+are offset from the visible frame; the offsets were measured by
+comparing commanded positions against where pictures land on hardware.
+
+**X origin: one dot left of the visible frame.** A picture lands on
+frame column X + 1. A title wanting its picture flush left programs
+X = -1; titles that draw a backdrop box behind a boxed window program
+X = 23 and X = 39 and the picture lands centered on the backdrop at
+frame columns 24 and 40. Measured on 320-dot horizontal modes only.
+352-dot titles are traced, but all of them play full-screen video,
+which offers no single-dot placement reference (a one-dot error only
+drops a column at a screen edge), so the offset is unmeasured in that
+mode - and the 352-dot modes run a faster dot clock, so if the offset
+is a fixed output-stage time delay rather than a counter definition,
+it need not be one dot there.
+
+**Y origin: the top line of the full raster.** The raster is 240 lines
+(NTSC) or 256 lines (PAL), and the VDP2 vertical-resolution setting
+takes its display lines from the raster center (the VDP2 manual's TVMD
+VRESO section: resolution-increment lines are added to the top and
+bottom without changing the screen's center), so a picture lands on
+frame line Y - (raster - lines) / 2:
+
+| Screen | Frame line |
+|--------|------------|
+| NTSC 224 | Y - 8 |
+| NTSC 240 | Y |
+| PAL 224 | Y - 16 (inferred) |
+| PAL 240 | Y - 8 (inferred) |
+| PAL 256 | Y (inferred) |
+
+Traced (each title's screen mode read from its TVMD setting): titles
+wanting the picture at the top of a 224-line screen program Y = 8; a
+boxed window at Y = 40 on a 224-line screen lands at frame line 32; a
+boxed window at Y = 49 on a 240-line screen lands at frame line 49,
+centered on its game-drawn backdrop; a title centering a 288x160
+window on a 320x240 screen programs (15, 40), which is dead center
+under this origin; and a title showing a full-height 239-line picture
+on a 224-line screen programs Y = 1, a near-centered vertical crop
+(picture rows 7-230 fill the frame). The PAL rows follow from the
+same center rule; no PAL title has been traced.
+
+Whether the X offset is a one-dot output-pipeline delay or part of the
+firmware's parameter definition is not observable from the host side;
+the mapping above is what all traced titles satisfy.
+
 ### CR packing of the display/window commands
 
 The host-side builders for $A0-$A4 all assemble the same 8-byte
@@ -411,14 +464,14 @@ Per command:
   picture is 320x224 (measured from the decoded frames; MPEG picture
   sizes are not fixed to the 352x240 Video CD geometry) shown 1:1 on
   a 320x224 display mode. The display size equals the picture size,
-  and the position values read as placing the picture within the
-  card's NTSC output raster so it aligns with the console's active
-  display area: vertically 8 = (240-224)/2 centers 224 lines in the
-  240-line active frame, and the horizontal 22 is inferred (not
-  validated) to be the 320-mode active-area inset in decoder dot
-  clocks. The frame-buffer ratio encoding is unknown; (15, 1)
-  accompanies unscaled output. All observed $A1 issues carry 0x0001
-  in CR2; that byte's meaning is unknown.
+  and display position (0, 8) places the picture at the visible top of
+  the 224-line frame, one dot right of flush left, per the
+  display-position coordinate origin (Y = 8 is the 224-line frame's
+  top raster line). The frame-buffer position 22 anchors the source
+  crop: with the 7/8 source step of ratio value 15, the 320-dot
+  display spans source columns 22..302 of the 320-wide picture. All
+  observed $A1 issues carry 0x0001 in CR2; that byte's meaning is
+  unknown.
 - **$A2 Set Border Color** - the 16-bit border color in CR2.
 - **$A3 Set Fade** - the Y gain and C gain bytes in CR2 (high, low).
   Gain 0/0 is observed with unfaded output, so 0 means no fade rather

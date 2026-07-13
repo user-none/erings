@@ -1011,10 +1011,10 @@ func TestCDBlockMpegDecodeRatio(t *testing.T) {
 	}
 }
 
-// TestCDBlockMpegWindowPlacement verifies MpegWindow converts the $A1
-// sub-parameters for the render walker: signed display position with
-// the Y origin 8 lines above the visible frame, exclusive extent,
-// source anchor, and per-axis ratios.
+// TestCDBlockMpegWindowPlacement verifies MpegWindow decodes the $A1
+// sub-parameters: signed display position in decoder coordinates (no
+// origin conversion applied), exclusive extent, source anchor, and
+// per-axis ratios.
 func TestCDBlockMpegWindowPlacement(t *testing.T) {
 	cb := NewCDBlock(nil)
 	mpegInit(cb)
@@ -1032,8 +1032,8 @@ func TestCDBlockMpegWindowPlacement(t *testing.T) {
 	if !sized {
 		t.Fatal("window should be configured")
 	}
-	if dx != 39 || dy != 40-8 || dw != 240 || dh != 160 {
-		t.Errorf("placement = (%d,%d) %dx%d, want (39,32) 240x160", dx, dy, dw, dh)
+	if dx != 39 || dy != 40 || dw != 240 || dh != 160 {
+		t.Errorf("placement = (%d,%d) %dx%d, want (39,40) 240x160", dx, dy, dw, dh)
 	}
 	if sx != 22 || sy != 0 {
 		t.Errorf("fb anchor = (%d,%d), want (22,0)", sx, sy)
@@ -1044,8 +1044,8 @@ func TestCDBlockMpegWindowPlacement(t *testing.T) {
 
 	// Signed display positions (a traced title uses X = -1).
 	execCommandFull(cb, 0xA1, mpegWinDispPos, 0x0001, 0xFFFF, 8)
-	if dx, dy, _, _, _, _, _, _, _ := cb.MpegWindow(); dx != -1 || dy != 0 {
-		t.Errorf("signed position = (%d,%d), want (-1,0)", dx, dy)
+	if dx, dy, _, _, _, _, _, _, _ := cb.MpegWindow(); dx != -1 || dy != 8 {
+		t.Errorf("signed position = (%d,%d), want (-1,8)", dx, dy)
 	}
 }
 

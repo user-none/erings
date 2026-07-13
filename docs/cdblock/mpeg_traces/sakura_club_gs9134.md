@@ -74,7 +74,7 @@ Notes: $95 CR1 low byte 01 selects independent playback (no A/V start
 sync; the audio goes through the sound CPU instead of the card). The
 $A1 window is frame-buffer position 0/0, ratio $8011/$8011 (1:1),
 display position X=$27 Y=$28, display size $F0 x $A0 (240x160, the
-stream's coded size at 29.97 fps).
+stream's coded size at 29.97 fps). The FMV screen mode is 320x224.
 
 Steady-state playback polling:
 

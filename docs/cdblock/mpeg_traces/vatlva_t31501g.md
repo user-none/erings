@@ -51,7 +51,9 @@ picture-start interrupt (cause $000100, in the $92 mask) wakes the game
 ```
 
 Window values: frame-buffer position 1/1, ratio $8011/$8011 (1:1),
-display position 1/1, display size $15F x $EF.
+display position 1/1, display size $15F x $EF. The FMV screen mode is
+352x224: the full-height window overflows the 224-line frame, which
+crops the picture to rows 7-230.
 
 Steady-state playback:
 

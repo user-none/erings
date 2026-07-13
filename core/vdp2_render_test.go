@@ -7725,3 +7725,58 @@ func TestPartialFrameLeavesRowsUntouched(t *testing.T) {
 		t.Errorf("row %d pixel = 0x%08X, want sentinel (not rendered)", lastRow, px)
 	}
 }
+
+// fakeEXBGSource provides a fixed decoded frame and display-window
+// placement for origin-conversion tests.
+type fakeEXBGSource struct {
+	rgb    []uint32
+	w, h   int
+	dx, dy int
+}
+
+func (f *fakeEXBGSource) MpegFrameRGB() ([]uint32, int, int, bool) {
+	return f.rgb, f.w, f.h, true
+}
+
+func (f *fakeEXBGSource) MpegWindow() (dx, dy, dw, dh, sx, sy, ratX, ratY int, sized bool) {
+	return f.dx, f.dy, 160, 120, 0, 0, 1000, 1000, true
+}
+
+// TestEXBGWindowOriginConversion verifies the display-position origin
+// conversion at the frame latch: the decoder X origin sits one dot
+// left of the frame edge and the Y origin at the top of the full
+// raster (240 lines NTSC, 256 PAL), so a window programmed at (X, Y)
+// lands at frame position (X+1, Y-(raster-lines)/2).
+func TestEXBGWindowOriginConversion(t *testing.T) {
+	cases := []struct {
+		name   string
+		pal    bool
+		tvmd   uint16
+		wantDX int
+		wantDY int
+	}{
+		{"NTSC 224-line", false, 0x8000, 24, 41},
+		{"NTSC 240-line", false, 0x8010, 24, 49},
+		{"PAL 224-line", true, 0x8000, 24, 33},
+		{"PAL 240-line", true, 0x8010, 24, 41},
+		{"PAL 256-line", true, 0x8020, 24, 49},
+	}
+	for _, c := range cases {
+		v := newTestVDP2()
+		v.SetPAL(c.pal)
+		v.regs[vdp2TVMD] = c.tvmd
+		v.recalcTiming()
+		v.regs[vdp2EXTEN] = 1
+		src := &fakeEXBGSource{rgb: make([]uint32, 352*240), w: 352, h: 240, dx: 23, dy: 49}
+		v.SetEXBGSource(src)
+		v.BeginFrame()
+		if !v.exbgSized {
+			t.Errorf("%s: window not latched", c.name)
+			continue
+		}
+		if v.exbgDX != c.wantDX || v.exbgDY != c.wantDY {
+			t.Errorf("%s: placement = (%d,%d), want (%d,%d)",
+				c.name, v.exbgDX, v.exbgDY, c.wantDX, c.wantDY)
+		}
+	}
+}
