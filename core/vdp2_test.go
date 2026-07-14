@@ -100,8 +100,8 @@ func TestVDP2TVSTATReadOnly(t *testing.T) {
 	v.Write(0x0004, 0xFFFF)
 
 	// TVSTAT should reflect timing state, not written value.
-	// Initial state: NTSC, display off, lineCycle=0, vLine=0
-	// Expected: all bits 0 (ODD reports no field scan while DISP=0)
+	// Initial state: NTSC, lineCycle=0, vLine=0
+	// Expected: all bits 0 (ODD reads 0 during the active scan)
 	got := v.Read(0x0004)
 	if got != 0 {
 		t.Errorf("TVSTAT after write = 0x%04X, want 0x0000", got)
@@ -153,16 +153,15 @@ func TestVDP2TVSTATPALBit(t *testing.T) {
 func TestVDP2TVSTATODDBit(t *testing.T) {
 	v := NewVDP2(NewSCU())
 
-	// TVMD.DISP=0 at reset: no field scan, ODD reads 0. Games poll ODD
-	// with the display off to block until their VBlank handler sets DISP.
+	// Non-interlace: ODD is the vertical retrace window. Games spin on
+	// ODD=1 as a wait-for-retrace gate, so it must read 0 mid-scan.
 	if v.Read(0x0004)&tvstatODD != 0 {
-		t.Error("ODD bit should be 0 while TVMD.DISP=0")
+		t.Error("ODD bit should be 0 during the active scan")
 	}
 
-	// Display on, non-interlace: odd fields only, ODD reads 1.
-	v.Write(0x0000, 0x8000)
+	v.vLine = v.activeLines
 	if v.Read(0x0004)&tvstatODD == 0 {
-		t.Error("ODD bit should be 1 with display on in non-interlace")
+		t.Error("ODD bit should be 1 during the vertical retrace")
 	}
 }
 
@@ -558,17 +557,27 @@ func TestVDP2TVSTATODDNonInterlace(t *testing.T) {
 	v := NewVDP2(NewSCU())
 	v.Write(0x0000, 0x8000) // DISP=1, LSMD=00 (non-interlace)
 
-	// ODD should always be 1 in non-interlace, regardless of oddField
+	// Non-interlace ODD is the vertical retrace window, independent of
+	// the field parity.
 	v.oddField = true
-	stat := v.Read(0x0004)
-	if stat&tvstatODD == 0 {
-		t.Error("ODD should be 1 in non-interlace (oddField=true)")
+	if v.Read(0x0004)&tvstatODD != 0 {
+		t.Error("ODD should be 0 during the active scan (oddField=true)")
 	}
 
 	v.oddField = false
-	stat = v.Read(0x0004)
-	if stat&tvstatODD == 0 {
-		t.Error("ODD should still be 1 in non-interlace (oddField=false)")
+	if v.Read(0x0004)&tvstatODD != 0 {
+		t.Error("ODD should be 0 during the active scan (oddField=false)")
+	}
+
+	v.vLine = v.activeLines
+	v.oddField = true
+	if v.Read(0x0004)&tvstatODD == 0 {
+		t.Error("ODD should be 1 during the retrace (oddField=true)")
+	}
+
+	v.oddField = false
+	if v.Read(0x0004)&tvstatODD == 0 {
+		t.Error("ODD should be 1 during the retrace (oddField=false)")
 	}
 }
 
@@ -644,7 +653,7 @@ func TestVDP2NewInitialState(t *testing.T) {
 	if v.Read(0x0000) != 0 {
 		t.Errorf("TVMD = 0x%04X, want 0", v.Read(0x0000))
 	}
-	// TVSTAT: ODD=0 (no field scan while TVMD.DISP=0)
+	// TVSTAT: ODD=0 (vLine=0 is in the active scan)
 	if v.Read(0x0004) != 0 {
 		t.Errorf("TVSTAT = 0x%04X, want 0x0000", v.Read(0x0004))
 	}

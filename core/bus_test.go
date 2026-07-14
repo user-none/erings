@@ -569,7 +569,7 @@ func TestNewBusVDP2Defaults(t *testing.T) {
 	if got := bus.Read16(0x05F80000); got != 0 {
 		t.Errorf("TVMD = 0x%04X, want 0x0000", got)
 	}
-	// TVSTAT: ODD=0 (no field scan while TVMD.DISP=0), PAL=0
+	// TVSTAT: ODD=0 (vLine=0 is in the active scan), PAL=0
 	if got := bus.Read16(0x05F80004); got != 0 {
 		t.Errorf("TVSTAT = 0x%04X, want 0x0000", got)
 	}

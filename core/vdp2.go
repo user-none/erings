@@ -714,12 +714,23 @@ func (v *VDP2) buildTVSTAT() uint16 {
 	if v.pal {
 		stat |= tvstatPAL
 	}
-	// ODD reports the field scan in progress (VDP2 manual, TVSTAT;
-	// non-interlace scans odd fields only). With TVMD.DISP = 0 the chip
-	// is "in the blank condition" (TVMD, DISP bit) - no field scan, so
-	// ODD reads 0. Games poll ODD with the display off to block until
-	// their VBlank handler sets DISP.
-	if v.regs[vdp2TVMD]&0x8000 != 0 && (v.interlace == 0 || v.oddField) {
+	// ODD is the scan field parity in interlace (VDP2 manual Sec 2.5,
+	// screen status register, Scan Field Flag bit description: 0 =
+	// during even field scan, 1 = during odd field scan). For
+	// non-interlace the same description states the flag "is always
+	// 1", but software establishes that it reads 0 during the active
+	// scan: a library frame-sync routine shared by multiple games
+	// spins on ODD=1 as a wait-for-vertical-retrace gate, both with
+	// the display on and off (so it cannot depend on the TVMD DISP
+	// bit, Sec 2.4), and games deadlock or race if the wait releases
+	// mid-scan. The flag is therefore modeled as the vertical retrace
+	// window, with the manual's "always 1" holding for reads during
+	// the retrace.
+	if v.interlace != 0 {
+		if v.oddField {
+			stat |= tvstatODD
+		}
+	} else if v.vLine >= v.activeLines {
 		stat |= tvstatODD
 	}
 	if v.inHBlank() {
