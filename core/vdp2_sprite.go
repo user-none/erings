@@ -9,6 +9,7 @@ const (
 	shadowNormal    = 1 // Normal shadow: darkens scroll/back per SDCTL
 	shadowMSBSprite = 2 // MSB shadow on sprites: darkens normal sprites below
 	shadowMSBTransp = 3 // MSB transparent shadow: darkens scroll/back per SDCTL
+	shadowMSBNull   = 4 // MSB transparent shadow with TPSDSL=0: dot transparent, no shadow
 )
 
 // readVDP1Pixel reads a VDP1 sprite pixel at the caller's field-line y.
@@ -98,12 +99,16 @@ func (v *VDP2) classifyShadow(pixel uint16) int {
 		return shadowNone
 	}
 
-	// MSB transparent shadow: bits[14:0] all zero (pixel=0x8000).
+	// MSB transparent shadow: bits[14:0] all zero (pixel=0x8000). The dot
+	// itself is always transparent (Sec 14.1, Figure 14.4); TPSDSL only
+	// selects whether it projects a shadow on the screens below. With
+	// TPSDSL=0 the shadow is nullified but the dot must not become a
+	// displayable palette-0 color.
 	if pixel&0x7FFF == 0 {
 		if v.frame.regs[vdp2SDCTL]&0x0100 != 0 {
 			return shadowMSBTransp
 		}
-		return shadowNone
+		return shadowMSBNull
 	}
 
 	// MSB sprite shadow: bits[14:0] non-zero.

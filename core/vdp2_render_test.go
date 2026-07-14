@@ -3325,6 +3325,58 @@ func TestShadowDisabled(t *testing.T) {
 	}
 }
 
+func TestMSBTranspShadowOnNBG(t *testing.T) {
+	v := setupNBG0Green(t)
+
+	// Sprite type 6, MSB transparent shadow pixel at (3,0)
+	v.regs[vdp2SPCTL] = 0x0006
+	spFB := make([]byte, 512*256*2)
+	spFB[(0*512+3)*2] = 0x80
+	fbView := vdp1FBView{data: spFB, is8bpp: false, width: 512, height: 256}
+
+	// TPSDSL=1 (bit 8), N0SDEN=1 (bit 0)
+	v.regs[vdp2SDCTL] = 0x0101
+	v.regs[vdp2PRINA] = 0x0003
+	v.regs[vdp2PRISA] = 0x0005
+
+	renderTestFrameFB(v, fbView)
+	fb := v.Framebuffer()
+	width := int(v.activeWidth)
+
+	// Pixel (3,0): transparent shadow projects onto NBG0 -> halved green
+	off := (0*width + 3) * 4
+	if g := fb[off+1]; g != 127 {
+		t.Errorf("transp shadow px(3,0) G=%d, want 127 (halved green)", g)
+	}
+}
+
+func TestMSBTranspShadowDisabledDotTransparent(t *testing.T) {
+	v := setupNBG0Green(t)
+
+	// Sprite type 6 with palette color mode, as used by the erase color
+	// 0x8000: SD=1, PR/CC/DC all zero. With TPSDSL=0 the dot must be fully
+	// transparent - neither darkened nor decoded as an opaque palette-0
+	// sprite pixel that would cover the scroll screens.
+	v.regs[vdp2SPCTL] = 0x0006
+	spFB := make([]byte, 512*256*2)
+	spFB[(0*512+3)*2] = 0x80
+	fbView := vdp1FBView{data: spFB, is8bpp: false, width: 512, height: 256}
+
+	v.regs[vdp2SDCTL] = 0x0000 // TPSDSL=0
+	v.regs[vdp2PRINA] = 0x0003
+	v.regs[vdp2PRISA] = 0x0005
+
+	renderTestFrameFB(v, fbView)
+	fb := v.Framebuffer()
+	width := int(v.activeWidth)
+
+	// Pixel (3,0): NBG0 shows through at full green
+	off := (0*width + 3) * 4
+	if g := fb[off+1]; g != 255 {
+		t.Errorf("nullified transp shadow px(3,0) G=%d, want 255 (NBG0 visible)", g)
+	}
+}
+
 // --- Line color screen tests ---
 
 func TestLineColorScreen(t *testing.T) {
@@ -5682,8 +5734,8 @@ func TestClassifyShadow_MSBTransparentDisabled(t *testing.T) {
 	v.regs[vdp2SDCTL] = 0x0000 // TPSDSL = 0
 	v.BeginFrame()
 	result := v.classifyShadow(0x8000)
-	if result != shadowNone {
-		t.Errorf("classifyShadow(0x8000) with TPSDSL=0 = %d, want %d (shadowNone)", result, shadowNone)
+	if result != shadowMSBNull {
+		t.Errorf("classifyShadow(0x8000) with TPSDSL=0 = %d, want %d (shadowMSBNull)", result, shadowMSBNull)
 	}
 }
 
