@@ -131,10 +131,19 @@ move these values literally into R0 (`MOV #1,R0` for BUP_NON,
 
 This section documents the byte layout that the BIOS writes
 to the 32 KB internal backup RAM at `$00180000` for save data.
-Cross-verified against three BIOS-created save images: a
-single Burning Rangers save, two NiGHTS saves (NIGHTS___01 +
-NIGHTS___02), and a combined image with all three files
-(B_RANGERS__ + NIGHTS___01 + NIGHTS___02).
+Cross-verified against console-created save images referenced
+throughout this section by save name:
+
+- `B_RANGERS__` (Burning Rangers): single-save image plus a
+  combined image with the two NiGHTS saves.
+- `NIGHTS___01` / `NIGHTS___02` (NiGHTS into Dreams): overflow
+  layout, `NIGHTS___02` is the worked multi-cont-page example
+  (D = 209, C = 7).
+- `GROOVE_ON_F` (GROOVE ON FIGHT, T-14411G): pure in-entry
+  layout with a dir-entry payload tail (datasize 202, D = 3).
+- `WANGANLOVE0` (WANGAN TRIALLOVE, T-9110G): overflow layout
+  whose single continuation page lists zero indices (datasize
+  880, D = 14, C = 1).
 
 ### File-level layout
 
@@ -172,8 +181,8 @@ index to offset mapping is `offset = block_index * 64`.
 
 ### Directory entry layout
 
-Cross-confirmed against 4 entries (BR cart.srm + cart3, NIGHTS_01 +
-NIGHTS_02 in cart2/cart3). All field offsets are relative to the
+Cross-confirmed against 4 entries (BR cart.srm + cart3, NIGHTS___01 +
+NIGHTS___02 in cart2/cart3). All field offsets are relative to the
 start of the directory entry block. The layout matches the SDK
 BupDir struct (34 bytes) except that the on-disk format drops
 the `blocksize` field and prefixes a 4-byte status word, then
@@ -231,7 +240,7 @@ A file's payload is reached via two kinds of block lists:
    a data block (see detection rule below).
 2. **Continuation-page list** at cont-page +$04..+$3F: 30
    16-bit BE word slots. Each slot names a data block. Per
-   inspection of cart2.srm NIGHTS_02's cont-listed blocks
+   inspection of cart2.srm NIGHTS___02's cont-listed blocks
    (51..80, 81..110, ..., 231..251), continuation pages
    **never name other continuation pages** - the chain is at
    most one level deep.
@@ -260,11 +269,20 @@ the payload phase. Each list - the in-entry list and every
 continuation page - ends at the first `$0000` word, and the data-block
 count is hard-capped at the device's total block count.
 
-Because classification is structural, a data block whose payload
-happens to begin with four zero bytes followed by an in-range block
-index (e.g. GROOVE ON FIGHT's high-score save, whose data begins
-`$00 40`) is **not** mistaken for a continuation page. A terminated
-in-entry list therefore references only data blocks.
+Because classification is structural, content that mimics list
+structure is harmless in both directions:
+
+- A data block whose payload begins with four zero bytes followed
+  by an in-range block index is **not** mistaken for a continuation
+  page. `GROOVE_ON_F`'s data block 4 is a live example: zero header
+  plus first payload word `$0080` = block 128, in range.
+- A continuation page whose list is empty (a lone `$0000`
+  terminator at +$04, so no valid first index) is **not** mistaken
+  for a data block. `WANGANLOVE0`'s single continuation page is a
+  live example (D = 14, C = 1 layout; every 841..898-byte file
+  produces one).
+
+A terminated in-entry list therefore references only data blocks.
 
 #### Data block
 
@@ -274,16 +292,26 @@ a data block:
   Skipped on read.
 - Bytes +$04..+$3F: 60 bytes of file payload.
 
-#### Continuation page payload tail
+#### List-terminating block payload tail
 
-When a cont-page list has a `$0000` terminator at slot index
-`T` (where `T < 30`), the bytes from offset `4 + (T+1)*2` to
-offset `64` of that block are **payload tail** - the first
-bytes of the file's payload that the cont page contributes.
-Tail size = `64 - 4 - (T+1)*2 = 58 - 2*T` bytes.
+Every block whose list ends at a `$0000` terminator contributes the
+bytes after that terminator (through offset `64`) as **payload
+tail** - the FIRST bytes of the file's payload. The walker's tail
+copy (+$1666..+$1692) is shared by every phase, so the rule covers
+both terminating blocks:
 
-If the cont list fills all 30 slots without a terminator, the
-cont page has no payload tail (capacity = 0 bytes).
+- **Dir entry** (pure layout, list terminates within the 15 slots
+  at index `D`): tail spans offset `$22 + (D+1)*2` to `64`, i.e.
+  `28 - 2*D` bytes. Confirmed by the console-written T-14411G
+  GROOVE_ON_F save (datasize 202, D = 3): the default hi-score
+  table's first 22 bytes sit in the dir-entry tail and continue
+  into the data blocks.
+- **Last continuation page** (overflow layout, list terminates at
+  slot index `T < 30`): tail spans offset `4 + (T+1)*2` to `64`,
+  i.e. `58 - 2*T` bytes.
+
+If a cont-page list fills all 30 slots without a terminator, the
+page has no payload tail (it is not the last cont page).
 
 #### Read chain assembly
 
@@ -311,48 +339,69 @@ copy `datasize` bytes from `chain` into the caller's buffer.
 ```
 
 For a **terminated in-entry list** (a `$0000` within the 15 slots),
-every referenced block is a data block - the chain reduces to those
-blocks in order, with no continuation pages read. Continuation pages
-appear only in the **overflow layout**, where the unterminated
-in-entry list references them positionally and their stored index
-lists are folded into the chain. In neither case is a candidate
-block's payload inspected to decide its role.
+every referenced block is a data block, and the dir-entry bytes
+after the terminator are the file's leading payload tail - the
+chain is that tail followed by the listed blocks in order, with no
+continuation pages read (`GROOVE_ON_F`: dir tail bytes 0..21, then
+blocks 3..5). Continuation pages appear only in the **overflow
+layout**, where the unterminated in-entry list references them
+positionally and their stored index lists are folded into the
+chain (`WANGANLOVE0`: cont page tail bytes 0..57, then 14 data
+blocks; `NIGHTS___02`: 7 cont pages). In neither case is a
+candidate block's payload inspected to decide its role.
 
 #### Capacity formula
 
-For a file with `D` data blocks and `C` continuation pages:
+Capacity is uniform across layouts because the terminating list's
+block always contributes its post-terminator remainder as payload
+tail. For a file with `D` data blocks and `C` continuation pages:
 
-- **Pure in-entry** (`C = 0`, `D <= 14`): capacity = `D * 60` bytes.
+- **Pure in-entry** (`C = 0`, `D <= 14`): dir tail `28 - 2D` bytes +
+  `D * 60` = **`58 * D + 28`** bytes.
 - **With continuation pages** (`D > 14`):
   - The in-entry list holds `C` cont-page slots and `15-C` data-block slots, so cont pages list `D - (15-C) = D + C - 15` indices.
   - The first `C-1` cont pages fill all 30 slots (no terminator, no tail) so they list 30 indices each = `30*(C-1)` indices.
   - The last cont page holds the remaining `D + C - 15 - 30*(C-1) = D + 15 - 29C` indices, followed by a terminator and a `58 - 2*(D + 15 - 29C) = 28 + 58C - 2D` byte payload tail.
   - Total payload capacity: `D * 60 + (28 + 58C - 2D)` = **`58 * (D + C) + 28`** bytes.
-  - Minimum cont pages: `C = ceil((D - 14) / 29)`.
-  - Maximum single-file size (D + C <= 510 free blocks, assuming a fresh device): roughly 29 KB.
+- Block accounting used by the Write body (+$0B76) and the BUP_Dir
+  blocksize field (+$1A6A): total blocks including the dir entry =
+  `(datasize + 29) / 58 + 1` (truncating division). BUP_Stat's
+  free-space figure is the same model inverted:
+  `freesize = 58 * freeblocks - 30`.
+- Minimum cont pages: `C = ceil((D - 14) / 29)`; equivalently, with
+  `M = D + C` blocks past the dir entry, `C = ceil((M - 14) / 30)`.
+- Maximum single-file size (D + C <= 510 free blocks, assuming a fresh device): roughly 29 KB.
 
-Worked NIGHTS_02 example: `D = 209`, `C = 7`, capacity = `58 * 216 + 28 = 12556` bytes >= datasize `12544` OK.
+Worked examples from the console saves:
+
+- `GROOVE_ON_F`: datasize 202 = `58 * 3 + 28` exactly (D = 3, C = 0,
+  22-byte dir tail fully used).
+- `WANGANLOVE0`: datasize 880 <= `58 * 15 + 28 = 898` (D = 14,
+  C = 1, 58-byte cont-page tail).
+- `NIGHTS___02`: datasize 12544 <= `58 * 216 + 28 = 12556` (D = 209,
+  C = 7).
 
 #### Write layout
 
 To write a file with byte count `datasize`:
 
-1. Compute `D` and `C`:
-   - If `datasize == 0`: `D = 0`, `C = 0`.
-   - Else if `datasize <= 14 * 60 = 840`: `D = ceil(datasize / 60)`, `C = 0` (pure in-entry).
-   - Else: solve `58 * (D + C) + 28 >= datasize` with `C = ceil((D - 14) / 29)`. The minimum `D` is approximately `(datasize - 28) / 60 + 14/30`; iterate D upward until the capacity formula is satisfied.
+1. Compute the block count (+$0B76): `M = (datasize + 29) / 58`
+   blocks past the dir entry (truncating division; `M = 0` when
+   `datasize <= 28`). Then:
+   - If `M <= 14`: pure in-entry, `D = M`, `C = 0`.
+   - Else: `C = ceil((M - 14) / 30)`, `D = M - C`.
 2. Allocate `1 + C + D` free blocks (dir entry + cont pages + data blocks).
 3. Lay out the in-entry list:
    - Slots `0..C-1`: cont-page block indices.
    - Slots `C..14`: first `15-C` data-block indices.
-   - If pure in-entry (`C = 0`): write a single `$0000` terminator after the last data-block index. Otherwise leave all 15 slots filled (unterminated -> triggers cont-page interpretation on read).
+   - If pure in-entry (`C = 0`): write a single `$0000` terminator after the last data-block index, then the **first** `28 - 2D` bytes of file payload as the dir-entry tail through +$3F. Otherwise leave all 15 slots filled (unterminated -> triggers cont-page interpretation on read).
 4. Lay out the continuation pages:
    - Cont pages `0..C-2`: fill all 30 cont-list slots with data-block indices `(15-C+0..29)`, `(15-C+30..59)`, etc. - no terminator, no payload tail.
    - Cont page `C-1` (the last): write the remaining `D + 15 - 29C` data-block indices, then a single `$0000` terminator, then write the **first** `28 + 58C - 2D` bytes of file payload as the page's tail.
 5. Lay out the data blocks: bytes +$00..+$03 = zero header; bytes +$04..+$3F = up to 60 payload bytes; remaining destination bytes zero-padded.
-6. The byte order in which file content is distributed across the cont-page tail and data blocks matches the **Read chain assembly** order above: last cont page's tail first, then in-entry data blocks in order, then cont-listed data blocks in cont-page order.
+6. The byte order in which file content is distributed matches the **Read chain assembly** order above: the terminating list's tail first (dir-entry tail for pure, last cont page's tail for overflow), then in-entry data blocks in order, then cont-listed data blocks in cont-page order.
 
-**Worked NIGHTS_02 layout** (datasize 12544, verified against
+**Worked NIGHTS___02 layout** (datasize 12544, verified against
 cart2.srm):
 - Dir entry at block 35.
 - In-entry list: `[$0024 $0025 ... $0032]` = blocks 36..50.
