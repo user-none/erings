@@ -103,8 +103,9 @@ func TestRGB555ToRGB(t *testing.T) {
 func TestBackScreenSingleColor(t *testing.T) {
 	v := newTestVDP2()
 
-	// Write a red color (RGB555: R=31, G=0, B=0 = 0x001F) to VRAM[0:2]
-	v.vram[0] = 0x00 // big-endian high byte
+	// Write a red color (RGB555: R=31, G=0, B=0, opacity bit 15 set =
+	// 0x801F) to VRAM[0:2]
+	v.vram[0] = 0x80 // big-endian high byte
 	v.vram[1] = 0x1F // big-endian low byte
 
 	renderTestFrame(v)
@@ -133,8 +134,9 @@ func TestBackScreenSingleColorCustomAddress(t *testing.T) {
 	v.regs[vdp2BKTAL] = 0x1000
 	v.regs[vdp2BKTAU] = 0x0000
 
-	// Write green (RGB555: R=0, G=31, B=0 = 0x03E0) at VRAM byte address 0x2000
-	v.vram[0x2000] = 0x03 // big-endian high
+	// Write green (RGB555 0x03E0 with opacity bit 15 set = 0x83E0) at
+	// VRAM byte address 0x2000
+	v.vram[0x2000] = 0x83 // big-endian high
 	v.vram[0x2001] = 0xE0 // big-endian low
 
 	renderTestFrame(v)
@@ -142,6 +144,26 @@ func TestBackScreenSingleColorCustomAddress(t *testing.T) {
 	fb := v.Framebuffer()
 	if fb[0] != 0 || fb[1] != 255 || fb[2] != 0 || fb[3] != 255 {
 		t.Errorf("pixel 0 = (%d,%d,%d,%d), want (0,255,0,255)", fb[0], fb[1], fb[2], fb[3])
+	}
+}
+
+// A back screen table entry with bit 15 clear displays black even
+// when its color fields are nonzero: games park BKTA on stale VRAM
+// (address 0) during scene re-init with the display enabled and rely
+// on the entry showing black. See the opacity-bit note at the back
+// screen read in vdp2_composite.go.
+func TestBackScreenBit15ClearDisplaysBlack(t *testing.T) {
+	v := newTestVDP2()
+
+	// 0x01A0: green field nonzero, bit 15 clear.
+	v.vram[0] = 0x01
+	v.vram[1] = 0xA0
+
+	renderTestFrame(v)
+
+	fb := v.Framebuffer()
+	if fb[0] != 0 || fb[1] != 0 || fb[2] != 0 {
+		t.Errorf("pixel 0 = (%d,%d,%d), want (0,0,0) for bit-15-clear back color", fb[0], fb[1], fb[2])
 	}
 }
 
@@ -153,11 +175,11 @@ func TestBackScreenPerLine(t *testing.T) {
 	v.regs[vdp2BKTAL] = 0x0000
 
 	// Write different colors for lines 0 and 1
-	// Line 0: red (0x001F) at VRAM[0:2]
-	v.vram[0] = 0x00
+	// Line 0: red (0x801F) at VRAM[0:2]
+	v.vram[0] = 0x80
 	v.vram[1] = 0x1F
-	// Line 1: blue (0x7C00) at VRAM[2:4]
-	v.vram[2] = 0x7C
+	// Line 1: blue (0xFC00) at VRAM[2:4]
+	v.vram[2] = 0xFC
 	v.vram[3] = 0x00
 
 	renderTestFrame(v)
@@ -205,7 +227,7 @@ func TestBackScreenActiveWidth352(t *testing.T) {
 	v.Write(0x0000, 0x8001)
 
 	// Write white to VRAM[0:2]
-	v.vram[0] = 0x7F
+	v.vram[0] = 0xFF
 	v.vram[1] = 0xFF
 
 	renderTestFrame(v)
@@ -989,7 +1011,7 @@ func TestComposite_PriorityZero(t *testing.T) {
 	v.layerBufs[0][0] = 0<<24 | 255<<16
 
 	// Fill back screen with green
-	val := uint16(0x03E0)
+	val := uint16(0x83E0)
 	v.vram[0] = uint8(val >> 8)
 	v.vram[1] = uint8(val)
 
@@ -5648,7 +5670,7 @@ func TestRender640Width(t *testing.T) {
 	v.Write(0x0000, 0x8002)
 
 	// Write a back screen color (white) at address 0
-	v.vram[0] = 0x7F
+	v.vram[0] = 0xFF
 	v.vram[1] = 0xFF
 
 	renderTestFrame(v)
@@ -6026,9 +6048,9 @@ func TestZMCTLNoClampExpansion(t *testing.T) {
 func TestBackScreenColorOffsetA(t *testing.T) {
 	v := newTestVDP2()
 
-	// Set back screen to pure red: RGB555 = 0x001F (R=31,G=0,B=0)
-	// VRAM big-endian: high byte first
-	writeVRAM16(v, 0, 0x001F)
+	// Set back screen to pure red: RGB555 0x001F (R=31,G=0,B=0) with
+	// the opacity bit 15 set. VRAM big-endian: high byte first.
+	writeVRAM16(v, 0, 0x801F)
 
 	// Enable back screen color offset (CLOFEN bit 5 = BKCOEN)
 	v.regs[vdp2CLOFEN] = 1 << 5
@@ -6056,7 +6078,7 @@ func TestBackScreenColorOffsetDisabled(t *testing.T) {
 	v := newTestVDP2()
 
 	// Back screen = pure red
-	writeVRAM16(v, 0, 0x001F)
+	writeVRAM16(v, 0, 0x801F)
 
 	// CLOFEN = 0: no offset
 	v.regs[vdp2CLOFEN] = 0
@@ -6247,8 +6269,8 @@ func setupNBG0WithBackScreen(t *testing.T) *VDP2 {
 	v.cram[1*2] = 0x00
 	v.cram[1*2+1] = 0x1F
 
-	// Back screen = green (0x03E0 in RGB555)
-	writeVRAM16(v, 0x70000, 0x03E0)
+	// Back screen = green (RGB555 0x03E0 with opacity bit 15 set)
+	writeVRAM16(v, 0x70000, 0x83E0)
 	v.regs[vdp2BKTAU] = 0x0003 // upper addr bits = 3 (for 0x70000/2 = 0x38000, bits 18:16 = 3)
 	v.regs[vdp2BKTAL] = 0x8000 // lower addr bits (0x38000 & 0xFFFF = 0x8000)
 
@@ -6329,7 +6351,7 @@ func TestShadowOnBackScreen(t *testing.T) {
 	v.regs[vdp2BGON] = 0x0000
 
 	// White back screen
-	writeVRAM16(v, 0, 0x7FFF)
+	writeVRAM16(v, 0, 0xFFFF)
 
 	// VDP1 framebuffer with normal shadow sprite (type 2)
 	v.regs[vdp2SPCTL] = 0x0002
@@ -6359,7 +6381,7 @@ func TestShadowOnBackScreen(t *testing.T) {
 func TestShadowOnBackScreenDisabled(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2BGON] = 0x0000
-	writeVRAM16(v, 0, 0x7FFF)
+	writeVRAM16(v, 0, 0xFFFF)
 
 	v.regs[vdp2SPCTL] = 0x0002
 	fbView := vdp1FBView{data: make([]uint8, 512*256*2), is8bpp: false, width: 512, height: 256}
@@ -6382,7 +6404,7 @@ func TestShadowOnBackScreenDisabled(t *testing.T) {
 func TestMSBTranspShadowOnBackScreen(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2BGON] = 0x0000
-	writeVRAM16(v, 0, 0x7FFF)
+	writeVRAM16(v, 0, 0xFFFF)
 
 	v.regs[vdp2SPCTL] = 0x0002
 	fbView := vdp1FBView{data: make([]uint8, 512*256*2), is8bpp: false, width: 512, height: 256}
@@ -6404,7 +6426,7 @@ func TestMSBTranspShadowOnBackScreen(t *testing.T) {
 func TestMSBSpriteShadowDoesNotAffectBackScreen(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2BGON] = 0x0000
-	writeVRAM16(v, 0, 0x7FFF)
+	writeVRAM16(v, 0, 0xFFFF)
 
 	v.regs[vdp2SPCTL] = 0x0002
 	fbView := vdp1FBView{data: make([]uint8, 512*256*2), is8bpp: false, width: 512, height: 256}
@@ -6909,11 +6931,11 @@ func TestSingleDensityInterlaceBackScreenPerLine(t *testing.T) {
 	v.regs[vdp2BKTAU] = 0x8000 // BKCLMD=1
 	v.regs[vdp2BKTAL] = 0x0000
 
-	// Entry 0 (lines 0-1): red (0x001F)
-	v.vram[0] = 0x00
+	// Entry 0 (lines 0-1): red (0x801F)
+	v.vram[0] = 0x80
 	v.vram[1] = 0x1F
-	// Entry 1 (lines 2-3): green (0x03E0)
-	v.vram[2] = 0x03
+	// Entry 1 (lines 2-3): green (0x83E0)
+	v.vram[2] = 0x83
 	v.vram[3] = 0xE0
 
 	renderTestFrame(v)
@@ -6953,10 +6975,10 @@ func TestNonInterlaceBackScreenPerLineRegression(t *testing.T) {
 	v.regs[vdp2BKTAL] = 0x0000
 
 	// Entry 0 (line 0): red
-	v.vram[0] = 0x00
+	v.vram[0] = 0x80
 	v.vram[1] = 0x1F
 	// Entry 1 (line 1): green
-	v.vram[2] = 0x03
+	v.vram[2] = 0x83
 	v.vram[3] = 0xE0
 
 	renderTestFrame(v)
@@ -7283,16 +7305,16 @@ func TestRenderLSMD3BackScreenPerLineDisplayedLineAddressing(t *testing.T) {
 	v.regs[vdp2BKTAL] = 0x0000
 
 	// Entry 0 (displayed row 0): red
-	v.vram[0] = 0x00
+	v.vram[0] = 0x80
 	v.vram[1] = 0x1F
 	// Entry 1 (displayed row 1): green
-	v.vram[2] = 0x03
+	v.vram[2] = 0x83
 	v.vram[3] = 0xE0
 	// Entry 2 (displayed row 2): blue
-	v.vram[4] = 0x7C
+	v.vram[4] = 0xFC
 	v.vram[5] = 0x00
 	// Entry 3 (displayed row 3): white
-	v.vram[6] = 0x7F
+	v.vram[6] = 0xFF
 	v.vram[7] = 0xFF
 
 	fb := v.Framebuffer()
@@ -7556,7 +7578,7 @@ func TestPerLineCRAMWriteAppliesNextLine(t *testing.T) {
 func TestBeginFrameLatchesDISP(t *testing.T) {
 	v := newTestVDP2()
 	// Back screen green at VRAM address 0
-	v.vram[0] = 0x03
+	v.vram[0] = 0x83
 	v.vram[1] = 0xE0
 
 	v.BeginFrame()
@@ -7584,7 +7606,7 @@ func TestRenderLineCompositesRow(t *testing.T) {
 
 	// Back screen green via a table away from the tile data at VRAM 0.
 	v.regs[vdp2BKTAL] = 0x8000 // bkAddr = 0x10000
-	v.WriteVRAM16(0x10000, 0x03E0)
+	v.WriteVRAM16(0x10000, 0x83E0)
 
 	for i := range v.framebuffer {
 		v.framebuffer[i] = 0xAB

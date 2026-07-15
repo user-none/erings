@@ -97,12 +97,26 @@ func (v *VDP2) compositeSpanSetup(y int) func(x0, x1 int) {
 
 	// Back screen color for this row. BKCLMD (BKTAU bit 15) selects one
 	// color for the whole screen vs one color per line.
+	//
+	// A table entry with bit 15 clear displays black. VDP2 manual
+	// Figure 7.5 marks bit 15 of back screen data as ignored, but that
+	// does not match observed behavior: games point BKTA at arbitrary
+	// VRAM (address 0) for several fields during scene re-init with
+	// the display enabled, and the stale word there - nonzero color
+	// fields with bit 15 clear - shows black, not its color. Treating
+	// bit 15 as an opacity flag is consistent with the chip's other
+	// RGB-format data: the Ch.4 transparency-code rule states an RGB
+	// dot is transparent when its most significant bit is 0, and color
+	// words are normally constructed with bit 15 set.
 	bktau := v.frame.regs[vdp2BKTAU]
 	bkAddr := ((uint32(bktau&0x07) << 16) | uint32(v.frame.regs[vdp2BKTAL])) * 2
 	if bktau&0x8000 != 0 {
 		bkAddr += uint32(v.lineTableY(y)) * 2
 	}
-	br, bg, bb := rgb555ToRGB(v.readVRAM16(bkAddr))
+	var br, bg, bb uint8
+	if bkColor := v.readVRAM16(bkAddr); bkColor&0x8000 != 0 {
+		br, bg, bb = rgb555ToRGB(bkColor)
+	}
 	fbRow := v.frameOutRow(y)
 
 	// A candidate is one non-transparent layer pixel competing for the dot.
