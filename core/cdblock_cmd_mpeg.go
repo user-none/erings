@@ -54,7 +54,7 @@ package core
 //     audio buffer-empty is set only on connection teardown, not on
 //     underrun or natural end.
 //   - Interrupt causes: only picture start, sequence start/end,
-//     stream-switch done (both layers), and audio ready are raised.
+//     stream-switch done, and audio ready are raised.
 //   - MPCM asserts only in the $93 tail (the firmware also asserts it
 //     from the LSI status handler and $97).
 //
