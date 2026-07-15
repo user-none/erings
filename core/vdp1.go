@@ -177,10 +177,12 @@ type VDP1 struct {
 	// VBlankIn as if VBE=1, then clear the latch.
 	vbeLatched bool
 
-	// Set when the SH-2 writes FBCR within the current frame. Used to
-	// distinguish an explicit "manual erase" request (FCT=0 written by
-	// the SH-2) from an auto-cleared FCT=0 left over from the previous
-	// V-Blank's swap. Cleared at the end of VBlankIn.
+	// Manual-erase mode, armed when the SH-2 writes FBCR with FCT=0
+	// (as distinct from an auto-cleared FCT=0 left over from a swap).
+	// While armed, every manual change erases the buffer it brings in
+	// during the blanking interval. Disarmed when a manual-idle field
+	// consumes it as a one-shot display erase, or when a 1-cycle
+	// (FCM=0) boundary passes - auto mode has its own per-field erase.
 	fbcrWritten bool
 
 	// Set true by VBlankIn when an FB swap actually occurred. Per VDP1
@@ -330,9 +332,28 @@ func (v *VDP1) Write(offset uint32, val uint16) {
 		// here, since both interpretations coincide at vblank-IN and
 		// existing logic depends on them being readable as soon as a
 		// game writes them in the prior field.
+		//
+		// An FBCR write with FCT=0 arms manual-erase mode. Sec 4.2
+		// gives two encodings for requesting the erase: the mode
+		// table's FCM=1/FCT=0 "manual mode (erase)" and the prose's
+		// "writing 0 to the VBE, FCM and FCT registers" (also the
+		// documented way to erase "when changing from manual mode to
+		// the 1-cycle mode ... in the field before changing"); both
+		// arm here. The arm is a request latch separate from the
+		// FCM/FCT value: the bits themselves are last-write-wins, but
+		// the request survives a later FCT=1 write in the same field.
+		// Games write erase then change together and expect the
+		// buffer the change brings in to come up cleared (observed;
+		// the mode table has no entry for the combination). The arm
+		// is spent by a manual-idle one-shot erase or a 1-cycle
+		// boundary, so the documented cadence of erase in one field
+		// and change in the next never erases the fresh frame that
+		// change brings in. FCT=1 writes do not arm.
 		v.fbcrPending = val
 		v.fbcr = (v.fbcr &^ 0x03) | (val & 0x03)
-		v.fbcrWritten = true
+		if val&0x01 == 0 {
+			v.fbcrWritten = true
+		}
 	case 0x04:
 		// Per VDP1 manual Sec.3: PTM=01 changes immediately; PTM=00
 		// and PTM=10 change with the switching of the frame buffer.

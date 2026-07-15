@@ -1184,6 +1184,77 @@ func TestManualChange(t *testing.T) {
 	// It contains whatever was in the old displayFB
 }
 
+// TestManualSameFieldEraseAndChange covers the erase request and the
+// change request written within one field (FBCR=0000 then FBCR=0003).
+// The Sec 4.2 mode table has no row for the combination; the change
+// clears the buffer it brings in during the blanking, so the
+// swapped-in buffer is never displayed with its stale content.
+func TestManualSameFieldEraseAndChange(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x06, 0xEEEE)
+	v.Write(0x08, 0x0000)
+	v.Write(0x0A, 0x50FF)
+	writeDrawEnd(v, 0)
+
+	// Latch EWDR/EWxR, then stage stale content in the buffer the
+	// coming manual change will bring in.
+	v.VBlankIn()
+	drainDrawing(v)
+	v.drawFB[0] = 0x12
+	v.drawFB[1] = 0x34
+
+	v.Write(0x02, 0x0000) // erase request
+	v.Write(0x02, 0x0003) // change request, same field
+
+	v.VBlankIn()
+	drainDrawing(v)
+
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xEEEE {
+		t.Errorf("post-change display(0,0) = 0x%04X, want 0xEEEE (brought-in buffer cleared)", got)
+	}
+}
+
+// TestManualEraseArmPersistsAcrossConsecutiveChanges verifies that after a
+// same-field erase+change, a following plain FCT=1 change also clears
+// the buffer it brings in: one erase request followed by one change
+// per field cycles both buffers through the erase.
+func TestManualEraseArmPersistsAcrossConsecutiveChanges(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x06, 0xEEEE)
+	v.Write(0x08, 0x0000)
+	v.Write(0x0A, 0x50FF)
+	writeDrawEnd(v, 0)
+
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// Stale content in both buffers.
+	v.drawFB[0] = 0x12
+	v.drawFB[1] = 0x34
+	v.displayFB[0] = 0x56
+	v.displayFB[1] = 0x78
+
+	// Field 1: erase + change.
+	v.Write(0x02, 0x0000)
+	v.Write(0x02, 0x0003)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xEEEE {
+		t.Fatalf("first change display(0,0) = 0x%04X, want 0xEEEE", got)
+	}
+
+	// Field 2: change only. The arm from field 1 still clears the
+	// buffer this change brings in.
+	v.Write(0x02, 0x0003)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xEEEE {
+		t.Errorf("second change display(0,0) = 0x%04X, want 0xEEEE (arm persisted)", got)
+	}
+}
+
 func TestManualEraseAndChange(t *testing.T) {
 	v := NewVDP1(NewSCU())
 	v.Write(0x04, 2)
