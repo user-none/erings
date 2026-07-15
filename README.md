@@ -46,7 +46,7 @@ have fun playing some amazing classic games.
   controller, but the UI does not)
 - Internal backup RAM (console saves) persists between sessions
 - Save states
-- MPEG card (for Lunar)
+- MPEG card
 
 BIOS region patching is supported. Meaning you can use a US BIOS to play
 Japanese games or a Japanese BIOS to play US games. Or just use the HLE BIOS
