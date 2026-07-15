@@ -587,6 +587,7 @@ func buildVDP1Regs(w *fieldWriter, v *VDP1) {
 	w.i32("vramWriteStall", v.vramWriteStallCycles.Load())
 	w.flag("vbeLatched", v.vbeLatched)
 	w.flag("fbcrWritten", v.fbcrWritten)
+	w.flag("eraseRequested", v.eraseRequested)
 	w.flag("fbSwapped", v.fbSwapped)
 	// lateEraseFB, when set, always aliases the current displayFB:
 	// every swap site clears it (PerformLateErase) before swapping, so
@@ -2094,6 +2095,7 @@ func decodeVDP1Regs(e *Emulator, r *fieldReader) func() {
 	vramWriteStall := r.i32("vramWriteStall")
 	vbeLatched := r.flag("vbeLatched")
 	fbcrWritten := r.flag("fbcrWritten")
+	eraseRequested := r.flag("eraseRequested")
 	fbSwapped := r.flag("fbSwapped")
 	lateErasePending := r.flag("lateErasePending")
 	return func() {
@@ -2129,6 +2131,7 @@ func decodeVDP1Regs(e *Emulator, r *fieldReader) func() {
 		v.vramWriteStallCycles.Store(vramWriteStall)
 		v.vbeLatched = vbeLatched
 		v.fbcrWritten = fbcrWritten
+		v.eraseRequested = eraseRequested
 		v.fbSwapped = fbSwapped
 		if lateErasePending {
 			v.lateEraseFB = v.displayFB

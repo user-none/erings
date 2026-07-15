@@ -1255,6 +1255,147 @@ func TestManualEraseArmPersistsAcrossConsecutiveChanges(t *testing.T) {
 	}
 }
 
+// FBCR=0002 then FBCR=0003 within one field: FCM/FCT are
+// last-write-wins at the field change (Sec 4.2), so the pair is a
+// plain change and nothing is erased. Only the all-zero write
+// latches an erase request.
+func TestManualModeSetThenChangeSameField(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x06, 0xEEEE)
+	v.Write(0x08, 0x0000)
+	v.Write(0x0A, 0x50FF)
+	writeDrawEnd(v, 0)
+
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// Drawn frame in the back buffer, stale content in the front.
+	v.drawFB[0] = 0xAA
+	v.drawFB[1] = 0xBB
+	v.displayFB[0] = 0x56
+	v.displayFB[1] = 0x78
+
+	v.Write(0x02, 0x0002) // mode set
+	v.Write(0x02, 0x0003) // change trigger, same field
+
+	v.VBlankIn()
+	drainDrawing(v)
+
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xAABB {
+		t.Errorf("post-change display(0,0) = 0x%04X, want 0xAABB (drawn frame survives)", got)
+	}
+	if got := readFBPixel(v, 0, 0); got != 0x5678 {
+		t.Errorf("post-change draw(0,0) = 0x%04X, want 0x5678 (no erase at all)", got)
+	}
+}
+
+// Deferred-swap variant of TestManualModeSetThenChangeSameField:
+// the same pair written from the vbout handler and consumed by
+// VBlankOut.
+func TestManualModeSetThenChangeSameFieldVBlankOut(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x06, 0xEEEE)
+	v.Write(0x08, 0x0000)
+	v.Write(0x0A, 0x50FF)
+	writeDrawEnd(v, 0)
+
+	v.VBlankIn()
+	drainDrawing(v)
+
+	v.drawFB[0] = 0xAA
+	v.drawFB[1] = 0xBB
+	v.displayFB[0] = 0x56
+	v.displayFB[1] = 0x78
+
+	v.Write(0x02, 0x0002)
+	v.Write(0x02, 0x0003)
+	v.VBlankOut()
+	drainDrawing(v)
+
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xAABB {
+		t.Errorf("post-change display(0,0) = 0x%04X, want 0xAABB (drawn frame survives)", got)
+	}
+	if got := readFBPixel(v, 0, 0); got != 0x5678 {
+		t.Errorf("post-change draw(0,0) = 0x%04X, want 0x5678 (no erase at all)", got)
+	}
+}
+
+// A field with no change request consumes the erase request as the
+// one-shot display erase; the next change must not erase the frame
+// it brings in.
+func TestManualEraseRequestSpentByIdleField(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x06, 0xEEEE)
+	v.Write(0x08, 0x0000)
+	v.Write(0x0A, 0x50FF)
+	writeDrawEnd(v, 0)
+
+	v.VBlankIn()
+	drainDrawing(v)
+
+	v.drawFB[0] = 0x12
+	v.drawFB[1] = 0x34
+
+	// Field 1: erase request + change; brought-in buffer cleared.
+	v.Write(0x02, 0x0000)
+	v.Write(0x02, 0x0003)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xEEEE {
+		t.Fatalf("first change display(0,0) = 0x%04X, want 0xEEEE", got)
+	}
+
+	// Field 2: no FBCR write. The idle field consumes the request as
+	// a one-shot erase of the display buffer.
+	v.VBlankIn()
+	drainDrawing(v)
+	v.PerformLateErase()
+
+	// Field 3: draw a frame and change without a new erase request;
+	// the brought-in buffer keeps its drawn content.
+	v.drawFB[0] = 0xAA
+	v.drawFB[1] = 0xBB
+	v.Write(0x02, 0x0003)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xAABB {
+		t.Errorf("post-idle change display(0,0) = 0x%04X, want 0xAABB (request was spent)", got)
+	}
+}
+
+// A 1-cycle field boundary consumes a latched erase request; it must
+// not leak into a later manual change.
+func TestManualEraseRequestSpentByOneCycleBoundary(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	v.Write(0x06, 0xEEEE)
+	v.Write(0x08, 0x0000)
+	v.Write(0x0A, 0x50FF)
+	writeDrawEnd(v, 0)
+
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// All-zero write latches the request and selects 1-cycle mode;
+	// the next boundary is an auto swap that spends it.
+	v.Write(0x02, 0x0000)
+	v.VBlankIn()
+	drainDrawing(v)
+
+	// Manual change with a drawn frame and no new erase request.
+	v.drawFB[0] = 0xAA
+	v.drawFB[1] = 0xBB
+	v.Write(0x02, 0x0003)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readDisplayFBPixel(v, 0, 0); got != 0xAABB {
+		t.Errorf("post-1-cycle change display(0,0) = 0x%04X, want 0xAABB (request was spent)", got)
+	}
+}
+
 func TestManualEraseAndChange(t *testing.T) {
 	v := NewVDP1(NewSCU())
 	v.Write(0x04, 2)

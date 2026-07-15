@@ -63,7 +63,7 @@ func (v *VDP1) VBlankIn() {
 		// the most recent COPR at the FB-change boundary per VDP1
 		// manual Sec 4.7. A pending manual erase completes before the
 		// buffer changes roles. Auto mode erases every field on its
-		// own, so a leftover manual-erase arm is spent.
+		// own, so a leftover erase request is spent.
 		v.PerformLateErase()
 		v.lopr = v.copr
 		v.drawFB, v.displayFB = v.displayFB, v.drawFB
@@ -74,15 +74,16 @@ func (v *VDP1) VBlankIn() {
 		// as-is and only clears at drawing-started (startDraw), so
 		// PTM=00 with no auto-trigger preserves CEF correctly.
 		v.edsr = (v.edsr & 0x02) | ((v.edsr >> 1) & 0x01)
-		v.fbcrWritten = false
+		v.eraseRequested = false
 	} else {
 		// Manual mode (FCM=1). FCT controls a single swap event;
 		// it auto-clears after the swap so a single SH-2 write
 		// produces one swap, not a continuous stream. With FCT=0,
-		// the V-Blank manual-erases the display FB only when erase
-		// mode is armed (or VBE was set); an auto-cleared FCT=0
-		// with no arm is idle so games that chain multiple draws
-		// between swaps accumulate into the same drawFB.
+		// the V-Blank manual-erases the display FB only if the SH-2
+		// wrote FCT=0 this field, an erase request is still latched,
+		// or VBE was set; an auto-cleared FCT=0 with none of those is
+		// idle so games that chain multiple draws between swaps
+		// accumulate into the same drawFB.
 		switch {
 		case fct != 0:
 			if vbe != 0 {
@@ -101,23 +102,15 @@ func (v *VDP1) VBlankIn() {
 			// stays as-is; startDraw clears it when the PTM=10
 			// auto-trigger fires later this frame.
 			v.edsr = (v.edsr & 0x02) | ((v.edsr >> 1) & 0x01)
-			// With erase mode armed, the change clears the buffer it
-			// brings in during this blanking interval. The Sec 4.2
-			// mode table has no VBE=0 row for erase and change
-			// requested in the same field; the erase prose reads
-			// "erase/write of the display frame buffer is performed
-			// in the next specified field, and the display frame
-			// buffer is cleared", and with the change landing at the
-			// same boundary the display frame buffer of that next
-			// field is the post-change buffer. Games issue one erase
-			// request and then request a change each field until both
-			// buffers have passed through the erase; every buffer
-			// brought in must come up cleared, so the arm stays set
-			// for the next change rather than being consumed here.
-			if v.fbcrWritten {
+			// A latched erase request clears the buffer the change
+			// brings in - after the swap it is the display FB of the
+			// "next specified field" the Sec 4.2 erase targets.
+			// The request stays latched so following changes clear
+			// the buffers they bring in too.
+			if v.eraseRequested {
 				v.eraseFrameBuffer(v.displayFB)
 			}
-		case v.fbcrWritten || vbe != 0:
+		case v.fbcrWritten || v.eraseRequested || vbe != 0:
 			// Manual mode (erase) per Sec.4.2: "Erase/write of the
 			// display frame buffer is performed in the next specified
 			// field." Capture the buffer to erase now (the display
@@ -125,13 +118,14 @@ func (v *VDP1) VBlankIn() {
 			// at the next VBlankIn boundary or at an earlier swap,
 			// so the next field still displays the pre-erase content
 			// and the buffer is clean before anything draws into it.
-			// This one-shot consumes the erase arm: the doc cadence
-			// "erase the outgoing display, then change" must not also
-			// erase the fresh frame the following change brings in.
+			// This one-shot also consumes any latched erase request.
 			v.lateEraseFB = v.displayFB
-			v.fbcrWritten = false
+			v.eraseRequested = false
 		}
 	}
+	// fbcrWritten describes only the field that just ended; every
+	// field boundary consumes it.
+	v.fbcrWritten = false
 }
 
 // VBlankOut handles a deferred FCM=1 + FCT=1 swap at the start of the
@@ -172,13 +166,14 @@ func (v *VDP1) VBlankOut() {
 	v.fbSwapped = true
 	v.swapCount++
 	v.edsr = (v.edsr & 0x02) | ((v.edsr >> 1) & 0x01)
-	// With erase mode armed, the change clears the buffer it brings in
-	// before this field's rows composite, as in VBlankIn's change
-	// case. The arm persists so following changes also clear the
-	// buffers they bring in.
-	if v.fbcrWritten {
+	// A latched erase request clears the buffer the change brings in.
+	if v.eraseRequested {
 		v.eraseFrameBuffer(v.displayFB)
 	}
+	// The FBCR write that armed this swap consumed its fbcrWritten
+	// signal here; clearing prevents VBlankIn from later mistaking
+	// the auto-cleared FCT=0 for a fresh "erase only" request.
+	v.fbcrWritten = false
 }
 
 // startDraw initializes per-draw state at the top of a new draw. Per
