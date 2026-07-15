@@ -126,9 +126,10 @@ $90 + $9B x2 polling continues after the teardown
 ...
 ```
 
-The $9A/$9C pair stages both records ($FF) and commits them, so the
-per-layer selection byte in $9C CR2 ($FF00, not modeled) does not
-change the outcome here - both layers disconnect either way. The $AE
+The $9A/$9C pair stages both records ($FF) and commits them through
+the per-layer selection byte in $9C CR2 ($FF00: audio bit 7 set, so
+only the video layer commits). The audio layer was never connected, so
+both layers end up disconnected either way. The $AE
 read of register $1A and the paired $AF write precede the register-6
 idle read-back (decoder-idle bit $4000) that confirms the decoder has
 stopped.
