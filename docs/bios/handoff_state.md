@@ -89,10 +89,17 @@ All writes use the $A55A write-protect key in the upper 16 bits.
 
 ### SH-2 On-chip DMAC / FRT / WDT / INTC / DIVU
 
-Not captured by the runtime state dump. Phase 6 ($0004C8) is known
-to touch SAR0 ($FFFFFE80) and CHCR0 ($FFFFFE91 = $80); the rest of
-DMAC, FRT, WDT, INTC, and DIVU state at handoff is open until
-accessors are added.
+The master handoff entry ($06000680) BSRs sub_0600071C before jumping
+to the IP, leaving the INTC vectors (VCRA-VCRD, VCRWDT, VCRDMA0/1,
+VCRDIV), IPRB FRT priority $F, ICR = 0, and FRT TIER = $81 (ICIE
+enabled) configured; the slave-init chain runs the same routine on
+every slave reset, so both CPUs carry identical state. See the
+sub_0600071C register table in slave_sh2_init.md. Confirmed against
+a captured real-BIOS in-game state dump.
+
+Phase 6 ($0004C8) is known to touch SAR0 ($FFFFFE80) and CHCR0
+($FFFFFE91 = $80); the rest of DMAC, WDT, and DIVU state at handoff
+is open.
 
 ### SMPC
 

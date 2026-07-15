@@ -623,39 +623,46 @@ func hleSlaveInitService(cpu *sh2.CPU) {
 	// halt loop cannot accept any maskable IRQ.
 	cpu.SetSR(0)
 
-	// FRT input-capture interrupt vector: INTC VCRC bits 14-8 = ICI vector
-	// ($64), matching the game's handler installed at slave VBR + $64*4 =
-	// $06000590. This is a CPU-private reg only writable by the slave
-	// itself. The real-BIOS slave-init chain ($06000600 -> sub_0600071C)
-	// writes the FRT vectors (VCRC = $6465, so ICI = $64) on every reset
-	// before reading and jumping to the game's slave entry, so it must be
-	// set unconditionally here too - not only on the halt-loop fallback.
-	// A game can install its own slave entry and configure FRT
-	// priority/ICIE itself while relying on this BIOS-set vector.
-	cpu.INTC().Write(0xFFFFFE66, 0x6400)
+	// On-chip interrupt configuration: the real-BIOS slave-init chain
+	// ($06000600 -> sub_$0600071C) runs on every slave reset before
+	// reading and jumping to the game's slave entry. Games rely on the
+	// vectors and FRT priority/ICIE it leaves (a game ICI handler
+	// prologue at $06012AAC expects max priority on entry; other games
+	// never program the vectors at all).
+	hleOnChipInterruptInit(cpu)
 
 	entry := cpu.Read32(0x06000250)
 	if entry == 0 || entry == hleSentinel {
-		// No game slave entry yet: the slave will park at the BIOS-ROM
-		// BRA-self halt loop and serve only as an IRQ-driven coprocessor,
-		// so HLE also has to supply the FRT priority/ICIE the game would
-		// otherwise configure.
-		//   INTC IPRB bits 11-8 = FRT priority ($F — game handler's
-		//     prologue at $06012AAC clears IPRB; it expects max
-		//     priority on entry).
-		//   FRT TIER bit 7 = ICIE (input capture interrupt enable).
-		cpu.INTC().Write(0xFFFFFE60, 0x0F00)
-		cpu.FRT().Write(0xFFFFFE10, 0x80)
-		// These pokes bypass the CPU on-chip write path, so re-evaluate the
-		// level-sensitive on-chip interrupt lines explicitly: a master MINIT
-		// can arrive before this runs (slave reset by SSHON, master writes
-		// MINIT while the slave is still in early boot), latching FTCSR.ICF
-		// with ICIE off. Enabling ICIE here must deliver the pending capture.
-		cpu.RefreshOnChipInterrupts()
-		// Slave halts at BIOS-ROM BRA-self ($2000020C) while waiting
-		// for IRQs. Slot $06000250 stays at hleSentinel — only the
-		// slave's PR is redirected.
+		// No game slave entry yet: the slave parks at the BIOS-ROM
+		// BRA-self halt loop ($2000020C) and serves only as an
+		// IRQ-driven coprocessor. Slot $06000250 stays at hleSentinel —
+		// only the slave's PR is redirected.
 		entry = 0x2000020C
 	}
 	cpu.SetPR(entry)
+}
+
+// hleOnChipInterruptInit replicates BIOS sub_$0600071C (WRAM copy of
+// ROM $00000D1C): the on-chip INTC vectors, FRT priority, and FRT
+// interrupt enable both CPUs carry when the BIOS hands them to game
+// code. The master handoff entry ($06000680) BSRs it before jumping
+// to the IP; the slave init ($06000600) BSRs it on every slave reset.
+// Games rely on this state for the MINIT/SINIT FRT input-capture
+// handshake instead of programming the vectors themselves. Values and
+// write order follow the ROM routine; docs/bios/slave_sh2_init.md.
+// The CPU on-chip write path re-evaluates the level-sensitive
+// interrupt lines, so a MINIT/SINIT capture latched before this runs
+// is delivered when TIER.ICIE goes on.
+func hleOnChipInterruptInit(cpu *sh2.CPU) {
+	cpu.Write16(0xFFFFFEE0, 0x0000) // ICR
+	cpu.Write16(0xFFFFFE60, 0x0F00) // IPRB: FRT priority $F
+	cpu.Write16(0xFFFFFE62, 0x6061) // VCRA
+	cpu.Write16(0xFFFFFE64, 0x6263) // VCRB
+	cpu.Write16(0xFFFFFE66, 0x6465) // VCRC: FRT ICI vector $64
+	cpu.Write16(0xFFFFFE68, 0x6600) // VCRD
+	cpu.Write16(0xFFFFFEE4, 0x6869) // VCRWDT
+	cpu.Write32(0xFFFFFFA8, 0x6C)   // VCRDMA1
+	cpu.Write32(0xFFFFFFA0, 0x6D)   // VCRDMA0
+	cpu.Write32(0xFFFFFF0C, 0x6E)   // VCRDIV
+	cpu.Write8(0xFFFFFE10, 0x81)    // FRT TIER: ICIE enabled
 }

@@ -531,6 +531,13 @@ func (h *HLEBIOS) Boot(ip []byte) error {
 	// and rely on that state.
 	h.master.SetCCR(0x01)
 	h.slave.SetCCR(0x01)
+
+	// The master handoff entry ($06000680) runs sub_$0600071C before
+	// jumping to the IP, leaving the on-chip INTC vectors and FRT
+	// priority/ICIE configured. Games rely on it for the master side
+	// of the MINIT/SINIT handshake (some enable TIER themselves but
+	// never program IPRB or the vectors).
+	hleOnChipInterruptInit(h.master)
 	return nil
 }
 
@@ -599,8 +606,8 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 	// $32524459). The real-BIOS slave-init code at $00000200-$0000027F
 	// reads mem.L[$06000240] and checks for this magic to know that
 	// master-side warm-boot work is done; with the slot at zero the
-	// slave's init takes a different path. Some games (Waku Waku 7's
-	// wait->loading transition) won't proceed until this matches.
+	// slave's init takes a different path. Some games' wait->loading
+	// transitions won't proceed until this matches.
 	h.bus.writeWramHU32(0x240, 0x32524459)
 
 	// BIOS-internal function pointer slots in $06000234-$0600034C.

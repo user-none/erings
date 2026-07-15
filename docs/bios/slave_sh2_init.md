@@ -95,7 +95,7 @@ that into a single "clear all GPRs except SP" step at the end.
 ```python
 def slave_init():           # entered at $06000600
     SP = 0x06001000                               # default slave SP
-    sub_0600071C()                                # additional init (interrupt setup, etc.)
+    sub_0600071C()                                # on-chip interrupt init (see below)
 
     VBR = 0x06000400                              # slave's vector base
     mem.L[0x06000244] = 0x32524453                # publish "2RDS" (slave → master)
@@ -121,6 +121,38 @@ def slave_init():           # entered at $06000600
     # If entry is the BIOS default ($06000646), slave halts in a tight
     # `BRA self` loop and serves only as an IRQ-driven coprocessor.
 ```
+
+### `sub_0600071C` on-chip interrupt init (source at BIOS `$00000D1C`)
+
+Programs the CPU's on-chip interrupt controller vectors, the FRT
+priority, and enables the FRT input-capture interrupt. It is not
+slave-specific: the master handoff entry at `$06000680` BSRs it as its
+first action before jumping to the IP, so BOTH CPUs carry this state
+when game code starts. Games rely on it for the MINIT/SINIT FRT
+input-capture handshake (observed: GUNGRIFFON T-4502G enables TIER on
+the master itself but never programs IPRB or any vector register).
+
+The routine walks a byte table of register offsets ($06000758) paired
+with a word table of values ($06000760), GBR = `$FFFFFE00`, then
+finishes with three `MOV.L @(disp,GBR)` vector writes and the TIER
+write. Register state left, in write order:
+
+| Register | Address | Value |
+|----------|---------|-------|
+| ICR | $FFFFFEE0 | $0000 |
+| IPRB | $FFFFFE60 | $0F00 (FRT priority $F) |
+| VCRA | $FFFFFE62 | $6061 |
+| VCRB | $FFFFFE64 | $6263 |
+| VCRC | $FFFFFE66 | $6465 (FRT ICI vector $64) |
+| VCRD | $FFFFFE68 | $6600 |
+| VCRWDT | $FFFFFEE4 | $6869 |
+| VCRDMA1 | $FFFFFFA8 | $0000006C |
+| VCRDMA0 | $FFFFFFA0 | $0000006D |
+| VCRDIV | $FFFFFF0C | $0000006E |
+| FRT TIER | $FFFFFE10 | $81 (ICIE enabled) |
+
+All values confirmed against a captured real-BIOS in-game state dump
+(both CPUs identical).
 
 The two magic values:
 - `"2RDY"` ($32524459) at `$06000240` — **master → slave**. Master
