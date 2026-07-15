@@ -941,37 +941,53 @@ func (cb *CDBlock) mpegStreamEndSwitch(layer int) {
 }
 
 // mpegApplyNextConnections promotes the next-connection records to
-// current ($9C). A layer switched to no partition loses its data
-// supply: decode halts and it reports stopped, buffer empty.
-func (cb *CDBlock) mpegApplyNextConnections() {
+// current ($9C), only for the selected layers; a skipped layer keeps
+// its current binding. A layer switched to no partition loses its data
+// supply: decode halts and it reports stopped, buffer empty. Only a
+// switched layer raises its switch-done cause.
+func (cb *CDBlock) mpegApplyNextConnections(switchAudio, switchVideo bool) {
 	m := &cb.mpeg
-	old := m.conn[0]
-	m.conn[0] = m.conn[1]
-	if m.play == nil {
-		return
-	}
-	// A rebind to a different partition reads from that partition's
-	// start: the non-delete-mode fed index belongs to the old binding.
-	// A re-commit of the same partition keeps it (resetting would
-	// re-feed duplicates).
+	var switchLayer [2]bool
+	switchLayer[mpegLayerAudio] = switchAudio
+	switchLayer[mpegLayerVideo] = switchVideo
+	var cause uint32
 	for layer := range m.conn[0] {
-		if m.conn[0][layer].bufNum != old[layer].bufNum {
+		if !switchLayer[layer] {
+			continue
+		}
+		old := m.conn[0][layer]
+		m.conn[0][layer] = m.conn[1][layer]
+		if m.play == nil {
+			continue
+		}
+		// A rebind to a different partition reads from that
+		// partition's start: the non-delete-mode fed index belongs to
+		// the old binding. A re-commit of the same partition keeps it
+		// (resetting would re-feed duplicates).
+		if m.conn[0][layer].bufNum != old.bufNum {
 			m.play.layers[layer].fed = 0
 		}
+		if int(m.conn[0][layer].bufNum) >= len(cb.partitions) {
+			m.play.layers[layer].phase = mpegPhaseHalted
+			if layer == mpegLayerVideo {
+				m.vidState = mpegRunStopped
+				m.vidStatus &^= mpegVidDecoding
+				m.vidStatus |= mpegVidBufEmpty
+			} else {
+				m.audState = mpegRunStopped
+				m.audStatus &^= mpegAudDecoding
+				m.audStatus |= mpegAudBufEmpty
+			}
+		}
+		if layer == mpegLayerVideo {
+			cause |= mpegIntVidSwitchDone
+		} else {
+			cause |= mpegIntAudSwitchDone
+		}
 	}
-	if int(m.conn[0][mpegLayerVideo].bufNum) >= len(cb.partitions) {
-		m.play.layers[mpegLayerVideo].phase = mpegPhaseHalted
-		m.vidState = mpegRunStopped
-		m.vidStatus &^= mpegVidDecoding
-		m.vidStatus |= mpegVidBufEmpty
+	if cause != 0 {
+		cb.mpegIntCause(cause)
 	}
-	if int(m.conn[0][mpegLayerAudio].bufNum) >= len(cb.partitions) {
-		m.play.layers[mpegLayerAudio].phase = mpegPhaseHalted
-		m.audState = mpegRunStopped
-		m.audStatus &^= mpegAudDecoding
-		m.audStatus |= mpegAudBufEmpty
-	}
-	cb.mpegIntCause(mpegIntVidSwitchDone | mpegIntAudSwitchDone)
 }
 
 // audioRate returns the audio sample rate for content-clock math,

@@ -167,7 +167,9 @@ func TestCDBlockMpegChangeConnectionPromotesNext(t *testing.T) {
 	execCommandFull(cb, 0x95, 0x00, 0xFF00, 0x0000, 0x00FF)
 	execCommandFull(cb, 0x9A, 0x06, 0x0001, 0x0026, 0xC000)
 	execCommandFull(cb, 0x9A, 0x00, 0x00FF, 0x01FF, 0x00FF)
-	execCommandFull(cb, 0x9C, 0x00, 0x00FF, 0x0000, 0x0000)
+	// CR2 = 0: both per-layer selector bytes have bit 7 clear, so both
+	// layers commit their next-slot record.
+	execCommandFull(cb, 0x9C, 0x00, 0x0000, 0x0000, 0x0000)
 
 	for layer := range cb.mpeg.conn[0] {
 		if cb.mpeg.conn[0][layer].bufNum != 0xFF {
@@ -179,6 +181,38 @@ func TestCDBlockMpegChangeConnectionPromotesNext(t *testing.T) {
 	want := uint32(mpegIntVidSwitchDone | mpegIntAudSwitchDone)
 	if cb.mpeg.intStatus&want != want {
 		t.Errorf("intStatus = 0x%06X, want switch-done causes latched", cb.mpeg.intStatus)
+	}
+}
+
+// TestCDBlockMpegChangeConnectionSkipsLayer verifies the $9C CR2
+// per-layer selector: bit 7 of the selector byte (low = video, high =
+// audio) skips that layer, leaving its current binding and withholding
+// its switch-done cause. This is the teardown shape a video-only FMV
+// uses: commit the video disconnect, leave the (already idle) audio
+// layer alone.
+func TestCDBlockMpegChangeConnectionSkipsLayer(t *testing.T) {
+	cb := NewCDBlock(nil)
+	mpegInit(cb)
+
+	execCommandFull(cb, 0x95, 0x00, 0xFF00, 0x0000, 0x00FF)
+	// Current: audio partition 1, video partition 0.
+	execCommandFull(cb, 0x9A, 0x06, 0x0001, 0x0026, 0xC000)
+	// Next: both disconnect (0xFF).
+	execCommandFull(cb, 0x9A, 0x00, 0x00FF, 0x01FF, 0x00FF)
+	// CR2 high byte 0x80: skip audio. Low byte 0x00: commit video.
+	execCommandFull(cb, 0x9C, 0x00, 0x8000, 0x0000, 0x0000)
+
+	if got := cb.mpeg.conn[0][mpegLayerVideo].bufNum; got != 0xFF {
+		t.Errorf("video bufNum = 0x%02X, want 0xFF (committed)", got)
+	}
+	if got := cb.mpeg.conn[0][mpegLayerAudio].bufNum; got != 0x01 {
+		t.Errorf("audio bufNum = 0x%02X, want 0x01 (skipped, kept)", got)
+	}
+	if cb.mpeg.intStatus&mpegIntVidSwitchDone == 0 {
+		t.Error("video switch-done cause not latched")
+	}
+	if cb.mpeg.intStatus&mpegIntAudSwitchDone != 0 {
+		t.Error("audio switch-done cause latched, but audio was skipped")
 	}
 }
 

@@ -402,11 +402,14 @@ func (cb *CDBlock) cmdMpegSetConnection() {
 }
 
 // cmdMpegChangeConnection handles $9C MpegChangeConnection: the host
-// stages records with $9A (next slot) and commits them here.
-// CDC_MpChgCon's per-layer selection bytes are not modeled - both
-// layers switch.
+// stages records with $9A (next slot) and commits them here. CR2 holds
+// the two per-layer selector bytes (low = video, high = audio); bit 7
+// set skips a layer, leaving its current binding in place
+// (saturn_cdblock_mpeg.md, $9C wire layout).
 func (cb *CDBlock) cmdMpegChangeConnection() {
-	cb.mpegApplyNextConnections()
+	switchVideo := uint8(cb.cmd[1])&0x80 == 0
+	switchAudio := uint8(cb.cmd[1]>>8)&0x80 == 0
+	cb.mpegApplyNextConnections(switchAudio, switchVideo)
 	cb.mpegStatusReturn()
 }
 

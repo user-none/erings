@@ -233,6 +233,22 @@ next), CR3 low byte = video connection-mode, CR4 = video
 layer:partition. $9B reads back the selected records in the same
 layout.
 
+$9C Change Connection commits staged next-slot records rather than
+carrying full records. Wire layout (disassembled from the host-side
+command builder and the ROM default handler $B538): CR1 = $9C00, CR2
+holds the two per-layer selector bytes - low byte = video, high byte =
+audio - and CR3/CR4 carry no field the handler evaluates (they are
+saved to the CR area at $09075374 for the commit routines). Each
+selector byte: bit 7 set skips the layer (its current binding is
+kept), bit 7 clear commits the layer's next-slot record; bit 0 set
+additionally requires the layer's busy flag clear ($0F000894 bit 1
+video, bit 5 audio) before the switch, bit 0 clear omits that check.
+Committing a layer requires its run state ($0F00089C video, $0F00089D
+audio) to be 4 (playing); the switch advances it to 5 (switching) and
+raises that layer's switch-done cause. Beyond the dispatcher's active
+gate, the handler rejects the whole command unless $0F000892 bits 1-3
+and $0907537B bit 0 are all clear.
+
 **Set Stream $9D** - stream parameter (per layer): stream-mode byte
 (0x01 set stream number, 0x02 identify stream number, 0x10 set channel
 number, 0x20 identify channel number), stream number, channel number.
