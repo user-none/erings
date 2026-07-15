@@ -159,6 +159,36 @@ func TestBackupRAMOddByteAddressing(t *testing.T) {
 	}
 }
 
+func TestBackupRAMWideAccess(t *testing.T) {
+	bus := newBusForTest()
+	// The SRAM sits on the odd-byte lane; even lanes read 0xFF and drop
+	// writes. Wide accesses compose per-lane behavior.
+	bus.Write8(0x00180001, 0x12) // RAM byte 0
+	bus.Write8(0x00180003, 0x34) // RAM byte 1
+	if got := bus.Read16(0x00180000); got != 0xFF12 {
+		t.Errorf("Backup 16-bit read = 0x%04X, want 0xFF12", got)
+	}
+	if got := bus.Read32(0x00180000); got != 0xFF12FF34 {
+		t.Errorf("Backup 32-bit read = 0x%08X, want 0xFF12FF34", got)
+	}
+
+	bus.Write16(0x00180000, 0xAB56)
+	if got := bus.Read8(0x00180001); got != 0x56 {
+		t.Errorf("Backup byte 0 after 16-bit write = 0x%02X, want 0x56", got)
+	}
+	if got := bus.Read8(0x00180000); got != 0xFF {
+		t.Errorf("Backup even addr after 16-bit write = 0x%02X, want 0xFF", got)
+	}
+
+	bus.Write32(0x00180000, 0x11223344)
+	if got := bus.Read8(0x00180001); got != 0x22 {
+		t.Errorf("Backup byte 0 after 32-bit write = 0x%02X, want 0x22", got)
+	}
+	if got := bus.Read8(0x00180003); got != 0x44 {
+		t.Errorf("Backup byte 1 after 32-bit write = 0x%02X, want 0x44", got)
+	}
+}
+
 func TestBackupRAMPersistence(t *testing.T) {
 	bus := newBusForTest()
 
@@ -1105,11 +1135,11 @@ func TestBus16BitInvalidRegions(t *testing.T) {
 	}
 	bus.Write16(0x00100000, 0xABCD) // logged, no state change
 
-	// Backup RAM: 16-bit access invalid.
-	if got := bus.Read16(0x00180000); got != 0 {
-		t.Errorf("16-bit Backup read = 0x%04X, want 0", got)
-	}
+	// Backup RAM: odd-byte lane carries data, even lane reads 0xFF.
 	bus.Write16(0x00180000, 0xABCD)
+	if got := bus.Read16(0x00180000); got != 0xFFCD {
+		t.Errorf("16-bit Backup read = 0x%04X, want 0xFFCD", got)
+	}
 
 	// MINIT/SINIT: read returns 0 (trigger-only).
 	if got := bus.Read16(0x01000000); got != 0 {
@@ -1212,11 +1242,11 @@ func TestBus32BitInvalidRegions(t *testing.T) {
 	}
 	bus.Write32(0x00100000, 0xCAFEBABE)
 
-	// Backup: byte-only.
-	if got := bus.Read32(0x00180000); got != 0 {
-		t.Errorf("32-bit Backup read = 0x%08X, want 0", got)
-	}
+	// Backup RAM: odd-byte lanes carry data, even lanes read 0xFF.
 	bus.Write32(0x00180000, 0xCAFEBABE)
+	if got := bus.Read32(0x00180000); got != 0xFFFEFFBE {
+		t.Errorf("32-bit Backup read = 0x%08X, want 0xFFFEFFBE", got)
+	}
 
 	// MINIT/SINIT: 32-bit not valid.
 	if got := bus.Read32(0x01000000); got != 0 {

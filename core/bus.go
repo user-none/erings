@@ -657,9 +657,9 @@ func (b *Bus) read16Impl(addr uint32) uint16 {
 		fmt.Printf("[BUS] invalid 16-bit read from SMPC 0x%08X\n", addr)
 		return 0
 	case masked >= 0x00180000 && masked <= 0x0018FFFF:
-		// Backup RAM: byte access only
-		fmt.Printf("[BUS] invalid 16-bit read from Backup RAM 0x%08X\n", addr)
-		return 0
+		// Backup RAM (32 KB mirrored, odd bytes only): the even byte lane
+		// is not driven and reads back 0xFF.
+		return 0xFF00 | uint16(b.backup[(masked>>1)&0x7FFF])
 	case masked >= 0x01000000 && masked <= 0x017FFFFF:
 		// MINIT region (trigger-only, no readable data)
 		return 0
@@ -755,9 +755,10 @@ func (b *Bus) read32Impl(addr uint32) uint32 {
 		fmt.Printf("[BUS] invalid 32-bit read from SMPC 0x%08X\n", addr)
 		return 0
 	case masked >= 0x00180000 && masked <= 0x0018FFFF:
-		// Backup RAM: byte access only
-		fmt.Printf("[BUS] invalid 32-bit read from Backup RAM 0x%08X\n", addr)
-		return 0
+		// Backup RAM (32 KB mirrored, odd bytes only): the even byte lane
+		// is not driven and reads back 0xFF.
+		i := (masked >> 1) & 0x7FFF
+		return 0xFF00FF00 | uint32(b.backup[i])<<16 | uint32(b.backup[(i+1)&0x7FFF])
 	case masked >= 0x01000000 && masked <= 0x017FFFFF:
 		// MINIT region (trigger-only, no readable data)
 		return 0
@@ -849,8 +850,9 @@ func (b *Bus) write16Impl(addr uint32, val uint16) {
 		fmt.Printf("[BUS] invalid 16-bit write to SMPC 0x%08X = 0x%04X\n", addr, val)
 		return
 	case masked >= 0x00180000 && masked <= 0x0018FFFF:
-		// Backup RAM: byte access only
-		fmt.Printf("[BUS] invalid 16-bit write to Backup RAM 0x%08X = 0x%04X\n", addr, val)
+		// Backup RAM (32 KB mirrored, odd bytes only): the even byte lane
+		// is not connected, so only the low byte lands.
+		b.backup[(masked>>1)&0x7FFF] = uint8(val)
 		return
 	case masked >= 0x01000000 && masked <= 0x017FFFFF:
 		// MINIT region (16-bit write triggers slave FRT input capture)
@@ -983,8 +985,11 @@ func (b *Bus) write32Impl(addr uint32, val uint32) {
 		fmt.Printf("[BUS] invalid 32-bit write to SMPC 0x%08X = 0x%08X\n", addr, val)
 		return
 	case masked >= 0x00180000 && masked <= 0x0018FFFF:
-		// Backup RAM: byte access only
-		fmt.Printf("[BUS] invalid 32-bit write to Backup RAM 0x%08X = 0x%08X\n", addr, val)
+		// Backup RAM (32 KB mirrored, odd bytes only): the even byte lanes
+		// are not connected, so only the low byte of each half lands.
+		i := (masked >> 1) & 0x7FFF
+		b.backup[i] = uint8(val >> 16)
+		b.backup[(i+1)&0x7FFF] = uint8(val)
 		return
 	case masked >= 0x01000000 && masked <= 0x017FFFFF:
 		// MINIT region: only 16-bit writes trigger
