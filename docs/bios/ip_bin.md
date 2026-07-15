@@ -161,3 +161,8 @@ The application's prologue typically establishes its own SR/SP
 immediately (e.g. `MOV #-1,R0; AND #$0F,R0; LDC R0,SR`), so only
 PC and the SP being in valid WRAM are strictly load-bearing for the
 handoff to succeed.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

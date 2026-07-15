@@ -548,3 +548,7 @@ them via `MOV.L @slot, Rn` and uses the value as a constant. `$023C`
 holds the BIOS data-table base; `$02B0` holds the "1st Read Address"
 populated from System ID +$F0.
 
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

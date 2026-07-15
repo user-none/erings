@@ -166,3 +166,7 @@ Two patterns:
    `$0600071C` does this configuration before the slave reaches
    the halt loop.
 
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

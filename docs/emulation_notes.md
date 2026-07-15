@@ -262,3 +262,8 @@ NIGHT WARRIORS | T-1208H | 60
 NiGHTS | MK-81020 | 30
 SONIC JAM | MK-81079 | 60
 WAKUWAKU7 | T-1515G | 60
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

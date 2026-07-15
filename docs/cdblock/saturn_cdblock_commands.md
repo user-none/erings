@@ -924,3 +924,8 @@ connected, false output disconnected.
 6. Poll sector count (0x51) until data available
 7. Get/transfer sector data (0x61 or 0x63)
 8. End transfer (0x06)
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

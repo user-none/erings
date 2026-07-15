@@ -731,4 +731,7 @@ Boot state machine
        +-- On failure: CD multiplayer (audio CD player)
 ```
 
+---
 
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

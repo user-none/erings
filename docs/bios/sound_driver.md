@@ -716,3 +716,8 @@ record-flag writes, each preceded by a fixed delay:
 CD-DA routing is opened at full send level while the master volume is
 left at minimum; the CD player application raises MVOL when it starts
 playback.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

@@ -120,3 +120,8 @@ exclusive paths off the same dispatcher:
 All application bodies are extractable with utils/extract_bioslibs
 (`app_videocd.bin`, `app_cdg.bin`, `app_graphics.bin`, `app_data.bin`,
 `app_playerui.bin`, `app_settings.bin`).
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

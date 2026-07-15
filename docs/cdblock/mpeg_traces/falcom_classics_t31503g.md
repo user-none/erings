@@ -132,3 +132,8 @@ change the outcome here - both layers disconnect either way. The $AE
 read of register $1A and the paired $AF write precede the register-6
 idle read-back (decoder-idle bit $4000) that confirms the decoder has
 stopped.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

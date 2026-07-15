@@ -381,3 +381,8 @@ copy; sub_15D4 then copies it block-by-block into sound RAM
 ($25A00000) per its copy table at ROM $16C4 and starts the 68k via
 SMPC SNDON. The driver runs from sound RAM, not WRAM-H. The driver
 itself is documented in [sound_driver.md](sound_driver.md).
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

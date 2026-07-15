@@ -80,3 +80,8 @@ issued in the same frame and then the title goes silent - no MPEG
 commands at all between movies (about 2400 frames between the first
 and second here). The second movie starts over from $93 MpegInit with
 the identical sequence.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

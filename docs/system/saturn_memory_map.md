@@ -304,3 +304,8 @@ From the System Library User's Guide:
   are not supported (SH7604 Hardware Manual section 8.4.7)
 - Work RAM-H is the primary execution area; Work RAM-L is supplementary
 - The slave SH-2 starts in reset state; master releases it via SMPC SSH_ON command (02H)
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

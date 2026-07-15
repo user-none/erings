@@ -44,3 +44,8 @@ After the boot CD sequence reads IP.BIN into Work RAM (cd_block_interface.md,
 
 A disc that fails authentication or header / region validation is not booted as
 a game. See ip_bin.md for the IP header layout.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

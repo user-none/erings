@@ -640,4 +640,7 @@ The sector payload is moved into Work RAM by reading the DATATRNS
 register directly, not by a Get Sector Data ($61) command. The BIOS
 does not issue Read Directory ($71) during boot.
 
+---
 
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

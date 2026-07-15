@@ -158,4 +158,9 @@ $17/$31, display size $A0 x $78 (160x120): a quarter-screen picture
 inside the game screen, sourcing from an offset well inside the frame
 buffer. The display comes back on with the next per-field $A0
 (CR2=0100). The trace ends about 12 seconds later with a final
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
 display-off while the movie screen is left.

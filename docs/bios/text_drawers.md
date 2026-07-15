@@ -118,3 +118,8 @@ character pattern data at $25E00000 in the font sub_5000 produced.
 The character-to-pattern mapping in $0050A0 (char N -> patterns 2N
 and 2N+1) is locked to the font layout: each ASCII glyph fills two
 vertically-adjacent 8x8 cells (an 8x16 visual character).
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

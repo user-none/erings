@@ -1360,3 +1360,8 @@ Covered in the boot pseudocode above. Note that port A/B pin function
 selection ($5D0) is what routes the DMAC request/acknowledge and IRQ6/IRQ7
 pins to the CD block ASICs; port B data bit 2 doubles as the factory test
 strap, and port C bit 0 selects the $0A00001A init value.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

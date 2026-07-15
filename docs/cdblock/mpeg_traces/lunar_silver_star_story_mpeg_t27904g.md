@@ -114,3 +114,8 @@ $90, $9B, $9E, $9B, $9E back to this sequence until the end
 The $AF raw LSI access (register 6 read-back) appears only in the
 end-of-stream window: the title polls it alongside the status report
 to detect decode completion.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

@@ -448,3 +448,8 @@ frame data and additional tile graphics for menu screens.
 Games do not access BIOS font data through any published API. The
 Saturn has no game-callable font service; titles ship their own font
 data.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

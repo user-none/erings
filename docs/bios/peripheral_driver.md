@@ -1699,3 +1699,8 @@ The slot 0 relocator is invoked once by PER_Init. Subsequent
 calls from game code go through `JSR @($06000354)` (which
 dereferences to the driver base) and then `JSR @($00,driver_base)`
 through `JSR @($28,driver_base)` for slot dispatch.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

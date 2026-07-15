@@ -445,4 +445,7 @@ character pattern reads across the 4 VRAM banks for all 4 scroll screens.
 | $06002040 | 10 bytes | Compatible area codes (IP+$40) - read by the sub_1BB4 region check |
 | $06002100 | varies | IP security-code start (SYS_SEC.OBJ at IP+$100); master PC starts here at handoff. Also serves as the validation comparison buffer during boot. |
 
+---
 
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/

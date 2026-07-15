@@ -125,3 +125,8 @@ pipeline can refill partition 3.
 After clip 4's $AF the title issues no further MPEG commands; the
 scene exits with the decoder left initialized and the display still
 enabled.
+
+---
+
+Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
+copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
