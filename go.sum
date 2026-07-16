@@ -73,8 +73,8 @@ github.com/user-none/eblitui/rdb v0.2.0 h1:5HTS6x0FvQA4CkX2faygOZ0iDfhtYDXKrc9jV
 github.com/user-none/eblitui/rdb v0.2.0/go.mod h1:UyIx+HTKfiqL6246Qoe2vKvrhbJc73cBkRqpw6Db4AU=
 github.com/user-none/eblitui/romloader v0.4.1 h1:Z3U4iQfwnJHJUcBJqF38d2+HvIN7mdC1/DRIfh579v0=
 github.com/user-none/eblitui/romloader v0.4.1/go.mod h1:Oo3xMBnfVX2IBJuNxRaPELQE8H8hXa8UOkZf51Ju8sQ=
-github.com/user-none/go-chip-m68k v0.1.1 h1:3GdtXidOVP03lnDYRHicKmoLb5qswy7pIgyLFRIIPNA=
-github.com/user-none/go-chip-m68k v0.1.1/go.mod h1:RNJR6/n5/2bMF0clriCmuFXvj4LBukgYqsjdxcWxvlY=
+github.com/user-none/go-chip-m68k v0.1.2 h1:X1BKRbNBhH501N8eALYQDim3ECJ18KtPwL3hhPLLsSA=
+github.com/user-none/go-chip-m68k v0.1.2/go.mod h1:RNJR6/n5/2bMF0clriCmuFXvj4LBukgYqsjdxcWxvlY=
 github.com/user-none/go-rcheevos v0.1.0 h1:WnSXpsmo2mqtWeYrI6R4A4RxBE/CIy82VXmcHUlZjB4=
 github.com/user-none/go-rcheevos v0.1.0/go.mod h1:MRIzBVxEdFPCdhxXvAvLHkyInXUzJCrb6v6mWI61A90=
 github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
