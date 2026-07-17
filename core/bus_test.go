@@ -1017,7 +1017,7 @@ func TestBusAccessCyclesPerRegion(t *testing.T) {
 		{"BIOS ROM", 0x00000000, 3, 12},
 		{"SMPC", 0x00100000, 3, 12},
 		{"Backup RAM", 0x00180000, 3, 12},
-		{"Work RAM-L", 0x00200000, 3, 12},
+		{"Work RAM-L", 0x00200000, 6, 24},
 		{"MINIT", 0x01000000, 3, 12},
 		{"SINIT", 0x01800000, 3, 12},
 		// A-Bus burst: first access 20, three beats at the SCU

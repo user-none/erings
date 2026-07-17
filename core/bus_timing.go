@@ -34,7 +34,8 @@ package core
 //
 // Per-region penalty + run = total (single read), from AccessCycles:
 //
-//	CPU-Bus CS0 (BIOS/SMPC/Backup/WRAM-L)   2 + 1  = 3
+//	CPU-Bus CS0 (BIOS/SMPC/Backup)          2 + 1  = 3
+//	WRAM-L (CS0, empirical)                 6
 //	A-Bus CS0/CS1/dummy (cartridge)         3 + 17 = 20
 //	CD block (CS2)                          3 + 7  = 10
 //	SCSP                                    3 + 9  = 12
@@ -92,7 +93,15 @@ func computeAccessCycles(addr uint32, size uint32) uint32 {
 
 	var base uint32
 	switch {
-	// CS0 partitions: BIOS ROM, SMPC, Backup RAM, Work RAM-L,
+	// Work RAM-L: slower than the WCR-derived CS0 cost. Ordinary-space
+	// accesses can be extended by external WAIT insertion (SH7604 Sec
+	// 7.2.3/7.4); the device-side timing is not documented in the
+	// references we hold. 6 states is an empirical value, established
+	// and game-validated by inter-CPU timing investigation.
+	case masked >= 0x00200000 && masked <= 0x002FFFFF:
+		base = 6
+
+	// CS0 partitions: BIOS ROM, SMPC, Backup RAM,
 	// MINIT/SINIT. Ordinary-space with SH-2 WCR wait_CS0 = 1:
 	//   states = 2 (base) + 1 (wait) = 3
 	// (SH7604 Sec 7.2.3 + observed WCR=0x5555.)
