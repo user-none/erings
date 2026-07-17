@@ -21,9 +21,13 @@ comments.
   seeks the FMV and the partition fills, then issues the play burst.
 - The window is programmed in the same burst that starts playback,
   not deferred to the first picture-start interrupt.
-- The clip is torn down explicitly: the connection is disconnected
-  through the $9A next-slot / $9C Change Connection path rather than a
-  re-init, followed by raw LSI register access.
+- Played to the end, no teardown commands are issued at all: the
+  stream's end mark stops the decoder, a single LSI register-6
+  read-back confirms idle, and the title walks away with the display
+  never switched off. Stopped early, the clip is torn down explicitly:
+  the connection is disconnected through the $9A next-slot / $9C
+  Change Connection path rather than a re-init, followed by raw LSI
+  register access.
 
 ## Bring-up
 
@@ -65,6 +69,7 @@ partition 0:
 ## Window burst and display on
 
 ```
+[MPEG] $91 MpegGetInterrupt     CR1=9100 CR2=0000 CR3=0000 CR4=0000
 [MPEG] $97 MpegOutDecodingSync  CR1=9700 CR2=0000 CR3=0000 CR4=0000
 [MPEG] $A1 MpegSetWindow        CR1=A100 CR2=0001 CR3=0010 CR4=0000
 [MPEG] $A1 MpegSetWindow        CR1=A101 CR2=0001 CR3=8011 CR4=8011
@@ -101,12 +106,42 @@ every other field for the 29.97 fps stream
 ...
 ```
 
-## Teardown
+## End of stream (played out)
 
-The connection is disconnected through the next-slot / Change
-Connection path (both records staged to $FF), then the title reads and
-writes LSI registers, ending with the register-6 read-back that
-carries the decoder-idle bit ($4000):
+Played to the end, there is no teardown. After the final $97-stepped
+picture the title issues a single LSI register-6 read-back (the
+decoder-idle bit $4000), polls for a few more fields, and stops
+issuing MPEG commands. No $A0 display-off, no $9A/$9C disconnect, and
+no other LSI access appear; the stream's end mark releases the
+connection on its own:
+
+```
+[MPEG] $97 MpegOutDecodingSync  CR1=9700 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+...
+$90 + $9B x2 polling continues for six more cycles a few fields
+later, then no MPEG command follows
+...
+```
+
+Because the title steps every picture itself with $97, it knows when
+the last picture has been delivered, so a single idle read-back
+suffices.
+
+## Early stop
+
+Stopped before the end of the stream, the connection is disconnected
+through the next-slot / Change Connection path (both records staged to
+$FF), then the title reads and writes LSI registers, ending with the
+register-6 read-back that carries the decoder-idle bit ($4000). The
+whole teardown lands in a single field, immediately after the last
+$97; as with the played-out end, no $A0 display-off is ever issued:
 
 ```
 [MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
@@ -122,7 +157,8 @@ carries the decoder-idle bit ($4000):
 [MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
 [MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
 ...
-$90 + $9B x2 polling continues after the teardown
+$90 + $9B x2 polling continues for a few cycles, then no MPEG command
+follows
 ...
 ```
 

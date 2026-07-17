@@ -114,10 +114,9 @@ read-back window
 
 On this path the title never disconnects the decoder layers - no
 $9A / $9C teardown and no register-$1A access. After the display-off
-a few more plain
-poll groups are issued in the same frame and then the title goes
-completely silent - no MPEG commands over the remaining ~20 s of the
-trace.
+plain polling continues briefly in the same frame (one poll group in
+one run, a few in another) and then the title goes completely silent
+for the rest of the trace.
 
 ## Early Exit (skipped)
 

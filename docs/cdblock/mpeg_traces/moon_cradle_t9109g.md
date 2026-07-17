@@ -10,7 +10,8 @@ never issued. The title never reads the stream records ($9E).
 Three movies were traced - two opening movies and one in-game movie
 that occupies only part of the screen - and all three share a single
 $93 MpegInit: the subsystem is initialized once and stays up for the
-whole session. The session runs on a 320x240 screen, and all three
+whole session. The first movie was additionally traced with an early
+exit (skipped). The session runs on a 320x240 screen, and all three
 movies use display windows smaller than it (the opening window lands
 centered).
 Repeating poll patterns are elided with `...` comments, and the tracer
@@ -104,7 +105,7 @@ different counter behavior.
 ## Opening Movies
 
 The first movie's play burst is followed about half a second later by
-the display window, then a single $91:
+the display window:
 
 ```
 [MPEG] $A1 MpegSetWindow        CR1=A100 CR2=0001 CR3=0020 CR4=0028
@@ -114,7 +115,6 @@ the display window, then a single $91:
 [MPEG] $A2 MpegSetBorderColor   CR1=A200 CR2=0000 CR3=0000 CR4=0000
 [MPEG] $A3 MpegSetFade          CR1=A300 CR2=0000 CR3=0000 CR4=0000
 [MPEG] $A4 MpegSetVideoEffect   CR1=A400 CR2=0F00 CR3=0000 CR4=0000
-[MPEG] $91 MpegGetInterrupt     CR1=9100 CR2=0000 CR3=0000 CR4=0000
 ```
 
 Window values: frame-buffer position $20/$28, ratio $8011/$8011
@@ -122,24 +122,72 @@ Window values: frame-buffer position $20/$28, ratio $8011/$8011
 smaller than the screen, displayed inset). $A4 carries $0F00
 (interpolation flags).
 
-The movie plays for about 34 seconds, then a second $91 consumes the
-end-of-stream cause. The display stays on and the polling (with the
-per-field $A0/$AF) continues for another 11 seconds before the title
-switches the display off and goes completely silent:
+About half a second after the window burst two $91 reads arrive two
+fields apart - the same paired-read pattern the title uses at every
+interrupt consumption.
+
+About 34 seconds into playback two more $91 reads arrive two fields
+apart (the reads consume whatever causes are pending, so the timing
+does not necessarily mark the stream end). The display stays on and
+the polling (with the per-field $A0/$AF) continues for another 11
+seconds before the title switches the display off. A couple of plain
+poll groups follow in the same field, then the title goes silent:
 
 ```
 [MPEG] $A0 MpegDisplay          CR1=A000 CR2=0000 CR3=0000 CR4=0000
 ```
 
-After about 20 seconds of silence the second movie starts with the
-identical play burst. No window burst follows - the first movie's
-window is reused unchanged. The movie plays for about 22 seconds,
-ending with two $91 reads two fields apart. As after the first movie,
-the display stays on and polling continues (here for over 30 seconds,
-through the transition into gameplay) before the end-of-session pair:
-two more $91 reads, then display off. Polling continues without a
-silent gap into the third movie's play burst about three seconds
-later.
+The second movie plays when a new game is started. The silent gap
+before its play burst depends on menu timing (14-20 seconds across
+runs, whether the first movie ended naturally or was skipped). The
+play burst is identical and no window burst follows - the first
+movie's window is reused unchanged. A pair of $91 reads two fields
+apart arrives at a run-varying point during playback (5 seconds in
+in one run, 39 in another, and in one run a second pair landed
+immediately before the display off): the reads consume whatever
+causes are pending when the game checks, so they do not mark the
+stream end. The display stays on with the per-field $A0/$AF polling
+running throughout, and the display off lands about 57 seconds after
+the play burst in every traced run. The third movie's play burst
+follows about three seconds later (polling continued through that gap
+in one run and went silent in another).
+
+## Early Exit (skipped)
+
+Skipped a few seconds into the first movie, the teardown lands in a
+single field: display off, two plain poll groups, the two-round
+per-layer disconnect ($9A stages next-slot records, both partition
+$FF; the first $9C commits only the audio layer, the second only the
+video layer), then the register-$1A read/write:
+
+```
+[MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $A0 MpegDisplay          CR1=A000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+[MPEG] $9A MpegSetConnection    CR1=9A00 CR2=00FF CR3=01FF CR4=00FF
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9C MpegChangeConnection CR1=9C00 CR2=00FF CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9A MpegSetConnection    CR1=9AFF CR2=00FF CR3=0100 CR4=00FF
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9C MpegChangeConnection CR1=9C00 CR2=FF00 CR3=0000 CR4=0000
+[MPEG] $AE MpegGetLsi           CR1=AE00 CR2=001A CR3=0000 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF00 CR2=001A CR3=0000 CR4=0000
+```
+
+No register-6 idle read-back follows the teardown: the per-field
+polling mode reads register 6 throughout playback anyway, and the
+last of those read-backs lands just before the display-off. The $AF
+register-$1A write is the final MPEG command; the title is completely
+silent afterward.
 
 ## In-Game Movie
 
@@ -158,9 +206,9 @@ $17/$31, display size $A0 x $78 (160x120): a quarter-screen picture
 inside the game screen, sourcing from an offset well inside the frame
 buffer. The display comes back on with the next per-field $A0
 (CR2=0100). The trace ends about 12 seconds later with a final
+display-off while the movie screen is left.
 
 ---
 
 Copyright © 2026 by erings authors is licensed under CC BY-SA 4.0. To view a
 copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
-display-off while the movie screen is left.

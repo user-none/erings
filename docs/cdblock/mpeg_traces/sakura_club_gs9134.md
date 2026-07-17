@@ -1,7 +1,8 @@
 # SAKURA CLUB (GS-9134) MPEG Command Trace
 
-Multi-clip movie scene, four clips played back to back. Captured from
-the scene entry through the return to the game. The `[f XXXX]` prefix
+Multi-clip movie scene, four clips played in sequence with a wait for
+player input between clips. Captured from the scene entry through the
+return to the game. The `[f XXXX]` prefix
 is the decoder's VSYNC operation-interval counter (one tick per field,
 free-running from each $93), so gaps between stamps read as elapsed
 fields. Repeating poll patterns are elided with `...` comments.
@@ -108,8 +109,12 @@ Each clip repeats the identical sequence: $93 / $92 / $94, the
 per-field $90 + $9B x2 wait loop while partition 3 refills, the $91 /
 $94 / $96 / $95 / $9D / $9A play burst, the $91 / $A1 x4 / $A2-$A4 /
 $A0 window burst (same values as clip 1), steady-state polling with
-$97, then $AF and the next $93. Only the timings differ (field stamps
-relative to each clip's own $93):
+$97, then $AF and the next $93. The $93 re-init follows each clip's
+$AF automatically within 14-19 fields; the input wait sits in the
+pre-play poll loop after it, so the play-burst stamp varies run to
+run while the playback length is fixed by the clip content and
+reproduces across runs (field stamps relative to each clip's own $93,
+play-burst stamps from one run):
 
 | Clip | Play burst | $AF (end) | Playback length |
 |------|------------|-----------|-----------------|
@@ -118,13 +123,34 @@ relative to each clip's own $93):
 | 3    | [f 0086]   | [f 0873]  | ~33.9 s         |
 | 4    | [f 00FC]   | [f 04FE]  | ~17.1 s         |
 
-Clip 2's longer pre-play wait ([f 00A5] vs [f 007B]) is the second
-mux play starting: the drive seeks to FAD $1C928 before the demux
-pipeline can refill partition 3.
+Clip 2's pre-play wait runs longer than the others in every run: the
+second mux play starts there, so on top of the input wait the drive
+seeks to FAD $1C928 before the demux pipeline can refill partition 3.
 
 After clip 4's $AF the title issues no further MPEG commands; the
 scene exits with the decoder left initialized and the display still
 enabled.
+
+## Early Exit (skipped)
+
+Skipping during clip 1 cancels the whole four-clip sequence, and the
+title issues no teardown of any kind: the $90 + $9B polling simply
+stops, a few final $97 steps trail out over the next fields, and that
+is the last MPEG activity. No display-off, no disconnect, no LSI
+access, and no re-init for the next clip - the decoder is abandoned
+mid-playback with its connection, playing state, and display switch
+left as they were:
+
+```
+[MPEG] [f 00E0] $97 MpegOutDecodingSync  CR1=9700 CR2=0000 CR3=0000 CR4=0000
+[MPEG] [f 00E2] $97 MpegOutDecodingSync  CR1=9700 CR2=0000 CR3=0000 CR4=0000
+[MPEG] [f 00E4] $97 MpegOutDecodingSync  CR1=9700 CR2=0000 CR3=0000 CR4=0000
+[MPEG] [f 00E6] $97 MpegOutDecodingSync  CR1=9700 CR2=0000 CR3=0000 CR4=0000
+```
+
+The polling stops one field before the last $97; the four trailing
+steps arrive bare, without the $90 + $9B pairs that accompany them
+during playback.
 
 ---
 

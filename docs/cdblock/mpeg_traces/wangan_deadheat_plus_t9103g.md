@@ -75,11 +75,46 @@ idle
 [MPEG] $A0 MpegDisplay          CR1=A000 CR2=0000 CR3=0000 CR4=0000
 ```
 
-After the display-off, two or three more $90 + $9B x2 poll groups are
+After the display-off, a few more $90 + $9B x2 poll groups are
 issued in the same frame and then the title goes silent - no MPEG
 commands at all between movies (about 2400 frames between the first
 and second here). The second movie starts over from $93 MpegInit with
 the identical sequence.
+
+## Early Exit (skipped)
+
+Skipped mid-playback, the teardown lands in a single frame: display
+off, a two-round per-layer disconnect ($9A stages next-slot records,
+both partition $FF; the first $9C commits only the audio layer, the
+second only the video layer), the register-$1A read/write, then a
+single register-6 idle read-back:
+
+```
+[MPEG] $A0 MpegDisplay          CR1=A000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+[MPEG] $9A MpegSetConnection    CR1=9A00 CR2=00FF CR3=01FF CR4=00FF
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9C MpegChangeConnection CR1=9C00 CR2=00FF CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9A MpegSetConnection    CR1=9AFF CR2=00FF CR3=0100 CR4=00FF
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9C MpegChangeConnection CR1=9C00 CR2=FF00 CR3=0000 CR4=0000
+[MPEG] $AE MpegGetLsi           CR1=AE00 CR2=001A CR3=0000 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF00 CR2=001A CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+```
+
+The idle read-back is issued exactly once - the disconnect has
+already stopped the decoder - and one poll group later the title goes
+silent, as on the played-out path.
 
 ---
 

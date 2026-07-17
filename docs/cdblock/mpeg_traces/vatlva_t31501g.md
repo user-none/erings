@@ -77,9 +77,37 @@ video stream ends (EOR sector); sequence-end cause $000400 asserts MPST
 [MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
 [MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
 ...
-$90, $9B, $9B back to this sequence after the video ends
-($91 is never issued again; the game reads the end from the status
-report and the $AF register-6 read-back, decoder-idle bit $4000)
+$90, $9B, $9B polling continues briefly (about a field), then no MPEG
+command follows
+...
+```
+
+$91 is never issued again; the game reads the end from the status
+report and the $AF register-6 read-back (decoder-idle bit $4000). No
+display-off and no teardown follow - the title leaves the scene with
+the decoder connected and the display switch on.
+
+## Early Exit (skipped)
+
+Skipped mid-playback, the teardown lands in a single field: a
+single-round disconnect ($9A stages next-slot records, both partition
+$FF; $9C commits only the video layer - the audio layer was never
+connected), the register-$1A read/write, then one register-6 idle
+read-back. As on the played-out path, no $A0 display-off is issued:
+
+```
+[MPEG] $9A MpegSetConnection    CR1=9AFF CR2=00FF CR3=0100 CR4=00FF
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9C MpegChangeConnection CR1=9C00 CR2=FF00 CR3=0000 CR4=0000
+[MPEG] $AE MpegGetLsi           CR1=AE00 CR2=001A CR3=0000 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF00 CR2=001A CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
+...
+$90, $9B, $9B polling continues for a few groups in the same field,
+then no MPEG command follows
 ...
 ```
 

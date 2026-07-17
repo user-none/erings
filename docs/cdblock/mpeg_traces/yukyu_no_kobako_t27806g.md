@@ -1,7 +1,7 @@
 # YUKYU NO KOBAKO (T-27806G) MPEG Command Trace
 
-Raw elementary-stream user of the decoder, same host-stepped profile
-as VATLVA: video-only FMV ($9A audio record $FF), raw video elementary
+Raw elementary-stream user of the decoder, host-stepped profile:
+video-only FMV ($9A audio record $FF), raw video elementary
 stream in partition 0 (video record mode $27), independent playback
 ($95 CR1 low byte 01), host-synchronized decode ($94 decode timing 1)
 stepped with $97 - one per picture, about every other frame for the
@@ -52,8 +52,8 @@ picture-start interrupt (cause $000100, in the $92 mask) wakes the game
 Window values: frame-buffer position 0/0, ratio $8011/$8011 (1:1),
 display position $FFFF/8, display size $140 x $E0 (320x224).
 
-Steady-state playback. Unlike the other traced titles, this game
-re-sends an identical window burst every frame:
+Steady-state playback. This game re-sends an identical window burst
+every frame:
 
 ```
 ...
@@ -68,8 +68,35 @@ video stream ends on the in-stream sequence end code (00 00 01 B7)
 ...
 [MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
 ...
-$90, $9B, $9B and the per-frame window burst continue after the video
-ends ($91 is never issued again)
+$90, $9B, $9B polling continues briefly after the video ends, then no
+MPEG command follows ($91 is never issued again; no display-off and
+no teardown - the decoder is left connected with the display switch
+on)
+...
+```
+
+## Early Exit (skipped)
+
+Skipped mid-playback, the teardown lands in a single field right
+after the last $97 step: a single-round disconnect ($9A stages
+next-slot records, both partition $FF; $9C commits only the video
+layer - the audio layer was never connected), the register-$1A
+read/write, then one register-6 idle read-back. As on the played-out
+path, no $A0 display-off is issued:
+
+```
+[MPEG] $9A MpegSetConnection    CR1=9AFF CR2=00FF CR3=0100 CR4=00FF
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9C MpegChangeConnection CR1=9C00 CR2=FF00 CR3=0000 CR4=0000
+[MPEG] $AE MpegGetLsi           CR1=AE00 CR2=001A CR3=0000 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF00 CR2=001A CR3=0000 CR4=0000
+[MPEG] $90 MpegGetStatus        CR1=9000 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0000 CR4=0000
+[MPEG] $9B MpegGetConnection    CR1=9B00 CR2=0000 CR3=0100 CR4=0000
+[MPEG] $AF MpegSetLsi           CR1=AF01 CR2=0006 CR3=0000 CR4=0000
+...
+$90, $9B, $9B polling continues for a few groups in the same field,
+then no MPEG command follows
 ...
 ```
 
