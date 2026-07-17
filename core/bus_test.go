@@ -1215,7 +1215,7 @@ func TestBus16BitMappedRegions(t *testing.T) {
 	}
 	bus.Write16(0x02000000, 0x1234)
 
-	// A-Bus CS1 cart ID at 0x04FFFFFE: returns 0xFF00 | cartID4MB.
+	// A-Bus CS1 cart ID at 0x04FFFFFE: returns 0xFF00 | ramCartID4MB.
 	if got := bus.Read16(0x04FFFFFE); got != 0xFF5C {
 		t.Errorf("CS1 cart ID 16 = 0x%04X, want 0xFF5C", got)
 	}

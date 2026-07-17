@@ -25,8 +25,9 @@ const (
 	cs0Top  = 0x03FFFFFF
 
 	// A-Bus CS1 Cartridge ID byte.
-	cartIDAddr = 0x04FFFFFF
-	cartID4MB  = 0x5C
+	cartIDAddr    = 0x04FFFFFF
+	ramCartIDNone = 0xFF
+	ramCartID4MB  = 0x5C
 )
 
 // Bus access locks, one per hardware arbitration domain. The Saturn
@@ -139,17 +140,18 @@ func (b *Bus) unlockArea(area uint8) {
 // It maps the SH-2's 32-bit address space to hardware regions.
 // Peripherals not yet implemented return 0 on read and ignore writes.
 type Bus struct {
-	bios    []byte   // 512 KB BIOS ROM (read-only)
-	wramH   []byte   // 1 MB Work RAM-H
-	wramL   []byte   // 1 MB Work RAM-L
-	backup  []byte   // 32 KB Backup RAM (mirrored in 64 KB range)
-	extRAM  []byte   // 4 MB Extended RAM Cartridge (A-Bus CS0)
-	scu     *SCU     // System Control Unit
-	smpc    *SMPC    // System Manager and Peripheral Control
-	vdp1    *VDP1    // Video Display Processor 1
-	vdp2    *VDP2    // Video Display Processor 2
-	scsp    *SCSP    // Saturn Custom Sound Processor
-	cdblock *CDBlock // CD Block (A-Bus CS2)
+	bios      []byte // 512 KB BIOS ROM (read-only)
+	wramH     []byte // 1 MB Work RAM-H
+	wramL     []byte // 1 MB Work RAM-L
+	backup    []byte // 32 KB Backup RAM (mirrored in 64 KB range)
+	extRAM    []byte // 4 MB Extended RAM Cartridge (A-Bus CS0)
+	ramCartID uint8
+	scu       *SCU     // System Control Unit
+	smpc      *SMPC    // System Manager and Peripheral Control
+	vdp1      *VDP1    // Video Display Processor 1
+	vdp2      *VDP2    // Video Display Processor 2
+	scsp      *SCSP    // Saturn Custom Sound Processor
+	cdblock   *CDBlock // CD Block (A-Bus CS2)
 
 	// MINIT/SINIT FRT-capture signals from a CPU's bus write inside
 	// Clock() to its own step loop. Each is read on the same goroutine
@@ -199,16 +201,17 @@ type Bus struct {
 // SCSP↔CDBlock wiring via scsp.SetCDAudioSource(cdblock).
 func NewBus(scu *SCU, smpc *SMPC, vdp1 *VDP1, vdp2 *VDP2, scsp *SCSP, cdblock *CDBlock) *Bus {
 	b := &Bus{
-		wramH:   make([]byte, wramHSize),
-		wramL:   make([]byte, wramLSize),
-		backup:  make([]byte, backupSize),
-		extRAM:  make([]byte, extRAMSize),
-		scu:     scu,
-		smpc:    smpc,
-		vdp1:    vdp1,
-		vdp2:    vdp2,
-		scsp:    scsp,
-		cdblock: cdblock,
+		wramH:     make([]byte, wramHSize),
+		wramL:     make([]byte, wramLSize),
+		backup:    make([]byte, backupSize),
+		extRAM:    make([]byte, extRAMSize),
+		ramCartID: ramCartID4MB,
+		scu:       scu,
+		smpc:      smpc,
+		vdp1:      vdp1,
+		vdp2:      vdp2,
+		scsp:      scsp,
+		cdblock:   cdblock,
 	}
 	formatBackupRAM(b.backup)
 	return b
@@ -346,7 +349,7 @@ func (b *Bus) read8Impl(addr uint32) uint8 {
 
 	case addr >= cs0Base && addr <= cs0Top:
 		// A-Bus CS0: Extended RAM Cartridge
-		if addr >= extRAMBase && addr <= extRAMTop {
+		if b.ramCartID != ramCartIDNone && addr >= extRAMBase && addr <= extRAMTop {
 			return b.extRAM[addr&extRAMMask]
 		}
 		return 0xFF
@@ -354,7 +357,7 @@ func (b *Bus) read8Impl(addr uint32) uint8 {
 	case addr >= 0x04000000 && addr <= 0x04FFFFFF:
 		// A-Bus CS1: Cartridge ID
 		if addr == cartIDAddr {
-			return cartID4MB
+			return b.ramCartID
 		}
 		return 0xFF
 
@@ -695,6 +698,9 @@ func (b *Bus) read16Impl(addr uint32) uint16 {
 		// VDP2 Registers: word access
 		return b.vdp2.Read((masked - 0x05F80000) &^ 1)
 	case masked >= extRAMBase && masked <= extRAMTop:
+		if b.ramCartID == ramCartIDNone {
+			return 0xFFFF
+		}
 		off := masked & extRAMMask
 		return uint16(b.extRAM[off])<<8 | uint16(b.extRAM[off+1])
 	case masked >= cs0Base && masked <= cs0Top:
@@ -703,7 +709,7 @@ func (b *Bus) read16Impl(addr uint32) uint16 {
 	case masked >= 0x04000000 && masked <= 0x04FFFFFF:
 		// A-Bus CS1: Cartridge ID (read-only, 16-bit bus)
 		if masked&0x00FFFFFE == 0x00FFFFFE {
-			return 0xFF00 | uint16(cartID4MB)
+			return 0xFF00 | uint16(b.ramCartID)
 		}
 		return 0xFFFF
 	case masked >= 0x05000000 && masked <= 0x057FFFFF:
@@ -794,6 +800,9 @@ func (b *Bus) read32Impl(addr uint32) uint32 {
 		off := (masked - 0x05F80000) &^ 3
 		return uint32(b.vdp2.Read(off))<<16 | uint32(b.vdp2.Read(off+2))
 	case masked >= extRAMBase && masked <= extRAMTop:
+		if b.ramCartID == ramCartIDNone {
+			return 0xFFFFFFFF
+		}
 		off := masked & extRAMMask
 		return uint32(b.extRAM[off])<<24 | uint32(b.extRAM[off+1])<<16 |
 			uint32(b.extRAM[off+2])<<8 | uint32(b.extRAM[off+3])
@@ -806,10 +815,10 @@ func (b *Bus) read32Impl(addr uint32) uint32 {
 		// the cartridge ID byte appears at 0x04FFFFFF.
 		hi, lo := uint32(0xFFFF), uint32(0xFFFF)
 		if masked&0x00FFFFFE == 0x00FFFFFE {
-			hi = 0xFF00 | uint32(cartID4MB)
+			hi = 0xFF00 | uint32(b.ramCartID)
 		}
 		if (masked+2)&0x00FFFFFE == 0x00FFFFFE {
-			lo = 0xFF00 | uint32(cartID4MB)
+			lo = 0xFF00 | uint32(b.ramCartID)
 		}
 		return hi<<16 | lo
 	case masked >= 0x05000000 && masked <= 0x057FFFFF:

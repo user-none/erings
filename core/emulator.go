@@ -5,6 +5,7 @@ package core
 
 import (
 	"errors"
+	"strings"
 	"sync/atomic"
 
 	"github.com/user-none/erings/core/sh2"
@@ -232,11 +233,24 @@ func (e *Emulator) systemReset() {
 func (e *Emulator) SetDisc(d DiscReader) {
 	e.cdblock.SetDisc(d)
 	e.ipImage = nil
+	e.bus.ramCartID = ramCartID4MB
 	if d == nil {
 		return
 	}
 	e.ipImage = readIPImage(d)
+	e.applyRAMCartOverride()
 	e.autoDetectRegion()
+}
+
+// applyRAMCartOverride sets the bus RAM cartridge ID from the disc's
+// product number via ramCartOverrides. Runs at disc load, before any boot
+// activity, so the game's cartridge probe sees consistent state.
+func (e *Emulator) applyRAMCartOverride() {
+	if len(e.ipImage) < 0x2A {
+		return
+	}
+	product := strings.Trim(string(e.ipImage[0x20:0x2A]), " \x00")
+	e.bus.ramCartID = ramCartIDForProduct(product)
 }
 
 // autoDetectRegion reads the area-code field from the cached IP
