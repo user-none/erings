@@ -4190,6 +4190,81 @@ func TestRBG0Identity(t *testing.T) {
 	}
 }
 
+// TestRBG0HiResHcntDotPairs verifies the rotation Hcnt in the 640/704
+// horizontal modes: the H counter's hi-res bit is below the rotation
+// pipeline's input (VDP2 manual, H Counter register), so consecutive
+// dot pairs share one rotation coordinate.
+func TestRBG0HiResHcntDotPairs(t *testing.T) {
+	v := setupRBG0Identity(t)
+
+	writeVRAM16(v, 0, 0x0001) // MSW: palette=1
+	writeVRAM16(v, 2, 0x0001) // LSW: charNum=1
+	// Cell row 0 with distinct dots 1..8 so mapX is observable per pixel.
+	v.vram[0x20] = 0x12
+	v.vram[0x21] = 0x34
+	v.vram[0x22] = 0x56
+	v.vram[0x23] = 0x78
+
+	// Palette 1, dot d -> color index 16+d; color raw value d (red = d<<3).
+	for d := 1; d <= 8; d++ {
+		v.cram[(16+d)*2] = 0x00
+		v.cram[(16+d)*2+1] = uint8(d)
+	}
+
+	v.hiRes = true
+
+	buf := make([]uint32, 352*256)
+	renderTestRBG0(v, buf)
+
+	// With identity rotation mapX equals hcnt, so pixel x samples cell
+	// dot x>>1: pairs repeat and advance one map dot per pair.
+	for x := 0; x < 8; x++ {
+		wantR, _, _ := rgb555ToRGB(uint16(x>>1 + 1))
+		if r := uint8(buf[x] >> 16); r != wantR {
+			t.Errorf("pixel (%d,0) red = %d, want %d (map dot %d)", x, r, wantR, x>>1)
+		}
+	}
+}
+
+// TestRBG0DoubleDensityVcntFieldLine verifies the rotation Vcnt in
+// double-density interlace: the V counter carries the line count within
+// the field with the field flag in bit 0 (VDP2 manual, V Counter
+// register), so the rotation equations step per field line and both
+// fields derive identical coordinates. Line y must sample map row y,
+// not the displayed row y*2+field.
+func TestRBG0DoubleDensityVcntFieldLine(t *testing.T) {
+	v := setupRBG0Identity(t)
+
+	writeVRAM16(v, 0, 0x0001) // MSW: palette=1
+	writeVRAM16(v, 2, 0x0001) // LSW: charNum=1
+	// Cell rows 0..7: every dot of row r is r+1 so mapY is observable.
+	for r := 0; r < 8; r++ {
+		for i := 0; i < 4; i++ {
+			v.vram[0x20+r*4+i] = uint8((r+1)<<4 | (r + 1))
+		}
+	}
+
+	// Palette 1, dot d -> color index 16+d; color raw value d (red = d<<3).
+	for d := 1; d <= 8; d++ {
+		v.cram[(16+d)*2] = 0x00
+		v.cram[(16+d)*2+1] = uint8(d)
+	}
+
+	v.interlace = 3
+	v.oddField = true // field bit 1: the doubled model would read row y*2+1
+
+	buf := make([]uint32, 352*256)
+	renderTestRBG0(v, buf)
+
+	w := int(v.activeWidth)
+	for y := 0; y < 4; y++ {
+		wantR, _, _ := rgb555ToRGB(uint16(y + 1))
+		if r := uint8(buf[y*w] >> 16); r != wantR {
+			t.Errorf("line %d red = %d, want %d (map row %d)", y, r, wantR, y)
+		}
+	}
+}
+
 // TestRBG0SFCCMDMode1ScreenEnableGate verifies the per-screen CC enable bit
 // gates the special CC modes for RBG0 (manual Table 12.3): mode 1 requires
 // both R0CCEN and the pattern-name special CC bit.

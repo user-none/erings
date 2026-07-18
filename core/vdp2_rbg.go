@@ -334,6 +334,14 @@ func (v *VDP2) rbg0SpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y int) 
 // rbg0CellSpanSetup prepares row y of cell-mode RBG0.
 func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y int) func(x0, x1 int) {
 	width := v.frame.width
+	// Rotation Hcnt advances at the normal-mode dot rate: in the
+	// 640/704-wide modes two screen dots share one rotation coordinate
+	// (VDP2 manual Sec 16.3, H Counter register: hi-res adds a low
+	// counter bit below the rotation pipeline's input).
+	hcntShift := 0
+	if v.frame.hiRes {
+		hcntShift = 1
+	}
 
 	// paramA/paramB stay pointers into rf because the RPRCTL re-reads
 	// below overwrite their xst, yst, and kast fields; those writes
@@ -386,10 +394,11 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 	totalPixH := totalCellsH * charPx
 	totalPixV := totalCellsV * charPx
 
+	// Rotation Vcnt is the line count within the field: the
+	// double-density interlace field flag sits below that count in the
+	// V counter (VDP2 manual Sec 16.3, V Counter register), so both
+	// fields step the rotation parameters identically.
 	vcnt := int64(y)
-	if v.frame.effIntl == 3 {
-		vcnt = int64(y*2 + v.frame.field)
-	}
 
 	// Per-line parameter re-reading, gated by this scanline's self-clearing
 	// RPRCTL arm. An armed parameter re-reads from VRAM and rebases its
@@ -472,7 +481,7 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 			if cfg.mosaicH > 1 {
 				ex = (x / cfg.mosaicH) * cfg.mosaicH
 			}
-			hcnt := int64(ex)
+			hcnt := int64(ex >> hcntShift)
 
 			// Determine which parameter set to use
 			useA := true
@@ -973,10 +982,18 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 }
 
 // rbg0BitmapSpanSetup prepares row y of RBG0 in bitmap mode with
-// rotation. Param re-reads and per-line position derivation match the
-// cell path; coefficient tables are not applied in this mode.
+// rotation. Param re-reads, per-line position derivation, and
+// coefficient table handling match the cell path.
 func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y int) func(x0, x1 int) {
 	width := v.frame.width
+	// Rotation Hcnt advances at the normal-mode dot rate: in the
+	// 640/704-wide modes two screen dots share one rotation coordinate
+	// (VDP2 manual Sec 16.3, H Counter register: hi-res adds a low
+	// counter bit below the rotation pipeline's input).
+	hcntShift := 0
+	if v.frame.hiRes {
+		hcntShift = 1
+	}
 
 	// paramA/paramB stay pointers into rf because the RPRCTL re-reads
 	// below overwrite their xst, yst, and kast fields; those writes
@@ -997,10 +1014,11 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 	bmpW := cfg.bmpWidth
 	bmpH := cfg.bmpHeight
 
+	// Rotation Vcnt is the line count within the field: the
+	// double-density interlace field flag sits below that count in the
+	// V counter (VDP2 manual Sec 16.3, V Counter register), so both
+	// fields step the rotation parameters identically.
 	vcnt := int64(y)
-	if v.frame.effIntl == 3 {
-		vcnt = int64(y*2 + v.frame.field)
-	}
 
 	// Per-line re-reads gated by this scanline's self-clearing RPRCTL arm
 	// (see rbg0CellSpanSetup).
@@ -1074,7 +1092,7 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			if cfg.mosaicH > 1 {
 				ex = (x / cfg.mosaicH) * cfg.mosaicH
 			}
-			hcnt := int64(ex)
+			hcnt := int64(ex >> hcntShift)
 
 			useA := cfg.rpMode != 1
 			if cfg.rpMode == 3 && v.isRPWindowB(x, y) {
@@ -1347,6 +1365,14 @@ func (v *VDP2) rbg1SpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y int) 
 // rbg1CellSpanSetup prepares row y of cell-mode RBG1.
 func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y int) func(x0, x1 int) {
 	width := v.frame.width
+	// Rotation Hcnt advances at the normal-mode dot rate: in the
+	// 640/704-wide modes two screen dots share one rotation coordinate
+	// (VDP2 manual Sec 16.3, H Counter register: hi-res adds a low
+	// counter bit below the rotation pipeline's input).
+	hcntShift := 0
+	if v.frame.hiRes {
+		hcntShift = 1
+	}
 
 	// paramB stays a pointer into rf because the RPRCTL re-reads below
 	// overwrite its xst, yst, and kast fields; those writes must
@@ -1387,10 +1413,11 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 	totalPixH := planeCellsH * 4 * charPx
 	totalPixV := planeCellsV * 4 * charPx
 
+	// Rotation Vcnt is the line count within the field: the
+	// double-density interlace field flag sits below that count in the
+	// V counter (VDP2 manual Sec 16.3, V Counter register), so both
+	// fields step the rotation parameters identically.
 	vcnt := int64(y)
-	if v.frame.effIntl == 3 {
-		vcnt = int64(y*2 + v.frame.field)
-	}
 
 	arm := v.rotArmBits(y)
 	if arm&0x0100 != 0 {
@@ -1431,7 +1458,7 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 			if cfg.mosaicH > 1 {
 				ex = (x / cfg.mosaicH) * cfg.mosaicH
 			}
-			hcnt := int64(ex)
+			hcnt := int64(ex >> hcntShift)
 
 			kx := paramB.kx
 			ky := paramB.ky
@@ -1777,6 +1804,14 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 // rotation (param B only).
 func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y int) func(x0, x1 int) {
 	width := v.frame.width
+	// Rotation Hcnt advances at the normal-mode dot rate: in the
+	// 640/704-wide modes two screen dots share one rotation coordinate
+	// (VDP2 manual Sec 16.3, H Counter register: hi-res adds a low
+	// counter bit below the rotation pipeline's input).
+	hcntShift := 0
+	if v.frame.hiRes {
+		hcntShift = 1
+	}
 
 	// paramB stays a pointer into rf because the RPRCTL re-reads below
 	// overwrite its xst, yst, and kast fields; those writes must
@@ -1794,10 +1829,11 @@ func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 	bmpW := cfg.bmpWidth
 	bmpH := cfg.bmpHeight
 
+	// Rotation Vcnt is the line count within the field: the
+	// double-density interlace field flag sits below that count in the
+	// V counter (VDP2 manual Sec 16.3, V Counter register), so both
+	// fields step the rotation parameters identically.
 	vcnt := int64(y)
-	if v.frame.effIntl == 3 {
-		vcnt = int64(y*2 + v.frame.field)
-	}
 
 	arm := v.rotArmBits(y)
 	if arm&0x0100 != 0 {
@@ -1838,7 +1874,7 @@ func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			if cfg.mosaicH > 1 {
 				ex = (x / cfg.mosaicH) * cfg.mosaicH
 			}
-			hcnt := int64(ex)
+			hcnt := int64(ex >> hcntShift)
 
 			kx := paramB.kx
 			ky := paramB.ky
