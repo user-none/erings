@@ -103,9 +103,9 @@ func TestRGB555ToRGB(t *testing.T) {
 func TestBackScreenSingleColor(t *testing.T) {
 	v := newTestVDP2()
 
-	// Write a red color (RGB555: R=31, G=0, B=0, opacity bit 15 set =
-	// 0x801F) to VRAM[0:2]
-	v.vram[0] = 0x80 // big-endian high byte
+	// Write a red color (RGB555: R=31, G=0, B=0 = 0x001F) to VRAM[0:2].
+	// Bit 15 is left clear: back screen data ignores it (manual Fig 7.5).
+	v.vram[0] = 0x00 // big-endian high byte
 	v.vram[1] = 0x1F // big-endian low byte
 
 	renderTestFrame(v)
@@ -134,9 +134,8 @@ func TestBackScreenSingleColorCustomAddress(t *testing.T) {
 	v.regs[vdp2BKTAL] = 0x1000
 	v.regs[vdp2BKTAU] = 0x0000
 
-	// Write green (RGB555 0x03E0 with opacity bit 15 set = 0x83E0) at
-	// VRAM byte address 0x2000
-	v.vram[0x2000] = 0x83 // big-endian high
+	// Write green (RGB555: R=0, G=31, B=0 = 0x03E0) at VRAM byte address 0x2000
+	v.vram[0x2000] = 0x03 // big-endian high
 	v.vram[0x2001] = 0xE0 // big-endian low
 
 	renderTestFrame(v)
@@ -144,26 +143,6 @@ func TestBackScreenSingleColorCustomAddress(t *testing.T) {
 	fb := v.Framebuffer()
 	if fb[0] != 0 || fb[1] != 255 || fb[2] != 0 || fb[3] != 255 {
 		t.Errorf("pixel 0 = (%d,%d,%d,%d), want (0,255,0,255)", fb[0], fb[1], fb[2], fb[3])
-	}
-}
-
-// A back screen table entry with bit 15 clear displays black even
-// when its color fields are nonzero: games park BKTA on stale VRAM
-// (address 0) during scene re-init with the display enabled and rely
-// on the entry showing black. See the opacity-bit note at the back
-// screen read in vdp2_composite.go.
-func TestBackScreenBit15ClearDisplaysBlack(t *testing.T) {
-	v := newTestVDP2()
-
-	// 0x01A0: green field nonzero, bit 15 clear.
-	v.vram[0] = 0x01
-	v.vram[1] = 0xA0
-
-	renderTestFrame(v)
-
-	fb := v.Framebuffer()
-	if fb[0] != 0 || fb[1] != 0 || fb[2] != 0 {
-		t.Errorf("pixel 0 = (%d,%d,%d), want (0,0,0) for bit-15-clear back color", fb[0], fb[1], fb[2])
 	}
 }
 

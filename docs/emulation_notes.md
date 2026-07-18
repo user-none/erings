@@ -22,6 +22,28 @@ dialog box and after the next loading screen.
 The name input menu flickers without at least partial SH-2 Multiplier
 Contention modeling.
 
+## FALCOM CLASSICS (T-31503G, CD-2/2)
+
+Scene transitions flash a single green frame. During its transition
+the game blanks the display for one frame and runs a VDP2 register
+init that zeroes BKTA. It then re-enables the display while BKTA
+still points at VRAM address 0; the game's regular per-vblank routine
+only restores the real table address one frame later. For that one
+frame every background layer is disabled (BGON=0) and both VDP1
+framebuffers have just been erased by the game's own auto-mode swaps,
+so the back screen is the only visible surface. The stale word at
+VRAM address 0 is 01A0H, a green with bit 15 clear, and per VDP2
+manual Figure 7.5 bit 15 of back screen data is ignored, so the color
+displays.
+
+It appears this green frame is what happens on real hardware - the
+frame's entire content is the game's own configuration and no fetch
+timing avoids the one-frame window between the two vblank writes -
+but this has not been confirmed on hardware. The game's intended
+transition black also comes from a bit-15-clear back screen word
+(0000H), so treating bit 15 as an opacity flag would only mask this
+one frame while contradicting the documented data format.
+
 # VDP1 rendering
 
 ## EDSR.CEF (Current End Flag) and the PTM trigger source
