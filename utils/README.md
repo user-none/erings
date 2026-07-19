@@ -9,8 +9,9 @@ standard library (plus the in-tree `core/sh2` disassembler for `disasm`,
 the `go-chip-m68k` disassembler for `m68kdisasm`, and the S2 decompressor
 for `statedump`). `debug` is the development launcher and links the
 emulator core and its UI dependencies, so it needs a display to run.
-`capture` links the emulator core but is fully headless (no display or
-audio), so it runs anywhere.
+`debugger` is the GUI client for `debug`'s console; it needs a display
+but does not link the emulator core. `capture` links the emulator core
+but is fully headless (no display or audio), so it runs anywhere.
 
 ## debug
 
@@ -50,12 +51,14 @@ Additional keys:
 
 ### Debug console
 
-`-c <port>` starts an interactive debug console on `127.0.0.1:<port>`
-(off by default). It speaks a bare line protocol, so both `telnet` and
+`-debug-console` starts an interactive debug console on
+`127.0.0.1:5000` (off by default; `-debug-console-port` selects a
+different port). It speaks a bare line protocol, so both `telnet` and
 `nc` work as clients, and it is scriptable
-(`echo "list" | nc localhost 7777`). One client is served at a time; a
-second connection waits until the current one disconnects. Console
-state (searches, watches, snapshots) lives in the tool and survives
+(`echo "list" | nc localhost 5000`). The `debugger` tool is a GUI
+client for the same console. One client is served at a time; a second
+connection waits until the current one disconnects. Console state
+(searches, watches, snapshots) lives in the tool and survives
 reconnects.
 
 Commands run between frames on the emulation loop. Addresses are Saturn
@@ -65,6 +68,8 @@ RAM Low and High are the accessible regions.
 
 - `pause` / `resume` / `frame [n]` - execution control; `frame` runs n
   frames while paused for frame-precise stepping.
+- `state` - one-line report of the pause flag, frame count, search
+  width, and surviving candidate count.
 - `regions` / `read <addr> [len]` - region list and hex dump.
 - `watch [<addr> [w]]` / `unwatch <addr>|all` - report value changes
   each frame (width 8/16/32) to stderr and the console.
@@ -72,14 +77,19 @@ RAM Low and High are the accessible regions.
   value condition first becomes true (same operators as `filter`),
   e.g. `break 0x0605C973 eq 0` to stop on the frame health hits zero.
 - `baseline [region...]` / `filter <op> [value]` / `width [8|16|32]` /
-  `list [n]` / `reset` - cheat-search style memory search: baseline the
-  regions, act in-game, then filter with `dec`, `inc`, `same`, `diff`,
-  or `eq`/`ne`/`lt`/`gt <value>` to narrow candidates. Every filter
-  re-baselines to the values it just read.
+  `list [n [offset]]` / `reset` - cheat-search style memory search:
+  baseline the regions, act in-game, then filter with `dec`, `inc`,
+  `same`, `diff`, or `eq`/`ne`/`lt`/`gt <value>` to narrow candidates.
+  Every filter re-baselines to the values it just read. `list` pages
+  through the survivors with the optional offset.
 - `snapshot [name]` / `snapshots` / `restore [name]` - in-memory
   machine save states for repeating an event from a fixed point.
 - `prompt on|off` - disable the interactive `> ` prompt for scripted
   capture.
+- `mode text|json` - response format. JSON mode emits one JSON object
+  per line (a response envelope per command, plus pushed watch/break
+  events) and is what the `debugger` tool uses; text mode is the
+  default and resets on every new connection.
 - `help` - full command list.
 
 A typical search: `baseline`, take a hit in-game, `filter dec`, play
@@ -93,6 +103,52 @@ used by the PC histogram feature of the `utils/debug` launcher. To use this
 function for other purposes with that launcher, the currently hooked-in
 function needs to be changed or replaced for one-off testing. Changes to
 this histogram capture should not be committed.
+
+## debugger
+
+A GUI client for the `debug` launcher's console, in its own window so
+keyboard focus never fights with the game. It is a viewer over the
+console's command set: it holds no state of its own, rebuilds every
+panel from the console's answers on connect, and clears them on
+disconnect. Console state survives client reconnects, so closing and
+reopening either side is routine.
+
+Start the launcher with the console enabled, then the debugger:
+
+```
+go run ./utils/debug -debug-console -disc game.chd
+go run ./utils/debugger
+```
+
+The connect panel is prefilled with `127.0.0.1:5000` (`-connect`
+changes the prefill); Connect attaches, and a dropped connection
+returns to the panel with the reason shown.
+
+Panels:
+
+- Top bar: pause / resume / step-n controls with the frame counter and
+  pause state.
+- Memory: a 16-row hex view with region buttons, a goto box (mirror
+  and partition spellings fold like the console), mouse-wheel movement
+  through the region, and a decaying highlight on bytes that changed
+  between refreshes.
+- Watches and Breaks: live lists with per-row remove, a quick-add row
+  under each (the break row cycles the condition operator), a red
+  flash when an entry fires, and click-to-jump: clicking an entry
+  scrolls the hex view to its address.
+- Search: the baseline / filter / width / rebase / reset workflow as
+  buttons, with a paged candidate list (50 per page); clicking a
+  candidate jumps the hex view to it.
+- Event log: pushed watch/break traffic and command responses in their
+  own scrollback, which takes all extra window height and follows the
+  bottom until scrolled up.
+- Command line: sends any console command verbatim, so the GUI never
+  lags the console's command set.
+
+Copy and paste: all text inputs take Ctrl/Cmd+A/C/V/X. The hex view
+has hex-editor drag selection (Ctrl/Cmd+C copies the dump format,
+Shift+Ctrl/Cmd+C a raw hex string) and the log has terminal-style drag
+selection copied as plain text. One selection exists at a time.
 
 ## capture
 
