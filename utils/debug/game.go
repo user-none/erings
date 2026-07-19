@@ -25,7 +25,8 @@ type game struct {
 	offscreen   *ebiten.Image
 
 	// paused, when true, makes emulationLoop skip RunFrame and queue
-	// one frame of silence to keep audio-driven pacing alive.
+	// one frame of silence so the audio ring stays fed and oto does not
+	// underrun.
 	paused atomic.Bool
 
 	// frameTick advances on every emulationLoop iteration. The watchdog
@@ -34,9 +35,8 @@ type game struct {
 	frameTick atomic.Uint64
 	// stage tags the most recent point reached inside one iteration of
 	// emulationLoop, so the watchdog can report which stage hung when
-	// frameTick stops advancing. Updated with atomic store of a small
-	// integer enum (stageStart / stageRunFrame / stageQueueAudio /
-	// stageUpdateFB).
+	// frameTick stops advancing. Updated with an atomic store of a small
+	// integer enum (see stageName).
 	stage atomic.Int32
 
 	// histReq is set from Update (ebiten goroutine) on key 9 and
@@ -51,8 +51,8 @@ type game struct {
 
 	// dumpReq is set from Update (ebiten goroutine) on key 8 and
 	// consumed in emulationLoop between frames. The emulation goroutine
-	// reads the memory regions and writes per-region binary files to a
-	// timestamped subdirectory under dumpDir.
+	// serializes the machine state and explodes it per chunk field into
+	// a timestamped subdirectory under dumpDir.
 	dumpReq atomic.Bool
 	dumpDir string
 
@@ -62,6 +62,41 @@ type game struct {
 	// and consumed in emulationLoop between frames to append a marker.
 	recorder      *replay.Recorder
 	screenshotReq atomic.Bool
+
+	// console, when non-nil (-c given), is the network debug console.
+	// Its command queue is drained between frames (serviceConsole), so
+	// command handlers run on the emulation goroutine and may touch
+	// emulation-owned state directly.
+	console *console
+
+	// stepRemaining and stepResp implement the console frame command.
+	// Both are owned by the emulation goroutine: stepRemaining counts
+	// frames still to run while paused, and stepResp holds the pending
+	// response channel until the step completes.
+	stepRemaining int
+	stepResp      chan string
+
+	// emuFrame counts RunFrame calls; watch lines reference it. Owned
+	// by the emulation goroutine.
+	emuFrame uint64
+
+	// watches and consoleOut are console watch state, owned by the
+	// emulation goroutine. consoleOut is the attached client's output
+	// channel (nil when no client is connected), handed over and
+	// cleared through the command queue (attach/bye).
+	watches    []watchEntry
+	consoleOut chan string
+
+	// search and searchWidth are the console memory-search state, owned
+	// by the emulation goroutine. searchWidth zero means the default
+	// (8-bit, see currentWidth).
+	search      *search
+	searchWidth int
+
+	// snapshots holds the console's in-memory machine states by slot
+	// name. Owned by the emulation goroutine; session-scoped, never
+	// written to disk.
+	snapshots map[string][]byte
 
 	// player, when non-nil (-replay given), feeds recorded input each
 	// frame. Its input is OR'd with live input so the user can still

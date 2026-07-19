@@ -31,8 +31,8 @@ Movement keys are:
 - S (down)
 - A (left)
 - D (right)
-- N (left shoulder)
-- M (right shoulder)
+- C (left shoulder)
+- N (right shoulder)
 - J (A)
 - K (B)
 - L (C)
@@ -47,6 +47,41 @@ Additional keys:
 - 9 (dump top 20 PC histogram)
 - 8 (dump the current save state, exploded per field, to a
   `dump-YYYYMMDD-HHMMSS-mmm` directory)
+
+### Debug console
+
+`-c <port>` starts an interactive debug console on `127.0.0.1:<port>`
+(off by default). It speaks a bare line protocol, so both `telnet` and
+`nc` work as clients, and it is scriptable
+(`echo "list" | nc localhost 7777`). One client is served at a time; a
+second connection waits until the current one disconnects. Console
+state (searches, watches, snapshots) lives in the tool and survives
+reconnects.
+
+Commands run between frames on the emulation loop. Addresses are Saturn
+hardware addresses (hex `0x` prefix or decimal); SH-2 partition
+spellings and mirror images resolve to the same canonical byte. Work
+RAM Low and High are the accessible regions.
+
+- `pause` / `resume` / `frame [n]` - execution control; `frame` runs n
+  frames while paused for frame-precise stepping.
+- `regions` / `read <addr> [len]` - region list and hex dump.
+- `watch [<addr> [w]]` / `unwatch <addr>|all` - report value changes
+  each frame (width 8/16/32) to stderr and the console.
+- `baseline [region...]` / `filter <op> [value]` / `width [8|16|32]` /
+  `list [n]` / `reset` - cheat-search style memory search: baseline the
+  regions, act in-game, then filter with `dec`, `inc`, `same`, `diff`,
+  or `eq`/`ne`/`lt`/`gt <value>` to narrow candidates. Every filter
+  re-baselines to the values it just read.
+- `snapshot [name]` / `snapshots` / `restore [name]` - in-memory
+  machine save states for repeating an event from a fixed point.
+- `prompt on|off` - disable the interactive `> ` prompt for scripted
+  capture.
+- `help` - full command list.
+
+A typical search: `baseline`, take a hit in-game, `filter dec`, play
+safely, `filter same`, take another hit, `filter dec`, then `list` and
+`watch` the survivors to confirm.
 
 ### sh2.TraceFunc
 

@@ -29,6 +29,7 @@ func main() {
 	record := flag.String("record", "", "Record a replay file (JSON) of per-frame input and screenshot markers.")
 	replayPath := flag.String("replay", "", "Replay a recorded input file (JSON). Recorded input is mixed with live input so you can still press buttons.")
 	loadState := flag.String("load-state", "", "Path to a save state file to load at startup. Requires the same disc and BIOS the state was captured with; a replay played on top must have been recorded from this state.")
+	consolePort := flag.Int("c", 0, "Debug console TCP port, bound to 127.0.0.1 (0 = disabled). Line protocol; connect with nc or telnet.")
 	flag.Parse()
 
 	if *record != "" && *replayPath != "" {
@@ -178,6 +179,15 @@ func main() {
 		dumpDir:     *dumpDir,
 		recorder:    recorder,
 		player:      player,
+	}
+
+	if *consolePort != 0 {
+		c, err := startConsole(*consolePort)
+		if err != nil {
+			log.Fatalf("failed to start debug console: %v", err)
+		}
+		g.console = c
+		fmt.Printf("[CONSOLE] listening on 127.0.0.1:%d\n", *consolePort)
 	}
 
 	g.startWatchdog()

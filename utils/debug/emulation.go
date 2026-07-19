@@ -60,12 +60,10 @@ func (g *game) emulationLoop() {
 	frameTimeSum := time.Duration(0)
 	frameTimeCount := 0
 
-	// Path 2 timer pacing. Frames run on an absolute-deadline schedule at the
+	// Timer pacing. Frames run on an absolute-deadline schedule at the
 	// nominal frame interval; a slow proportional controller nudges the
 	// interval from ring fill so long-term production locks to the audio
-	// device's consumption rate. This replaces the demand-token gate, which
-	// slaved the producer to oto's coarse, Go-scheduled ~33ms reads and made
-	// frames complete in bursts.
+	// device's consumption rate.
 	bytesPerFrame := int(math.Round(float64(audioSampleRate) * 4 / float64(g.fps)))
 	baseInterval := float64(time.Second) / float64(g.fps)
 	frameInterval := baseInterval
@@ -102,7 +100,15 @@ func (g *game) emulationLoop() {
 			g.emu.SetInput(player, buttons[player])
 		}
 
-		if g.paused.Load() {
+		// A pending console frame step runs frames while the pause flag
+		// stays set; the step counter is emulation-goroutine-owned.
+		paused := g.paused.Load()
+		if paused && g.stepRemaining > 0 {
+			g.stepRemaining--
+			paused = false
+		}
+
+		if paused {
 			g.stage.Store(stageQueueAudio)
 			g.audioPlayer.queueSamples(nil)
 		} else {
@@ -127,6 +133,7 @@ func (g *game) emulationLoop() {
 			runStart := time.Now()
 			g.emu.RunFrame()
 			runDur := time.Since(runStart)
+			g.emuFrame++
 
 			// Record the input applied to this frame. buttons is the
 			// snapshot read above and fed to SetInput, so it is exactly
@@ -212,9 +219,11 @@ func (g *game) emulationLoop() {
 // stable core state. All between-frames work is added here, not inline in
 // emulationLoop.
 func (g *game) serviceRequests() {
+	g.serviceWatches()
 	g.serviceHistRequest()
 	g.serviceScreenshotRequest()
 	g.serviceDumpRequest()
+	g.serviceConsole()
 }
 
 type emuControl struct {
