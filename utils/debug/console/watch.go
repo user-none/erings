@@ -60,31 +60,50 @@ func (c *Console) serviceWatches() {
 	}
 }
 
+// parseWidth parses a value width argument.
+func parseWidth(s string) (int, error) {
+	v, err := strconv.Atoi(s)
+	if err != nil || (v != 8 && v != 16 && v != 32) {
+		return 0, fmt.Errorf("width must be 8, 16, or 32")
+	}
+	return v, nil
+}
+
+// resolveTarget validates an address at a width. It returns the
+// canonical address, region, and offset.
+func resolveTarget(addrStr string, width int) (uint32, *region, uint32, error) {
+	addr, err := parseAddress(addrStr)
+	if err != nil {
+		return 0, nil, 0, err
+	}
+	r, off, err := lookupRegion(addr)
+	if err != nil {
+		return 0, nil, 0, err
+	}
+	if bytes := uint32(width / 8); off%bytes != 0 {
+		return 0, nil, 0, fmt.Errorf("address 0x%08X is not %d-byte aligned for w%d",
+			r.start+off, bytes, width)
+	}
+	return r.start + off, r, off, nil
+}
+
 // parseWatchTarget validates an address/width argument pair shared by
 // watch and unwatch. It returns the canonical address, region, offset,
 // and width.
 func parseWatchTarget(args []string) (uint32, *region, uint32, int, error) {
-	addr, err := parseAddress(args[0])
-	if err != nil {
-		return 0, nil, 0, 0, err
-	}
 	width := 8
 	if len(args) == 2 {
-		v, err := strconv.Atoi(args[1])
-		if err != nil || (v != 8 && v != 16 && v != 32) {
-			return 0, nil, 0, 0, fmt.Errorf("width must be 8, 16, or 32")
+		w, err := parseWidth(args[1])
+		if err != nil {
+			return 0, nil, 0, 0, err
 		}
-		width = v
+		width = w
 	}
-	r, off, err := lookupRegion(addr)
+	addr, r, off, err := resolveTarget(args[0], width)
 	if err != nil {
 		return 0, nil, 0, 0, err
 	}
-	if bytes := uint32(width / 8); off%bytes != 0 {
-		return 0, nil, 0, 0, fmt.Errorf("address 0x%08X is not %d-byte aligned for w%d",
-			r.start+off, bytes, width)
-	}
-	return r.start + off, r, off, width, nil
+	return addr, r, off, width, nil
 }
 
 func cmdWatch(c *Console, args []string) (string, error) {

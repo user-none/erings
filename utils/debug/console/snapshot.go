@@ -57,9 +57,10 @@ func cmdSnapshots(c *Console, args []string) (string, error) {
 
 // cmdRestore loads a named snapshot. Search state, watches, and the
 // snapshot slots themselves are tool-side data and deliberately survive
-// a restore. After a restore the next filter intersects into the same
-// surviving candidate set. Watches typically fire on the restored
-// values, which is informative rather than spurious.
+// a restore. After a restore, rebase re-anchors the search baseline so
+// the next filter intersects into the same surviving candidate set.
+// Watches typically fire on the restored values, which is informative
+// rather than spurious.
 func cmdRestore(c *Console, args []string) (string, error) {
 	if len(args) > 1 {
 		return "", fmt.Errorf("usage: restore [name]")

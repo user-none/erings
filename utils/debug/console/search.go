@@ -22,8 +22,8 @@ type searchRegionState struct {
 
 // search is an active memory search owned by the emulation goroutine.
 // The candidate set and baselines survive snapshot restores by design.
-// After a restore the next filter intersects into the same surviving
-// set.
+// After a restore, rebase re-anchors the baseline to current memory so
+// the next filter intersects into the same surviving set.
 type search struct {
 	width   int // value width in bits
 	regions []searchRegionState
@@ -107,6 +107,15 @@ type filterOp struct {
 	keep     func(prev, cur, val uint32) bool
 }
 
+func findFilterOp(name string) *filterOp {
+	for i := range filterOps {
+		if filterOps[i].name == name {
+			return &filterOps[i]
+		}
+	}
+	return nil
+}
+
 var filterOps = []filterOp{
 	{"dec", false, func(p, c, _ uint32) bool { return c < p }},
 	{"inc", false, func(p, c, _ uint32) bool { return c > p }},
@@ -176,13 +185,7 @@ func cmdFilter(c *Console, args []string) (string, error) {
 	if len(args) == 0 {
 		return "", fmt.Errorf("usage: filter dec|inc|same|diff | filter eq|ne|lt|gt <value>")
 	}
-	var op *filterOp
-	for i := range filterOps {
-		if filterOps[i].name == args[0] {
-			op = &filterOps[i]
-			break
-		}
-	}
+	op := findFilterOp(args[0])
 	if op == nil {
 		return "", fmt.Errorf("unknown filter %q", args[0])
 	}
@@ -219,6 +222,21 @@ func cmdFilter(c *Console, args []string) (string, error) {
 	return fmt.Sprintf("%d -> %d candidates", before, c.search.total()), nil
 }
 
+// cmdRebase re-reads the baseline for the active search without
+// filtering. It re-anchors comparisons to current memory while keeping
+// the candidate set, which is what makes cross-trial intersection work:
+// restore, rebase, act, filter.
+func cmdRebase(c *Console, args []string) (string, error) {
+	if c.search == nil {
+		return "", fmt.Errorf("no search active (run baseline)")
+	}
+	for i := range c.search.regions {
+		st := &c.search.regions[i]
+		st.baseline = c.readRegion(st.r, 0, st.r.size)
+	}
+	return fmt.Sprintf("rebased, %d candidates kept", c.search.total()), nil
+}
+
 func cmdWidth(c *Console, args []string) (string, error) {
 	if len(args) == 0 {
 		return fmt.Sprintf("width %d", c.currentWidth()), nil
@@ -226,9 +244,9 @@ func cmdWidth(c *Console, args []string) (string, error) {
 	if len(args) != 1 {
 		return "", fmt.Errorf("usage: width [8|16|32]")
 	}
-	v, err := strconv.Atoi(args[0])
-	if err != nil || (v != 8 && v != 16 && v != 32) {
-		return "", fmt.Errorf("width must be 8, 16, or 32")
+	v, err := parseWidth(args[0])
+	if err != nil {
+		return "", err
 	}
 	reset := ""
 	if c.search != nil && c.search.width != v {

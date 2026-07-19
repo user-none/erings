@@ -89,6 +89,44 @@ func TestSearchNarrowing(t *testing.T) {
 	}
 }
 
+// TestRebaseCrossTrialIntersection drives the multi-trial workflow
+// rebase exists for. Trial one diffs across an event. The memory is
+// then rolled back and rebase re-anchors without losing candidates, so
+// a control trial can prune values that also change without the event.
+func TestRebaseCrossTrialIntersection(t *testing.T) {
+	c, m := newFakeConsole()
+	const flag = fakeAddr      // changes only during the event
+	const churn = fakeAddr + 4 // changes in every trial
+
+	if r := runLine(t, c, "rebase"); !strings.Contains(r, "no search active") {
+		t.Fatalf("rebase without search: %q", r)
+	}
+
+	runLine(t, c, "baseline wramh")
+	// Event trial: both the flag and the churn value change.
+	m.wram[flag] = 1
+	m.wram[churn] = 9
+	if r := runLine(t, c, "filter diff"); r != "1048576 -> 2 candidates" {
+		t.Fatalf("event trial: %q", r)
+	}
+
+	// Roll back (as restore would) and re-anchor.
+	m.wram[flag] = 0
+	m.wram[churn] = 0
+	if r := runLine(t, c, "rebase"); r != "rebased, 2 candidates kept" {
+		t.Fatalf("rebase: %q", r)
+	}
+
+	// Control trial: only the churn value changes.
+	m.wram[churn] = 5
+	if r := runLine(t, c, "filter same"); r != "2 -> 1 candidates" {
+		t.Fatalf("control trial: %q", r)
+	}
+	if list := runLine(t, c, "list"); !strings.Contains(list, "0x06001000 ") {
+		t.Fatalf("survivor should be the flag:\n%s", list)
+	}
+}
+
 func TestSnapshotRestoreRoundTrip(t *testing.T) {
 	c, m := newFakeConsole()
 	m.wram[fakeAddr] = 42

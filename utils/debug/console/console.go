@@ -79,6 +79,9 @@ type Console struct {
 	// disconnects.
 	watches []watchEntry
 
+	// breaks are the value breaks. Entries survive console disconnects.
+	breaks []breakEntry
+
 	// search and searchWidth are the memory-search state. searchWidth
 	// zero means the default (8-bit, see currentWidth).
 	search      *search
@@ -204,8 +207,11 @@ func init() {
 		{"read", "read <addr> [len]", "hex dump memory (len 1-4096, default 64)", cmdRead},
 		{"watch", "watch [<addr> [w]]", "report value changes each frame (w=8/16/32); no args lists", cmdWatch},
 		{"unwatch", "unwatch <addr>|all", "stop watching", cmdUnwatch},
+		{"break", "break [<addr> <op> [v] [w]]", "pause when the condition becomes true; no args lists", cmdBreak},
+		{"unbreak", "unbreak <addr>|all", "remove a break", cmdUnbreak},
 		{"baseline", "baseline [region...]", "start a search over regions (default all)", cmdBaseline},
 		{"filter", "filter <op> [value]", "narrow candidates: dec inc same diff | eq ne lt gt <value>", cmdFilter},
+		{"rebase", "rebase", "re-read the baseline without filtering (keeps candidates)", cmdRebase},
 		{"width", "width [8|16|32]", "search value width; setting resets the search", cmdWidth},
 		{"list", "list [n]", "show surviving candidates (default 20)", cmdList},
 		{"reset", "reset", "discard the search", cmdReset},
@@ -223,6 +229,7 @@ func init() {
 func (c *Console) Service(frame uint64) {
 	c.frame = frame
 	c.serviceWatches()
+	c.serviceBreaks()
 	c.serviceCommands()
 }
 
@@ -337,7 +344,7 @@ func cmdPrompt(c *Console, args []string) (string, error) {
 func cmdHelp(c *Console, args []string) (string, error) {
 	var b strings.Builder
 	for _, cm := range commands {
-		fmt.Fprintf(&b, "%-21s %s\n", cm.usage, cm.summary)
+		fmt.Fprintf(&b, "%-27s %s\n", cm.usage, cm.summary)
 	}
 	return strings.TrimRight(b.String(), "\n"), nil
 }

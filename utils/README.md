@@ -68,6 +68,9 @@ RAM Low and High are the accessible regions.
 - `regions` / `read <addr> [len]` - region list and hex dump.
 - `watch [<addr> [w]]` / `unwatch <addr>|all` - report value changes
   each frame (width 8/16/32) to stderr and the console.
+- `break [<addr> <op> [v] [w]]` / `unbreak <addr>|all` - pause when a
+  value condition first becomes true (same operators as `filter`),
+  e.g. `break 0x0605C973 eq 0` to stop on the frame health hits zero.
 - `baseline [region...]` / `filter <op> [value]` / `width [8|16|32]` /
   `list [n]` / `reset` - cheat-search style memory search: baseline the
   regions, act in-game, then filter with `dec`, `inc`, `same`, `diff`,
