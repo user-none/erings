@@ -5,7 +5,7 @@ package core
 
 // Override default 4MB expanded memory cart
 var ramCartOverrides = map[string]uint8{
-	"T-16103H": ramCartIDNone, // Die Hard Trilogy
+	"T-16103H": ramCartIDNone, // Die Hard Trilogy: Fails to run with a memory cart inserted
 }
 
 // ramCartIDForProduct returns the cartridge ID byte for a disc's product number
