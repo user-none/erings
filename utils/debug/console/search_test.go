@@ -207,7 +207,7 @@ func TestWidthCommand(t *testing.T) {
 func TestListValidation(t *testing.T) {
 	c := newTestConsole()
 	c.search = &search{width: 8}
-	for _, bad := range []string{"list 0", "list -1", "list 1001", "list x", "list 5 6"} {
+	for _, bad := range []string{"list 0", "list -1", "list 1001", "list x", "list 5 x", "list 5 -1", "list 5 6 7"} {
 		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
 			t.Fatalf("%q: unexpected response %q", bad, r)
 		}

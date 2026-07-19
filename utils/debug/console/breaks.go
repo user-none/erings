@@ -63,9 +63,15 @@ func (c *Console) serviceBreaks() {
 			line := fmt.Sprintf("[BREAK] frame=%d 0x%08X w%d: %d -> %d (%s) paused",
 				c.frame, b.addr, b.width, b.prev, cur, b.describe())
 			fmt.Fprintln(os.Stderr, line)
+			push := line
+			if c.jsonMode {
+				push = marshalLine(breakEvent{Type: "break", Frame: c.frame,
+					Addr: b.addr, Width: b.width, Prev: b.prev, Cur: cur,
+					Cond: b.describe()})
+			}
 			if c.out != nil {
 				select {
-				case c.out <- line + "\n":
+				case c.out <- push + "\n":
 				default:
 				}
 			}
@@ -75,55 +81,88 @@ func (c *Console) serviceBreaks() {
 	}
 }
 
-func cmdBreak(c *Console, args []string) (string, error) {
+// BreakList is the break list response.
+type BreakList struct {
+	Breaks []BreakInfo `json:"breaks"`
+}
+
+// BreakInfo is one break list entry. Val is meaningful only when HasVal
+// is set (comparison operators).
+type BreakInfo struct {
+	Addr   uint32 `json:"addr"`
+	Width  int    `json:"width"`
+	Op     string `json:"op"`
+	Val    uint32 `json:"val"`
+	HasVal bool   `json:"has_val"`
+}
+
+// cond renders the condition the way breakEntry.describe does.
+func (b BreakInfo) cond() string {
+	if b.HasVal {
+		return fmt.Sprintf("%s %d", b.Op, b.Val)
+	}
+	return b.Op
+}
+
+func (r BreakList) text() string {
+	if len(r.Breaks) == 0 {
+		return "no breaks"
+	}
+	var b strings.Builder
+	for _, e := range r.Breaks {
+		fmt.Fprintf(&b, "0x%08X w%d %s\n", e.Addr, e.Width, e.cond())
+	}
+	return strings.TrimRight(b.String(), "\n")
+}
+
+func cmdBreak(c *Console, args []string) (result, error) {
 	if len(args) == 0 {
-		if len(c.breaks) == 0 {
-			return "no breaks", nil
-		}
-		var b strings.Builder
+		r := BreakList{Breaks: make([]BreakInfo, 0, len(c.breaks))}
 		for i := range c.breaks {
 			e := &c.breaks[i]
-			fmt.Fprintf(&b, "0x%08X w%d %s\n", e.addr, e.width, e.describe())
+			r.Breaks = append(r.Breaks, BreakInfo{
+				Addr: e.addr, Width: e.width, Op: e.op.name,
+				Val: e.val, HasVal: e.op.needsVal})
 		}
-		return strings.TrimRight(b.String(), "\n"), nil
+		return r, nil
 	}
 	if len(args) < 2 {
-		return "", fmt.Errorf("usage: break [<addr> <op> [value] [width]]")
+		return nil, fmt.Errorf("usage: break [<addr> <op> [value] [width]]")
 	}
 	op := findFilterOp(args[1])
 	if op == nil {
-		return "", fmt.Errorf("unknown condition %q", args[1])
+		return nil, fmt.Errorf("unknown condition %q", args[1])
 	}
 	rest := args[2:]
 	var val uint32
 	if op.needsVal {
 		if len(rest) < 1 {
-			return "", fmt.Errorf("usage: break <addr> %s <value> [width]", op.name)
+			return nil, fmt.Errorf("usage: break <addr> %s <value> [width]", op.name)
 		}
 		v, err := parseNumber(rest[0])
 		if err != nil {
-			return "", fmt.Errorf("invalid value %q", rest[0])
+			return nil, fmt.Errorf("invalid value %q", rest[0])
 		}
 		val = v
 		rest = rest[1:]
 	}
 	width := 8
 	if len(rest) > 1 {
-		return "", fmt.Errorf("usage: break [<addr> <op> [value] [width]]")
+		return nil, fmt.Errorf("usage: break [<addr> <op> [value] [width]]")
 	}
 	if len(rest) == 1 {
 		w, err := parseWidth(rest[0])
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		width = w
 	}
 	if op.needsVal && val > widthMax(width) {
-		return "", fmt.Errorf("value %d exceeds w%d range", val, width)
+		return nil, fmt.Errorf("value %d exceeds w%d range", val, width)
 	}
 	addr, r, off, err := resolveTarget(args[0], width)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	entry := breakEntry{addr: addr, r: r, off: off, width: width, op: op, val: val}
 	// Re-adding an address replaces its entry so a condition change or
@@ -131,39 +170,39 @@ func cmdBreak(c *Console, args []string) (string, error) {
 	for i := range c.breaks {
 		if c.breaks[i].addr == addr {
 			c.breaks[i] = entry
-			return fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe()), nil
+			return msg(fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe())), nil
 		}
 	}
 	if len(c.breaks) >= maxBreaks {
-		return "", fmt.Errorf("break limit reached (%d)", maxBreaks)
+		return nil, fmt.Errorf("break limit reached (%d)", maxBreaks)
 	}
 	c.breaks = append(c.breaks, entry)
-	return fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe()), nil
+	return msg(fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe())), nil
 }
 
-func cmdUnbreak(c *Console, args []string) (string, error) {
+func cmdUnbreak(c *Console, args []string) (result, error) {
 	if len(args) != 1 {
-		return "", fmt.Errorf("usage: unbreak <addr>|all")
+		return nil, fmt.Errorf("usage: unbreak <addr>|all")
 	}
 	if args[0] == "all" {
 		n := len(c.breaks)
 		c.breaks = nil
-		return fmt.Sprintf("removed %d breaks", n), nil
+		return msg(fmt.Sprintf("removed %d breaks", n)), nil
 	}
 	addr, err := parseAddress(args[0])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	r, off, err := lookupRegion(addr)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	canonical := r.start + off
 	for i := range c.breaks {
 		if c.breaks[i].addr == canonical {
 			c.breaks = append(c.breaks[:i], c.breaks[i+1:]...)
-			return fmt.Sprintf("unbreak 0x%08X", canonical), nil
+			return msg(fmt.Sprintf("unbreak 0x%08X", canonical)), nil
 		}
 	}
-	return "", fmt.Errorf("0x%08X has no break", canonical)
+	return nil, fmt.Errorf("0x%08X has no break", canonical)
 }

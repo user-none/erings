@@ -134,7 +134,7 @@ func widthMax(width int) uint32 {
 	return (uint32(1) << width) - 1
 }
 
-func cmdBaseline(c *Console, args []string) (string, error) {
+func cmdBaseline(c *Console, args []string) (result, error) {
 	var selected []*region
 	if len(args) == 0 {
 		for i := range regionTable {
@@ -150,11 +150,11 @@ func cmdBaseline(c *Console, args []string) (string, error) {
 				}
 			}
 			if r == nil {
-				return "", fmt.Errorf("unknown region %q (see regions)", name)
+				return nil, fmt.Errorf("unknown region %q (see regions)", name)
 			}
 			for _, prev := range selected {
 				if prev == r {
-					return "", fmt.Errorf("region %q listed twice", name)
+					return nil, fmt.Errorf("region %q listed twice", name)
 				}
 			}
 			selected = append(selected, r)
@@ -177,36 +177,36 @@ func cmdBaseline(c *Console, args []string) (string, error) {
 		names = append(names, r.name)
 	}
 	c.search = s
-	return fmt.Sprintf("baseline over %s: %d candidates (w%d)",
-		strings.Join(names, ","), s.total(), width), nil
+	return msg(fmt.Sprintf("baseline over %s: %d candidates (w%d)",
+		strings.Join(names, ","), s.total(), width)), nil
 }
 
-func cmdFilter(c *Console, args []string) (string, error) {
+func cmdFilter(c *Console, args []string) (result, error) {
 	if len(args) == 0 {
-		return "", fmt.Errorf("usage: filter dec|inc|same|diff | filter eq|ne|lt|gt <value>")
+		return nil, fmt.Errorf("usage: filter dec|inc|same|diff | filter eq|ne|lt|gt <value>")
 	}
 	op := findFilterOp(args[0])
 	if op == nil {
-		return "", fmt.Errorf("unknown filter %q", args[0])
+		return nil, fmt.Errorf("unknown filter %q", args[0])
 	}
 	var val uint32
 	if op.needsVal {
 		if len(args) != 2 {
-			return "", fmt.Errorf("usage: filter %s <value>", op.name)
+			return nil, fmt.Errorf("usage: filter %s <value>", op.name)
 		}
 		v, err := parseNumber(args[1])
 		if err != nil {
-			return "", fmt.Errorf("invalid value %q", args[1])
+			return nil, fmt.Errorf("invalid value %q", args[1])
 		}
 		val = v
 	} else if len(args) != 1 {
-		return "", fmt.Errorf("usage: filter %s", op.name)
+		return nil, fmt.Errorf("usage: filter %s", op.name)
 	}
 	if c.search == nil {
-		return "", fmt.Errorf("no search active (run baseline)")
+		return nil, fmt.Errorf("no search active (run baseline)")
 	}
 	if op.needsVal && val > widthMax(c.search.width) {
-		return "", fmt.Errorf("value %d exceeds w%d range", val, c.search.width)
+		return nil, fmt.Errorf("value %d exceeds w%d range", val, c.search.width)
 	}
 
 	before := c.search.total()
@@ -219,34 +219,34 @@ func cmdFilter(c *Console, args []string) (string, error) {
 		// The live snapshot just read becomes the new baseline.
 		st.baseline = live
 	}
-	return fmt.Sprintf("%d -> %d candidates", before, c.search.total()), nil
+	return msg(fmt.Sprintf("%d -> %d candidates", before, c.search.total())), nil
 }
 
 // cmdRebase re-reads the baseline for the active search without
 // filtering. It re-anchors comparisons to current memory while keeping
 // the candidate set, which is what makes cross-trial intersection work:
 // restore, rebase, act, filter.
-func cmdRebase(c *Console, args []string) (string, error) {
+func cmdRebase(c *Console, args []string) (result, error) {
 	if c.search == nil {
-		return "", fmt.Errorf("no search active (run baseline)")
+		return nil, fmt.Errorf("no search active (run baseline)")
 	}
 	for i := range c.search.regions {
 		st := &c.search.regions[i]
 		st.baseline = c.readRegion(st.r, 0, st.r.size)
 	}
-	return fmt.Sprintf("rebased, %d candidates kept", c.search.total()), nil
+	return msg(fmt.Sprintf("rebased, %d candidates kept", c.search.total())), nil
 }
 
-func cmdWidth(c *Console, args []string) (string, error) {
+func cmdWidth(c *Console, args []string) (result, error) {
 	if len(args) == 0 {
-		return fmt.Sprintf("width %d", c.currentWidth()), nil
+		return msg(fmt.Sprintf("width %d", c.currentWidth())), nil
 	}
 	if len(args) != 1 {
-		return "", fmt.Errorf("usage: width [8|16|32]")
+		return nil, fmt.Errorf("usage: width [8|16|32]")
 	}
 	v, err := parseWidth(args[0])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	reset := ""
 	if c.search != nil && c.search.width != v {
@@ -254,56 +254,102 @@ func cmdWidth(c *Console, args []string) (string, error) {
 		reset = " (search reset)"
 	}
 	c.searchWidth = v
-	return fmt.Sprintf("width %d%s", v, reset), nil
+	return msg(fmt.Sprintf("width %d%s", v, reset)), nil
 }
 
 const listDefault = 20
 
-func cmdList(c *Console, args []string) (string, error) {
-	n := listDefault
-	if len(args) > 1 {
-		return "", fmt.Errorf("usage: list [n]")
+// CandidateList is the list command response. Candidates holds up to
+// the requested count in address order starting at Offset; Total is
+// the full surviving count.
+type CandidateList struct {
+	Width      int             `json:"width"`
+	Total      int             `json:"total"`
+	Offset     int             `json:"offset"`
+	Candidates []CandidateInfo `json:"candidates"`
+}
+
+// CandidateInfo is one surviving search candidate. Cur is the live
+// value at list time and Base is the current comparison baseline.
+type CandidateInfo struct {
+	Addr uint32 `json:"addr"`
+	Cur  uint32 `json:"cur"`
+	Base uint32 `json:"base"`
+}
+
+func (r CandidateList) text() string {
+	digits := r.Width / 8 * 2
+	var b strings.Builder
+	for _, cd := range r.Candidates {
+		fmt.Fprintf(&b, "0x%08X  cur=%d (0x%0*X)  base=%d (0x%0*X)\n",
+			cd.Addr, cd.Cur, digits, cd.Cur, cd.Base, digits, cd.Base)
 	}
-	if len(args) == 1 {
+	fmt.Fprintf(&b, "%d candidates", r.Total)
+	return b.String()
+}
+
+func cmdList(c *Console, args []string) (result, error) {
+	n := listDefault
+	offset := 0
+	if len(args) > 2 {
+		return nil, fmt.Errorf("usage: list [n [offset]]")
+	}
+	if len(args) >= 1 {
 		v, err := strconv.Atoi(args[0])
 		if err != nil || v < 1 || v > 1000 {
-			return "", fmt.Errorf("count must be 1-1000")
+			return nil, fmt.Errorf("count must be 1-1000")
 		}
 		n = v
 	}
+	if len(args) == 2 {
+		v, err := strconv.Atoi(args[1])
+		if err != nil || v < 0 {
+			return nil, fmt.Errorf("offset must be a non-negative integer")
+		}
+		offset = v
+	}
 	if c.search == nil {
-		return "", fmt.Errorf("no search active (run baseline)")
+		return nil, fmt.Errorf("no search active (run baseline)")
 	}
 
 	stride := c.search.width / 8
-	digits := stride * 2
-	var b strings.Builder
-	shown := 0
+	res := CandidateList{Width: c.search.width, Total: c.search.total(),
+		Offset: offset, Candidates: make([]CandidateInfo, 0)}
+	skip := offset
 	for i := range c.search.regions {
 		st := &c.search.regions[i]
-		if shown >= n {
+		if len(res.Candidates) >= n {
 			break
 		}
+		// Whole regions before the offset are skipped by count without
+		// walking their bitmaps.
+		if skip >= st.count {
+			skip -= st.count
+			continue
+		}
 		forEachBit(st.cand, func(idx int) bool {
+			if skip > 0 {
+				skip--
+				return true
+			}
 			off := uint32(idx * stride)
 			var buf [4]byte
 			c.machine.ReadMemory(st.r.flatBase+off, buf[:stride])
-			cur := beValue(buf[:stride])
-			base := beValue(st.baseline[off : off+uint32(stride)])
-			fmt.Fprintf(&b, "0x%08X  cur=%d (0x%0*X)  base=%d (0x%0*X)\n",
-				st.r.start+off, cur, digits, cur, base, digits, base)
-			shown++
-			return shown < n
+			res.Candidates = append(res.Candidates, CandidateInfo{
+				Addr: st.r.start + off,
+				Cur:  beValue(buf[:stride]),
+				Base: beValue(st.baseline[off : off+uint32(stride)]),
+			})
+			return len(res.Candidates) < n
 		})
 	}
-	fmt.Fprintf(&b, "%d candidates", c.search.total())
-	return b.String(), nil
+	return res, nil
 }
 
-func cmdReset(c *Console, args []string) (string, error) {
+func cmdReset(c *Console, args []string) (result, error) {
 	if c.search == nil {
-		return "no search active", nil
+		return msg("no search active"), nil
 	}
 	c.search = nil
-	return "search reset", nil
+	return msg("search reset"), nil
 }

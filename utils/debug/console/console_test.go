@@ -158,7 +158,7 @@ func TestConsoleStepAbortOnUnpause(t *testing.T) {
 func TestConsoleHelpListsCommands(t *testing.T) {
 	c := newTestConsole()
 	r := runLine(t, c, "help")
-	for _, name := range []string{"pause", "resume", "frame", "prompt", "help"} {
+	for _, name := range []string{"pause", "resume", "frame", "state", "prompt", "mode", "help"} {
 		if !strings.Contains(r, name) {
 			t.Fatalf("help output missing %q:\n%s", name, r)
 		}

@@ -4,6 +4,7 @@
 package console
 
 import (
+	"encoding/hex"
 	"fmt"
 	"strconv"
 	"strings"
@@ -126,38 +127,77 @@ const (
 	readMaxLen     = 4096
 )
 
-func cmdRead(c *Console, args []string) (string, error) {
+// ReadResult is the read command response. Data is the bytes hex
+// encoded. raw keeps the bytes for the text rendering without a decode
+// round trip.
+type ReadResult struct {
+	Addr uint32 `json:"addr"`
+	Data string `json:"data"`
+	raw  []byte
+}
+
+func (r ReadResult) text() string { return formatHexDump(r.Addr, r.raw) }
+
+func cmdRead(c *Console, args []string) (result, error) {
 	if len(args) < 1 || len(args) > 2 {
-		return "", fmt.Errorf("usage: read <addr> [len]")
+		return nil, fmt.Errorf("usage: read <addr> [len]")
 	}
 	addr, err := parseAddress(args[0])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	length := uint32(readDefaultLen)
 	if len(args) == 2 {
 		v, err := strconv.ParseUint(args[1], 10, 32)
 		if err != nil || v < 1 || v > readMaxLen {
-			return "", fmt.Errorf("length must be 1-%d", readMaxLen)
+			return nil, fmt.Errorf("length must be 1-%d", readMaxLen)
 		}
 		length = uint32(v)
 	}
 	r, off, err := lookupRegion(addr)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	// Clamp to the region end rather than reading past it.
 	if remaining := r.size - off; length > remaining {
 		length = remaining
 	}
-	return formatHexDump(r.start+off, c.readRegion(r, off, length)), nil
+	data := c.readRegion(r, off, length)
+	return ReadResult{Addr: r.start + off, Data: hex.EncodeToString(data), raw: data}, nil
 }
 
-func cmdRegions(c *Console, args []string) (string, error) {
+// RegionList is the regions command response.
+type RegionList struct {
+	Regions []RegionInfo `json:"regions"`
+}
+
+// RegionInfo is one region list entry. Start and End bound the
+// canonical range inclusive; Size is in bytes. Window is the full bus
+// decode window the region mirrors through (Window == Size when not
+// mirrored), so a client can fold mirror spellings the way the console
+// does.
+type RegionInfo struct {
+	Name   string `json:"name"`
+	Start  uint32 `json:"start"`
+	End    uint32 `json:"end"`
+	Size   uint32 `json:"size"`
+	Window uint32 `json:"window"`
+}
+
+func (r RegionList) text() string {
 	var b strings.Builder
+	for _, ri := range r.Regions {
+		fmt.Fprintf(&b, "%-6s 0x%08X-0x%08X  %dKB\n", ri.Name, ri.Start, ri.End, ri.Size/1024)
+	}
+	return strings.TrimRight(b.String(), "\n")
+}
+
+func cmdRegions(c *Console, args []string) (result, error) {
+	res := RegionList{Regions: make([]RegionInfo, 0, len(regionTable))}
 	for i := range regionTable {
 		r := &regionTable[i]
-		fmt.Fprintf(&b, "%-6s 0x%08X-0x%08X  %dKB\n", r.name, r.start, r.end(), r.size/1024)
+		res.Regions = append(res.Regions, RegionInfo{
+			Name: r.name, Start: r.start, End: r.end(), Size: r.size, Window: r.window})
 	}
-	return strings.TrimRight(b.String(), "\n"), nil
+	return res, nil
 }

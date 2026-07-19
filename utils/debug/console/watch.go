@@ -48,9 +48,14 @@ func (c *Console) serviceWatches() {
 			line := fmt.Sprintf("[WATCH] frame=%d 0x%08X w%d: %d -> %d (0x%0*X -> 0x%0*X)",
 				c.frame, w.addr, w.width, w.prev, cur, n*2, w.prev, n*2, cur)
 			fmt.Fprintln(os.Stderr, line)
+			push := line
+			if c.jsonMode {
+				push = marshalLine(watchEvent{Type: "watch", Frame: c.frame,
+					Addr: w.addr, Width: w.width, Prev: w.prev, Cur: cur})
+			}
 			if c.out != nil {
 				select {
-				case c.out <- line + "\n":
+				case c.out <- push + "\n":
 				default:
 				}
 			}
@@ -106,67 +111,90 @@ func parseWatchTarget(args []string) (uint32, *region, uint32, int, error) {
 	return addr, r, off, width, nil
 }
 
-func cmdWatch(c *Console, args []string) (string, error) {
-	if len(args) == 0 {
-		if len(c.watches) == 0 {
-			return "no watches", nil
+// WatchList is the watch list response.
+type WatchList struct {
+	Watches []WatchInfo `json:"watches"`
+}
+
+// WatchInfo is one watch list entry. Value is the last value read;
+// Valid is false until the first between-frames read has seeded it.
+type WatchInfo struct {
+	Addr  uint32 `json:"addr"`
+	Width int    `json:"width"`
+	Value uint32 `json:"value"`
+	Valid bool   `json:"valid"`
+}
+
+func (r WatchList) text() string {
+	if len(r.Watches) == 0 {
+		return "no watches"
+	}
+	var b strings.Builder
+	for _, w := range r.Watches {
+		val := "?"
+		if w.Valid {
+			val = strconv.FormatUint(uint64(w.Value), 10)
 		}
-		var b strings.Builder
+		fmt.Fprintf(&b, "0x%08X w%d = %s\n", w.Addr, w.Width, val)
+	}
+	return strings.TrimRight(b.String(), "\n")
+}
+
+func cmdWatch(c *Console, args []string) (result, error) {
+	if len(args) == 0 {
+		r := WatchList{Watches: make([]WatchInfo, 0, len(c.watches))}
 		for i := range c.watches {
 			w := &c.watches[i]
-			val := "?"
-			if w.valid {
-				val = strconv.FormatUint(uint64(w.prev), 10)
-			}
-			fmt.Fprintf(&b, "0x%08X w%d = %s\n", w.addr, w.width, val)
+			r.Watches = append(r.Watches, WatchInfo{
+				Addr: w.addr, Width: w.width, Value: w.prev, Valid: w.valid})
 		}
-		return strings.TrimRight(b.String(), "\n"), nil
+		return r, nil
 	}
 	if len(args) > 2 {
-		return "", fmt.Errorf("usage: watch [<addr> [width]]")
+		return nil, fmt.Errorf("usage: watch [<addr> [width]]")
 	}
 	addr, r, off, width, err := parseWatchTarget(args)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	// Re-watching an address replaces its entry so a width change or
 	// reseed takes effect.
 	for i := range c.watches {
 		if c.watches[i].addr == addr {
 			c.watches[i] = watchEntry{addr: addr, r: r, off: off, width: width}
-			return fmt.Sprintf("watching 0x%08X w%d", addr, width), nil
+			return msg(fmt.Sprintf("watching 0x%08X w%d", addr, width)), nil
 		}
 	}
 	if len(c.watches) >= maxWatches {
-		return "", fmt.Errorf("watch limit reached (%d)", maxWatches)
+		return nil, fmt.Errorf("watch limit reached (%d)", maxWatches)
 	}
 	c.watches = append(c.watches, watchEntry{addr: addr, r: r, off: off, width: width})
-	return fmt.Sprintf("watching 0x%08X w%d", addr, width), nil
+	return msg(fmt.Sprintf("watching 0x%08X w%d", addr, width)), nil
 }
 
-func cmdUnwatch(c *Console, args []string) (string, error) {
+func cmdUnwatch(c *Console, args []string) (result, error) {
 	if len(args) != 1 {
-		return "", fmt.Errorf("usage: unwatch <addr>|all")
+		return nil, fmt.Errorf("usage: unwatch <addr>|all")
 	}
 	if args[0] == "all" {
 		n := len(c.watches)
 		c.watches = nil
-		return fmt.Sprintf("removed %d watches", n), nil
+		return msg(fmt.Sprintf("removed %d watches", n)), nil
 	}
 	addr, err := parseAddress(args[0])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	r, off, err := lookupRegion(addr)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	canonical := r.start + off
 	for i := range c.watches {
 		if c.watches[i].addr == canonical {
 			c.watches = append(c.watches[:i], c.watches[i+1:]...)
-			return fmt.Sprintf("unwatched 0x%08X", canonical), nil
+			return msg(fmt.Sprintf("unwatched 0x%08X", canonical)), nil
 		}
 	}
-	return "", fmt.Errorf("0x%08X is not watched", canonical)
+	return nil, fmt.Errorf("0x%08X is not watched", canonical)
 }

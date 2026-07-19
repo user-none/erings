@@ -60,6 +60,10 @@ type Console struct {
 	// each response (default on).
 	prompt bool
 
+	// jsonMode switches responses and pushed events to one-line JSON
+	// envelopes (see format.go). It resets to text on client attach.
+	jsonMode bool
+
 	// frame is the RunFrame count passed to the latest Service call.
 	// Watch lines reference it.
 	frame uint64
@@ -160,8 +164,13 @@ func (c *Console) serveConn(conn net.Conn) {
 		conn.Close()
 	}()
 
+	// The prompt reads console state owned by the emulation goroutine.
+	// Every read happens after a command response has been received, so
+	// the response channel orders it after the command that could have
+	// changed the setting. JSON mode never prompts: the client is a
+	// program, and a bare "> " is not a JSON line.
 	prompt := func() {
-		if c.prompt {
+		if c.prompt && !c.jsonMode {
 			out <- "> "
 		}
 	}
@@ -191,7 +200,7 @@ type command struct {
 	name    string
 	usage   string
 	summary string
-	fn      func(c *Console, args []string) (string, error)
+	fn      func(c *Console, args []string) (result, error)
 }
 
 // commands is populated in init. The help handler iterates the table it
@@ -203,6 +212,7 @@ func init() {
 		{"pause", "pause", "pause emulation", cmdPause},
 		{"resume", "resume", "resume emulation", cmdResume},
 		{"frame", "frame [n]", "while paused, run n frames (default 1) then re-pause", cmdFrame},
+		{"state", "state", "report pause, frame, width, and search candidates", cmdState},
 		{"regions", "regions", "list known memory regions", cmdRegions},
 		{"read", "read <addr> [len]", "hex dump memory (len 1-4096, default 64)", cmdRead},
 		{"watch", "watch [<addr> [w]]", "report value changes each frame (w=8/16/32); no args lists", cmdWatch},
@@ -213,12 +223,13 @@ func init() {
 		{"filter", "filter <op> [value]", "narrow candidates: dec inc same diff | eq ne lt gt <value>", cmdFilter},
 		{"rebase", "rebase", "re-read the baseline without filtering (keeps candidates)", cmdRebase},
 		{"width", "width [8|16|32]", "search value width; setting resets the search", cmdWidth},
-		{"list", "list [n]", "show surviving candidates (default 20)", cmdList},
+		{"list", "list [n [offset]]", "show surviving candidates (default 20, from offset)", cmdList},
 		{"reset", "reset", "discard the search", cmdReset},
 		{"snapshot", "snapshot [name]", "capture the machine to an in-memory slot", cmdSnapshot},
 		{"snapshots", "snapshots", "list snapshot slots", cmdSnapshots},
 		{"restore", "restore [name]", "load a snapshot (search/watches survive)", cmdRestore},
 		{"prompt", "prompt on|off", "toggle the interactive prompt (default on)", cmdPrompt},
+		{"mode", "mode text|json", "set the response format (default text)", cmdMode},
 		{"help", "help", "list commands", cmdHelp},
 	}
 }
@@ -255,7 +266,7 @@ func (c *Console) serviceCommands() {
 			return
 		}
 		c.stepRemaining = 0
-		c.stepResp <- "stepped"
+		c.stepResp <- c.formatResp(msg("stepped"))
 		c.stepResp = nil
 	}
 	for {
@@ -273,12 +284,16 @@ func (c *Console) serviceCommands() {
 
 func (c *Console) runCommand(cmd consoleCmd) {
 	// A connection attach/bye takes or drops the client's output channel.
+	// Either transition resets the output format: mode is per-connection
+	// state, and a fresh client (interactive nc or the GUI) must always
+	// start in text mode regardless of what the previous client set.
 	if cmd.attach != nil || cmd.bye {
 		if cmd.bye {
 			c.out = nil
 		} else {
 			c.out = cmd.attach
 		}
+		c.jsonMode = false
 		cmd.resp <- ""
 		return
 	}
@@ -295,56 +310,92 @@ func (c *Console) runCommand(cmd consoleCmd) {
 		case errors.Is(err, errDeferredResponse):
 			c.stepResp = cmd.resp
 		case err != nil:
-			cmd.resp <- "error: " + err.Error()
+			cmd.resp <- c.formatErr(err)
 		default:
-			cmd.resp <- out
+			cmd.resp <- c.formatResp(out)
 		}
 		return
 	}
-	cmd.resp <- fmt.Sprintf("error: unknown command %q (try help)", name)
+	cmd.resp <- c.formatErr(fmt.Errorf("unknown command %q (try help)", name))
 }
 
-func cmdPause(c *Console, args []string) (string, error) {
+func cmdPause(c *Console, args []string) (result, error) {
 	c.paused.Store(true)
-	return "paused", nil
+	return msg("paused"), nil
 }
 
-func cmdResume(c *Console, args []string) (string, error) {
+func cmdResume(c *Console, args []string) (result, error) {
 	c.paused.Store(false)
-	return "resumed", nil
+	return msg("resumed"), nil
 }
 
-func cmdFrame(c *Console, args []string) (string, error) {
+func cmdFrame(c *Console, args []string) (result, error) {
 	n := 1
 	if len(args) > 0 {
 		v, err := strconv.Atoi(args[0])
 		if err != nil || v < 1 {
-			return "", fmt.Errorf("frame count must be a positive integer")
+			return nil, fmt.Errorf("frame count must be a positive integer")
 		}
 		n = v
 	}
 	if !c.paused.Load() {
-		return "", fmt.Errorf("not paused")
+		return nil, fmt.Errorf("not paused")
 	}
 	c.stepRemaining = n
-	return "", errDeferredResponse
+	return nil, errDeferredResponse
 }
 
-// cmdPrompt is silent on success. An empty response writes nothing, so
-// a scripted "prompt off" leaves the output stream clean from its first
-// command onward.
-func cmdPrompt(c *Console, args []string) (string, error) {
+// StateResult is the state command response. Width is the search value
+// width setting, which applies whether or not a search is active.
+type StateResult struct {
+	Paused       bool   `json:"paused"`
+	Frame        uint64 `json:"frame"`
+	Width        int    `json:"width"`
+	SearchActive bool   `json:"search_active"`
+	Candidates   int    `json:"candidates"`
+}
+
+func (s StateResult) text() string {
+	search := "none"
+	if s.SearchActive {
+		search = strconv.Itoa(s.Candidates)
+	}
+	return fmt.Sprintf("paused=%t frame=%d width=%d search=%s",
+		s.Paused, s.Frame, s.Width, search)
+}
+
+// cmdState reports the execution and search state in one response. A
+// reconnecting client uses it to rebuild its view without inferring
+// anything from earlier traffic.
+func cmdState(c *Console, args []string) (result, error) {
+	if len(args) != 0 {
+		return nil, fmt.Errorf("usage: state")
+	}
+	s := StateResult{Paused: c.paused.Load(), Frame: c.frame, Width: c.currentWidth()}
+	if c.search != nil {
+		s.SearchActive = true
+		s.Candidates = c.search.total()
+	}
+	return s, nil
+}
+
+// cmdPrompt is silent on success in text mode: an empty response
+// writes nothing, so a scripted "prompt off" leaves the output stream
+// clean from its first command onward. In JSON mode the empty message
+// still produces a response envelope, because a client matches
+// responses to commands in order and every command must answer.
+func cmdPrompt(c *Console, args []string) (result, error) {
 	if len(args) != 1 || (args[0] != "on" && args[0] != "off") {
-		return "", fmt.Errorf("usage: prompt on|off")
+		return nil, fmt.Errorf("usage: prompt on|off")
 	}
 	c.prompt = args[0] == "on"
-	return "", nil
+	return msg(""), nil
 }
 
-func cmdHelp(c *Console, args []string) (string, error) {
+func cmdHelp(c *Console, args []string) (result, error) {
 	var b strings.Builder
 	for _, cm := range commands {
 		fmt.Fprintf(&b, "%-27s %s\n", cm.usage, cm.summary)
 	}
-	return strings.TrimRight(b.String(), "\n"), nil
+	return msg(strings.TrimRight(b.String(), "\n")), nil
 }

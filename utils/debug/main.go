@@ -22,15 +22,16 @@ import (
 
 func main() {
 	biosPath := flag.String("bios", "", "Path to Saturn BIOS ROM (512KB). Optional - if omitted, the HLE BIOS boots the disc directly.")
-	discPath := flag.String("disc", "", "Path to CHD V5 or cue disc image")
-	cpuProfile := flag.String("cpuprofile", "", "Write CPU profile to file")
-	dumpDir := flag.String("dump-dir", ".", "Directory to write memory dumps into (created if missing)")
+	discPath := flag.String("disc", "", "Path to CHD V5 or cue disc image.")
+	cpuProfile := flag.String("cpuprofile", "", "Write CPU profile to file.")
+	dumpDir := flag.String("dump-dir", ".", "Directory to write memory dumps into (created if missing).")
 	savePath := flag.String("save", "", "Path to backup-RAM save file. If a directory, uses <gameid>.srm inside it. Loaded on start (if it exists) and written on close.")
-	fastBoot := flag.Bool("fast-boot", false, "Skip the real BIOS boot animation and enter the disc IP directly (real BIOS only; no effect with the HLE BIOS).")
+	fastBoot := flag.Bool("fast-boot", false, "Skip the real BIOS boot animation and enter the disc IP directly (real BIOS only).")
 	record := flag.String("record", "", "Record a replay file (JSON) of per-frame input and screenshot markers.")
 	replayPath := flag.String("replay", "", "Replay a recorded input file (JSON). Recorded input is mixed with live input so you can still press buttons.")
-	loadState := flag.String("load-state", "", "Path to a save state file to load at startup. Requires the same disc and BIOS the state was captured with; a replay played on top must have been recorded from this state.")
-	consolePort := flag.Int("c", 0, "Debug console TCP port, bound to 127.0.0.1 (0 = disabled). Line protocol; connect with nc or telnet.")
+	loadState := flag.String("load-state", "", "Path to a save state file to load at startup. Requires the same disc and BIOS the state was captured with.")
+	debugConsole := flag.Bool("debug-console", false, "Enable the debug console, bound to 127.0.0.1.")
+	debugConsolePort := flag.Int("debug-console-port", 5000, "Debug console TCP port.")
 	flag.Parse()
 
 	if *record != "" && *replayPath != "" {
@@ -182,13 +183,16 @@ func main() {
 		player:      player,
 	}
 
-	if *consolePort != 0 {
-		c, err := console.Start(*consolePort, emu, &g.paused)
+	if *debugConsole {
+		if *debugConsolePort < 1 || *debugConsolePort > 65535 {
+			log.Fatalf("debug console port must be 1-65535")
+		}
+		c, err := console.Start(*debugConsolePort, emu, &g.paused)
 		if err != nil {
 			log.Fatalf("failed to start debug console: %v", err)
 		}
 		g.console = c
-		fmt.Printf("[CONSOLE] listening on 127.0.0.1:%d\n", *consolePort)
+		fmt.Printf("[CONSOLE] listening on 127.0.0.1:%d\n", *debugConsolePort)
 	}
 
 	g.startWatchdog()
