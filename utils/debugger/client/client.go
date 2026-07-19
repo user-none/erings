@@ -1,11 +1,10 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// Package client implements the debugger's connection to the debug
-// console (utils/debug/console). It dials the console's TCP port,
-// switches the connection to JSON mode, and then exposes two streams:
-// in-order command responses and pushed watch/break events. The package
-// has no UI dependencies.
+// Package client implements the debugger's connection to a debug
+// console. It dials the console's TCP port, switches the connection to
+// JSON mode, and then exposes two streams: in-order command responses
+// and pushed watch/break events. The package has no UI dependencies.
 package client
 
 import (

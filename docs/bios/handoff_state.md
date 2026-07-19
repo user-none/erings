@@ -9,16 +9,14 @@ discs). The set is deterministic except for per-disc bytes
 
 ## BIOS Handoff State
 
-State left behind by the BIOS at the moment the master SH-2 begins
-fetching from the IP load window ($06002000-$0600A000). Captured from
-real BIOS_USA runs against two unrelated commercial discs via the
-trace mechanism in `utils/debug` (first master fetch in the IP load
-window). Comparison of the two captures shows the BIOS handoff is
-**fully deterministic** apart from a small set of disc-derived data
-caches; the values below are the observed-constant portion. The
-disc-derived portion consists of CD-block register state plus
-~280 bytes of WRAM-H disc-info caches synthesized from the actual
-disc TOC and System ID.
+State left behind by the BIOS at the moment the master SH-2 begins fetching
+from the IP load window ($06002000-$0600A000). Captured from real BIOS_USA runs
+against two unrelated commercial discs (first master fetch in the IP load
+window). Comparison of the two captures shows the BIOS handoff is **fully
+deterministic** apart from a small set of disc-derived data caches; the values
+below are the observed-constant portion. The disc-derived portion consists of
+CD-block register state plus ~280 bytes of WRAM-H disc-info caches synthesized
+from the actual disc TOC and System ID.
 
 ### SH-2 Master
 

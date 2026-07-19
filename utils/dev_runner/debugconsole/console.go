@@ -1,13 +1,13 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// Package console implements the network debug console for the debug
-// launcher. It speaks a bare line protocol over a localhost TCP port and
+// Package debugconsole implements the dev runner's network debug
+// console. It speaks a bare line protocol over a localhost TCP port and
 // provides execution control, memory inspection, a cheat-search style
 // memory search, and in-memory machine snapshots. The package has no UI
 // dependencies. The host wires it to the emulator through the Machine
 // interface and calls Service between frames.
-package console
+package debugconsole
 
 import (
 	"bufio"

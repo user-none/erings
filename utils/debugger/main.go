@@ -1,9 +1,9 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// The debugger is a standalone viewer for the debug launcher's console
-// (utils/debug -c <port>). It connects over TCP and renders the
-// console's state; it holds no authoritative state of its own.
+// The debugger renders a debug console served over TCP. It switches
+// the session to JSON mode and holds no authoritative state of its
+// own; every panel is a view of the console's answers.
 package main
 
 import (

@@ -7,16 +7,17 @@ Run them with `go run ./utils/<tool>` or build with `go build ./utils/<tool>`.
 `disasm`, `m68kdisasm`, `extract_bioslibs`, and `statedump` use only the
 standard library (plus the in-tree `core/sh2` disassembler for `disasm`,
 the `go-chip-m68k` disassembler for `m68kdisasm`, and the S2 decompressor
-for `statedump`). `debug` is the development launcher and links the
-emulator core and its UI dependencies, so it needs a display to run.
-`debugger` is the GUI client for `debug`'s console; it needs a display
-but does not link the emulator core. `capture` links the emulator core
-but is fully headless (no display or audio), so it runs anywhere.
+for `statedump`). `dev_runner` is the development game runner and links
+the emulator core and its UI dependencies, so it needs a display to
+run. `debugger` is the GUI client for `dev_runner`'s debug console; it
+needs a display but does not link the emulator core. `capture` links
+the emulator core but is fully headless (no display or audio), so it
+runs anywhere.
 
-## debug
+## dev_runner
 
-A command line launcher that should be used for development. It is decoupled
-from the UI and outputs additional information to the console, such as the
+A game runner that should be used for development. It is decoupled from
+the UI and outputs additional information to the console, such as the
 frame rate and the gameplay frame rate.
 
 It also includes a stall watchdog that detects when the emulator has entered
@@ -99,24 +100,24 @@ safely, `filter same`, take another hit, `filter dec`, then `list` and
 ### sh2.TraceFunc
 
 The SH-2 supports a hook that allows tracing all SH-2 execution. This is
-used by the PC histogram feature of the `utils/debug` launcher. To use this
-function for other purposes with that launcher, the currently hooked-in
+used by the PC histogram feature of `utils/dev_runner`. To use this
+function for other purposes with that tool, the currently hooked-in
 function needs to be changed or replaced for one-off testing. Changes to
 this histogram capture should not be committed.
 
 ## debugger
 
-A GUI client for the `debug` launcher's console, in its own window so
+A GUI client for the `dev_runner` debug console, in its own window so
 keyboard focus never fights with the game. It is a viewer over the
 console's command set: it holds no state of its own, rebuilds every
 panel from the console's answers on connect, and clears them on
 disconnect. Console state survives client reconnects, so closing and
 reopening either side is routine.
 
-Start the launcher with the console enabled, then the debugger:
+Start the runner with the console enabled, then the debugger:
 
 ```
-go run ./utils/debug -debug-console -disc game.chd
+go run ./utils/dev_runner -debug-console -disc game.chd
 go run ./utils/debugger
 ```
 
@@ -199,7 +200,7 @@ running the emulator: a `header.txt` with the decoded state header
 (version, game ID, BIOS hash, CRC) and one `<field>.bin` per chunk field
 under a subdirectory named after the chunk tag (`CD_MPEG/latch.slots.bin`,
 `SH2M_CORE/pc.bin`, and so on). It exists to inspect states saved by any
-frontend after the fact; the `debug` launcher's in-session dump key
+frontend after the fact; the `dev_runner` in-session dump key
 produces the same layout (plus the state file itself) through the shared
 `internal/statedump` package.
 

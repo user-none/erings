@@ -10,7 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/replay"
-	"github.com/user-none/erings/utils/debug/console"
+	"github.com/user-none/erings/utils/dev_runner/debugconsole"
 )
 
 type game struct {
@@ -67,7 +67,7 @@ type game struct {
 	// console, when non-nil (-c given), is the network debug console.
 	// Its between-frames work runs through Service on the emulation
 	// goroutine, so console state is emulation-owned.
-	console *console.Console
+	console *debugconsole.Console
 
 	// emuFrame counts RunFrame calls. The console's watch lines
 	// reference it. Owned by the emulation goroutine.
