@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/user-none/erings/internal/debugconsoletypes"
 )
 
 // maxBreaks bounds the per-frame read cost of the break list.
@@ -81,46 +83,33 @@ func (c *Console) serviceBreaks() {
 	}
 }
 
-// BreakList is the break list response.
-type BreakList struct {
-	Breaks []BreakInfo `json:"breaks"`
-}
-
-// BreakInfo is one break list entry. Val is meaningful only when HasVal
-// is set (comparison operators).
-type BreakInfo struct {
-	Addr   uint32 `json:"addr"`
-	Width  int    `json:"width"`
-	Op     string `json:"op"`
-	Val    uint32 `json:"val"`
-	HasVal bool   `json:"has_val"`
-}
-
-// cond renders the condition the way breakEntry.describe does.
-func (b BreakInfo) cond() string {
+// breakCond renders an entry's condition the way breakEntry.describe
+// does.
+func breakCond(b debugconsoletypes.BreakInfo) string {
 	if b.HasVal {
 		return fmt.Sprintf("%s %d", b.Op, b.Val)
 	}
 	return b.Op
 }
 
-func (r BreakList) text() string {
+// breakListText renders the break list response for text mode.
+func breakListText(r debugconsoletypes.BreakList) string {
 	if len(r.Breaks) == 0 {
 		return "no breaks"
 	}
 	var b strings.Builder
 	for _, e := range r.Breaks {
-		fmt.Fprintf(&b, "0x%08X w%d %s\n", e.Addr, e.Width, e.cond())
+		fmt.Fprintf(&b, "0x%08X w%d %s\n", e.Addr, e.Width, breakCond(e))
 	}
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdBreak(c *Console, args []string) (result, error) {
+func cmdBreak(c *Console, args []string) (any, error) {
 	if len(args) == 0 {
-		r := BreakList{Breaks: make([]BreakInfo, 0, len(c.breaks))}
+		r := debugconsoletypes.BreakList{Breaks: make([]debugconsoletypes.BreakInfo, 0, len(c.breaks))}
 		for i := range c.breaks {
 			e := &c.breaks[i]
-			r.Breaks = append(r.Breaks, BreakInfo{
+			r.Breaks = append(r.Breaks, debugconsoletypes.BreakInfo{
 				Addr: e.addr, Width: e.width, Op: e.op.name,
 				Val: e.val, HasVal: e.op.needsVal})
 		}
@@ -170,24 +159,24 @@ func cmdBreak(c *Console, args []string) (result, error) {
 	for i := range c.breaks {
 		if c.breaks[i].addr == addr {
 			c.breaks[i] = entry
-			return msg(fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe())), nil
+			return fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe()), nil
 		}
 	}
 	if len(c.breaks) >= maxBreaks {
 		return nil, fmt.Errorf("break limit reached (%d)", maxBreaks)
 	}
 	c.breaks = append(c.breaks, entry)
-	return msg(fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe())), nil
+	return fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe()), nil
 }
 
-func cmdUnbreak(c *Console, args []string) (result, error) {
+func cmdUnbreak(c *Console, args []string) (any, error) {
 	if len(args) != 1 {
 		return nil, fmt.Errorf("usage: unbreak <addr>|all")
 	}
 	if args[0] == "all" {
 		n := len(c.breaks)
 		c.breaks = nil
-		return msg(fmt.Sprintf("removed %d breaks", n)), nil
+		return fmt.Sprintf("removed %d breaks", n), nil
 	}
 	addr, err := parseAddress(args[0])
 	if err != nil {
@@ -201,7 +190,7 @@ func cmdUnbreak(c *Console, args []string) (result, error) {
 	for i := range c.breaks {
 		if c.breaks[i].addr == canonical {
 			c.breaks = append(c.breaks[:i], c.breaks[i+1:]...)
-			return msg(fmt.Sprintf("unbreak 0x%08X", canonical)), nil
+			return fmt.Sprintf("unbreak 0x%08X", canonical), nil
 		}
 	}
 	return nil, fmt.Errorf("0x%08X has no break", canonical)

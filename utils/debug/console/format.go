@@ -6,21 +6,9 @@ package console
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/user-none/erings/internal/debugconsoletypes"
 )
-
-// result is a command response. Every handler returns one. Text mode
-// sends text() to the client. JSON mode marshals the result as the data
-// field of a {"type":"resp","data":...} envelope, so structured results
-// carry json tags and plain messages marshal as strings.
-type result interface {
-	text() string
-}
-
-// msg is a plain-message result. It renders as itself in text mode and
-// as a JSON string in JSON mode.
-type msg string
-
-func (m msg) text() string { return string(m) }
 
 // respEnvelope wraps a successful command response in JSON mode. The
 // client matches resp lines to sent commands in order: the connection
@@ -71,15 +59,43 @@ func marshalLine(v any) string {
 	return string(b)
 }
 
-// formatResp renders a successful command result for the current output
-// mode. In text mode an empty message stays empty, which the connection
-// treats as a silent command. In JSON mode every command produces a
-// line so the client's in-order response matching never skips.
-func (c *Console) formatResp(r result) string {
+// formatResp renders a successful command result for the current
+// output mode. Handlers return either a plain message string or one of
+// the structured response types. In text mode an empty message stays
+// empty, which the connection treats as a silent command. In JSON mode
+// every command produces a line so the client's in-order response
+// matching never skips.
+func (c *Console) formatResp(v any) string {
 	if c.jsonMode {
-		return marshalLine(respEnvelope{Type: "resp", Data: r})
+		return marshalLine(respEnvelope{Type: "resp", Data: v})
 	}
-	return r.text()
+	return renderText(v)
+}
+
+// renderText maps a command result to its text-mode rendering. Every
+// type a handler can return has a case; the tests exercise every
+// command in both modes, so a missing case surfaces as the JSON
+// fallback in a text-mode test expectation.
+func renderText(v any) string {
+	switch r := v.(type) {
+	case string:
+		return r
+	case debugconsoletypes.StateResult:
+		return stateText(r)
+	case debugconsoletypes.ReadResult:
+		return readText(r)
+	case debugconsoletypes.RegionList:
+		return regionListText(r)
+	case debugconsoletypes.WatchList:
+		return watchListText(r)
+	case debugconsoletypes.BreakList:
+		return breakListText(r)
+	case debugconsoletypes.CandidateList:
+		return candidateListText(r)
+	case snapshotList:
+		return snapshotListText(r)
+	}
+	return marshalLine(v)
 }
 
 // formatErr renders a command error for the current output mode.
@@ -95,10 +111,10 @@ func (c *Console) formatErr(err error) string {
 // "mode json" sees JSON from that response onward. JSON mode also
 // suppresses the interactive prompt. The mode resets to text whenever a
 // client attaches.
-func cmdMode(c *Console, args []string) (result, error) {
+func cmdMode(c *Console, args []string) (any, error) {
 	if len(args) != 1 || (args[0] != "text" && args[0] != "json") {
 		return nil, fmt.Errorf("usage: mode text|json")
 	}
 	c.jsonMode = args[0] == "json"
-	return msg("mode " + args[0]), nil
+	return "mode " + args[0], nil
 }

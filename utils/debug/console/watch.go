@@ -8,6 +8,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/user-none/erings/internal/debugconsoletypes"
 )
 
 // maxWatches bounds the per-frame read cost of the watch list.
@@ -111,21 +113,8 @@ func parseWatchTarget(args []string) (uint32, *region, uint32, int, error) {
 	return addr, r, off, width, nil
 }
 
-// WatchList is the watch list response.
-type WatchList struct {
-	Watches []WatchInfo `json:"watches"`
-}
-
-// WatchInfo is one watch list entry. Value is the last value read;
-// Valid is false until the first between-frames read has seeded it.
-type WatchInfo struct {
-	Addr  uint32 `json:"addr"`
-	Width int    `json:"width"`
-	Value uint32 `json:"value"`
-	Valid bool   `json:"valid"`
-}
-
-func (r WatchList) text() string {
+// watchListText renders the watch list response for text mode.
+func watchListText(r debugconsoletypes.WatchList) string {
 	if len(r.Watches) == 0 {
 		return "no watches"
 	}
@@ -140,12 +129,12 @@ func (r WatchList) text() string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdWatch(c *Console, args []string) (result, error) {
+func cmdWatch(c *Console, args []string) (any, error) {
 	if len(args) == 0 {
-		r := WatchList{Watches: make([]WatchInfo, 0, len(c.watches))}
+		r := debugconsoletypes.WatchList{Watches: make([]debugconsoletypes.WatchInfo, 0, len(c.watches))}
 		for i := range c.watches {
 			w := &c.watches[i]
-			r.Watches = append(r.Watches, WatchInfo{
+			r.Watches = append(r.Watches, debugconsoletypes.WatchInfo{
 				Addr: w.addr, Width: w.width, Value: w.prev, Valid: w.valid})
 		}
 		return r, nil
@@ -162,24 +151,24 @@ func cmdWatch(c *Console, args []string) (result, error) {
 	for i := range c.watches {
 		if c.watches[i].addr == addr {
 			c.watches[i] = watchEntry{addr: addr, r: r, off: off, width: width}
-			return msg(fmt.Sprintf("watching 0x%08X w%d", addr, width)), nil
+			return fmt.Sprintf("watching 0x%08X w%d", addr, width), nil
 		}
 	}
 	if len(c.watches) >= maxWatches {
 		return nil, fmt.Errorf("watch limit reached (%d)", maxWatches)
 	}
 	c.watches = append(c.watches, watchEntry{addr: addr, r: r, off: off, width: width})
-	return msg(fmt.Sprintf("watching 0x%08X w%d", addr, width)), nil
+	return fmt.Sprintf("watching 0x%08X w%d", addr, width), nil
 }
 
-func cmdUnwatch(c *Console, args []string) (result, error) {
+func cmdUnwatch(c *Console, args []string) (any, error) {
 	if len(args) != 1 {
 		return nil, fmt.Errorf("usage: unwatch <addr>|all")
 	}
 	if args[0] == "all" {
 		n := len(c.watches)
 		c.watches = nil
-		return msg(fmt.Sprintf("removed %d watches", n)), nil
+		return fmt.Sprintf("removed %d watches", n), nil
 	}
 	addr, err := parseAddress(args[0])
 	if err != nil {
@@ -193,7 +182,7 @@ func cmdUnwatch(c *Console, args []string) (result, error) {
 	for i := range c.watches {
 		if c.watches[i].addr == canonical {
 			c.watches = append(c.watches[:i], c.watches[i+1:]...)
-			return msg(fmt.Sprintf("unwatched 0x%08X", canonical)), nil
+			return fmt.Sprintf("unwatched 0x%08X", canonical), nil
 		}
 	}
 	return nil, fmt.Errorf("0x%08X is not watched", canonical)

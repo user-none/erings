@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/user-none/erings/internal/debugconsoletypes"
 )
 
 // region is one entry in the memory-region registry. The registry drives
@@ -127,18 +129,17 @@ const (
 	readMaxLen     = 4096
 )
 
-// ReadResult is the read command response. Data is the bytes hex
-// encoded. raw keeps the bytes for the text rendering without a decode
-// round trip.
-type ReadResult struct {
-	Addr uint32 `json:"addr"`
-	Data string `json:"data"`
-	raw  []byte
+// readText renders the read response for text mode. The hex string is
+// our own encoding of the bytes just read, so the decode cannot fail.
+func readText(r debugconsoletypes.ReadResult) string {
+	data, err := hex.DecodeString(r.Data)
+	if err != nil {
+		return "error: corrupt read data"
+	}
+	return formatHexDump(r.Addr, data)
 }
 
-func (r ReadResult) text() string { return formatHexDump(r.Addr, r.raw) }
-
-func cmdRead(c *Console, args []string) (result, error) {
+func cmdRead(c *Console, args []string) (any, error) {
 	if len(args) < 1 || len(args) > 2 {
 		return nil, fmt.Errorf("usage: read <addr> [len]")
 	}
@@ -163,28 +164,11 @@ func cmdRead(c *Console, args []string) (result, error) {
 		length = remaining
 	}
 	data := c.readRegion(r, off, length)
-	return ReadResult{Addr: r.start + off, Data: hex.EncodeToString(data), raw: data}, nil
+	return debugconsoletypes.ReadResult{Addr: r.start + off, Data: hex.EncodeToString(data)}, nil
 }
 
-// RegionList is the regions command response.
-type RegionList struct {
-	Regions []RegionInfo `json:"regions"`
-}
-
-// RegionInfo is one region list entry. Start and End bound the
-// canonical range inclusive; Size is in bytes. Window is the full bus
-// decode window the region mirrors through (Window == Size when not
-// mirrored), so a client can fold mirror spellings the way the console
-// does.
-type RegionInfo struct {
-	Name   string `json:"name"`
-	Start  uint32 `json:"start"`
-	End    uint32 `json:"end"`
-	Size   uint32 `json:"size"`
-	Window uint32 `json:"window"`
-}
-
-func (r RegionList) text() string {
+// regionListText renders the region list response for text mode.
+func regionListText(r debugconsoletypes.RegionList) string {
 	var b strings.Builder
 	for _, ri := range r.Regions {
 		fmt.Fprintf(&b, "%-6s 0x%08X-0x%08X  %dKB\n", ri.Name, ri.Start, ri.End, ri.Size/1024)
@@ -192,11 +176,11 @@ func (r RegionList) text() string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdRegions(c *Console, args []string) (result, error) {
-	res := RegionList{Regions: make([]RegionInfo, 0, len(regionTable))}
+func cmdRegions(c *Console, args []string) (any, error) {
+	res := debugconsoletypes.RegionList{Regions: make([]debugconsoletypes.RegionInfo, 0, len(regionTable))}
 	for i := range regionTable {
 		r := &regionTable[i]
-		res.Regions = append(res.Regions, RegionInfo{
+		res.Regions = append(res.Regions, debugconsoletypes.RegionInfo{
 			Name: r.name, Start: r.start, End: r.end(), Size: r.size, Window: r.window})
 	}
 	return res, nil

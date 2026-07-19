@@ -15,7 +15,7 @@ const defaultSnapshotName = "default"
 
 // cmdSnapshot captures the full state into an in-memory named slot.
 // Slots are session-scoped and nothing touches disk.
-func cmdSnapshot(c *Console, args []string) (result, error) {
+func cmdSnapshot(c *Console, args []string) (any, error) {
 	if len(args) > 1 {
 		return nil, fmt.Errorf("usage: snapshot [name]")
 	}
@@ -31,7 +31,7 @@ func cmdSnapshot(c *Console, args []string) (result, error) {
 		c.snapshots = make(map[string][]byte)
 	}
 	c.snapshots[name] = state
-	return msg(fmt.Sprintf("snapshot %q saved (%.1fMB)", name, float64(len(state))/(1<<20))), nil
+	return fmt.Sprintf("snapshot %q saved (%.1fMB)", name, float64(len(state))/(1<<20)), nil
 }
 
 // snapshotNames returns the slot names sorted.
@@ -44,19 +44,21 @@ func snapshotNames(c *Console) []string {
 	return names
 }
 
-// SnapshotList is the snapshots command response.
-type SnapshotList struct {
-	Snapshots []SnapshotInfo `json:"snapshots"`
+// snapshotList is the snapshots command response. The debugger does
+// not use snapshots, so the type is console-local rather than shared.
+type snapshotList struct {
+	Snapshots []snapshotInfo `json:"snapshots"`
 }
 
-// SnapshotInfo is one snapshot slot. Size is the serialized state size
+// snapshotInfo is one snapshot slot. Size is the serialized state size
 // in bytes.
-type SnapshotInfo struct {
+type snapshotInfo struct {
 	Name string `json:"name"`
 	Size int    `json:"size"`
 }
 
-func (r SnapshotList) text() string {
+// snapshotListText renders the snapshot list response for text mode.
+func snapshotListText(r snapshotList) string {
 	if len(r.Snapshots) == 0 {
 		return "no snapshots"
 	}
@@ -67,10 +69,10 @@ func (r SnapshotList) text() string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdSnapshots(c *Console, args []string) (result, error) {
-	res := SnapshotList{Snapshots: make([]SnapshotInfo, 0, len(c.snapshots))}
+func cmdSnapshots(c *Console, args []string) (any, error) {
+	res := snapshotList{Snapshots: make([]snapshotInfo, 0, len(c.snapshots))}
 	for _, n := range snapshotNames(c) {
-		res.Snapshots = append(res.Snapshots, SnapshotInfo{Name: n, Size: len(c.snapshots[n])})
+		res.Snapshots = append(res.Snapshots, snapshotInfo{Name: n, Size: len(c.snapshots[n])})
 	}
 	return res, nil
 }
@@ -81,7 +83,7 @@ func cmdSnapshots(c *Console, args []string) (result, error) {
 // the next filter intersects into the same surviving candidate set.
 // Watches typically fire on the restored values, which is informative
 // rather than spurious.
-func cmdRestore(c *Console, args []string) (result, error) {
+func cmdRestore(c *Console, args []string) (any, error) {
 	if len(args) > 1 {
 		return nil, fmt.Errorf("usage: restore [name]")
 	}
@@ -99,5 +101,5 @@ func cmdRestore(c *Console, args []string) (result, error) {
 	if err := c.machine.Deserialize(state); err != nil {
 		return nil, fmt.Errorf("restore failed: %v", err)
 	}
-	return msg(fmt.Sprintf("restored %q", name)), nil
+	return fmt.Sprintf("restored %q", name), nil
 }

@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"strings"
 	"testing"
+
+	"github.com/user-none/erings/internal/debugconsoletypes"
 )
 
 // decodeLine unmarshals one JSON line into v and fails the test on any
@@ -120,9 +122,9 @@ func TestStateCommand(t *testing.T) {
 	if e.Type != "resp" {
 		t.Fatalf("state envelope type %q", e.Type)
 	}
-	var s StateResult
+	var s debugconsoletypes.StateResult
 	decodeLine(t, string(e.Data), &s)
-	want := StateResult{Paused: true, Frame: 77, Width: 16, SearchActive: true, Candidates: 1}
+	want := debugconsoletypes.StateResult{Paused: true, Frame: 77, Width: 16, SearchActive: true, Candidates: 1}
 	if s != want {
 		t.Fatalf("state data %+v, want %+v", s, want)
 	}
@@ -134,7 +136,7 @@ func TestJSONRead(t *testing.T) {
 	runLine(t, c, "mode json")
 
 	e := runJSON(t, c, "read 0x06001000 4")
-	var r ReadResult
+	var r debugconsoletypes.ReadResult
 	decodeLine(t, string(e.Data), &r)
 	if r.Addr != 0x06001000 || r.Data != "deadbeef" {
 		t.Fatalf("read data %+v", r)
@@ -154,12 +156,12 @@ func TestJSONWatchList(t *testing.T) {
 	runLine(t, c, "watch 0x06001000 16")
 	c.Service(5)
 	e = runJSON(t, c, "watch")
-	var wl WatchList
+	var wl debugconsoletypes.WatchList
 	decodeLine(t, string(e.Data), &wl)
 	if len(wl.Watches) != 1 {
 		t.Fatalf("watch list %+v", wl)
 	}
-	want := WatchInfo{Addr: 0x06001000, Width: 16, Value: 9 << 8, Valid: true}
+	want := debugconsoletypes.WatchInfo{Addr: 0x06001000, Width: 16, Value: 9 << 8, Valid: true}
 	if wl.Watches[0] != want {
 		t.Fatalf("watch entry %+v, want %+v", wl.Watches[0], want)
 	}
@@ -177,9 +179,9 @@ func TestJSONBreakList(t *testing.T) {
 	runLine(t, c, "break 0x06001000 dec")
 	runLine(t, c, "break 0x06001004 eq 42 32")
 	e = runJSON(t, c, "break")
-	var bl BreakList
+	var bl debugconsoletypes.BreakList
 	decodeLine(t, string(e.Data), &bl)
-	want := []BreakInfo{
+	want := []debugconsoletypes.BreakInfo{
 		{Addr: 0x06001000, Width: 8, Op: "dec"},
 		{Addr: 0x06001004, Width: 32, Op: "eq", Val: 42, HasVal: true},
 	}
@@ -193,7 +195,7 @@ func TestJSONRegionsAndSnapshots(t *testing.T) {
 	runLine(t, c, "mode json")
 
 	e := runJSON(t, c, "regions")
-	var rl RegionList
+	var rl debugconsoletypes.RegionList
 	decodeLine(t, string(e.Data), &rl)
 	if len(rl.Regions) != len(regionTable) || rl.Regions[0].Name != "wraml" {
 		t.Fatalf("regions data %+v", rl)
@@ -205,7 +207,7 @@ func TestJSONRegionsAndSnapshots(t *testing.T) {
 	}
 	runLine(t, c, "snapshot spot")
 	e = runJSON(t, c, "snapshots")
-	var sl SnapshotList
+	var sl snapshotList
 	decodeLine(t, string(e.Data), &sl)
 	if len(sl.Snapshots) != 1 || sl.Snapshots[0].Name != "spot" || sl.Snapshots[0].Size != 0x200000 {
 		t.Fatalf("snapshots data %+v", sl)
@@ -220,12 +222,12 @@ func TestJSONList(t *testing.T) {
 	runLine(t, c, "filter diff")
 
 	e := runJSON(t, c, "list")
-	var lr CandidateList
+	var lr debugconsoletypes.CandidateList
 	decodeLine(t, string(e.Data), &lr)
 	if lr.Width != 8 || lr.Total != 1 || len(lr.Candidates) != 1 {
 		t.Fatalf("list data %+v", lr)
 	}
-	want := CandidateInfo{Addr: 0x06001000, Cur: 9, Base: 9}
+	want := debugconsoletypes.CandidateInfo{Addr: 0x06001000, Cur: 9, Base: 9}
 	if lr.Candidates[0] != want {
 		t.Fatalf("candidate %+v, want %+v", lr.Candidates[0], want)
 	}
@@ -240,7 +242,7 @@ func TestListOffsetPaging(t *testing.T) {
 	runLine(t, c, "baseline wramh")
 
 	e := runJSON(t, c, "list 2 3")
-	var cl CandidateList
+	var cl debugconsoletypes.CandidateList
 	decodeLine(t, string(e.Data), &cl)
 	if cl.Offset != 3 || cl.Total != 0x100000 || len(cl.Candidates) != 2 {
 		t.Fatalf("page shape %+v", cl)

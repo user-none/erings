@@ -12,7 +12,7 @@ import (
 
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
-	"github.com/user-none/erings/utils/debug/console"
+	"github.com/user-none/erings/internal/debugconsoletypes"
 	"github.com/user-none/erings/utils/debugger/client"
 	"github.com/user-none/erings/utils/debugger/ui"
 )
@@ -32,7 +32,7 @@ const memWheelRows = 3
 // at connect time; curRegion indexes into them and memOffset is the
 // byte offset of the visible window inside that region, 16-aligned.
 type memory struct {
-	regions   []console.RegionInfo
+	regions   []debugconsoletypes.RegionInfo
 	curRegion int
 	memOffset uint32
 
@@ -127,7 +127,7 @@ func (a *app) fetchRegions() {
 			a.logf("regions: error: %s", r.Err)
 			return
 		}
-		var rl console.RegionList
+		var rl debugconsoletypes.RegionList
 		if json.Unmarshal(r.Data, &rl) != nil {
 			return
 		}
@@ -167,7 +167,7 @@ func (a *app) pollMemory() {
 		if r.Err != nil {
 			return
 		}
-		var rr console.ReadResult
+		var rr debugconsoletypes.ReadResult
 		if json.Unmarshal(r.Data, &rr) != nil {
 			return
 		}

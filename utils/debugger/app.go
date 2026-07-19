@@ -13,7 +13,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/user-none/erings/utils/debug/console"
+	"github.com/user-none/erings/internal/debugconsoletypes"
 	"github.com/user-none/erings/utils/debugger/client"
 	"github.com/user-none/erings/utils/debugger/ui"
 )
@@ -380,7 +380,7 @@ func (a *app) onState(r client.Response) {
 	if r.Err != nil {
 		return
 	}
-	var s console.StateResult
+	var s debugconsoletypes.StateResult
 	if json.Unmarshal(r.Data, &s) != nil {
 		return
 	}

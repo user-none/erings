@@ -18,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"sync/atomic"
+
+	"github.com/user-none/erings/internal/debugconsoletypes"
 )
 
 // Machine is the emulator surface the console needs.
@@ -200,7 +202,7 @@ type command struct {
 	name    string
 	usage   string
 	summary string
-	fn      func(c *Console, args []string) (result, error)
+	fn      func(c *Console, args []string) (any, error)
 }
 
 // commands is populated in init. The help handler iterates the table it
@@ -266,7 +268,7 @@ func (c *Console) serviceCommands() {
 			return
 		}
 		c.stepRemaining = 0
-		c.stepResp <- c.formatResp(msg("stepped"))
+		c.stepResp <- c.formatResp("stepped")
 		c.stepResp = nil
 	}
 	for {
@@ -319,17 +321,17 @@ func (c *Console) runCommand(cmd consoleCmd) {
 	cmd.resp <- c.formatErr(fmt.Errorf("unknown command %q (try help)", name))
 }
 
-func cmdPause(c *Console, args []string) (result, error) {
+func cmdPause(c *Console, args []string) (any, error) {
 	c.paused.Store(true)
-	return msg("paused"), nil
+	return "paused", nil
 }
 
-func cmdResume(c *Console, args []string) (result, error) {
+func cmdResume(c *Console, args []string) (any, error) {
 	c.paused.Store(false)
-	return msg("resumed"), nil
+	return "resumed", nil
 }
 
-func cmdFrame(c *Console, args []string) (result, error) {
+func cmdFrame(c *Console, args []string) (any, error) {
 	n := 1
 	if len(args) > 0 {
 		v, err := strconv.Atoi(args[0])
@@ -345,17 +347,8 @@ func cmdFrame(c *Console, args []string) (result, error) {
 	return nil, errDeferredResponse
 }
 
-// StateResult is the state command response. Width is the search value
-// width setting, which applies whether or not a search is active.
-type StateResult struct {
-	Paused       bool   `json:"paused"`
-	Frame        uint64 `json:"frame"`
-	Width        int    `json:"width"`
-	SearchActive bool   `json:"search_active"`
-	Candidates   int    `json:"candidates"`
-}
-
-func (s StateResult) text() string {
+// stateText renders the state response for text mode.
+func stateText(s debugconsoletypes.StateResult) string {
 	search := "none"
 	if s.SearchActive {
 		search = strconv.Itoa(s.Candidates)
@@ -367,11 +360,11 @@ func (s StateResult) text() string {
 // cmdState reports the execution and search state in one response. A
 // reconnecting client uses it to rebuild its view without inferring
 // anything from earlier traffic.
-func cmdState(c *Console, args []string) (result, error) {
+func cmdState(c *Console, args []string) (any, error) {
 	if len(args) != 0 {
 		return nil, fmt.Errorf("usage: state")
 	}
-	s := StateResult{Paused: c.paused.Load(), Frame: c.frame, Width: c.currentWidth()}
+	s := debugconsoletypes.StateResult{Paused: c.paused.Load(), Frame: c.frame, Width: c.currentWidth()}
 	if c.search != nil {
 		s.SearchActive = true
 		s.Candidates = c.search.total()
@@ -384,18 +377,18 @@ func cmdState(c *Console, args []string) (result, error) {
 // clean from its first command onward. In JSON mode the empty message
 // still produces a response envelope, because a client matches
 // responses to commands in order and every command must answer.
-func cmdPrompt(c *Console, args []string) (result, error) {
+func cmdPrompt(c *Console, args []string) (any, error) {
 	if len(args) != 1 || (args[0] != "on" && args[0] != "off") {
 		return nil, fmt.Errorf("usage: prompt on|off")
 	}
 	c.prompt = args[0] == "on"
-	return msg(""), nil
+	return "", nil
 }
 
-func cmdHelp(c *Console, args []string) (result, error) {
+func cmdHelp(c *Console, args []string) (any, error) {
 	var b strings.Builder
 	for _, cm := range commands {
 		fmt.Fprintf(&b, "%-27s %s\n", cm.usage, cm.summary)
 	}
-	return msg(strings.TrimRight(b.String(), "\n")), nil
+	return strings.TrimRight(b.String(), "\n"), nil
 }
