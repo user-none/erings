@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package console
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ func TestBEValue(t *testing.T) {
 }
 
 func TestWatchValidation(t *testing.T) {
-	g := &game{}
+	c := newTestConsole()
 	for _, bad := range []string{
 		"watch nonsense",
 		"watch 0x05C00000",
@@ -36,44 +36,44 @@ func TestWatchValidation(t *testing.T) {
 		"watch 0x06000002 32",
 		"watch 0x06000000 8 extra",
 	} {
-		if r := runLine(t, g, bad); !strings.HasPrefix(r, "error:") {
+		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
 			t.Fatalf("%q: unexpected response %q", bad, r)
 		}
 	}
-	if len(g.watches) != 0 {
-		t.Fatalf("invalid commands added watches: %v", g.watches)
+	if len(c.watches) != 0 {
+		t.Fatalf("invalid commands added watches: %v", c.watches)
 	}
 }
 
 func TestWatchAddListUnwatch(t *testing.T) {
-	g := &game{}
-	if r := runLine(t, g, "watch"); r != "no watches" {
+	c := newTestConsole()
+	if r := runLine(t, c, "watch"); r != "no watches" {
 		t.Fatalf("empty list response %q", r)
 	}
-	if r := runLine(t, g, "watch 0x060A3C42 16"); r != "watching 0x060A3C42 w16" {
+	if r := runLine(t, c, "watch 0x060A3C42 16"); r != "watching 0x060A3C42 w16" {
 		t.Fatalf("watch response %q", r)
 	}
-	if r := runLine(t, g, "watch 0x00200010"); r != "watching 0x00200010 w8" {
+	if r := runLine(t, c, "watch 0x00200010"); r != "watching 0x00200010 w8" {
 		t.Fatalf("watch response %q", r)
 	}
-	list := runLine(t, g, "watch")
+	list := runLine(t, c, "watch")
 	if !strings.Contains(list, "0x060A3C42 w16 = ?") || !strings.Contains(list, "0x00200010 w8 = ?") {
 		t.Fatalf("list output:\n%s", list)
 	}
-	if r := runLine(t, g, "unwatch 0x060A3C42"); r != "unwatched 0x060A3C42" {
+	if r := runLine(t, c, "unwatch 0x060A3C42"); r != "unwatched 0x060A3C42" {
 		t.Fatalf("unwatch response %q", r)
 	}
-	if len(g.watches) != 1 || g.watches[0].addr != 0x00200010 {
-		t.Fatalf("watch list after unwatch: %v", g.watches)
+	if len(c.watches) != 1 || c.watches[0].addr != 0x00200010 {
+		t.Fatalf("watch list after unwatch: %v", c.watches)
 	}
-	if r := runLine(t, g, "unwatch 0x060A3C42"); !strings.HasPrefix(r, "error:") {
+	if r := runLine(t, c, "unwatch 0x060A3C42"); !strings.HasPrefix(r, "error:") {
 		t.Fatalf("double unwatch response %q", r)
 	}
-	if r := runLine(t, g, "unwatch all"); r != "removed 1 watches" {
+	if r := runLine(t, c, "unwatch all"); r != "removed 1 watches" {
 		t.Fatalf("unwatch all response %q", r)
 	}
-	if len(g.watches) != 0 {
-		t.Fatalf("watches remain after unwatch all: %v", g.watches)
+	if len(c.watches) != 0 {
+		t.Fatalf("watches remain after unwatch all: %v", c.watches)
 	}
 }
 
@@ -82,51 +82,51 @@ func TestWatchAddListUnwatch(t *testing.T) {
 // the entry rather than adding a duplicate. unwatch accepts any
 // spelling.
 func TestWatchCanonicalization(t *testing.T) {
-	g := &game{}
-	runLine(t, g, "watch 0x06001000")
-	if r := runLine(t, g, "watch 0x26101000 16"); r != "watching 0x06001000 w16" {
+	c := newTestConsole()
+	runLine(t, c, "watch 0x06001000")
+	if r := runLine(t, c, "watch 0x26101000 16"); r != "watching 0x06001000 w16" {
 		t.Fatalf("re-watch response %q", r)
 	}
-	if len(g.watches) != 1 || g.watches[0].width != 16 {
-		t.Fatalf("expected single replaced entry: %v", g.watches)
+	if len(c.watches) != 1 || c.watches[0].width != 16 {
+		t.Fatalf("expected single replaced entry: %v", c.watches)
 	}
-	if r := runLine(t, g, "unwatch 0x07F01000"); r != "unwatched 0x06001000" {
+	if r := runLine(t, c, "unwatch 0x07F01000"); r != "unwatched 0x06001000" {
 		t.Fatalf("unwatch via mirror response %q", r)
 	}
 }
 
 func TestWatchLimit(t *testing.T) {
-	g := &game{}
+	c := newTestConsole()
 	for i := 0; i < maxWatches; i++ {
-		r := runLine(t, g, fmt.Sprintf("watch 0x%08X", 0x06000000+i*4))
+		r := runLine(t, c, fmt.Sprintf("watch 0x%08X", 0x06000000+i*4))
 		if !strings.HasPrefix(r, "watching") {
 			t.Fatalf("watch %d failed: %q", i, r)
 		}
 	}
-	if r := runLine(t, g, "watch 0x06001000"); !strings.HasPrefix(r, "error: watch limit") {
+	if r := runLine(t, c, "watch 0x06001000"); !strings.HasPrefix(r, "error: watch limit") {
 		t.Fatalf("over-limit response %q", r)
 	}
 }
 
 func TestConsoleAttachBye(t *testing.T) {
-	g := &game{}
+	c := newTestConsole()
 	out := make(chan string, 4)
 
 	attach := consoleCmd{attach: out, resp: make(chan string, 1)}
-	g.runConsoleCommand(attach)
+	c.runCommand(attach)
 	if r := <-attach.resp; r != "" {
 		t.Fatalf("attach response %q", r)
 	}
-	if g.consoleOut == nil {
+	if c.out == nil {
 		t.Fatal("attach did not take the output channel")
 	}
 
 	bye := consoleCmd{bye: true, resp: make(chan string, 1)}
-	g.runConsoleCommand(bye)
+	c.runCommand(bye)
 	if r := <-bye.resp; r != "" {
 		t.Fatalf("bye response %q", r)
 	}
-	if g.consoleOut != nil {
+	if c.out != nil {
 		t.Fatal("bye did not clear the output channel")
 	}
 }

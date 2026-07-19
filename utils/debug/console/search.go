@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package console
 
 import (
 	"fmt"
@@ -38,11 +38,11 @@ func (s *search) total() int {
 }
 
 // currentWidth returns the search value width, defaulting to 8 bits.
-func (g *game) currentWidth() int {
-	if g.searchWidth == 0 {
+func (c *Console) currentWidth() int {
+	if c.searchWidth == 0 {
 		return 8
 	}
-	return g.searchWidth
+	return c.searchWidth
 }
 
 // newBitmap returns a bitmap of n bits, all set, with the tail bits of
@@ -125,7 +125,7 @@ func widthMax(width int) uint32 {
 	return (uint32(1) << width) - 1
 }
 
-func cmdBaseline(g *game, args []string) (string, error) {
+func cmdBaseline(c *Console, args []string) (string, error) {
 	var selected []*region
 	if len(args) == 0 {
 		for i := range regionTable {
@@ -152,7 +152,7 @@ func cmdBaseline(g *game, args []string) (string, error) {
 		}
 	}
 
-	width := g.currentWidth()
+	width := c.currentWidth()
 	stride := width / 8
 	s := &search{width: width}
 	var names []string
@@ -160,19 +160,19 @@ func cmdBaseline(g *game, args []string) (string, error) {
 		n := int(r.size) / stride
 		st := searchRegionState{
 			r:        r,
-			baseline: g.readRegion(r, 0, r.size),
+			baseline: c.readRegion(r, 0, r.size),
 			cand:     newBitmap(n),
 			count:    n,
 		}
 		s.regions = append(s.regions, st)
 		names = append(names, r.name)
 	}
-	g.search = s
+	c.search = s
 	return fmt.Sprintf("baseline over %s: %d candidates (w%d)",
 		strings.Join(names, ","), s.total(), width), nil
 }
 
-func cmdFilter(g *game, args []string) (string, error) {
+func cmdFilter(c *Console, args []string) (string, error) {
 	if len(args) == 0 {
 		return "", fmt.Errorf("usage: filter dec|inc|same|diff | filter eq|ne|lt|gt <value>")
 	}
@@ -199,29 +199,29 @@ func cmdFilter(g *game, args []string) (string, error) {
 	} else if len(args) != 1 {
 		return "", fmt.Errorf("usage: filter %s", op.name)
 	}
-	if g.search == nil {
+	if c.search == nil {
 		return "", fmt.Errorf("no search active (run baseline)")
 	}
-	if op.needsVal && val > widthMax(g.search.width) {
-		return "", fmt.Errorf("value %d exceeds w%d range", val, g.search.width)
+	if op.needsVal && val > widthMax(c.search.width) {
+		return "", fmt.Errorf("value %d exceeds w%d range", val, c.search.width)
 	}
 
-	before := g.search.total()
-	stride := g.search.width / 8
+	before := c.search.total()
+	stride := c.search.width / 8
 	keep := func(prev, cur uint32) bool { return op.keep(prev, cur, val) }
-	for i := range g.search.regions {
-		st := &g.search.regions[i]
-		live := g.readRegion(st.r, 0, st.r.size)
+	for i := range c.search.regions {
+		st := &c.search.regions[i]
+		live := c.readRegion(st.r, 0, st.r.size)
 		st.count = filterBitmap(st.cand, st.baseline, live, stride, keep)
 		// The live snapshot just read becomes the new baseline.
 		st.baseline = live
 	}
-	return fmt.Sprintf("%d -> %d candidates", before, g.search.total()), nil
+	return fmt.Sprintf("%d -> %d candidates", before, c.search.total()), nil
 }
 
-func cmdWidth(g *game, args []string) (string, error) {
+func cmdWidth(c *Console, args []string) (string, error) {
 	if len(args) == 0 {
-		return fmt.Sprintf("width %d", g.currentWidth()), nil
+		return fmt.Sprintf("width %d", c.currentWidth()), nil
 	}
 	if len(args) != 1 {
 		return "", fmt.Errorf("usage: width [8|16|32]")
@@ -231,17 +231,17 @@ func cmdWidth(g *game, args []string) (string, error) {
 		return "", fmt.Errorf("width must be 8, 16, or 32")
 	}
 	reset := ""
-	if g.search != nil && g.search.width != v {
-		g.search = nil
+	if c.search != nil && c.search.width != v {
+		c.search = nil
 		reset = " (search reset)"
 	}
-	g.searchWidth = v
+	c.searchWidth = v
 	return fmt.Sprintf("width %d%s", v, reset), nil
 }
 
 const listDefault = 20
 
-func cmdList(g *game, args []string) (string, error) {
+func cmdList(c *Console, args []string) (string, error) {
 	n := listDefault
 	if len(args) > 1 {
 		return "", fmt.Errorf("usage: list [n]")
@@ -253,23 +253,23 @@ func cmdList(g *game, args []string) (string, error) {
 		}
 		n = v
 	}
-	if g.search == nil {
+	if c.search == nil {
 		return "", fmt.Errorf("no search active (run baseline)")
 	}
 
-	stride := g.search.width / 8
+	stride := c.search.width / 8
 	digits := stride * 2
 	var b strings.Builder
 	shown := 0
-	for i := range g.search.regions {
-		st := &g.search.regions[i]
+	for i := range c.search.regions {
+		st := &c.search.regions[i]
 		if shown >= n {
 			break
 		}
 		forEachBit(st.cand, func(idx int) bool {
 			off := uint32(idx * stride)
 			var buf [4]byte
-			g.emu.ReadMemory(st.r.flatBase+off, buf[:stride])
+			c.machine.ReadMemory(st.r.flatBase+off, buf[:stride])
 			cur := beValue(buf[:stride])
 			base := beValue(st.baseline[off : off+uint32(stride)])
 			fmt.Fprintf(&b, "0x%08X  cur=%d (0x%0*X)  base=%d (0x%0*X)\n",
@@ -278,14 +278,14 @@ func cmdList(g *game, args []string) (string, error) {
 			return shown < n
 		})
 	}
-	fmt.Fprintf(&b, "%d candidates", g.search.total())
+	fmt.Fprintf(&b, "%d candidates", c.search.total())
 	return b.String(), nil
 }
 
-func cmdReset(g *game, args []string) (string, error) {
-	if g.search == nil {
+func cmdReset(c *Console, args []string) (string, error) {
+	if c.search == nil {
 		return "no search active", nil
 	}
-	g.search = nil
+	c.search = nil
 	return "search reset", nil
 }

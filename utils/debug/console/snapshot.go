@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package console
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ const defaultSnapshotName = "default"
 
 // cmdSnapshot captures the full state into an in-memory named slot.
 // Slots are session-scoped and nothing touches disk.
-func cmdSnapshot(g *game, args []string) (string, error) {
+func cmdSnapshot(c *Console, args []string) (string, error) {
 	if len(args) > 1 {
 		return "", fmt.Errorf("usage: snapshot [name]")
 	}
@@ -23,34 +23,34 @@ func cmdSnapshot(g *game, args []string) (string, error) {
 	if len(args) == 1 {
 		name = args[0]
 	}
-	state, err := g.emu.Serialize()
+	state, err := c.machine.Serialize()
 	if err != nil {
 		return "", fmt.Errorf("serialize failed: %v", err)
 	}
-	if g.snapshots == nil {
-		g.snapshots = make(map[string][]byte)
+	if c.snapshots == nil {
+		c.snapshots = make(map[string][]byte)
 	}
-	g.snapshots[name] = state
+	c.snapshots[name] = state
 	return fmt.Sprintf("snapshot %q saved (%.1fMB)", name, float64(len(state))/(1<<20)), nil
 }
 
 // snapshotNames returns the slot names sorted.
-func snapshotNames(g *game) []string {
+func snapshotNames(c *Console) []string {
 	var names []string
-	for n := range g.snapshots {
+	for n := range c.snapshots {
 		names = append(names, n)
 	}
 	sort.Strings(names)
 	return names
 }
 
-func cmdSnapshots(g *game, args []string) (string, error) {
-	if len(g.snapshots) == 0 {
+func cmdSnapshots(c *Console, args []string) (string, error) {
+	if len(c.snapshots) == 0 {
 		return "no snapshots", nil
 	}
 	var b strings.Builder
-	for _, n := range snapshotNames(g) {
-		fmt.Fprintf(&b, "%-16s %.1fMB\n", n, float64(len(g.snapshots[n]))/(1<<20))
+	for _, n := range snapshotNames(c) {
+		fmt.Fprintf(&b, "%-16s %.1fMB\n", n, float64(len(c.snapshots[n]))/(1<<20))
 	}
 	return strings.TrimRight(b.String(), "\n"), nil
 }
@@ -60,7 +60,7 @@ func cmdSnapshots(g *game, args []string) (string, error) {
 // a restore. After a restore the next filter intersects into the same
 // surviving candidate set. Watches typically fire on the restored
 // values, which is informative rather than spurious.
-func cmdRestore(g *game, args []string) (string, error) {
+func cmdRestore(c *Console, args []string) (string, error) {
 	if len(args) > 1 {
 		return "", fmt.Errorf("usage: restore [name]")
 	}
@@ -68,14 +68,14 @@ func cmdRestore(g *game, args []string) (string, error) {
 	if len(args) == 1 {
 		name = args[0]
 	}
-	state, ok := g.snapshots[name]
+	state, ok := c.snapshots[name]
 	if !ok {
-		if len(g.snapshots) == 0 {
+		if len(c.snapshots) == 0 {
 			return "", fmt.Errorf("no snapshots taken")
 		}
-		return "", fmt.Errorf("no snapshot %q (have: %s)", name, strings.Join(snapshotNames(g), ", "))
+		return "", fmt.Errorf("no snapshot %q (have: %s)", name, strings.Join(snapshotNames(c), ", "))
 	}
-	if err := g.emu.Deserialize(state); err != nil {
+	if err := c.machine.Deserialize(state); err != nil {
 		return "", fmt.Errorf("restore failed: %v", err)
 	}
 	return fmt.Sprintf("restored %q", name), nil

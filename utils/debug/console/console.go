@@ -1,7 +1,13 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+// Package console implements the network debug console for the debug
+// launcher. It speaks a bare line protocol over a localhost TCP port and
+// provides execution control, memory inspection, a cheat-search style
+// memory search, and in-memory machine snapshots. The package has no UI
+// dependencies. The host wires it to the emulator through the Machine
+// interface and calls Service between frames.
+package console
 
 import (
 	"bufio"
@@ -11,7 +17,17 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"sync/atomic"
 )
+
+// Machine is the emulator surface the console needs.
+type Machine interface {
+	// ReadMemory copies guest memory at a flat offset into buf and
+	// returns the number of bytes copied.
+	ReadMemory(addr uint32, buf []byte) uint32
+	Serialize() ([]byte, error)
+	Deserialize(data []byte) error
+}
 
 // consoleCmd is one line received from a console client. The connection
 // goroutine blocks on resp until the emulation goroutine has executed the
@@ -29,25 +45,60 @@ type consoleCmd struct {
 	bye    bool
 }
 
-// console owns the debug console listener. Connection goroutines read
-// lines and queue consoleCmds. The emulation goroutine drains the queue
-// between frames (serviceConsole), so command handlers run on the
-// emulation goroutine and may freely touch emulation-owned state.
-type console struct {
+// Console owns the debug console listener and all console state.
+// Connection goroutines read lines and queue consoleCmds. The emulation
+// goroutine drains the queue between frames (Service), so command
+// handlers run on the emulation goroutine and everything below the
+// queue is owned by it.
+type Console struct {
+	machine  Machine
+	paused   *atomic.Bool
 	listener net.Listener
 	cmds     chan consoleCmd
 
 	// prompt controls the interactive "> " written on connect and after
 	// each response (default on).
 	prompt bool
+
+	// frame is the RunFrame count passed to the latest Service call.
+	// Watch lines reference it.
+	frame uint64
+
+	// stepRemaining counts frames still to run while paused. stepResp
+	// holds the pending frame-command response channel until the step
+	// completes.
+	stepRemaining int
+	stepResp      chan string
+
+	// out is the attached client's output channel. It is nil when no
+	// client is connected and is handed over and cleared through the
+	// command queue (attach/bye).
+	out chan string
+
+	// watches are the watched addresses. Entries survive console
+	// disconnects.
+	watches []watchEntry
+
+	// search and searchWidth are the memory-search state. searchWidth
+	// zero means the default (8-bit, see currentWidth).
+	search      *search
+	searchWidth int
+
+	// snapshots holds in-memory machine states by slot name.
+	// Session-scoped, never written to disk.
+	snapshots map[string][]byte
 }
 
-func startConsole(port int) (*console, error) {
+// Start listens on 127.0.0.1:port and serves console clients. The
+// paused flag is shared with the host's pause control.
+func Start(port int, m Machine, paused *atomic.Bool) (*Console, error) {
 	ln, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
 	if err != nil {
 		return nil, err
 	}
-	c := &console{
+	c := &Console{
+		machine:  m,
+		paused:   paused,
 		listener: ln,
 		cmds:     make(chan consoleCmd, 16),
 		prompt:   true,
@@ -59,7 +110,7 @@ func startConsole(port int) (*console, error) {
 // acceptLoop serves one client at a time. A second connection
 // attempt waits in the listen backlog until the current client
 // disconnects.
-func (c *console) acceptLoop() {
+func (c *Console) acceptLoop() {
 	for {
 		conn, err := c.listener.Accept()
 		if err != nil {
@@ -79,7 +130,7 @@ func (c *console) acceptLoop() {
 // interleave mid-write. This loop sends responses and prompts. The
 // emulation goroutine is the other sender and pushes watch lines into
 // the same channel once attached.
-func (c *console) serveConn(conn net.Conn) {
+func (c *Console) serveConn(conn net.Conn) {
 	out := make(chan string, 64)
 	writerDone := make(chan struct{})
 	go func() {
@@ -132,21 +183,20 @@ func (c *console) serveConn(conn net.Conn) {
 // command's response channel instead of replying immediately.
 var errDeferredResponse = errors.New("deferred response")
 
-// consoleCommand describes one console command for dispatch and help.
-type consoleCommand struct {
+// command describes one console command for dispatch and help.
+type command struct {
 	name    string
 	usage   string
 	summary string
-	fn      func(g *game, args []string) (string, error)
+	fn      func(c *Console, args []string) (string, error)
 }
 
-// consoleCommands is populated in init. The help handler iterates the
-// table it appears in, so a literal initializer would be an
-// initialization cycle.
-var consoleCommands []consoleCommand
+// commands is populated in init. The help handler iterates the table it
+// appears in, so a literal initializer would be an initialization cycle.
+var commands []command
 
 func init() {
-	consoleCommands = []consoleCommand{
+	commands = []command{
 		{"pause", "pause", "pause emulation", cmdPause},
 		{"resume", "resume", "resume emulation", cmdResume},
 		{"frame", "frame [n]", "while paused, run n frames (default 1) then re-pause", cmdFrame},
@@ -167,27 +217,45 @@ func init() {
 	}
 }
 
-// serviceConsole drains queued console commands. While a frame step is in
-// flight, queued commands are held so they observe the post-step state.
-func (g *game) serviceConsole() {
-	if g.console == nil {
-		return
+// Service runs the console's between-frames work: watch reads and
+// queued commands. The host calls it once per emulation loop iteration
+// with the current RunFrame count.
+func (c *Console) Service(frame uint64) {
+	c.frame = frame
+	c.serviceWatches()
+	c.serviceCommands()
+}
+
+// TakeStep reports whether a console frame step is pending and consumes
+// one frame from it. The host calls it while paused to decide whether
+// to run a frame anyway.
+func (c *Console) TakeStep() bool {
+	if c.stepRemaining > 0 {
+		c.stepRemaining--
+		return true
 	}
-	if g.stepResp != nil {
+	return false
+}
+
+// serviceCommands drains queued console commands. While a frame step is
+// in flight, queued commands are held so they observe the post-step
+// state.
+func (c *Console) serviceCommands() {
+	if c.stepResp != nil {
 		// A pause toggle from the keyboard aborts the step. Complete
 		// the response either way.
-		if g.stepRemaining > 0 && g.paused.Load() {
+		if c.stepRemaining > 0 && c.paused.Load() {
 			return
 		}
-		g.stepRemaining = 0
-		g.stepResp <- "stepped"
-		g.stepResp = nil
+		c.stepRemaining = 0
+		c.stepResp <- "stepped"
+		c.stepResp = nil
 	}
 	for {
 		select {
-		case cmd := <-g.console.cmds:
-			g.runConsoleCommand(cmd)
-			if g.stepResp != nil {
+		case cmd := <-c.cmds:
+			c.runCommand(cmd)
+			if c.stepResp != nil {
 				return
 			}
 		default:
@@ -196,13 +264,13 @@ func (g *game) serviceConsole() {
 	}
 }
 
-func (g *game) runConsoleCommand(cmd consoleCmd) {
+func (c *Console) runCommand(cmd consoleCmd) {
 	// A connection attach/bye takes or drops the client's output channel.
 	if cmd.attach != nil || cmd.bye {
 		if cmd.bye {
-			g.consoleOut = nil
+			c.out = nil
 		} else {
-			g.consoleOut = cmd.attach
+			c.out = cmd.attach
 		}
 		cmd.resp <- ""
 		return
@@ -211,14 +279,14 @@ func (g *game) runConsoleCommand(cmd consoleCmd) {
 	fields := strings.Fields(cmd.line)
 	name := fields[0]
 	args := fields[1:]
-	for i := range consoleCommands {
-		if consoleCommands[i].name != name {
+	for i := range commands {
+		if commands[i].name != name {
 			continue
 		}
-		out, err := consoleCommands[i].fn(g, args)
+		out, err := commands[i].fn(c, args)
 		switch {
 		case errors.Is(err, errDeferredResponse):
-			g.stepResp = cmd.resp
+			c.stepResp = cmd.resp
 		case err != nil:
 			cmd.resp <- "error: " + err.Error()
 		default:
@@ -229,17 +297,17 @@ func (g *game) runConsoleCommand(cmd consoleCmd) {
 	cmd.resp <- fmt.Sprintf("error: unknown command %q (try help)", name)
 }
 
-func cmdPause(g *game, args []string) (string, error) {
-	g.paused.Store(true)
+func cmdPause(c *Console, args []string) (string, error) {
+	c.paused.Store(true)
 	return "paused", nil
 }
 
-func cmdResume(g *game, args []string) (string, error) {
-	g.paused.Store(false)
+func cmdResume(c *Console, args []string) (string, error) {
+	c.paused.Store(false)
 	return "resumed", nil
 }
 
-func cmdFrame(g *game, args []string) (string, error) {
+func cmdFrame(c *Console, args []string) (string, error) {
 	n := 1
 	if len(args) > 0 {
 		v, err := strconv.Atoi(args[0])
@@ -248,28 +316,28 @@ func cmdFrame(g *game, args []string) (string, error) {
 		}
 		n = v
 	}
-	if !g.paused.Load() {
+	if !c.paused.Load() {
 		return "", fmt.Errorf("not paused")
 	}
-	g.stepRemaining = n
+	c.stepRemaining = n
 	return "", errDeferredResponse
 }
 
 // cmdPrompt is silent on success. An empty response writes nothing, so
 // a scripted "prompt off" leaves the output stream clean from its first
 // command onward.
-func cmdPrompt(g *game, args []string) (string, error) {
+func cmdPrompt(c *Console, args []string) (string, error) {
 	if len(args) != 1 || (args[0] != "on" && args[0] != "off") {
 		return "", fmt.Errorf("usage: prompt on|off")
 	}
-	g.console.prompt = args[0] == "on"
+	c.prompt = args[0] == "on"
 	return "", nil
 }
 
-func cmdHelp(g *game, args []string) (string, error) {
+func cmdHelp(c *Console, args []string) (string, error) {
 	var b strings.Builder
-	for _, c := range consoleCommands {
-		fmt.Fprintf(&b, "%-21s %s\n", c.usage, c.summary)
+	for _, cm := range commands {
+		fmt.Fprintf(&b, "%-21s %s\n", cm.usage, cm.summary)
 	}
 	return strings.TrimRight(b.String(), "\n"), nil
 }

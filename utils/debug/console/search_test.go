@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package console
 
 import (
 	"math/bits"
@@ -130,26 +130,26 @@ func TestWidthMax(t *testing.T) {
 }
 
 func TestSearchCommandValidation(t *testing.T) {
-	g := &game{}
+	c := newTestConsole()
 	// No active search.
 	for _, cmd := range []string{"filter dec", "list"} {
-		if r := runLine(t, g, cmd); !strings.Contains(r, "no search active") {
+		if r := runLine(t, c, cmd); !strings.Contains(r, "no search active") {
 			t.Fatalf("%q: unexpected response %q", cmd, r)
 		}
 	}
-	if r := runLine(t, g, "reset"); r != "no search active" {
+	if r := runLine(t, c, "reset"); r != "no search active" {
 		t.Fatalf("reset response %q", r)
 	}
 	// Bad region names fail before any memory access.
-	if r := runLine(t, g, "baseline bogus"); !strings.Contains(r, "unknown region") {
+	if r := runLine(t, c, "baseline bogus"); !strings.Contains(r, "unknown region") {
 		t.Fatalf("baseline response %q", r)
 	}
-	if r := runLine(t, g, "baseline wraml wraml"); !strings.Contains(r, "listed twice") {
+	if r := runLine(t, c, "baseline wraml wraml"); !strings.Contains(r, "listed twice") {
 		t.Fatalf("baseline response %q", r)
 	}
 
 	// Operator/argument validation against an empty active search.
-	g.search = &search{width: 8}
+	c.search = &search{width: 8}
 	for _, bad := range []string{
 		"filter",
 		"filter bogus",
@@ -159,55 +159,56 @@ func TestSearchCommandValidation(t *testing.T) {
 		"filter eq 300",
 		"filter eq xyz",
 	} {
-		if r := runLine(t, g, bad); !strings.HasPrefix(r, "error:") {
+		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
 			t.Fatalf("%q: unexpected response %q", bad, r)
 		}
 	}
-	if r := runLine(t, g, "filter eq 255"); r != "0 -> 0 candidates" {
+	if r := runLine(t, c, "filter eq 255"); r != "0 -> 0 candidates" {
 		t.Fatalf("empty-search filter response %q", r)
 	}
-	if r := runLine(t, g, "list"); r != "0 candidates" {
+	if r := runLine(t, c, "list"); r != "0 candidates" {
 		t.Fatalf("empty-search list response %q", r)
 	}
-	if r := runLine(t, g, "reset"); r != "search reset" {
+	if r := runLine(t, c, "reset"); r != "search reset" {
 		t.Fatalf("reset response %q", r)
 	}
-	if g.search != nil {
+	if c.search != nil {
 		t.Fatal("reset did not clear the search")
 	}
 }
 
 func TestWidthCommand(t *testing.T) {
-	g := &game{}
-	if r := runLine(t, g, "width"); r != "width 8" {
+	c := newTestConsole()
+	if r := runLine(t, c, "width"); r != "width 8" {
 		t.Fatalf("default width response %q", r)
 	}
-	if r := runLine(t, g, "width 16"); r != "width 16" {
+	if r := runLine(t, c, "width 16"); r != "width 16" {
 		t.Fatalf("set width response %q", r)
 	}
-	if r := runLine(t, g, "width"); r != "width 16" {
+	if r := runLine(t, c, "width"); r != "width 16" {
 		t.Fatalf("width after set response %q", r)
 	}
 	for _, bad := range []string{"width 12", "width x", "width 8 16"} {
-		if r := runLine(t, g, bad); !strings.HasPrefix(r, "error:") {
+		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
 			t.Fatalf("%q: unexpected response %q", bad, r)
 		}
 	}
 	// Changing width discards an active search. Re-setting the same
 	// width does not.
-	g.search = &search{width: 16}
-	if r := runLine(t, g, "width 16"); r != "width 16" || g.search == nil {
-		t.Fatalf("same-width set: %q, search=%v", r, g.search)
+	c.search = &search{width: 16}
+	if r := runLine(t, c, "width 16"); r != "width 16" || c.search == nil {
+		t.Fatalf("same-width set: %q, search=%v", r, c.search)
 	}
-	if r := runLine(t, g, "width 32"); r != "width 32 (search reset)" || g.search != nil {
-		t.Fatalf("width change: %q, search=%v", r, g.search)
+	if r := runLine(t, c, "width 32"); r != "width 32 (search reset)" || c.search != nil {
+		t.Fatalf("width change: %q, search=%v", r, c.search)
 	}
 }
 
 func TestListValidation(t *testing.T) {
-	g := &game{search: &search{width: 8}}
+	c := newTestConsole()
+	c.search = &search{width: 8}
 	for _, bad := range []string{"list 0", "list -1", "list 1001", "list x", "list 5 6"} {
-		if r := runLine(t, g, bad); !strings.HasPrefix(r, "error:") {
+		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
 			t.Fatalf("%q: unexpected response %q", bad, r)
 		}
 	}

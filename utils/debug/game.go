@@ -10,6 +10,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/replay"
+	"github.com/user-none/erings/utils/debug/console"
 )
 
 type game struct {
@@ -64,39 +65,13 @@ type game struct {
 	screenshotReq atomic.Bool
 
 	// console, when non-nil (-c given), is the network debug console.
-	// Its command queue is drained between frames (serviceConsole), so
-	// command handlers run on the emulation goroutine and may touch
-	// emulation-owned state directly.
-	console *console
+	// Its between-frames work runs through Service on the emulation
+	// goroutine, so console state is emulation-owned.
+	console *console.Console
 
-	// stepRemaining and stepResp implement the console frame command.
-	// Both are owned by the emulation goroutine: stepRemaining counts
-	// frames still to run while paused, and stepResp holds the pending
-	// response channel until the step completes.
-	stepRemaining int
-	stepResp      chan string
-
-	// emuFrame counts RunFrame calls; watch lines reference it. Owned
-	// by the emulation goroutine.
+	// emuFrame counts RunFrame calls. The console's watch lines
+	// reference it. Owned by the emulation goroutine.
 	emuFrame uint64
-
-	// watches and consoleOut are console watch state, owned by the
-	// emulation goroutine. consoleOut is the attached client's output
-	// channel (nil when no client is connected), handed over and
-	// cleared through the command queue (attach/bye).
-	watches    []watchEntry
-	consoleOut chan string
-
-	// search and searchWidth are the console memory-search state, owned
-	// by the emulation goroutine. searchWidth zero means the default
-	// (8-bit, see currentWidth).
-	search      *search
-	searchWidth int
-
-	// snapshots holds the console's in-memory machine states by slot
-	// name. Owned by the emulation goroutine; session-scoped, never
-	// written to disk.
-	snapshots map[string][]byte
 
 	// player, when non-nil (-replay given), feeds recorded input each
 	// frame. Its input is OR'd with live input so the user can still

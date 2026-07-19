@@ -17,6 +17,7 @@ import (
 	"github.com/user-none/eblitui/romloader"
 	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/replay"
+	"github.com/user-none/erings/utils/debug/console"
 )
 
 func main() {
@@ -182,7 +183,7 @@ func main() {
 	}
 
 	if *consolePort != 0 {
-		c, err := startConsole(*consolePort)
+		c, err := console.Start(*consolePort, emu, &g.paused)
 		if err != nil {
 			log.Fatalf("failed to start debug console: %v", err)
 		}

@@ -101,10 +101,9 @@ func (g *game) emulationLoop() {
 		}
 
 		// A pending console frame step runs frames while the pause flag
-		// stays set; the step counter is emulation-goroutine-owned.
+		// stays set.
 		paused := g.paused.Load()
-		if paused && g.stepRemaining > 0 {
-			g.stepRemaining--
+		if paused && g.console != nil && g.console.TakeStep() {
 			paused = false
 		}
 
@@ -219,11 +218,12 @@ func (g *game) emulationLoop() {
 // stable core state. All between-frames work is added here, not inline in
 // emulationLoop.
 func (g *game) serviceRequests() {
-	g.serviceWatches()
 	g.serviceHistRequest()
 	g.serviceScreenshotRequest()
 	g.serviceDumpRequest()
-	g.serviceConsole()
+	if g.console != nil {
+		g.console.Service(g.emuFrame)
+	}
 }
 
 type emuControl struct {

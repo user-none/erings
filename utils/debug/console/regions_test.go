@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package console
 
 import (
 	"fmt"
@@ -117,7 +117,7 @@ func TestFormatHexDumpSingleByte(t *testing.T) {
 }
 
 func TestReadCommandValidation(t *testing.T) {
-	g := &game{}
+	c := newTestConsole()
 	for _, bad := range []string{
 		"read",
 		"read 0x06000000 64 extra",
@@ -127,15 +127,15 @@ func TestReadCommandValidation(t *testing.T) {
 		"read 0x06000000 4097",
 		"read 0x06000000 -1",
 	} {
-		if r := runLine(t, g, bad); !strings.HasPrefix(r, "error:") {
+		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
 			t.Fatalf("%q: unexpected response %q", bad, r)
 		}
 	}
 }
 
 func TestRegionsCommand(t *testing.T) {
-	g := &game{}
-	r := runLine(t, g, "regions")
+	c := newTestConsole()
+	r := runLine(t, c, "regions")
 	for _, want := range []string{"wraml", "wramh", "0x00200000-0x002FFFFF", "0x06000000-0x060FFFFF", "1024KB"} {
 		if !strings.Contains(r, want) {
 			t.Fatalf("regions output missing %q:\n%s", want, r)

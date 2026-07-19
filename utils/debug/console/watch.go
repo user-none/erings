@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package console
 
 import (
 	"fmt"
@@ -13,8 +13,8 @@ import (
 // maxWatches bounds the per-frame read cost of the watch list.
 const maxWatches = 64
 
-// watchEntry is one watched address. All watch state is owned by the
-// emulation goroutine. Entries survive console disconnects.
+// watchEntry is one watched address. Entries survive console
+// disconnects.
 type watchEntry struct {
 	addr  uint32 // canonical native address, for display
 	r     *region
@@ -37,20 +37,20 @@ func beValue(b []byte) uint32 {
 // runs between frames on the emulation goroutine. Change lines go to
 // stderr and are pushed non-blocking to the connected client. A stalled
 // client drops pushes. The stderr copy is complete.
-func (g *game) serviceWatches() {
-	for i := range g.watches {
-		w := &g.watches[i]
+func (c *Console) serviceWatches() {
+	for i := range c.watches {
+		w := &c.watches[i]
 		var buf [4]byte
 		n := w.width / 8
-		g.emu.ReadMemory(w.r.flatBase+w.off, buf[:n])
+		c.machine.ReadMemory(w.r.flatBase+w.off, buf[:n])
 		cur := beValue(buf[:n])
 		if w.valid && cur != w.prev {
 			line := fmt.Sprintf("[WATCH] frame=%d 0x%08X w%d: %d -> %d (0x%0*X -> 0x%0*X)",
-				g.emuFrame, w.addr, w.width, w.prev, cur, n*2, w.prev, n*2, cur)
+				c.frame, w.addr, w.width, w.prev, cur, n*2, w.prev, n*2, cur)
 			fmt.Fprintln(os.Stderr, line)
-			if g.consoleOut != nil {
+			if c.out != nil {
 				select {
-				case g.consoleOut <- line + "\n":
+				case c.out <- line + "\n":
 				default:
 				}
 			}
@@ -87,14 +87,14 @@ func parseWatchTarget(args []string) (uint32, *region, uint32, int, error) {
 	return r.start + off, r, off, width, nil
 }
 
-func cmdWatch(g *game, args []string) (string, error) {
+func cmdWatch(c *Console, args []string) (string, error) {
 	if len(args) == 0 {
-		if len(g.watches) == 0 {
+		if len(c.watches) == 0 {
 			return "no watches", nil
 		}
 		var b strings.Builder
-		for i := range g.watches {
-			w := &g.watches[i]
+		for i := range c.watches {
+			w := &c.watches[i]
 			val := "?"
 			if w.valid {
 				val = strconv.FormatUint(uint64(w.prev), 10)
@@ -112,26 +112,26 @@ func cmdWatch(g *game, args []string) (string, error) {
 	}
 	// Re-watching an address replaces its entry so a width change or
 	// reseed takes effect.
-	for i := range g.watches {
-		if g.watches[i].addr == addr {
-			g.watches[i] = watchEntry{addr: addr, r: r, off: off, width: width}
+	for i := range c.watches {
+		if c.watches[i].addr == addr {
+			c.watches[i] = watchEntry{addr: addr, r: r, off: off, width: width}
 			return fmt.Sprintf("watching 0x%08X w%d", addr, width), nil
 		}
 	}
-	if len(g.watches) >= maxWatches {
+	if len(c.watches) >= maxWatches {
 		return "", fmt.Errorf("watch limit reached (%d)", maxWatches)
 	}
-	g.watches = append(g.watches, watchEntry{addr: addr, r: r, off: off, width: width})
+	c.watches = append(c.watches, watchEntry{addr: addr, r: r, off: off, width: width})
 	return fmt.Sprintf("watching 0x%08X w%d", addr, width), nil
 }
 
-func cmdUnwatch(g *game, args []string) (string, error) {
+func cmdUnwatch(c *Console, args []string) (string, error) {
 	if len(args) != 1 {
 		return "", fmt.Errorf("usage: unwatch <addr>|all")
 	}
 	if args[0] == "all" {
-		n := len(g.watches)
-		g.watches = nil
+		n := len(c.watches)
+		c.watches = nil
 		return fmt.Sprintf("removed %d watches", n), nil
 	}
 	addr, err := parseAddress(args[0])
@@ -143,9 +143,9 @@ func cmdUnwatch(g *game, args []string) (string, error) {
 		return "", err
 	}
 	canonical := r.start + off
-	for i := range g.watches {
-		if g.watches[i].addr == canonical {
-			g.watches = append(g.watches[:i], g.watches[i+1:]...)
+	for i := range c.watches {
+		if c.watches[i].addr == canonical {
+			c.watches = append(c.watches[:i], c.watches[i+1:]...)
 			return fmt.Sprintf("unwatched 0x%08X", canonical), nil
 		}
 	}

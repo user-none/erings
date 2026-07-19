@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package main
+package console
 
 import (
 	"fmt"
@@ -22,8 +22,8 @@ type region struct {
 	start  uint32
 	size   uint32
 	window uint32
-	// flatBase locates the region inside the core's ReadMemory window.
-	// This is the access point into reading memory.
+	// flatBase locates the region inside the machine's ReadMemory
+	// window. This is the access point into reading memory.
 	flatBase uint32
 }
 
@@ -84,10 +84,10 @@ func lookupRegion(addr uint32) (*region, uint32, error) {
 }
 
 // readRegion copies length bytes at the region offset into a fresh
-// buffer via the core's ReadMemory window.
-func (g *game) readRegion(r *region, off, length uint32) []byte {
+// buffer via the machine's ReadMemory window.
+func (c *Console) readRegion(r *region, off, length uint32) []byte {
 	buf := make([]byte, length)
-	n := g.emu.ReadMemory(r.flatBase+off, buf)
+	n := c.machine.ReadMemory(r.flatBase+off, buf)
 	return buf[:n]
 }
 
@@ -109,9 +109,9 @@ func formatHexDump(addr uint32, data []byte) string {
 			}
 		}
 		b.WriteString(" |")
-		for _, c := range line {
-			if c >= 0x20 && c <= 0x7E {
-				b.WriteByte(c)
+		for _, ch := range line {
+			if ch >= 0x20 && ch <= 0x7E {
+				b.WriteByte(ch)
 			} else {
 				b.WriteByte('.')
 			}
@@ -126,7 +126,7 @@ const (
 	readMaxLen     = 4096
 )
 
-func cmdRead(g *game, args []string) (string, error) {
+func cmdRead(c *Console, args []string) (string, error) {
 	if len(args) < 1 || len(args) > 2 {
 		return "", fmt.Errorf("usage: read <addr> [len]")
 	}
@@ -150,10 +150,10 @@ func cmdRead(g *game, args []string) (string, error) {
 	if remaining := r.size - off; length > remaining {
 		length = remaining
 	}
-	return formatHexDump(r.start+off, g.readRegion(r, off, length)), nil
+	return formatHexDump(r.start+off, c.readRegion(r, off, length)), nil
 }
 
-func cmdRegions(g *game, args []string) (string, error) {
+func cmdRegions(c *Console, args []string) (string, error) {
 	var b strings.Builder
 	for i := range regionTable {
 		r := &regionTable[i]
