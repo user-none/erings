@@ -1,14 +1,14 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"encoding/json"
 	"strings"
 	"testing"
 
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
 // decodeLine unmarshals one JSON line into v and fails the test on any
@@ -29,7 +29,7 @@ type envelope struct {
 }
 
 // runJSON dispatches one command line and decodes the JSON envelope.
-func runJSON(t *testing.T, c *Console, line string) envelope {
+func runJSON(t *testing.T, c *Server, line string) envelope {
 	t.Helper()
 	var e envelope
 	decodeLine(t, runLine(t, c, line), &e)
@@ -37,7 +37,7 @@ func runJSON(t *testing.T, c *Console, line string) envelope {
 }
 
 func TestModeValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	for _, bad := range []string{"mode", "mode x", "mode json text"} {
 		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
 			t.Fatalf("%q: unexpected response %q", bad, r)
@@ -52,7 +52,7 @@ func TestModeValidation(t *testing.T) {
 // response to a mode command is emitted in the newly selected mode in
 // both directions.
 func TestModeSwitchResponses(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	e := runJSON(t, c, "mode json")
 	if e.Type != "resp" || string(e.Data) != `"mode json"` {
 		t.Fatalf("mode json response: %+v", e)
@@ -69,7 +69,7 @@ func TestModeSwitchResponses(t *testing.T) {
 }
 
 func TestJSONErrorEnvelope(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	runLine(t, c, "mode json")
 	e := runJSON(t, c, "bogus")
 	if e.Type != "error" || !strings.Contains(e.Msg, "unknown command") {
@@ -85,7 +85,7 @@ func TestJSONErrorEnvelope(t *testing.T) {
 // in text mode still produce a response line in JSON mode, which the
 // client's in-order response matching depends on.
 func TestJSONEveryCommandResponds(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "prompt off"); r != "" {
 		t.Fatalf("text-mode prompt off should be silent, got %q", r)
 	}
@@ -97,7 +97,7 @@ func TestJSONEveryCommandResponds(t *testing.T) {
 }
 
 func TestStateCommand(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	c.frame = 77
 
 	if r := runLine(t, c, "state"); r != "paused=false frame=77 width=8 search=none" {
@@ -122,21 +122,21 @@ func TestStateCommand(t *testing.T) {
 	if e.Type != "resp" {
 		t.Fatalf("state envelope type %q", e.Type)
 	}
-	var s debugconsoletypes.StateResult
+	var s responses.StateResult
 	decodeLine(t, string(e.Data), &s)
-	want := debugconsoletypes.StateResult{Paused: true, Frame: 77, Width: 16, SearchActive: true, Candidates: 1}
+	want := responses.StateResult{Paused: true, Frame: 77, Width: 16, SearchActive: true, Candidates: 1}
 	if s != want {
 		t.Fatalf("state data %+v, want %+v", s, want)
 	}
 }
 
 func TestJSONRead(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	copy(m.wram[fakeAddr:], []byte{0xDE, 0xAD, 0xBE, 0xEF})
 	runLine(t, c, "mode json")
 
 	e := runJSON(t, c, "read 0x06001000 4")
-	var r debugconsoletypes.ReadResult
+	var r responses.ReadResult
 	decodeLine(t, string(e.Data), &r)
 	if r.Addr != 0x06001000 || r.Data != "deadbeef" {
 		t.Fatalf("read data %+v", r)
@@ -144,7 +144,7 @@ func TestJSONRead(t *testing.T) {
 }
 
 func TestJSONWatchList(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	m.wram[fakeAddr] = 9
 	runLine(t, c, "mode json")
 
@@ -156,19 +156,19 @@ func TestJSONWatchList(t *testing.T) {
 	runLine(t, c, "watch 0x06001000 16")
 	c.Service(5)
 	e = runJSON(t, c, "watch")
-	var wl debugconsoletypes.WatchList
+	var wl responses.WatchList
 	decodeLine(t, string(e.Data), &wl)
 	if len(wl.Watches) != 1 {
 		t.Fatalf("watch list %+v", wl)
 	}
-	want := debugconsoletypes.WatchInfo{Addr: 0x06001000, Width: 16, Value: 9 << 8, Valid: true}
+	want := responses.WatchInfo{Addr: 0x06001000, Width: 16, Value: 9 << 8, Valid: true}
 	if wl.Watches[0] != want {
 		t.Fatalf("watch entry %+v, want %+v", wl.Watches[0], want)
 	}
 }
 
 func TestJSONBreakList(t *testing.T) {
-	c, _ := newFakeConsole()
+	c, _ := newFakeServer()
 	runLine(t, c, "mode json")
 
 	e := runJSON(t, c, "break")
@@ -179,9 +179,9 @@ func TestJSONBreakList(t *testing.T) {
 	runLine(t, c, "break 0x06001000 dec")
 	runLine(t, c, "break 0x06001004 eq 42 32")
 	e = runJSON(t, c, "break")
-	var bl debugconsoletypes.BreakList
+	var bl responses.BreakList
 	decodeLine(t, string(e.Data), &bl)
-	want := []debugconsoletypes.BreakInfo{
+	want := []responses.BreakInfo{
 		{Addr: 0x06001000, Width: 8, Op: "dec"},
 		{Addr: 0x06001004, Width: 32, Op: "eq", Val: 42, HasVal: true},
 	}
@@ -191,11 +191,11 @@ func TestJSONBreakList(t *testing.T) {
 }
 
 func TestJSONRegionsAndSnapshots(t *testing.T) {
-	c, _ := newFakeConsole()
+	c, _ := newFakeServer()
 	runLine(t, c, "mode json")
 
 	e := runJSON(t, c, "regions")
-	var rl debugconsoletypes.RegionList
+	var rl responses.RegionList
 	decodeLine(t, string(e.Data), &rl)
 	if len(rl.Regions) != len(regionTable) || rl.Regions[0].Name != "wraml" {
 		t.Fatalf("regions data %+v", rl)
@@ -215,19 +215,19 @@ func TestJSONRegionsAndSnapshots(t *testing.T) {
 }
 
 func TestJSONList(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	runLine(t, c, "mode json")
 	runLine(t, c, "baseline wramh")
 	m.wram[fakeAddr] = 9
 	runLine(t, c, "filter diff")
 
 	e := runJSON(t, c, "list")
-	var lr debugconsoletypes.CandidateList
+	var lr responses.CandidateList
 	decodeLine(t, string(e.Data), &lr)
 	if lr.Width != 8 || lr.Total != 1 || len(lr.Candidates) != 1 {
 		t.Fatalf("list data %+v", lr)
 	}
-	want := debugconsoletypes.CandidateInfo{Addr: 0x06001000, Cur: 9, Base: 9}
+	want := responses.CandidateInfo{Addr: 0x06001000, Cur: 9, Base: 9}
 	if lr.Candidates[0] != want {
 		t.Fatalf("candidate %+v, want %+v", lr.Candidates[0], want)
 	}
@@ -237,12 +237,12 @@ func TestJSONList(t *testing.T) {
 // fresh baseline keeps every offset as a candidate, so page contents
 // are predictable addresses.
 func TestListOffsetPaging(t *testing.T) {
-	c, _ := newFakeConsole()
+	c, _ := newFakeServer()
 	runLine(t, c, "mode json")
 	runLine(t, c, "baseline wramh")
 
 	e := runJSON(t, c, "list 2 3")
-	var cl debugconsoletypes.CandidateList
+	var cl responses.CandidateList
 	decodeLine(t, string(e.Data), &cl)
 	if cl.Offset != 3 || cl.Total != 0x100000 || len(cl.Candidates) != 2 {
 		t.Fatalf("page shape %+v", cl)
@@ -264,7 +264,7 @@ func TestListOffsetPaging(t *testing.T) {
 }
 
 func TestJSONWatchAndBreakEvents(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	c.out = make(chan string, 4)
 	m.wram[fakeAddr] = 6
 	runLine(t, c, "mode json")
@@ -298,17 +298,17 @@ func TestJSONWatchAndBreakEvents(t *testing.T) {
 // client attach (and a disconnect) drops back to text mode so the next
 // client never inherits JSON output it did not ask for.
 func TestAttachResetsMode(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	runLine(t, c, "mode json")
 
-	attach := consoleCmd{attach: make(chan string, 1), resp: make(chan string, 1)}
+	attach := clientCmd{attach: make(chan string, 1), resp: make(chan string, 1)}
 	c.runCommand(attach)
 	if c.jsonMode {
 		t.Fatal("attach did not reset the mode")
 	}
 
 	runLine(t, c, "mode json")
-	bye := consoleCmd{bye: true, resp: make(chan string, 1)}
+	bye := clientCmd{bye: true, resp: make(chan string, 1)}
 	c.runCommand(bye)
 	if c.jsonMode {
 		t.Fatal("bye did not reset the mode")
@@ -318,12 +318,12 @@ func TestAttachResetsMode(t *testing.T) {
 // TestJSONSteppedResponse drives a frame step in JSON mode and checks
 // the deferred response arrives as an envelope.
 func TestJSONSteppedResponse(t *testing.T) {
-	c := newTestConsole()
-	c.cmds = make(chan consoleCmd, 16)
+	c := newTestServer()
+	c.cmds = make(chan clientCmd, 16)
 	c.paused.Store(true)
 	runLine(t, c, "mode json")
 
-	step := consoleCmd{line: "frame 1", resp: make(chan string, 1)}
+	step := clientCmd{line: "frame 1", resp: make(chan string, 1)}
 	c.cmds <- step
 	c.serviceCommands()
 	if !c.TakeStep() {

@@ -36,7 +36,7 @@ func (a *app) buildConnectScreen(status string) {
 	)
 
 	panel.AddChild(ui.Label("Saturn Debugger", ui.Text))
-	panel.AddChild(ui.Label("debug console address (host:port)", ui.TextSecondary))
+	panel.AddChild(ui.Label("debug server address (host:port)", ui.TextSecondary))
 
 	a.addrInput = ui.TextInput("host:port", 260,
 		widget.TextInputOpts.SubmitHandler(func(args *widget.TextInputChangedEventArgs) {

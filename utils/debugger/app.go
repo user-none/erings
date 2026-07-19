@@ -13,7 +13,7 @@ import (
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 	"github.com/user-none/erings/utils/debugger/client"
 	"github.com/user-none/erings/utils/debugger/ui"
 )
@@ -25,7 +25,7 @@ const statePollTicks = 30
 // maxLogLines bounds the event log scrollback.
 const maxLogLines = 1000
 
-// pendingCmd is one in-flight console command. Update polls ch and
+// pendingCmd is one in-flight server command. Update polls ch and
 // calls done with the response when it arrives. done runs on the
 // ebiten goroutine, so handlers touch app and widget state freely, but
 // must not mutate the pending list itself.
@@ -326,7 +326,7 @@ func (a *app) handleEvent(ev client.Event) {
 	}
 }
 
-// send queues a console command. done (optional) runs on the ebiten
+// send queues a server command. done (optional) runs on the ebiten
 // goroutine when the response arrives.
 func (a *app) send(line string, done func(client.Response)) {
 	if !a.connected {
@@ -362,7 +362,7 @@ func (a *app) pollPending() {
 	}
 }
 
-// refresh re-reads all server state after a connect. The console keeps
+// refresh re-reads all server state after a connect. The server keeps
 // watches, breaks, and search state across client sessions, so the view
 // is rebuilt from its answers, never from anything remembered locally.
 func (a *app) refresh() {
@@ -380,7 +380,7 @@ func (a *app) onState(r client.Response) {
 	if r.Err != nil {
 		return
 	}
-	var s debugconsoletypes.StateResult
+	var s responses.StateResult
 	if json.Unmarshal(r.Data, &s) != nil {
 		return
 	}

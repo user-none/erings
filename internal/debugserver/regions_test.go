@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"fmt"
@@ -117,7 +117,7 @@ func TestFormatHexDumpSingleByte(t *testing.T) {
 }
 
 func TestReadCommandValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	for _, bad := range []string{
 		"read",
 		"read 0x06000000 64 extra",
@@ -134,7 +134,7 @@ func TestReadCommandValidation(t *testing.T) {
 }
 
 func TestRegionsCommand(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	r := runLine(t, c, "regions")
 	for _, want := range []string{"wraml", "wramh", "0x00200000-0x002FFFFF", "0x06000000-0x060FFFFF", "1024KB"} {
 		if !strings.Contains(r, want) {

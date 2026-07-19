@@ -16,8 +16,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/user-none/eblitui/romloader"
 	"github.com/user-none/erings/core"
+	"github.com/user-none/erings/internal/debugserver"
 	"github.com/user-none/erings/internal/replay"
-	"github.com/user-none/erings/utils/dev_runner/debugconsole"
 )
 
 func main() {
@@ -30,8 +30,8 @@ func main() {
 	record := flag.String("record", "", "Record a replay file (JSON) of per-frame input and screenshot markers.")
 	replayPath := flag.String("replay", "", "Replay a recorded input file (JSON). Recorded input is mixed with live input so you can still press buttons.")
 	loadState := flag.String("load-state", "", "Path to a save state file to load at startup. Requires the same disc and BIOS the state was captured with.")
-	debugConsole := flag.Bool("debug-console", false, "Enable the debug console, bound to 127.0.0.1.")
-	debugConsolePort := flag.Int("debug-console-port", 5000, "Debug console TCP port.")
+	enableDebugServer := flag.Bool("debug-server", false, "Enable the debug server, bound to 127.0.0.1.")
+	debugServerPort := flag.Int("debug-server-port", 5000, "Debug server TCP port.")
 	flag.Parse()
 
 	if *record != "" && *replayPath != "" {
@@ -183,16 +183,16 @@ func main() {
 		player:      player,
 	}
 
-	if *debugConsole {
-		if *debugConsolePort < 1 || *debugConsolePort > 65535 {
-			log.Fatalf("debug console port must be 1-65535")
+	if *enableDebugServer {
+		if *debugServerPort < 1 || *debugServerPort > 65535 {
+			log.Fatalf("debug server port must be 1-65535")
 		}
-		c, err := debugconsole.Start(*debugConsolePort, emu, &g.paused)
+		s, err := debugserver.Start(*debugServerPort, emu, &g.paused)
 		if err != nil {
-			log.Fatalf("failed to start debug console: %v", err)
+			log.Fatalf("failed to start debug server: %v", err)
 		}
-		g.console = c
-		fmt.Printf("[CONSOLE] listening on 127.0.0.1:%d\n", *debugConsolePort)
+		g.debugServer = s
+		fmt.Printf("[DEBUGSERVER] listening on 127.0.0.1:%d\n", *debugServerPort)
 	}
 
 	g.startWatchdog()

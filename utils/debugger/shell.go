@@ -142,7 +142,7 @@ func (a *app) buildLog() widget.PreferredSizeLocateableWidget {
 	return wrapper
 }
 
-// buildCommandLine creates the raw console command entry.
+// buildCommandLine creates the raw server command entry.
 func (a *app) buildCommandLine() *widget.Container {
 	row := widget.NewContainer(
 		widget.ContainerOpts.Layout(widget.NewGridLayout(
@@ -153,7 +153,7 @@ func (a *app) buildCommandLine() *widget.Container {
 	)
 	row.AddChild(ui.Label(">", ui.TextSecondary))
 
-	a.cmdInput = ui.TextInput("console command (help lists commands)", 200,
+	a.cmdInput = ui.TextInput("server command (help lists commands)", 200,
 		widget.TextInputOpts.SubmitHandler(func(args *widget.TextInputChangedEventArgs) {
 			line := strings.TrimSpace(args.InputText)
 			if line == "" {

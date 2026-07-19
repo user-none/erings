@@ -9,8 +9,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/user-none/erings/core"
+	"github.com/user-none/erings/internal/debugserver"
 	"github.com/user-none/erings/internal/replay"
-	"github.com/user-none/erings/utils/dev_runner/debugconsole"
 )
 
 type game struct {
@@ -64,12 +64,12 @@ type game struct {
 	recorder      *replay.Recorder
 	screenshotReq atomic.Bool
 
-	// console, when non-nil (-c given), is the network debug console.
-	// Its between-frames work runs through Service on the emulation
-	// goroutine, so console state is emulation-owned.
-	console *debugconsole.Console
+	// debugServer, when non-nil (-debug-server given), is the debug
+	// server. Its between-frames work runs through Service on the
+	// emulation goroutine, so its state is emulation-owned.
+	debugServer *debugserver.Server
 
-	// emuFrame counts RunFrame calls. The console's watch lines
+	// emuFrame counts RunFrame calls. The debug server's watch lines
 	// reference it. Owned by the emulation goroutine.
 	emuFrame uint64
 

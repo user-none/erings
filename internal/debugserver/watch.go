@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
 // maxWatches bounds the per-frame read cost of the watch list.
 const maxWatches = 64
 
-// watchEntry is one watched address. Entries survive console
+// watchEntry is one watched address. Entries survive client
 // disconnects.
 type watchEntry struct {
 	addr  uint32 // canonical native address, for display
@@ -39,7 +39,7 @@ func beValue(b []byte) uint32 {
 // runs between frames on the emulation goroutine. Change lines go to
 // stderr and are pushed non-blocking to the connected client. A stalled
 // client drops pushes. The stderr copy is complete.
-func (c *Console) serviceWatches() {
+func (c *Server) serviceWatches() {
 	for i := range c.watches {
 		w := &c.watches[i]
 		var buf [4]byte
@@ -114,7 +114,7 @@ func parseWatchTarget(args []string) (uint32, *region, uint32, int, error) {
 }
 
 // watchListText renders the watch list response for text mode.
-func watchListText(r debugconsoletypes.WatchList) string {
+func watchListText(r responses.WatchList) string {
 	if len(r.Watches) == 0 {
 		return "no watches"
 	}
@@ -129,12 +129,12 @@ func watchListText(r debugconsoletypes.WatchList) string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdWatch(c *Console, args []string) (any, error) {
+func cmdWatch(c *Server, args []string) (any, error) {
 	if len(args) == 0 {
-		r := debugconsoletypes.WatchList{Watches: make([]debugconsoletypes.WatchInfo, 0, len(c.watches))}
+		r := responses.WatchList{Watches: make([]responses.WatchInfo, 0, len(c.watches))}
 		for i := range c.watches {
 			w := &c.watches[i]
-			r.Watches = append(r.Watches, debugconsoletypes.WatchInfo{
+			r.Watches = append(r.Watches, responses.WatchInfo{
 				Addr: w.addr, Width: w.width, Value: w.prev, Valid: w.valid})
 		}
 		return r, nil
@@ -161,7 +161,7 @@ func cmdWatch(c *Console, args []string) (any, error) {
 	return fmt.Sprintf("watching 0x%08X w%d", addr, width), nil
 }
 
-func cmdUnwatch(c *Console, args []string) (any, error) {
+func cmdUnwatch(c *Server, args []string) (any, error) {
 	if len(args) != 1 {
 		return nil, fmt.Errorf("usage: unwatch <addr>|all")
 	}

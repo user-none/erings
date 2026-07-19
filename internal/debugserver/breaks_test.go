@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 )
 
 func TestBreakValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "break"); r != "no breaks" {
 		t.Fatalf("empty list response %q", r)
 	}
@@ -37,7 +37,7 @@ func TestBreakValidation(t *testing.T) {
 }
 
 func TestBreakAddListUnbreak(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "break 0x0605C973 eq 0"); r != "break 0x0605C973 w8 eq 0" {
 		t.Fatalf("break response %q", r)
 	}
@@ -67,7 +67,7 @@ func TestBreakAddListUnbreak(t *testing.T) {
 }
 
 func TestBreakLimit(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	for i := 0; i < maxBreaks; i++ {
 		r := runLine(t, c, fmt.Sprintf("break 0x%08X diff", 0x06000000+i*4))
 		if !strings.HasPrefix(r, "break") {
@@ -84,7 +84,7 @@ func TestBreakLimit(t *testing.T) {
 // stays quiet while it holds, and fires again after it clears and
 // returns.
 func TestBreakFiresOnEdge(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	c.out = make(chan string, 4)
 	m.wram[fakeAddr] = 3
 
@@ -130,7 +130,7 @@ func TestBreakFiresOnEdge(t *testing.T) {
 // already holds: it must not fire until the condition clears and comes
 // back.
 func TestBreakAlreadyTrueAtAdd(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	m.wram[fakeAddr] = 0
 
 	runLine(t, c, "break 0x06001000 eq 0")
@@ -152,7 +152,7 @@ func TestBreakAlreadyTrueAtAdd(t *testing.T) {
 // TestBreakCancelsStep covers a break firing during a frame step: the
 // remaining step frames are cancelled so stepping stops at the break.
 func TestBreakCancelsStep(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	m.wram[fakeAddr] = 1
 	runLine(t, c, "break 0x06001000 eq 0")
 	c.Service(400) // seed

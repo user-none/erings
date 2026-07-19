@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 // Package client implements the debugger's connection to a debug
-// console. It dials the console's TCP port, switches the connection to
+// server. It dials the server's TCP port, switches the connection to
 // JSON mode, and then exposes two streams: in-order command responses
 // and pushed watch/break events. The package has no UI dependencies.
 package client
@@ -23,11 +23,11 @@ const (
 	// dialTimeout bounds the TCP connect.
 	dialTimeout = 3 * time.Second
 	// handshakeTimeout bounds the wait for the mode-switch response, so
-	// dialing a port that is not a debug console fails instead of
+	// dialing a port that is not a debug server fails instead of
 	// hanging.
 	handshakeTimeout = 3 * time.Second
 	// eventBuffer is the pushed-event channel capacity. Events beyond a
-	// full buffer are dropped, matching the console's own non-blocking
+	// full buffer are dropped, matching the server's own non-blocking
 	// push to a stalled client.
 	eventBuffer = 256
 )
@@ -62,8 +62,8 @@ type envelope struct {
 	Data json.RawMessage `json:"data"`
 }
 
-// Client is one console connection. Commands are matched to responses
-// by order: the console executes one command at a time and emits
+// Client is one server connection. Commands are matched to responses
+// by order: the server executes one command at a time and emits
 // exactly one resp or error line per command, so the oldest pending
 // command owns the next response line.
 type Client struct {
@@ -82,9 +82,10 @@ type Client struct {
 	done      chan struct{}
 }
 
-// Dial connects to a debug console, switches it to JSON mode, and
-// starts the reader. It returns an error if the endpoint does not
-// answer the mode switch like a console within the handshake timeout.
+// Dial connects to a debug server, switches it to JSON mode, and
+// starts the reader. The mode switch doubles as a handshake: if the
+// expected mode response does not arrive within the timeout, the
+// endpoint is not a debug server and Dial fails.
 func Dial(addr string) (*Client, error) {
 	conn, err := net.DialTimeout("tcp", addr, dialTimeout)
 	if err != nil {
@@ -102,16 +103,16 @@ func Dial(addr string) (*Client, error) {
 	case r := <-resp:
 		if r.Err != nil {
 			c.Close()
-			return nil, fmt.Errorf("console handshake: %w", r.Err)
+			return nil, fmt.Errorf("server handshake: %w", r.Err)
 		}
 		var mode string
 		if json.Unmarshal(r.Data, &mode) != nil || mode != "mode json" {
 			c.Close()
-			return nil, fmt.Errorf("console handshake: unexpected response %s", r.Data)
+			return nil, fmt.Errorf("server handshake: unexpected response %s", r.Data)
 		}
 	case <-time.After(handshakeTimeout):
 		c.Close()
-		return nil, errors.New("console handshake: timed out")
+		return nil, errors.New("server handshake: timed out")
 	}
 	return c, nil
 }
@@ -119,7 +120,7 @@ func Dial(addr string) (*Client, error) {
 // Do queues one command line and returns a channel that delivers its
 // response exactly once. On a dead connection the response is an
 // immediate error. A line containing a newline is rejected: it would
-// reach the console as multiple commands and desynchronize the
+// reach the server as multiple commands and desynchronize the
 // in-order response matching.
 func (c *Client) Do(line string) <-chan Response {
 	resp := make(chan Response, 1)
@@ -179,7 +180,7 @@ func (c *Client) readLoop() {
 	sc.Buffer(make([]byte, 0, 64*1024), 1024*1024)
 	for sc.Scan() {
 		line := sc.Text()
-		// The console writes an interactive "> " prompt before the mode
+		// The server writes an interactive "> " prompt before the mode
 		// switch lands, so the first response line arrives with prompt
 		// prefixes. JSON lines never start with '>'.
 		for strings.HasPrefix(line, "> ") {

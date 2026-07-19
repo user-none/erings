@@ -100,10 +100,10 @@ func (g *game) emulationLoop() {
 			g.emu.SetInput(player, buttons[player])
 		}
 
-		// A pending console frame step runs frames while the pause flag
-		// stays set.
+		// A pending debug-server frame step runs frames while the pause
+		// flag stays set.
 		paused := g.paused.Load()
-		if paused && g.console != nil && g.console.TakeStep() {
+		if paused && g.debugServer != nil && g.debugServer.TakeStep() {
 			paused = false
 		}
 
@@ -221,8 +221,8 @@ func (g *game) serviceRequests() {
 	g.serviceHistRequest()
 	g.serviceScreenshotRequest()
 	g.serviceDumpRequest()
-	if g.console != nil {
-		g.console.Service(g.emuFrame)
+	if g.debugServer != nil {
+		g.debugServer.Service(g.emuFrame)
 	}
 }
 

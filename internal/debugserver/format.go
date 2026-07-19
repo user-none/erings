@@ -1,13 +1,13 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
 // respEnvelope wraps a successful command response in JSON mode. The
@@ -65,7 +65,7 @@ func marshalLine(v any) string {
 // empty, which the connection treats as a silent command. In JSON mode
 // every command produces a line so the client's in-order response
 // matching never skips.
-func (c *Console) formatResp(v any) string {
+func (c *Server) formatResp(v any) string {
 	if c.jsonMode {
 		return marshalLine(respEnvelope{Type: "resp", Data: v})
 	}
@@ -80,17 +80,17 @@ func renderText(v any) string {
 	switch r := v.(type) {
 	case string:
 		return r
-	case debugconsoletypes.StateResult:
+	case responses.StateResult:
 		return stateText(r)
-	case debugconsoletypes.ReadResult:
+	case responses.ReadResult:
 		return readText(r)
-	case debugconsoletypes.RegionList:
+	case responses.RegionList:
 		return regionListText(r)
-	case debugconsoletypes.WatchList:
+	case responses.WatchList:
 		return watchListText(r)
-	case debugconsoletypes.BreakList:
+	case responses.BreakList:
 		return breakListText(r)
-	case debugconsoletypes.CandidateList:
+	case responses.CandidateList:
 		return candidateListText(r)
 	case snapshotList:
 		return snapshotListText(r)
@@ -99,7 +99,7 @@ func renderText(v any) string {
 }
 
 // formatErr renders a command error for the current output mode.
-func (c *Console) formatErr(err error) string {
+func (c *Server) formatErr(err error) string {
 	if c.jsonMode {
 		return marshalLine(errorEnvelope{Type: "error", Msg: err.Error()})
 	}
@@ -111,7 +111,7 @@ func (c *Console) formatErr(err error) string {
 // "mode json" sees JSON from that response onward. JSON mode also
 // suppresses the interactive prompt. The mode resets to text whenever a
 // client attaches.
-func cmdMode(c *Console, args []string) (any, error) {
+func cmdMode(c *Server, args []string) (any, error) {
 	if len(args) != 1 || (args[0] != "text" && args[0] != "json") {
 		return nil, fmt.Errorf("usage: mode text|json")
 	}

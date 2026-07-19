@@ -64,8 +64,7 @@ func (g *TextInputGroup) Update() {
 	if inpututil.IsKeyJustPressed(ebiten.KeyV) {
 		if text := clipboardReadText(); text != nil {
 			// Every input here is single-line and feeds the one-line
-			// console protocol, so line breaks in pasted text become
-			// spaces.
+			// protocol, so line breaks in pasted text become spaces.
 			s := strings.ReplaceAll(string(text), "\r", "")
 			s = strings.ReplaceAll(s, "\n", " ")
 			focused.DeleteSelectedText()

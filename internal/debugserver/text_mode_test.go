@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"strings"
@@ -42,15 +42,15 @@ func (m *fakeMachine) Deserialize(data []byte) error {
 // 0x06001000 is WRAM-H offset 0x1000, flat offset 0x101000.
 const fakeAddr = 0x101000
 
-func newFakeConsole() (*Console, *fakeMachine) {
+func newFakeServer() (*Server, *fakeMachine) {
 	m := &fakeMachine{}
-	c := newTestConsole()
+	c := newTestServer()
 	c.machine = m
 	return c, m
 }
 
 func TestReadCommandData(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	copy(m.wram[fakeAddr:], []byte{0xDE, 0xAD, 0xBE, 0xEF})
 	r := runLine(t, c, "read 0x06001000 4")
 	want := dumpLine(0x06001000, "DE AD BE EF", "....")
@@ -64,7 +64,7 @@ func TestReadCommandData(t *testing.T) {
 }
 
 func TestSearchNarrowing(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	m.wram[fakeAddr] = 10
 	m.wram[fakeAddr+1] = 77
 
@@ -94,7 +94,7 @@ func TestSearchNarrowing(t *testing.T) {
 // then rolled back and rebase re-anchors without losing candidates, so
 // a control trial can prune values that also change without the event.
 func TestRebaseCrossTrialIntersection(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	const flag = fakeAddr      // changes only during the event
 	const churn = fakeAddr + 4 // changes in every trial
 
@@ -128,7 +128,7 @@ func TestRebaseCrossTrialIntersection(t *testing.T) {
 }
 
 func TestSnapshotRestoreRoundTrip(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	m.wram[fakeAddr] = 42
 
 	if r := runLine(t, c, "snapshot spot"); !strings.HasPrefix(r, `snapshot "spot" saved`) {
@@ -147,7 +147,7 @@ func TestSnapshotRestoreRoundTrip(t *testing.T) {
 }
 
 func TestWatchReportsChange(t *testing.T) {
-	c, m := newFakeConsole()
+	c, m := newFakeServer()
 	c.out = make(chan string, 4)
 	m.wram[fakeAddr] = 6
 

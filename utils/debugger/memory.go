@@ -12,7 +12,7 @@ import (
 
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 	"github.com/user-none/erings/utils/debugger/client"
 	"github.com/user-none/erings/utils/debugger/ui"
 )
@@ -28,11 +28,11 @@ const memRows = 16
 // memWheelRows is how many rows one wheel notch scrolls.
 const memWheelRows = 3
 
-// memory is the memory panel state. The regions come from the console
+// memory is the memory panel state. The regions come from the server
 // at connect time; curRegion indexes into them and memOffset is the
 // byte offset of the visible window inside that region, 16-aligned.
 type memory struct {
-	regions   []debugconsoletypes.RegionInfo
+	regions   []responses.RegionInfo
 	curRegion int
 	memOffset uint32
 
@@ -119,7 +119,7 @@ func (a *app) buildRegionButtons() {
 	}
 }
 
-// fetchRegions asks the console for its region table. It runs once per
+// fetchRegions asks the server for its region table. It runs once per
 // connect as part of refresh.
 func (a *app) fetchRegions() {
 	a.send("regions", func(r client.Response) {
@@ -127,7 +127,7 @@ func (a *app) fetchRegions() {
 			a.logf("regions: error: %s", r.Err)
 			return
 		}
-		var rl debugconsoletypes.RegionList
+		var rl responses.RegionList
 		if json.Unmarshal(r.Data, &rl) != nil {
 			return
 		}
@@ -167,7 +167,7 @@ func (a *app) pollMemory() {
 		if r.Err != nil {
 			return
 		}
-		var rr debugconsoletypes.ReadResult
+		var rr responses.ReadResult
 		if json.Unmarshal(r.Data, &rr) != nil {
 			return
 		}
@@ -212,7 +212,7 @@ func (a *app) scrollMemory(delta float64) {
 
 // gotoAddress jumps the window to the entered address. The address may
 // be hex with 0x or decimal, and must fall inside a known region after
-// masking the SH-2 partition bits, the same normalization the console
+// masking the SH-2 partition bits, the same normalization the server
 // applies.
 func (a *app) gotoAddress() {
 	s := strings.TrimSpace(a.mem.gotoInput.GetText())
@@ -236,7 +236,7 @@ func (a *app) gotoAddress() {
 }
 
 // jumpTo scrolls the memory view to addr, resolving it the same way
-// the console does: mask the SH-2 partition bits, then fold mirror
+// the server does: mask the SH-2 partition bits, then fold mirror
 // spellings onto the canonical range. It reports whether the address
 // landed in a known region.
 func (a *app) jumpTo(addr uint32) bool {

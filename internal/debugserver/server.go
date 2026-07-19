@@ -1,13 +1,13 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// Package debugconsole implements the dev runner's network debug
-// console. It speaks a bare line protocol over a localhost TCP port and
-// provides execution control, memory inspection, a cheat-search style
-// memory search, and in-memory machine snapshots. The package has no UI
-// dependencies. The host wires it to the emulator through the Machine
-// interface and calls Service between frames.
-package debugconsole
+// Package debugserver implements the emulator debug server. It speaks a
+// bare line protocol over a localhost TCP port and provides execution
+// control, memory inspection, a cheat-search style memory search, and
+// in-memory machine snapshots. The package has no UI dependencies. A
+// host wires it to the emulator through the Machine interface and
+// calls Service between frames.
+package debugserver
 
 import (
 	"bufio"
@@ -19,10 +19,10 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
-// Machine is the emulator surface the console needs.
+// Machine is the emulator surface the server needs.
 type Machine interface {
 	// ReadMemory copies guest memory at a flat offset into buf and
 	// returns the number of bytes copied.
@@ -31,7 +31,7 @@ type Machine interface {
 	Deserialize(data []byte) error
 }
 
-// consoleCmd is one line received from a console client. The connection
+// clientCmd is one line received from a client. The connection
 // goroutine blocks on resp until the emulation goroutine has executed the
 // command. resp is buffered so the responder never blocks, even if the
 // client has gone away.
@@ -40,23 +40,24 @@ type Machine interface {
 // disconnect. attach hands the emulation goroutine the connection's
 // output channel so watch lines can be pushed to the client. bye clears
 // the channel when the connection closes.
-type consoleCmd struct {
+type clientCmd struct {
 	line   string
 	resp   chan string
 	attach chan string
 	bye    bool
 }
 
-// Console owns the debug console listener and all console state.
-// Connection goroutines read lines and queue consoleCmds. The emulation
+// Server owns the listener and all debug state (watches, breaks,
+// searches, snapshots). Connection goroutines read lines and queue
+// clientCmds. The emulation
 // goroutine drains the queue between frames (Service), so command
 // handlers run on the emulation goroutine and everything below the
 // queue is owned by it.
-type Console struct {
+type Server struct {
 	machine  Machine
 	paused   *atomic.Bool
 	listener net.Listener
-	cmds     chan consoleCmd
+	cmds     chan clientCmd
 
 	// prompt controls the interactive "> " written on connect and after
 	// each response (default on).
@@ -81,11 +82,11 @@ type Console struct {
 	// command queue (attach/bye).
 	out chan string
 
-	// watches are the watched addresses. Entries survive console
+	// watches are the watched addresses. Entries survive client
 	// disconnects.
 	watches []watchEntry
 
-	// breaks are the value breaks. Entries survive console disconnects.
+	// breaks are the value breaks. Entries survive client disconnects.
 	breaks []breakEntry
 
 	// search and searchWidth are the memory-search state. searchWidth
@@ -98,18 +99,18 @@ type Console struct {
 	snapshots map[string][]byte
 }
 
-// Start listens on 127.0.0.1:port and serves console clients. The
+// Start listens on 127.0.0.1:port and serves clients. The
 // paused flag is shared with the host's pause control.
-func Start(port int, m Machine, paused *atomic.Bool) (*Console, error) {
+func Start(port int, m Machine, paused *atomic.Bool) (*Server, error) {
 	ln, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", port))
 	if err != nil {
 		return nil, err
 	}
-	c := &Console{
+	c := &Server{
 		machine:  m,
 		paused:   paused,
 		listener: ln,
-		cmds:     make(chan consoleCmd, 16),
+		cmds:     make(chan clientCmd, 16),
 		prompt:   true,
 	}
 	go c.acceptLoop()
@@ -119,7 +120,7 @@ func Start(port int, m Machine, paused *atomic.Bool) (*Console, error) {
 // acceptLoop serves one client at a time. A second connection
 // attempt waits in the listen backlog until the current client
 // disconnects.
-func (c *Console) acceptLoop() {
+func (c *Server) acceptLoop() {
 	for {
 		conn, err := c.listener.Accept()
 		if err != nil {
@@ -139,7 +140,7 @@ func (c *Console) acceptLoop() {
 // interleave mid-write. This loop sends responses and prompts. The
 // emulation goroutine is the other sender and pushes watch lines into
 // the same channel once attached.
-func (c *Console) serveConn(conn net.Conn) {
+func (c *Server) serveConn(conn net.Conn) {
 	out := make(chan string, 64)
 	writerDone := make(chan struct{})
 	go func() {
@@ -154,11 +155,11 @@ func (c *Console) serveConn(conn net.Conn) {
 	}()
 
 	// Hand the emulation goroutine this connection's output channel.
-	attach := consoleCmd{attach: out, resp: make(chan string, 1)}
+	attach := clientCmd{attach: out, resp: make(chan string, 1)}
 	c.cmds <- attach
 	<-attach.resp
 	defer func() {
-		bye := consoleCmd{bye: true, resp: make(chan string, 1)}
+		bye := clientCmd{bye: true, resp: make(chan string, 1)}
 		c.cmds <- bye
 		<-bye.resp
 		close(out)
@@ -166,7 +167,7 @@ func (c *Console) serveConn(conn net.Conn) {
 		conn.Close()
 	}()
 
-	// The prompt reads console state owned by the emulation goroutine.
+	// The prompt reads server state owned by the emulation goroutine.
 	// Every read happens after a command response has been received, so
 	// the response channel orders it after the command that could have
 	// changed the setting. JSON mode never prompts: the client is a
@@ -182,7 +183,7 @@ func (c *Console) serveConn(conn net.Conn) {
 	for sc.Scan() {
 		line := strings.TrimSpace(sc.Text())
 		if line != "" {
-			cmd := consoleCmd{line: line, resp: make(chan string, 1)}
+			cmd := clientCmd{line: line, resp: make(chan string, 1)}
 			c.cmds <- cmd
 			if r := <-cmd.resp; r != "" {
 				out <- r + "\n"
@@ -197,12 +198,12 @@ func (c *Console) serveConn(conn net.Conn) {
 // command's response channel instead of replying immediately.
 var errDeferredResponse = errors.New("deferred response")
 
-// command describes one console command for dispatch and help.
+// command describes one command for dispatch and help.
 type command struct {
 	name    string
 	usage   string
 	summary string
-	fn      func(c *Console, args []string) (any, error)
+	fn      func(c *Server, args []string) (any, error)
 }
 
 // commands is populated in init. The help handler iterates the table it
@@ -236,20 +237,20 @@ func init() {
 	}
 }
 
-// Service runs the console's between-frames work: watch reads and
+// Service runs the server's between-frames work: watch reads and
 // queued commands. The host calls it once per emulation loop iteration
 // with the current RunFrame count.
-func (c *Console) Service(frame uint64) {
+func (c *Server) Service(frame uint64) {
 	c.frame = frame
 	c.serviceWatches()
 	c.serviceBreaks()
 	c.serviceCommands()
 }
 
-// TakeStep reports whether a console frame step is pending and consumes
+// TakeStep reports whether a client frame step is pending and consumes
 // one frame from it. The host calls it while paused to decide whether
 // to run a frame anyway.
-func (c *Console) TakeStep() bool {
+func (c *Server) TakeStep() bool {
 	if c.stepRemaining > 0 {
 		c.stepRemaining--
 		return true
@@ -257,10 +258,10 @@ func (c *Console) TakeStep() bool {
 	return false
 }
 
-// serviceCommands drains queued console commands. While a frame step is
+// serviceCommands drains queued client commands. While a frame step is
 // in flight, queued commands are held so they observe the post-step
 // state.
-func (c *Console) serviceCommands() {
+func (c *Server) serviceCommands() {
 	if c.stepResp != nil {
 		// A pause toggle from the keyboard aborts the step. Complete
 		// the response either way.
@@ -284,7 +285,7 @@ func (c *Console) serviceCommands() {
 	}
 }
 
-func (c *Console) runCommand(cmd consoleCmd) {
+func (c *Server) runCommand(cmd clientCmd) {
 	// A connection attach/bye takes or drops the client's output channel.
 	// Either transition resets the output format: mode is per-connection
 	// state, and a fresh client (interactive nc or the GUI) must always
@@ -321,17 +322,17 @@ func (c *Console) runCommand(cmd consoleCmd) {
 	cmd.resp <- c.formatErr(fmt.Errorf("unknown command %q (try help)", name))
 }
 
-func cmdPause(c *Console, args []string) (any, error) {
+func cmdPause(c *Server, args []string) (any, error) {
 	c.paused.Store(true)
 	return "paused", nil
 }
 
-func cmdResume(c *Console, args []string) (any, error) {
+func cmdResume(c *Server, args []string) (any, error) {
 	c.paused.Store(false)
 	return "resumed", nil
 }
 
-func cmdFrame(c *Console, args []string) (any, error) {
+func cmdFrame(c *Server, args []string) (any, error) {
 	n := 1
 	if len(args) > 0 {
 		v, err := strconv.Atoi(args[0])
@@ -348,7 +349,7 @@ func cmdFrame(c *Console, args []string) (any, error) {
 }
 
 // stateText renders the state response for text mode.
-func stateText(s debugconsoletypes.StateResult) string {
+func stateText(s responses.StateResult) string {
 	search := "none"
 	if s.SearchActive {
 		search = strconv.Itoa(s.Candidates)
@@ -360,11 +361,11 @@ func stateText(s debugconsoletypes.StateResult) string {
 // cmdState reports the execution and search state in one response. A
 // reconnecting client uses it to rebuild its view without inferring
 // anything from earlier traffic.
-func cmdState(c *Console, args []string) (any, error) {
+func cmdState(c *Server, args []string) (any, error) {
 	if len(args) != 0 {
 		return nil, fmt.Errorf("usage: state")
 	}
-	s := debugconsoletypes.StateResult{Paused: c.paused.Load(), Frame: c.frame, Width: c.currentWidth()}
+	s := responses.StateResult{Paused: c.paused.Load(), Frame: c.frame, Width: c.currentWidth()}
 	if c.search != nil {
 		s.SearchActive = true
 		s.Candidates = c.search.total()
@@ -377,7 +378,7 @@ func cmdState(c *Console, args []string) (any, error) {
 // clean from its first command onward. In JSON mode the empty message
 // still produces a response envelope, because a client matches
 // responses to commands in order and every command must answer.
-func cmdPrompt(c *Console, args []string) (any, error) {
+func cmdPrompt(c *Server, args []string) (any, error) {
 	if len(args) != 1 || (args[0] != "on" && args[0] != "off") {
 		return nil, fmt.Errorf("usage: prompt on|off")
 	}
@@ -385,7 +386,7 @@ func cmdPrompt(c *Console, args []string) (any, error) {
 	return "", nil
 }
 
-func cmdHelp(c *Console, args []string) (any, error) {
+func cmdHelp(c *Server, args []string) (any, error) {
 	var b strings.Builder
 	for _, cm := range commands {
 		fmt.Fprintf(&b, "%-27s %s\n", cm.usage, cm.summary)

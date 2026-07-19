@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"encoding/hex"
@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
 // region is one entry in the memory-region registry. The registry drives
-// console address validation and read access. New memory areas become
+// address validation and read access. New memory areas become
 // table entries. Regions are memories only. Register banks never get an
 // entry because their reads can have side effects.
 type region struct {
@@ -88,7 +88,7 @@ func lookupRegion(addr uint32) (*region, uint32, error) {
 
 // readRegion copies length bytes at the region offset into a fresh
 // buffer via the machine's ReadMemory window.
-func (c *Console) readRegion(r *region, off, length uint32) []byte {
+func (c *Server) readRegion(r *region, off, length uint32) []byte {
 	buf := make([]byte, length)
 	n := c.machine.ReadMemory(r.flatBase+off, buf)
 	return buf[:n]
@@ -131,7 +131,7 @@ const (
 
 // readText renders the read response for text mode. The hex string is
 // our own encoding of the bytes just read, so the decode cannot fail.
-func readText(r debugconsoletypes.ReadResult) string {
+func readText(r responses.ReadResult) string {
 	data, err := hex.DecodeString(r.Data)
 	if err != nil {
 		return "error: corrupt read data"
@@ -139,7 +139,7 @@ func readText(r debugconsoletypes.ReadResult) string {
 	return formatHexDump(r.Addr, data)
 }
 
-func cmdRead(c *Console, args []string) (any, error) {
+func cmdRead(c *Server, args []string) (any, error) {
 	if len(args) < 1 || len(args) > 2 {
 		return nil, fmt.Errorf("usage: read <addr> [len]")
 	}
@@ -164,11 +164,11 @@ func cmdRead(c *Console, args []string) (any, error) {
 		length = remaining
 	}
 	data := c.readRegion(r, off, length)
-	return debugconsoletypes.ReadResult{Addr: r.start + off, Data: hex.EncodeToString(data)}, nil
+	return responses.ReadResult{Addr: r.start + off, Data: hex.EncodeToString(data)}, nil
 }
 
 // regionListText renders the region list response for text mode.
-func regionListText(r debugconsoletypes.RegionList) string {
+func regionListText(r responses.RegionList) string {
 	var b strings.Builder
 	for _, ri := range r.Regions {
 		fmt.Fprintf(&b, "%-6s 0x%08X-0x%08X  %dKB\n", ri.Name, ri.Start, ri.End, ri.Size/1024)
@@ -176,11 +176,11 @@ func regionListText(r debugconsoletypes.RegionList) string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdRegions(c *Console, args []string) (any, error) {
-	res := debugconsoletypes.RegionList{Regions: make([]debugconsoletypes.RegionInfo, 0, len(regionTable))}
+func cmdRegions(c *Server, args []string) (any, error) {
+	res := responses.RegionList{Regions: make([]responses.RegionInfo, 0, len(regionTable))}
 	for i := range regionTable {
 		r := &regionTable[i]
-		res.Regions = append(res.Regions, debugconsoletypes.RegionInfo{
+		res.Regions = append(res.Regions, responses.RegionInfo{
 			Name: r.name, Start: r.start, End: r.end(), Size: r.size, Window: r.window})
 	}
 	return res, nil

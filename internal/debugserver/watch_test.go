@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ func TestBEValue(t *testing.T) {
 }
 
 func TestWatchValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	for _, bad := range []string{
 		"watch nonsense",
 		"watch 0x05C00000",
@@ -46,7 +46,7 @@ func TestWatchValidation(t *testing.T) {
 }
 
 func TestWatchAddListUnwatch(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "watch"); r != "no watches" {
 		t.Fatalf("empty list response %q", r)
 	}
@@ -82,7 +82,7 @@ func TestWatchAddListUnwatch(t *testing.T) {
 // the entry rather than adding a duplicate. unwatch accepts any
 // spelling.
 func TestWatchCanonicalization(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	runLine(t, c, "watch 0x06001000")
 	if r := runLine(t, c, "watch 0x26101000 16"); r != "watching 0x06001000 w16" {
 		t.Fatalf("re-watch response %q", r)
@@ -96,7 +96,7 @@ func TestWatchCanonicalization(t *testing.T) {
 }
 
 func TestWatchLimit(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	for i := 0; i < maxWatches; i++ {
 		r := runLine(t, c, fmt.Sprintf("watch 0x%08X", 0x06000000+i*4))
 		if !strings.HasPrefix(r, "watching") {
@@ -108,11 +108,11 @@ func TestWatchLimit(t *testing.T) {
 	}
 }
 
-func TestConsoleAttachBye(t *testing.T) {
-	c := newTestConsole()
+func TestServerAttachBye(t *testing.T) {
+	c := newTestServer()
 	out := make(chan string, 4)
 
-	attach := consoleCmd{attach: out, resp: make(chan string, 1)}
+	attach := clientCmd{attach: out, resp: make(chan string, 1)}
 	c.runCommand(attach)
 	if r := <-attach.resp; r != "" {
 		t.Fatalf("attach response %q", r)
@@ -121,7 +121,7 @@ func TestConsoleAttachBye(t *testing.T) {
 		t.Fatal("attach did not take the output channel")
 	}
 
-	bye := consoleCmd{bye: true, resp: make(chan string, 1)}
+	bye := clientCmd{bye: true, resp: make(chan string, 1)}
 	c.runCommand(bye)
 	if r := <-bye.resp; r != "" {
 		t.Fatalf("bye response %q", r)

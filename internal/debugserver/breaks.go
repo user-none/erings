@@ -1,14 +1,14 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"fmt"
 	"os"
 	"strings"
 
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
 // maxBreaks bounds the per-frame read cost of the break list.
@@ -45,7 +45,7 @@ func (b *breakEntry) describe() string {
 // emulation goroutine. A fire also cancels an in-flight frame step so
 // stepping stops at the break. Break lines go to stderr and are pushed
 // non-blocking to the connected client.
-func (c *Console) serviceBreaks() {
+func (c *Server) serviceBreaks() {
 	for i := range c.breaks {
 		b := &c.breaks[i]
 		var buf [4]byte
@@ -85,7 +85,7 @@ func (c *Console) serviceBreaks() {
 
 // breakCond renders an entry's condition the way breakEntry.describe
 // does.
-func breakCond(b debugconsoletypes.BreakInfo) string {
+func breakCond(b responses.BreakInfo) string {
 	if b.HasVal {
 		return fmt.Sprintf("%s %d", b.Op, b.Val)
 	}
@@ -93,7 +93,7 @@ func breakCond(b debugconsoletypes.BreakInfo) string {
 }
 
 // breakListText renders the break list response for text mode.
-func breakListText(r debugconsoletypes.BreakList) string {
+func breakListText(r responses.BreakList) string {
 	if len(r.Breaks) == 0 {
 		return "no breaks"
 	}
@@ -104,12 +104,12 @@ func breakListText(r debugconsoletypes.BreakList) string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdBreak(c *Console, args []string) (any, error) {
+func cmdBreak(c *Server, args []string) (any, error) {
 	if len(args) == 0 {
-		r := debugconsoletypes.BreakList{Breaks: make([]debugconsoletypes.BreakInfo, 0, len(c.breaks))}
+		r := responses.BreakList{Breaks: make([]responses.BreakInfo, 0, len(c.breaks))}
 		for i := range c.breaks {
 			e := &c.breaks[i]
-			r.Breaks = append(r.Breaks, debugconsoletypes.BreakInfo{
+			r.Breaks = append(r.Breaks, responses.BreakInfo{
 				Addr: e.addr, Width: e.width, Op: e.op.name,
 				Val: e.val, HasVal: e.op.needsVal})
 		}
@@ -169,7 +169,7 @@ func cmdBreak(c *Console, args []string) (any, error) {
 	return fmt.Sprintf("break 0x%08X w%d %s", addr, width, entry.describe()), nil
 }
 
-func cmdUnbreak(c *Console, args []string) (any, error) {
+func cmdUnbreak(c *Server, args []string) (any, error) {
 	if len(args) != 1 {
 		return nil, fmt.Errorf("usage: unbreak <addr>|all")
 	}

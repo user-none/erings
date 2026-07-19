@@ -9,7 +9,7 @@ standard library (plus the in-tree `core/sh2` disassembler for `disasm`,
 the `go-chip-m68k` disassembler for `m68kdisasm`, and the S2 decompressor
 for `statedump`). `dev_runner` is the development game runner and links
 the emulator core and its UI dependencies, so it needs a display to
-run. `debugger` is the GUI client for `dev_runner`'s debug console; it
+run. `debugger` is the GUI client for `dev_runner`'s debug server; it
 needs a display but does not link the emulator core. `capture` links
 the emulator core but is fully headless (no display or audio), so it
 runs anywhere.
@@ -50,15 +50,15 @@ Additional keys:
 - 8 (dump the current save state, exploded per field, to a
   `dump-YYYYMMDD-HHMMSS-mmm` directory)
 
-### Debug console
+### Debug server
 
-`-debug-console` starts an interactive debug console on
-`127.0.0.1:5000` (off by default; `-debug-console-port` selects a
+`-debug-server` starts an interactive debug server on
+`127.0.0.1:5000` (off by default; `-debug-server-port` selects a
 different port). It speaks a bare line protocol, so both `telnet` and
 `nc` work as clients, and it is scriptable
 (`echo "list" | nc localhost 5000`). The `debugger` tool is a GUI
-client for the same console. One client is served at a time; a second
-connection waits until the current one disconnects. Console state
+client for the same server. One client is served at a time; a second
+connection waits until the current one disconnects. Server state
 (searches, watches, snapshots) lives in the tool and survives
 reconnects.
 
@@ -73,7 +73,7 @@ RAM Low and High are the accessible regions.
   width, and surviving candidate count.
 - `regions` / `read <addr> [len]` - region list and hex dump.
 - `watch [<addr> [w]]` / `unwatch <addr>|all` - report value changes
-  each frame (width 8/16/32) to stderr and the console.
+  each frame (width 8/16/32) to stderr and the connected client.
 - `break [<addr> <op> [v] [w]]` / `unbreak <addr>|all` - pause when a
   value condition first becomes true (same operators as `filter`),
   e.g. `break 0x0605C973 eq 0` to stop on the frame health hits zero.
@@ -107,17 +107,17 @@ this histogram capture should not be committed.
 
 ## debugger
 
-A GUI client for the `dev_runner` debug console, in its own window so
+A GUI client for the `dev_runner` debug server, in its own window so
 keyboard focus never fights with the game. It is a viewer over the
-console's command set: it holds no state of its own, rebuilds every
-panel from the console's answers on connect, and clears them on
-disconnect. Console state survives client reconnects, so closing and
+server's command set: it holds no state of its own, rebuilds every
+panel from the server's answers on connect, and clears them on
+disconnect. Server state survives client reconnects, so closing and
 reopening either side is routine.
 
-Start the runner with the console enabled, then the debugger:
+Start the runner with the debug server enabled, then the debugger:
 
 ```
-go run ./utils/dev_runner -debug-console -disc game.chd
+go run ./utils/dev_runner -debug-server -disc game.chd
 go run ./utils/debugger
 ```
 
@@ -130,7 +130,7 @@ Panels:
 - Top bar: pause / resume / step-n controls with the frame counter and
   pause state.
 - Memory: a 16-row hex view with region buttons, a goto box (mirror
-  and partition spellings fold like the console), mouse-wheel movement
+  and partition spellings fold like the server), mouse-wheel movement
   through the region, and a decaying highlight on bytes that changed
   between refreshes.
 - Watches and Breaks: live lists with per-row remove, a quick-add row
@@ -143,8 +143,8 @@ Panels:
 - Event log: pushed watch/break traffic and command responses in their
   own scrollback, which takes all extra window height and follows the
   bottom until scrolled up.
-- Command line: sends any console command verbatim, so the GUI never
-  lags the console's command set.
+- Command line: sends any server command verbatim, so the GUI never
+  lags the server's command set.
 
 Copy and paste: all text inputs take Ctrl/Cmd+A/C/V/X. The hex view
 has hex-editor drag selection (Ctrl/Cmd+C copies the dump format,

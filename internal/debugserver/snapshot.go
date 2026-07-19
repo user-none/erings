@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"fmt"
@@ -15,7 +15,7 @@ const defaultSnapshotName = "default"
 
 // cmdSnapshot captures the full state into an in-memory named slot.
 // Slots are session-scoped and nothing touches disk.
-func cmdSnapshot(c *Console, args []string) (any, error) {
+func cmdSnapshot(c *Server, args []string) (any, error) {
 	if len(args) > 1 {
 		return nil, fmt.Errorf("usage: snapshot [name]")
 	}
@@ -35,7 +35,7 @@ func cmdSnapshot(c *Console, args []string) (any, error) {
 }
 
 // snapshotNames returns the slot names sorted.
-func snapshotNames(c *Console) []string {
+func snapshotNames(c *Server) []string {
 	var names []string
 	for n := range c.snapshots {
 		names = append(names, n)
@@ -45,7 +45,7 @@ func snapshotNames(c *Console) []string {
 }
 
 // snapshotList is the snapshots command response. The debugger does
-// not use snapshots, so the type is console-local rather than shared.
+// not use snapshots, so the type is server-local rather than shared.
 type snapshotList struct {
 	Snapshots []snapshotInfo `json:"snapshots"`
 }
@@ -69,7 +69,7 @@ func snapshotListText(r snapshotList) string {
 	return strings.TrimRight(b.String(), "\n")
 }
 
-func cmdSnapshots(c *Console, args []string) (any, error) {
+func cmdSnapshots(c *Server, args []string) (any, error) {
 	res := snapshotList{Snapshots: make([]snapshotInfo, 0, len(c.snapshots))}
 	for _, n := range snapshotNames(c) {
 		res.Snapshots = append(res.Snapshots, snapshotInfo{Name: n, Size: len(c.snapshots[n])})
@@ -83,7 +83,7 @@ func cmdSnapshots(c *Console, args []string) (any, error) {
 // the next filter intersects into the same surviving candidate set.
 // Watches typically fire on the restored values, which is informative
 // rather than spurious.
-func cmdRestore(c *Console, args []string) (any, error) {
+func cmdRestore(c *Server, args []string) (any, error) {
 	if len(args) > 1 {
 		return nil, fmt.Errorf("usage: restore [name]")
 	}

@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
 // searchRegionState is one region's share of an active search. It holds
@@ -40,7 +40,7 @@ func (s *search) total() int {
 }
 
 // currentWidth returns the search value width, defaulting to 8 bits.
-func (c *Console) currentWidth() int {
+func (c *Server) currentWidth() int {
 	if c.searchWidth == 0 {
 		return 8
 	}
@@ -136,7 +136,7 @@ func widthMax(width int) uint32 {
 	return (uint32(1) << width) - 1
 }
 
-func cmdBaseline(c *Console, args []string) (any, error) {
+func cmdBaseline(c *Server, args []string) (any, error) {
 	var selected []*region
 	if len(args) == 0 {
 		for i := range regionTable {
@@ -183,7 +183,7 @@ func cmdBaseline(c *Console, args []string) (any, error) {
 		strings.Join(names, ","), s.total(), width), nil
 }
 
-func cmdFilter(c *Console, args []string) (any, error) {
+func cmdFilter(c *Server, args []string) (any, error) {
 	if len(args) == 0 {
 		return nil, fmt.Errorf("usage: filter dec|inc|same|diff | filter eq|ne|lt|gt <value>")
 	}
@@ -228,7 +228,7 @@ func cmdFilter(c *Console, args []string) (any, error) {
 // filtering. It re-anchors comparisons to current memory while keeping
 // the candidate set, which is what makes cross-trial intersection work:
 // restore, rebase, act, filter.
-func cmdRebase(c *Console, args []string) (any, error) {
+func cmdRebase(c *Server, args []string) (any, error) {
 	if c.search == nil {
 		return nil, fmt.Errorf("no search active (run baseline)")
 	}
@@ -239,7 +239,7 @@ func cmdRebase(c *Console, args []string) (any, error) {
 	return fmt.Sprintf("rebased, %d candidates kept", c.search.total()), nil
 }
 
-func cmdWidth(c *Console, args []string) (any, error) {
+func cmdWidth(c *Server, args []string) (any, error) {
 	if len(args) == 0 {
 		return fmt.Sprintf("width %d", c.currentWidth()), nil
 	}
@@ -262,7 +262,7 @@ func cmdWidth(c *Console, args []string) (any, error) {
 const listDefault = 20
 
 // candidateListText renders the list response for text mode.
-func candidateListText(r debugconsoletypes.CandidateList) string {
+func candidateListText(r responses.CandidateList) string {
 	digits := r.Width / 8 * 2
 	var b strings.Builder
 	for _, cd := range r.Candidates {
@@ -273,7 +273,7 @@ func candidateListText(r debugconsoletypes.CandidateList) string {
 	return b.String()
 }
 
-func cmdList(c *Console, args []string) (any, error) {
+func cmdList(c *Server, args []string) (any, error) {
 	n := listDefault
 	offset := 0
 	if len(args) > 2 {
@@ -298,8 +298,8 @@ func cmdList(c *Console, args []string) (any, error) {
 	}
 
 	stride := c.search.width / 8
-	res := debugconsoletypes.CandidateList{Width: c.search.width, Total: c.search.total(),
-		Offset: offset, Candidates: make([]debugconsoletypes.CandidateInfo, 0)}
+	res := responses.CandidateList{Width: c.search.width, Total: c.search.total(),
+		Offset: offset, Candidates: make([]responses.CandidateInfo, 0)}
 	skip := offset
 	for i := range c.search.regions {
 		st := &c.search.regions[i]
@@ -320,7 +320,7 @@ func cmdList(c *Console, args []string) (any, error) {
 			off := uint32(idx * stride)
 			var buf [4]byte
 			c.machine.ReadMemory(st.r.flatBase+off, buf[:stride])
-			res.Candidates = append(res.Candidates, debugconsoletypes.CandidateInfo{
+			res.Candidates = append(res.Candidates, responses.CandidateInfo{
 				Addr: st.r.start + off,
 				Cur:  beValue(buf[:stride]),
 				Base: beValue(st.baseline[off : off+uint32(stride)]),
@@ -331,7 +331,7 @@ func cmdList(c *Console, args []string) (any, error) {
 	return res, nil
 }
 
-func cmdReset(c *Console, args []string) (any, error) {
+func cmdReset(c *Server, args []string) (any, error) {
 	if c.search == nil {
 		return "no search active", nil
 	}

@@ -10,7 +10,7 @@ import (
 
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 	"github.com/user-none/erings/utils/debugger/client"
 	"github.com/user-none/erings/utils/debugger/ui"
 )
@@ -50,7 +50,7 @@ type searchPanel struct {
 }
 
 // buildSearchPanel creates the search controls and the candidate list.
-// Every control maps directly onto a console command; region-scoped
+// Every control maps directly onto a server command; region-scoped
 // baselines stay on the command line.
 func (a *app) buildSearchPanel() *widget.Container {
 	panel := widget.NewContainer(
@@ -188,9 +188,9 @@ func (a *app) pollCandidates(force bool) {
 			refetch := a.search.listQueued
 			a.search.listQueued = false
 			if r.Err != nil {
-				a.rebuildCandidateRows(debugconsoletypes.CandidateList{})
+				a.rebuildCandidateRows(responses.CandidateList{})
 			} else {
-				var cl debugconsoletypes.CandidateList
+				var cl responses.CandidateList
 				if json.Unmarshal(r.Data, &cl) == nil {
 					// A page emptied from under us (the set shrank)
 					// snaps back to the last populated page and
@@ -212,7 +212,7 @@ func (a *app) pollCandidates(force bool) {
 
 // updateSearchFooter renders the count label and page-button states
 // from one list response.
-func (a *app) updateSearchFooter(cl debugconsoletypes.CandidateList) {
+func (a *app) updateSearchFooter(cl responses.CandidateList) {
 	if a.search.status == nil {
 		return
 	}
@@ -240,7 +240,7 @@ func (a *app) setSearchState(active bool, total int) {
 			a.search.nextBtn.GetWidget().Disabled = true
 		}
 		if wasActive {
-			a.rebuildCandidateRows(debugconsoletypes.CandidateList{})
+			a.rebuildCandidateRows(responses.CandidateList{})
 		}
 		return
 	}
@@ -253,7 +253,7 @@ func (a *app) setSearchState(active bool, total int) {
 
 // rebuildCandidateRows fills the candidate list. Clicking a row jumps
 // the memory view to that address.
-func (a *app) rebuildCandidateRows(cl debugconsoletypes.CandidateList) {
+func (a *app) rebuildCandidateRows(cl responses.CandidateList) {
 	c := a.search.rows
 	if c == nil {
 		return

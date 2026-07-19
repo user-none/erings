@@ -10,7 +10,7 @@ import (
 
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
-	"github.com/user-none/erings/internal/debugconsoletypes"
+	"github.com/user-none/erings/internal/debugserver/responses"
 	"github.com/user-none/erings/utils/debugger/client"
 	"github.com/user-none/erings/utils/debugger/ui"
 )
@@ -31,8 +31,8 @@ type side struct {
 	watchRows *widget.Container
 	breakRows *widget.Container
 
-	watches []debugconsoletypes.WatchInfo
-	breaks  []debugconsoletypes.BreakInfo
+	watches []responses.WatchInfo
+	breaks  []responses.BreakInfo
 
 	// watchHeat and breakHeat hold per-address highlight ticks set by
 	// pushed events.
@@ -163,7 +163,7 @@ func (a *app) buildWatchAddRow() *widget.Container {
 }
 
 // breakOps is the condition cycle order for the break quick-add row,
-// matching the console's operator vocabulary.
+// matching the server's operator vocabulary.
 var breakOps = []string{"dec", "inc", "same", "diff", "eq", "ne", "lt", "gt"}
 
 // breakOpNeedsVal reports whether the operator compares against a
@@ -289,7 +289,7 @@ func (a *app) pollWatches(force bool) {
 		queued := a.side.watchQueued
 		a.side.watchQueued = false
 		if r.Err == nil {
-			var wl debugconsoletypes.WatchList
+			var wl responses.WatchList
 			if json.Unmarshal(r.Data, &wl) == nil {
 				a.side.watches = wl.Watches
 				a.rebuildWatchRows()
@@ -317,7 +317,7 @@ func (a *app) pollBreaks(force bool) {
 		queued := a.side.breakQueued
 		a.side.breakQueued = false
 		if r.Err == nil {
-			var bl debugconsoletypes.BreakList
+			var bl responses.BreakList
 			if json.Unmarshal(r.Data, &bl) == nil {
 				a.side.breaks = bl.Breaks
 				a.rebuildBreakRows()

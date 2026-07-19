@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"strings"
@@ -9,17 +9,17 @@ import (
 	"testing"
 )
 
-// newTestConsole builds a Console with the fields dispatch-only tests
+// newTestServer builds a Server with the fields dispatch-only tests
 // need. Tests that touch memory set machine to a fakeMachine.
-func newTestConsole() *Console {
-	return &Console{paused: new(atomic.Bool)}
+func newTestServer() *Server {
+	return &Server{paused: new(atomic.Bool)}
 }
 
 // runLine dispatches one command line and returns the immediate response,
 // or "" if the response was deferred.
-func runLine(t *testing.T, c *Console, line string) string {
+func runLine(t *testing.T, c *Server, line string) string {
 	t.Helper()
-	cmd := consoleCmd{line: line, resp: make(chan string, 1)}
+	cmd := clientCmd{line: line, resp: make(chan string, 1)}
 	c.runCommand(cmd)
 	select {
 	case r := <-cmd.resp:
@@ -29,16 +29,16 @@ func runLine(t *testing.T, c *Console, line string) string {
 	}
 }
 
-func TestConsoleUnknownCommand(t *testing.T) {
-	c := newTestConsole()
+func TestServerUnknownCommand(t *testing.T) {
+	c := newTestServer()
 	r := runLine(t, c, "bogus")
 	if !strings.HasPrefix(r, "error: unknown command") {
 		t.Fatalf("unexpected response %q", r)
 	}
 }
 
-func TestConsolePauseResume(t *testing.T) {
-	c := newTestConsole()
+func TestServerPauseResume(t *testing.T) {
+	c := newTestServer()
 	if r := runLine(t, c, "pause"); r != "paused" {
 		t.Fatalf("pause response %q", r)
 	}
@@ -53,15 +53,15 @@ func TestConsolePauseResume(t *testing.T) {
 	}
 }
 
-func TestConsoleFrameRequiresPause(t *testing.T) {
-	c := newTestConsole()
+func TestServerFrameRequiresPause(t *testing.T) {
+	c := newTestServer()
 	if r := runLine(t, c, "frame"); r != "error: not paused" {
 		t.Fatalf("unexpected response %q", r)
 	}
 }
 
-func TestConsoleFrameArgValidation(t *testing.T) {
-	c := newTestConsole()
+func TestServerFrameArgValidation(t *testing.T) {
+	c := newTestServer()
 	c.paused.Store(true)
 	for _, bad := range []string{"frame 0", "frame -3", "frame x"} {
 		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
@@ -70,10 +70,10 @@ func TestConsoleFrameArgValidation(t *testing.T) {
 	}
 }
 
-func TestConsoleFrameDefersResponse(t *testing.T) {
-	c := newTestConsole()
+func TestServerFrameDefersResponse(t *testing.T) {
+	c := newTestServer()
 	c.paused.Store(true)
-	cmd := consoleCmd{line: "frame 3", resp: make(chan string, 1)}
+	cmd := clientCmd{line: "frame 3", resp: make(chan string, 1)}
 	c.runCommand(cmd)
 	select {
 	case r := <-cmd.resp:
@@ -88,17 +88,17 @@ func TestConsoleFrameDefersResponse(t *testing.T) {
 	}
 }
 
-// TestConsoleStepFlow drives the full frame-step sequence the way the
+// TestServerStepFlow drives the full frame-step sequence the way the
 // emulation loop and serviceCommands interleave. The step holds later
 // commands until the frames have run. Then the deferred response fires
 // and the held commands execute.
-func TestConsoleStepFlow(t *testing.T) {
-	c := newTestConsole()
-	c.cmds = make(chan consoleCmd, 16)
+func TestServerStepFlow(t *testing.T) {
+	c := newTestServer()
+	c.cmds = make(chan clientCmd, 16)
 	c.paused.Store(true)
 
-	step := consoleCmd{line: "frame 2", resp: make(chan string, 1)}
-	held := consoleCmd{line: "resume", resp: make(chan string, 1)}
+	step := clientCmd{line: "frame 2", resp: make(chan string, 1)}
+	held := clientCmd{line: "resume", resp: make(chan string, 1)}
 	c.cmds <- step
 	c.cmds <- held
 
@@ -132,15 +132,15 @@ func TestConsoleStepFlow(t *testing.T) {
 	}
 }
 
-// TestConsoleStepAbortOnUnpause covers a keyboard unpause arriving while
+// TestServerStepAbortOnUnpause covers a keyboard unpause arriving while
 // a step is in flight. The step completes its response instead of
 // holding the queue forever.
-func TestConsoleStepAbortOnUnpause(t *testing.T) {
-	c := newTestConsole()
-	c.cmds = make(chan consoleCmd, 16)
+func TestServerStepAbortOnUnpause(t *testing.T) {
+	c := newTestServer()
+	c.cmds = make(chan clientCmd, 16)
 	c.paused.Store(true)
 
-	step := consoleCmd{line: "frame 10", resp: make(chan string, 1)}
+	step := clientCmd{line: "frame 10", resp: make(chan string, 1)}
 	c.cmds <- step
 	c.serviceCommands()
 
@@ -155,8 +155,8 @@ func TestConsoleStepAbortOnUnpause(t *testing.T) {
 	}
 }
 
-func TestConsoleHelpListsCommands(t *testing.T) {
-	c := newTestConsole()
+func TestServerHelpListsCommands(t *testing.T) {
+	c := newTestServer()
 	r := runLine(t, c, "help")
 	for _, name := range []string{"pause", "resume", "frame", "state", "prompt", "mode", "help"} {
 		if !strings.Contains(r, name) {
@@ -165,8 +165,8 @@ func TestConsoleHelpListsCommands(t *testing.T) {
 	}
 }
 
-func TestConsolePromptToggle(t *testing.T) {
-	c := newTestConsole()
+func TestServerPromptToggle(t *testing.T) {
+	c := newTestServer()
 	c.prompt = true
 
 	if r := runLine(t, c, "prompt off"); r != "" {

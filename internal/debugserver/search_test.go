@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"math/bits"
@@ -130,7 +130,7 @@ func TestWidthMax(t *testing.T) {
 }
 
 func TestSearchCommandValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	// No active search.
 	for _, cmd := range []string{"filter dec", "list"} {
 		if r := runLine(t, c, cmd); !strings.Contains(r, "no search active") {
@@ -178,7 +178,7 @@ func TestSearchCommandValidation(t *testing.T) {
 }
 
 func TestWidthCommand(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "width"); r != "width 8" {
 		t.Fatalf("default width response %q", r)
 	}
@@ -205,7 +205,7 @@ func TestWidthCommand(t *testing.T) {
 }
 
 func TestListValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	c.search = &search{width: 8}
 	for _, bad := range []string{"list 0", "list -1", "list 1001", "list x", "list 5 x", "list 5 -1", "list 5 6 7"} {
 		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {

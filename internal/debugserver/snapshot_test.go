@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package debugconsole
+package debugserver
 
 import (
 	"strings"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestRestoreValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "restore"); r != "error: no snapshots taken" {
 		t.Fatalf("restore with no slots: %q", r)
 	}
@@ -24,14 +24,14 @@ func TestRestoreValidation(t *testing.T) {
 }
 
 func TestSnapshotValidation(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "snapshot a b"); !strings.HasPrefix(r, "error: usage") {
 		t.Fatalf("snapshot arg count: %q", r)
 	}
 }
 
 func TestSnapshotsList(t *testing.T) {
-	c := newTestConsole()
+	c := newTestServer()
 	if r := runLine(t, c, "snapshots"); r != "no snapshots" {
 		t.Fatalf("empty list: %q", r)
 	}

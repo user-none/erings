@@ -1,9 +1,9 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// The debugger renders a debug console served over TCP. It switches
-// the session to JSON mode and holds no authoritative state of its
-// own; every panel is a view of the console's answers.
+// The debugger renders the state served by a debug server over TCP. It
+// switches the session to JSON mode and holds no authoritative state
+// of its own; every panel is a view of the server's answers.
 package main
 
 import (
@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	addr := flag.String("connect", "127.0.0.1:5000", "console address to prefill in the connect panel")
+	addr := flag.String("connect", "127.0.0.1:5000", "debug server address to prefill in the connect panel")
 	flag.Parse()
 
 	ebiten.SetWindowTitle("Saturn Debugger")

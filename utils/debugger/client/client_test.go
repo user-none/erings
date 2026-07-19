@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// startServer runs a one-connection fake console. It performs the
+// startServer runs a one-connection fake debug server. It performs the
 // text-mode connect behavior (prompt, then the mode-switch handshake)
 // and hands the connection to script for the test body. The connection
 // closes when script returns.
@@ -158,7 +158,7 @@ func TestErrorResponse(t *testing.T) {
 	}
 }
 
-// TestTextLineIgnored covers the attach window where the console can
+// TestTextLineIgnored covers the attach window where the server can
 // still push text-mode lines: they are dropped without consuming a
 // pending response slot.
 func TestTextLineIgnored(t *testing.T) {

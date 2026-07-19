@@ -1,13 +1,13 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// Package debugconsoletypes holds the shared data types of the debug
-// console's JSON responses: the console server serializes them as the
-// data field of its response envelopes and the debugger client decodes
-// them. Types used by only one side (and the envelope and event line
-// shapes, which each side models itself) stay out; this package is the
-// shared vocabulary, nothing more.
-package debugconsoletypes
+// Package responses holds the shared data types of the debug server's
+// JSON responses: the server serializes them as the data field of its
+// response envelopes and the debugger client decodes them. Types used
+// by only one side (and the envelope and event line shapes, which each
+// side models itself) stay out; this package is the shared vocabulary,
+// nothing more.
+package responses
 
 // StateResult is the state command response. Width is the search value
 // width setting, which applies whether or not a search is active.
@@ -34,7 +34,7 @@ type RegionList struct {
 // RegionInfo is one region list entry. Start and End bound the
 // canonical range inclusive; Size is in bytes. Window is the full bus
 // decode window the region mirrors through (Window == Size when not
-// mirrored), so a client can fold mirror spellings the way the console
+// mirrored), so a client can fold mirror spellings the way the server
 // does.
 type RegionInfo struct {
 	Name   string `json:"name"`
