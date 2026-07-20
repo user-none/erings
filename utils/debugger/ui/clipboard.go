@@ -64,3 +64,10 @@ func ShiftPressed() bool {
 		ebiten.IsKeyPressed(ebiten.KeyShiftLeft) ||
 		ebiten.IsKeyPressed(ebiten.KeyShiftRight)
 }
+
+// AltPressed reports whether either alt key is held.
+func AltPressed() bool {
+	return ebiten.IsKeyPressed(ebiten.KeyAlt) ||
+		ebiten.IsKeyPressed(ebiten.KeyAltLeft) ||
+		ebiten.IsKeyPressed(ebiten.KeyAltRight)
+}

@@ -252,7 +252,9 @@ func (a *app) setSearchState(active bool, total int) {
 }
 
 // rebuildCandidateRows fills the candidate list. Clicking a row jumps
-// the memory view to that address.
+// the memory view to that address; Shift+click adds a watch and
+// Alt+click adds a break instead, each through the same path as its
+// quick-add row so the row's width and condition controls apply.
 func (a *app) rebuildCandidateRows(cl responses.CandidateList) {
 	c := a.search.rows
 	if c == nil {
@@ -269,7 +271,14 @@ func (a *app) rebuildCandidateRows(cl responses.CandidateList) {
 		label := fmt.Sprintf("0x%08X  cur=%d (0x%0*X)  base=%d (0x%0*X)",
 			cand.Addr, cand.Cur, digits, cand.Cur, cand.Base, digits, cand.Base)
 		c.AddChild(ui.LinkButton(label, ui.Text, func(args *widget.ButtonClickedEventArgs) {
-			a.jumpTo(addr)
+			switch {
+			case ui.ShiftPressed():
+				a.addWatchAt(fmt.Sprintf("0x%08X", addr))
+			case ui.AltPressed():
+				a.addBreakAt(fmt.Sprintf("0x%08X", addr))
+			default:
+				a.jumpTo(addr)
+			}
 		}))
 	}
 }

@@ -221,13 +221,18 @@ func widthLabel(w int) string {
 	return fmt.Sprintf("w%d", w)
 }
 
-// addWatch sends a watch command for the quick-add entry and refreshes
-// the list.
+// addWatch sends a watch command for the quick-add entry.
 func (a *app) addWatch() {
 	addr := strings.TrimSpace(a.side.watchAddr.GetText())
 	if addr == "" {
 		return
 	}
+	a.addWatchAt(addr)
+}
+
+// addWatchAt sends a watch command for addr using the quick-add row's
+// width and refreshes the list.
+func (a *app) addWatchAt(addr string) {
 	a.send(fmt.Sprintf("watch %s %d", addr, a.side.watchAddWidth), func(r client.Response) {
 		if out := formatResponse(r); out != "" {
 			a.logf("%s", out)
@@ -236,13 +241,18 @@ func (a *app) addWatch() {
 	})
 }
 
-// addBreak sends a break command for the quick-add entry and refreshes
-// the list.
+// addBreak sends a break command for the quick-add entry.
 func (a *app) addBreak() {
 	addr := strings.TrimSpace(a.side.breakAddr.GetText())
 	if addr == "" {
 		return
 	}
+	a.addBreakAt(addr)
+}
+
+// addBreakAt sends a break command for addr using the quick-add row's
+// condition controls and refreshes the list.
+func (a *app) addBreakAt(addr string) {
 	cmd := fmt.Sprintf("break %s %s", addr, a.side.breakOp)
 	if breakOpNeedsVal(a.side.breakOp) {
 		v := strings.TrimSpace(a.side.breakVal.GetText())
