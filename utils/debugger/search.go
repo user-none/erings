@@ -6,6 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/ebitenui/ebitenui/image"
@@ -40,6 +41,15 @@ type searchPanel struct {
 	// command resets it; a page emptied by filtering snaps back to the
 	// last populated one.
 	page int
+
+	// rowSig identifies the candidate rows currently built (addresses
+	// and width) and rowBtns holds their buttons in row order. A list
+	// response whose signature matches updates the value labels on the
+	// existing buttons instead of rebuilding, so widget identity
+	// survives and in-progress hovers and clicks are not dropped. A nil
+	// signature forces a build for a fresh container.
+	rowSig  []string
+	rowBtns []*widget.Button
 
 	active bool
 
@@ -114,6 +124,8 @@ func (a *app) buildSearchPanel() *widget.Container {
 			widget.RowLayoutOpts.Spacing(ui.Px(2)),
 		)),
 	)
+	a.search.rowSig = nil
+	a.search.rowBtns = nil
 	view, wrap := ui.Scrollable(a.search.rows, ui.Surface)
 	// The candidate list holds a fixed design height so the middle
 	// section's total height is deterministic; window growth goes to
@@ -251,26 +263,48 @@ func (a *app) setSearchState(active bool, total int) {
 	}
 }
 
-// rebuildCandidateRows fills the candidate list. Clicking a row jumps
-// the memory view to that address; Shift+click adds a watch and
-// Alt+click adds a break instead, each through the same path as its
-// quick-add row so the row's width and condition controls apply.
+// candidateRowLabel renders one candidate list entry.
+func candidateRowLabel(cand responses.CandidateInfo, digits int) string {
+	return fmt.Sprintf("0x%08X  cur=%d (0x%0*X)  base=%d (0x%0*X)",
+		cand.Addr, cand.Cur, digits, cand.Cur, cand.Base, digits, cand.Base)
+}
+
+// rebuildCandidateRows reconciles the candidate list with the last
+// response. While the addresses and width are unchanged only the value
+// labels update, on the existing buttons; recreating the rows would
+// drop the hover and any in-progress click under the cursor on every
+// poll. Clicking a row jumps the memory view to that address;
+// Shift+click adds a watch and Alt+click adds a break instead, each
+// through the same path as its quick-add row so the row's width and
+// condition controls apply.
 func (a *app) rebuildCandidateRows(cl responses.CandidateList) {
 	c := a.search.rows
 	if c == nil {
 		return
 	}
+	digits := cl.Width / 4
+	sig := make([]string, 0, len(cl.Candidates)+1)
+	sig = append(sig, fmt.Sprintf("w%d", cl.Width))
+	for _, cand := range cl.Candidates {
+		sig = append(sig, fmt.Sprintf("%08X", cand.Addr))
+	}
+	if a.search.rowSig != nil && slices.Equal(sig, a.search.rowSig) {
+		for i, cand := range cl.Candidates {
+			a.search.rowBtns[i].Text().Label = candidateRowLabel(cand, digits)
+		}
+		c.RequestRelayout()
+		return
+	}
+	a.search.rowSig = sig
+	a.search.rowBtns = nil
 	c.RemoveChildren()
 	if len(cl.Candidates) == 0 {
 		c.AddChild(ui.Label("(none)", ui.TextSecondary))
 		return
 	}
-	digits := cl.Width / 4
 	for _, cand := range cl.Candidates {
 		addr := cand.Addr
-		label := fmt.Sprintf("0x%08X  cur=%d (0x%0*X)  base=%d (0x%0*X)",
-			cand.Addr, cand.Cur, digits, cand.Cur, cand.Base, digits, cand.Base)
-		c.AddChild(ui.LinkButton(label, ui.Text, func(args *widget.ButtonClickedEventArgs) {
+		btn := ui.LinkButton(candidateRowLabel(cand, digits), ui.Text, func(args *widget.ButtonClickedEventArgs) {
 			switch {
 			case ui.ShiftPressed():
 				a.addWatchAt(fmt.Sprintf("0x%08X", addr))
@@ -279,6 +313,8 @@ func (a *app) rebuildCandidateRows(cl responses.CandidateList) {
 			default:
 				a.jumpTo(addr)
 			}
-		}))
+		})
+		a.search.rowBtns = append(a.search.rowBtns, btn)
+		c.AddChild(btn)
 	}
 }

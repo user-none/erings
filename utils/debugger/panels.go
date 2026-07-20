@@ -6,6 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/ebitenui/ebitenui/image"
@@ -30,6 +31,17 @@ const sideListRows = 8
 type side struct {
 	watchRows *widget.Container
 	breakRows *widget.Container
+
+	// watchRowSig and breakRowSig identify the rows currently built
+	// (address, width, condition, heat). A poll whose signature matches
+	// leaves the widgets alone instead of rebuilding, so widget identity
+	// survives and in-progress hovers and clicks are not dropped.
+	// watchRowBtns holds the watch link buttons in row order for
+	// in-place value label updates. nil signatures force a build for a
+	// fresh container.
+	watchRowSig  []string
+	watchRowBtns []*widget.Button
+	breakRowSig  []string
 
 	watches []responses.WatchInfo
 	breaks  []responses.BreakInfo
@@ -112,6 +124,8 @@ func listRowsContainer() *widget.Container {
 func (a *app) buildWatchPanel() *widget.Container {
 	a.ensureSideDefaults()
 	a.side.watchRows = listRowsContainer()
+	a.side.watchRowSig = nil
+	a.side.watchRowBtns = nil
 	panel := sideListPanel("Watches", a.side.watchRows, a.buildWatchAddRow())
 	a.rebuildWatchRows()
 	return panel
@@ -121,6 +135,7 @@ func (a *app) buildWatchPanel() *widget.Container {
 func (a *app) buildBreakPanel() *widget.Container {
 	a.ensureSideDefaults()
 	a.side.breakRows = listRowsContainer()
+	a.side.breakRowSig = nil
 	panel := sideListPanel("Breaks", a.side.breakRows, a.buildBreakAddRow())
 	a.rebuildBreakRows()
 	return panel
@@ -341,12 +356,17 @@ func (a *app) pollBreaks(force bool) {
 
 // listRow creates one list entry: a remove button that sends removeCmd
 // and the entry itself, which jumps the hex view to addr when clicked.
-func (a *app) listRow(label string, hot bool, addr uint32, removeCmd string, after func()) *widget.Container {
+// The entry's link button is returned alongside the row for in-place
+// label updates.
+func (a *app) listRow(label string, hot bool, addr uint32, removeCmd string, after func()) (*widget.Container, *widget.Button) {
 	c := ui.Text
 	if hot {
 		c = ui.Bad
 	}
-	return ui.HRow(ui.Px(6),
+	link := ui.LinkButton(label, c, func(args *widget.ButtonClickedEventArgs) {
+		a.jumpTo(addr)
+	})
+	row := ui.HRow(ui.Px(6),
 		ui.Button("x", func(args *widget.ButtonClickedEventArgs) {
 			a.send(removeCmd, func(r client.Response) {
 				if out := formatResponse(r); out != "" {
@@ -355,53 +375,91 @@ func (a *app) listRow(label string, hot bool, addr uint32, removeCmd string, aft
 				after()
 			})
 		}),
-		ui.LinkButton(label, c, func(args *widget.ButtonClickedEventArgs) {
-			a.jumpTo(addr)
-		}),
+		link,
 	)
+	return row, link
 }
 
+// watchRowLabel renders one watch list entry.
+func watchRowLabel(w responses.WatchInfo) string {
+	val := "?"
+	if w.Valid {
+		val = fmt.Sprintf("%d (0x%0*X)", w.Value, w.Width/4, w.Value)
+	}
+	return fmt.Sprintf("0x%08X w%-2d = %s", w.Addr, w.Width, val)
+}
+
+// rebuildWatchRows reconciles the watch list with the last response.
+// While the row set and heat are unchanged only the labels update, on
+// the existing buttons; recreating the rows would drop the hover and
+// any in-progress click under the cursor on every poll.
 func (a *app) rebuildWatchRows() {
 	c := a.side.watchRows
 	if c == nil {
 		return
 	}
+	sig := make([]string, 0, len(a.side.watches))
+	for _, w := range a.side.watches {
+		sig = append(sig, fmt.Sprintf("%08X/%d/%t", w.Addr, w.Width, a.side.watchHeat[w.Addr] > 0))
+	}
+	if a.side.watchRowSig != nil && slices.Equal(sig, a.side.watchRowSig) {
+		for i, w := range a.side.watches {
+			a.side.watchRowBtns[i].Text().Label = watchRowLabel(w)
+		}
+		c.RequestRelayout()
+		return
+	}
+	a.side.watchRowSig = sig
+	a.side.watchRowBtns = nil
 	c.RemoveChildren()
 	if len(a.side.watches) == 0 {
 		c.AddChild(ui.Label("(none)", ui.TextSecondary))
 		return
 	}
 	for _, w := range a.side.watches {
-		val := "?"
-		if w.Valid {
-			val = fmt.Sprintf("%d (0x%0*X)", w.Value, w.Width/4, w.Value)
-		}
-		label := fmt.Sprintf("0x%08X w%-2d = %s", w.Addr, w.Width, val)
 		hot := a.side.watchHeat[w.Addr] > 0
-		c.AddChild(a.listRow(label, hot, w.Addr, fmt.Sprintf("unwatch 0x%08X", w.Addr),
-			func() { a.pollWatches(true) }))
+		row, link := a.listRow(watchRowLabel(w), hot, w.Addr, fmt.Sprintf("unwatch 0x%08X", w.Addr),
+			func() { a.pollWatches(true) })
+		a.side.watchRowBtns = append(a.side.watchRowBtns, link)
+		c.AddChild(row)
 	}
 }
 
+// breakRowLabel renders one break list entry.
+func breakRowLabel(b responses.BreakInfo) string {
+	cond := b.Op
+	if b.HasVal {
+		cond = fmt.Sprintf("%s %d", b.Op, b.Val)
+	}
+	return fmt.Sprintf("0x%08X w%-2d %s", b.Addr, b.Width, cond)
+}
+
+// rebuildBreakRows reconciles the break list with the last response,
+// with the same identity preservation as rebuildWatchRows. Break labels
+// are static, so a matching signature means nothing to update at all.
 func (a *app) rebuildBreakRows() {
 	c := a.side.breakRows
 	if c == nil {
 		return
 	}
+	sig := make([]string, 0, len(a.side.breaks))
+	for _, b := range a.side.breaks {
+		sig = append(sig, fmt.Sprintf("%s/%t", breakRowLabel(b), a.side.breakHeat[b.Addr] > 0))
+	}
+	if a.side.breakRowSig != nil && slices.Equal(sig, a.side.breakRowSig) {
+		return
+	}
+	a.side.breakRowSig = sig
 	c.RemoveChildren()
 	if len(a.side.breaks) == 0 {
 		c.AddChild(ui.Label("(none)", ui.TextSecondary))
 		return
 	}
 	for _, b := range a.side.breaks {
-		cond := b.Op
-		if b.HasVal {
-			cond = fmt.Sprintf("%s %d", b.Op, b.Val)
-		}
-		label := fmt.Sprintf("0x%08X w%-2d %s", b.Addr, b.Width, cond)
 		hot := a.side.breakHeat[b.Addr] > 0
-		c.AddChild(a.listRow(label, hot, b.Addr, fmt.Sprintf("unbreak 0x%08X", b.Addr),
-			func() { a.pollBreaks(true) }))
+		row, _ := a.listRow(breakRowLabel(b), hot, b.Addr, fmt.Sprintf("unbreak 0x%08X", b.Addr),
+			func() { a.pollBreaks(true) })
+		c.AddChild(row)
 	}
 }
 
