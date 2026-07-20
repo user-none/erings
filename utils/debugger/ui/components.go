@@ -67,6 +67,7 @@ func TextInput(placeholder string, minWidth int, opts ...widget.TextInputOpt) *w
 		}),
 		widget.TextInputOpts.Padding(widget.NewInsetsSimple(Px(4))),
 		widget.TextInputOpts.Placeholder(placeholder),
+		widget.TextInputOpts.AllowDuplicateSubmit(true),
 		widget.TextInputOpts.WidgetOpts(
 			widget.WidgetOpts.MinSize(Px(minWidth), 0),
 		),
