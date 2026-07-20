@@ -5,6 +5,7 @@ package ui
 
 import (
 	"image"
+	"math"
 
 	"github.com/ebitenui/ebitenui/widget"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -48,10 +49,14 @@ func (v *LogView) SetLocation(rect image.Rectangle) {
 	v.widget.Rect = rect
 }
 
-// PreferredSize reports the full content size.
+// PreferredSize reports the full content size. The face's line height
+// is fractional, and rows draw at row*lineH in float space, so the
+// height must ceil the full product: truncating per line under-reports
+// tall content and the bottom rows spill past the reserved rect.
 func (v *LogView) PreferredSize() (int, int) {
 	charW, lineH := cellMetrics()
-	return int(charW*float64(v.buf.MaxCols())) + Px(12), int(lineH)*v.buf.LineCount() + Px(8)
+	return int(math.Ceil(charW*float64(v.buf.MaxCols()))) + Px(12),
+		int(math.Ceil(lineH*float64(v.buf.LineCount()))) + Px(8)
 }
 
 // Validate is part of the ebitenui widget contract.
@@ -158,11 +163,11 @@ func (v *LogView) Render(screen *ebiten.Image) {
 	x0 := float64(rect.Min.X + Px(6))
 	top := rect.Min.Y + Px(4)
 
-	first := (v.lastClip.Min.Y - top) / int(lineH)
+	first := int(float64(v.lastClip.Min.Y-top) / lineH)
 	if first < 0 {
 		first = 0
 	}
-	last := (v.lastClip.Max.Y-top)/int(lineH) + 1
+	last := int(float64(v.lastClip.Max.Y-top)/lineH) + 1
 	if last > v.buf.LineCount() {
 		last = v.buf.LineCount()
 	}

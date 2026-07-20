@@ -5,6 +5,7 @@ package ui
 
 import (
 	"image/color"
+	"math"
 
 	"github.com/ebitenui/ebitenui/image"
 	"github.com/ebitenui/ebitenui/widget"
@@ -89,10 +90,10 @@ func Label(text string, c color.Color) *widget.Text {
 }
 
 // TextRowsHeight returns the pixel height of n text rows plus the
-// standard cell padding, for fixing a list view's design height.
+// standard cell padding. Ensures bottom text is not cut off for log view.
 func TextRowsHeight(n int) int {
 	_, lineH := cellMetrics()
-	return int(lineH)*n + Px(8)
+	return int(math.Ceil(lineH*float64(n))) + Px(8)
 }
 
 // HRow lays out children horizontally with the given spacing and

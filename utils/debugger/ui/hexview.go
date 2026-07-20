@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"math"
 	"strings"
 
 	"github.com/ebitenui/ebitenui/widget"
@@ -104,10 +105,13 @@ const (
 	rowChars      = asciiStartCol + hexBytesPerRow + 1
 )
 
-// PreferredSize reports the size of the full row grid.
+// PreferredSize reports the size of the full row grid. Cell metrics are
+// fractional and rows draw at row*lineH in float space, so both
+// dimensions ceil the full product rather than truncating per cell.
 func (h *HexView) PreferredSize() (int, int) {
 	charW, lineH := cellMetrics()
-	return int(charW*rowChars) + Px(8), int(lineH)*h.Rows + Px(8)
+	return int(math.Ceil(charW*rowChars)) + Px(8),
+		int(math.Ceil(lineH*float64(h.Rows))) + Px(8)
 }
 
 // Validate is part of the ebitenui widget contract.
