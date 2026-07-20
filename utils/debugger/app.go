@@ -16,6 +16,7 @@ import (
 	"github.com/user-none/erings/internal/debugserver/responses"
 	"github.com/user-none/erings/utils/debugger/client"
 	"github.com/user-none/erings/utils/debugger/ui"
+	"github.com/user-none/erings/utils/debugger/ui/logbuf"
 )
 
 // statePollTicks is how often the connected app refreshes the status
@@ -73,7 +74,7 @@ type app struct {
 	// lifetime; it survives screen rebuilds and reconnects as history.
 	// logFollow tracks whether the log sticks to the bottom on append;
 	// it disengages while scrolled up or selecting.
-	logBuf    *ui.LogBuffer
+	logBuf    *logbuf.Buffer
 	logFollow bool
 
 	// mem, side, and search are the panel states (memory.go,
@@ -103,7 +104,7 @@ func newApp(addr string) *app {
 		addr:      addr,
 		dialCh:    make(chan dialResult, 1),
 		scale:     1.0,
-		logBuf:    ui.NewLogBuffer(maxLogLines),
+		logBuf:    logbuf.New(maxLogLines),
 		logFollow: true,
 	}
 	ui.SetDPIScale(1.0)

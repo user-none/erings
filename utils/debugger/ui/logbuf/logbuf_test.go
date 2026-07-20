@@ -1,29 +1,26 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package ui
+package logbuf
 
 import (
 	"testing"
 )
 
-func fillBuffer(b *LogBuffer, lines ...string) {
+func fillBuffer(b *Buffer, lines ...string) {
 	for _, l := range lines {
 		b.Append(l)
 	}
 }
 
 // selectRange sets a selection the way a drag would.
-func selectRange(b *LogBuffer, anchorID uint64, anchorCol int, curID uint64, curCol int) {
-	b.selActive = true
-	b.anchorID = anchorID
-	b.anchorCol = anchorCol
-	b.curID = curID
-	b.curCol = curCol
+func selectRange(b *Buffer, anchorID uint64, anchorCol int, curID uint64, curCol int) {
+	b.StartSelection(anchorID, anchorCol)
+	b.DragTo(curID, curCol)
 }
 
-func TestLogBufferSelectedTextSingleLine(t *testing.T) {
-	b := NewLogBuffer(10)
+func TestBufferSelectedTextSingleLine(t *testing.T) {
+	b := New(10)
 	fillBuffer(b, "hello world")
 	selectRange(b, 0, 6, 0, 10)
 	if got := b.SelectedText(); got != "world" {
@@ -36,8 +33,8 @@ func TestLogBufferSelectedTextSingleLine(t *testing.T) {
 	}
 }
 
-func TestLogBufferSelectedTextMultiLine(t *testing.T) {
-	b := NewLogBuffer(10)
+func TestBufferSelectedTextMultiLine(t *testing.T) {
+	b := New(10)
 	fillBuffer(b, "first", "", "third")
 	selectRange(b, 0, 3, 2, 2)
 	// From "s" of first through "i" of third, across the empty line.
@@ -46,8 +43,8 @@ func TestLogBufferSelectedTextMultiLine(t *testing.T) {
 	}
 }
 
-func TestLogBufferTrimKeepsSelectionAnchored(t *testing.T) {
-	b := NewLogBuffer(3)
+func TestBufferTrimKeepsSelectionAnchored(t *testing.T) {
+	b := New(3)
 	fillBuffer(b, "a0", "b1", "c2")
 	// Select all of "b1" and "c2" (IDs 1 and 2).
 	selectRange(b, 1, 0, 2, 1)
@@ -74,8 +71,8 @@ func TestLogBufferTrimKeepsSelectionAnchored(t *testing.T) {
 	}
 }
 
-func TestLogBufferSelSpan(t *testing.T) {
-	b := NewLogBuffer(10)
+func TestBufferSelSpan(t *testing.T) {
+	b := New(10)
 	fillBuffer(b, "abcdef", "ghijkl", "mnopqr")
 	selectRange(b, 0, 4, 2, 1)
 
@@ -89,24 +86,24 @@ func TestLogBufferSelSpan(t *testing.T) {
 		{2, 0, 1, true},
 	}
 	for _, c := range cases {
-		start, end, ok := b.selSpan(c.id)
+		start, end, ok := b.SelSpan(c.id)
 		if start != c.start || end != c.end || ok != c.ok {
-			t.Fatalf("selSpan(%d) = (%d,%d,%t), want (%d,%d,%t)",
+			t.Fatalf("SelSpan(%d) = (%d,%d,%t), want (%d,%d,%t)",
 				c.id, start, end, ok, c.start, c.end, c.ok)
 		}
 	}
-	if _, _, ok := b.selSpan(3); ok {
-		t.Fatal("selSpan hit a line outside the selection")
+	if _, _, ok := b.SelSpan(3); ok {
+		t.Fatal("SelSpan hit a line outside the selection")
 	}
 }
 
-func TestLogBufferMaxColsAndCap(t *testing.T) {
-	b := NewLogBuffer(2)
+func TestBufferMaxColsAndCap(t *testing.T) {
+	b := New(2)
 	fillBuffer(b, "short", "a much longer line", "x")
-	if len(b.lines) != 2 || b.firstID != 1 {
-		t.Fatalf("cap not applied: %d lines, firstID %d", len(b.lines), b.firstID)
+	if b.LineCount() != 2 || b.FirstID() != 1 {
+		t.Fatalf("cap not applied: %d lines, firstID %d", b.LineCount(), b.FirstID())
 	}
-	if b.maxCols != len("a much longer line") {
-		t.Fatalf("maxCols %d", b.maxCols)
+	if b.MaxCols() != len("a much longer line") {
+		t.Fatalf("maxCols %d", b.MaxCols())
 	}
 }
