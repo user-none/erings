@@ -23,38 +23,69 @@ func toBCD(v byte) byte {
 
 // posToFAD decodes a 24-bit CD position value. Bit 23 set means the
 // remaining 23 bits are an FAD. Bit 23 clear means bits 15:8 are a
-// track number (1-based) and bits 7:0 are an index number within
-// that track. Unknown tracks fall back to FAD 150 (disc lead-in).
+// track number (1-based) and bits 7:0 are a binary index number within
+// that track. Per the interface spec (ST-38-R1, CdcPos, No 3.4) index 0
+// as a start position designates the track lead, same as index 1.
+// Index numbers >= 2 resolve through the track's index point table;
+// a number past the last known point clamps to the nearest earlier
+// point, so images that expose no index data land on the track lead.
+// Unknown tracks fall back to FAD 150 (disc lead-in).
 func (cb *CDBlock) posToFAD(pos uint32) uint32 {
 	if pos&0x800000 != 0 {
 		return pos & 0x7FFFFF
 	}
 	trackNum := int((pos >> 8) & 0xFF)
-	for _, tr := range cb.trackCache {
-		if int(tr.number) == trackNum {
-			return tr.index01FAD
+	idxNum := uint8(pos & 0xFF)
+	for i := range cb.trackCache {
+		tr := &cb.trackCache[i]
+		if int(tr.number) != trackNum {
+			continue
 		}
+		fad := tr.index01FAD
+		if idxNum >= 2 {
+			for _, e := range tr.indexes {
+				if e.Number > idxNum {
+					break
+				}
+				fad = e.FAD
+			}
+		}
+		return fad
 	}
 	return 150
 }
 
 // posToEndFAD decodes a 24-bit CD position as an end boundary. When
-// specified as a track number (bit 23 clear), this returns the FAD
-// just past the end of the track (start of the next track, or leadout
-// for the last track). This differs from posToFAD which returns the
-// start of the track.
+// specified as track/index (bit 23 clear), the play range ends where
+// the designated index range ends: at the next index point in the
+// track, or just past the end of the track (start of the next track,
+// or leadout for the last track) when the designated index is the
+// track's last. Per the interface spec (ST-38-R1, CdcPos, No 3.4)
+// index 0 as an end position designates the track end, same as
+// index 99. This differs from posToFAD which returns where the
+// designated range starts.
 func (cb *CDBlock) posToEndFAD(pos uint32) uint32 {
 	if pos&0x800000 != 0 {
 		return pos & 0x7FFFFF
 	}
 	trackNum := int((pos >> 8) & 0xFF)
-	for i, tr := range cb.trackCache {
-		if int(tr.number) == trackNum {
-			if i+1 < len(cb.trackCache) {
-				return cb.trackCache[i+1].index01FAD
-			}
-			return cb.leadoutFAD()
+	idxNum := uint8(pos & 0xFF)
+	for i := range cb.trackCache {
+		tr := &cb.trackCache[i]
+		if int(tr.number) != trackNum {
+			continue
 		}
+		if idxNum >= 1 && idxNum < 99 {
+			for _, e := range tr.indexes {
+				if e.Number > idxNum {
+					return e.FAD
+				}
+			}
+		}
+		if i+1 < len(cb.trackCache) {
+			return cb.trackCache[i+1].index01FAD
+		}
+		return cb.leadoutFAD()
 	}
 	return 150
 }
@@ -214,16 +245,14 @@ func (cb *CDBlock) cmdSeekDisc() {
 			// Track seek - track number in bits 15:8, invalid track sets STANDBY
 			trackNum := int((pos >> 8) & 0xFF)
 			found := false
-			var targetFAD uint32
 			for _, tr := range cb.trackCache {
 				if int(tr.number) == trackNum {
-					targetFAD = tr.index01FAD
 					found = true
 					break
 				}
 			}
 			if found {
-				cb.seekFAD = targetFAD
+				cb.seekFAD = cb.posToFAD(pos)
 				cb.pendingStatus = cdStatusSeek
 				cb.seeking = true
 				cb.seekTarget = cdStatusPause

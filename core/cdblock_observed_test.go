@@ -29,8 +29,20 @@ func (d *obsDisc) NumTracks() int { return len(d.tracks) }
 func (d *obsDisc) Track(i int) (int, string, int, int, int, uint8) {
 	return trackAt(d.tracks, i)
 }
-func (d *obsDisc) NumTrackIndexes(i int) int      { return 1 }
-func (d *obsDisc) TrackIndex(i, n int) (int, int) { return trackIndexAt(d.tracks, i) }
+func (d *obsDisc) NumTrackIndexes(i int) int {
+	if n := len(d.tracks[i].Indexes); n > 0 {
+		return n
+	}
+	return 1
+}
+
+func (d *obsDisc) TrackIndex(i, n int) (int, int) {
+	if idxs := d.tracks[i].Indexes; len(idxs) > 0 {
+		e := idxs[n]
+		return int(e.Number), int(e.FAD) - 150
+	}
+	return trackIndexAt(d.tracks, i)
+}
 
 func (d *obsDisc) ReadSector(lba int) ([]byte, error) {
 	if d.sectorMap != nil {
@@ -103,6 +115,24 @@ func obsThreeTrack() *obsDisc {
 		tracks: []TrackInfo{
 			{Number: 1, Type: "MODE1_RAW", Frames: 200, Pregap: 0, StartLBA: 0, Control: 0x41},
 			{Number: 2, Type: "AUDIO", Frames: 300, Pregap: 0, StartLBA: 200, Control: 0x01},
+			{Number: 3, Type: "AUDIO", Frames: 400, Pregap: 0, StartLBA: 500, Control: 0x01},
+		},
+	}
+}
+
+// obsMultiIndex returns a 3-track mock whose middle audio track carries
+// four index points. Models the sound-cue bank layout some games use:
+// one long audio track subdivided by INDEX marks, each cue played as a
+// single track/index range.
+//
+// FAD layout: track 1 = 150-349, track 2 = 350-649 with index points
+// 1@350 2@425 3@500 4@575, track 3 = 650-1049, leadout 1050.
+func obsMultiIndex() *obsDisc {
+	return &obsDisc{
+		tracks: []TrackInfo{
+			{Number: 1, Type: "MODE1_RAW", Frames: 200, Pregap: 0, StartLBA: 0, Control: 0x41},
+			{Number: 2, Type: "AUDIO", Frames: 300, Pregap: 0, StartLBA: 200, Control: 0x01,
+				Indexes: []TrackIndex{{1, 350}, {2, 425}, {3, 500}, {4, 575}}},
 			{Number: 3, Type: "AUDIO", Frames: 400, Pregap: 0, StartLBA: 500, Control: 0x01},
 		},
 	}
@@ -416,6 +446,99 @@ func TestCDBlockPosToFADTrackNumberDecoding(t *testing.T) {
 
 	if got := cb.posToFAD(0x009900); got != 150 {
 		t.Errorf("unknown-track posToFAD = %d, want 150 (lead-in fallback)", got)
+	}
+}
+
+// TestCDBlockPosToFADIndexResolution verifies that a track/index start
+// position resolves through the track's index point table. The interface
+// spec (ST-38-R1, CdcPos, No 3.4) states index numbers address positions
+// within the track and that index 0 as a start designates the track lead
+// (same as index 1). An index past the last known point clamps to the
+// nearest earlier point so images without index data degrade to a
+// track-lead start instead of an invalid position.
+func TestCDBlockPosToFADIndexResolution(t *testing.T) {
+	cb := obsCDBlockWith(obsMultiIndex())
+
+	cases := []struct {
+		pos  uint32
+		want uint32
+		desc string
+	}{
+		{0x000200, 350, "index 0 = track lead"},
+		{0x000201, 350, "index 1 = track body start"},
+		{0x000203, 500, "index 3 = its index point FAD"},
+		{0x000206, 575, "index past last point clamps to last"},
+		{0x000305, 650, "single-index track clamps to track lead"},
+	}
+	for _, c := range cases {
+		if got := cb.posToFAD(c.pos); got != c.want {
+			t.Errorf("posToFAD(0x%06X) = %d, want %d (%s)", c.pos, got, c.want, c.desc)
+		}
+	}
+}
+
+// TestCDBlockPosToEndFADIndexResolution verifies that a track/index end
+// position ends the play range where the designated index range ends:
+// at the next index point, or at the track end when the designated index
+// is the track's last. The interface spec (ST-38-R1, CdcPos, No 3.4)
+// states index 0 as an end designates the track end, same as index 99.
+// Without index resolution a one-cue play request spans the whole track
+// and the host waits minutes for PEND (game-visible as a lockup).
+func TestCDBlockPosToEndFADIndexResolution(t *testing.T) {
+	cb := obsCDBlockWith(obsMultiIndex())
+
+	cases := []struct {
+		pos  uint32
+		want uint32
+		desc string
+	}{
+		{0x000202, 500, "index 2 ends at index 3 point"},
+		{0x000204, 650, "last index ends at track end"},
+		{0x000200, 650, "index 0 = track end"},
+		{0x000263, 650, "index 99 = track end"},
+		{0x000301, 1050, "last track ends at leadout"},
+	}
+	for _, c := range cases {
+		if got := cb.posToEndFAD(c.pos); got != c.want {
+			t.Errorf("posToEndFAD(0x%06X) = %d, want %d (%s)", c.pos, got, c.want, c.desc)
+		}
+	}
+}
+
+// TestCDBlockPlayDiscTrackIndexRange verifies the full PlayDisc shape a
+// sound-cue-bank game issues: start and end both name the same
+// track/index, meaning play exactly that one index range. Traced from a
+// title that plays announcer cues this way (CR1-CR4 = 0x1000 0x0333
+// 0x0000 0x0333); resolving both positions to the whole track made every
+// cue a minutes-long play the game waits out polling PEND.
+func TestCDBlockPlayDiscTrackIndexRange(t *testing.T) {
+	cb := obsCDBlockWith(obsMultiIndex())
+
+	obsExec(cb, 0x10, 0x00, 0x0203, 0x0000, 0x0203)
+
+	if cb.startFAD != 500 {
+		t.Errorf("startFAD = %d, want 500 (track 2 index 3 point)", cb.startFAD)
+	}
+	if cb.endFAD != 575 {
+		t.Errorf("endFAD = %d, want 575 (index 4 point ends the range)", cb.endFAD)
+	}
+	if cb.seekFAD != 500 {
+		t.Errorf("seekFAD = %d, want 500 (pickup moves to range start)", cb.seekFAD)
+	}
+}
+
+// TestCDBlockSeekDiscTrackIndex verifies SeekDisc with a track/index
+// position lands the pickup on the index point, not the track start.
+func TestCDBlockSeekDiscTrackIndex(t *testing.T) {
+	cb := obsCDBlockWith(obsMultiIndex())
+
+	obsExec(cb, 0x11, 0x00, 0x0202, 0x0000, 0x0000)
+
+	if cb.seekFAD != 425 {
+		t.Errorf("seekFAD = %d, want 425 (track 2 index 2 point)", cb.seekFAD)
+	}
+	if cb.pendingStatus != cdStatusSeek {
+		t.Errorf("pendingStatus = 0x%02X, want 0x%02X (SEEK)", cb.pendingStatus, cdStatusSeek)
 	}
 }
 
