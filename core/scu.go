@@ -90,6 +90,17 @@ type SCU struct {
 	// clears.
 	irlWithheld bool
 
+	// reqPending models undocumented SCU behavior. A source raised
+	// while unmasked may be blocked from asserting by a held or
+	// withheld assertion. That request stays committed to delivery
+	// and a software IST clear does not cancel it. Established by
+	// software that requires it: a title's V-Blank-IN handler raises
+	// a Level-2 DMA end behind a held assertion, clears IST two
+	// instructions later, and deadlocks unless the completion is
+	// still delivered. Bits clear when the source asserts or is
+	// acknowledged. Sources raised while masked latch only in IST.
+	reqPending uint32
+
 	// Bus reference for DMA transfers
 	bus BusReadWriter
 
@@ -179,6 +190,7 @@ func (s *SCU) Reset() {
 	s.ims = 0xBFFF
 	s.pendingBit = -1
 	s.irlWithheld = false
+	s.reqPending = 0
 	for i := range 3 {
 		s.dmaEN[i] = 0
 		s.dmaAD[i] = 0x101
@@ -294,6 +306,7 @@ func (s *SCU) AcknowledgeInterrupt(vec uint16) {
 	if int(vec) < len(vecToBit) {
 		if bit := vecToBit[vec]; bit >= 0 {
 			s.ist &^= 1 << bit
+			s.reqPending &^= 1 << bit
 		}
 	}
 	s.pendingBit = -1
@@ -548,6 +561,12 @@ func (s *SCU) raiseInterrupt(bit int) {
 		return
 	}
 	s.ist |= 1 << bit
+	// External interrupts (bits 16-31) are not maskable; bits 0-15
+	// consult IMS. Unmasked raises join the committed-delivery queue;
+	// checkInterrupts consumes the bit if it asserts right away.
+	if bit >= 16 || s.ims&(1<<bit) == 0 {
+		s.reqPending |= 1 << bit
+	}
 	s.checkInterrupts()
 }
 
@@ -1059,11 +1078,24 @@ func (s *SCU) checkInterrupts() {
 	if s.irlWithheld {
 		return
 	}
+	// An asserted interrupt holds its level and vector until the SH-2
+	// acknowledges it. SH7604 HW manual Sec 5.6 Figure 5.9 shows a
+	// request level held through pin-level changes until acceptance,
+	// with a later higher-priority request waiting behind it. The
+	// manual documents that hold on the SH-2 input side. Modeling it
+	// here in the SCU, where software IMS/IST writes landing before
+	// the acknowledge cannot retract or replace the assertion, is
+	// undocumented behavior established by the same title reqPending
+	// covers. Together with irlWithheld the output stage runs
+	// assert -> hold -> ack -> withhold -> IMS write -> assert next.
+	if s.pendingBit >= 0 {
+		return
+	}
 
 	// IMS bits 0-15: 1 = interrupt masked, 0 = interrupt enabled.
 	// External interrupts (16-31) are not maskable.
 	mask := uint32(s.ims & 0xFFFF)
-	pending := s.ist & ^mask
+	pending := (s.ist | s.reqPending) & ^mask
 
 	if pending == 0 {
 		s.clearIRL()
@@ -1090,6 +1122,7 @@ func (s *SCU) checkInterrupts() {
 
 	if bestBit >= 0 {
 		s.pendingBit = bestBit
+		s.reqPending &^= 1 << bestBit
 		s.setIRL(bitToLevelVec[bestBit].level, bitToLevelVec[bestBit].vec)
 	} else {
 		s.clearIRL()

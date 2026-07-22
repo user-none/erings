@@ -213,6 +213,7 @@ func TestSerializeValues(t *testing.T) {
 	e.vdp2.regs[vdp2BGON] = 0x5678
 	e.scu.ims = 0xDEAD
 	e.scu.irlWithheld = true
+	e.scu.reqPending = 0x00000200
 	e.smpc.oreg[5] = 0x42
 	e.smpc.cmdIREG[2] = 0x77
 	e.smpc.pendingOps = append(e.smpc.pendingOps,
@@ -284,6 +285,9 @@ func TestSerializeValues(t *testing.T) {
 	}
 	if got := chunks[tagSCUCore]["irlWithheld"]; len(got) != 1 || got[0] != 1 {
 		t.Errorf("SCU irlWithheld = %v, want [1]", got)
+	}
+	if got := binary.BigEndian.Uint32(chunks[tagSCUCore]["reqPending"]); got != 0x200 {
+		t.Errorf("SCU reqPending = %08x, want 200", got)
 	}
 	if got := chunks[tagSMPC]["oreg"][5]; got != 0x42 {
 		t.Errorf("SMPC oreg[5] = %02x, want 42", got)
@@ -424,6 +428,7 @@ func fillEmulatorState(e *Emulator) {
 	e.vdp2.latchedOddField = true
 	e.scu.ims = 0xDEAD
 	e.scu.irlWithheld = true
+	e.scu.reqPending = 0x00000200
 	e.scu.dsp.prog[10] = 0x12345678
 	e.smpc.oreg[5] = 0x42
 	e.smpc.cmdIREG[2] = 0x77

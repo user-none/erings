@@ -425,6 +425,7 @@ func buildSCUCore(w *fieldWriter, s *SCU) {
 	w.u32("rsel", s.rsel)
 	w.i64("pendingBit", int64(s.pendingBit))
 	w.flag("irlWithheld", s.irlWithheld)
+	w.u32("reqPending", s.reqPending)
 }
 
 func buildSCUDSP(w *fieldWriter, d *scuDSP) {
@@ -1834,6 +1835,7 @@ func decodeSCUCore(e *Emulator, r *fieldReader) func() {
 	rsel := r.u32("rsel")
 	pendingBit := r.iRange("pendingBit", -1, 31)
 	irlWithheld := r.flag("irlWithheld")
+	reqPending := r.u32("reqPending")
 	return func() {
 		s := e.scu
 		copy(s.dmaR[:], dmaR)
@@ -1863,6 +1865,7 @@ func decodeSCUCore(e *Emulator, r *fieldReader) func() {
 		s.rsel = rsel
 		s.pendingBit = pendingBit
 		s.irlWithheld = irlWithheld
+		s.reqPending = reqPending
 	}
 }
 

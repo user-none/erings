@@ -705,6 +705,100 @@ func TestSCUDMADeferredDelayProportional(t *testing.T) {
 	}
 }
 
+// TestSCUAssertedIRLHeldAcrossIMSAndISTWrites verifies that an
+// asserted-but-unacknowledged interrupt survives software IMS and IST
+// writes: the assertion holds its level and vector until the SH-2
+// acknowledges. This is the pre-acknowledge half of the stateful
+// output stage irlWithheld models post-acknowledge. A title's
+// V-Blank-IN handler kicks a level 2 DMA, then resets interrupt state
+// with IMS = 0x0080 followed by IST &= 0x0080; when the DMA-end
+// interrupt (vector 0x49) asserts between the kick and that reset, a
+// recompute at the IMS write would replace it with the newly unmasked
+// H-Blank (higher level) and the IST write would then drop everything,
+// losing the completion and deadlocking the game on its DMA flag.
+func TestSCUAssertedIRLHeldAcrossIMSAndISTWrites(t *testing.T) {
+	s := NewSCU()
+
+	var vecs []uint16
+	cleared := 0
+	s.SetIRLHandler(func(level uint8, vec uint16) { vecs = append(vecs, vec) },
+		func() { cleared++ })
+
+	// Game steady state: everything masked except the DMA ends.
+	s.Write(0xA0, 0xF1FF)
+	// H-Blank-IN latches while masked.
+	s.RaiseHBlankIN(0)
+	if len(vecs) != 0 {
+		t.Fatalf("masked H-Blank asserted: %v", vecs)
+	}
+	// Level 2 DMA end asserts.
+	s.RaiseInterrupt(9)
+	if len(vecs) != 1 || vecs[0] != 0x49 {
+		t.Fatalf("expected assertion of 0x49, got %v", vecs)
+	}
+
+	// The handler's interrupt reset: the IMS write unmasks H-Blank
+	// (level 0xD outranks the DMA end's 6) and the IST write clears
+	// every latched bit. Neither may disturb the held assertion.
+	s.Write(0xA0, 0x0080)
+	s.Write(0xA4, 0x0080)
+	if len(vecs) != 1 {
+		t.Fatalf("held assertion disturbed: assertions %v", vecs)
+	}
+
+	// The SH-2 acknowledges the held vector; the handler runs and the
+	// next IMS write resumes normal evaluation with nothing pending.
+	s.AcknowledgeInterrupt(0x49)
+	s.Write(0xA0, 0xF17C)
+	if len(vecs) != 1 {
+		t.Fatalf("unexpected assertion after ack: %v", vecs)
+	}
+}
+
+// TestSCUUnmaskedRaiseBehindHeldAssertionSurvivesISTClear verifies
+// that a source raised while unmasked, but blocked because another
+// assertion is being held for acknowledge, is not cancelled by a
+// software IST clear: it asserts once the output stage frees up.
+// Undocumented behavior established by a title whose V-Blank-IN
+// handler's IMS write asserts a stale H-Blank latch (held), the level
+// 2 DMA end raises unmasked one instruction later, and the handler's
+// IST &= 0x80 lands before the H-Blank acknowledge; the completion
+// must still be delivered afterward or the game deadlocks on its DMA
+// flag.
+func TestSCUUnmaskedRaiseBehindHeldAssertionSurvivesISTClear(t *testing.T) {
+	s := NewSCU()
+
+	var vecs []uint16
+	s.SetIRLHandler(func(level uint8, vec uint16) { vecs = append(vecs, vec) }, func() {})
+
+	s.Write(0xA0, 0xF1FF) // steady state: only DMA ends unmasked
+	s.RaiseInterrupt(2)   // H-Blank latches while masked
+	if len(vecs) != 0 {
+		t.Fatalf("masked raise asserted: %v", vecs)
+	}
+
+	s.Write(0xA0, 0x0080) // wipe entry: stale H-Blank latch asserts
+	if len(vecs) != 1 || vecs[0] != 0x42 {
+		t.Fatalf("expected held H-Blank assertion, got %v", vecs)
+	}
+
+	s.RaiseInterrupt(9)   // DMA end raises unmasked, output busy
+	s.Write(0xA4, 0x0080) // IST wipe: must not cancel the queued request
+
+	s.AcknowledgeInterrupt(0x42)
+	s.Write(0xA0, 0xF17C) // handler exit mask: queued DMA end asserts
+	if len(vecs) != 2 || vecs[1] != 0x49 {
+		t.Fatalf("queued DMA end not delivered after IST clear: %v", vecs)
+	}
+
+	// Consumed on assertion: the next IMS write must not re-assert it.
+	s.AcknowledgeInterrupt(0x49)
+	s.Write(0xA0, 0xF17C)
+	if len(vecs) != 2 {
+		t.Fatalf("stale re-assertion after ack: %v", vecs)
+	}
+}
+
 func TestSCUDMANoBusNoPanic(t *testing.T) {
 	s := NewSCU()
 	// No bus set - should not panic
@@ -1594,11 +1688,13 @@ func TestSCUAcknowledgeInterruptClearsPending(t *testing.T) {
 }
 
 // TestSCUAcknowledgeInterruptClearsAcceptedVectorNotLastAsserted verifies the
-// SCU clears the IST bit for the vector the SH-2 dispatched, not the bit it
-// last asserted via IRL. A lower-priority interrupt is accepted, then a
-// higher-priority source re-points the last-asserted bit before the ack. The
-// ack must clear the bit for the dispatched vector, leaving the higher-
-// priority source asserted; otherwise that source's interrupt is lost.
+// SCU clears the IST bit for the vector the SH-2 dispatched. A lower-priority
+// interrupt is asserted, then a higher-priority source raises before the ack:
+// the assertion holds (SH7604 HW manual Sec 5.6 Figure 5.9 shows a sampled
+// request level held through pin-level changes and released only at
+// acceptance), the ack clears the dispatched vector's bit, and the
+// higher-priority source asserts at the dispatcher's IMS write; otherwise
+// that source's interrupt is lost.
 func TestSCUAcknowledgeInterruptClearsAcceptedVectorNotLastAsserted(t *testing.T) {
 	s := NewSCU()
 	s.SetIRLHandler(func(level uint8, vec uint16) {}, func() {})
@@ -1608,11 +1704,11 @@ func TestSCUAcknowledgeInterruptClearsAcceptedVectorNotLastAsserted(t *testing.T
 	// and commits to accepting.
 	s.RaiseInterrupt(11)
 	// DSP End (bit 5, vec 0x45, level 0xA) raised after, modeling the
-	// concurrent secondary-worker raise. Higher priority, so it re-points the
-	// last-asserted bit to 5 before the CPU acks.
+	// concurrent secondary-worker raise. Higher priority, but the in-flight
+	// assertion holds until the ack.
 	s.RaiseInterrupt(5)
-	if s.pendingBit != 5 {
-		t.Fatalf("pendingBit = %d, want 5 (DSP End is highest pending)", s.pendingBit)
+	if s.pendingBit != 11 {
+		t.Fatalf("pendingBit = %d, want 11 (assertion held until ack)", s.pendingBit)
 	}
 
 	// The CPU acks the vector it actually accepted (DMA End), not pendingBit.
