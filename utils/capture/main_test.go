@@ -28,6 +28,30 @@ func TestScreenshotName(t *testing.T) {
 	}
 }
 
+func TestCaptureLogName(t *testing.T) {
+	tests := []struct {
+		id   string
+		ts   int64
+		want string
+	}{
+		{"MK-81088", 1718900000, "MK-81088_1718900000.log"},
+		{"unknown", 1700000000, "unknown_1700000000.log"},
+	}
+	for _, tc := range tests {
+		if got := captureLogName(tc.id, tc.ts); got != tc.want {
+			t.Errorf("captureLogName(%q, %d) = %q, want %q", tc.id, tc.ts, got, tc.want)
+		}
+	}
+}
+
+func TestFrameStatsLine(t *testing.T) {
+	got := frameStatsLine(120, 412.5, 30, 1.2, 15.75, 4.125)
+	want := "frame 120  fps 412.50  game_fps 30.00 | fmin 1.200, fmax 15.750, favg 4.125 ms"
+	if got != want {
+		t.Errorf("frameStatsLine = %q, want %q", got, want)
+	}
+}
+
 func TestSanitizeID(t *testing.T) {
 	tests := []struct {
 		in   string

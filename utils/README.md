@@ -173,6 +173,7 @@ Flags:
 | `-bios` | (none) | Path to the Saturn BIOS ROM. If omitted, the HLE BIOS boots the disc. |
 | `-fast-boot` | false | Skip the real BIOS boot animation (real BIOS only; no effect with the HLE BIOS). |
 | `-out` | `capture_output` | Output root directory, created if missing. |
+| `-load-state` | (none) | Save state to load at startup; the replay must have been recorded from this state with the same disc and BIOS. |
 
 Example:
 
@@ -185,6 +186,25 @@ where `id` is the disc's product number (`unknown` if it can't be read),
 `ts` is the Unix timestamp when the run started, and `framenum` is the frame
 the shot was taken on. Images are lossless PNG so pixel-exact differences
 survive for comparison.
+
+A capture log is written under `<out>/logs/` as `id_ts.log` using the same
+id and timestamp. It records the run milestones (state load, replay start,
+completion, any watchdog abort) and a frame stats line every region-fps
+frames (one emulated second per window) in the same format `dev_runner`
+prints:
+
+```
+frame 120  fps 412.50  game_fps 30.00 | fmin 1.200, fmax 15.750, favg 4.125 ms
+```
+
+Because the run is unpaced, `fps` is host throughput over the window's wall
+time, while `game_fps` counts VDP1 framebuffer swaps against the window's
+emulated time - the game's internal rate, independent of host speed and
+directly comparable to `dev_runner` running at full speed. The frame times
+are min/max/average `RunFrame` compute cost over the window, which
+`dev_runner` also measures excluding its pacing wait, so they compare
+directly as well. A partial final window is flushed when the replay ends so
+short runs still produce stats.
 
 The run is unattended, so a watchdog aborts it (exit code 2) if emulation
 throughput collapses. Because the loop has no pacing, a healthy run produces

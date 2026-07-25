@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 // Command capture replays a recorded session against a disc with no display,
-// running as fast as possible, and writes framebuffer screenshots for
-// regression comparison. It is headless and unattended: a self-aborting
+// running as fast as possible, and writes framebuffer screenshots plus a
+// capture log with per-window frame stats for regression comparison. It is
+// headless and unattended: a self-aborting
 // watchdog kills the run if the emulation freezes or collapses below a
 // throughput floor instead of pinning a CPU.
 package main
@@ -15,6 +16,7 @@ import (
 	"image/png"
 	"io"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -97,6 +99,31 @@ func main() {
 		emu.SetOption("fast_boot", "true")
 	}
 
+	// The product number comes from an arbitrary disc image, so sanitize it
+	// before using it in a filename or printing it: a crafted field could
+	// contain path separators (traversal out of the output directory) or
+	// terminal control bytes.
+	id := sanitizeID(rawID)
+	ts := time.Now().Unix()
+
+	shotsDir := filepath.Join(*outDir, "screenshots")
+	if err := os.MkdirAll(shotsDir, 0o755); err != nil {
+		log.Fatalf("failed to create output directory %q: %v", shotsDir, err)
+	}
+	logsDir := filepath.Join(*outDir, "logs")
+	if err := os.MkdirAll(logsDir, 0o755); err != nil {
+		log.Fatalf("failed to create output directory %q: %v", logsDir, err)
+	}
+	logPath := filepath.Join(logsDir, captureLogName(id, ts))
+	logFile, err := os.Create(logPath)
+	if err != nil {
+		log.Fatalf("failed to create capture log %q: %v", logPath, err)
+	}
+	defer logFile.Close()
+	// Run milestones go to both stdout and the capture log; per-window frame
+	// stats go to the log only.
+	echo := io.MultiWriter(os.Stdout, logFile)
+
 	if err := emu.Start(); err != nil {
 		log.Fatalf("emulator start failed: %v", err)
 	}
@@ -113,30 +140,50 @@ func main() {
 		if err := emu.Deserialize(stateData); err != nil {
 			log.Fatalf("failed to load save state %q: %v", *loadState, err)
 		}
-		fmt.Printf("[CAPTURE] loaded state %s\n", *loadState)
+		fmt.Fprintf(echo, "[CAPTURE] loaded state %s\n", *loadState)
 	}
 
-	// The product number comes from an arbitrary disc image, so sanitize it
-	// before using it in a filename or printing it: a crafted field could
-	// contain path separators (traversal out of the output directory) or
-	// terminal control bytes.
-	id := sanitizeID(rawID)
-	ts := time.Now().Unix()
-
-	shotsDir := filepath.Join(*outDir, "screenshots")
-	if err := os.MkdirAll(shotsDir, 0o755); err != nil {
-		log.Fatalf("failed to create output directory %q: %v", shotsDir, err)
-	}
-
-	fmt.Printf("[CAPTURE] replaying %s (%d frames, %d screenshots), disc=%s -> %s\n",
+	fmt.Fprintf(echo, "[CAPTURE] replaying %s (%d frames, %d screenshots), disc=%s -> %s\n",
 		replayPath, rf.Frames, len(rf.Screenshots), id, shotsDir)
 
 	start := time.Now()
-	wd := newWatchdog(start)
+	wd := newWatchdog(start, io.MultiWriter(os.Stderr, logFile))
 	wd.run()
+
+	// Per-window RunFrame stats, logged every region-fps frames (one emulated
+	// second per window). The run is unpaced, so fps is host throughput over
+	// the window's wall time, while game_fps counts VDP1 framebuffer swaps
+	// against the window's emulated time - the game's internal rate,
+	// independent of host speed.
+	windowFrames := 0
+	windowStart := start
+	swapCountStart := emu.VDP1SwapCount()
+	frameTimeMin := time.Duration(math.MaxInt64)
+	frameTimeMax := time.Duration(0)
+	frameTimeSum := time.Duration(0)
 
 	frameNum := 0
 	shots := 0
+
+	// flushWindow logs the current window's stats and resets it. Callers
+	// guarantee windowFrames > 0.
+	flushWindow := func() {
+		swapCountNow := emu.VDP1SwapCount()
+		line := frameStatsLine(frameNum,
+			float64(windowFrames)/time.Since(windowStart).Seconds(),
+			float64(swapCountNow-swapCountStart)*float64(emu.GetTiming().FPS)/float64(windowFrames),
+			float64(frameTimeMin.Microseconds())/1000.0,
+			float64(frameTimeMax.Microseconds())/1000.0,
+			float64(frameTimeSum.Microseconds())/1000.0/float64(windowFrames))
+		fmt.Fprintln(logFile, line)
+
+		windowFrames = 0
+		windowStart = time.Now()
+		swapCountStart = swapCountNow
+		frameTimeMin = time.Duration(math.MaxInt64)
+		frameTimeMax = 0
+		frameTimeSum = 0
+	}
 	for {
 		p1, p2, active := player.Next()
 		if !active {
@@ -144,8 +191,19 @@ func main() {
 		}
 		emu.SetInput(0, p1)
 		emu.SetInput(1, p2)
+		runStart := time.Now()
 		emu.RunFrame()
+		runDur := time.Since(runStart)
 		wd.frameDone()
+
+		windowFrames++
+		if runDur < frameTimeMin {
+			frameTimeMin = runDur
+		}
+		if runDur > frameTimeMax {
+			frameTimeMax = runDur
+		}
+		frameTimeSum += runDur
 
 		if player.ShouldScreenshot() {
 			name := screenshotName(id, ts, frameNum)
@@ -155,10 +213,34 @@ func main() {
 			shots++
 		}
 		frameNum++
+
+		if windowFrames >= emu.GetTiming().FPS {
+			flushWindow()
+		}
 	}
 
-	fmt.Printf("[CAPTURE] done: %d frames, %d screenshots -> %s (%.1fs)\n",
+	// A replay rarely ends exactly on a window boundary; flush the partial
+	// window so short runs still produce stats.
+	if windowFrames > 0 {
+		flushWindow()
+	}
+
+	fmt.Fprintf(echo, "[CAPTURE] done: %d frames, %d screenshots -> %s (%.1fs)\n",
 		frameNum, shots, shotsDir, time.Since(start).Seconds())
+}
+
+// captureLogName builds the capture log filename id_ts.log, matching the
+// id/timestamp scheme used by screenshotName.
+func captureLogName(id string, ts int64) string {
+	return fmt.Sprintf("%s_%d.log", id, ts)
+}
+
+// frameStatsLine formats one per-window frame stats line in the same format
+// dev_runner prints: window frame rate, VDP1 swap rate, and min/max/avg
+// RunFrame compute time in milliseconds.
+func frameStatsLine(frame int, fps, gameFPS, fmin, fmax, favg float64) string {
+	return fmt.Sprintf("frame %d  fps %.2f  game_fps %.2f | fmin %.3f, fmax %.3f, favg %.3f ms",
+		frame, fps, gameFPS, fmin, fmax, favg)
 }
 
 // readGameID reads the 10-byte product number from the disc's IP header
@@ -266,12 +348,13 @@ func classifyHealth(gap time.Duration, framesInWindow uint64) healthState {
 // them once per window.
 type watchdog struct {
 	start             time.Time
+	out               io.Writer
 	completed         atomic.Uint64
 	lastCompleteNanos atomic.Int64
 }
 
-func newWatchdog(start time.Time) *watchdog {
-	wd := &watchdog{start: start}
+func newWatchdog(start time.Time, out io.Writer) *watchdog {
+	wd := &watchdog{start: start, out: out}
 	// Seed so the gap isn't stale before the first frame completes.
 	wd.lastCompleteNanos.Store(start.UnixNano())
 	return wd
@@ -298,18 +381,18 @@ func (wd *watchdog) run() {
 
 			switch classifyHealth(gap, d) {
 			case frozen:
-				fmt.Fprintf(os.Stderr,
+				fmt.Fprintf(wd.out,
 					"\n[WATCHDOG] emulation frozen: no frame completed for %v (%d frames total); aborting\n",
 					gap.Round(time.Millisecond), cur)
 				buf := make([]byte, 1<<20)
 				n := runtime.Stack(buf, true)
-				os.Stderr.Write(buf[:n])
-				fmt.Fprintln(os.Stderr, "[WATCHDOG] end of stack dump")
+				wd.out.Write(buf[:n])
+				fmt.Fprintln(wd.out, "[WATCHDOG] end of stack dump")
 				os.Exit(exitWatchdog)
 			case slow:
 				elapsed := now.Sub(wd.start)
 				fps := float64(cur) / elapsed.Seconds()
-				fmt.Fprintf(os.Stderr,
+				fmt.Fprintf(wd.out,
 					"\n[WATCHDOG] emulation too slow: %d frames in the last %v (%.1f fps avg over %v); aborting\n",
 					d, healthWin, fps, elapsed.Round(time.Millisecond))
 				os.Exit(exitWatchdog)
