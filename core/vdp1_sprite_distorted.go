@@ -13,6 +13,8 @@ type distortedResumeState struct {
 	charW, charH       int
 	colorMode          uint16
 	cc                 uint16
+	pixCycles          int32
+	srcReadU           int
 	ecdOff, spdOn      bool
 	msbOn, mesh        bool
 	userClip           uint16
@@ -71,6 +73,7 @@ func (v *VDP1) startDistortedSprite(cmd *vdp1Command, budget int32) (consumed in
 	d.charH = int(cmd.size & 0xFF)
 	d.colorMode = (cmd.pmod >> 3) & 0x07
 	d.cc = cmd.pmod & 0x07
+	d.pixCycles = vdp1PixelCycles(d.cc)
 	d.ecdOff = cmd.pmod&0x0080 != 0
 	d.spdOn = cmd.pmod&0x0040 != 0
 	d.msbOn = cmd.pmod&0x8000 != 0
@@ -256,6 +259,7 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 						gouraud = d.gsLine.value()
 					}
 					v.writePixel(d.curLx, d.curLy, pixel, d.cc, gouraud, d.msbOn, d.mesh, d.userClip, d.clipX, d.clipY)
+					cycles += d.pixCycles - 1
 				}
 				cycles++
 
@@ -273,6 +277,7 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				d.prevPx = d.curLx
 				d.prevPy = d.curLy
 				d.endCodeCount = 0
+				d.srcReadU = -1
 				d.innerJ = 0
 				d.jEnd = d.lineLen
 
@@ -345,6 +350,21 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 					}
 				}
 
+				adv := int32(1)
+				if d.srcReadU >= 0 {
+					da := int32(srcU - d.srcReadU)
+					if da < 0 {
+						da = -da
+					}
+					if d.hssShrinkU {
+						da = (da + 1) / 2
+					}
+					if da > 1 {
+						adv = da
+					}
+				}
+				d.srcReadU = srcU
+
 				var dot uint16
 				switch d.colorMode {
 				case 0, 1:
@@ -415,6 +435,9 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 							v.writePixel(px, py, pixel, d.cc, gouraud, d.msbOn, d.mesh, d.userClip, d.clipX, d.clipY)
 						}
 					}
+					if d.pixCycles > adv {
+						cycles += d.pixCycles - adv
+					}
 				}
 
 				d.prevPx = px
@@ -427,7 +450,7 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 				d.uFP += d.duFP
 
 				d.innerJ++
-				cycles++
+				cycles += adv
 			}
 
 			if cycles >= budget && d.innerJ <= d.jEnd {
@@ -456,10 +479,10 @@ func (v *VDP1) runDistortedSprite(budget int32) (consumed int32, done bool) {
 
 	v.cmdPhase = phaseIdle
 	if d.cc >= 4 {
-		cycles += 4
+		cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 	}
 	if d.colorMode == 1 {
-		cycles += 16
+		cycles += vdp1CLUTWords * vdp1VRAMPortWordCycles
 	}
 	return cycles, true
 }

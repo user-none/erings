@@ -10,6 +10,7 @@ package core
 type polygonResumeState struct {
 	color        uint16
 	cc           uint16
+	pixCycles    int32
 	msbOn, mesh  bool
 	userClip     uint16
 	clipX, clipY int
@@ -49,6 +50,7 @@ func (v *VDP1) startPolygon(cmd *vdp1Command, budget int32) (consumed int32, don
 	p := &v.polygonResume
 	p.color = cmd.colr
 	p.cc = cmd.pmod & 0x07
+	p.pixCycles = vdp1PixelCycles(p.cc)
 	p.msbOn = cmd.pmod&0x8000 != 0
 	p.mesh = cmd.pmod&0x0100 != 0
 	p.userClip = (cmd.pmod >> 9) & 3
@@ -103,9 +105,9 @@ func (v *VDP1) startPolygon(cmd *vdp1Command, budget int32) (consumed int32, don
 			gEnd = p.gt[1]
 		}
 		v.bresenhamLine(p.ax, p.ay, p.bx, p.by, p.color, p.cc, gStart, gEnd, p.msbOn, p.mesh, p.userClip, p.clipX, p.clipY)
-		cycles := int32(intMax(intAbs(p.bx-p.ax), intAbs(p.by-p.ay)) + 1)
+		cycles := int32(intMax(intAbs(p.bx-p.ax), intAbs(p.by-p.ay))+1) * p.pixCycles
 		if p.cc >= 4 {
-			cycles += 4
+			cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 		}
 		return cycles, true
 	}
@@ -198,7 +200,7 @@ func (v *VDP1) runPolygon(budget int32) (consumed int32, done bool) {
 						gouraud, p.msbOn, p.mesh, p.userClip,
 						p.clipX, p.clipY)
 				}
-				cycles++
+				cycles += p.pixCycles
 				p.jEnd = p.lineLen
 				p.innerJ = p.lineLen + 1
 			} else {
@@ -309,7 +311,7 @@ func (v *VDP1) runPolygon(budget int32) (consumed int32, done bool) {
 				p.pxFP += p.dpxFP
 				p.pyFP += p.dpyFP
 				p.innerJ++
-				cycles++
+				cycles += p.pixCycles
 			}
 			if cycles >= budget && p.innerJ <= p.jEnd {
 				v.cmdPhase = phasePolygon
@@ -336,7 +338,7 @@ func (v *VDP1) runPolygon(budget int32) (consumed int32, done bool) {
 
 	v.cmdPhase = phaseIdle
 	if p.cc >= 4 {
-		cycles += 4
+		cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 	}
 	return cycles, true
 }

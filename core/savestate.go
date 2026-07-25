@@ -41,7 +41,7 @@ const (
 	// erings) with a "state is from a newer version" error. Raised
 	// when fields are added; older files simply lack the new fields,
 	// which read as zero values on load.
-	stateVersion = uint32(3)
+	stateVersion = uint32(4)
 
 	// stateMinVersion is the oldest state-file version Deserialize
 	// accepts. A file below it is rejected with a distinct "state is
@@ -586,6 +586,8 @@ func buildVDP1Regs(w *fieldWriter, v *VDP1) {
 	w.u32("procReturnAddr", v.procReturnAddr)
 	w.i32("systemCycleDebt", v.systemCycleDebt)
 	w.i32("vramWriteStall", v.vramWriteStallCycles.Load())
+	w.i64("drawTicked", v.drawTicked.Load())
+	w.i64("drawStallCharged", v.drawStallCharged.Load())
 	w.flag("vbeLatched", v.vbeLatched)
 	w.flag("fbcrWritten", v.fbcrWritten)
 	w.flag("eraseRequested", v.eraseRequested)
@@ -633,6 +635,7 @@ func buildVDP1Resume(w *fieldWriter, v *VDP1) {
 	w.i64("sprite.innerIdx", int64(sr.innerIdx))
 	w.i64("sprite.endCodeCount", int64(sr.endCodeCount))
 	w.i64("sprite.prevSrcX", int64(sr.prevSrcX))
+	w.i64("sprite.srcReadX", int64(sr.srcReadX))
 
 	dr := &v.distortedResume
 	w.u32("dist.charAddr", dr.charAddr)
@@ -699,6 +702,7 @@ func buildVDP1Resume(w *fieldWriter, v *VDP1) {
 	w.i64("dist.prevPx", int64(dr.prevPx))
 	w.i64("dist.prevPy", int64(dr.prevPy))
 	w.i64("dist.endCodeCount", int64(dr.endCodeCount))
+	w.i64("dist.srcReadU", int64(dr.srcReadU))
 	w.gouraud("dist.gsLine", &dr.gsLine)
 
 	pr := &v.polygonResume
@@ -2096,6 +2100,8 @@ func decodeVDP1Regs(e *Emulator, r *fieldReader) func() {
 	procReturnAddr := r.u32("procReturnAddr")
 	systemCycleDebt := r.i32("systemCycleDebt")
 	vramWriteStall := r.i32("vramWriteStall")
+	drawTicked := r.i64("drawTicked")
+	drawStallCharged := r.i64("drawStallCharged")
 	vbeLatched := r.flag("vbeLatched")
 	fbcrWritten := r.flag("fbcrWritten")
 	eraseRequested := r.flag("eraseRequested")
@@ -2132,6 +2138,8 @@ func decodeVDP1Regs(e *Emulator, r *fieldReader) func() {
 		v.procReturnAddr = procReturnAddr
 		v.systemCycleDebt = systemCycleDebt
 		v.vramWriteStallCycles.Store(vramWriteStall)
+		v.drawTicked.Store(drawTicked)
+		v.drawStallCharged.Store(drawStallCharged)
 		v.vbeLatched = vbeLatched
 		v.fbcrWritten = fbcrWritten
 		v.eraseRequested = eraseRequested
@@ -2154,6 +2162,8 @@ func decodeVDP1Resume(e *Emulator, r *fieldReader) func() {
 	sr.charH = int(r.i64("sprite.charH"))
 	sr.colorMode = r.u16("sprite.colorMode")
 	sr.cc = r.u16("sprite.cc")
+	// pixCycles is derived from cc, not stored; recompute on load.
+	sr.pixCycles = vdp1PixelCycles(sr.cc)
 	sr.ecdOff = r.flag("sprite.ecdOff")
 	sr.spdOn = r.flag("sprite.spdOn")
 	sr.msbOn = r.flag("sprite.msbOn")
@@ -2180,6 +2190,7 @@ func decodeVDP1Resume(e *Emulator, r *fieldReader) func() {
 	sr.innerIdx = int(r.i64("sprite.innerIdx"))
 	sr.endCodeCount = int(r.i64("sprite.endCodeCount"))
 	sr.prevSrcX = int(r.i64("sprite.prevSrcX"))
+	sr.srcReadX = int(r.i64("sprite.srcReadX"))
 
 	var dr distortedResumeState
 	dr.charAddr = r.u32("dist.charAddr")
@@ -2187,6 +2198,7 @@ func decodeVDP1Resume(e *Emulator, r *fieldReader) func() {
 	dr.charH = int(r.i64("dist.charH"))
 	dr.colorMode = r.u16("dist.colorMode")
 	dr.cc = r.u16("dist.cc")
+	dr.pixCycles = vdp1PixelCycles(dr.cc)
 	dr.ecdOff = r.flag("dist.ecdOff")
 	dr.spdOn = r.flag("dist.spdOn")
 	dr.msbOn = r.flag("dist.msbOn")
@@ -2246,11 +2258,13 @@ func decodeVDP1Resume(e *Emulator, r *fieldReader) func() {
 	dr.prevPx = int(r.i64("dist.prevPx"))
 	dr.prevPy = int(r.i64("dist.prevPy"))
 	dr.endCodeCount = int(r.i64("dist.endCodeCount"))
+	dr.srcReadU = int(r.i64("dist.srcReadU"))
 	dr.gsLine = r.gouraud("dist.gsLine")
 
 	var pr polygonResumeState
 	pr.color = r.u16("poly.color")
 	pr.cc = r.u16("poly.cc")
+	pr.pixCycles = vdp1PixelCycles(pr.cc)
 	pr.msbOn = r.flag("poly.msbOn")
 	pr.mesh = r.flag("poly.mesh")
 	pr.userClip = r.u16("poly.userClip")
@@ -2292,6 +2306,7 @@ func decodeVDP1Resume(e *Emulator, r *fieldReader) func() {
 	var lr lineResumeState
 	lr.color = r.u16("line.color")
 	lr.cc = r.u16("line.cc")
+	lr.pixCycles = vdp1PixelCycles(lr.cc)
 	lr.msbOn = r.flag("line.msbOn")
 	lr.mesh = r.flag("line.mesh")
 	lr.userClip = r.u16("line.userClip")

@@ -5,10 +5,13 @@ package core
 
 import "testing"
 
-// TestVDP1SH2WriteStallChargedPerAccess verifies an SH-2 store to VDP1
-// VRAM during an active draw is charged the per-access contention wait,
-// scaled by transaction width, and nothing when no draw is active or the
-// target is not VDP1 VRAM.
+// TestVDP1SH2WriteStallChargedPerAccess verifies an SH-2 access to
+// VDP1 VRAM during an active draw stalls drawing by the per-word
+// penalty, scaled by transaction width, for stores and loads alike.
+// It charges nothing when no draw is active or the target is not
+// VDP1 VRAM. The draw's cycles-run counter is set high so the
+// per-draw cap stays out of these assertions - the cap itself is
+// covered by TestVDP1SH2WriteStallBoundedByDrawLifetime.
 func TestVDP1SH2WriteStallChargedPerAccess(t *testing.T) {
 	bus := newBusForTest()
 	v := bus.vdp1
@@ -20,6 +23,7 @@ func TestVDP1SH2WriteStallChargedPerAccess(t *testing.T) {
 	}
 
 	v.drawActive = true
+	v.drawTicked.Store(1 << 20)
 
 	v.vramWriteStallCycles.Store(0)
 	bus.SH2Write16(vram, 0x1234, 0, false)
@@ -34,9 +38,60 @@ func TestVDP1SH2WriteStallChargedPerAccess(t *testing.T) {
 	}
 
 	v.vramWriteStallCycles.Store(0)
+	bus.SH2Read16(vram, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != vdp1WriteStallSystemCycles {
+		t.Fatalf("SH2Read16 during draw: stall=%d, want %d", got, vdp1WriteStallSystemCycles)
+	}
+
+	v.vramWriteStallCycles.Store(0)
+	bus.SH2Read32(vram, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 2*vdp1WriteStallSystemCycles {
+		t.Fatalf("SH2Read32 during draw: stall=%d, want %d", got, 2*vdp1WriteStallSystemCycles)
+	}
+
+	v.vramWriteStallCycles.Store(0)
 	bus.SH2Write16(0x06000000, 0x1234, 0, false)
 	if got := v.vramWriteStallCycles.Load(); got != 0 {
 		t.Fatalf("SH2Write16 to work RAM during draw: stall=%d, want 0", got)
+	}
+}
+
+// TestVDP1SH2WriteStallBoundedByDrawLifetime verifies the per-draw
+// cap: the stall charged to a draw cannot exceed the cycles it has
+// run. A store stream against a draw with no elapsed time charges
+// nothing. A partial remainder is consumed exactly, and it
+// replenishes as the draw's cycles-run counter advances.
+func TestVDP1SH2WriteStallBoundedByDrawLifetime(t *testing.T) {
+	bus := newBusForTest()
+	v := bus.vdp1
+	const vram = uint32(0x05C00000)
+
+	v.drawActive = true
+
+	// Fresh draw, no elapsed time: nothing to take.
+	bus.SH2Write16(vram, 0x1234, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 0 {
+		t.Fatalf("write with zero draw lifetime: stall=%d, want 0", got)
+	}
+
+	// A remainder smaller than the full penalty clamps the charge.
+	v.drawTicked.Store(10)
+	bus.SH2Write16(vram, 0x1234, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 10 {
+		t.Fatalf("write with 10 cycles remaining: stall=%d, want 10", got)
+	}
+
+	// Remainder used up: further writes charge nothing.
+	bus.SH2Write16(vram, 0x1234, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 10 {
+		t.Fatalf("write with remainder used up: stall=%d, want 10", got)
+	}
+
+	// Advancing the cycles-run counter replenishes the remainder.
+	v.drawTicked.Add(1 << 20)
+	bus.SH2Write16(vram, 0x1234, 0, false)
+	if got, want := v.vramWriteStallCycles.Load(), int32(10+vdp1WriteStallSystemCycles); got != want {
+		t.Fatalf("write after clock advance: stall=%d, want %d", got, want)
 	}
 }
 

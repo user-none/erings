@@ -14,6 +14,7 @@ func (v *VDP1) startScaledSprite(cmd *vdp1Command, budget int32) (consumed int32
 	s.charH = int(cmd.size & 0xFF)
 	s.colorMode = (cmd.pmod >> 3) & 0x07
 	s.cc = cmd.pmod & 0x07
+	s.pixCycles = vdp1PixelCycles(s.cc)
 	s.ecdOff = cmd.pmod&0x0080 != 0
 	s.spdOn = cmd.pmod&0x0040 != 0
 	s.msbOn = cmd.pmod&0x8000 != 0
@@ -123,6 +124,7 @@ func (v *VDP1) startScaledSprite(cmd *vdp1Command, budget int32) (consumed int32
 	s.innerIdx = 0 // dx
 	s.endCodeCount = 0
 	s.prevSrcX = -1
+	s.srcReadX = -1
 
 	return v.runScaledSprite(budget)
 }
@@ -151,6 +153,7 @@ func (v *VDP1) runScaledSprite(budget int32) (consumed int32, done bool) {
 			s.innerIdx = 0
 			s.endCodeCount = 0
 			s.prevSrcX = -1
+			s.srcReadX = -1
 			cycles += 5
 			if cycles >= budget && s.outerIdx < s.destH {
 				v.cmdPhase = phaseScaledSprite
@@ -177,8 +180,22 @@ func (v *VDP1) runScaledSprite(budget int32) (consumed int32, done bool) {
 					}
 				}
 
-				dot := v.readCharDot(s.charAddr, srcX, srcY, s.charW, s.colorMode)
+				adv := int32(1)
+				if s.srcReadX >= 0 {
+					da := int32(srcX - s.srcReadX)
+					if da < 0 {
+						da = -da
+					}
+					if s.hssShrinkX {
+						da = (da + 1) / 2
+					}
+					if da > 1 {
+						adv = da
+					}
+				}
+				s.srcReadX = srcX
 
+				dot := v.readCharDot(s.charAddr, srcX, srcY, s.charW, s.colorMode)
 				if !s.hssEcdOff && !s.ecdOff && v.isEndCode(dot, s.colorMode) {
 					if srcX != s.prevSrcX {
 						s.prevSrcX = srcX
@@ -189,12 +206,12 @@ func (v *VDP1) runScaledSprite(budget int32) (consumed int32, done bool) {
 						}
 					}
 					s.innerIdx++
-					cycles++
+					cycles += adv
 					continue
 				}
 				if !s.spdOn && dot == 0 {
 					s.innerIdx++
-					cycles++
+					cycles += adv
 					continue
 				}
 
@@ -209,7 +226,11 @@ func (v *VDP1) runScaledSprite(budget int32) (consumed int32, done bool) {
 				v.writePixel(fbX, fbY, pixel, s.cc, gouraud, s.msbOn, s.mesh, s.userClip, s.clipX, s.clipY)
 
 				s.innerIdx++
-				cycles++
+				if adv > s.pixCycles {
+					cycles += adv
+				} else {
+					cycles += s.pixCycles
+				}
 			}
 
 			if cycles >= budget {
@@ -222,6 +243,7 @@ func (v *VDP1) runScaledSprite(budget int32) (consumed int32, done bool) {
 		s.innerIdx = 0
 		s.endCodeCount = 0
 		s.prevSrcX = -1
+		s.srcReadX = -1
 		if cycles >= budget && s.outerIdx < s.destH {
 			v.cmdPhase = phaseScaledSprite
 			return cycles, false
@@ -230,10 +252,10 @@ func (v *VDP1) runScaledSprite(budget int32) (consumed int32, done bool) {
 
 	v.cmdPhase = phaseIdle
 	if s.cc >= 4 {
-		cycles += 4
+		cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 	}
 	if s.colorMode == 1 {
-		cycles += 16
+		cycles += vdp1CLUTWords * vdp1VRAMPortWordCycles
 	}
 	return cycles, true
 }

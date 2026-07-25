@@ -370,10 +370,18 @@ func (b *Bus) chargeAccess(area uint8, cost uint32, frameCyc int64, slave bool) 
 // non-timed path (on-chip DMAC, HLE, SCU).
 func (b *Bus) SH2Read32(addr uint32, frameCyc int64, slave bool) (uint32, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
+	cost := accessReadSingle[(addr>>20)&0x7F]
+	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
+	if drawArb {
+		cost += vdp1DrawAccessWaitCycles
+	}
 	b.lockArea(area)
 	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
-	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
+	stall := bufWait + b.chargeAccess(area, cost, frameCyc+int64(bufWait), slave)
 	val := b.read32Impl(addr)
+	if drawArb {
+		b.vdp1.chargeDrawStallBounded(addr, 2)
+	}
 	b.unlockArea(area)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 4, val)
@@ -383,10 +391,18 @@ func (b *Bus) SH2Read32(addr uint32, frameCyc int64, slave bool) (uint32, uint32
 
 func (b *Bus) SH2Read16(addr uint32, frameCyc int64, slave bool) (uint16, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
+	cost := accessReadSingle[(addr>>20)&0x7F]
+	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
+	if drawArb {
+		cost += vdp1DrawAccessWaitCycles
+	}
 	b.lockArea(area)
 	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
-	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
+	stall := bufWait + b.chargeAccess(area, cost, frameCyc+int64(bufWait), slave)
 	val := b.read16Impl(addr)
+	if drawArb {
+		b.vdp1.chargeDrawStallBounded(addr, 1)
+	}
 	b.unlockArea(area)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 2, uint32(val))
@@ -396,10 +412,18 @@ func (b *Bus) SH2Read16(addr uint32, frameCyc int64, slave bool) (uint16, uint32
 
 func (b *Bus) SH2Read8(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
+	cost := accessReadSingle[(addr>>20)&0x7F]
+	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
+	if drawArb {
+		cost += vdp1DrawAccessWaitCycles
+	}
 	b.lockArea(area)
 	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
-	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
+	stall := bufWait + b.chargeAccess(area, cost, frameCyc+int64(bufWait), slave)
 	val := b.read8Impl(addr)
+	if drawArb {
+		b.vdp1.chargeDrawStallBounded(addr, 1)
+	}
 	b.unlockArea(area)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 1, uint32(val))
@@ -409,37 +433,43 @@ func (b *Bus) SH2Read8(addr uint32, frameCyc int64, slave bool) (uint8, uint32) 
 
 func (b *Bus) SH2Write32(addr uint32, val uint32, frameCyc int64, slave bool) uint32 {
 	area := busAreaOf(addr & 0x07FFFFFF)
+	cost := accessWriteSingle[(addr>>20)&0x7F]
 	b.lockArea(area)
-	stall := b.chargeWrite(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
+	stall := b.chargeWrite(area, cost, frameCyc, slave)
 	b.write32Impl(addr, val)
-	b.unlockArea(area)
-	if area == areaBBus {
-		b.vdp1.chargeDrawStall(addr, 2*vdp1WriteStallSystemCycles)
+	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
+	if drawArb {
+		b.vdp1.chargeDrawStallBounded(addr, 2)
 	}
+	b.unlockArea(area)
 	return stall
 }
 
 func (b *Bus) SH2Write16(addr uint32, val uint16, frameCyc int64, slave bool) uint32 {
 	area := busAreaOf(addr & 0x07FFFFFF)
+	cost := accessWriteSingle[(addr>>20)&0x7F]
 	b.lockArea(area)
-	stall := b.chargeWrite(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
+	stall := b.chargeWrite(area, cost, frameCyc, slave)
 	b.write16Impl(addr, val)
-	b.unlockArea(area)
-	if area == areaBBus {
-		b.vdp1.chargeDrawStall(addr, vdp1WriteStallSystemCycles)
+	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
+	if drawArb {
+		b.vdp1.chargeDrawStallBounded(addr, 1)
 	}
+	b.unlockArea(area)
 	return stall
 }
 
 func (b *Bus) SH2Write8(addr uint32, val uint8, frameCyc int64, slave bool) uint32 {
 	area := busAreaOf(addr & 0x07FFFFFF)
+	cost := accessWriteSingle[(addr>>20)&0x7F]
 	b.lockArea(area)
-	stall := b.chargeWrite(area, accessWriteSingle[(addr>>20)&0x7F], frameCyc, slave)
+	stall := b.chargeWrite(area, cost, frameCyc, slave)
 	b.write8Impl(addr, val)
-	b.unlockArea(area)
-	if area == areaBBus {
-		b.vdp1.chargeDrawStall(addr, vdp1WriteStallSystemCycles)
+	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
+	if drawArb {
+		b.vdp1.chargeDrawStallBounded(addr, 1)
 	}
+	b.unlockArea(area)
 	return stall
 }
 
@@ -465,9 +495,15 @@ func (b *Bus) SH2FillLine(base uint32, dst *[16]byte, frameCyc int64, slave bool
 // cost (the slave handshake and contention wait were already paid on the read).
 func (b *Bus) SH2RMWRead(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
 	area := busAreaOf(addr & 0x07FFFFFF)
+	cost := accessReadSingle[(addr>>20)&0x7F]
+	// The read half pays the CPU-side arbitration wait once.
+	// SH2RMWWrite stalls drawing for the write half.
+	if area == areaBBus && b.vdp1.drawingVRAMAccess(addr) {
+		cost += vdp1DrawAccessWaitCycles
+	}
 	b.lockArea(area)
 	bufWait := b.pendingWriteOf(slave).wait(frameCyc)
-	stall := bufWait + b.chargeAccess(area, accessReadSingle[(addr>>20)&0x7F], frameCyc+int64(bufWait), slave)
+	stall := bufWait + b.chargeAccess(area, cost, frameCyc+int64(bufWait), slave)
 	val := b.read8Impl(addr)
 	if b.ReadTrace != nil {
 		b.ReadTrace(addr, 1, uint32(val))
@@ -486,9 +522,9 @@ func (b *Bus) SH2RMWWrite(addr uint32, val uint8, frameCyc int64) uint32 {
 		b.busyUntil[area] = end + int64(cost)
 	}
 	b.write8Impl(addr, val)
-	b.unlockArea(area)
 	if area == areaBBus {
-		b.vdp1.chargeDrawStall(addr, vdp1WriteStallSystemCycles)
+		b.vdp1.chargeDrawStallBounded(addr, 1)
 	}
+	b.unlockArea(area)
 	return cost - 1
 }

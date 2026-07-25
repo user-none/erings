@@ -188,6 +188,8 @@ func (v *VDP1) startDraw() {
 	v.procAddr = 0
 	v.procReturnAddr = 0
 	v.systemCycleDebt = 0
+	v.drawTicked.Store(0)
+	v.drawStallCharged.Store(0)
 	v.drawActive = true
 	v.edsr &^= 0x02
 	// A new draw discards any pending ENDR latched against the
@@ -230,6 +232,9 @@ func (v *VDP1) TickSystemCycles(cycles uint32) {
 		v.vramWriteStallCycles.Store(0)
 		return
 	}
+	// Advance the cycles-run counter that caps per-draw stall in
+	// chargeDrawStallBounded.
+	v.drawTicked.Add(int64(cycles))
 
 	// Bus arbitration: SH-2 / SCU-DMA writes to VRAM during this
 	// segment have priority over VDP1's command-table fetches. Charge
@@ -365,13 +370,11 @@ func (v *VDP1) processCommands(budget int32) (consumed int32, endBit bool) {
 
 		cmd := v.readCommand(v.procAddr)
 		v.copr = uint16(v.procAddr / 8)
-		// Command-table fetch overhead. The manual is silent on the
-		// exact value; 16 is a reasonable approximation based on a
-		// 16-word table fetched from VRAM. Charged for every command
-		// before any control-bit dispatch (end-bit, skip, setup) since
-		// the hardware reads the full table to find out what the
-		// command is.
-		consumed += 16
+		// Parameter read: fetch the command table over the VRAM port.
+		// Charged for every command before any control-bit dispatch
+		// (end bit, skip, setup) because the hardware reads the table
+		// to learn what the command is.
+		consumed += vdp1CmdFetchWords * vdp1VRAMPortWordCycles
 
 		if cmd.ctrl&0x8000 != 0 {
 			v.drawActive = false

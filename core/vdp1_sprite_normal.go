@@ -13,6 +13,7 @@ func (v *VDP1) startNormalSprite(cmd *vdp1Command, budget int32) (consumed int32
 	s.charH = int(cmd.size & 0xFF)
 	s.colorMode = (cmd.pmod >> 3) & 0x07
 	s.cc = cmd.pmod & 0x07
+	s.pixCycles = vdp1PixelCycles(s.cc)
 	s.ecdOff = cmd.pmod&0x0080 != 0
 	s.spdOn = cmd.pmod&0x0040 != 0
 	s.msbOn = cmd.pmod&0x8000 != 0
@@ -106,7 +107,7 @@ func (v *VDP1) runNormalSprite(budget int32) (consumed int32, done bool) {
 				v.writePixel(fbX, fbY, pixel, s.cc, gouraud, s.msbOn, s.mesh, s.userClip, s.clipX, s.clipY)
 
 				s.innerIdx++
-				cycles++
+				cycles += s.pixCycles
 			}
 
 			if cycles >= budget {
@@ -123,13 +124,15 @@ func (v *VDP1) runNormalSprite(budget int32) (consumed int32, done bool) {
 		}
 	}
 
-	// Completion adders match the existing post-loop accounting.
+	// Table reads over the VRAM port: the Gouraud shading table, and
+	// the CLUT in color mode 1. Charged at completion as an
+	// approximation of their setup-time cost.
 	v.cmdPhase = phaseIdle
 	if s.cc >= 4 {
-		cycles += 4
+		cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 	}
 	if s.colorMode == 1 {
-		cycles += 16
+		cycles += vdp1CLUTWords * vdp1VRAMPortWordCycles
 	}
 	return cycles, true
 }

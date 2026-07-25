@@ -440,6 +440,9 @@ func fillEmulatorState(e *Emulator) {
 	e.vdp1.copr = 0x0040
 	e.vdp1.lateEraseFB = e.vdp1.displayFB
 	e.vdp1.distortedResume.pxFP = -99887766
+	e.vdp1.distortedResume.cc = 3
+	e.vdp1.drawTicked.Store(5000)
+	e.vdp1.drawStallCharged.Store(1234)
 	e.pendingSystemReset.Store(true)
 	e.lineWidthAccum = 0x123456789A
 	e.bus.minitWritten = true
@@ -521,6 +524,16 @@ func TestStateRoundTrip(t *testing.T) {
 	}
 	if &e2.vdp1.lateEraseFB[0] != &e2.vdp1.displayFB[0] {
 		t.Errorf("restored lateEraseFB does not alias displayFB")
+	}
+	if got := e2.vdp1.drawTicked.Load(); got != 5000 {
+		t.Errorf("restored drawTicked = %d, want 5000", got)
+	}
+	if got := e2.vdp1.drawStallCharged.Load(); got != 1234 {
+		t.Errorf("restored drawStallCharged = %d, want 1234", got)
+	}
+	// pixCycles is derived from cc at decode, not stored.
+	if got := e2.vdp1.distortedResume.pixCycles; got != vdp1PixelCycles(3) {
+		t.Errorf("restored dist pixCycles = %d, want %d", got, vdp1PixelCycles(3))
 	}
 	if !e2.pendingSystemReset.Load() {
 		t.Errorf("restored pendingSystemReset not set")

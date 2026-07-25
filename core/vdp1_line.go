@@ -9,6 +9,7 @@ package core
 type lineResumeState struct {
 	color        uint16
 	cc           uint16
+	pixCycles    int32
 	msbOn, mesh  bool
 	userClip     uint16
 	clipX, clipY int
@@ -96,7 +97,7 @@ func (v *VDP1) runBresenhamLine(budget int32) (consumed int32, done bool) {
 				}
 			}
 			s.iter++
-			cycles++
+			cycles += s.pixCycles
 		}
 		if cycles >= budget && s.iter <= s.iterMax {
 			return cycles, false
@@ -111,6 +112,7 @@ func (v *VDP1) startLine(cmd *vdp1Command, budget int32) (consumed int32, done b
 	s := &v.lineResume
 	s.color = cmd.colr
 	s.cc = cmd.pmod & 0x07
+	s.pixCycles = vdp1PixelCycles(s.cc)
 	s.msbOn = cmd.pmod&0x8000 != 0
 	s.mesh = cmd.pmod&0x0100 != 0
 	s.userClip = (cmd.pmod >> 9) & 3
@@ -146,7 +148,7 @@ func (v *VDP1) startLine(cmd *vdp1Command, budget int32) (consumed int32, done b
 
 	v.cmdPhase = phaseIdle
 	if s.cc >= 4 {
-		cycles += 4
+		cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 	}
 	return cycles, true
 }
@@ -161,7 +163,7 @@ func (v *VDP1) resumeLine(budget int32) (consumed int32, done bool) {
 
 	v.cmdPhase = phaseIdle
 	if s.cc >= 4 {
-		cycles += 4
+		cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 	}
 	return cycles, true
 }
@@ -172,6 +174,7 @@ func (v *VDP1) startPolyline(cmd *vdp1Command, budget int32) (consumed int32, do
 	s := &v.lineResume
 	s.color = cmd.colr
 	s.cc = cmd.pmod & 0x07
+	s.pixCycles = vdp1PixelCycles(s.cc)
 	s.msbOn = cmd.pmod&0x8000 != 0
 	s.mesh = cmd.pmod&0x0100 != 0
 	s.userClip = (cmd.pmod >> 9) & 3
@@ -275,7 +278,7 @@ func (v *VDP1) runPolyline(budget int32) (consumed int32, done bool) {
 
 	v.cmdPhase = phaseIdle
 	if s.cc >= 4 {
-		cycles += 4
+		cycles += vdp1GouraudWords * vdp1VRAMPortWordCycles
 	}
 	return cycles, true
 }

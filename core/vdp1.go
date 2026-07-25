@@ -17,27 +17,67 @@ const (
 // cycles of overshoot per yield. Must be at least 1.
 const pixelsPerYieldChunk = 8
 
-// vdp1WriteStallSystemCycles is the bus-contention penalty (in system
-// cycles) charged to VDP1's per-segment cycle budget for each 16-bit
-// VRAM port transaction by an SH-2 store while drawActive=true. The
-// VDP1 port is 16-bit, so a 32-bit write costs this twice. Drawing
-// slows when the SH-2 is busy writing, keeping the SH-2 ahead of
-// drawing's read position so each command lands before VDP1 reads it.
+// vdp1VRAMPortWordCycles is the system cycles to transfer one 16-bit
+// word over the VDP1's VRAM port: the parameter read (command table
+// fetch) and the pattern read (character/texture data), both VDP1
+// User's Manual Sec 2.1: "performed in a short period of time using
+// burst transfer". One system clock per word is the 16-bit port's
+// peak transfer rate.
+const vdp1VRAMPortWordCycles = 1
+
+// vdp1CmdFetchWords is the number of words the parameter read
+// transfers per command. A command table occupies 32 bytes (16
+// words), but VDP1 User's Manual Sec 5.4, command table figure: the
+// last word is "(Dummy) Skipped during table fetch", so only 15
+// words are actually read. Table 2.2 gives the same figure directly
+// as the command size, 1EH (30 bytes).
+const vdp1CmdFetchWords = 15
+
+// vdp1CLUTWords is the number of words the pattern read transfers for
+// the color lookup table in color mode 1, VDP1 User's Manual Sec 5.2:
+// 16 colors of one word each. Table 2.2 gives the same size, 20H (32
+// bytes).
+const vdp1CLUTWords = 16
+
+// vdp1GouraudWords is the number of words read from the Gouraud
+// shading table when Gouraud shading is enabled, VDP1 User's Manual
+// Sec 6.8: "8H bytes (4 words)". Table layout in Sec 5.3.
+const vdp1GouraudWords = 4
+
+// vdp1WriteStallSystemCycles is the system cycles drawing stalls for
+// each 16-bit VRAM word a CPU access takes during drawing. A 32-bit
+// access counts as two words. VDP1 User's Manual Sec 2.1 (VRAM)
+// documents that CPU access is arbitrated with priority over drawing
+// and interrupts it, but gives no figure for how long drawing loses.
+// Its "more than 10 wait cycles" describes the CPU-side wait (see
+// vdp1DrawAccessWaitCycles), and its burst-transfer statement implies
+// the port transaction itself is short.
 //
-// The VDP1 User's Manual Section 2.1 (Address Map, VRAM) gives only
-// "more than 10 wait cycles" per arbitrated access, with no exact value.
-// 24 sits above that floor so VDP1's command-table reads stay behind the
-// SH-2's command-list writes. We've seen below ~22 the draw can latch
-// a stale end-bit left by a prior shorter list and truncate the command
-// list, dropping the tail sprites. A slightly larger value is used to
-// allow for some head room.
-const vdp1WriteStallSystemCycles = 24
+// The value is therefore an empirical calibration, not spec-derived.
+// It must be large enough that drawing stays behind an SH-2 still
+// streaming its command list into VRAM; when drawing catches up, it
+// reads a stale end bit left over from an earlier shorter list and
+// stops the command list early with the tail sprites dropped. 16 is
+// the measured no-flicker value with writes posting through the
+// write buffer; 16 flickered when writes also paid a CPU-side
+// arbitration wait.
+const vdp1WriteStallSystemCycles = 16
+
+// vdp1DrawAccessWaitCycles is the extra wait cycles a CPU VRAM read
+// pays while drawing is in progress, for arbitrating the shared port
+// with drawing, VDP1 User's Manual Sec 2.1: "more than 10 wait
+// cycles". Added on top of the read's normal region cost, which
+// already includes ~5 B-Bus cycles, so the wait during drawing
+// totals ~13 cycles, above the manual's floor. Writes post through
+// the write buffer and continue without waiting; they pay only the
+// draw-side stall.
+const vdp1DrawAccessWaitCycles = 8
 
 // vdp1DMABurstStallPerWord is the bus-contention penalty (in system
 // cycles) charged to VDP1's per-segment cycle budget for each 16-bit
 // B-Bus word of a bus-master burst (SCU-DMA) into VRAM while
 // drawActive=true. Per the VDP1 User's Manual Section 2.1 (Address Map,
-// VRAM, p.19) a DMA burst transfers continuously in a short period, so a
+// VRAM) a DMA burst transfers continuously in a short period, so a
 // word costs far less than the per-access arbitration wait an SH-2 single
 // store pays. The B-Bus is 16-bit and a 32-bit write moves two words. At
 // one cycle per word a full burst stalls the draw by bytes/2 system
@@ -57,6 +97,24 @@ const vdp1DMABurstStallPerWord = 1
 // cases (trivial reject through full clip-edge intersection) rather
 // than charging the worst-case 5 every time.
 const vdp1PreClipLineCycles = 3
+
+// vdp1PixelCycles is the system cycles to draw one pixel of a part.
+// Drawing writes "1 pixel ... in sync with" the system clock, VDP1
+// User's Manual Sec 2.1, so most modes cost one cycle.
+//
+// Shadow (cc=1), half-transparency (cc=3), and Gouraud shading +
+// half-transparency (cc=7) read the destination pixel back from the
+// frame buffer before writing. Mode 7 also tests its MSB to select
+// processing. For these, Sec 6.3, Color Calculation: "drawing ...
+// takes six times longer than when color calculation is not
+// performed".
+func vdp1PixelCycles(cc uint16) int32 {
+	switch cc {
+	case 1, 3, 7:
+		return 6
+	}
+	return 1
+}
 
 // Command phase tags. Non-zero values identify which rasterizer
 // holds in-progress state and must be resumed on the next
@@ -80,6 +138,7 @@ type spriteResumeState struct {
 	charW, charH  int
 	colorMode     uint16
 	cc            uint16
+	pixCycles     int32
 	ecdOff, spdOn bool
 	msbOn, mesh   bool
 	userClip      uint16
@@ -100,6 +159,7 @@ type spriteResumeState struct {
 	innerIdx     int
 	endCodeCount int
 	prevSrcX     int
+	srcReadX     int
 }
 
 // VDP1 implements the Sega Saturn Video Display Processor 1.
@@ -156,16 +216,24 @@ type VDP1 struct {
 	procReturnAddr  uint32 // single return-address register (manual Sec 3.2)
 	systemCycleDebt int32  // system cycles owed from prior overshoot
 
-	// vramWriteStallCycles is bus-contention stall (in system cycles)
-	// accumulated since the last TickSystemCycles. It is charged by
-	// accumulated since the last TickSystemCycles. Incremented per SH-2
-	// or SCU-DMA write to VRAM while drawActive=true; consumed and
-	// cleared at the top of TickSystemCycles where it reduces the
-	// per-segment cycle budget. Overshoot rolls into systemCycleDebt
-	// via the existing carry mechanism. Atomic: writers (CPU/SCU bus
-	// goroutines) increment while the VDP walker reads-and-clears, with
-	// no common lock between them.
+	// vramWriteStallCycles is the draw stall (in system cycles)
+	// accumulated since the last TickSystemCycles. It is added per
+	// SH-2 access (chargeDrawStallBounded) or SCU-DMA write
+	// (chargeDrawStall) to VRAM while drawActive=true, then consumed
+	// and cleared at the top of TickSystemCycles, where it reduces
+	// the per-segment cycle budget. Overshoot rolls into
+	// systemCycleDebt via the existing carry mechanism. Atomic: the
+	// CPU/SCU bus goroutines add to it while the VDP walker reads and
+	// clears it, with no common lock between them.
 	vramWriteStallCycles atomic.Int32
+
+	// drawTicked and drawStallCharged implement the per-draw cap in
+	// chargeDrawStallBounded. The stall charged to one draw cannot
+	// exceed the cycles that draw has run. drawTicked is the cycles
+	// drawing has advanced since startDraw and drawStallCharged is the
+	// stall already charged against it.
+	drawTicked       atomic.Int64
+	drawStallCharged atomic.Int64
 
 	// SCU reference for interrupt signaling
 	scu *SCU
@@ -470,7 +538,7 @@ func (v *VDP1) InitCommandEndCodes() {
 
 // chargeDrawStall adds `cycles` of draw-contention stall to the VDP1's
 // per-segment budget when `addr` lands in VDP1 VRAM during an active
-// draw. Per the VDP1 User's Manual Section 2.1 (Address Map, VRAM, p.19)
+// draw. Per the VDP1 User's Manual Section 2.1 (Address Map, VRAM)
 // VRAM access is arbitrated against drawing (priority: system
 // controller > drawing).
 func (v *VDP1) chargeDrawStall(addr uint32, cycles int32) {
@@ -479,6 +547,44 @@ func (v *VDP1) chargeDrawStall(addr uint32, cycles int32) {
 	}
 	if m := addr & 0x07FFFFFF; m >= 0x05C00000 && m <= 0x05C7FFFF {
 		v.vramWriteStallCycles.Add(cycles)
+	}
+}
+
+// drawingVRAMAccess reports whether addr targets VDP1 VRAM while a
+// draw is active.
+func (v *VDP1) drawingVRAMAccess(addr uint32) bool {
+	if !v.drawActive {
+		return false
+	}
+	m := addr & 0x07FFFFFF
+	return m >= 0x05C00000 && m <= 0x05C7FFFF
+}
+
+// chargeDrawStallBounded stalls drawing by vdp1WriteStallSystemCycles
+// per 16-bit word of a CPU VRAM access during drawing, capped at the
+// cycles the draw has run since startDraw. A shared port cannot take
+// more time from drawing than has actually elapsed.
+//
+// A draw that keeps advancing stays ahead of the cap, so occasional
+// accesses charge the full penalty. A dense access stream that pins
+// drawing in place is held to the elapsed time instead, and drawing
+// resumes as soon as the stream stops.
+//
+// Callers must hold the areaBBus lock: it serializes the two SH-2s
+// here, so the slack check and the charge are atomic against the
+// other CPU. The VDP walker advances drawTicked concurrently without
+// the lock, but it only grows, which can only under-count the slack.
+func (v *VDP1) chargeDrawStallBounded(addr uint32, words int32) {
+	if !v.drawingVRAMAccess(addr) {
+		return
+	}
+	charge := int64(words) * vdp1WriteStallSystemCycles
+	if slack := v.drawTicked.Load() - v.drawStallCharged.Load(); slack < charge {
+		charge = slack
+	}
+	if charge > 0 {
+		v.drawStallCharged.Add(charge)
+		v.vramWriteStallCycles.Add(int32(charge))
 	}
 }
 
