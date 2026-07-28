@@ -175,8 +175,8 @@ func (e *Emulator) RunFrame() {
 		// intra-line position advances, then the barrier publishes the
 		// master's position, delivers any pending SINIT capture, and waits
 		// for the slave to reach the position before the next chunk.
-		cyc := e.masterLineCarry
-		e.masterLineCarry = 0
+		cyc := e.masterTASCarry
+		e.masterTASCarry = 0
 		for cyc < lineWidth {
 			chunk := lineWidth - cyc
 			if chunk > syncChunkCycles {
@@ -200,7 +200,7 @@ func (e *Emulator) RunFrame() {
 			cyc++
 		}
 		if cyc > lineWidth {
-			e.masterLineCarry = cyc - lineWidth
+			e.masterTASCarry = cyc - lineWidth
 		}
 		pos += int64(lineWidth)
 
@@ -438,8 +438,20 @@ func (e *Emulator) walkSecondaryFrame() {
 				chunk = rem
 			}
 			if smpc.SSHEnabled() {
-				for c := int64(0); c < chunk; c++ {
+				c := e.slaveTASCarry
+				e.slaveTASCarry = 0
+				for ; c < chunk; c++ {
 					e.stepSlave(pos + c)
+				}
+				// Finish a TAS that straddled the chunk boundary before
+				// the component ticks below. Prevents deadlock if one
+				// of the other components needs the bus.
+				for e.slave.InTAS() {
+					e.stepSlave(pos + c)
+					c++
+				}
+				if c > chunk {
+					e.slaveTASCarry = c - chunk
 				}
 			}
 			w := uint32(chunk)

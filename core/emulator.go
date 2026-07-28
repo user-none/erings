@@ -139,7 +139,11 @@ type Emulator struct {
 	sinitPending atomic.Bool
 
 	frameTotalCycles int64
-	masterLineCarry  uint32
+	// Cycle debt from draining a TAS that straddled a stepping-loop
+	// boundary: the master carries into its next line, the slave into
+	// its next chunk. Each is owned by its stepping goroutine.
+	masterTASCarry uint32
+	slaveTASCarry  int64
 
 	// Save-state scratch, reused across Serialize calls: rewind
 	// captures at up to every-other-frame rates, and fresh 12+ MB
