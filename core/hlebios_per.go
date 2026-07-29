@@ -144,7 +144,7 @@ func writePerDriverTable(cpu *sh2.CPU, driverBase uint32) {
 func hlePerDriverSlot0Service(cpu *sh2.CPU) {
 	r := cpu.Registers()
 	driver := r.R[4]
-	if driver < 0x06000000 || driver >= 0x06100000 {
+	if !isPerBufferRAM(driver) {
 		return
 	}
 	writePerDriverTable(cpu, driver)

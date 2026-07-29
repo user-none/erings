@@ -100,6 +100,60 @@ func TestPERInitRegistersWRAMLDriver(t *testing.T) {
 	}
 }
 
+func TestPERInitRegistersVDP1VRAMDriver(t *testing.T) {
+	// Regression: XMEN COTA hands PER_Init a workbuff in VDP1 VRAM
+	// ($05C00000-$05C7FFFF) and a conf buffer in sound RAM
+	// ($05A00000-$05A7FFFF). Real BIOS PER_Init performs no address
+	// validation, so both must be accepted; an earlier work-RAM-only
+	// guard skipped registration, leaving $06000354 zero and sending
+	// the game's first driver dispatch through a null pointer into
+	// its illegal-instruction trap.
+	const vdp1Workbuff uint32 = 0x05C04100 // observed workbuff
+	const sndConfBuf uint32 = 0x05A79E44   // observed conf buffer
+	h, bus, master, _ := newHLEBIOSForTest()
+	if err := h.Boot(makeIPImage()); err != nil {
+		t.Fatalf("Boot: %v", err)
+	}
+	master.SetReg(4, 0x05C00100) // libaddr (HLE ignores)
+	master.SetReg(5, vdp1Workbuff)
+	master.SetReg(6, sndConfBuf)
+
+	hleBiosPERInitService(master)
+
+	if got := bus.readWramHU32(wramHPERDriverSlot - 0x06000000); got != vdp1Workbuff {
+		t.Errorf("after PER_Init, mem.L[$06000354] = %08X, want %08X", got, vdp1Workbuff)
+	}
+	// The slot table must be laid down in VDP1 VRAM at the buffer.
+	if got := bus.Read32(vdp1Workbuff); got != hlePerDriverSlot0 {
+		t.Errorf("slot 0 @ %08X = %08X, want %08X", vdp1Workbuff, got, hlePerDriverSlot0)
+	}
+	// The BupConfig must be written to the sound-RAM conf buffer.
+	want := []uint16{1, 1, 0, 0, 0, 0}
+	for i, w := range want {
+		off := sndConfBuf + uint32(i)*2
+		if got := bus.Read16(off); got != w {
+			t.Errorf("BupConfig[+%d] = %04X, want %04X", i*2, got, w)
+		}
+	}
+}
+
+func TestPERSlot0VDP1VRAMDriver(t *testing.T) {
+	// Slot 0 re-entry must accept the same non-work-RAM driver base
+	// that PER_Init registered (its guard shares isPerBufferRAM).
+	const vdp1Workbuff uint32 = 0x05C04100
+	_, bus, master, _ := newHLEBIOSForTest()
+	master.SetReg(4, vdp1Workbuff)
+	hlePerDriverSlot0Service(master)
+
+	if got := bus.readWramHU32(wramHPERDriverSlot - 0x06000000); got != vdp1Workbuff {
+		t.Errorf("after slot 0, mem.L[$06000354] = %08X, want %08X",
+			got, vdp1Workbuff)
+	}
+	if got := bus.Read32(vdp1Workbuff); got != hlePerDriverSlot0 {
+		t.Errorf("slot 0 @ %08X = %08X, want %08X", vdp1Workbuff, got, hlePerDriverSlot0)
+	}
+}
+
 func TestPERSlot0RegistersDriver(t *testing.T) {
 	// Slot 0 (when explicitly invoked by game code) re-does the
 	// driver registration write idempotently.

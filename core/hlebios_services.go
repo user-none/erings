@@ -538,13 +538,15 @@ func hleBiosPERInitService(cpu *sh2.CPU) {
 
 // isPerBufferRAM reports whether addr is a plausible PER_Init buffer
 // pointer (work-buffer / peripheral-output buffer). Games may place
-// these in either Work RAM-L ($00200000-$002FFFFF) or Work RAM-H
-// ($06000000-$060FFFFF): NiGHTS uses WRAM-H, Cotton Boomerang uses
-// WRAM-L. Earlier code accepted only WRAM-H, so a WRAM-L workbuff
-// silently skipped driver registration ($06000354 stayed zero) and
-// the game's first peripheral dispatch faulted on the null driver.
+// these in Work RAM-L ($00200000-$002FFFFF), Work RAM-H
+// ($06000000-$060FFFFF), sound RAM ($05A00000-$05A7FFFF), or VDP1
+// VRAM ($05C00000-$05C7FFFF): NiGHTS uses WRAM-H, Cotton Boomerang
+// uses WRAM-L, XMEN COTA passes a VDP1-VRAM workbuff and a
+// sound-RAM conf buffer.
 func isPerBufferRAM(addr uint32) bool {
-	return isWorkRAM(addr)
+	return isWorkRAM(addr) ||
+		(addr >= 0x05A00000 && addr < 0x05A80000) ||
+		(addr >= 0x05C00000 && addr < 0x05C80000)
 }
 
 // isWorkRAM reports whether addr lies in Work RAM-L
