@@ -1046,7 +1046,7 @@ func (cb *CDBlock) TickSystemCycles(cycles uint32) {
 			period = cb.sectorCycles2x
 		}
 		cb.sectorAccum += c
-		for cb.sectorAccum >= period {
+		for cb.sectorAccum >= period && cb.playing {
 			cb.sectorAccum -= period
 			cb.readOneSector()
 		}
@@ -1191,6 +1191,53 @@ func (cb *CDBlock) RecalcTiming(systemCyclesPerSecond, fieldRateHz uint32) {
 	cb.mpegVsyncCycles = int(h / uint64(fieldRateHz))
 }
 
+// playRangeEnded handles the play head sitting outside the play range
+// (PEND's definition: "Play ended - FAD outside play area"). Repeat
+// modes wrap playFAD back to startFAD and reading continues. Otherwise
+// the play stops with PAUSE + PEND (and EFLS for ReadFile-originated
+// plays) and true is returned.
+// Two range cases: explicit end position (endFAD > 0) and continuous
+// play to disc end (endFAD == 0).
+func (cb *CDBlock) playRangeEnded() bool {
+	endReached := false
+	if cb.endFAD > 0 && cb.playFAD >= cb.endFAD {
+		endReached = true
+	} else if cb.endFAD == 0 && cb.playFAD >= cb.leadoutFAD() {
+		endReached = true
+	}
+	if !endReached {
+		return false
+	}
+	if cb.repeatCount == 0x0F {
+		cb.playFAD = cb.startFAD
+		return false
+	}
+	if cb.repeatCount > 0 {
+		cb.repeatCount--
+		cb.playFAD = cb.startFAD
+		return false
+	}
+	cb.playing = false
+	cb.status = cdStatusPause
+	cb.hirqReq |= hirqPEND
+	if cb.fileRead {
+		cb.hirqReq |= hirqEFLS
+		cb.fileRead = false
+	}
+	return true
+}
+
+// advancePlay moves the play head one sector and runs the end-of-range
+// transition at the new position. PEND must be raised together with
+// the last sector of the range, not one sector period later.
+// Clear PEND right after consuming the final sector and immediately
+// start the next play, so a late PEND from the finished play would
+// satisfy the new play's end-wait before it delivers anything.
+func (cb *CDBlock) advancePlay() {
+	cb.playFAD++
+	cb.playRangeEnded()
+}
+
 // readOneSector reads a single sector from disc at the current playFAD,
 // routes it through the filter chain, and advances playFAD.
 func (cb *CDBlock) readOneSector() {
@@ -1203,30 +1250,8 @@ func (cb *CDBlock) readOneSector() {
 	// data is being routed. A host that disconnects the device filter
 	// after issuing a finite-range PlayDisc still expects status to
 	// transition to PAUSE when the range completes.
-	// Two cases: explicit end position (endFAD > 0) and continuous
-	// play to disc end (endFAD == 0).
-	endReached := false
-	if cb.endFAD > 0 && cb.playFAD >= cb.endFAD {
-		endReached = true
-	} else if cb.endFAD == 0 && cb.playFAD >= cb.leadoutFAD() {
-		endReached = true
-	}
-	if endReached {
-		if cb.repeatCount == 0x0F {
-			cb.playFAD = cb.startFAD
-		} else if cb.repeatCount > 0 {
-			cb.repeatCount--
-			cb.playFAD = cb.startFAD
-		} else {
-			cb.playing = false
-			cb.status = cdStatusPause
-			cb.hirqReq |= hirqPEND
-			if cb.fileRead {
-				cb.hirqReq |= hirqEFLS
-				cb.fileRead = false
-			}
-			return
-		}
+	if cb.playRangeEnded() {
+		return
 	}
 
 	tr := cb.trackAt(cb.playFAD)
@@ -1236,7 +1261,7 @@ func (cb *CDBlock) readOneSector() {
 	// play head so the next tick can re-evaluate endFAD. Audio sectors
 	// bypass the device filter via the SCSP EXTS path.
 	if !isAudio && cb.cdDeviceFilter == 0xFF {
-		cb.playFAD++
+		cb.advancePlay()
 		return
 	}
 	// Partition buffer full gates data sectors only. The drive pauses in
@@ -1251,7 +1276,7 @@ func (cb *CDBlock) readOneSector() {
 	lba := int(cb.playFAD) - 150
 	data, err := cb.disc.ReadSector(lba)
 	if err != nil {
-		cb.playFAD++
+		cb.advancePlay()
 		return
 	}
 	cp := make([]byte, len(data))
@@ -1264,7 +1289,7 @@ func (cb *CDBlock) readOneSector() {
 		cb.appendAudioSamples(cp[:2352])
 		cb.hirqReq |= hirqCSCT
 		cb.curTrack = tr.number
-		cb.playFAD++
+		cb.advancePlay()
 		return
 	}
 
@@ -1302,7 +1327,7 @@ func (cb *CDBlock) readOneSector() {
 	if tr != nil {
 		cb.curTrack = tr.number
 	}
-	cb.playFAD++
+	cb.advancePlay()
 }
 
 // QueueCommand executes the command immediately.

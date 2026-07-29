@@ -1498,6 +1498,85 @@ func TestCDBlockTickPlayCompletes(t *testing.T) {
 	}
 }
 
+// TestCDBlockPENDAssertsWithLastSector verifies PEND, PAUSE, and the
+// end of playback all land in the same sector period that delivers the
+// final sector of the play range ("Play ended - FAD outside play
+// area"), not one period later. Hosts clear PEND right after consuming
+// the final sector and immediately start the next play; a PEND that
+// trails the last sector by a period lands after that clear and
+// satisfies the new play's end-wait before it delivers anything.
+func TestCDBlockPENDAssertsWithLastSector(t *testing.T) {
+	cb, _ := newCDBlockWithDisc()
+	execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0003)
+	tickN(cb, 3) // 3 sector reads; the 3rd is the last of the range
+
+	if len(cb.partitions[0].sectors) != 3 {
+		t.Fatalf("sectors = %d, want 3", len(cb.partitions[0].sectors))
+	}
+	if cb.hirqReq&hirqPEND == 0 {
+		t.Error("PEND not set in the tick that delivered the last sector")
+	}
+	if cb.status != cdStatusPause {
+		t.Errorf("status = 0x%02X, want PAUSE in the tick that delivered the last sector", cb.status)
+	}
+	if cb.playing {
+		t.Error("playing still true after last sector of range")
+	}
+}
+
+// TestCDBlockPENDNotReassertedAfterClear verifies that once the host
+// clears PEND after a play range ends, nothing re-asserts it: the
+// ended play must signal exactly once.
+func TestCDBlockPENDNotReassertedAfterClear(t *testing.T) {
+	cb, _ := newCDBlockWithDisc()
+	execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0003)
+	tickN(cb, 3)
+	if cb.hirqReq&hirqPEND == 0 {
+		t.Fatal("PEND not set at play end")
+	}
+
+	cb.hirqReq &^= hirqPEND
+	tickN(cb, 3)
+
+	if cb.hirqReq&hirqPEND != 0 {
+		t.Error("PEND re-asserted after host clear")
+	}
+	if len(cb.partitions[0].sectors) != 3 {
+		t.Errorf("sectors = %d, want 3 (no reads after play end)", len(cb.partitions[0].sectors))
+	}
+}
+
+// TestCDBlockPlayEndMidTickBacklog verifies the sector pacing loop
+// stops once playback ends inside a tick: a single oversized tick
+// whose cycle budget covers more periods than the play range delivers
+// exactly the range's sectors, and the leftover budget neither reads
+// past the range nor re-asserts PEND after the host clears it.
+func TestCDBlockPlayEndMidTickBacklog(t *testing.T) {
+	cb, _ := newCDBlockWithDisc()
+	execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0003)
+	cb.TickSystemCycles(uint32(cdSectorCycles2x) * 8)
+
+	if len(cb.partitions[0].sectors) != 3 {
+		t.Fatalf("sectors = %d, want 3 (range is 3 sectors)", len(cb.partitions[0].sectors))
+	}
+	if cb.status != cdStatusPause {
+		t.Errorf("status = 0x%02X, want PAUSE", cb.status)
+	}
+	if cb.hirqReq&hirqPEND == 0 {
+		t.Error("PEND not set at play end")
+	}
+
+	cb.hirqReq &^= hirqPEND
+	cb.TickSystemCycles(uint32(cdSectorCycles2x) * 8)
+
+	if cb.hirqReq&hirqPEND != 0 {
+		t.Error("PEND re-asserted by leftover pacing backlog")
+	}
+	if len(cb.partitions[0].sectors) != 3 {
+		t.Errorf("sectors = %d, want 3 (no reads after play end)", len(cb.partitions[0].sectors))
+	}
+}
+
 func TestCDBlockTickBufferFull(t *testing.T) {
 	cb, _ := newCDBlockWithDisc()
 	// Pre-fill buffer to capacity
