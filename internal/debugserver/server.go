@@ -3,8 +3,9 @@
 
 // Package debugserver implements the emulator debug server. It speaks a
 // bare line protocol over a localhost TCP port and provides execution
-// control, memory inspection, a cheat-search style memory search, and
-// in-memory machine snapshots. The package has no UI dependencies. A
+// control, memory inspection, held memory locations, a cheat-search
+// style memory search, and in-memory machine snapshots. The package has
+// no UI dependencies. A
 // host wires it to the emulator through the Machine interface and
 // calls Service between frames.
 package debugserver
@@ -19,14 +20,22 @@ import (
 	"strings"
 	"sync/atomic"
 
+	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
-// Machine is the emulator surface the server needs.
+// Machine is the emulator surface the server needs. Memory access is
+// canonical native bus addressed and gated by the machine's region
+// table, the same table the memory access methods serve from.
 type Machine interface {
-	// ReadMemory copies guest memory at a flat offset into buf and
-	// returns the number of bytes copied.
+	// ReadMemory reads guest memory at a canonical native bus address
+	// into buf and returns the number of bytes read.
 	ReadMemory(addr uint32, buf []byte) uint32
+	// WriteMemory writes data to guest memory at a canonical native
+	// bus address and returns the number of bytes written.
+	WriteMemory(addr uint32, data []byte) uint32
+	// Regions is the machine's accessible bus region table.
+	Regions() []core.BusRegion
 	Serialize() ([]byte, error)
 	Deserialize(data []byte) error
 }
@@ -47,7 +56,7 @@ type clientCmd struct {
 	bye    bool
 }
 
-// Server owns the listener and all debug state (watches, breaks,
+// Server owns the listener and all debug state (watches, breaks, pins,
 // searches, snapshots). Connection goroutines read lines and queue
 // clientCmds. The emulation
 // goroutine drains the queue between frames (Service), so command
@@ -58,6 +67,10 @@ type Server struct {
 	paused   *atomic.Bool
 	listener net.Listener
 	cmds     chan clientCmd
+
+	// regions caches the machine's bus region table. Static per
+	// machine.
+	regions []core.BusRegion
 
 	// prompt controls the interactive "> " written on connect and after
 	// each response (default on).
@@ -89,6 +102,10 @@ type Server struct {
 	// breaks are the value breaks. Entries survive client disconnects.
 	breaks []breakEntry
 
+	// pins are the held memory locations, restored every frame. Entries
+	// survive client disconnects.
+	pins []pinEntry
+
 	// search and searchWidth are the memory-search state. searchWidth
 	// zero means the default (8-bit, see currentWidth).
 	search      *search
@@ -107,14 +124,20 @@ func Start(port int, m Machine, paused *atomic.Bool) (*Server, error) {
 		return nil, err
 	}
 	c := &Server{
-		machine:  m,
 		paused:   paused,
 		listener: ln,
 		cmds:     make(chan clientCmd, 16),
 		prompt:   true,
 	}
+	c.setMachine(m)
 	go c.acceptLoop()
 	return c, nil
+}
+
+// setMachine wires the machine and caches its region table.
+func (c *Server) setMachine(m Machine) {
+	c.machine = m
+	c.regions = m.Regions()
 }
 
 // acceptLoop serves one client at a time. A second connection
@@ -218,6 +241,9 @@ func init() {
 		{"state", "state", "report pause, frame, width, and search candidates", cmdState},
 		{"regions", "regions", "list known memory regions", cmdRegions},
 		{"read", "read <addr> [len]", "hex dump memory (len 1-4096, default 64)", cmdRead},
+		{"write", "write <addr> <hex>", "write hex bytes to memory", cmdWrite},
+		{"pin", "pin [<addr> <hex>]", "hold hex bytes in memory every frame; no args lists", cmdPin},
+		{"unpin", "unpin <addr>|all", "release a pin", cmdUnpin},
 		{"watch", "watch [<addr> [w]]", "report value changes each frame (w=8/16/32); no args lists", cmdWatch},
 		{"unwatch", "unwatch <addr>|all", "stop watching", cmdUnwatch},
 		{"break", "break [<addr> <op> [v] [w]]", "pause when the condition becomes true; no args lists", cmdBreak},
@@ -237,11 +263,13 @@ func init() {
 	}
 }
 
-// Service runs the server's between-frames work: watch reads and
-// queued commands. The host calls it once per emulation loop iteration
-// with the current RunFrame count.
+// Service runs the server's between-frames work: pin restores, watch
+// reads, and queued commands. The host calls it once per emulation loop
+// iteration with the current RunFrame count. Pins are restored first so
+// everything downstream observes the held values.
 func (c *Server) Service(frame uint64) {
 	c.frame = frame
+	c.servicePins()
 	c.serviceWatches()
 	c.serviceBreaks()
 	c.serviceCommands()

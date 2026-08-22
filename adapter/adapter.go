@@ -72,6 +72,7 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 				Name:          "Sega Saturn",
 				RDBName:       "Sega - Saturn",
 				ThumbnailRepo: "Sega_-_Saturn",
+				RumbleRepoDir: "saturn",
 			},
 		},
 		CoreOptions: []coreif.CoreOption{
@@ -197,10 +198,33 @@ func (e *emulator) SetRom(data []byte)                  {} // Saturn is disc-onl
 func (e *emulator) Start()                              { e.emu.Start() }
 func (e *emulator) Close()                              { e.emu.Close() }
 
-// ReadMemory implements coreif.MemoryInspector for RetroAchievements, mapping
-// the rcheevos flat Saturn address space onto Work RAM.
 func (e *emulator) ReadMemory(addr uint32, buf []byte) uint32 {
 	return e.emu.ReadMemory(addr, buf)
+}
+
+func (e *emulator) WriteMemory(addr uint32, data []byte) uint32 {
+	return e.emu.WriteMemory(addr, data)
+}
+
+func (e *emulator) Regions() []coreif.BusRegion {
+	regions := e.emu.Regions()
+	out := make([]coreif.BusRegion, len(regions))
+	for i, r := range regions {
+		out[i] = coreif.BusRegion{
+			Name:  r.Name,
+			Start: r.Start,
+			Size:  r.Size,
+		}
+	}
+	return out
+}
+
+func (e *emulator) ReadMemoryFlat(off uint32, buf []byte) uint32 {
+	return e.emu.ReadMemoryFlat(off, buf)
+}
+
+func (e *emulator) WriteMemoryFlat(off uint32, data []byte) uint32 {
+	return e.emu.WriteMemoryFlat(off, data)
 }
 
 // Serialize implements coreif.SaveStater; the returned bytes are the

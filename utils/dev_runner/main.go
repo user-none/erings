@@ -15,6 +15,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/user-none/eblitui/romloader"
+	"github.com/user-none/eblitui/rumble"
 	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/debugserver"
 	"github.com/user-none/erings/internal/replay"
@@ -30,12 +31,29 @@ func main() {
 	record := flag.String("record", "", "Record a replay file (JSON) of per-frame input and screenshot markers.")
 	replayPath := flag.String("replay", "", "Replay a recorded input file (JSON). Recorded input is mixed with live input so you can still press buttons.")
 	loadState := flag.String("load-state", "", "Path to a save state file to load at startup. Requires the same disc and BIOS the state was captured with.")
+	rumblePath := flag.String("rumble", "", "Path to a rumble file that drives gamepad vibration from game memory (see eblitui/rumble FORMAT.md).")
 	enableDebugServer := flag.Bool("debug-server", false, "Enable the debug server, bound to 127.0.0.1.")
 	debugServerPort := flag.Int("debug-server-port", 5000, "Debug server TCP port.")
+	p1Pad := flag.String("p1-pad", "0", "Gamepad index for player 1, or \"none\". Keyboard is always player 1.")
+	p2Pad := flag.String("p2-pad", "1", "Gamepad index for player 2, or \"none\".")
 	flag.Parse()
 
 	if *record != "" && *replayPath != "" {
 		log.Fatal("-record and -replay are mutually exclusive")
+	}
+
+	p1PadSet, p2PadSet := false, false
+	flag.Visit(func(f *flag.Flag) {
+		switch f.Name {
+		case "p1-pad":
+			p1PadSet = true
+		case "p2-pad":
+			p2PadSet = true
+		}
+	})
+	padAssign, padErr := resolvePadAssignment(*p1Pad, *p2Pad, p1PadSet, p2PadSet)
+	if padErr != nil {
+		log.Fatal(padErr)
 	}
 
 	var cpuProfileFile *os.File
@@ -76,6 +94,15 @@ func main() {
 		}
 		printDiscInfo(disc)
 		emu.SetDisc(disc)
+	}
+
+	var rumbleEngine *rumble.Engine
+	if *rumblePath != "" {
+		rumbleEngine, err = loadRumbleEngine(*rumblePath, emu)
+		if err != nil {
+			log.Fatalf("failed to load rumble file: %v", err)
+		}
+		fmt.Printf("[RUMBLE] loaded %s\n", *rumblePath)
 	}
 
 	resolvedSavePath := resolveSavePath(*savePath, disc)
@@ -178,9 +205,13 @@ func main() {
 		emuDone:     make(chan struct{}),
 		keyMap:      buildKeyMap(),
 		padMap:      buildPadMap(),
+		padAssign:   padAssign,
 		dumpDir:     *dumpDir,
 		recorder:    recorder,
 		player:      player,
+
+		rumbleEngine: rumbleEngine,
+		sharedMotors: &sharedMotors{},
 	}
 
 	if *enableDebugServer {

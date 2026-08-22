@@ -93,7 +93,8 @@ func (a *app) buildTopBar() *widget.Container {
 // window growth goes to the log below. The left column is locked to
 // the hex view's content width, with the memory panel on top and the
 // search panel below. The right column absorbs the remaining width and
-// splits the same height between the watches and breaks panels.
+// splits the same height between the tabbed watches/pins panel and the
+// breaks panel.
 func (a *app) buildMiddle() *widget.Container {
 	middle := widget.NewContainer(
 		widget.ContainerOpts.Layout(widget.NewGridLayout(
@@ -121,7 +122,7 @@ func (a *app) buildMiddle() *widget.Container {
 			widget.GridLayoutOpts.Spacing(0, ui.Px(8)),
 		)),
 	)
-	right.AddChild(a.buildWatchPanel())
+	right.AddChild(a.buildListTabsPanel())
 	right.AddChild(a.buildBreakPanel())
 	middle.AddChild(right)
 

@@ -90,6 +90,8 @@ func renderText(v any) string {
 		return watchListText(r)
 	case responses.BreakList:
 		return breakListText(r)
+	case responses.PinList:
+		return pinListText(r)
 	case responses.CandidateList:
 		return candidateListText(r)
 	case snapshotList:

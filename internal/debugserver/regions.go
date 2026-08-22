@@ -9,35 +9,16 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
-// region is one entry in the memory-region registry. The registry drives
-// address validation and read access. New memory areas become
-// table entries. Regions are memories only. Register banks never get an
-// entry because their reads can have side effects.
-type region struct {
-	name string
-	// start and size describe the canonical physical range. Window is
-	// the full bus decode window. The region repeats (mirrors) through
-	// it, exactly as the bus folds addresses onto the backing storage.
-	// window == size when the region is not mirrored.
-	start  uint32
-	size   uint32
-	window uint32
-	// flatBase locates the region inside the machine's ReadMemory
-	// window. This is the access point into reading memory.
-	flatBase uint32
-}
+// The server's region knowledge comes from the machine's bus region
+// table (Machine.Regions), cached on the Server by setMachine. The
+// table drives address validation and memory access, so debugger
+// addressing and the machine's own resolution cannot drift.
 
-// regionTable mirrors the bus decode. WRAM-L is exactly 1MB with no
-// mirror. WRAM-H repeats through 0x06000000-0x07FFFFFF.
-var regionTable = []region{
-	{name: "wraml", start: 0x00200000, size: 0x100000, window: 0x100000, flatBase: 0x000000},
-	{name: "wramh", start: 0x06000000, size: 0x100000, window: 0x2000000, flatBase: 0x100000},
-}
-
-func (r *region) end() uint32 { return r.start + r.size - 1 }
+func regionEnd(r *core.BusRegion) uint32 { return r.Start + r.Size - 1 }
 
 // parseNumber parses a uint32 given as hex with a 0x prefix or as
 // decimal.
@@ -65,32 +46,31 @@ func parseAddress(s string) (uint32, error) {
 	return v, nil
 }
 
-// lookupRegion normalizes a native address and resolves it to a region
-// and canonical offset. Normalization masks the SH-2 partition bits (the
-// top 3 address bits select cached/cache-through/purge views of the same
-// physical space) and folds mirror images within a region's decode window.
-func lookupRegion(addr uint32) (*region, uint32, error) {
-	physical := addr & 0x1FFFFFFF
-	for i := range regionTable {
-		r := &regionTable[i]
-		if physical >= r.start && physical < r.start+r.window {
-			return r, (physical - r.start) & (r.size - 1), nil
+// lookupRegion resolves a canonical native address to a region and
+// offset. Addresses are canonical only, as the machine's region table
+// lists them; mirror and partition spellings are outside the known
+// regions.
+func (c *Server) lookupRegion(addr uint32) (*core.BusRegion, uint32, error) {
+	for i := range c.regions {
+		r := &c.regions[i]
+		if addr >= r.Start && addr-r.Start < r.Size {
+			return r, addr - r.Start, nil
 		}
 	}
 	var ranges []string
-	for i := range regionTable {
-		r := &regionTable[i]
-		ranges = append(ranges, fmt.Sprintf("%s 0x%08X-0x%08X", r.name, r.start, r.end()))
+	for i := range c.regions {
+		r := &c.regions[i]
+		ranges = append(ranges, fmt.Sprintf("%s 0x%08X-0x%08X", r.Name, r.Start, regionEnd(r)))
 	}
 	return nil, 0, fmt.Errorf("address 0x%08X is outside known regions (%s)",
 		addr, strings.Join(ranges, ", "))
 }
 
 // readRegion copies length bytes at the region offset into a fresh
-// buffer via the machine's ReadMemory window.
-func (c *Server) readRegion(r *region, off, length uint32) []byte {
+// buffer via the machine's native memory access.
+func (c *Server) readRegion(r *core.BusRegion, off, length uint32) []byte {
 	buf := make([]byte, length)
-	n := c.machine.ReadMemory(r.flatBase+off, buf)
+	n := c.machine.ReadMemory(r.Start+off, buf)
 	return buf[:n]
 }
 
@@ -155,16 +135,59 @@ func cmdRead(c *Server, args []string) (any, error) {
 		}
 		length = uint32(v)
 	}
-	r, off, err := lookupRegion(addr)
+	r, off, err := c.lookupRegion(addr)
 	if err != nil {
 		return nil, err
 	}
 	// Clamp to the region end rather than reading past it.
-	if remaining := r.size - off; length > remaining {
+	if remaining := r.Size - off; length > remaining {
 		length = remaining
 	}
 	data := c.readRegion(r, off, length)
-	return responses.ReadResult{Addr: r.start + off, Data: hex.EncodeToString(data)}, nil
+	return responses.ReadResult{Addr: r.Start + off, Data: hex.EncodeToString(data)}, nil
+}
+
+const writeMaxLen = 4096
+
+// parseWriteTarget validates the address and hex byte string pair
+// shared by write and pin. maxLen bounds the byte count, which differs
+// between a one-shot write and a pin re-applied every frame. It
+// returns the canonical address and the decoded bytes, which must fit
+// inside the address's region.
+func (c *Server) parseWriteTarget(addrStr, hexStr string, maxLen int) (uint32, []byte, error) {
+	addr, err := parseAddress(addrStr)
+	if err != nil {
+		return 0, nil, err
+	}
+	data, err := hex.DecodeString(hexStr)
+	if err != nil || len(data) == 0 {
+		return 0, nil, fmt.Errorf("data must be an even-length hex byte string")
+	}
+	if len(data) > maxLen {
+		return 0, nil, fmt.Errorf("length must be 1-%d bytes", maxLen)
+	}
+	r, off, err := c.lookupRegion(addr)
+	if err != nil {
+		return 0, nil, err
+	}
+	if uint32(len(data)) > r.Size-off {
+		return 0, nil, fmt.Errorf("%d bytes do not fit inside %s", len(data), r.Name)
+	}
+	return r.Start + off, data, nil
+}
+
+// cmdWrite writes hex bytes to memory at a native address. The write is
+// validated against the region table and must fit inside its region.
+func cmdWrite(c *Server, args []string) (any, error) {
+	if len(args) != 2 {
+		return nil, fmt.Errorf("usage: write <addr> <hex>")
+	}
+	addr, data, err := c.parseWriteTarget(args[0], args[1], writeMaxLen)
+	if err != nil {
+		return nil, err
+	}
+	n := c.machine.WriteMemory(addr, data)
+	return fmt.Sprintf("wrote %d bytes at 0x%08X", n, addr), nil
 }
 
 // regionListText renders the region list response for text mode.
@@ -177,11 +200,11 @@ func regionListText(r responses.RegionList) string {
 }
 
 func cmdRegions(c *Server, args []string) (any, error) {
-	res := responses.RegionList{Regions: make([]responses.RegionInfo, 0, len(regionTable))}
-	for i := range regionTable {
-		r := &regionTable[i]
+	res := responses.RegionList{Regions: make([]responses.RegionInfo, 0, len(c.regions))}
+	for i := range c.regions {
+		r := &c.regions[i]
 		res.Regions = append(res.Regions, responses.RegionInfo{
-			Name: r.name, Start: r.start, End: r.end(), Size: r.size, Window: r.window})
+			Name: r.Name, Start: r.Start, End: regionEnd(r), Size: r.Size})
 	}
 	return res, nil
 }

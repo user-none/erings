@@ -51,15 +51,13 @@ func TestLookupRegion(t *testing.T) {
 		{0x002FFFFF, "wraml", 0xFFFFF, false},
 		{0x06000000, "wramh", 0x00000, false},
 		{0x060FFFFF, "wramh", 0xFFFFF, false},
-		// SH-2 partition spellings normalize to physical.
-		{0x26001000, "wramh", 0x01000, false},
-		{0x20200010, "wraml", 0x00010, false},
-		{0xC6000000, "wramh", 0x00000, false},
-		// WRAM-H mirrors through 0x06000000-0x07FFFFFF per the bus decode.
-		{0x06100000, "wramh", 0x00000, false},
-		{0x07FFFFFF, "wramh", 0xFFFFF, false},
-		{0x27F00042, "wramh", 0x00042, false},
-		// WRAM-L has no mirror. Adjacent addresses are outside.
+		// Addresses are canonical only: partition spellings and mirror
+		// spellings are outside the known regions.
+		{0x26001000, "", 0, true},
+		{0x20200010, "", 0, true},
+		{0x06100000, "", 0, true},
+		{0x07FFFFFF, "", 0, true},
+		// Adjacent addresses are outside.
 		{0x001FFFFF, "", 0, true},
 		{0x00300000, "", 0, true},
 		// Other hardware areas are not regions.
@@ -67,11 +65,12 @@ func TestLookupRegion(t *testing.T) {
 		{0x05E00000, "", 0, true},
 		{0x00000000, "", 0, true},
 	}
+	srv := newTestServer()
 	for _, c := range cases {
-		r, off, err := lookupRegion(c.addr)
+		r, off, err := srv.lookupRegion(c.addr)
 		if c.outside {
 			if err == nil {
-				t.Errorf("0x%08X: expected outside-region error, got %s+0x%X", c.addr, r.name, off)
+				t.Errorf("0x%08X: expected outside-region error, got %s+0x%X", c.addr, r.Name, off)
 			} else if !strings.Contains(err.Error(), "wraml") || !strings.Contains(err.Error(), "wramh") {
 				t.Errorf("0x%08X: error should name the valid ranges: %v", c.addr, err)
 			}
@@ -81,8 +80,8 @@ func TestLookupRegion(t *testing.T) {
 			t.Errorf("0x%08X: unexpected error %v", c.addr, err)
 			continue
 		}
-		if r.name != c.region || off != c.off {
-			t.Errorf("0x%08X: got %s+0x%05X, want %s+0x%05X", c.addr, r.name, off, c.region, c.off)
+		if r.Name != c.region || off != c.off {
+			t.Errorf("0x%08X: got %s+0x%05X, want %s+0x%05X", c.addr, r.Name, off, c.region, c.off)
 		}
 	}
 }

@@ -4,6 +4,9 @@
 package main
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -27,6 +30,65 @@ const (
 )
 
 const maxPlayers = 2
+
+// padAssignment maps each player to an index into the connected
+// gamepad list, or -1 for no pad. Keyboard input is always player 1
+// and is not part of the assignment.
+type padAssignment [maxPlayers]int
+
+func parsePadFlag(name, value string) (int, error) {
+	if value == "none" {
+		return -1, nil
+	}
+	n, err := strconv.Atoi(value)
+	if err != nil || n < 0 {
+		return 0, fmt.Errorf("-%s must be a gamepad index or \"none\", got %q", name, value)
+	}
+	return n, nil
+}
+
+// resolvePadAssignment turns the -p1-pad/-p2-pad flag values into a
+// pad assignment. An explicitly passed index that collides with the
+// other player's defaulted index steals the pad and the defaulted
+// player gets none. Two explicit flags naming the same index is an
+// error.
+func resolvePadAssignment(p1, p2 string, p1Set, p2Set bool) (padAssignment, error) {
+	var pa padAssignment
+	var err error
+	pa[0], err = parsePadFlag("p1-pad", p1)
+	if err != nil {
+		return pa, err
+	}
+	pa[1], err = parsePadFlag("p2-pad", p2)
+	if err != nil {
+		return pa, err
+	}
+	if pa[0] >= 0 && pa[0] == pa[1] {
+		switch {
+		case p1Set && p2Set:
+			return pa, fmt.Errorf("-p1-pad and -p2-pad both name gamepad %d", pa[0])
+		case p2Set:
+			pa[0] = -1
+		default:
+			pa[1] = -1
+		}
+	}
+	return pa, nil
+}
+
+// padForPlayer resolves a player's assigned gamepad index against the
+// currently connected pads. Indexes are re-resolved every poll so
+// hotplugged pads are picked up.
+func padForPlayer(pa padAssignment, gamepadIDs []ebiten.GamepadID, player int) (ebiten.GamepadID, bool) {
+	if player < 0 || player >= maxPlayers {
+		return 0, false
+	}
+	idx := pa[player]
+	if idx < 0 || idx >= len(gamepadIDs) {
+		return 0, false
+	}
+	return gamepadIDs[idx], true
+}
 
 type sharedInput struct {
 	mu      sync.Mutex
@@ -113,37 +175,45 @@ func buildPadMap() map[int]ebiten.StandardGamepadButton {
 
 func (g *game) pollInputToShared() {
 	gamepadIDs := ebiten.AppendGamepadIDs(nil)
-	hasGamepad := len(gamepadIDs) > 0
+	g.logPadAssignment(gamepadIDs)
 
-	var gamepadID ebiten.GamepadID
-	if hasGamepad {
-		gamepadID = gamepadIDs[0]
-	}
-
-	var buttons uint32
-	for bitID, key := range g.keyMap {
-		if ebiten.IsKeyPressed(key) {
-			buttons |= 1 << uint(bitID)
-		}
-	}
-	if hasGamepad {
-		for bitID, padBtn := range g.padMap {
-			if ebiten.IsStandardGamepadButtonPressed(gamepadID, padBtn) {
-				buttons |= 1 << uint(bitID)
+	for player := 0; player < maxPlayers; player++ {
+		var buttons uint32
+		if player == 0 {
+			for bitID, key := range g.keyMap {
+				if ebiten.IsKeyPressed(key) {
+					buttons |= 1 << uint(bitID)
+				}
 			}
 		}
-		pollAnalogStick(&buttons, g.padMap, gamepadID)
-	}
-	g.sharedInput.set(0, buttons)
-
-	if len(gamepadIDs) > 1 {
-		var p2buttons uint32
-		for bitID, padBtn := range g.padMap {
-			if ebiten.IsStandardGamepadButtonPressed(gamepadIDs[1], padBtn) {
-				p2buttons |= 1 << uint(bitID)
+		if id, ok := padForPlayer(g.padAssign, gamepadIDs, player); ok {
+			for bitID, padBtn := range g.padMap {
+				if ebiten.IsStandardGamepadButtonPressed(id, padBtn) {
+					buttons |= 1 << uint(bitID)
+				}
 			}
+			pollAnalogStick(&buttons, g.padMap, id)
 		}
-		pollAnalogStick(&p2buttons, g.padMap, gamepadIDs[1])
-		g.sharedInput.set(1, p2buttons)
+		g.sharedInput.set(player, buttons)
+	}
+}
+
+// logPadAssignment prints the resolved pad-to-player mapping whenever
+// it changes (startup, hotplug, disconnect).
+func (g *game) logPadAssignment(gamepadIDs []ebiten.GamepadID) {
+	var b strings.Builder
+	for player := 0; player < maxPlayers; player++ {
+		if id, ok := padForPlayer(g.padAssign, gamepadIDs, player); ok {
+			fmt.Fprintf(&b, "[INPUT] pad %d %q -> player %d\n", g.padAssign[player], ebiten.GamepadName(id), player+1)
+		}
+	}
+	if b.String() == g.lastPadLog {
+		return
+	}
+	g.lastPadLog = b.String()
+	if b.Len() > 0 {
+		fmt.Print(b.String())
+	} else {
+		fmt.Println("[INPUT] no gamepads assigned")
 	}
 }

@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/debugserver/responses"
 )
 
@@ -16,7 +17,7 @@ import (
 // the region's baseline snapshot and the candidate bitmap with one bit
 // per width-aligned offset.
 type searchRegionState struct {
-	r        *region
+	r        *core.BusRegion
 	baseline []byte
 	cand     []uint64
 	count    int
@@ -137,17 +138,17 @@ func widthMax(width int) uint32 {
 }
 
 func cmdBaseline(c *Server, args []string) (any, error) {
-	var selected []*region
+	var selected []*core.BusRegion
 	if len(args) == 0 {
-		for i := range regionTable {
-			selected = append(selected, &regionTable[i])
+		for i := range c.regions {
+			selected = append(selected, &c.regions[i])
 		}
 	} else {
 		for _, name := range args {
-			var r *region
-			for i := range regionTable {
-				if regionTable[i].name == name {
-					r = &regionTable[i]
+			var r *core.BusRegion
+			for i := range c.regions {
+				if c.regions[i].Name == name {
+					r = &c.regions[i]
 					break
 				}
 			}
@@ -168,15 +169,15 @@ func cmdBaseline(c *Server, args []string) (any, error) {
 	s := &search{width: width}
 	var names []string
 	for _, r := range selected {
-		n := int(r.size) / stride
+		n := int(r.Size) / stride
 		st := searchRegionState{
 			r:        r,
-			baseline: c.readRegion(r, 0, r.size),
+			baseline: c.readRegion(r, 0, r.Size),
 			cand:     newBitmap(n),
 			count:    n,
 		}
 		s.regions = append(s.regions, st)
-		names = append(names, r.name)
+		names = append(names, r.Name)
 	}
 	c.search = s
 	return fmt.Sprintf("baseline over %s: %d candidates (w%d)",
@@ -216,7 +217,7 @@ func cmdFilter(c *Server, args []string) (any, error) {
 	keep := func(prev, cur uint32) bool { return op.keep(prev, cur, val) }
 	for i := range c.search.regions {
 		st := &c.search.regions[i]
-		live := c.readRegion(st.r, 0, st.r.size)
+		live := c.readRegion(st.r, 0, st.r.Size)
 		st.count = filterBitmap(st.cand, st.baseline, live, stride, keep)
 		// The live snapshot just read becomes the new baseline.
 		st.baseline = live
@@ -234,7 +235,7 @@ func cmdRebase(c *Server, args []string) (any, error) {
 	}
 	for i := range c.search.regions {
 		st := &c.search.regions[i]
-		st.baseline = c.readRegion(st.r, 0, st.r.size)
+		st.baseline = c.readRegion(st.r, 0, st.r.Size)
 	}
 	return fmt.Sprintf("rebased, %d candidates kept", c.search.total()), nil
 }
@@ -319,9 +320,9 @@ func cmdList(c *Server, args []string) (any, error) {
 			}
 			off := uint32(idx * stride)
 			var buf [4]byte
-			c.machine.ReadMemory(st.r.flatBase+off, buf[:stride])
+			c.machine.ReadMemory(st.r.Start+off, buf[:stride])
 			res.Candidates = append(res.Candidates, responses.CandidateInfo{
-				Addr: st.r.start + off,
+				Addr: st.r.Start + off,
 				Cur:  beValue(buf[:stride]),
 				Base: beValue(st.baseline[off : off+uint32(stride)]),
 			})

@@ -77,21 +77,26 @@ func TestWatchAddListUnwatch(t *testing.T) {
 	}
 }
 
-// TestWatchCanonicalization checks that mirror and partition spellings
-// watch the same byte. A re-watch through a different spelling replaces
-// the entry rather than adding a duplicate. unwatch accepts any
-// spelling.
-func TestWatchCanonicalization(t *testing.T) {
+// TestWatchRejectsNonCanonical checks that mirror and partition
+// spellings are outside the known regions: watch targets are canonical
+// addresses only. A re-watch at the canonical address replaces the
+// entry rather than adding a duplicate.
+func TestWatchRejectsNonCanonical(t *testing.T) {
 	c := newTestServer()
 	runLine(t, c, "watch 0x06001000")
-	if r := runLine(t, c, "watch 0x26101000 16"); r != "watching 0x06001000 w16" {
+	for _, bad := range []string{"watch 0x26101000 16", "unwatch 0x07F01000"} {
+		if r := runLine(t, c, bad); !strings.HasPrefix(r, "error:") {
+			t.Fatalf("%q: unexpected response %q", bad, r)
+		}
+	}
+	if r := runLine(t, c, "watch 0x06001000 16"); r != "watching 0x06001000 w16" {
 		t.Fatalf("re-watch response %q", r)
 	}
 	if len(c.watches) != 1 || c.watches[0].width != 16 {
 		t.Fatalf("expected single replaced entry: %v", c.watches)
 	}
-	if r := runLine(t, c, "unwatch 0x07F01000"); r != "unwatched 0x06001000" {
-		t.Fatalf("unwatch via mirror response %q", r)
+	if r := runLine(t, c, "unwatch 0x06001000"); r != "unwatched 0x06001000" {
+		t.Fatalf("unwatch response %q", r)
 	}
 }
 

@@ -235,17 +235,15 @@ func (a *app) gotoAddress() {
 	}
 }
 
-// jumpTo scrolls the memory view to addr, resolving it the same way
-// the server does: mask the SH-2 partition bits, then fold mirror
-// spellings onto the canonical range. It reports whether the address
-// landed in a known region.
+// jumpTo scrolls the memory view to addr. Addresses are canonical, as
+// the region list bounds them. It reports whether the address landed
+// in a known region.
 func (a *app) jumpTo(addr uint32) bool {
-	physical := addr & 0x1FFFFFFF
 	for i, r := range a.mem.regions {
-		if physical < r.Start || physical >= r.Start+r.Window {
+		if addr < r.Start || addr-r.Start >= r.Size {
 			continue
 		}
-		off := ((physical - r.Start) & (r.Size - 1)) &^ 0xF
+		off := (addr - r.Start) &^ 0xF
 		maxOff := uint32(0)
 		if r.Size > memRows*16 {
 			maxOff = r.Size - memRows*16

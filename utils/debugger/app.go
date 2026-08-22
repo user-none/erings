@@ -316,7 +316,11 @@ func (a *app) handleEvent(ev client.Event) {
 		a.logf("[WATCH] frame=%d 0x%08X w%d: %d -> %d",
 			ev.Frame, ev.Addr, ev.Width, ev.Prev, ev.Cur)
 		a.side.watchHeat[ev.Addr] = rowHeatTicks
-		a.pollWatches(true)
+		// The event reaches the log either way. The list only needs the
+		// read when its tab is the one on screen.
+		if a.side.tab == tabWatches {
+			a.pollWatches(true)
+		}
 	case "break":
 		a.paused = true
 		a.updateStatus()
@@ -364,15 +368,16 @@ func (a *app) pollPending() {
 }
 
 // refresh re-reads all server state after a connect. The server keeps
-// watches, breaks, and search state across client sessions, so the view
-// is rebuilt from its answers, never from anything remembered locally.
+// watches, pins, breaks, and search state across client sessions, so
+// the view is rebuilt from its answers, never from anything remembered
+// locally.
 func (a *app) refresh() {
 	a.stateInFlight = true
 	a.send("state", func(r client.Response) {
 		a.stateInFlight = false
 		a.onState(r)
 	})
-	a.pollWatches(true)
+	a.pollActiveList(true)
 	a.pollBreaks(true)
 	a.fetchRegions()
 }

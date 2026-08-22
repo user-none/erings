@@ -32,16 +32,14 @@ type RegionList struct {
 }
 
 // RegionInfo is one region list entry. Start and End bound the
-// canonical range inclusive; Size is in bytes. Window is the full bus
-// decode window the region mirrors through (Window == Size when not
-// mirrored), so a client can fold mirror spellings the way the server
-// does.
+// canonical range inclusive; Size is in bytes. Addresses in the
+// protocol are canonical only; the machine's bus handles all decode
+// internally.
 type RegionInfo struct {
-	Name   string `json:"name"`
-	Start  uint32 `json:"start"`
-	End    uint32 `json:"end"`
-	Size   uint32 `json:"size"`
-	Window uint32 `json:"window"`
+	Name  string `json:"name"`
+	Start uint32 `json:"start"`
+	End   uint32 `json:"end"`
+	Size  uint32 `json:"size"`
 }
 
 // WatchList is the watch list response.
@@ -71,6 +69,21 @@ type BreakInfo struct {
 	Op     string `json:"op"`
 	Val    uint32 `json:"val"`
 	HasVal bool   `json:"has_val"`
+}
+
+// PinList is the pin list response.
+type PinList struct {
+	Pins []PinInfo `json:"pins"`
+}
+
+// PinInfo is one pin list entry. Data is the held bytes hex encoded,
+// the same encoding the pin command takes. Hits counts the frames that
+// ended with the location changed, so it rises by at most one per
+// frame and counts frames rather than writes.
+type PinInfo struct {
+	Addr uint32 `json:"addr"`
+	Data string `json:"data"`
+	Hits uint64 `json:"hits"`
 }
 
 // CandidateList is the list command response. Candidates holds up to

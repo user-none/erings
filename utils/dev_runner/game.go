@@ -4,10 +4,12 @@
 package main
 
 import (
+	"fmt"
 	"sync/atomic"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/user-none/eblitui/rumble"
 	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/internal/debugserver"
 	"github.com/user-none/erings/internal/replay"
@@ -25,10 +27,23 @@ type game struct {
 	padMap      map[int]ebiten.StandardGamepadButton
 	offscreen   *ebiten.Image
 
+	// padAssign maps players to gamepad indexes (from -p1-pad/-p2-pad).
+	// lastPadLog holds the last printed pad-to-player mapping so
+	// changes are logged once. Both are owned by the ebiten goroutine.
+	padAssign  padAssignment
+	lastPadLog string
+
 	// paused, when true, makes emulationLoop skip RunFrame and queue
 	// one frame of silence so the audio ring stays fed and oto does not
 	// underrun.
 	paused atomic.Bool
+
+	// turbo is toggled from Update (ebiten goroutine) on key 7 and read
+	// by the emulation loop, which then skips its pacing sleep and runs
+	// frames as fast as the host manages. Emulated timing is untouched:
+	// the frame keeps its nominal length, so in-game speed and the
+	// reported fps stay as they are and only wall-clock time compresses.
+	turbo atomic.Bool
 
 	// frameTick advances on every emulationLoop iteration. The watchdog
 	// goroutine reads it to detect a stalled emulation loop and dump
@@ -80,10 +95,24 @@ type game struct {
 	// goroutine.
 	player     *replay.Player
 	replayDone bool
+
+	// rumbleEngine, when non-nil (-rumble given), is evaluated against
+	// emulated memory after each frame on the emulation goroutine. Its
+	// motor states cross to the ebiten goroutine through sharedMotors,
+	// and rumbleActive tracks which players are vibrating so a player
+	// that goes silent is stopped. rumbleActive is owned by the ebiten
+	// goroutine.
+	rumbleEngine *rumble.Engine
+	sharedMotors *sharedMotors
+	rumbleActive map[int]bool
 }
 
 func (g *game) Update() error {
 	g.pollInputToShared()
+
+	if g.rumbleEngine != nil {
+		g.rumbleActive = fireMotorStates(g.sharedMotors.read(), g.rumbleActive, g.padAssign)
+	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyF11) {
 		ebiten.SetFullscreen(!ebiten.IsFullscreen())
@@ -91,6 +120,16 @@ func (g *game) Update() error {
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyDigit0) {
 		g.paused.Store(!g.paused.Load())
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyDigit7) {
+		on := !g.turbo.Load()
+		g.turbo.Store(on)
+		state := "disabled"
+		if on {
+			state = "enabled"
+		}
+		fmt.Printf("[TURBO] %s\n", state)
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyDigit9) {

@@ -5,14 +5,13 @@ package debugserver
 
 import (
 	"strings"
-	"sync/atomic"
 	"testing"
 )
 
-// newTestServer builds a Server with the fields dispatch-only tests
-// need. Tests that touch memory set machine to a fakeMachine.
+// newTestServer builds a Server backed by a fresh fakeMachine.
 func newTestServer() *Server {
-	return &Server{paused: new(atomic.Bool)}
+	c, _ := newFakeServer()
+	return c
 }
 
 // runLine dispatches one command line and returns the immediate response,

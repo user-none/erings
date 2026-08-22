@@ -85,9 +85,16 @@ func (g *game) emulationLoop() {
 		// sleep overshoot. Shutdown is handled by the shouldRun check above -
 		// the sleep is bounded by one interval, so a stopped loop exits
 		// within a frame.
+		turbo := g.turbo.Load()
+
 		g.stage.Store(stagePacing)
 		nextDeadline = nextDeadline.Add(time.Duration(frameInterval))
-		if d := time.Until(nextDeadline); d > 0 {
+		if turbo {
+			// Turbo: run the next frame immediately. The deadline is
+			// reset so releasing the key resumes pacing from now
+			// instead of sleeping off the accumulated debt.
+			nextDeadline = time.Now()
+		} else if d := time.Until(nextDeadline); d > 0 {
 			time.Sleep(d)
 		} else if d < -time.Duration(baseInterval) {
 			// Fell more than a full frame behind (e.g. a long RunFrame).
@@ -109,7 +116,14 @@ func (g *game) emulationLoop() {
 
 		if paused {
 			g.stage.Store(stageQueueAudio)
-			g.audioPlayer.queueSamples(nil)
+			if !turbo {
+				g.audioPlayer.queueSamples(nil)
+			}
+			// Silence the motors while paused. The engine is not
+			// evaluated, so nothing else clears a held level.
+			if g.rumbleEngine != nil {
+				g.sharedMotors.set(nil)
+			}
 		} else {
 			// Mix recorded replay input with the live input read above
 			// (bitwise OR), then re-apply, so the user can still press
@@ -150,8 +164,22 @@ func (g *game) emulationLoop() {
 			frameTimeSum += runDur
 			frameTimeCount++
 
+			// Turbo drops the frame's audio. Queuing it would block in
+			// the ring's full-wait, which is what paces production to
+			// the audio device and would hold turbo at normal speed.
 			g.stage.Store(stageQueueAudio)
-			g.audioPlayer.queueSamples(g.emu.GetAudioSamples())
+			if turbo {
+				g.emu.GetAudioSamples()
+			} else {
+				g.audioPlayer.queueSamples(g.emu.GetAudioSamples())
+			}
+
+			// Rumble evaluation reads emulated memory, so it runs here
+			// between frames with the emulation threads parked. The
+			// ebiten goroutine picks the states up on its next Update.
+			if g.rumbleEngine != nil {
+				g.sharedMotors.set(g.rumbleEngine.Evaluate(g.emu, time.Now()))
+			}
 		}
 
 		g.stage.Store(stageUpdateFB)
@@ -167,7 +195,13 @@ func (g *game) emulationLoop() {
 		// consumes, so lengthen the interval (and vice versa). The low-pass
 		// plus small clamped gain make the controller track only the long-term
 		// rate and ignore oto's per-burst fill swing.
-		if g.audioPlayer != nil {
+		// Turbo starves the ring by design, so its fill says nothing
+		// about the production rate. Hold the controller and re-seed the
+		// filter at the target so pacing resumes cleanly on exit.
+		if turbo {
+			smoothFill = pacingTarget
+			frameInterval = baseInterval
+		} else if g.audioPlayer != nil {
 			fill := float64(g.audioPlayer.buffered())
 			smoothFill += (fill - smoothFill) * pacingFillAlpha
 			adjust := pacingGain * (smoothFill - pacingTarget) / pacingTarget

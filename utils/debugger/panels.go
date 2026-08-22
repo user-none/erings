@@ -26,42 +26,79 @@ const rowHeatTicks = 45
 // sideListRows is each list's baseline visible height in text rows.
 const sideListRows = 8
 
-// side is the watches/breaks panel state. The row lists are rebuilt
-// from the last server response; nothing here is authoritative.
+// listTab identifies which list the tabbed panel shows.
+type listTab int
+
+const (
+	tabWatches listTab = iota
+	tabPins
+)
+
+// tabTitles are the tab strip labels in listTab order.
+var tabTitles = []string{"Watches", "Pins"}
+
+// side is the watches/pins/breaks panel state. The row lists are
+// rebuilt from the last server response; nothing here is
+// authoritative.
 type side struct {
-	watchRows *widget.Container
+	// tab is the list the tabbed panel shows. Watches and pins share
+	// one row container, one scroll view, and one quick-add slot, so
+	// only the active list is built and polled. Pins hold a value
+	// rather than report one, so nothing is missed while the tab is
+	// away: a watch change still reaches the event log.
+	tab      listTab
+	tabBtns  []*widget.Button
+	listRows *widget.Container
+	listView *ui.ScrollView
+	addHost  *widget.Container
+	addRows  []*widget.Container
+
 	breakRows *widget.Container
 
-	// watchRowSig and breakRowSig identify the rows currently built
-	// (address, width, condition, heat). A poll whose signature matches
-	// leaves the widgets alone instead of rebuilding, so widget identity
-	// survives and in-progress hovers and clicks are not dropped.
-	// watchRowBtns holds the watch link buttons in row order for
-	// in-place value label updates. nil signatures force a build for a
-	// fresh container.
+	// The row signatures identify the rows currently built (address,
+	// width, condition, heat). A poll whose signature matches leaves the
+	// widgets alone instead of rebuilding, so widget identity survives
+	// and in-progress hovers and clicks are not dropped. The button
+	// slices hold each list's link buttons in row order for in-place
+	// label updates. nil signatures force a build for a fresh container,
+	// which is also how a tab switch discards the other list's rows.
 	watchRowSig  []string
 	watchRowBtns []*widget.Button
+	pinRowSig    []string
+	pinRowBtns   []*widget.Button
 	breakRowSig  []string
 
 	watches []responses.WatchInfo
+	pins    []responses.PinInfo
 	breaks  []responses.BreakInfo
 
-	// watchHeat and breakHeat hold per-address highlight ticks set by
-	// pushed events.
+	// watchHeat, pinHeat, and breakHeat hold per-address highlight
+	// ticks. Watch and break heat is set by pushed events. Pins have no
+	// event, so pinHits records the last count seen per address and heat
+	// is set when a poll shows it moved.
 	watchHeat map[uint32]int
+	pinHeat   map[uint32]int
 	breakHeat map[uint32]int
+	pinHits   map[uint32]uint64
 
 	// One request per list is outstanding at a time; a forced refresh
 	// arriving mid-flight queues exactly one follow-up.
 	watchInFlight bool
 	watchQueued   bool
+	pinInFlight   bool
+	pinQueued     bool
 	breakInFlight bool
 	breakQueued   bool
 
 	// Quick-add rows, one per list. The breaks row adds the condition
-	// operator (cycled) and its comparison value.
+	// operator (cycled) and its comparison value. Pins hold a byte
+	// string rather than a value at a width, so their row has no width
+	// control.
 	watchAddr     *widget.TextInput
 	watchAddWidth int
+
+	pinAddr *widget.TextInput
+	pinVal  *widget.TextInput
 
 	breakAddr     *widget.TextInput
 	breakVal      *widget.TextInput
@@ -74,7 +111,9 @@ type side struct {
 func (a *app) ensureSideDefaults() {
 	if a.side.watchHeat == nil {
 		a.side.watchHeat = map[uint32]int{}
+		a.side.pinHeat = map[uint32]int{}
 		a.side.breakHeat = map[uint32]int{}
+		a.side.pinHits = map[uint32]uint64{}
 	}
 	if a.side.watchAddWidth == 0 {
 		a.side.watchAddWidth = 8
@@ -88,8 +127,10 @@ func (a *app) ensureSideDefaults() {
 }
 
 // sideListPanel builds one list panel: a header, the stretching row
-// list, and the quick-add row pinned beneath it.
-func sideListPanel(title string, rows *widget.Container, addRow *widget.Container) *widget.Container {
+// list, and the quick-add row pinned beneath it. The header is a widget
+// rather than a title so a panel can carry a tab strip instead of a
+// label. It returns the panel and the list's scroll view.
+func sideListPanel(header widget.PreferredSizeLocateableWidget, rows *widget.Container, addRow widget.PreferredSizeLocateableWidget) (*widget.Container, *ui.ScrollView) {
 	panel := widget.NewContainer(
 		widget.ContainerOpts.BackgroundImage(image.NewNineSliceColor(ui.Surface)),
 		widget.ContainerOpts.Layout(widget.NewGridLayout(
@@ -99,7 +140,7 @@ func sideListPanel(title string, rows *widget.Container, addRow *widget.Containe
 			widget.GridLayoutOpts.Spacing(0, ui.Px(6)),
 		)),
 	)
-	panel.AddChild(ui.Label(title, ui.TextSecondary))
+	panel.AddChild(header)
 	view, wrap := ui.Scrollable(rows, ui.Surface)
 	// The list's preferred height is a fixed baseline so the middle
 	// section's height stays deterministic. The left column is taller,
@@ -108,7 +149,7 @@ func sideListPanel(title string, rows *widget.Container, addRow *widget.Containe
 	view.MaxHeight = view.MinHeight
 	panel.AddChild(wrap)
 	panel.AddChild(addRow)
-	return panel
+	return panel, view
 }
 
 func listRowsContainer() *widget.Container {
@@ -120,23 +161,121 @@ func listRowsContainer() *widget.Container {
 	)
 }
 
-// buildWatchPanel creates the watches list panel.
-func (a *app) buildWatchPanel() *widget.Container {
+// buildListTabsPanel creates the tabbed watches/pins panel. Both lists
+// share the row container and the quick-add slot, and the tab strip
+// selects which one fills them.
+func (a *app) buildListTabsPanel() *widget.Container {
 	a.ensureSideDefaults()
-	a.side.watchRows = listRowsContainer()
+	a.side.listRows = listRowsContainer()
 	a.side.watchRowSig = nil
 	a.side.watchRowBtns = nil
-	panel := sideListPanel("Watches", a.side.watchRows, a.buildWatchAddRow())
-	a.rebuildWatchRows()
+	a.side.pinRowSig = nil
+	a.side.pinRowBtns = nil
+
+	a.side.addRows = []*widget.Container{a.buildWatchAddRow(), a.buildPinAddRow()}
+	a.side.addHost = widget.NewContainer(
+		widget.ContainerOpts.Layout(widget.NewAnchorLayout()),
+	)
+	a.side.addHost.AddChild(a.side.addRows[a.side.tab])
+
+	panel, view := sideListPanel(a.buildTabStrip(), a.side.listRows, a.side.addHost)
+	a.side.listView = view
+	a.rebuildActiveRows()
 	return panel
 }
 
-// buildBreakPanel creates the breaks list panel.
+// buildTabStrip creates the watches/pins selector. The active tab is
+// bracketed, the same convention the region selector uses.
+func (a *app) buildTabStrip() *widget.Container {
+	a.side.tabBtns = nil
+	items := make([]widget.PreferredSizeLocateableWidget, 0, len(tabTitles))
+	for i := range tabTitles {
+		tab := listTab(i)
+		btn := ui.Button(tabLabel(tab, a.side.tab), func(args *widget.ButtonClickedEventArgs) {
+			a.setTab(tab)
+		})
+		a.side.tabBtns = append(a.side.tabBtns, btn)
+		items = append(items, btn)
+	}
+	return ui.HRow(ui.Px(4), items...)
+}
+
+func tabLabel(tab, active listTab) string {
+	if tab == active {
+		return "[" + tabTitles[tab] + "]"
+	}
+	return tabTitles[tab]
+}
+
+// setTab switches the tabbed panel to tab. Both lists' row signatures
+// are dropped so the incoming list builds from scratch over the
+// outgoing one, and the scroll position resets: the two lists have
+// unrelated lengths, so carrying a scroll fraction across is
+// meaningless.
+func (a *app) setTab(tab listTab) {
+	if a.side.tab == tab {
+		return
+	}
+	// The outgoing quick-add row leaves the widget tree. Clear its
+	// focus first: a detached input that still reports itself focused
+	// would hold the clipboard shortcuts away from the hex view and the
+	// log for the rest of the session.
+	for _, in := range a.tabInputs(a.side.tab) {
+		if in != nil {
+			in.Focus(false)
+		}
+	}
+	a.side.tab = tab
+	a.side.watchRowSig = nil
+	a.side.pinRowSig = nil
+	for i, btn := range a.side.tabBtns {
+		btn.Text().Label = tabLabel(listTab(i), tab)
+	}
+	a.side.addHost.RemoveChildren()
+	a.side.addHost.AddChild(a.side.addRows[tab])
+	if a.side.listView != nil {
+		a.side.listView.SetScrollTop(0)
+	}
+	a.rebuildActiveRows()
+	a.pollActiveList(true)
+}
+
+// tabInputs returns the quick-add text inputs belonging to tab.
+func (a *app) tabInputs(tab listTab) []*widget.TextInput {
+	if tab == tabPins {
+		return []*widget.TextInput{a.side.pinAddr, a.side.pinVal}
+	}
+	return []*widget.TextInput{a.side.watchAddr}
+}
+
+// rebuildActiveRows rebuilds whichever list the tab strip is showing.
+func (a *app) rebuildActiveRows() {
+	if a.side.tab == tabPins {
+		a.rebuildPinRows()
+		return
+	}
+	a.rebuildWatchRows()
+}
+
+// pollActiveList re-reads whichever list the tab strip is showing. The
+// hidden list is not polled: it is not on screen, and its rows are
+// rebuilt from a forced read on the next switch.
+func (a *app) pollActiveList(force bool) {
+	if a.side.tab == tabPins {
+		a.pollPins(force)
+		return
+	}
+	a.pollWatches(force)
+}
+
+// buildBreakPanel creates the breaks list panel. Breaks stay outside
+// the tab strip: a break fires on its own and pauses emulation, so its
+// list is never hidden.
 func (a *app) buildBreakPanel() *widget.Container {
 	a.ensureSideDefaults()
 	a.side.breakRows = listRowsContainer()
 	a.side.breakRowSig = nil
-	panel := sideListPanel("Breaks", a.side.breakRows, a.buildBreakAddRow())
+	panel, _ := sideListPanel(ui.Label("Breaks", ui.TextSecondary), a.side.breakRows, a.buildBreakAddRow())
 	a.rebuildBreakRows()
 	return panel
 }
@@ -175,6 +314,54 @@ func (a *app) buildWatchAddRow() *widget.Container {
 			a.addWatch()
 		}),
 	)
+}
+
+// buildPinAddRow creates the pin quick-add controls: address entry,
+// the held bytes as a hex string, and the add button. A pin holds a
+// byte string rather than a value at a width, so there is no width
+// control.
+func (a *app) buildPinAddRow() *widget.Container {
+	a.side.pinAddr = ui.TextInput("address", 130,
+		widget.TextInputOpts.SubmitHandler(func(args *widget.TextInputChangedEventArgs) {
+			a.addPin()
+		}),
+	)
+	a.inputs.Add(a.side.pinAddr)
+
+	a.side.pinVal = ui.TextInput("hex", 90,
+		widget.TextInputOpts.SubmitHandler(func(args *widget.TextInputChangedEventArgs) {
+			a.addPin()
+		}),
+	)
+	a.inputs.Add(a.side.pinVal)
+
+	return ui.HRow(ui.Px(4),
+		a.side.pinAddr,
+		a.side.pinVal,
+		ui.Button("+Pin", func(args *widget.ButtonClickedEventArgs) {
+			a.addPin()
+		}),
+	)
+}
+
+// addPin sends a pin command for the quick-add entry and refreshes the
+// list.
+func (a *app) addPin() {
+	addr := strings.TrimSpace(a.side.pinAddr.GetText())
+	val := strings.TrimSpace(a.side.pinVal.GetText())
+	if addr == "" {
+		return
+	}
+	if val == "" {
+		a.logf("pin needs the bytes to hold")
+		return
+	}
+	a.send(fmt.Sprintf("pin %s %s", addr, val), func(r client.Response) {
+		if out := formatResponse(r); out != "" {
+			a.logf("%s", out)
+		}
+		a.pollPins(true)
+	})
 }
 
 // breakOps is the condition cycle order for the break quick-add row,
@@ -286,12 +473,12 @@ func (a *app) addBreakAt(addr string) {
 	})
 }
 
-// pollSide refreshes both lists on their cadence.
+// pollSide refreshes the visible lists on their cadence.
 func (a *app) pollSide() {
 	if a.tick%sidePollTicks != 0 {
 		return
 	}
-	a.pollWatches(false)
+	a.pollActiveList(false)
 	a.pollBreaks(false)
 }
 
@@ -324,6 +511,55 @@ func (a *app) pollWatches(force bool) {
 			a.pollWatches(true)
 		}
 	})
+}
+
+// pollPins re-reads the pin list. A pin has no pushed event, so the
+// response is also where a hit is noticed: an entry whose count moved
+// since the last read gets its row highlighted, the same signal a
+// watch row gets when it fires.
+func (a *app) pollPins(force bool) {
+	if !a.connected {
+		return
+	}
+	if a.side.pinInFlight {
+		if force {
+			a.side.pinQueued = true
+		}
+		return
+	}
+	a.side.pinInFlight = true
+	a.send("pin", func(r client.Response) {
+		a.side.pinInFlight = false
+		queued := a.side.pinQueued
+		a.side.pinQueued = false
+		if r.Err == nil {
+			var pl responses.PinList
+			if json.Unmarshal(r.Data, &pl) == nil {
+				a.side.pins = pl.Pins
+				a.markPinHits()
+				a.rebuildPinRows()
+			}
+		}
+		if queued {
+			a.pollPins(true)
+		}
+	})
+}
+
+// markPinHits highlights the rows whose hit count moved since the last
+// read and re-seeds the counts. The map is rebuilt from the response so
+// removed pins do not accumulate in it. An address seen for the first
+// time only seeds: a pin added to a location the emulator is already
+// writing would otherwise light up before it has done anything.
+func (a *app) markPinHits() {
+	hits := make(map[uint32]uint64, len(a.side.pins))
+	for _, p := range a.side.pins {
+		if prev, ok := a.side.pinHits[p.Addr]; ok && p.Hits != prev {
+			a.side.pinHeat[p.Addr] = rowHeatTicks
+		}
+		hits[p.Addr] = p.Hits
+	}
+	a.side.pinHits = hits
 }
 
 func (a *app) pollBreaks(force bool) {
@@ -394,8 +630,8 @@ func watchRowLabel(w responses.WatchInfo) string {
 // the existing buttons; recreating the rows would drop the hover and
 // any in-progress click under the cursor on every poll.
 func (a *app) rebuildWatchRows() {
-	c := a.side.watchRows
-	if c == nil {
+	c := a.side.listRows
+	if c == nil || a.side.tab != tabWatches {
 		return
 	}
 	sig := make([]string, 0, len(a.side.watches))
@@ -421,6 +657,48 @@ func (a *app) rebuildWatchRows() {
 		row, link := a.listRow(watchRowLabel(w), hot, w.Addr, fmt.Sprintf("unwatch 0x%08X", w.Addr),
 			func() { a.pollWatches(true) })
 		a.side.watchRowBtns = append(a.side.watchRowBtns, link)
+		c.AddChild(row)
+	}
+}
+
+// pinRowLabel renders one pin list entry. Bytes are upper case to
+// match the hex dump.
+func pinRowLabel(p responses.PinInfo) string {
+	return fmt.Sprintf("0x%08X = %s hits=%d", p.Addr, strings.ToUpper(p.Data), p.Hits)
+}
+
+// rebuildPinRows reconciles the pin list with the last response, with
+// the same identity preservation as rebuildWatchRows. The hit count is
+// part of the label but not the signature, so a counting pin updates
+// its label in place instead of rebuilding its row every poll.
+func (a *app) rebuildPinRows() {
+	c := a.side.listRows
+	if c == nil || a.side.tab != tabPins {
+		return
+	}
+	sig := make([]string, 0, len(a.side.pins))
+	for _, p := range a.side.pins {
+		sig = append(sig, fmt.Sprintf("%08X/%s/%t", p.Addr, p.Data, a.side.pinHeat[p.Addr] > 0))
+	}
+	if a.side.pinRowSig != nil && slices.Equal(sig, a.side.pinRowSig) {
+		for i, p := range a.side.pins {
+			a.side.pinRowBtns[i].Text().Label = pinRowLabel(p)
+		}
+		c.RequestRelayout()
+		return
+	}
+	a.side.pinRowSig = sig
+	a.side.pinRowBtns = nil
+	c.RemoveChildren()
+	if len(a.side.pins) == 0 {
+		c.AddChild(ui.Label("(none)", ui.TextSecondary))
+		return
+	}
+	for _, p := range a.side.pins {
+		hot := a.side.pinHeat[p.Addr] > 0
+		row, link := a.listRow(pinRowLabel(p), hot, p.Addr, fmt.Sprintf("unpin 0x%08X", p.Addr),
+			func() { a.pollPins(true) })
+		a.side.pinRowBtns = append(a.side.pinRowBtns, link)
 		c.AddChild(row)
 	}
 }
@@ -470,6 +748,13 @@ func (a *app) decayRowHeat() {
 			delete(a.side.watchHeat, addr)
 		} else {
 			a.side.watchHeat[addr] = h - 1
+		}
+	}
+	for addr, h := range a.side.pinHeat {
+		if h <= 1 {
+			delete(a.side.pinHeat, addr)
+		} else {
+			a.side.pinHeat[addr] = h - 1
 		}
 	}
 	for addr, h := range a.side.breakHeat {

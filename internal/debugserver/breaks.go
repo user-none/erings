@@ -22,10 +22,8 @@ const maxBreaks = 16
 // already true when the break is added does not fire until it clears
 // and comes back.
 type breakEntry struct {
-	addr   uint32 // canonical native address, for display
-	r      *region
-	off    uint32
-	width  int // value width in bits: 8, 16, 32
+	addr   uint32 // canonical native address
+	width  int    // value width in bits: 8, 16, 32
 	op     *filterOp
 	val    uint32
 	prev   uint32
@@ -50,7 +48,7 @@ func (c *Server) serviceBreaks() {
 		b := &c.breaks[i]
 		var buf [4]byte
 		n := b.width / 8
-		c.machine.ReadMemory(b.r.flatBase+b.off, buf[:n])
+		c.machine.ReadMemory(b.addr, buf[:n])
 		cur := beValue(buf[:n])
 		if !b.seeded {
 			b.prev = cur
@@ -149,11 +147,11 @@ func cmdBreak(c *Server, args []string) (any, error) {
 	if op.needsVal && val > widthMax(width) {
 		return nil, fmt.Errorf("value %d exceeds w%d range", val, width)
 	}
-	addr, r, off, err := resolveTarget(args[0], width)
+	addr, err := c.resolveTarget(args[0], width)
 	if err != nil {
 		return nil, err
 	}
-	entry := breakEntry{addr: addr, r: r, off: off, width: width, op: op, val: val}
+	entry := breakEntry{addr: addr, width: width, op: op, val: val}
 	// Re-adding an address replaces its entry so a condition change or
 	// reseed takes effect.
 	for i := range c.breaks {
@@ -182,16 +180,14 @@ func cmdUnbreak(c *Server, args []string) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	r, off, err := lookupRegion(addr)
-	if err != nil {
+	if _, _, err := c.lookupRegion(addr); err != nil {
 		return nil, err
 	}
-	canonical := r.start + off
 	for i := range c.breaks {
-		if c.breaks[i].addr == canonical {
+		if c.breaks[i].addr == addr {
 			c.breaks = append(c.breaks[:i], c.breaks[i+1:]...)
-			return fmt.Sprintf("unbreak 0x%08X", canonical), nil
+			return fmt.Sprintf("unbreak 0x%08X", addr), nil
 		}
 	}
-	return nil, fmt.Errorf("0x%08X has no break", canonical)
+	return nil, fmt.Errorf("0x%08X has no break", addr)
 }

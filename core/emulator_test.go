@@ -324,6 +324,118 @@ func TestEmulatorClose(t *testing.T) {
 func TestReadMemory(t *testing.T) {
 	e := NewEmulator()
 
+	// Distinct markers at each region edge.
+	e.bus.wramL[0] = 0xAA
+	e.bus.wramL[wramLSize-1] = 0xBB
+	e.bus.wramH[0] = 0xCC
+	e.bus.wramH[wramHSize-1] = 0xDD
+
+	buf := make([]byte, 1)
+
+	// Work RAM-L start and end at their native addresses.
+	if n := e.ReadMemory(0x00200000, buf); n != 1 || buf[0] != 0xAA {
+		t.Fatalf("wraml start: n=%d buf=%#x, want 1 0xAA", n, buf[0])
+	}
+	if n := e.ReadMemory(0x002FFFFF, buf); n != 1 || buf[0] != 0xBB {
+		t.Fatalf("wraml end: n=%d buf=%#x, want 1 0xBB", n, buf[0])
+	}
+	// Work RAM-H start and end.
+	if n := e.ReadMemory(0x06000000, buf); n != 1 || buf[0] != 0xCC {
+		t.Fatalf("wramh start: n=%d buf=%#x, want 1 0xCC", n, buf[0])
+	}
+	if n := e.ReadMemory(0x060FFFFF, buf); n != 1 || buf[0] != 0xDD {
+		t.Fatalf("wramh end: n=%d buf=%#x, want 1 0xDD", n, buf[0])
+	}
+	// Non-canonical spellings are outside the gate: partition views and
+	// mirrors read nothing.
+	if n := e.ReadMemory(0x26000000, buf); n != 0 {
+		t.Fatalf("partition view: n=%d, want 0", n)
+	}
+	if n := e.ReadMemory(0x06100000, buf); n != 0 {
+		t.Fatalf("mirror: n=%d, want 0", n)
+	}
+
+	// Reads clamp at the region end rather than crossing regions.
+	tail := make([]byte, 4)
+	if n := e.ReadMemory(0x002FFFFF, tail); n != 1 || tail[0] != 0xBB {
+		t.Fatalf("region-end clamp: n=%d tail=%#x, want 1 [0xBB]", n, tail)
+	}
+
+	// Addresses outside every region read nothing.
+	if n := e.ReadMemory(0x05000000, buf); n != 0 {
+		t.Fatalf("outside regions: n=%d, want 0", n)
+	}
+}
+
+func TestWriteMemory(t *testing.T) {
+	e := NewEmulator()
+
+	if n := e.WriteMemory(0x0605C973, []byte{0x12, 0x34}); n != 2 {
+		t.Fatalf("write: n=%d, want 2", n)
+	}
+	if e.bus.wramH[0x5C973] != 0x12 || e.bus.wramH[0x5C974] != 0x34 {
+		t.Fatalf("write did not land: %#x %#x", e.bus.wramH[0x5C973], e.bus.wramH[0x5C974])
+	}
+	// Non-canonical spellings write nothing.
+	if n := e.WriteMemory(0x2615C973, []byte{0x56}); n != 0 || e.bus.wramH[0x5C973] != 0x12 {
+		t.Fatalf("mirror write: n=%d byte=%#x, want 0 0x12", n, e.bus.wramH[0x5C973])
+	}
+	// Writes clamp at the region end.
+	if n := e.WriteMemory(0x002FFFFF, []byte{0x01, 0x02}); n != 1 {
+		t.Fatalf("region-end clamp: n=%d, want 1", n)
+	}
+	if e.bus.wramL[wramLSize-1] != 0x01 || e.bus.wramH[0] != 0 {
+		t.Fatalf("clamped write leaked across regions")
+	}
+	// Addresses outside every region write nothing.
+	if n := e.WriteMemory(0x05000000, []byte{0xFF}); n != 0 {
+		t.Fatalf("outside regions: n=%d, want 0", n)
+	}
+}
+
+// TestMemoryAccessUsesBusDecode pins ReadMemory and WriteMemory to the
+// bus decode itself: a byte written through one is visible through the
+// other at every spelling the bus folds, so the region table can never
+// disagree with the bus about which byte an address selects.
+func TestMemoryAccessUsesBusDecode(t *testing.T) {
+	e := NewEmulator()
+
+	if n := e.WriteMemory(0x0605C973, []byte{0x5A}); n != 1 {
+		t.Fatalf("write: n=%d, want 1", n)
+	}
+	for _, addr := range []uint32{0x0605C973, 0x0615C973, 0x2605C973, 0x27F5C973} {
+		if got := e.bus.read8Impl(addr); got != 0x5A {
+			t.Fatalf("bus read 0x%08X = %#x, want 0x5A", addr, got)
+		}
+	}
+
+	// A write through the bus at a mirror spelling is visible to
+	// ReadMemory at the canonical address.
+	e.bus.write8Impl(0x0615C973, 0xA5)
+	var b [1]byte
+	if n := e.ReadMemory(0x0605C973, b[:]); n != 1 || b[0] != 0xA5 {
+		t.Fatalf("read after bus write: n=%d byte=%#x, want 1 0xA5", n, b[0])
+	}
+}
+
+func TestBusRegions(t *testing.T) {
+	e := NewEmulator()
+	regions := e.Regions()
+	if len(regions) != 2 {
+		t.Fatalf("regions = %+v", regions)
+	}
+	wraml, wramh := regions[0], regions[1]
+	if wraml.Name != "wraml" || wraml.Start != 0x00200000 || wraml.Size != wramLSize {
+		t.Fatalf("wraml = %+v", wraml)
+	}
+	if wramh.Name != "wramh" || wramh.Start != 0x06000000 || wramh.Size != wramHSize {
+		t.Fatalf("wramh = %+v", wramh)
+	}
+}
+
+func TestReadMemoryFlat(t *testing.T) {
+	e := NewEmulator()
+
 	// Distinct markers at each region edge so the flat mapping is observable.
 	e.bus.wramL[0] = 0xAA
 	e.bus.wramL[wramLSize-1] = 0xBB
@@ -333,32 +445,60 @@ func TestReadMemory(t *testing.T) {
 	buf := make([]byte, 1)
 
 	// Flat 0 -> Work RAM-L start.
-	if n := e.ReadMemory(0, buf); n != 1 || buf[0] != 0xAA {
+	if n := e.ReadMemoryFlat(0, buf); n != 1 || buf[0] != 0xAA {
 		t.Fatalf("flat 0: n=%d buf=%#x, want 1 0xAA", n, buf[0])
 	}
 	// Flat 0x100000 -> Work RAM-H start (the L/H boundary).
-	if n := e.ReadMemory(0x100000, buf); n != 1 || buf[0] != 0xCC {
+	if n := e.ReadMemoryFlat(0x100000, buf); n != 1 || buf[0] != 0xCC {
 		t.Fatalf("flat 0x100000: n=%d buf=%#x, want 1 0xCC", n, buf[0])
 	}
 	// Last byte of Work RAM-H.
-	if n := e.ReadMemory(0x1FFFFF, buf); n != 1 || buf[0] != 0xDD {
+	if n := e.ReadMemoryFlat(0x1FFFFF, buf); n != 1 || buf[0] != 0xDD {
 		t.Fatalf("flat 0x1FFFFF: n=%d buf=%#x, want 1 0xDD", n, buf[0])
 	}
 
 	// A read spanning the L/H boundary returns contiguous bytes from both.
 	span := make([]byte, 2)
-	if n := e.ReadMemory(wramLSize-1, span); n != 2 || span[0] != 0xBB || span[1] != 0xCC {
+	if n := e.ReadMemoryFlat(wramLSize-1, span); n != 2 || span[0] != 0xBB || span[1] != 0xCC {
 		t.Fatalf("L/H span: n=%d span=%#x, want 2 [0xBB 0xCC]", n, span)
 	}
 
 	// Out-of-range start reads nothing.
-	if n := e.ReadMemory(0x200000, buf); n != 0 {
+	if n := e.ReadMemoryFlat(0x200000, buf); n != 0 {
 		t.Fatalf("out-of-range: n=%d, want 0", n)
 	}
 
 	// A read running off the end returns only the in-range count.
 	tail := make([]byte, 4)
-	if n := e.ReadMemory(0x1FFFFE, tail); n != 2 {
+	if n := e.ReadMemoryFlat(0x1FFFFE, tail); n != 2 {
 		t.Fatalf("tail overrun: n=%d, want 2", n)
+	}
+}
+
+func TestWriteMemoryFlat(t *testing.T) {
+	e := NewEmulator()
+
+	// A write spanning the L/H boundary lands contiguously in both.
+	if n := e.WriteMemoryFlat(wramLSize-1, []byte{0x12, 0x34}); n != 2 {
+		t.Fatalf("L/H span: n=%d, want 2", n)
+	}
+	if e.bus.wramL[wramLSize-1] != 0x12 || e.bus.wramH[0] != 0x34 {
+		t.Fatalf("span write did not land: %#x %#x", e.bus.wramL[wramLSize-1], e.bus.wramH[0])
+	}
+	// The write is visible to the flat read and the native read.
+	var b [1]byte
+	if e.ReadMemoryFlat(0x100000, b[:]) != 1 || b[0] != 0x34 {
+		t.Fatalf("flat read after write: %#x", b[0])
+	}
+	if e.ReadMemory(0x06000000, b[:]) != 1 || b[0] != 0x34 {
+		t.Fatalf("native read after flat write: %#x", b[0])
+	}
+	// A write running off the end writes only the in-range count.
+	if n := e.WriteMemoryFlat(0x1FFFFF, []byte{0x56, 0x78}); n != 1 {
+		t.Fatalf("tail overrun: n=%d, want 1", n)
+	}
+	// Out-of-range start writes nothing.
+	if n := e.WriteMemoryFlat(0x200000, []byte{0xFF}); n != 0 {
+		t.Fatalf("out-of-range: n=%d, want 0", n)
 	}
 }

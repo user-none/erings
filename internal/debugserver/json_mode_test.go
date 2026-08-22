@@ -190,6 +190,27 @@ func TestJSONBreakList(t *testing.T) {
 	}
 }
 
+func TestJSONPinList(t *testing.T) {
+	c, m := newFakeServer()
+	runLine(t, c, "mode json")
+
+	e := runJSON(t, c, "pin")
+	if string(e.Data) != `{"pins":[]}` {
+		t.Fatalf("empty pin list data %s", e.Data)
+	}
+
+	runLine(t, c, "pin 0x06001000 dead")
+	m.wram[fakeAddr] = 0
+	c.Service(5)
+	e = runJSON(t, c, "pin")
+	var pl responses.PinList
+	decodeLine(t, string(e.Data), &pl)
+	want := responses.PinInfo{Addr: 0x06001000, Data: "dead", Hits: 1}
+	if len(pl.Pins) != 1 || pl.Pins[0] != want {
+		t.Fatalf("pin list %+v, want %+v", pl.Pins, want)
+	}
+}
+
 func TestJSONRegionsAndSnapshots(t *testing.T) {
 	c, _ := newFakeServer()
 	runLine(t, c, "mode json")
@@ -197,7 +218,7 @@ func TestJSONRegionsAndSnapshots(t *testing.T) {
 	e := runJSON(t, c, "regions")
 	var rl responses.RegionList
 	decodeLine(t, string(e.Data), &rl)
-	if len(rl.Regions) != len(regionTable) || rl.Regions[0].Name != "wraml" {
+	if len(rl.Regions) != 2 || rl.Regions[0].Name != "wraml" {
 		t.Fatalf("regions data %+v", rl)
 	}
 

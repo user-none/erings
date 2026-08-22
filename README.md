@@ -40,10 +40,10 @@ have fun playing some amazing classic games.
 
 - Runs through the eblitui desktop UI
 - RetroAchievements
-- NTSC and PAL region
+- RuMbLe support for various games
+- NTSC and PAL regions
 - A 4MB extended RAM cartridge
-- Single player digital controller only (the core supports a second
-  controller, but the UI does not)
+- Two player digital controllers with per controller configuration profiles
 - Internal backup RAM (console saves) persists between sessions
 - Save states
 - MPEG card
