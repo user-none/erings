@@ -56,9 +56,9 @@ type vdp2Frame struct {
 	// Effective vertical-scroll base per NBG screen, 11.8 fixed point:
 	// base + dispY*incY gives a line's vertical position (VDP2 manual
 	// Sec 5.2 display coordinate formula). A SCYN write during the
-	// display sets the position directly from the following line, so
-	// BeginLine rebases; without mid-display writes the base equals
-	// the SCYN registers.
+	// display takes effect from the following line with per-screen
+	// semantics (see the BeginLine rebase); without mid-display writes
+	// the base equals the SCYN registers.
 	nbgYBaseFP [4]int32
 
 	// EXBG occupies NBG1's slot: NBG1's priority, color calculation,
@@ -641,11 +641,19 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 		v.decodeLineState()
 	}
 
-	// NBG vertical-scroll counter reloads: a SCYN write during line y-1
-	// reloads the screen's vertical counter, and line y displays the
-	// written position verbatim. Rebase the effective Y base so
-	// base + dispY*incY yields the written position here and keeps
-	// stepping by incY on later lines.
+	// Mid-display SCYN writes, effective from line y after a write
+	// during line y-1. The two screen classes differ:
+	//
+	// NBG0/NBG1 evaluate the VDP2 manual Sec 5.2 display coordinate
+	// formula (coordinate increment Y x V counter value + screen
+	// scroll value Y) against the free-running V counter, so a write
+	// replaces the scroll-value term. Remaining lines shift by the
+	// value delta, and rewriting an unchanged value has no effect.
+	//
+	// NBG2/NBG3 have no zoom datapath. Their vertical position is a
+	// line counter that a write reloads, and line y displays the
+	// written row verbatim. Rebase so base + dispY*0x100 yields the
+	// written row at line y.
 	if y > 0 && y-1 < len(v.scynSet) {
 		dispY := int32(y)
 		if fs.effIntl == 3 {
@@ -655,14 +663,11 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 			if !v.scynSet[y-1][s] {
 				continue
 			}
-			incY := int32(0x100)
-			switch s {
-			case 0:
-				incY = int32(fs.regs[vdp2ZMYIN0]&0x07)<<8 | int32(fs.regs[vdp2ZMYDN0]>>8)
-			case 1:
-				incY = int32(fs.regs[vdp2ZMYIN1]&0x07)<<8 | int32(fs.regs[vdp2ZMYDN1]>>8)
+			if s < 2 {
+				fs.nbgYBaseFP[s] = v.scynRec[y-1][s]
+			} else {
+				fs.nbgYBaseFP[s] = v.scynRec[y-1][s] - dispY*0x100
 			}
-			fs.nbgYBaseFP[s] = v.scynRec[y-1][s] - dispY*incY
 		}
 	}
 

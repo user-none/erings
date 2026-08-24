@@ -456,14 +456,13 @@ func (v *VDP2) Write(offset uint32, val uint16) {
 		v.rprArm[v.vLine] |= val & 0x0707
 	}
 
-	// NBG vertical-scroll counter reload: per VDP2 manual Sec 5.1 the
-	// screen scroll value can be changed during the horizontal retrace
-	// to take effect in the middle of the image screen, so a
-	// mid-display SCYN write sets the layer's internal vertical
-	// position directly, effective on the following line. Record the
-	// write at the raster line it occurred on; BeginLine rebases the
-	// screen's effective Y base from it. The last write within a line
-	// wins.
+	// Mid-display SCYN writes: per VDP2 manual Sec 5.1 the screen
+	// scroll value can be changed during the horizontal retrace to
+	// take effect in the middle of the image screen. Record the write
+	// at the raster line it occurred on; BeginLine applies it from the
+	// following line, with per-screen-class semantics (NBG0/1 formula
+	// base replace, NBG2/3 counter reload - see the BeginLine rebase).
+	// The last write within a line wins.
 	if int(v.vLine) < len(v.scynRec) {
 		switch idx {
 		case vdp2SCYIN0:
@@ -678,6 +677,31 @@ func (v *VDP2) TickSystemCycles(cycles uint32) {
 	}
 }
 
+// vblankOutLine returns the raster line where the V-Blank signal
+// deasserts and the SCU V-Blank-OUT interrupt fires. Per VDP2 manual
+// Sec 2.3 Figure 2.2 the standard display area is the setting display
+// area plus the border area. The vertical blank interval lies
+// outside it, so V-Blank ends at the start of the top border. The
+// border size is from Sec 2.4: the VRESO table caps the vertical
+// resolution at 240 lines on NTSC and 256 on PAL, and resolution
+// increments "are added to the top and bottom of the screen without
+// changing the screen's center". The top border is
+// (raster - activeLines)/2 lines. Per SCU manual Sec 2.2 the
+// V-Blank-OUT interrupt "indicates the beginning of a display" and
+// occurs an interval before the actual display materializes. With no
+// border (240-line NTSC, 256-line PAL settings) this returns
+// linesPerFrame and the interrupt fires at the frame boundary.
+func (v *VDP2) vblankOutLine() uint16 {
+	raster := uint16(240)
+	if v.pal {
+		raster = 256
+	}
+	if v.activeLines >= raster {
+		return v.linesPerFrame
+	}
+	return v.linesPerFrame - (raster-v.activeLines)/2
+}
+
 // EndLine advances the line counter at a scanline boundary. Called by
 // the frame loop for every line except the last of the frame.
 func (v *VDP2) EndLine() {
@@ -687,6 +711,9 @@ func (v *VDP2) EndLine() {
 
 	if v.vLine == v.activeLines {
 		v.scu.RaiseVBlankIN()
+	}
+	if v.vLine == v.vblankOutLine() {
+		v.scu.RaiseVBlankOUT()
 	}
 }
 
@@ -704,7 +731,12 @@ func (v *VDP2) EndFrame() {
 	v.scynFrame[2] = int32(v.regs[vdp2SCYN2]&0x7FF) << 8
 	v.scynFrame[3] = int32(v.regs[vdp2SCYN3]&0x7FF) << 8
 
-	v.scu.RaiseVBlankOUT()
+	// With no border the V-Blank signal runs to the frame boundary and
+	// V-Blank-OUT fires here; with a border EndLine raised it at the
+	// top-border start.
+	if v.vblankOutLine() >= v.linesPerFrame {
+		v.scu.RaiseVBlankOUT()
+	}
 }
 
 // buildTVSTAT computes the TVSTAT register from current timing state.

@@ -1881,13 +1881,13 @@ func TestRenderNBG_PlaneSize2x2(t *testing.T) {
 	}
 }
 
-func TestNBGVerticalScrollCounterReload(t *testing.T) {
+func TestNBGVerticalScrollMidDisplayWrites(t *testing.T) {
 	v := newTestVDP2()
 	v.recalcTiming()
 
 	// Top-of-display load: EndFrame captures SCYN, ResetRotArm clears
 	// the per-line capture (RunFrame's frame-start order), BeginFrame
-	// seeds the counters.
+	// seeds the bases.
 	v.regs[vdp2SCYIN0] = 0x0040
 	v.regs[vdp2SCYN2] = 0x0020
 	v.EndFrame()
@@ -1902,27 +1902,37 @@ func TestNBGVerticalScrollCounterReload(t *testing.T) {
 		t.Errorf("NBG2 top-of-display base = %#x, want %#x", got, want)
 	}
 
-	// A mid-display SCYIN0 write reloads the vertical counter: the
-	// following line displays the written position verbatim, so the
-	// rebased base plus the line's dispY*incY advance equals it.
+	// A mid-display SCYIN0 write replaces the scroll-value term of the
+	// Sec 5.2 display coordinate formula: line 11 shows the written
+	// value plus the V counter's advance, so the base becomes the
+	// written value directly.
 	v.vLine = 10
 	v.Write(vdp2SCYIN0*2, 0x0100)
 	v.BeginLine(11, vdp1FBView{})
-	incY := int32(0x100) // ZMYIN0 = 1.0 from the fixture
-	if got, want := v.frame.nbgYBaseFP[0]+11*incY, int32(0x0100)<<8; got != want {
-		t.Errorf("NBG0 line 11 position = %#x, want %#x (reloaded)", got, want)
+	if got, want := v.frame.nbgYBaseFP[0], int32(0x0100)<<8; got != want {
+		t.Errorf("NBG0 base after mid-display write = %#x, want %#x", got, want)
+	}
+
+	// Rewriting the unchanged value is a no-op for NBG0.
+	v.vLine = 12
+	v.Write(vdp2SCYIN0*2, 0x0100)
+	v.BeginLine(13, vdp1FBView{})
+	if got, want := v.frame.nbgYBaseFP[0], int32(0x0100)<<8; got != want {
+		t.Errorf("NBG0 base after same-value write = %#x, want %#x", got, want)
 	}
 
 	// Later lines keep stepping by the coordinate increment: the base
-	// is unchanged so positions advance one line per line.
+	// is unchanged without a write.
 	base := v.frame.nbgYBaseFP[0]
-	v.BeginLine(12, vdp1FBView{})
+	v.BeginLine(14, vdp1FBView{})
 	if got := v.frame.nbgYBaseFP[0]; got != base {
 		t.Errorf("NBG0 base changed without a write: %#x, want %#x", got, base)
 	}
 
-	// NBG2 has no coordinate increment register; it advances 1.0 per
-	// line and reloads the same way.
+	// A mid-display SCYN2 write reloads the screen's vertical line
+	// counter: line 21 displays the written row verbatim, so the
+	// rebased base plus the line's 1.0-per-line advance equals it.
+	incY := int32(0x100)
 	v.vLine = 20
 	v.Write(vdp2SCYN2*2, 0x0080)
 	v.BeginLine(21, vdp1FBView{})
