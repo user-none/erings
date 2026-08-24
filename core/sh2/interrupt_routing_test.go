@@ -1112,7 +1112,7 @@ func TestDMACDEIAcceptedAfterStallEnds(t *testing.T) {
 	cpu.dmac.ch[0].vcrdma = 0x4E
 	cpu.dmac.dmaor = 1
 	priDMAC(cpu, 7)
-	cpu.writeOnChip(0xFFFFFF8C, 0x5805) // IE=1, DE=1
+	cpu.writeOnChip(0xFFFFFF8C, 0x5815) // TB=1 (burst), IE=1, DE=1
 	if !cpu.dmac.Stalling() {
 		t.Fatal("setup: DMAC not stalling")
 	}

@@ -20,8 +20,8 @@ type DMAC struct {
 	nextCh int      // Next channel for round-robin priority (0 or 1)
 	bus    Bus      // Memory access for transfers
 
-	stallCycles int // cycles remaining in DMA stall (-1 = inactive)
-	stallCh     int // channel that completed transfer (-1 = none)
+	stallCycles [2]int // stallCycles is the per-channel bus-occupation countdown in cycles (-1 = no transfer in progress).
+	stallCh     int   // channel most recently kicked (-1 = none)
 }
 
 // Reset returns the DMAC to power-on state.
@@ -32,13 +32,25 @@ func (d *DMAC) Reset() {
 	d.drcr[0] = 0
 	d.drcr[1] = 0
 	d.nextCh = 1 // after reset, ch1 has priority in round-robin mode
-	d.stallCycles = -1
+	d.stallCycles = [2]int{-1, -1}
 	d.stallCh = -1
 }
 
-// Stalling returns true if the DMAC is occupying the bus.
+// Active returns true while any channel's bus-occupation countdown is running.
+func (d *DMAC) Active() bool {
+	return d.stallCycles[0] >= 0 || d.stallCycles[1] >= 0
+}
+
+// Stalling returns true if the DMAC is locking the CPU off the bus.
+// Only burst-mode transfers (CHCR TB, bit 4) hold the bus until the
+// transfer end condition is satisfied.
 func (d *DMAC) Stalling() bool {
-	return d.stallCycles >= 0
+	for ch := range d.stallCycles {
+		if d.stallCycles[ch] >= 0 && d.ch[ch].chcr&0x10 != 0 {
+			return true
+		}
+	}
+	return false
 }
 
 // IRQAsserted returns true when the DMAC channel's transfer-end
@@ -49,22 +61,26 @@ func (d *DMAC) IRQAsserted(ch int) bool {
 	return d.ch[ch].chcr&0x06 == 0x06
 }
 
-// Tick decrements the stall countdown by one cycle. When the countdown
-// reaches zero, TE is set on the completed channel. Returns the channel
-// number that completed, or -1 if no completion occurred.
+// Tick decrements the active countdowns by one cycle. When a channel's
+// countdown reaches zero, TE is set on it. Returns the channel number
+// that completed, or -1 if no completion occurred. If both channels
+// complete on the same cycle the second is reported on the next tick.
 func (d *DMAC) Tick() int {
-	if d.stallCycles < 0 {
-		return -1
+	done := -1
+	for ch := range d.stallCycles {
+		if d.stallCycles[ch] < 0 {
+			continue
+		}
+		if d.stallCycles[ch] > 0 {
+			d.stallCycles[ch]--
+		}
+		if d.stallCycles[ch] == 0 && done < 0 {
+			d.ch[ch].chcr |= 2 // Set TE
+			d.stallCycles[ch] = -1
+			done = ch
+		}
 	}
-	d.stallCycles--
-	if d.stallCycles <= 0 {
-		ch := d.stallCh
-		d.ch[ch].chcr |= 2 // Set TE
-		d.stallCycles = -1
-		d.stallCh = -1
-		return ch
-	}
-	return -1
+	return done
 }
 
 // Read reads a DMAC register by full address (0xFFFFFF80-0xFFFFFFB0).
@@ -134,13 +150,6 @@ func (d *DMAC) writeCHCR(ch int, val uint32) int {
 		chcr = (chcr &^ 2) | (d.ch[ch].chcr & 2)
 	}
 	d.ch[ch].chcr = chcr
-	// A CHCR write while the channel's transfer is still occupying
-	// the bus must not re-kick the engine. Matches SH-7604 HW manual
-	// sec 9.5 Note 2 guidance that DE must be cleared before CHCR is
-	// rewritten.
-	if d.Stalling() && d.stallCh == ch {
-		return -1
-	}
 	if d.transferReady(ch) {
 		d.execute(ch)
 	}
@@ -162,16 +171,11 @@ func (d *DMAC) writeDMAOR(val uint32) int {
 	d.dmaor = (newVal & 0x09) | ae | nmif
 
 	// Per sec 9.3.1 flowchart, clearing DME during an active transfer
-	// aborts it. Cancel the stall without setting TE so no DEI
+	// aborts it. Cancel the countdowns without setting TE so no DEI
 	// fires - DEI is only raised on normal completion.
-	if oldDME != 0 && d.dmaor&1 == 0 && d.Stalling() {
-		d.stallCycles = -1
+	if oldDME != 0 && d.dmaor&1 == 0 && d.Active() {
+		d.stallCycles = [2]int{-1, -1}
 		d.stallCh = -1
-		return -1
-	}
-
-	// Don't re-kick a channel that's already occupying the bus.
-	if d.Stalling() {
 		return -1
 	}
 	return d.runReady()
@@ -206,6 +210,13 @@ func (d *DMAC) runReady() int {
 
 func (d *DMAC) transferReady(ch int) bool {
 	if d.bus == nil {
+		return false
+	}
+	// A channel whose transfer is still in progress must not re-kick.
+	// Matches SH-7604 HW manual sec 9.5 Note 2 guidance that DE must
+	// be cleared before CHCR is rewritten. In cycle-steal mode both
+	// channels' requests are accepted (HM Sec 9.5, channel priorities).
+	if d.stallCycles[ch] >= 0 {
 		return false
 	}
 	// DMAOR: DME=1, AE=0, NMIF=0
@@ -296,7 +307,7 @@ func (d *DMAC) execute(ch int) {
 	c.dar = dst
 	c.tcr = 0
 
-	d.stallCycles = int(stall)
+	d.stallCycles[ch] = int(stall)
 	d.stallCh = ch
 }
 

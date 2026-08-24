@@ -200,48 +200,10 @@ func TestDMACRoundRobinFirstIsChannel1(t *testing.T) {
 	}
 }
 
-// Simplification lock. HM Sec 9.3.4 Fig 9.10 describes cycle-steal
-// as a one-unit-at-a-time interleave between CPU and DMAC. erings
-// transfers the full block atomically at register-write time and
-// then stalls the CPU for an accumulated AccessCycles budget
-// (README "DMAC Simplifications"). This test pins the stall
-// behavior: while DMAC.Stalling() is true, CPU.Clock() advances
-// cycles but does NOT advance PC or execute any instruction.
-func TestDMACStallBlocksCPUExecution(t *testing.T) {
-	bus := newTestBus(0x1000)
-	cpu := New(bus, true)
-	cpu.reg.SR = srIMask
-	cpu.reg.PC = 0x400
-	bus.Write16(0x400, 0x0009) // NOP
-
-	// Kick a single-longword transfer.
-	bus.Write32(0x100, 0xDEADBEEF)
-	cpu.dmac.ch[0].sar = 0x100
-	cpu.dmac.ch[0].dar = 0x200
-	cpu.dmac.ch[0].tcr = 1
-	cpu.dmac.dmaor = 1
-	cpu.writeOnChip(0xFFFFFF8C, 0x5801) // CHCR: DM=01 SM=01 TS=10 DE=1
-
-	if !cpu.dmac.Stalling() {
-		t.Fatal("setup: DMAC not stalling after transfer kick")
-	}
-
-	pcBefore := cpu.reg.PC
-	cyclesBefore := cpu.cycles
-	cpu.Clock()
-	if cpu.reg.PC != pcBefore {
-		t.Errorf("PC advanced during DMAC stall: PC=0x%08X, was 0x%08X",
-			cpu.reg.PC, pcBefore)
-	}
-	if cpu.cycles == cyclesBefore {
-		t.Error("cycles did not advance during DMAC stall")
-	}
-}
-
 // HM Sec 11.1 / 12.1: FRT and WDT have their own clock domains and
-// count regardless of which bus master holds the bus. erings
-// confirms this via the Clock() path (cpu.go:205) that calls
-// tickPeripherals during DMAC stall.
+// count regardless of which bus master holds the bus. A burst-mode
+// transfer stalls the CPU, and tickPeripherals must still run across
+// the stall.
 func TestDMACStallTicksPeripherals(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
@@ -251,8 +213,8 @@ func TestDMACStallTicksPeripherals(t *testing.T) {
 	cpu.wdt.WriteWord(0xFFFFFE80, 0xA520)
 	wtcntBefore := cpu.wdt.wtcnt
 
-	// Kick a transfer with enough units that stall lasts >> 2 cycles
-	// (phi/2 period).
+	// Kick a burst transfer with enough units that the stall lasts
+	// >> 2 cycles (phi/2 period).
 	for i := uint32(0); i < 64; i++ {
 		bus.Write32(0x100+i*4, uint32(i))
 	}
@@ -260,7 +222,7 @@ func TestDMACStallTicksPeripherals(t *testing.T) {
 	cpu.dmac.ch[0].dar = 0x200
 	cpu.dmac.ch[0].tcr = 64
 	cpu.dmac.dmaor = 1
-	cpu.writeOnChip(0xFFFFFF8C, 0x5801)
+	cpu.writeOnChip(0xFFFFFF8C, 0x5811) // DM=01 SM=01 TS=10 TB=1 DE=1
 	if !cpu.dmac.Stalling() {
 		t.Fatal("setup: DMAC not stalling")
 	}
@@ -293,11 +255,12 @@ func TestDMACTEPersistsUntilSoftwareClear(t *testing.T) {
 	d.ch[0].tcr = 1
 	d.dmaor = 0x01
 	d.Write(0xFFFFFF8C, 0x5201) // DM=01 SM=01 TS=00 DE=1 (byte)
-	if !d.Stalling() {
-		t.Fatal("setup: not stalling after kick")
+	if !d.Active() {
+		t.Fatal("setup: countdown not running after kick")
 	}
-	// Drain the stall. testBus returns 2 per access; 1 byte -> 4 cycles.
-	for d.Stalling() {
+	// Drain the countdown. testBus returns 2 per access; 1 byte -> 4
+	// cycles.
+	for d.Active() {
 		d.Tick()
 	}
 	if d.ch[0].chcr&0x02 == 0 {
@@ -324,6 +287,205 @@ func TestDMACTEPersistsUntilSoftwareClear(t *testing.T) {
 	}
 }
 
+// HM Sec 9.5 Bus Modes: "In cycle-steal mode, the bus right is given
+// to another bus master after the DMAC transfers one transfer unit."
+// The CPU therefore keeps executing (and accepting interrupts) while a
+// cycle-steal transfer's bus-occupation countdown runs; only burst
+// mode (CHCR TB, bit 4) locks the CPU off the bus.
+func TestDMACCycleStealCPUKeepsExecuting(t *testing.T) {
+	bus := newTestBus(0x1000)
+	cpu := New(bus, true)
+	cpu.reg.SR = srIMask
+	cpu.reg.PC = 0x400
+	bus.Write16(0x400, 0x0009) // NOP
+	bus.Write16(0x402, 0x0009) // NOP
+
+	for i := uint32(0); i < 64; i++ {
+		bus.Write32(0x100+i*4, uint32(i))
+	}
+	cpu.dmac.ch[0].sar = 0x100
+	cpu.dmac.ch[0].dar = 0x600
+	cpu.dmac.ch[0].tcr = 64
+	cpu.dmac.dmaor = 1
+	cpu.writeOnChip(0xFFFFFF8C, 0x5801) // DM=01 SM=01 TS=10 TB=0 DE=1
+
+	if !cpu.dmac.Active() {
+		t.Fatal("setup: DMAC not active after transfer kick")
+	}
+	if cpu.dmac.Stalling() {
+		t.Fatal("cycle-steal transfer must not stall the CPU")
+	}
+
+	pcBefore := cpu.reg.PC
+	cpu.Clock()
+	if cpu.reg.PC == pcBefore {
+		t.Errorf("PC did not advance during cycle-steal transfer: PC=0x%08X",
+			cpu.reg.PC)
+	}
+}
+
+// Companion to TestDMACCycleStealCPUKeepsExecuting: completion timing
+// is unchanged by the non-stalling bus mode. The testBus charges 2
+// cycles per access, so one longword unit costs 4 (read + write); TE
+// must set on the cycle the countdown expires and not before.
+func TestDMACCycleStealCompletionTiming(t *testing.T) {
+	bus := newTestBus(0x1000)
+	cpu := New(bus, true)
+	cpu.reg.SR = srIMask
+	cpu.reg.PC = 0x400
+	for a := uint32(0x400); a < 0x420; a += 2 {
+		bus.Write16(a, 0x0009) // NOP
+	}
+
+	bus.Write32(0x100, 0xDEADBEEF)
+	cpu.dmac.ch[0].sar = 0x100
+	cpu.dmac.ch[0].dar = 0x600
+	cpu.dmac.ch[0].tcr = 1
+	cpu.dmac.dmaor = 1
+	cpu.writeOnChip(0xFFFFFF8C, 0x5801)
+
+	// One longword unit: stall = 2 (read) + 2 (write) = 4 cycles.
+	for i := 0; i < 3; i++ {
+		cpu.Clock()
+		if cpu.dmac.ch[0].chcr&0x02 != 0 {
+			t.Fatalf("TE set after %d cycles, want 4", i+1)
+		}
+	}
+	cpu.Clock()
+	if cpu.dmac.ch[0].chcr&0x02 == 0 {
+		t.Error("TE not set after 4 cycles")
+	}
+	if cpu.dmac.Active() {
+		t.Error("DMAC still active after countdown expiry")
+	}
+}
+
+// HM Sec 9.5 Bus Modes + Sec 4.4: with the bus returned between units,
+// nothing blocks interrupt acceptance during a cycle-steal transfer.
+// An asserted IRL must dispatch while the countdown is still running.
+func TestDMACCycleStealAcceptsInterrupt(t *testing.T) {
+	bus := newTestBus(0x1000)
+	cpu := New(bus, true)
+	cpu.reg.VBR = 0x100
+	cpu.reg.R[15] = 0x800
+	cpu.reg.SR = 0
+	cpu.reg.PC = 0x300
+	bus.Write32(0x100+0x42*4, 0x500)
+	bus.Write16(0x300, 0x0009) // NOP (wait loop stand-in)
+	bus.Write16(0x302, 0x0009)
+	bus.Write16(0x500, 0x0009) // NOP at handler
+
+	// Long transfer so the countdown outlasts the dispatch.
+	cpu.dmac.ch[0].sar = 0x600
+	cpu.dmac.ch[0].dar = 0x700
+	cpu.dmac.ch[0].tcr = 64
+	cpu.dmac.dmaor = 1
+	cpu.writeOnChip(0xFFFFFF8C, 0x5801)
+	if !cpu.dmac.Active() {
+		t.Fatal("setup: DMAC not active")
+	}
+
+	cpu.SetIRL(8, 0x42)
+	for i := 0; i < 50 && cpu.reg.PC != 0x500; i++ {
+		cpu.Clock()
+	}
+	if cpu.reg.PC != 0x500 {
+		t.Fatalf("IRL not dispatched during cycle-steal transfer: PC=0x%08X",
+			cpu.reg.PC)
+	}
+	if !cpu.dmac.Active() {
+		t.Error("transfer completed before dispatch; countdown too short to prove acceptance")
+	}
+}
+
+// HM Sec 9.5 Bus Modes: "In burst mode, once the DMAC gets the bus,
+// the transfer continues until the transfer end condition is
+// satisfied." A burst transfer (CHCR TB=1) stalls the CPU for the full
+// countdown: Clock() advances cycles but executes no instruction.
+func TestDMACBurstBlocksCPUExecution(t *testing.T) {
+	bus := newTestBus(0x1000)
+	cpu := New(bus, true)
+	cpu.reg.SR = srIMask
+	cpu.reg.PC = 0x400
+	bus.Write16(0x400, 0x0009) // NOP
+
+	bus.Write32(0x100, 0xDEADBEEF)
+	cpu.dmac.ch[0].sar = 0x100
+	cpu.dmac.ch[0].dar = 0x600
+	cpu.dmac.ch[0].tcr = 1
+	cpu.dmac.dmaor = 1
+	cpu.writeOnChip(0xFFFFFF8C, 0x5811) // DM=01 SM=01 TS=10 TB=1 DE=1
+
+	if !cpu.dmac.Stalling() {
+		t.Fatal("setup: burst transfer not stalling after kick")
+	}
+
+	pcBefore := cpu.reg.PC
+	cyclesBefore := cpu.cycles
+	cpu.Clock()
+	if cpu.reg.PC != pcBefore {
+		t.Errorf("PC advanced during burst DMAC stall: PC=0x%08X, was 0x%08X",
+			cpu.reg.PC, pcBefore)
+	}
+	if cpu.cycles == cyclesBefore {
+		t.Error("cycles did not advance during burst DMAC stall")
+	}
+}
+
+// With per-channel countdowns, kicking a transfer on one channel while
+// the other channel's cycle-steal transfer is still in progress must
+// not disturb the first countdown (in cycle-steal mode both channels'
+// requests are accepted, HM Sec 9.5). The load pattern this pins: a
+// long ch0 transfer in flight while ch1 runs a short per-frame
+// transfer.
+func TestDMACCrossChannelKickPreservesCountdown(t *testing.T) {
+	bus := newTestBus(0x1000)
+	cpu := New(bus, true)
+	cpu.reg.SR = srIMask
+	cpu.reg.PC = 0x400
+	bus.Write16(0x400, 0x0009) // NOP
+
+	// ch0: long transfer (64 longwords -> 256 cycle countdown).
+	cpu.dmac.ch[0].sar = 0x100
+	cpu.dmac.ch[0].dar = 0x600
+	cpu.dmac.ch[0].tcr = 64
+	cpu.dmac.dmaor = 1
+	cpu.writeOnChip(0xFFFFFF8C, 0x5801)
+	if cpu.dmac.stallCycles[0] <= 0 {
+		t.Fatal("setup: ch0 countdown not running")
+	}
+	ch0Before := cpu.dmac.stallCycles[0]
+
+	// ch1: short transfer kicked while ch0 is in flight.
+	bus.Write32(0x200, 0xBABECAFE)
+	cpu.dmac.ch[1].sar = 0x200
+	cpu.dmac.ch[1].dar = 0x700
+	cpu.dmac.ch[1].tcr = 1
+	cpu.writeOnChip(0xFFFFFF9C, 0x5801)
+
+	if bus.Read32(0x700) != 0xBABECAFE {
+		t.Error("ch1 transfer did not execute while ch0 in flight")
+	}
+	if cpu.dmac.stallCycles[0] != ch0Before {
+		t.Errorf("ch0 countdown disturbed by ch1 kick: %d, was %d",
+			cpu.dmac.stallCycles[0], ch0Before)
+	}
+	// ch1 completes first (4 cycles) and sets its own TE; ch0 keeps
+	// counting.
+	for i := 0; i < 4; i++ {
+		cpu.Clock()
+	}
+	if cpu.dmac.ch[1].chcr&0x02 == 0 {
+		t.Error("ch1 TE not set after its countdown expired")
+	}
+	if cpu.dmac.ch[0].chcr&0x02 != 0 {
+		t.Error("ch0 TE set while its countdown still running")
+	}
+	if !cpu.dmac.Active() {
+		t.Error("ch0 countdown no longer active after ch1 completion")
+	}
+}
+
 // HM Sec 9.3.8 "Conditions for Both Channels Ending Simultaneously":
 // NMI during transfer sets DMAOR.NMIF and aborts. Per the table,
 // "TE = 1 ... when this transfer is the final transfer." A mid-
@@ -345,11 +507,11 @@ func TestDMACNMIAbortsBeforeTE(t *testing.T) {
 	cpu.dmac.dmaor = 1
 	cpu.writeOnChip(0xFFFFFF8C, 0x5801)
 
-	if !cpu.dmac.Stalling() {
-		t.Fatal("setup: DMAC not stalling after kick")
+	if !cpu.dmac.Active() {
+		t.Fatal("setup: DMAC countdown not running after kick")
 	}
 
-	// NMI mid-stall. CPU.NMI() sets DMAOR.NMIF.
+	// NMI mid-transfer. CPU.NMI() sets DMAOR.NMIF.
 	cpu.NMI()
 	if cpu.dmac.dmaor&0x02 == 0 {
 		t.Error("NMIF not set after NMI()")

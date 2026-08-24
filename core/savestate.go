@@ -41,7 +41,7 @@ const (
 	// erings) with a "state is from a newer version" error. Raised
 	// when fields are added; older files simply lack the new fields,
 	// which read as zero values on load.
-	stateVersion = uint32(4)
+	stateVersion = uint32(5)
 
 	// stateMinVersion is the oldest state-file version Deserialize
 	// accepts. A file below it is rejected with a distinct "state is
@@ -371,7 +371,7 @@ func buildSH2Core(w *fieldWriter, st *sh2.State) {
 	w.u16("dmac.dmaor", st.DMAC.DMAOR)
 	w.raw("dmac.drcr", st.DMAC.DRCR[:])
 	w.i64("dmac.nextCh", int64(st.DMAC.NextCh))
-	w.i64("dmac.stallCycles", int64(st.DMAC.StallCycles))
+	w.i64s("dmac.stallCycles", []int64{int64(st.DMAC.StallCycles[0]), int64(st.DMAC.StallCycles[1])})
 	w.i64("dmac.stallCh", int64(st.DMAC.StallCh))
 
 	w.u8("wdt.wtcsr", st.WDT.WTCSR)
@@ -1791,8 +1791,21 @@ func decodeSH2Core(r *fieldReader, st *sh2.State) {
 	st.DMAC.DMAOR = r.u16("dmac.dmaor")
 	copy(st.DMAC.DRCR[:], r.take("dmac.drcr", 2))
 	st.DMAC.NextCh = r.iRange("dmac.nextCh", 0, 1)
-	st.DMAC.StallCycles = int(r.i64("dmac.stallCycles"))
 	st.DMAC.StallCh = r.iRange("dmac.stallCh", -1, 1)
+	st.DMAC.StallCycles = [2]int{-1, -1}
+	switch d := r.take("dmac.stallCycles", -1); len(d) {
+	case 16:
+		st.DMAC.StallCycles[0] = int(int64(binary.BigEndian.Uint64(d)))
+		st.DMAC.StallCycles[1] = int(int64(binary.BigEndian.Uint64(d[8:])))
+	case 8:
+		if st.DMAC.StallCh >= 0 {
+			st.DMAC.StallCycles[st.DMAC.StallCh] = int(int64(binary.BigEndian.Uint64(d)))
+		}
+	case 0:
+		// Field absent: predates the countdown, both channels idle.
+	default:
+		r.fail("field dmac.stallCycles size %d, want 8 or 16", len(d))
+	}
 
 	st.WDT.WTCSR = r.u8("wdt.wtcsr")
 	st.WDT.WTCNT = r.u8("wdt.wtcnt")

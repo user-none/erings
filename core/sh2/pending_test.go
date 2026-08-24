@@ -471,27 +471,29 @@ func TestPendingDMACStallVsPendingMutex(t *testing.T) {
 	// Force the DMAC into a stalling state. We rig the stall counter
 	// directly instead of triggering a real transfer because the
 	// invariant under test is the dispatch precedence in Clock(),
-	// not the DMA semantics.
-	cpu.dmac.stallCycles = 8
+	// not the DMA semantics. TB (burst) makes the countdown a CPU
+	// stall; a cycle-steal countdown would tick during the drain.
+	cpu.dmac.ch[0].chcr = 0x10
+	cpu.dmac.stallCycles[0] = 8
 
 	// Drain the TRAPA pending op. Each Clock() call must continue to
 	// step the pending machine, not the DMAC stall path. We confirm
 	// by observing that dmac.stallCycles is unchanged across the
 	// drain.
-	beforeStall := cpu.dmac.stallCycles
+	beforeStall := cpu.dmac.stallCycles[0]
 	for cpu.pendingOp != popNone {
 		cpu.Clock()
 	}
-	if cpu.dmac.stallCycles != beforeStall {
+	if cpu.dmac.stallCycles[0] != beforeStall {
 		t.Errorf("DMAC stallCycles changed during TRAPA drain: %d -> %d",
-			beforeStall, cpu.dmac.stallCycles)
+			beforeStall, cpu.dmac.stallCycles[0])
 	}
 
 	// Pending complete - subsequent Clock() must now bleed the DMAC
 	// stall counter down (one cycle per Clock).
 	cpu.Clock()
-	if cpu.dmac.stallCycles != beforeStall-1 {
+	if cpu.dmac.stallCycles[0] != beforeStall-1 {
 		t.Errorf("post-TRAPA Clock: stallCycles = %d, want %d",
-			cpu.dmac.stallCycles, beforeStall-1)
+			cpu.dmac.stallCycles[0], beforeStall-1)
 	}
 }

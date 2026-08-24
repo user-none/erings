@@ -137,7 +137,7 @@ type DMACState struct {
 	DMAOR       uint16
 	DRCR        [2]uint8
 	NextCh      int
-	StallCycles int
+	StallCycles [2]int
 	StallCh     int
 }
 

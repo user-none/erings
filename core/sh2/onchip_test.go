@@ -362,8 +362,8 @@ func TestDMACLongwordTransfer(t *testing.T) {
 	if d.ch[0].tcr != 0 {
 		t.Errorf("TCR = %d, want 0", d.ch[0].tcr)
 	}
-	if !d.Stalling() {
-		t.Error("DMAC should be stalling after transfer")
+	if !d.Active() {
+		t.Error("DMAC countdown should be running after transfer")
 	}
 
 	// Drain stall. testBus returns 2 cycles per access; TCR=4
@@ -710,8 +710,8 @@ func TestDMACStallCyclesMatchesTCR(t *testing.T) {
 		// testBus returns 2 cycles per access; per unit we pay
 		// 2 read + 2 write = 4 cycles.
 		want := int(tcr) * 4
-		if d.stallCycles != want {
-			t.Errorf("TCR=%d: stallCycles = %d, want %d", tcr, d.stallCycles, want)
+		if d.stallCycles[0] != want {
+			t.Errorf("TCR=%d: stallCycles = %d, want %d", tcr, d.stallCycles[0], want)
 		}
 	}
 }
@@ -762,12 +762,12 @@ func TestDMACNMIBlocksNewTransfers(t *testing.T) {
 	}
 }
 
-// TestDMACCHCRWriteDuringStall verifies that a CHCR write on a
-// channel currently occupying the bus does not re-enter the transfer
-// engine. SH-7604 HW manual sec 9.5 Note 2 tells software to clear DE
-// before rewriting CHCR; when software violates this, the running
-// channel must not restart.
-func TestDMACCHCRWriteDuringStall(t *testing.T) {
+// TestDMACCHCRWriteDuringTransfer verifies that a CHCR write on a
+// channel whose transfer is still in progress does not re-enter the
+// transfer engine. SH-7604 HW manual sec 9.5 Note 2 tells software to
+// clear DE before rewriting CHCR; when software violates this, the
+// running channel must not restart.
+func TestDMACCHCRWriteDuringTransfer(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
@@ -782,8 +782,8 @@ func TestDMACCHCRWriteDuringStall(t *testing.T) {
 
 	// Kick: DM=01, SM=01, TS=10 (long), DE=1.
 	d.Write(0xFFFFFF8C, 0x5801)
-	if !d.Stalling() {
-		t.Fatal("DMAC should be stalling after kick")
+	if !d.Active() {
+		t.Fatal("DMAC countdown should be running after kick")
 	}
 	stallBefore := d.stallCycles
 	sarAfterFirst := d.ch[0].sar
@@ -810,10 +810,10 @@ func TestDMACCHCRWriteDuringStall(t *testing.T) {
 	}
 }
 
-// TestDMACDMAORDMESetDuringStall verifies that writing DMAOR with
-// DME=1 while a channel is already stalling does not re-kick the
-// engine.
-func TestDMACDMAORDMESetDuringStall(t *testing.T) {
+// TestDMACDMAORDMESetDuringTransfer verifies that writing DMAOR with
+// DME=1 while a channel's transfer is still in progress does not
+// re-kick the engine.
+func TestDMACDMAORDMESetDuringTransfer(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
@@ -826,8 +826,8 @@ func TestDMACDMAORDMESetDuringStall(t *testing.T) {
 	d.dmaor = 1
 
 	d.Write(0xFFFFFF8C, 0x5801)
-	if !d.Stalling() {
-		t.Fatal("DMAC should be stalling")
+	if !d.Active() {
+		t.Fatal("DMAC countdown should be running")
 	}
 	stallBefore := d.stallCycles
 
@@ -857,15 +857,15 @@ func TestDMACDMAORDMEClearAborts(t *testing.T) {
 
 	// Kick with IE=1 so a DEI would normally fire on completion.
 	d.Write(0xFFFFFF8C, 0x5805)
-	if !d.Stalling() {
-		t.Fatal("DMAC should be stalling")
+	if !d.Active() {
+		t.Fatal("DMAC countdown should be running")
 	}
 
-	// Clear DME during the stall - abort.
+	// Clear DME during the transfer - abort.
 	d.Write(0xFFFFFFB0, 0x0)
 
-	if d.Stalling() {
-		t.Error("DMAC should not be stalling after DME=0 abort")
+	if d.Active() {
+		t.Error("DMAC countdown should not be running after DME=0 abort")
 	}
 	if d.stallCh != -1 {
 		t.Errorf("stallCh = %d, want -1", d.stallCh)
@@ -889,9 +889,10 @@ func TestDMACDMAORDMEClearAborts(t *testing.T) {
 	}
 }
 
-// TestDMACRegWriteDuringStall verifies that SAR/DAR/TCR writes during
-// stall land in the registers but do not cause another transfer.
-func TestDMACRegWriteDuringStall(t *testing.T) {
+// TestDMACRegWriteDuringTransfer verifies that SAR/DAR/TCR writes
+// while a transfer is in progress land in the registers but do not
+// cause another transfer.
+func TestDMACRegWriteDuringTransfer(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
 
@@ -904,8 +905,8 @@ func TestDMACRegWriteDuringStall(t *testing.T) {
 	d.dmaor = 1
 
 	d.Write(0xFFFFFF8C, 0x5801)
-	if !d.Stalling() {
-		t.Fatal("DMAC should be stalling")
+	if !d.Active() {
+		t.Fatal("DMAC countdown should be running")
 	}
 
 	// New values must land in the registers but not re-execute.

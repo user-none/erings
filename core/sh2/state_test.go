@@ -109,7 +109,7 @@ func fillCPUState(c *CPU) {
 	c.dmac.dmaor = 0x0001
 	c.dmac.drcr = [2]uint8{0x01, 0x02}
 	c.dmac.nextCh = 1
-	c.dmac.stallCycles = 23
+	c.dmac.stallCycles = [2]int{23, 24}
 	c.dmac.stallCh = 1
 
 	c.wdt.wtcsr = 0x25
