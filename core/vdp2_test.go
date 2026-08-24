@@ -251,20 +251,46 @@ func TestVDP2VBlankINInterrupt(t *testing.T) {
 func TestVDP2VBlankOUTInterrupt(t *testing.T) {
 	scu := NewSCU()
 	v := NewVDP2(scu)
-	v.Write(0x0000, 0x8000) // DISP=1
+	v.Write(0x0000, 0x8000) // DISP=1, 224-line NTSC
+	v.recalcTiming()
 
-	// Place at last line of frame
-	v.vLine = linesNTSC - 1
-
-	// Complete the frame
-	v.EndFrame()
-
-	// IST bit 1 = V-Blank-OUT
+	// 224-line NTSC: the top border is (240-224)/2 = 8 lines, so
+	// V-Blank-OUT fires as the raster enters the top border, 8 lines
+	// before the display top. IST bit 1 = V-Blank-OUT.
+	v.vLine = linesNTSC - 10
+	v.EndLine()
+	if scu.ist&(1<<1) != 0 {
+		t.Error("VBlank-OUT should not fire before the top border")
+	}
+	v.EndLine()
 	if scu.ist&(1<<1) == 0 {
-		t.Error("VBlank-OUT should fire when frame wraps")
+		t.Error("VBlank-OUT should fire at the top-border start")
+	}
+
+	scu.ist &^= 1 << 1
+	v.vLine = linesNTSC - 1
+	v.EndFrame()
+	if scu.ist&(1<<1) != 0 {
+		t.Error("VBlank-OUT should not fire again at the frame wrap with a border")
 	}
 	if v.vLine != 0 {
 		t.Errorf("vLine = %d, want 0 after frame wrap", v.vLine)
+	}
+
+	// 240-line NTSC fills the standard display area with no border, so
+	// V-Blank-OUT fires at the frame wrap.
+	v.Write(0x0000, 0x8010) // DISP=1, VRESO=240
+	v.recalcTiming()
+	scu.ist &^= 1 << 1
+	for line := uint16(0); line < linesNTSC-1; line++ {
+		v.EndLine()
+	}
+	if scu.ist&(1<<1) != 0 {
+		t.Error("VBlank-OUT should not fire before the frame wrap without a border")
+	}
+	v.EndFrame()
+	if scu.ist&(1<<1) == 0 {
+		t.Error("VBlank-OUT should fire at the frame wrap without a border")
 	}
 }
 
