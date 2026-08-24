@@ -807,6 +807,56 @@ func TestCDBlockGetThenDelete(t *testing.T) {
 	}
 }
 
+// A host that abandons an in-progress get-transfer (no EndDataTransfer)
+// and issues Initialize CD System expects the transfer state to reset:
+// per the CD block communication interface spec, CDC_CdInit
+// "initializes the CD block and the CD communications interface", and
+// the command asserts EHST (host I/O finished). Without the reset,
+// every later get-transfer command is refused with WAIT forever
+// (observed: a title's post-intro loader wedges this way after
+// aborting its streaming loop mid-transfer).
+func TestCDBlockInitClearsAbandonedTransfer(t *testing.T) {
+	cb, _ := newCDBlockWithDisc()
+	cb.getSectorLen = 0
+
+	// Play 3 sectors, arm GetThenDelete, then abandon it: no
+	// EndDataTransfer.
+	execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0003)
+	tickN(cb, 4)
+	execCommandFull(cb, 0x63, 0x00, 0x0000, 0x0000, 0x0002)
+	if !cb.transferActive {
+		t.Fatal("setup: transfer not active after GetThenDelete")
+	}
+
+	// Initialize CD System with the soft-reset init flag (CR1 low
+	// bit 0), as the wedged title issues it.
+	execCommandFull(cb, 0x04, 0x01, 0x0000, 0x0000, 0x0000)
+
+	if cb.transferActive {
+		t.Error("transferActive survived Initialize CD System")
+	}
+	if cb.dataBuf != nil || cb.dataPos != 0 {
+		t.Errorf("staged data survived init: len=%d pos=%d", len(cb.dataBuf), cb.dataPos)
+	}
+	if cb.delPart != nil {
+		t.Error("deferred GetThenDelete deletion survived init")
+	}
+
+	// A fresh play + GetThenDelete must stage data normally instead of
+	// responding WAIT.
+	cb.cdDeviceFilter = 0
+	tickN(cb, 1) // drain the init BUSY->PAUSE transition
+	execCommandFull(cb, 0x10, 0x80, 0x0096, 0x0080, 0x0001)
+	tickN(cb, 2)
+	execCommandFull(cb, 0x63, 0x00, 0x0000, 0x0000, 0x0001)
+	if !cb.transferActive {
+		t.Error("GetThenDelete after init did not start a transfer")
+	}
+	if len(cb.dataBuf) != 1024 {
+		t.Errorf("staged words after init = %d, want 1024", len(cb.dataBuf))
+	}
+}
+
 func TestCDBlockDeleteSectorData(t *testing.T) {
 	cb, _ := newCDBlockWithDisc()
 

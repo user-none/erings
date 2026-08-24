@@ -140,6 +140,16 @@ func (cb *CDBlock) cmdInitCDSystem() {
 	cb.lastBufferDest = 0xFF
 	cb.authenticated = false
 	cb.initSelectors()
+	cb.transferActive = false
+	cb.dataBuf = nil
+	cb.dataPos = 0
+	cb.dataTransferType = 0
+	cb.putBuf = nil
+	cb.putSectorsRemaining = 0
+	cb.putWords = 0
+	cb.delPart = nil
+	cb.delStart = 0
+	cb.delCount = 0
 	// Init flags (CR1 low byte). Bit 5 requests a change to the init
 	// flags; bits 0-4 (bit 4 = data-read speed, 1=1x/0=2x) apply only when
 	// it is set. 0xFF is the no-change sentinel, as 0xFFFF is for standby
