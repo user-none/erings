@@ -6592,6 +6592,51 @@ func TestNBG2NBG3ColorCountDisable(t *testing.T) {
 	}
 }
 
+// Per VDP2 manual: when NBG0 is set at 16,770,000 colors, NBG1 to NBG3
+// can no longer be displayed.
+func TestNBG1ColorCountDisable(t *testing.T) {
+	v := newTestVDP2()
+
+	// Enable NBG1; NBG0 defaults to 16-color (CHCTLA=0)
+	v.regs[vdp2BGON] = 0x0002 // bit 1 = NBG1
+	v.regs[vdp2PNCN1] = 0x0000
+	v.regs[vdp2MPABN1] = 0x0000
+	v.regs[vdp2MPCDN1] = 0x0000
+	v.regs[vdp2PRINA] = 0x0100 // NBG1=1
+
+	// NBG1 pattern: charNum=1, dot=3 -> red
+	v.vram[0] = 0x00
+	v.vram[1] = 0x00
+	v.vram[2] = 0x00
+	v.vram[3] = 0x01
+	v.vram[0x20] = 0x33 // 4bpp: dot value 3
+	v.cram[6] = 0x00
+	v.cram[7] = 0x1F // color 3 = red (palette 0)
+
+	// NBG0 at 16-color: NBG1 renders
+	renderTestFrame(v)
+	if v.layerBufs[1][0] == 0 {
+		t.Error("NBG0 16-color: NBG1 should render a pixel")
+	}
+	if !v.frame.nbgOn[1] {
+		t.Error("NBG0 16-color: NBG1 should be enabled")
+	}
+
+	// NBG0 at 32,768 colors: NBG1 still displays
+	v.regs[vdp2CHCTLA] = 0x0030
+	renderTestFrame(v)
+	if !v.frame.nbgOn[1] {
+		t.Error("NBG0 32K-color: NBG1 should still render")
+	}
+
+	// NBG0 at 16.77M colors (CHCTLA bits 6:4 = 100): NBG1 disabled
+	v.regs[vdp2CHCTLA] = 0x0040
+	renderTestFrame(v)
+	if v.frame.nbgOn[1] {
+		t.Error("NBG0 16.77M-color: NBG1 should be disabled")
+	}
+}
+
 // TestBurningRangersTitleColorCalc reproduces the Burning Rangers
 // "CHOOSE YOUR PLAYER" screen: hi-res, NBG1 (text) at priority 4 with
 // add-as-is color calculation, NBG2 enabled at priority 3 as the

@@ -521,15 +521,17 @@ func (v *VDP2) decodeLineState() {
 			fs.nbgOn[s] = false
 		}
 	} else {
-		// NBG2/NBG3 availability per VDP2 manual: NBG2 cannot be
-		// displayed when NBG0 is 2048/32,768/16.77M colors; NBG3 cannot
-		// when NBG1 is 2048/32,768 colors or NBG0 is 16.77M colors. The
-		// ZMCTL reduction rule (Sec 5.2 Table 5.2) is an additional
-		// disable. Hi-res alone does not disable NBG2/NBG3.
+		// NBG1/NBG2/NBG3 availability per VDP2 manual: when NBG0 is
+		// 16.77M colors, NBG1 to NBG3 cannot be displayed; NBG2 cannot
+		// be displayed when NBG0 is 2048/32,768/16.77M colors; NBG3
+		// cannot when NBG1 is 2048/32,768 colors. The ZMCTL reduction
+		// rule (Sec 5.2 Table 5.2) is an additional disable. Hi-res
+		// alone does not disable NBG2/NBG3.
 		zmctl := fs.regs[vdp2ZMCTL]
 		chctla := fs.regs[vdp2CHCTLA]
 		nbg0cm := uint8((chctla >> 4) & 0x07)
 		nbg1cm := uint8((chctla >> 12) & 0x03)
+		disableNBG1 := nbg0cm == 4
 		disableNBG2 := nbg0cm >= 2 ||
 			reductionDisablesCompanion(uint8(zmctl&0x03), nbg0cm)
 		disableNBG3 := nbg1cm >= 2 || nbg0cm == 4 ||
@@ -538,6 +540,9 @@ func (v *VDP2) decodeLineState() {
 		for s := 0; s < 4; s++ {
 			cfg := v.decodeNBGConfig(s)
 			on := cfg.enabled && cfg.priority != 0
+			if s == 1 && disableNBG1 {
+				on = false
+			}
 			if s == 2 && disableNBG2 {
 				on = false
 			}
