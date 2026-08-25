@@ -29,7 +29,7 @@ func (v *VDP2) windowX(raw uint16) int {
 // the boundary aligns to an even displayed line; otherwise all 9 bits
 // (V8:V0) are valid.
 func (v *VDP2) windowY(raw uint16) int {
-	if v.frame.effIntl == 3 {
+	if v.frame.lsmd3 {
 		return int(raw & 0x01FE)
 	}
 	return int(raw & 0x01FF)
@@ -40,15 +40,18 @@ func (v *VDP2) windowY(raw uint16) int {
 // two field-lines. Double-density interlace (LSMD=3) maps the caller's
 // field-line y to the displayed-line index 2*y + field so the per-
 // displayed-line tables (line scroll, line color, back screen, line
-// window) are read at the correct offset. LSMD=3 with NBG mosaic
-// enabled downgrades to LSMD=2 semantics per VDP2 manual section 4.11.
-// Interlace mode and field parity come from the BeginFrame latch.
+// window) are read at the correct offset. The programmed LSMD decides
+// the index space: LSMD=3 with NBG mosaic enabled displays at
+// single-density per VDP2 manual section 4.11, but the screen
+// coordinate generation (and with it the per-displayed-line table
+// walk) stays double-density. Interlace mode and field parity come
+// from the BeginFrame latch.
 func (v *VDP2) lineTableY(y int) int {
-	switch v.frame.effIntl {
-	case 2:
-		return y / 2
-	case 3:
+	if v.frame.lsmd3 {
 		return y*2 + v.frame.field
+	}
+	if v.frame.effIntl == 2 {
+		return y / 2
 	}
 	return y
 }
@@ -149,7 +152,7 @@ func (v *VDP2) evalWindow(wctl uint8, x, y int) bool {
 	// cover the full 480-line double-density range), while lineTableY and
 	// readVDP1Pixel expect the caller's field-line y. Keep both.
 	dispY := y
-	if v.frame.effIntl == 3 {
+	if v.frame.lsmd3 {
 		dispY = y*2 + v.frame.field
 	}
 

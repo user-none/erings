@@ -599,9 +599,13 @@ func (v *VDP2) ActiveLines() uint16 { return v.activeLines }
 
 // effectiveInterlace returns the interlace mode actually in effect for
 // display output. Per VDP2 manual section 4.11, when LSMD=3 is programmed
-// and any NBG mosaic enable bit is set, the hardware forces the screen
-// back to single-density interlace. All renderer surfaces that depend on
-// the interlace mode must consult this helper rather than v.interlace.
+// and any NBG mosaic enable bit is set, the screen "is made to be
+// displayed by the single-density interlace mode". The downgrade is a
+// display-density change only: screen coordinate generation (layer
+// vertical stepping, per-displayed-line table walks, window coordinate
+// spaces) stays in the programmed double-density space (frame.lsmd3);
+// only output geometry (DisplayHeight, frameOutRow, the geometry-change
+// blank) consults this helper.
 func (v *VDP2) effectiveInterlace() uint8 {
 	if v.interlace == 3 {
 		// MZCTL bits 3:0 = N3MZE, N2MZE, N1MZE, N0MZE (NBG3..NBG0).

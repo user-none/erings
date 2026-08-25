@@ -7481,23 +7481,34 @@ func TestReadVDP1PixelLSMD3NoHalving(t *testing.T) {
 	}
 }
 
-func TestLineTableYLSMD3WithMosaicHalvesInsteadOfDoubles(t *testing.T) {
+func TestLineTableYLSMD3WithMosaicStaysDoubled(t *testing.T) {
 	v := newTestVDP2()
 	v.regs[vdp2TVMD] = 0x80C0
 	v.recalcTiming()
 
-	// Enable NBG0 mosaic. Per VDP2 manual Sec 4.11 this forces the display
-	// back to single-density interlace, so lineTableY should halve y like
-	// it does for LSMD=2 rather than doubling.
+	// Enable NBG0 mosaic. Per VDP2 manual Sec 4.11 this forces the
+	// display back to single-density interlace, but the downgrade is
+	// display-density only: screen coordinate generation and the
+	// per-displayed-line table walk stay in the programmed
+	// double-density space, so lineTableY keeps doubling. The field
+	// term is 0 because fieldBit is always 0 outside effective LSMD=3.
 	v.regs[vdp2MZCTL] = 0x0001 // N0MZE=1
 	v.oddField = false
 	v.BeginFrame()
 
-	if got := v.lineTableY(5); got != 2 {
-		t.Errorf("LSMD=3 + mosaic lineTableY(5) = %d, want 2 (half)", got)
+	if got := v.lineTableY(5); got != 10 {
+		t.Errorf("LSMD=3 + mosaic lineTableY(5) = %d, want 10 (doubled)", got)
 	}
-	if got := v.lineTableY(10); got != 5 {
-		t.Errorf("LSMD=3 + mosaic lineTableY(10) = %d, want 5 (half)", got)
+	if got := v.lineTableY(10); got != 20 {
+		t.Errorf("LSMD=3 + mosaic lineTableY(10) = %d, want 20 (doubled)", got)
+	}
+
+	// The odd field renders the same displayed lines: the downgrade
+	// pins the field term to 0, so both fields read the same entries.
+	v.oddField = true
+	v.BeginFrame()
+	if got := v.lineTableY(5); got != 10 {
+		t.Errorf("LSMD=3 + mosaic odd field lineTableY(5) = %d, want 10 (field term 0)", got)
 	}
 }
 
@@ -7535,6 +7546,64 @@ func TestRenderLSMD3WithMosaicWritesAllRows(t *testing.T) {
 	for row := activeLines; row < 2*activeLines; row++ {
 		if !rowIsSentinel(fb, row, width, 0xAA) {
 			t.Fatalf("downgrade: row %d should be untouched (no doubling)", row)
+		}
+	}
+}
+
+// TestNBGSamplingLSMD3MosaicDowngradeKeepsStepping renders the same
+// NBG0 scene under LSMD=3 with and without a size-1 mosaic (identity
+// pixel quantization, so only the vertical stepping could differ) and
+// requires identical layer output. The manual Sec 4.11 downgrade is
+// display-density only: layer coordinate generation stays in the
+// double-density displayed-line space, so enabling mosaic must not
+// halve the vertical walk (the Astra Superstars HUD-stretch bug).
+func TestNBGSamplingLSMD3MosaicDowngradeKeepsStepping(t *testing.T) {
+	setup := func(mzctl uint16) *VDP2 {
+		v := setupNBG0_4bpp_2word(t)
+		v.regs[vdp2TVMD] = 0x80C0 // DISP=1, LSMD=3
+		v.recalcTiming()
+		v.regs[vdp2MZCTL] = mzctl
+		v.oddField = false
+
+		// Pattern at cell (0,0): palette=1, charNum=1.
+		v.vram[1] = 0x01
+		v.vram[3] = 0x01
+
+		// Cell rows 0..7 get distinct dot values 1..8 so every source
+		// row renders a distinct color; a halved vertical walk would
+		// visibly repeat rows.
+		for r := 0; r < 8; r++ {
+			dot := uint8(r + 1)
+			for i := 0; i < 4; i++ {
+				v.vram[0x20+r*4+i] = dot<<4 | dot
+			}
+		}
+		// CRAM palette 1: dot d -> red intensity d.
+		for d := 1; d <= 8; d++ {
+			v.cram[(16+d)*2] = 0x00
+			v.cram[(16+d)*2+1] = uint8(d)
+		}
+		return v
+	}
+
+	ref := setup(0)
+	buf := make([]uint32, 352*256)
+	renderTestNBG(ref, 0, buf)
+
+	mz := setup(0x0001) // N0MZE=1, 1x1 mosaic
+	if got := mz.effectiveInterlace(); got != 2 {
+		t.Fatalf("effectiveInterlace = %d, want 2 (downgrade active)", got)
+	}
+	bufMz := make([]uint32, 352*256)
+	renderTestNBG(mz, 0, bufMz)
+
+	width := int(ref.activeWidth)
+	for y := 0; y < ref.frame.height; y++ {
+		for x := 0; x < width; x++ {
+			if buf[y*width+x] != bufMz[y*width+x] {
+				t.Fatalf("line %d x %d: no-mosaic pixel %08X != mosaic pixel %08X (stepping changed under downgrade)",
+					y, x, buf[y*width+x], bufMz[y*width+x])
+			}
 		}
 	}
 }

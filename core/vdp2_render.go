@@ -36,7 +36,11 @@ type vdp2Frame struct {
 	height  int   // active field lines; layer buffers indexed y*width
 	effIntl uint8 // effectiveInterlace() at frame start
 	field   int   // fieldBit() at frame start
-	hiRes   bool  // hi-res horizontal mode at frame start
+	lsmd3   bool  // programmed LSMD==3 at frame start; displayed-line
+	// space stays double-density even when the mosaic downgrade drops
+	// effIntl to single-density (the downgrade changes display density,
+	// not screen coordinate generation)
+	hiRes bool // hi-res horizontal mode at frame start
 
 	// Snapshot of the register file, refreshed by BeginFrame and by
 	// every BeginLine. Register reads in the decode and render paths
@@ -365,6 +369,7 @@ func (v *VDP2) BeginFrame() {
 	fs.height = int(v.activeLines)
 	fs.effIntl = v.effectiveInterlace()
 	fs.field = v.fieldBit()
+	fs.lsmd3 = v.interlace == 3
 
 	// NBG vertical counters load from the top-of-display SCYN capture;
 	// mid-display SCYN writes rebase them per line in BeginLine.
@@ -656,7 +661,7 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 	// written row at line y.
 	if y > 0 && y-1 < len(v.scynSet) {
 		dispY := int32(y)
-		if fs.effIntl == 3 {
+		if fs.lsmd3 {
 			dispY = int32(y*2 + fs.field)
 		}
 		for s := 0; s < 4; s++ {
@@ -679,7 +684,7 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 	v.lineSprRot.enabled = fb.rotated
 	if fb.rotated {
 		vcnt := int64(y)
-		if fs.effIntl == 3 {
+		if fs.lsmd3 {
 			vcnt = int64(y*2 + fs.field)
 		}
 		arm := v.rotArmBits(y)

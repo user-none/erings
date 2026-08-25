@@ -425,7 +425,7 @@ func (v *VDP2) nbgCellSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) fun
 	lineIncXFP := cfg.incXFP
 	if hasLineScroll {
 		srcY := y
-		if v.frame.effIntl == 3 {
+		if v.frame.lsmd3 {
 			srcY = y*2 + v.frame.field
 		}
 		lineIdx := srcY / cfg.lineInterval
@@ -463,10 +463,10 @@ func (v *VDP2) nbgCellSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) fun
 	}
 
 	// Source-Y for cell-pattern lookup uses displayed-line index so
-	// the pattern advances per displayed scanline. Under LSMD=3
-	// effective interlace the loop's y is field-line; convert.
+	// the pattern advances per displayed scanline. Under LSMD=3 the
+	// loop's y is field-line; convert.
 	dispY := y
-	if v.frame.effIntl == 3 {
+	if v.frame.lsmd3 {
 		dispY = y*2 + v.frame.field
 	}
 	ey := dispY
@@ -719,10 +719,10 @@ func (v *VDP2) nbgBitmapSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) f
 	hasLineScroll := cfg.lineScrollX || cfg.lineScrollY || cfg.lineZoomX
 
 	// Source-Y for bitmap sampling uses displayed-line index so the
-	// pattern advances per displayed scanline. Under LSMD=3
-	// effective interlace the loop's y is field-line; convert.
+	// pattern advances per displayed scanline. Under LSMD=3 the
+	// loop's y is field-line; convert.
 	dispY := y
-	if v.frame.effIntl == 3 {
+	if v.frame.lsmd3 {
 		dispY = y*2 + v.frame.field
 	}
 	ey := dispY
@@ -745,7 +745,7 @@ func (v *VDP2) nbgBitmapSpanSetup(buf []uint32, cfg *nbgConfig, screen, y int) f
 	lineIncXFP := cfg.incXFP
 	if hasLineScroll {
 		srcY := y
-		if v.frame.effIntl == 3 {
+		if v.frame.lsmd3 {
 			srcY = y*2 + v.frame.field
 		}
 		lineIdx := srcY / cfg.lineInterval

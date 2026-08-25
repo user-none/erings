@@ -701,7 +701,7 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 					// per-field interleave the loop's y is field-line so convert
 					// to displayed-line before taking the modulo.
 					ovY := y
-					if v.frame.effIntl == 3 {
+					if v.frame.lsmd3 {
 						ovY = y*2 + v.frame.field
 					}
 					ovDotX := x % charPx
@@ -1528,7 +1528,7 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 					// per-field interleave the loop's y is field-line so convert
 					// to displayed-line before taking the modulo.
 					ovY := y
-					if v.frame.effIntl == 3 {
+					if v.frame.lsmd3 {
 						ovY = y*2 + v.frame.field
 					}
 					ovDotX := x % charPx
@@ -2064,7 +2064,7 @@ func (v *VDP2) isRPWindowB(x, y int) bool {
 	}
 
 	dispY := y
-	if v.frame.effIntl == 3 {
+	if v.frame.lsmd3 {
 		dispY = y*2 + v.frame.field
 	}
 
