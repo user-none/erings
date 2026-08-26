@@ -60,10 +60,11 @@ type scuDSP struct {
 	scu *SCU
 }
 
-// dspDMAAddValue is the SCU DSP DMA write destination's byte stride per long
-// word for a non-B-Bus target, indexed by the command Add Mode field (bits
-// 17:15; SCU User's Manual section 4.5, DMA [RAM],D0). A B-Bus target doubles
-// this stride (see execDMA). Reads do not use this table; they step one long
+// dspDMAAddValue is the SCU DSP DMA write destination's byte stride,
+// indexed by the command Add Mode field (bits 17:15; SCU User's Manual
+// section 4.5, DMA [RAM],D0). For a non-B-Bus target it is the stride
+// per long word; for a B-Bus target it is the stride per 16-bit write
+// unit (see execDMA). Reads do not use this table; they step one long
 // word.
 var dspDMAAddValue = [8]uint32{0, 2, 4, 8, 16, 32, 64, 128}
 
@@ -621,20 +622,29 @@ func (d *scuDSP) execDMA(instr uint32) uint32 {
 		addr := (d.wa0 << 2) & 0x07FFFFFF
 		bank := ramSel & 3
 
-		// A B-Bus destination (VDP1/VDP2/SCSP) is on the 16-bit external bus, so
-		// a long word is written as two 16-bit halves at separate addresses and
-		// the destination advances at twice the table stride (SCU User's Manual
-		// section 4.5: B-Bus write unit is 16 bits). Without this, consecutive
-		// stores overlap by half a word and every other entry is dropped.
 		if isBBus(addr) {
-			addrAdd *= 2
-		}
-
-		for i := 0; i < count; i++ {
-			val := d.data[bank][d.ct[bank]]
-			d.ct[bank] = (d.ct[bank] + 1) & 0x3F
-			d.scu.bus.DMAWrite32(addr, val)
-			addr += addrAdd
+			// A B-Bus destination (VDP1/VDP2/SCSP) is on the 16-bit
+			// external bus. SCU User's Manual section 4.5 (DMA
+			// [RAM],D0): "Write units are 16 bit; 32 bit data is
+			// divided in half and written at intervals of 16bit x
+			// (0-64)" - each halfword of a long word lands at its own
+			// add-value interval, so the destination advances the
+			// table stride per halfword (twice per long word).
+			for i := 0; i < count; i++ {
+				val := d.data[bank][d.ct[bank]]
+				d.ct[bank] = (d.ct[bank] + 1) & 0x3F
+				d.scu.bus.DMAWrite16(addr, uint16(val>>16))
+				addr += addrAdd
+				d.scu.bus.DMAWrite16(addr, uint16(val))
+				addr += addrAdd
+			}
+		} else {
+			for i := 0; i < count; i++ {
+				val := d.data[bank][d.ct[bank]]
+				d.ct[bank] = (d.ct[bank] + 1) & 0x3F
+				d.scu.bus.DMAWrite32(addr, val)
+				addr += addrAdd
+			}
 		}
 		if !hold {
 			d.wa0 = addr >> 2

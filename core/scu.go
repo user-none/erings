@@ -9,6 +9,7 @@ type BusReadWriter interface {
 	Read16(addr uint32) uint16
 	Read32(addr uint32) uint32
 	DMAWrite8(addr uint32, val uint8)
+	DMAWrite16(addr uint32, val uint16)
 	DMAWrite32(addr uint32, val uint32)
 }
 
@@ -793,12 +794,27 @@ func (s *SCU) dmaTransfer(src, dst, count, readInc, writeInc uint32) (uint32, ui
 	}
 
 	// Sparse-stride path: dstStep > 4 means the destination has gaps
-	// between long-word writes (writeInc 8/16/32/64/128). The manual
-	// does not define byte-tail behavior for sparse strides, and
-	// software pairs sparse strides with aligned multiple-of-4 counts
-	// (e.g. VRAM cell-data scatter). Truncate to whole long-words.
+	// between write stops (writeInc 4/8/16/32/64/128). The manual does
+	// not define byte-tail behavior for sparse strides, and software
+	// pairs sparse strides with aligned multiple-of-4 counts (e.g.
+	// VRAM cell-data scatter). Truncate to whole long-words.
 	if dstStep > 4 {
 		units := count / 4
+		if isBBus(dst) {
+			// The B-Bus write unit is 16 bits (SCU manual Sec 4.5),
+			// so the write-add value advances the destination per
+			// halfword. Each halfword of a source long word lands at
+			// its own stop.
+			for i := uint32(0); i < units; i++ {
+				w := s.bus.Read32(src)
+				s.bus.DMAWrite16(dst, uint16(w>>16))
+				dst += writeInc
+				s.bus.DMAWrite16(dst, uint16(w))
+				dst += writeInc
+				src += readInc
+			}
+			return src, dst
+		}
 		for i := uint32(0); i < units; i++ {
 			s.bus.DMAWrite32(dst, s.bus.Read32(src))
 			src += readInc

@@ -983,6 +983,18 @@ func (b *Bus) DMAWrite8(addr uint32, val uint8) {
 	b.unlockArea(area)
 }
 
+// DMAWrite16 performs a bus-master (SCU-DMA) 16-bit write: one B-Bus
+// write unit, so one burst-stall word of VDP1 draw contention.
+func (b *Bus) DMAWrite16(addr uint32, val uint16) {
+	area := busAreaOf(addr & 0x07FFFFFF)
+	b.lockArea(area)
+	b.write16Impl(addr, val)
+	b.unlockArea(area)
+	if area == areaBBus {
+		b.vdp1.chargeDrawStall(addr, vdp1DMABurstStallPerWord)
+	}
+}
+
 func (b *Bus) write32Impl(addr uint32, val uint32) {
 	masked := addr & 0x07FFFFFF
 	switch {
