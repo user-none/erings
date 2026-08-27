@@ -394,7 +394,7 @@ func TestAcceptClearsHaltedAllSources(t *testing.T) {
 		}},
 		{"WDT", func(cpu *CPU) {
 			priWDT(cpu, 5)
-			cpu.wdt.wtcsr |= wtcsrOVF
+			cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 			cpu.intc.vcrwdt = 0x42 << 8
 			cpu.intc.AssertSource(isrcWDT)
 		}},

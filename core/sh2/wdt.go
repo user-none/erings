@@ -211,8 +211,10 @@ func (w *WDT) fireDue(now uint64) bool {
 }
 
 // IRQAsserted returns true when the WDT is driving an interval
-// interrupt request line: OVF latch set AND interval mode selected.
-// Watchdog-mode overflow does not raise ITI.
+// interrupt request line: timer enabled, OVF latch set, and interval
+// mode selected. Watchdog-mode overflow does not raise ITI. TME gates
+// the request: TME is the WDT's only enable bit, and a latched OVF
+// with the timer disabled must not request ITI.
 func (w *WDT) IRQAsserted() bool {
-	return w.wtcsr&wtcsrOVF != 0 && w.wtcsr&wtcsrWTIT == 0
+	return w.wtcsr&wtcsrTME != 0 && w.wtcsr&wtcsrOVF != 0 && w.wtcsr&wtcsrWTIT == 0
 }

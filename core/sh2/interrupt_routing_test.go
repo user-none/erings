@@ -569,7 +569,7 @@ func TestRouteWDTInterruptZeroPriority(t *testing.T) {
 	// Leave IPRA WDT field (bits 7-4) as 0.
 
 	// Simulate a WDT interval-mode overflow state.
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 
 	cpu.routeWDTInterrupt()
 
@@ -584,7 +584,7 @@ func TestRouteWDTInterruptAssertsPending(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priWDT(cpu, 5)
 
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 
 	cpu.routeWDTInterrupt()
 
@@ -924,7 +924,7 @@ func TestWDTVCRWDTLowByteDoesNotAffectITI(t *testing.T) {
 	priWDT(cpu, 5)
 
 	cpu.intc.vcrwdt = 0x4250
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 
 	cpu.routeWDTInterrupt()
 
@@ -945,7 +945,7 @@ func TestWDTVCRWDTLowByteDoesNotAffectITI(t *testing.T) {
 func TestRouteWDTInterruptDoesNotAssertBSCSource(t *testing.T) {
 	cpu := setupIntCPU(t)
 	priWDT(cpu, 5)
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 
 	cpu.routeWDTInterrupt()
 
@@ -1151,7 +1151,7 @@ func TestWDTOVFLatchedThroughIntInhibit(t *testing.T) {
 	cpu.intc.vcrwdt = (0x58 << 8)
 
 	// Assert WDT with OVF latched.
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 	cpu.intc.AssertSource(isrcWDT)
 
 	cpu.intInhibit = true
@@ -1185,7 +1185,7 @@ func TestWDTClearingOVFDeassertsINTC(t *testing.T) {
 	cpu.intc.vcrwdt = (0x58 << 8)
 
 	// Overflow + route. IMASK is 0 so the interrupt would normally accept.
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 	cpu.intc.AssertSource(isrcWDT)
 
 	if cpu.intc.pending&(1<<isrcWDT) == 0 {
@@ -1207,6 +1207,38 @@ func TestWDTClearingOVFDeassertsINTC(t *testing.T) {
 	}
 	if cpu.intc.pending&(1<<isrcWDT) != 0 {
 		t.Errorf("INTC.pending[WDT] not cleared after OVF software clear: pending=0x%04X",
+			cpu.intc.pending)
+	}
+}
+
+// TestWDTStopTimerDeassertsITIWithOVFLatched verifies TME gates the
+// interval interrupt request. Shutdown code stops the timer with a
+// read-modify-write that clears only TME (writing 1 to OVF keeps the
+// latch per Sec 12.2.2), then later unmasks SR with only a default
+// RTE-only handler at the ITI vector. The latched OVF with TME=0 must
+// not request ITI, or that unmask enters an unrecoverable interrupt
+// loop.
+func TestWDTStopTimerDeassertsITIWithOVFLatched(t *testing.T) {
+	cpu := setupIntCPU(t)
+	priWDT(cpu, 0xF)
+	cpu.intc.vcrwdt = (0x68 << 8)
+
+	// Interval timer running with OVF latched, request pending.
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
+	cpu.intc.AssertSource(isrcWDT)
+
+	// Stop the timer: A5-keyed write of (read & ~TME), preserving OVF.
+	stop := uint16(0xA500) | uint16(cpu.wdt.wtcsr&^wtcsrTME)
+	cpu.wdt.WriteWord(0xFFFFFE80, stop)
+	if cpu.wdt.wtcsr&wtcsrOVF == 0 {
+		t.Fatalf("setup: OVF latch lost by TME-clear write, wtcsr=0x%02X", cpu.wdt.wtcsr)
+	}
+
+	if cpu.processInterrupt() {
+		t.Fatal("processInterrupt accepted WDT ITI with TME=0")
+	}
+	if cpu.intc.pending&(1<<isrcWDT) != 0 {
+		t.Errorf("INTC.pending[WDT] not reconciled after timer stop: pending=0x%04X",
 			cpu.intc.pending)
 	}
 }

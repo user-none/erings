@@ -311,7 +311,7 @@ func TestPriorityZeroMaskedAllSources(t *testing.T) {
 			cpu.intc.AssertSource(isrcFRT)
 		}},
 		{"WDT", func(cpu *CPU) {
-			cpu.wdt.wtcsr |= wtcsrOVF
+			cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 			cpu.intc.AssertSource(isrcWDT)
 		}},
 	}
@@ -351,7 +351,7 @@ func TestTieBreakDMAC0BeatsWDT(t *testing.T) {
 	priDMAC(cpu, 6)
 	priWDT(cpu, 6)
 
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 	cpu.intc.vcrwdt = 0x42 << 8
 	cpu.intc.AssertSource(isrcWDT)
 
@@ -371,7 +371,7 @@ func TestTieBreakDMAC1BeatsWDT(t *testing.T) {
 	priDMAC(cpu, 6)
 	priWDT(cpu, 6)
 
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 	cpu.intc.vcrwdt = 0x42 << 8
 	cpu.intc.AssertSource(isrcWDT)
 
@@ -427,7 +427,7 @@ func TestTieBreakWDTBeatsFRT(t *testing.T) {
 
 	assertFRTOCI(cpu, 0x70)
 
-	cpu.wdt.wtcsr |= wtcsrOVF
+	cpu.wdt.wtcsr |= wtcsrTME | wtcsrOVF
 	cpu.intc.vcrwdt = 0x42 << 8
 	cpu.intc.AssertSource(isrcWDT)
 
