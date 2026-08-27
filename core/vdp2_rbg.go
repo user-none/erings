@@ -2075,14 +2075,13 @@ func (v *VDP2) isRPWindowB(x, y int) bool {
 			// from a VRAM table (manual Sec 8.1 p.185-186).
 			lwta0 := ((uint32(v.frame.regs[vdp2LWTA0U]&0x07) << 16) | uint32(v.frame.regs[vdp2LWTA0L]&0xFFFE)) * 2
 			entryAddr := lwta0 + uint32(v.lineTableY(y))*4
-			rs := v.readVRAM16(entryAddr)
-			re := v.readVRAM16(entryAddr + 2)
-			// Sec 8.1 p.183: start > end => whole line is outside. The
-			// comparison is on the signed coordinate words, so an end of
-			// 0xFFFF (-1) marks an excluded line.
-			if int16(rs) <= int16(re) {
-				sx := v.windowX(rs)
-				ex := v.windowX(re)
+			// Sec 8.1 p.183: start > end => whole line is outside.
+			// Coordinates are signed words (see lineWindowX), so an end
+			// of 0xFFFF (-1) marks an excluded line and a negative
+			// start covers the line from its left edge.
+			sx := v.lineWindowX(v.readVRAM16(entryAddr))
+			ex := v.lineWindowX(v.readVRAM16(entryAddr + 2))
+			if sx <= ex {
 				w0Inside = x >= sx && x <= ex
 			}
 		} else {
@@ -2100,13 +2099,13 @@ func (v *VDP2) isRPWindowB(x, y int) bool {
 			// Normal line window (W1LWE).
 			lwta1 := ((uint32(v.frame.regs[vdp2LWTA1U]&0x07) << 16) | uint32(v.frame.regs[vdp2LWTA1L]&0xFFFE)) * 2
 			entryAddr := lwta1 + uint32(v.lineTableY(y))*4
-			rs := v.readVRAM16(entryAddr)
-			re := v.readVRAM16(entryAddr + 2)
-			// Sec 8.1 p.183: start > end => whole line is outside (signed
-			// coordinate words; end 0xFFFF (-1) marks an excluded line).
-			if int16(rs) <= int16(re) {
-				sx := v.windowX(rs)
-				ex := v.windowX(re)
+			// Sec 8.1 p.183: start > end => whole line is outside
+			// (signed coordinate words, see lineWindowX; an end of
+			// 0xFFFF (-1) marks an excluded line and a negative start
+			// covers the line from its left edge).
+			sx := v.lineWindowX(v.readVRAM16(entryAddr))
+			ex := v.lineWindowX(v.readVRAM16(entryAddr + 2))
+			if sx <= ex {
 				w1Inside = x >= sx && x <= ex
 			}
 		} else {

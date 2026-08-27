@@ -23,6 +23,23 @@ func (v *VDP2) windowX(raw uint16) int {
 	return int(raw&0x03FE) >> 1
 }
 
+// lineWindowX converts a line-window-table coordinate word to a pixel
+// coordinate. Unlike the rectangle window registers, the table words
+// are evaluated as full signed 16-bit values: games exclude a line by
+// storing start > end (an end of 0xFFFF reads as -1) and cover a full
+// line by storing a negative start (traced: a title writes start
+// 0xFFFE / end 0x02C0 for lines the window must cover entirely, and
+// start 0x02C2 / end 0x02C0 for excluded lines - masking the start to
+// 10 bits would turn the covered lines into excluded ones). In normal
+// resolution bit 0 is invalid, so the signed word shifts right
+// arithmetically by one.
+func (v *VDP2) lineWindowX(raw uint16) int {
+	if v.frame.hiRes {
+		return int(int16(raw))
+	}
+	return int(int16(raw)) >> 1
+}
+
 // windowY converts a raw window vertical coordinate (WPSY/WPEY) to a
 // displayed-line value per Table 8.2. In double-density interlace the
 // least significant bit is invalid (the value is V7:V0 in bits 8:1), so
@@ -169,8 +186,8 @@ func (v *VDP2) evalWindow(wctl uint8, x, y int) bool {
 			// Line window: per-scanline X boundaries from VRAM table
 			lwta0 := ((uint32(v.frame.regs[vdp2LWTA0U]&0x07) << 16) | uint32(v.frame.regs[vdp2LWTA0L]&0xFFFE)) * 2
 			entryAddr := lwta0 + uint32(v.lineTableY(y))*4
-			sx := v.windowX(v.readVRAM16(entryAddr))
-			ex := v.windowX(v.readVRAM16(entryAddr + 2))
+			sx := v.lineWindowX(v.readVRAM16(entryAddr))
+			ex := v.lineWindowX(v.readVRAM16(entryAddr + 2))
 			if inY && sx <= ex {
 				w0Inside = x >= sx && x <= ex
 			}
@@ -193,8 +210,8 @@ func (v *VDP2) evalWindow(wctl uint8, x, y int) bool {
 		if v.frame.regs[vdp2LWTA1U]&0x8000 != 0 {
 			lwta1 := ((uint32(v.frame.regs[vdp2LWTA1U]&0x07) << 16) | uint32(v.frame.regs[vdp2LWTA1L]&0xFFFE)) * 2
 			entryAddr := lwta1 + uint32(v.lineTableY(y))*4
-			sx := v.windowX(v.readVRAM16(entryAddr))
-			ex := v.windowX(v.readVRAM16(entryAddr + 2))
+			sx := v.lineWindowX(v.readVRAM16(entryAddr))
+			ex := v.lineWindowX(v.readVRAM16(entryAddr + 2))
 			if inY && sx <= ex {
 				w1Inside = x >= sx && x <= ex
 			}

@@ -2948,6 +2948,14 @@ func TestLineWindowW0(t *testing.T) {
 	v.vram[0x40006] = 0x00
 	v.vram[0x40007] = 0x06 // endX register = 6, pixel = 3
 
+	// Line 2: start = 0xFFFE (-2), end = 0x02C0 (704). The table words
+	// are signed (lineWindowX), so the negative start covers the whole
+	// line from its left edge.
+	v.vram[0x40008] = 0xFF
+	v.vram[0x40009] = 0xFE
+	v.vram[0x4000A] = 0x02
+	v.vram[0x4000B] = 0xC0
+
 	// Line 3: window X range 0-8 (would mask x=2 horizontally)
 	v.vram[0x4000C] = 0x00
 	v.vram[0x4000D] = 0x00 // startX register = 0, pixel = 0
@@ -2955,9 +2963,9 @@ func TestLineWindowW0(t *testing.T) {
 	v.vram[0x4000F] = 0x10 // endX register = 16, pixel = 8
 
 	// The line window is bounded vertically by WPSY0/WPEY0 (Sec 8.1):
-	// cover display lines 0-1 only, so line 3 is outside the window.
+	// cover display lines 0-2 only, so line 3 is outside the window.
 	v.regs[vdp2WPSY0] = 0
-	v.regs[vdp2WPEY0] = 1
+	v.regs[vdp2WPEY0] = 2
 
 	// WCTLA: NBG0 W0 enable, inside mode. Transparency runs inside the
 	// per-line range, so the layer is hidden inside and visible outside.
@@ -2990,8 +2998,20 @@ func TestLineWindowW0(t *testing.T) {
 		t.Errorf("line window L1 px(5,1) G=%d, want 255 (outside)", fb[off3+1])
 	}
 
+	// Line 2, pixels (0,2) and (7,2): the negative start covers the
+	// whole line -> masked. Masking the start word to 10 bits would
+	// read 511 and wrongly leave the line unmasked.
+	off5 := (2*width + 0) * 4
+	if fb[off5+1] == 255 {
+		t.Errorf("line window L2 px(0,2) should be masked (negative start covers line)")
+	}
+	off6 := (2*width + 7) * 4
+	if fb[off6+1] == 255 {
+		t.Errorf("line window L2 px(7,2) should be masked (negative start covers line)")
+	}
+
 	// Line 3, pixel (2,3): horizontally inside the table range (0-8) but
-	// outside the vertical window (WPEY0=1) -> not masked, visible.
+	// outside the vertical window (WPEY0=2) -> not masked, visible.
 	off4 := (3*width + 2) * 4
 	if fb[off4+1] != 255 {
 		t.Errorf("line window L3 px(2,3) G=%d, want 255 (outside vertical bound)", fb[off4+1])
@@ -3847,11 +3867,44 @@ func TestIsRPWindowB_LogicBit(t *testing.T) {
 // rotation parameter window: W1LWE (LWTA1U bit 15) makes W1 read its
 // per-scanline horizontal start/end from a VRAM table (manual Sec 8.1
 // p.185-186). Per p.183 a line whose start > end is entirely outside;
-// the comparison is on the signed coordinate words, so an end of
-// 0xFFFF (-1) marks an excluded line (the Panzer Dragoon Saga lava
-// reflection pattern - decoding it unsigned wrongly reads it as the
-// full window). Param B is shown in the active area (p.190);
-// isRPWindowB returns true for Param B.
+// the coordinate words are evaluated as signed (lineWindowX), so an
+// end of 0xFFFF (-1) marks an excluded line (the Panzer Dragoon Saga
+// lava reflection pattern - decoding it unsigned wrongly reads it as
+// the full window) and a negative start covers the line from its left
+// edge (the Panzer Dragoon Zwei ep3 ground pattern: start 0xFFFE /
+// end 0x02C0 - masking the start to 10 bits wrongly empties the
+// window). Param B is shown in the active area (p.190); isRPWindowB
+// returns true for Param B.
+// TestLineWindowX exercises the signed line-window-table coordinate
+// conversion: the full 16-bit word is signed, and in normal resolution
+// bit 0 is invalid so the value shifts right arithmetically by one.
+func TestLineWindowX(t *testing.T) {
+	cases := []struct {
+		name  string
+		hiRes bool
+		raw   uint16
+		want  int
+	}{
+		{"normal in-range", false, 0x02C0, 352},
+		{"normal drops bit 0", false, 0x02C1, 352},
+		{"normal zero", false, 0x0000, 0},
+		{"normal negative start -2", false, 0xFFFE, -1},
+		{"normal negative end -1", false, 0xFFFF, -1},
+		{"normal start>end marker 706", false, 0x02C2, 353},
+		{"hi-res in-range", true, 0x02C0, 704},
+		{"hi-res negative -2", true, 0xFFFE, -2},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			v := newTestVDP2()
+			v.frame.hiRes = tc.hiRes
+			if got := v.lineWindowX(tc.raw); got != tc.want {
+				t.Errorf("lineWindowX(0x%04X) = %d, want %d", tc.raw, got, tc.want)
+			}
+		})
+	}
+}
+
 func TestIsRPWindowB_LineWindow(t *testing.T) {
 	const tableBase = 0x1000
 
@@ -3862,7 +3915,7 @@ func TestIsRPWindowB_LineWindow(t *testing.T) {
 		// ((LWTA1U&7)<<16 | (LWTA1L&0xFFFE)) * 2 = 0x1000.
 		v.regs[vdp2LWTA1U] = 0x8000 // W1LWE=1, addr hi = 0
 		v.regs[vdp2LWTA1L] = 0x0800
-		// windowX (non-hi-res) = (raw & 0x3FE) >> 1, so raw = px*2.
+		// lineWindowX (non-hi-res) = signed raw >> 1, so raw = px*2.
 		// Line 2: window pixels 4..20 (start<=end).
 		v.WriteVRAM16(tableBase+2*4+0, 4*2)
 		v.WriteVRAM16(tableBase+2*4+2, 20*2)
@@ -3871,6 +3924,14 @@ func TestIsRPWindowB_LineWindow(t *testing.T) {
 		// start/end words are compared as signed.
 		v.WriteVRAM16(tableBase+5*4+0, 0x0000)
 		v.WriteVRAM16(tableBase+5*4+2, 0xFFFF)
+		// Line 7: start = 0xFFFE (-2), end = 0x02C0 (704) -> whole
+		// line inside (PDZ ep3 ground lines).
+		v.WriteVRAM16(tableBase+7*4+0, 0xFFFE)
+		v.WriteVRAM16(tableBase+7*4+2, 0x02C0)
+		// Line 8: start = 0x02C2 (706) > end = 0x02C0 (704) -> whole
+		// line outside (PDZ ep3 canopy lines).
+		v.WriteVRAM16(tableBase+8*4+0, 0x02C2)
+		v.WriteVRAM16(tableBase+8*4+2, 0x02C0)
 		return v
 	}
 
@@ -3889,6 +3950,11 @@ func TestIsRPWindowB_LineWindow(t *testing.T) {
 		{"area=outside, outside line -> active -> param B", 0x0C, 30, 2, true},
 		{"area=outside, 0xFFFF-excluded line all outside -> active -> param B", 0x0C, 10, 5, true},
 		{"area=outside, 0xFFFF-excluded line, other x -> param B", 0x0C, 300, 5, true},
+		{"area=outside, negative-start full line inside -> param A", 0x0C, 10, 7, false},
+		{"area=outside, negative-start full line inside, right edge -> param A", 0x0C, 340, 7, false},
+		{"area=outside, start>end line all outside -> active -> param B", 0x0C, 10, 8, true},
+		{"area=inside, negative-start full line inside -> active -> param B", 0x08, 10, 7, true},
+		{"area=inside, start>end line all outside -> param A", 0x08, 10, 8, false},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
