@@ -300,6 +300,32 @@ func (b *Bus) SINITWritten() bool {
 	return v
 }
 
+// CS2 decode classification for cs2Decode results.
+const (
+	cs2OpenBus  = iota // no device decodes the address
+	cs2DataTRNS        // Data Transfer FIFO
+	cs2Register        // command/status register block
+)
+
+// cs2Decode classifies a CS2 offset (addr - 0x05800000): DATATRNS at
+// 0x18000 (mirror 0x98000), the 64-byte register block at 0x90000
+// (mirror 0x98000, offsets 0x00-0x03 aliasing DATATRNS), and open bus
+// everywhere else. The returned register offset is only meaningful for
+// cs2Register.
+func cs2Decode(cs2off uint32) (int, uint32) {
+	if m := cs2off &^ uint32(0x80000); m >= 0x18000 && m <= 0x18003 {
+		return cs2DataTRNS, 0
+	}
+	if cs2off&0xF0000 == 0x90000 && cs2off&0x7FC0 == 0 {
+		regOff := cs2off & 0x3F
+		if regOff <= 0x03 {
+			return cs2DataTRNS, 0
+		}
+		return cs2Register, regOff
+	}
+	return cs2OpenBus, 0
+}
+
 // Read8 reads a byte from the given address, claiming the address's
 // bus area for the duration of the access.
 func (b *Bus) Read8(addr uint32) uint8 {
@@ -368,22 +394,24 @@ func (b *Bus) read8Impl(addr uint32) uint8 {
 	case addr >= 0x05800000 && addr <= 0x058FFFFF:
 		// A-Bus CS2 (CD Block)
 		cs2off := addr - 0x05800000
-		cs2masked := cs2off & ^uint32(0x80000)
-		regOff := cs2off & 0x3F
-		if cs2masked >= 0x18000 && cs2masked <= 0x18003 || regOff <= 0x03 {
+		kind, regOff := cs2Decode(cs2off)
+		switch kind {
+		case cs2DataTRNS:
 			// DATATRNS: fetch one word per aligned byte pair
 			if cs2off&1 == 0 {
 				b.cdDataTRNSCache = b.cdblock.ReadDataTRNS()
 				return uint8(b.cdDataTRNSCache >> 8)
 			}
 			return uint8(b.cdDataTRNSCache)
+		case cs2Register:
+			reg := b.cdblock.Read(regOff &^ 1)
+			if regOff&1 == 0 {
+				return uint8(reg >> 8)
+			}
+			return uint8(reg)
 		}
-		// Other registers: offset from low 6 bits
-		reg := b.cdblock.Read(regOff &^ 1)
-		if regOff&1 == 0 {
-			return uint8(reg >> 8)
-		}
-		return uint8(reg)
+		// No device decodes this address (open bus).
+		return 0xFF
 
 	case addr >= 0x05A00000 && addr <= 0x05A7FFFF:
 		// Sound RAM (512 KB)
@@ -508,9 +536,9 @@ func (b *Bus) write8Impl(addr uint32, val uint8) {
 	case addr >= 0x05800000 && addr <= 0x058FFFFF:
 		// A-Bus CS2 (CD Block)
 		cs2off := addr - 0x05800000
-		cs2masked := cs2off & ^uint32(0x80000)
-		regOff := cs2off & 0x3F
-		if cs2masked >= 0x18000 && cs2masked <= 0x18003 || regOff <= 0x03 {
+		kind, _ := cs2Decode(cs2off)
+		switch kind {
+		case cs2DataTRNS:
 			// DATATRNS byte write: accumulate, send on low byte
 			if cs2off&1 == 0 {
 				b.cdDataTRNSCache = (b.cdDataTRNSCache & 0x00FF) | (uint16(val) << 8)
@@ -518,9 +546,12 @@ func (b *Bus) write8Impl(addr uint32, val uint8) {
 				b.cdDataTRNSCache = (b.cdDataTRNSCache & 0xFF00) | uint16(val)
 				b.cdblock.Write(0x0000, b.cdDataTRNSCache)
 			}
-		} else {
+		case cs2Register:
+			// Registers are 16-bit only: a byte write cannot be
+			// delivered to a decoded register.
 			fmt.Printf("[CDBLOCK] dropped 8-bit write to 0x%08X = 0x%02X\n", addr, val)
 		}
+		// Open bus: no device, write discarded.
 
 	case addr >= 0x05A00000 && addr <= 0x05A7FFFF:
 		// Sound RAM (512 KB)
@@ -717,12 +748,15 @@ func (b *Bus) read16Impl(addr uint32) uint16 {
 		return 0
 	case masked >= 0x05800000 && masked <= 0x058FFFFF:
 		// A-Bus CS2 (CD Block)
-		cs2off := masked - 0x05800000
-		cs2masked := cs2off & ^uint32(0x80000)
-		if cs2masked >= 0x18000 && cs2masked <= 0x18003 || (cs2off&0x3F) <= 0x03 {
+		kind, regOff := cs2Decode(masked - 0x05800000)
+		switch kind {
+		case cs2DataTRNS:
 			return b.cdblock.ReadDataTRNS()
+		case cs2Register:
+			return b.cdblock.Read(regOff &^ 1)
 		}
-		return b.cdblock.Read(cs2off & 0x3E)
+		// No device decodes this address (open bus).
+		return 0xFFFF
 	default:
 		fmt.Printf("[BUS] unmapped 16-bit read from 0x%08X\n", addr)
 		return 0
@@ -826,13 +860,16 @@ func (b *Bus) read32Impl(addr uint32) uint32 {
 		return 0
 	case masked >= 0x05800000 && masked <= 0x058FFFFF:
 		// A-Bus CS2 (CD Block)
-		cs2off := masked - 0x05800000
-		cs2masked := cs2off & ^uint32(0x80000)
-		if cs2masked >= 0x18000 && cs2masked <= 0x18003 || (cs2off&0x3F) <= 0x03 {
+		kind, regOff := cs2Decode(masked - 0x05800000)
+		switch kind {
+		case cs2DataTRNS:
 			return b.cdblock.ReadDataTRNS32()
+		case cs2Register:
+			reg := b.cdblock.Read(regOff &^ 1)
+			return uint32(reg)<<16 | uint32(reg)
 		}
-		reg := b.cdblock.Read(cs2off & 0x3E)
-		return uint32(reg)<<16 | uint32(reg)
+		// No device decodes this address (open bus).
+		return 0xFFFFFFFF
 	default:
 		fmt.Printf("[BUS] unmapped 32-bit read from 0x%08X\n", addr)
 		return 0
@@ -936,13 +973,14 @@ func (b *Bus) write16Impl(addr uint32, val uint16) {
 		return
 	case masked >= 0x05800000 && masked <= 0x058FFFFF:
 		// A-Bus CS2 (CD Block)
-		cs2off := masked - 0x05800000
-		cs2masked := cs2off & ^uint32(0x80000)
-		if cs2masked >= 0x18000 && cs2masked <= 0x18003 || (cs2off&0x3F) <= 0x03 {
+		kind, regOff := cs2Decode(masked - 0x05800000)
+		switch kind {
+		case cs2DataTRNS:
 			b.cdblock.Write(0x0000, val)
-		} else {
-			b.cdblock.Write(cs2off&0x3E, val)
+		case cs2Register:
+			b.cdblock.Write(regOff&^1, val)
 		}
+		// Open bus: no device, write discarded.
 		return
 	default:
 		fmt.Printf("[BUS] unmapped 16-bit write to 0x%08X = 0x%04X\n", addr, val)
@@ -1090,15 +1128,16 @@ func (b *Bus) write32Impl(addr uint32, val uint32) {
 		return
 	case masked >= 0x05800000 && masked <= 0x058FFFFF:
 		// A-Bus CS2 (CD Block)
-		cs2off := masked - 0x05800000
-		cs2masked := cs2off & ^uint32(0x80000)
-		if cs2masked >= 0x18000 && cs2masked <= 0x18003 || (cs2off&0x3F) <= 0x03 {
+		kind, regOff := cs2Decode(masked - 0x05800000)
+		switch kind {
+		case cs2DataTRNS:
 			b.cdblock.Write32(0x0000, val)
-		} else {
-			regOff := cs2off & 0x3E
+		case cs2Register:
+			regOff &^= 1
 			b.cdblock.Write(regOff, uint16(val>>16))
 			b.cdblock.Write(regOff+2, uint16(val))
 		}
+		// Open bus: no device, write discarded.
 		return
 	default:
 		fmt.Printf("[BUS] unmapped 32-bit write to 0x%08X = 0x%08X\n", addr, val)

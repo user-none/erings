@@ -27,9 +27,14 @@ offsets within the CS2 space:
 DATATRNS is at CS2 offset 0x18000 (absolute 0x25818000), mirrored at
 0x98000 (absolute 0x25898000) via bit 19.
 
-The command/status registers at 0x90000+ are mirrored at 0x98000+ via
-a 0x08000 (32 KB) mirror. The register offset within the 64-byte block
-is extracted as (cs2_offset & 0x3F).
+The command/status register block occupies the first 64 bytes of the
+0x90000 page, mirrored at 0x98000 (32 KB mirror). The register offset
+within the 64-byte block is extracted as (cs2_offset & 0x3F). The
+block does not repeat across the rest of the 0x90000-0x9FFFF page: a
+traced title detects the modem by probing a 16550-style UART at
+0x25895001 (register stride 4, scratch write/read-back at 0x2589501D),
+which requires the CD Block not to drive those addresses. On a console
+without the expansion device they read as open bus.
 
 Writing to CR4 (offset 0x25 within the register block) triggers command
 execution.

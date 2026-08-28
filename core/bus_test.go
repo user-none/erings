@@ -293,21 +293,23 @@ func TestStubRegions(t *testing.T) {
 	stubs := []struct {
 		name string
 		addr uint32
+		want uint8
 	}{
-		{"SMPC", 0x00100000},
-		{"A-Bus Dummy", 0x05000000},
-		{"A-Bus CS2", 0x05800000},
-		{"VDP1 VRAM", 0x05C00000},
-		{"VDP1 FB", 0x05C80000},
-		{"VDP1 Regs", 0x05D00000},
-		{"VDP2 VRAM", 0x05E00000},
-		{"VDP2 CRAM", 0x05F00000},
-		{"VDP2 Regs", 0x05F80000},
-		{"SCU Regs", 0x05FE0000},
+		{"SMPC", 0x00100000, 0},
+		{"A-Bus Dummy", 0x05000000, 0},
+		// CS2 outside the CD Block's decoded windows is open bus.
+		{"A-Bus CS2", 0x05800000, 0xFF},
+		{"VDP1 VRAM", 0x05C00000, 0},
+		{"VDP1 FB", 0x05C80000, 0},
+		{"VDP1 Regs", 0x05D00000, 0},
+		{"VDP2 VRAM", 0x05E00000, 0},
+		{"VDP2 CRAM", 0x05F00000, 0},
+		{"VDP2 Regs", 0x05F80000, 0},
+		{"SCU Regs", 0x05FE0000, 0},
 	}
 	for _, s := range stubs {
-		if got := bus.Read8(s.addr); got != 0 {
-			t.Errorf("%s read = 0x%02X, want 0x00", s.name, got)
+		if got := bus.Read8(s.addr); got != s.want {
+			t.Errorf("%s read = 0x%02X, want 0x%02X", s.name, got, s.want)
 		}
 		// Write should not panic
 		bus.Write8(s.addr, 0xFF)
@@ -949,14 +951,28 @@ func TestCDBlockAccessorNotNil(t *testing.T) {
 	}
 }
 
-func TestCS2UnmappedStillZero(t *testing.T) {
+// TestCS2OpenBusUndecoded verifies CS2 addresses outside the CD Block's
+// decoded windows (DATATRNS at offsets 0x18000/0x98000, the 64-byte
+// register block at 0x90000/0x98000) behave as open bus: reads return
+// all-ones and writes are discarded. The byte addresses are ones a
+// traced title hits while probing the modem UART.
+func TestCS2OpenBusUndecoded(t *testing.T) {
 	bus := newBusForTest()
-	// Address in CS2 range but outside CD Block registers
-	if got := bus.Read8(0x05800000); got != 0 {
-		t.Errorf("CS2 unmapped read = 0x%02X, want 0x00", got)
+	for _, a := range []uint32{0x05800000, 0x0589501D, 0x0582503D, 0x05890040} {
+		if got := bus.Read8(a); got != 0xFF {
+			t.Errorf("Read8(0x%08X) = 0x%02X, want 0xFF", a, got)
+		}
+		// Write must be discarded without panic.
+		bus.Write8(a, 0x5A)
 	}
-	// Should not panic
-	bus.Write8(0x05800000, 0xFF)
+	if got := bus.Read16(0x05895010); got != 0xFFFF {
+		t.Errorf("Read16(0x05895010) = 0x%04X, want 0xFFFF", got)
+	}
+	if got := bus.Read32(0x05825000); got != 0xFFFFFFFF {
+		t.Errorf("Read32(0x05825000) = 0x%08X, want 0xFFFFFFFF", got)
+	}
+	bus.Write16(0x05895010, 0x1234)
+	bus.Write32(0x05825000, 0xCAFEBABE)
 }
 
 func TestExtendedRAMCartridge(t *testing.T) {
@@ -1373,16 +1389,20 @@ func TestBus16BitWriteMINITSINIT(t *testing.T) {
 // TestBusCS2_32BitRegister exercises the A-Bus CS2 (CD block) 32-bit
 // non-DATATRNS path. Write32 at HIRQMSK writes the upper half to
 // HIRQMSK; a Read32 at the same address composes HIRQMSK into both
-// halves of the returned value.
+// halves of the returned value. The register also reads back through
+// the 32 KB register-block mirror at CS2 offset 0x98000.
 func TestBusCS2_32BitRegister(t *testing.T) {
 	bus := newBusForTest()
 
-	// HIRQMSK at CS2 offset 0x000C.
-	bus.Write32(0x0580000C, 0x0FFF0000)
-	if got := bus.Read16(0x0580000C); got != 0x0FFF {
+	// HIRQMSK at CS2 offset 0x9000C.
+	bus.Write32(0x0589000C, 0x0FFF0000)
+	if got := bus.Read16(0x0589000C); got != 0x0FFF {
 		t.Errorf("HIRQMSK after Write32 = 0x%04X, want 0x0FFF", got)
 	}
-	if got := bus.Read32(0x0580000C); got != (0x0FFF<<16)|0x0FFF {
+	if got := bus.Read32(0x0589000C); got != (0x0FFF<<16)|0x0FFF {
 		t.Errorf("HIRQMSK Read32 composition = 0x%08X, want 0x0FFF0FFF", got)
+	}
+	if got := bus.Read16(0x0589800C); got != 0x0FFF {
+		t.Errorf("HIRQMSK via 0x98000 mirror = 0x%04X, want 0x0FFF", got)
 	}
 }
