@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"sync/atomic"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -72,6 +73,14 @@ type game struct {
 	dumpReq atomic.Bool
 	dumpDir string
 
+	// traceReq is set from Update (ebiten goroutine) on key 6 and
+	// consumed in emulationLoop between frames, toggling a runtime
+	// execution trace (see trace.go). traceActive and traceFile are
+	// owned solely by the emulation goroutine.
+	traceReq    atomic.Bool
+	traceActive bool
+	traceFile   *os.File
+
 	// recorder, when non-nil (-record given), captures per-frame input
 	// and screenshot markers. It is written to disk on shutdown.
 	// screenshotReq is set from Update (ebiten goroutine) on the space bar
@@ -134,6 +143,10 @@ func (g *game) Update() error {
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyDigit9) {
 		g.histReq.Store(true)
+	}
+
+	if inpututil.IsKeyJustPressed(ebiten.KeyDigit6) {
+		g.traceReq.Store(true)
 	}
 
 	if inpututil.IsKeyJustPressed(ebiten.KeyDigit8) {

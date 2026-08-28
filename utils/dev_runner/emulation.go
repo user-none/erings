@@ -255,6 +255,7 @@ func (g *game) serviceRequests() {
 	g.serviceHistRequest()
 	g.serviceScreenshotRequest()
 	g.serviceDumpRequest()
+	g.serviceTraceRequest()
 	if g.debugServer != nil {
 		g.debugServer.Service(g.emuFrame)
 	}
