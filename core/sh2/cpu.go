@@ -277,7 +277,7 @@ func (c *CPU) Clock() ClockState {
 	// Cycle-steal DMAC transfer: the bus write returns to the CPU after
 	// each transfer unit (HM Sec 9.5, Bus Modes, Fig 9.10), so the CPU
 	// keeps executing while the bus-occupation countdown runs in the
-	// background. 
+	// background.
 	if c.dmac.Active() && !c.dmac.Stalling() {
 		if ch := c.dmac.Tick(); ch >= 0 {
 			c.routeDMACInterrupt(ch)

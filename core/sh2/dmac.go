@@ -21,7 +21,7 @@ type DMAC struct {
 	bus    Bus      // Memory access for transfers
 
 	stallCycles [2]int // stallCycles is the per-channel bus-occupation countdown in cycles (-1 = no transfer in progress).
-	stallCh     int   // channel most recently kicked (-1 = none)
+	stallCh     int    // channel most recently kicked (-1 = none)
 }
 
 // Reset returns the DMAC to power-on state.
