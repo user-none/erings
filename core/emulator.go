@@ -68,18 +68,28 @@ type Emulator struct {
 	// support stays simple.
 	ipImage []byte
 
-	// Per-goroutine progress counters: system cycles completed this frame,
-	// reset by RunFrame before the workers are kicked (both are parked at
-	// that point). Each goroutine stores its counter after every chunk and
-	// spin-waits on the counters of the goroutines constraining it (see
-	// frame.go's timing-model comment for the constraint graph). The
-	// counters bound only WHEN each goroutine's clock sits relative to the
-	// others; the ordering and safety of individual shared accesses to
-	// component registers, VRAM, and WRAM within that window is handled
-	// separately, by the per-area bus locks.
-	masterCycles    atomic.Int64
-	secondaryCycles atomic.Int64
-	vdpCycles       atomic.Int64
+	// Per-goroutine fence counters, reset by RunFrame before the
+	// workers are kicked (both are parked at that point). Units are the
+	// publisher's own: masterCycles and secondaryCycles count system
+	// cycles completed this frame; vdpLinesWalked counts fully walked
+	// scanlines. Each goroutine publishes its counter as it advances and
+	// waits, through its waiter below, on the counters of the goroutines
+	// constraining it. The counters bound only WHEN each goroutine's
+	// clock sits relative to the others; the ordering and safety of
+	// individual shared accesses to component registers, VRAM, and WRAM
+	// within that window is handled separately, by the per-area bus locks.
+	masterCycles    fence
+	secondaryCycles fence
+	vdpLinesWalked  fence
+
+	// The frame walk's complete wait graph: one owned waiter per waiting
+	// goroutine and counter, created at construction before the workers
+	// start.
+	masterWaitsSecondary *fenceWaiter // sh2 barrier + frame-end join
+	secondaryWaitsMaster *fenceWaiter // sh2 barrier
+	walkerWaitsMaster    *fenceWaiter // line gate
+	walkerWaitsSecondary *fenceWaiter // line gate
+	masterWaitsWalker    *fenceWaiter // line slack gate
 
 	// Per-frame walk parameters for the workers, written before the
 	// kick channel sends so both workers see the values the main
@@ -93,13 +103,13 @@ type Emulator struct {
 
 	// The VDP worker cycle-walks the frame: VDP1 incremental command
 	// ticking per chunk, with VDP2 BeginFrame/RenderLine and the VDP1
-	// frame events fired at their cycle positions. Main spins for
-	// vdpWalkDone at frame end, so the framebuffer is complete and the
-	// worker parked when RunFrame returns. Both workers are spawned by
-	// Start and stopped by Close (which closes their job channels).
-	vdpJobCh        chan struct{}
-	vdpWalkDone     atomic.Int64
-	vdpFramesKicked int64
+	// frame events fired at their cycle positions. RunFrame sends on
+	// vdpJobChBegin to start the walk and receives on vdpJobChFinished
+	// at frame end, so the framebuffer is complete and the worker
+	// parked when RunFrame returns. Both workers are spawned by Start
+	// and stopped by Close (which closes their kick channels).
+	vdpJobChBegin    chan struct{}
+	vdpJobChFinished chan struct{}
 
 	// The secondary bucket (slave SH-2 + SCU/SCSP/CD + SMPC dispatch)
 	// runs on its own worker goroutine every frame. Slave SH-2 stepping
@@ -130,11 +140,9 @@ type Emulator struct {
 	// Cross-CPU FRT input-capture flags. A MINIT write by the master must
 	// capture the slave's FRT; a SINIT write by the slave must capture the
 	// master's. The writer sets its flag; the receiving CPU clears it and
-	// latches its own FRT at the next sync barrier (frame.go barrier),
-	// within syncChunkCycles of the write. The tight barrier supplies the
-	// relative-timing guarantee that the loose-drift design needed an
-	// explicit park-and-respond rendezvous for. A plain bool suffices: a
-	// MINIT/SINIT write is a deliberate sync, never spammed within a chunk.
+	// latches its own FRT at its next sh2Barrier, within syncChunkCycles
+	// of the write. A plain bool suffices: a MINIT/SINIT write is a
+	// deliberate sync, never spammed within a chunk.
 	minitPending atomic.Bool
 	sinitPending atomic.Bool
 
@@ -195,9 +203,15 @@ func NewEmulator() *Emulator {
 	master.SetIRLAck(scu.AcknowledgeInterrupt)
 
 	// VDP worker (VDP1 walk + VDP2 line render) and slave SH-2 worker
-	// kick channels.
-	e.vdpJobCh = make(chan struct{}, 1)
+	// channels, and the frame walk's wait graph.
+	e.vdpJobChBegin = make(chan struct{}, 1)
+	e.vdpJobChFinished = make(chan struct{}, 1)
 	e.secondaryJobCh = make(chan struct{}, 1)
+	e.masterWaitsSecondary = e.secondaryCycles.NewWaiter()
+	e.secondaryWaitsMaster = e.masterCycles.NewWaiter()
+	e.walkerWaitsMaster = e.masterCycles.NewWaiter()
+	e.walkerWaitsSecondary = e.secondaryCycles.NewWaiter()
+	e.masterWaitsWalker = e.vdpLinesWalked.NewWaiter()
 
 	e.recalcTiming()
 
@@ -470,6 +484,6 @@ func (e *Emulator) Close() {
 		return
 	}
 	e.closed = true
-	close(e.vdpJobCh)
+	close(e.vdpJobChBegin)
 	close(e.secondaryJobCh)
 }
