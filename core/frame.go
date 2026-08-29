@@ -22,7 +22,7 @@ import (
 // and spin-waits for the other to reach it before continuing, so master
 // and slave never drift more than a chunk apart. The VDP walker is
 // aligned more loosely, scanline-granular against the CPUs - it publishes
-// once per line and is waited on at line boundaries.
+// its completed-line count and is waited on at line boundaries.
 //
 //   Main goroutine: master SH-2 steps plus the VDP2 intra-line position
 //   per sync chunk, then publishes its position and waits for the slave
@@ -138,7 +138,7 @@ func (e *Emulator) RunFrame() {
 	// writes ahead of the workers' reads.
 	e.masterCycles.Store(0)
 	e.secondaryCycles.Store(0)
-	e.vdpCycles.Store(0)
+	e.vdpLinesWalked.Store(0)
 	e.bus.resetContention()
 	e.vdp2.ResetRotArm()
 	e.frameLineWidth = e.systemCyclesPerScanline
@@ -159,14 +159,13 @@ func (e *Emulator) RunFrame() {
 
 	lineWidth := e.frameLineWidth
 	scanlines := e.frameScanlines
-	vdpSlack := int64(vdpSlackLines) * int64(lineWidth)
 	pos := int64(0)
 	for line := uint16(0); line < scanlines; line++ {
 		// Line-boundary sync against the VDP walker only: start the line
-		// when the walker is within its slack. The slave is held within
-		// syncChunkCycles by the per-chunk barrier below, not here.
-		vdpWait := pos + int64(lineWidth) - vdpSlack
-		for e.vdpCycles.Load() < vdpWait {
+		// when the walker trails it by no more than vdpSlackLines. The
+		// slave is held within syncChunkCycles by the per-chunk barrier
+		// below, not here.
+		for e.vdpLinesWalked.Load() < int64(line)+1-vdpSlackLines {
 			runtime.Gosched()
 		}
 
@@ -389,7 +388,7 @@ func (e *Emulator) walkVDPFrame() {
 			vdp2.RenderTo(int((next - line*lineWidth) / cpp))
 		}
 		if next-(line*lineWidth) == lineWidth {
-			e.vdpCycles.Store(next)
+			e.vdpLinesWalked.Store(line + 1)
 		}
 		pos = next
 	}

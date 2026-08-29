@@ -68,9 +68,11 @@ type Emulator struct {
 	// support stays simple.
 	ipImage []byte
 
-	// Per-goroutine progress counters: system cycles completed this frame,
-	// reset by RunFrame before the workers are kicked (both are parked at
-	// that point). Each goroutine stores its counter after every chunk and
+	// Per-goroutine progress counters, reset by RunFrame before the
+	// workers are kicked (both are parked at that point). Units are the
+	// publisher's own: masterCycles and secondaryCycles count system
+	// cycles completed this frame; vdpLinesWalked counts fully walked
+	// scanlines. Each goroutine publishes its counter as it advances and
 	// spin-waits on the counters of the goroutines constraining it (see
 	// frame.go's timing-model comment for the constraint graph). The
 	// counters bound only WHEN each goroutine's clock sits relative to the
@@ -79,7 +81,7 @@ type Emulator struct {
 	// separately, by the per-area bus locks.
 	masterCycles    atomic.Int64
 	secondaryCycles atomic.Int64
-	vdpCycles       atomic.Int64
+	vdpLinesWalked  atomic.Int64
 
 	// Per-frame walk parameters for the workers, written before the
 	// kick channel sends so both workers see the values the main
