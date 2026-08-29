@@ -150,8 +150,7 @@ func (e *Emulator) RunFrame() {
 
 	// Kick the VDP worker's frame walk. The workers are spawned by
 	// Start; RunFrame only kicks them.
-	e.vdpFramesKicked++
-	e.vdpJobCh <- struct{}{}
+	e.vdpJobChBegin <- struct{}{}
 
 	// Kick the secondary worker. It always runs - the SCU/SCSP/CD
 	// components live there; the slave SH-2 stepping inside it is
@@ -215,13 +214,12 @@ func (e *Emulator) RunFrame() {
 
 	// Wait for both workers to finish the frame: after this the
 	// framebuffer is complete and both workers are parked on their
-	// kick channels.
+	// kick channels. The secondary's completion is its cycle counter
+	// reaching the frame total; the walker's is the finished send.
 	for e.secondaryCycles.Load() < e.frameTotalCycles {
 		runtime.Gosched()
 	}
-	for e.vdpWalkDone.Load() != e.vdpFramesKicked {
-		runtime.Gosched()
-	}
+	<-e.vdpJobChFinished
 
 	smpc.TickFrame()
 
@@ -285,8 +283,9 @@ func (e *Emulator) sh2Barrier(pub, peer *atomic.Int64, myPos int64, cpu *sh2.CPU
 // vdpWorker services one frame walk per kick, parking on the job
 // channel between frames.
 func (e *Emulator) vdpWorker() {
-	for range e.vdpJobCh {
+	for range e.vdpJobChBegin {
 		e.walkVDPFrame()
+		e.vdpJobChFinished <- struct{}{}
 	}
 }
 
@@ -318,8 +317,6 @@ func (e *Emulator) vdpWorker() {
 //	composited, and per Sec.4.2 the erase-write progresses behind the
 //	beam during the displayed field - then VBlankIn fires (swap,
 //	BEF/CEF latch).
-//
-// vdpWalkDone signals frame completion to main's frame-end wait.
 func (e *Emulator) walkVDPFrame() {
 	vdp1 := e.vdp1
 	vdp2 := e.vdp2
@@ -396,7 +393,6 @@ func (e *Emulator) walkVDPFrame() {
 		}
 		pos = next
 	}
-	e.vdpWalkDone.Add(1)
 }
 
 // secondaryWorker services one frame walk per kick, parking on the job

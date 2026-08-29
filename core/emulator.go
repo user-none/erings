@@ -93,13 +93,11 @@ type Emulator struct {
 
 	// The VDP worker cycle-walks the frame: VDP1 incremental command
 	// ticking per chunk, with VDP2 BeginFrame/RenderLine and the VDP1
-	// frame events fired at their cycle positions. Main spins for
-	// vdpWalkDone at frame end, so the framebuffer is complete and the
-	// worker parked when RunFrame returns. Both workers are spawned by
-	// Start and stopped by Close (which closes their job channels).
-	vdpJobCh        chan struct{}
-	vdpWalkDone     atomic.Int64
-	vdpFramesKicked int64
+	// frame events fired at their cycle positions. RunFrame sends on
+	// vdpJobChBegin to start the walk and receives on vdpJobChFinished
+	// at frame end.
+	vdpJobChBegin    chan struct{}
+	vdpJobChFinished chan struct{}
 
 	// The secondary bucket (slave SH-2 + SCU/SCSP/CD + SMPC dispatch)
 	// runs on its own worker goroutine every frame. Slave SH-2 stepping
@@ -196,7 +194,8 @@ func NewEmulator() *Emulator {
 
 	// VDP worker (VDP1 walk + VDP2 line render) and slave SH-2 worker
 	// kick channels.
-	e.vdpJobCh = make(chan struct{}, 1)
+	e.vdpJobChBegin = make(chan struct{}, 1)
+	e.vdpJobChFinished = make(chan struct{}, 1)
 	e.secondaryJobCh = make(chan struct{}, 1)
 
 	e.recalcTiming()
@@ -470,6 +469,6 @@ func (e *Emulator) Close() {
 		return
 	}
 	e.closed = true
-	close(e.vdpJobCh)
+	close(e.vdpJobChBegin)
 	close(e.secondaryJobCh)
 }
