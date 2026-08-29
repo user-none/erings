@@ -139,11 +139,14 @@ type CPU struct {
 	// direct data-array region per Section 8.4.8 Figure 8.10. Cache
 	// contents are NOT initialized by a reset (Section 8.5.1) - only
 	// CCR is cleared - so none of these are touched in Reset.
-	cacheData  [4096]byte
-	cacheTag   [4][64]uint32 // tag address bits A28-A10 per way/entry
-	cacheValid [4][64]bool
-	cacheLRU   [64]uint8 // 6-bit pseudo-LRU per entry (Section 8.4.5)
-	ccr        uint8     // Cache Control Register (0xFFFFFE92)
+	cacheData [4096]byte
+	// cacheTags is entry-major so one set's four ways share a single
+	// 16-byte row: tag address bits A28-A10 with the valid bit packed
+	// into bit 0 (free below the tag field). An invalid line keeps its
+	// tag with bit 0 clear, as hardware keeps tags across purges.
+	cacheTags [64][4]uint32
+	cacheLRU  [64]uint8 // 6-bit pseudo-LRU per entry (Section 8.4.5)
+	ccr       uint8     // Cache Control Register (0xFFFFFE92)
 
 	// fetchLineAddr/Way/Off memoize the last cached instruction
 	// fetch's line resolution, so sequential fetches within one

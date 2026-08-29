@@ -188,8 +188,15 @@ func (c *CPU) State() State {
 
 	s.Cache.CCR = c.ccr
 	s.Cache.Data = c.cacheData
-	s.Cache.Tag = c.cacheTag
-	s.Cache.Valid = c.cacheValid
+	// TODO: this is translating to an older format for compatibility. If the emulator save
+	//       state has a breaking change this should be changed to mirror the implementation. 
+	for entry := 0; entry < 64; entry++ {
+		for way := 0; way < 4; way++ {
+			stored := c.cacheTags[entry][way]
+			s.Cache.Tag[way][entry] = stored &^ cacheValidBit
+			s.Cache.Valid[way][entry] = stored&cacheValidBit != 0
+		}
+	}
 	s.Cache.LRU = c.cacheLRU
 
 	s.INTC.IPRA = c.intc.ipra
@@ -284,8 +291,17 @@ func (c *CPU) SetState(s *State) {
 
 	c.ccr = s.Cache.CCR
 	c.cacheData = s.Cache.Data
-	c.cacheTag = s.Cache.Tag
-	c.cacheValid = s.Cache.Valid
+	// TODO: this is translating to an older format for compatibility. If the emulator save
+	//       state has a breaking change this should be changed to mirror the implementation. 
+	for entry := 0; entry < 64; entry++ {
+		for way := 0; way < 4; way++ {
+			stored := s.Cache.Tag[way][entry] &^ cacheValidBit
+			if s.Cache.Valid[way][entry] {
+				stored |= cacheValidBit
+			}
+			c.cacheTags[entry][way] = stored
+		}
+	}
 	c.cacheLRU = s.Cache.LRU
 
 	c.intc.ipra = s.INTC.IPRA

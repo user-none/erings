@@ -58,10 +58,9 @@ func fillCPUState(c *CPU) {
 	for i := range c.cacheData {
 		c.cacheData[i] = byte(i%255) + 1
 	}
-	for way := range c.cacheTag {
-		for e := range c.cacheTag[way] {
-			c.cacheTag[way][e] = uint32(way*1000 + e + 1)
-			c.cacheValid[way][e] = true
+	for e := range c.cacheTags {
+		for way := range c.cacheTags[e] {
+			c.cacheTags[e][way] = cacheTagOf(uint32(way*1000+e+1)<<10) | cacheValidBit
 		}
 	}
 	for i := range c.cacheLRU {
@@ -191,7 +190,7 @@ func TestStateSpotValues(t *testing.T) {
 	if s.Exec.FetchLineWay != 2 {
 		t.Errorf("Exec.FetchLineWay = %d", s.Exec.FetchLineWay)
 	}
-	if s.Cache.Tag[2][10] != 2011 {
+	if s.Cache.Tag[2][10] != uint32(2011)<<10 {
 		t.Errorf("Cache.Tag[2][10] = %d", s.Cache.Tag[2][10])
 	}
 	if s.INTC.Pending != 0x0042 {
@@ -260,8 +259,7 @@ var stateCoverage = map[reflect.Type]map[string]string{
 		"wdt":                 "captured",
 		"nextPeripheralEvent": "captured",
 		"cacheData":           "captured",
-		"cacheTag":            "captured",
-		"cacheValid":          "captured",
+		"cacheTags":           "captured",
 		"cacheLRU":            "captured",
 		"ccr":                 "captured",
 		"fetchLineAddr":       "captured",

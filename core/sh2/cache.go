@@ -24,7 +24,9 @@ package sh2
 // way-major - way*1024 + entry*16 + byte. Way 0 maps to
 // 0xC0000000-0xC00003FF, way 1 to 0x...400-0x...7FF, way 2 to
 // 0x...800-0x...BFF, way 3 to 0x...C00-0x...FFF, so direct data-array
-// access and cached lines share storage exactly as on hardware.
+// access and cached lines share storage exactly as on hardware. Tags
+// live in cacheTags entry-major with the valid bit packed into bit 0,
+// so a lookup probes one contiguous row.
 
 // CCR bits (Section 8.2, Table 8.1).
 const (
@@ -41,6 +43,10 @@ const fetchLineInvalid = 1
 
 // cacheTagOf extracts the tag address bits A28-A10 (Figure 8.2).
 func cacheTagOf(addr uint32) uint32 { return addr & 0x1FFFFC00 }
+
+// cacheValidBit is the valid flag packed into bit 0 of a cacheTags
+// word, below the tag field.
+const cacheValidBit = 1
 
 // cacheEntryOf extracts the entry (set) index bits A9-A4 (Figure 8.2).
 func cacheEntryOf(addr uint32) uint32 { return (addr >> 4) & 0x3F }
@@ -65,14 +71,20 @@ func (c *CPU) cacheTouch(entry uint32, way int) {
 
 // cacheLookup finds the way whose valid line holds addr's tag at addr's
 // entry. Tags are compared on all four ways even in two-way mode
-// (Section 8.4.5); entries with valid bit 0 never match (Section 8.4.1).
+// (Section 8.4.5); entries with valid bit 0 never match (Section 8.4.1)
+// - the packed valid bit makes an invalid line's word compare unequal.
 func (c *CPU) cacheLookup(addr uint32) (int, bool) {
-	entry := cacheEntryOf(addr)
-	tag := cacheTagOf(addr)
-	for way := 0; way < 4; way++ {
-		if c.cacheValid[way][entry] && c.cacheTag[way][entry] == tag {
-			return way, true
-		}
+	set := &c.cacheTags[cacheEntryOf(addr)]
+	want := cacheTagOf(addr) | cacheValidBit
+	switch want {
+	case set[0]:
+		return 0, true
+	case set[1]:
+		return 1, true
+	case set[2]:
+		return 2, true
+	case set[3]:
+		return 3, true
 	}
 	return 0, false
 }
@@ -116,8 +128,7 @@ func (c *CPU) cacheFill(way int, addr uint32) {
 	// The replacement may evict the memoized fetch line.
 	c.fetchLineAddr = fetchLineInvalid
 	entry := cacheEntryOf(addr)
-	c.cacheTag[way][entry] = cacheTagOf(addr)
-	c.cacheValid[way][entry] = true
+	c.cacheTags[entry][way] = cacheTagOf(addr) | cacheValidBit
 	base := addr &^ 0xF
 	off := uint32(way)*1024 + entry*16
 	// Read the 16-byte line as one transaction so it cannot be torn by
@@ -268,8 +279,10 @@ func (c *CPU) cacheWriteHit32(addr uint32, val uint32) {
 // writing 1 to CCR's CP bit.
 func (c *CPU) cachePurge() {
 	c.fetchLineAddr = fetchLineInvalid
-	for way := range c.cacheValid {
-		clear(c.cacheValid[way][:])
+	for entry := range c.cacheTags {
+		for way := range c.cacheTags[entry] {
+			c.cacheTags[entry][way] &^= cacheValidBit
+		}
 	}
 	clear(c.cacheLRU[:])
 }
@@ -288,11 +301,11 @@ func (c *CPU) CachePurge() { c.cachePurge() }
 // A non-matching address purges nothing.
 func (c *CPU) associativePurge(addr uint32) {
 	c.fetchLineAddr = fetchLineInvalid
-	entry := cacheEntryOf(addr)
-	tag := cacheTagOf(addr)
-	for way := 0; way < 4; way++ {
-		if c.cacheValid[way][entry] && c.cacheTag[way][entry] == tag {
-			c.cacheValid[way][entry] = false
+	set := &c.cacheTags[cacheEntryOf(addr)]
+	want := cacheTagOf(addr) | cacheValidBit
+	for way := range set {
+		if set[way] == want {
+			set[way] &^= cacheValidBit
 		}
 	}
 }
@@ -304,8 +317,9 @@ func (c *CPU) associativePurge(addr uint32) {
 func (c *CPU) addressArrayRead(addr uint32) uint32 {
 	way := (c.ccr >> 6) & 3
 	entry := cacheEntryOf(addr)
-	v := c.cacheTag[way][entry] | uint32(c.cacheLRU[entry])<<4
-	if c.cacheValid[way][entry] {
+	stored := c.cacheTags[entry][way]
+	v := (stored &^ cacheValidBit) | uint32(c.cacheLRU[entry])<<4
+	if stored&cacheValidBit != 0 {
 		v |= 1 << 2
 	}
 	return v
@@ -319,7 +333,10 @@ func (c *CPU) addressArrayWrite(addr uint32, val uint32) {
 	c.fetchLineAddr = fetchLineInvalid
 	way := (c.ccr >> 6) & 3
 	entry := cacheEntryOf(addr)
-	c.cacheTag[way][entry] = cacheTagOf(addr)
-	c.cacheValid[way][entry] = addr&(1<<2) != 0
+	stored := cacheTagOf(addr)
+	if addr&(1<<2) != 0 {
+		stored |= cacheValidBit
+	}
+	c.cacheTags[entry][way] = stored
 	c.cacheLRU[entry] = uint8(val>>4) & 0x3F
 }

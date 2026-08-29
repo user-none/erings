@@ -161,7 +161,7 @@ func TestCacheLRUReplacement(t *testing.T) {
 	for i, a := range addrs[:4] {
 		cpu.Read32(a)
 		w := wantWays[i]
-		if !cpu.cacheValid[w][1] || cpu.cacheTag[w][1] != cacheTagOf(a) {
+		if !cpu.testCacheValid(w, 1) || cpu.testCacheTag(w, 1) != cacheTagOf(a) {
 			t.Fatalf("fill %d: tag %08X not in way %d", i, cacheTagOf(a), w)
 		}
 	}
@@ -170,7 +170,7 @@ func TestCacheLRUReplacement(t *testing.T) {
 	// the replacement target, then miss: the new tag lands in way 2.
 	cpu.Read32(addrs[0])
 	cpu.Read32(addrs[4])
-	if cpu.cacheTag[2][1] != cacheTagOf(addrs[4]) {
+	if cpu.testCacheTag(2, 1) != cacheTagOf(addrs[4]) {
 		t.Errorf("5th tag in way %v, want way 2 (LRU after touching way 3)",
 			func() int {
 				w, _ := cpu.cacheLookup(addrs[4])
@@ -230,9 +230,9 @@ func TestAddressArrayAccess(t *testing.T) {
 	cpu.SetCCR(0x40 | ccrCE)
 	addr := uint32(0x60000000) | 0x00000C00 | 2<<4 | 1<<2
 	cpu.Write32(addr, 5<<4) // LRU = 5
-	if !cpu.cacheValid[1][2] || cpu.cacheTag[1][2] != 0x00000C00 {
+	if !cpu.testCacheValid(1, 2) || cpu.testCacheTag(1, 2) != 0x00000C00 {
 		t.Fatalf("address-array write: way1 entry2 = valid %v tag %08X",
-			cpu.cacheValid[1][2], cpu.cacheTag[1][2])
+			cpu.testCacheValid(1, 2), cpu.testCacheTag(1, 2))
 	}
 	if cpu.cacheLRU[2] != 5 {
 		t.Errorf("LRU after address-array write = %d, want 5", cpu.cacheLRU[2])
@@ -245,7 +245,7 @@ func TestAddressArrayAccess(t *testing.T) {
 
 	// Clearing the valid bit through the address array invalidates.
 	cpu.Write32(addr&^(1<<2), 0)
-	if cpu.cacheValid[1][2] {
+	if cpu.testCacheValid(1, 2) {
 		t.Error("address-array write with V=0 left the entry valid")
 	}
 }
@@ -292,7 +292,7 @@ func TestCacheTwoWayMode(t *testing.T) {
 	for _, a := range addrs {
 		cpu.Read32(a)
 	}
-	if cpu.cacheValid[0][1] || cpu.cacheValid[1][1] {
+	if cpu.testCacheValid(0, 1) || cpu.testCacheValid(1, 1) {
 		t.Error("two-way mode replaced way 0 or 1")
 	}
 	// Three fills into two ways: all landed in ways 2/3.
@@ -461,4 +461,14 @@ func TestCacheStallExemptions(t *testing.T) {
 	if cpu.busStall != 7 {
 		t.Errorf("write-through stall = %d, want 7", cpu.busStall)
 	}
+}
+
+// testCacheValid and testCacheTag present the packed cacheTags words in
+// the way/entry tag+valid view the assertions are written against.
+func (c *CPU) testCacheValid(way, entry int) bool {
+	return c.cacheTags[entry][way]&cacheValidBit != 0
+}
+
+func (c *CPU) testCacheTag(way, entry int) uint32 {
+	return c.cacheTags[entry][way] &^ cacheValidBit
 }
