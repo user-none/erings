@@ -25,11 +25,13 @@ import (
 // its completed-line count and is waited on at line boundaries.
 //
 //   Main goroutine: master SH-2 steps plus the VDP2 intra-line position
-//   per sync chunk, then publishes its position and waits for the slave
-//   before the next chunk. Scanline boundaries advance the raster timebase
-//   (VDP2.EndLine/EndFrame), which raises the SCU V-blank/H-blank
-//   interrupts. Starts a line only when the VDP walker is within
-//   vdpSlackLines; the slave is held within syncChunkCycles per chunk.
+//   per sync chunk (the intra-line tick raises SCU H-blank IN as the
+//   line enters horizontal blanking), then publishes its position and
+//   waits for the slave before the next chunk. Scanline boundaries
+//   advance the raster timebase (VDP2.EndLine/EndFrame), which raises
+//   the SCU V-blank interrupts. Starts a line only when the VDP walker
+//   trails by no more than vdpSlackLines; the slave is held within
+//   syncChunkCycles per chunk.
 //
 //   Secondary worker (always running): the bucket - SCU, SCSP, CD,
 //   and the slave SH-2 (stepped only when SSHEnabled) - advanced in
@@ -91,14 +93,47 @@ const syncChunkCycles = 16
 // deficit, bounded by this value.
 const vdpSlackLines = 2
 
-// barrierSpinLimit is how many times the master/slave rendezvous busy-waits
-// for the peer before yielding the goroutine with runtime.Gosched. With at
-// least one host thread per worker the peer arrives within the budget and the
-// yield is never reached, so the hot path stays a bare atomic spin. When the
-// scheduler is oversubscribed (fewer usable threads than workers, or a GC
-// worker has taken a P) the budget runs out and the yield lets the awaited
-// goroutine run, trading the tight coupling for forward progress.
-const barrierSpinLimit = 1 << 12
+// barrierSpinLimit is how many times a frame-walk wait busy-waits before
+// yielding the goroutine with runtime.Gosched. It applies to every wait
+// loop in the walk: the master/slave rendezvous, the line and frame-end
+// waits, and the VDP walker's line wait.
+//
+// The budget is chosen once at startup from GOMAXPROCS, because the two
+// regimes want opposite values. With a host thread for each of the
+// three workers plus slack for the runtime and host app (4+), a large
+// budget means normal waits resolve while still spinning and never
+// yield - each yield in that regime wakes an idle OS thread, and at
+// wait frequency those wakes dominate CPU. With fewer threads than
+// workers, every wait is a starvation wait: the awaited goroutine is
+// not running, the budget is dead time before the yield lets it run,
+// and a small budget's microsecond-scale yield cadence timeslices the
+// workers instead (yields are also cheap there - with no idle thread
+// to wake, Gosched is just a requeue).
+var barrierSpinLimit = spinLimitForProcs(runtime.GOMAXPROCS(0))
+
+// spinLimitForProcs picks the frame-walk spin budget for the number of
+// usable host threads.
+func spinLimitForProcs(procs int) int {
+	if procs >= 4 {
+		return 1 << 20
+	}
+	return 1 << 12
+}
+
+// spinWait holds until ctr reaches target: a bare spin for
+// barrierSpinLimit iterations, then a runtime.Gosched yield, repeated.
+// The frame walk's line and frame-end waits use this; the master/slave
+// rendezvous has its own loop in sh2Barrier with its gating conditions.
+func spinWait(ctr *atomic.Int64, target int64) {
+	spins := 0
+	for ctr.Load() < target {
+		spins++
+		if spins >= barrierSpinLimit {
+			runtime.Gosched()
+			spins = 0
+		}
+	}
+}
 
 // RunFrame executes one complete frame of emulation.
 func (e *Emulator) RunFrame() {
@@ -111,7 +146,7 @@ func (e *Emulator) RunFrame() {
 	if e.pendingSystemReset.CompareAndSwap(true, false) {
 		e.systemReset()
 	}
-	// Deliver the derred SMPC CKCHG reset
+	// Deliver the deferred SMPC CKCHG reset
 	if scsp.TakePendingReset() {
 		scsp.Reset()
 	}
@@ -165,9 +200,7 @@ func (e *Emulator) RunFrame() {
 		// when the walker trails it by no more than vdpSlackLines. The
 		// slave is held within syncChunkCycles by the per-chunk barrier
 		// below, not here.
-		for e.vdpLinesWalked.Load() < int64(line)+1-vdpSlackLines {
-			runtime.Gosched()
-		}
+		spinWait(&e.vdpLinesWalked, int64(line)+1-vdpSlackLines)
 
 		// Walk the line in sync chunks: the master steps, the VDP2
 		// intra-line position advances, then the barrier publishes the
@@ -215,9 +248,7 @@ func (e *Emulator) RunFrame() {
 	// framebuffer is complete and both workers are parked on their
 	// kick channels. The secondary's completion is its cycle counter
 	// reaching the frame total; the walker's is the finished send.
-	for e.secondaryCycles.Load() < e.frameTotalCycles {
-		runtime.Gosched()
-	}
+	spinWait(&e.secondaryCycles, e.frameTotalCycles)
 	<-e.vdpJobChFinished
 
 	smpc.TickFrame()
@@ -253,24 +284,27 @@ func (e *Emulator) stepSlave(frameCyc int64) {
 	}
 }
 
-// sh2Barrier publishes this goroutine's clock position and spin-waits until the
-// peer reaches it, holding the two SH-2 clocks within syncChunkCycles. It
-// also delivers a pending cross-CPU FRT input capture: when the peer wrote
-// MINIT/SINIT since the last barrier, the receiving CPU latches its own
-// FRT here, on its own goroutine, within a chunk of the write - the tight
-// barrier supplies the timing that the loose-drift design needed an
-// explicit rendezvous and response window for. The wait is skipped while
-// this CPU is mid-TAS (it holds a bus claim across cycles that the peer
-// would otherwise spin on at this barrier) and at the frame end (where the
-// peer's clock caps and is free to reset); RunFrame's frame-end wait
-// covers the boundary.
+// sh2Barrier publishes this goroutine's clock position and spin-waits until
+// the peer reaches it, holding the two SH-2 clocks within syncChunkCycles.
+// It also delivers a pending cross-CPU FRT input capture: when the peer
+// wrote MINIT/SINIT since the last barrier, the receiving CPU latches its
+// own FRT here, on its own goroutine, within a chunk of the write.
+//
+// The wait is skipped mid-TAS (this CPU holds a bus claim across cycles
+// that the peer may be waiting on, so waiting here would deadlock) and at
+// the frame end (RunFrame's frame-end wait covers the boundary). Both
+// conditions only change through this goroutine's own stepping, so they
+// are evaluated once instead of per wait iteration.
 func (e *Emulator) sh2Barrier(pub, peer *atomic.Int64, myPos int64, cpu *sh2.CPU, pending *atomic.Bool, capture func()) {
 	pub.Store(myPos)
 	if pending.CompareAndSwap(true, false) {
 		capture()
 	}
+	if cpu.InTAS() || myPos >= e.frameTotalCycles {
+		return
+	}
 	spins := 0
-	for !cpu.InTAS() && myPos < e.frameTotalCycles && peer.Load() < myPos {
+	for peer.Load() < myPos {
 		spins++
 		if spins >= barrierSpinLimit {
 			runtime.Gosched()
@@ -341,9 +375,8 @@ func (e *Emulator) walkVDPFrame() {
 			// Line-boundary sync: walk this line only after both CPUs
 			// have completed it.
 			wait := pos + lineWidth
-			for e.masterCycles.Load() < wait || e.secondaryCycles.Load() < wait {
-				runtime.Gosched()
-			}
+			spinWait(&e.masterCycles, wait)
+			spinWait(&e.secondaryCycles, wait)
 			if line == 1 {
 				// First H-blank IN after V-blank OUT: VDP1's FBCR
 				// latch point. Per VDP1 manual Sec 4.2, FCM/FCT

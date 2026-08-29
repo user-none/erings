@@ -130,11 +130,9 @@ type Emulator struct {
 	// Cross-CPU FRT input-capture flags. A MINIT write by the master must
 	// capture the slave's FRT; a SINIT write by the slave must capture the
 	// master's. The writer sets its flag; the receiving CPU clears it and
-	// latches its own FRT at the next sync barrier (frame.go barrier),
-	// within syncChunkCycles of the write. The tight barrier supplies the
-	// relative-timing guarantee that the loose-drift design needed an
-	// explicit park-and-respond rendezvous for. A plain bool suffices: a
-	// MINIT/SINIT write is a deliberate sync, never spammed within a chunk.
+	// latches its own FRT at its next sh2Barrier, within syncChunkCycles
+	// of the write. A plain bool suffices: a MINIT/SINIT write is a
+	// deliberate sync, never spammed within a chunk.
 	minitPending atomic.Bool
 	sinitPending atomic.Bool
 
