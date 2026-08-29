@@ -4,6 +4,7 @@
 package core
 
 import (
+	"runtime"
 	"sync/atomic"
 
 	"github.com/user-none/erings/core/sh2"
@@ -17,21 +18,18 @@ import (
 // hardware bus domain for the duration of that access and releases it, so
 // goroutines serialize only where the hardware's buses do, at the access
 // itself. Time alignment: the two SH-2 clocks are held within
-// syncChunkCycles of each other - each publishes its position every
-// chunk and waits (fence: spin, then park) for the other to reach it
-// before continuing, so master and slave never drift more than a chunk
-// apart. The VDP walker is aligned more loosely, scanline-granular
-// against the CPUs - it publishes its completed-line count and is
-// waited on at line boundaries.
+// syncChunkCycles of each other - each publishes its position every chunk
+// and spin-waits for the other to reach it before continuing, so master
+// and slave never drift more than a chunk apart. The VDP walker is
+// aligned more loosely, scanline-granular against the CPUs - it publishes
+// once per line and is waited on at line boundaries.
 //
 //   Main goroutine: master SH-2 steps plus the VDP2 intra-line position
-//   per sync chunk (the intra-line tick raises SCU H-blank IN as the
-//   line enters horizontal blanking), then publishes its position and
-//   waits for the slave before the next chunk. Scanline boundaries
-//   advance the raster timebase (VDP2.EndLine/EndFrame), which raises
-//   the SCU V-blank interrupts. Starts a line only when the VDP walker
-//   trails by no more than vdpSlackLines; the slave is held within
-//   syncChunkCycles per chunk.
+//   per sync chunk, then publishes its position and waits for the slave
+//   before the next chunk. Scanline boundaries advance the raster timebase
+//   (VDP2.EndLine/EndFrame), which raises the SCU V-blank/H-blank
+//   interrupts. Starts a line only when the VDP walker is within
+//   vdpSlackLines; the slave is held within syncChunkCycles per chunk.
 //
 //   Secondary worker (always running): the bucket - SCU, SCSP, CD,
 //   and the slave SH-2 (stepped only when SSHEnabled) - advanced in
@@ -39,9 +37,8 @@ import (
 //   each chunk. Bounded against the VDP walker transitively, through
 //   the master.
 //
-//   VDP worker: kicked per frame on vdpJobChBegin, signals completion
-//   on vdpJobChFinished. Ticks VDP1 incremental command processing in
-//   tick chunks and streams the VDP2 row render along the dot clock - each
+//   VDP worker: ticks VDP1 incremental command processing in tick
+//   chunks and streams the VDP2 row render along the dot clock - each
 //   chunk renders the pixels the beam covered, so the render cost
 //   spreads across the line instead of bursting at a boundary. It
 //   starts a line only when both CPUs have completed it, so VDP1
@@ -77,7 +74,7 @@ const tickChunkCycles = 10
 
 // syncChunkCycles bounds how far the master (main goroutine) and slave
 // (secondary worker) SH-2 clocks may drift apart. Each steps this many
-// cycles, publishes its position, then waits until the peer has
+// cycles, publishes its position, then spin-waits until the peer has
 // reached that position before the next chunk, so neither runs more than
 // one chunk ahead of the other. The MINIT/SINIT cross-CPU FRT capture
 // rides this barrier (see sh2Barrier): the writer flags it, the receiver
@@ -93,6 +90,15 @@ const syncChunkCycles = 16
 // While the walker is behind, VDP1 status and interrupts lag by the
 // deficit, bounded by this value.
 const vdpSlackLines = 2
+
+// barrierSpinLimit is how many times the master/slave rendezvous busy-waits
+// for the peer before yielding the goroutine with runtime.Gosched. With at
+// least one host thread per worker the peer arrives within the budget and the
+// yield is never reached, so the hot path stays a bare atomic spin. When the
+// scheduler is oversubscribed (fewer usable threads than workers, or a GC
+// worker has taken a P) the budget runs out and the yield lets the awaited
+// goroutine run, trading the tight coupling for forward progress.
+const barrierSpinLimit = 1 << 12
 
 // RunFrame executes one complete frame of emulation.
 func (e *Emulator) RunFrame() {
@@ -126,13 +132,13 @@ func (e *Emulator) RunFrame() {
 	// regardless of how the frame is sliced.
 	scsp.StartFrame(e.systemCyclesPerFrame, e.samplesPerFrame, e.m68kCyclesPerFrame)
 
-	// Reset the fence counters and publish this frame's walk
+	// Reset the progress counters and publish this frame's walk
 	// parameters. Both workers are parked here (the previous frame's
 	// end waits below guarantee it), and the channel sends order these
 	// writes ahead of the workers' reads.
 	e.masterCycles.Store(0)
 	e.secondaryCycles.Store(0)
-	e.vdpLinesWalked.Store(0)
+	e.vdpCycles.Store(0)
 	e.bus.resetContention()
 	e.vdp2.ResetRotArm()
 	e.frameLineWidth = e.systemCyclesPerScanline
@@ -144,7 +150,8 @@ func (e *Emulator) RunFrame() {
 
 	// Kick the VDP worker's frame walk. The workers are spawned by
 	// Start; RunFrame only kicks them.
-	e.vdpJobChBegin <- struct{}{}
+	e.vdpFramesKicked++
+	e.vdpJobCh <- struct{}{}
 
 	// Kick the secondary worker. It always runs - the SCU/SCSP/CD
 	// components live there; the slave SH-2 stepping inside it is
@@ -153,13 +160,16 @@ func (e *Emulator) RunFrame() {
 
 	lineWidth := e.frameLineWidth
 	scanlines := e.frameScanlines
+	vdpSlack := int64(vdpSlackLines) * int64(lineWidth)
 	pos := int64(0)
 	for line := uint16(0); line < scanlines; line++ {
 		// Line-boundary sync against the VDP walker only: start the line
-		// when the walker trails it by no more than vdpSlackLines. The
-		// slave is held within syncChunkCycles by the per-chunk barrier
-		// below, not here.
-		e.masterWaitsWalker.Wait(int64(line) + 1 - vdpSlackLines)
+		// when the walker is within its slack. The slave is held within
+		// syncChunkCycles by the per-chunk barrier below, not here.
+		vdpWait := pos + int64(lineWidth) - vdpSlack
+		for e.vdpCycles.Load() < vdpWait {
+			runtime.Gosched()
+		}
 
 		// Walk the line in sync chunks: the master steps, the VDP2
 		// intra-line position advances, then the barrier publishes the
@@ -177,7 +187,7 @@ func (e *Emulator) RunFrame() {
 			}
 			vdp2.TickSystemCycles(chunk)
 			cyc += chunk
-			e.sh2Barrier(&e.masterCycles, e.masterWaitsSecondary, pos+int64(cyc), e.master, &e.sinitPending, e.master.FRTInputCapture)
+			e.sh2Barrier(&e.masterCycles, &e.secondaryCycles, pos+int64(cyc), e.master, &e.sinitPending, e.master.FRTInputCapture)
 		}
 		// Finish a TAS that straddled the line boundary before the next
 		// line's VDP-slack wait (or, on the last line, the frame-end
@@ -205,10 +215,13 @@ func (e *Emulator) RunFrame() {
 
 	// Wait for both workers to finish the frame: after this the
 	// framebuffer is complete and both workers are parked on their
-	// kick channels. The secondary's completion is its cycle clock
-	// reaching the frame total; the walker's is the finished send.
-	e.masterWaitsSecondary.Wait(e.frameTotalCycles)
-	<-e.vdpJobChFinished
+	// kick channels.
+	for e.secondaryCycles.Load() < e.frameTotalCycles {
+		runtime.Gosched()
+	}
+	for e.vdpWalkDone.Load() != e.vdpFramesKicked {
+		runtime.Gosched()
+	}
 
 	smpc.TickFrame()
 
@@ -243,33 +256,37 @@ func (e *Emulator) stepSlave(frameCyc int64) {
 	}
 }
 
-// sh2Barrier publishes this goroutine's clock position and waits until the
-// peer reaches it, holding the two SH-2 clocks within syncChunkCycles.
-// It also delivers a pending cross-CPU FRT input capture: when the peer
-// wrote MINIT/SINIT since the last barrier, the receiving CPU latches its
-// own FRT here, on its own goroutine, within a chunk of the write.
-//
-// The wait is skipped mid-TAS (this CPU holds a bus claim across cycles
-// that the peer may be waiting on, so waiting here would deadlock) and at
-// the frame end (RunFrame's frame-end wait covers the boundary). Both
-// conditions only change through this goroutine's own stepping, so they
-// are evaluated once instead of per wait iteration.
-func (e *Emulator) sh2Barrier(pub *fence, peer *fenceWaiter, myPos int64, cpu *sh2.CPU, pending *atomic.Bool, capture func()) {
+// sh2Barrier publishes this goroutine's clock position and spin-waits until the
+// peer reaches it, holding the two SH-2 clocks within syncChunkCycles. It
+// also delivers a pending cross-CPU FRT input capture: when the peer wrote
+// MINIT/SINIT since the last barrier, the receiving CPU latches its own
+// FRT here, on its own goroutine, within a chunk of the write - the tight
+// barrier supplies the timing that the loose-drift design needed an
+// explicit rendezvous and response window for. The wait is skipped while
+// this CPU is mid-TAS (it holds a bus claim across cycles that the peer
+// would otherwise spin on at this barrier) and at the frame end (where the
+// peer's clock caps and is free to reset); RunFrame's frame-end wait
+// covers the boundary.
+func (e *Emulator) sh2Barrier(pub, peer *atomic.Int64, myPos int64, cpu *sh2.CPU, pending *atomic.Bool, capture func()) {
 	pub.Store(myPos)
 	if pending.CompareAndSwap(true, false) {
 		capture()
 	}
-	if !cpu.InTAS() && myPos < e.frameTotalCycles {
-		peer.Wait(myPos)
+	spins := 0
+	for !cpu.InTAS() && myPos < e.frameTotalCycles && peer.Load() < myPos {
+		spins++
+		if spins >= barrierSpinLimit {
+			runtime.Gosched()
+			spins = 0
+		}
 	}
 }
 
-// vdpWorker services one frame walk per kick, signals completion, and
-// parks on the kick channel between frames.
+// vdpWorker services one frame walk per kick, parking on the job
+// channel between frames.
 func (e *Emulator) vdpWorker() {
-	for range e.vdpJobChBegin {
+	for range e.vdpJobCh {
 		e.walkVDPFrame()
-		e.vdpJobChFinished <- struct{}{}
 	}
 }
 
@@ -281,7 +298,7 @@ func (e *Emulator) vdpWorker() {
 // cursor follows the dot clock (one pixel per activeCyc/width cycles
 // of the line's active period), so each chunk renders the few pixels
 // the beam covered and the row completes as the active period ends.
-// vdpLinesWalked publishes the walked-line count as each line completes.
+// Progress publishes once per line.
 //
 // Frame events fire at their cycle positions:
 //
@@ -301,6 +318,8 @@ func (e *Emulator) vdpWorker() {
 //	composited, and per Sec.4.2 the erase-write progresses behind the
 //	beam during the displayed field - then VBlankIn fires (swap,
 //	BEF/CEF latch).
+//
+// vdpWalkDone signals frame completion to main's frame-end wait.
 func (e *Emulator) walkVDPFrame() {
 	vdp1 := e.vdp1
 	vdp2 := e.vdp2
@@ -326,8 +345,9 @@ func (e *Emulator) walkVDPFrame() {
 			// Line-boundary sync: walk this line only after both CPUs
 			// have completed it.
 			wait := pos + lineWidth
-			e.walkerWaitsMaster.Wait(wait)
-			e.walkerWaitsSecondary.Wait(wait)
+			for e.masterCycles.Load() < wait || e.secondaryCycles.Load() < wait {
+				runtime.Gosched()
+			}
 			if line == 1 {
 				// First H-blank IN after V-blank OUT: VDP1's FBCR
 				// latch point. Per VDP1 manual Sec 4.2, FCM/FCT
@@ -372,10 +392,11 @@ func (e *Emulator) walkVDPFrame() {
 			vdp2.RenderTo(int((next - line*lineWidth) / cpp))
 		}
 		if next-(line*lineWidth) == lineWidth {
-			e.vdpLinesWalked.Store(line + 1)
+			e.vdpCycles.Store(next)
 		}
 		pos = next
 	}
+	e.vdpWalkDone.Add(1)
 }
 
 // secondaryWorker services one frame walk per kick, parking on the job
@@ -441,7 +462,7 @@ func (e *Emulator) walkSecondaryFrame() {
 			scsp.TickSystemCycles(w)
 			e.cdblock.TickSystemCycles(w)
 			pos += chunk
-			e.sh2Barrier(&e.secondaryCycles, e.secondaryWaitsMaster, pos, e.slave, &e.minitPending, e.slave.FRTInputCapture)
+			e.sh2Barrier(&e.secondaryCycles, &e.masterCycles, pos, e.slave, &e.minitPending, e.slave.FRTInputCapture)
 		}
 	}
 }
