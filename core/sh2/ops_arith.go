@@ -296,12 +296,18 @@ func opDIV1(c *CPU) {
 // Baseline 2 cycles (EX + MA). mm runs 4 cycles after MA; if the next
 // multiplier instruction begins before mm completes, that instruction
 // stalls. Programming Manual Section 7.2.3, Table 7.1 (2-4 cycles).
+//
+// Contention accounting shared by the multiplier instructions: the
+// follower's multiplier MA runs one cycle after its EX (its first
+// pending step), and Section 7.2.3 extends that MA until the preceding
+// instruction's mm ends, so the stall is the busy time remaining after
+// the EX cycle, clamped to the follower's Table 7.1 maximum.
 func opMULL(c *CPU) {
 	extraStall := uint8(0)
 	if c.cycles < c.multiplierBusyUntil {
 		delta := c.multiplierBusyUntil - c.cycles
-		if delta > 2 {
-			extraStall = uint8(delta - 2)
+		if delta > 1 {
+			extraStall = uint8(delta - 1)
 		}
 	}
 	if extraStall > 2 { // Table 7.1 max: MUL.L 2 to 4
@@ -310,9 +316,8 @@ func opMULL(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
 	c.reg.MACL = c.reg.R[n] * c.reg.R[m]
-	c.cycles++
-	c.setPending(popStall, 1+extraStall)
-	c.multiplierBusyUntil = c.cycles + 5
+	c.multiplierBusyUntil = c.cycles + 6
+	c.cycles += 2 + uint64(extraStall)
 }
 
 // opMULSW: MULS.W Rm,Rn - MACL = int16(Rn) * int16(Rm) (signed).
@@ -333,11 +338,8 @@ func opMULSW(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
 	c.reg.MACL = uint32(int32(int16(c.reg.R[n])) * int32(int16(c.reg.R[m])))
-	c.cycles++
-	if extraStall > 0 {
-		c.setPending(popStall, extraStall)
-	}
-	c.multiplierBusyUntil = c.cycles + 3
+	c.multiplierBusyUntil = c.cycles + 4
+	c.cycles += 1 + uint64(extraStall)
 }
 
 // opMULUW: MULU.W Rm,Rn - MACL = uint16(Rn) * uint16(Rm) (unsigned).
@@ -357,11 +359,8 @@ func opMULUW(c *CPU) {
 	n := regN(c.ir)
 	m := regM(c.ir)
 	c.reg.MACL = uint32(uint16(c.reg.R[n])) * uint32(uint16(c.reg.R[m]))
-	c.cycles++
-	if extraStall > 0 {
-		c.setPending(popStall, extraStall)
-	}
-	c.multiplierBusyUntil = c.cycles + 3
+	c.multiplierBusyUntil = c.cycles + 4
+	c.cycles += 1 + uint64(extraStall)
 }
 
 // opDMULSL: DMULS.L Rm,Rn - MACH:MACL = int32(Rn) * int32(Rm) (signed).
@@ -371,8 +370,8 @@ func opDMULSL(c *CPU) {
 	extraStall := uint8(0)
 	if c.cycles < c.multiplierBusyUntil {
 		delta := c.multiplierBusyUntil - c.cycles
-		if delta > 2 {
-			extraStall = uint8(delta - 2)
+		if delta > 1 {
+			extraStall = uint8(delta - 1)
 		}
 	}
 	if extraStall > 2 { // Table 7.1 max: DMULS.L 2 to 4
@@ -383,9 +382,8 @@ func opDMULSL(c *CPU) {
 	result := int64(int32(c.reg.R[n])) * int64(int32(c.reg.R[m]))
 	c.reg.MACL = uint32(result)
 	c.reg.MACH = uint32(result >> 32)
-	c.cycles++
-	c.setPending(popStall, 1+extraStall)
-	c.multiplierBusyUntil = c.cycles + 5
+	c.multiplierBusyUntil = c.cycles + 6
+	c.cycles += 2 + uint64(extraStall)
 }
 
 // opDMULUL: DMULU.L Rm,Rn - MACH:MACL = uint32(Rn) * uint32(Rm) (unsigned).
@@ -395,8 +393,8 @@ func opDMULUL(c *CPU) {
 	extraStall := uint8(0)
 	if c.cycles < c.multiplierBusyUntil {
 		delta := c.multiplierBusyUntil - c.cycles
-		if delta > 2 {
-			extraStall = uint8(delta - 2)
+		if delta > 1 {
+			extraStall = uint8(delta - 1)
 		}
 	}
 	if extraStall > 2 { // Table 7.1 max: DMULU.L 2 to 4
@@ -407,16 +405,14 @@ func opDMULUL(c *CPU) {
 	result := uint64(c.reg.R[n]) * uint64(c.reg.R[m])
 	c.reg.MACL = uint32(result)
 	c.reg.MACH = uint32(result >> 32)
-	c.cycles++
-	c.setPending(popStall, 1+extraStall)
-	c.multiplierBusyUntil = c.cycles + 5
+	c.multiplierBusyUntil = c.cycles + 6
+	c.cycles += 2 + uint64(extraStall)
 }
 
 // opMACL: MAC.L @Rm+,@Rn+ - multiply-accumulate long.
 // Baseline 2 cycles. mm runs 4 cycles after the second MA (set in
 // stepMACL). If the multiplier is still busy from a preceding MUL/MAC,
-// MAC.L's pending-op count is extended so stepMACL idles for the
-// required stall cycles before running the real second-MA body.
+// The contention stall delays MAC.L's second MA.
 // Programming Manual Section 7.2.3, Table 7.1 (2-4 cycles).
 // Cycle 1: EX+MA read @Rn, post-increment Rn
 // Cycle 2 (final step): MA read @Rm, post-increment Rm, accumulate
@@ -424,8 +420,8 @@ func opMACL(c *CPU) {
 	extraStall := uint8(0)
 	if c.cycles < c.multiplierBusyUntil {
 		delta := c.multiplierBusyUntil - c.cycles
-		if delta > 2 {
-			extraStall = uint8(delta - 2)
+		if delta > 1 {
+			extraStall = uint8(delta - 1)
 		}
 	}
 	if extraStall > 2 { // Table 7.1 max: MAC.L 2 to 4
@@ -435,12 +431,14 @@ func opMACL(c *CPU) {
 	m := regM(c.ir)
 
 	// Cycle 1: read @Rn, post-increment
-	c.pendingVal = uint32(c.Read32(c.reg.R[n]))
+	rnVal := int32(c.Read32(c.reg.R[n]))
 	c.reg.R[n] += 4
-	c.pendingN = n | (m << 4)
-	c.stepBus = BusRead
+	c.cycles += 1 + uint64(extraStall) // MA: read @Rm
+	rmVal := int32(c.Read32(c.reg.R[m]))
+	c.reg.R[m] += 4
 	c.cycles++
-	c.setPending(popMACL, 1+extraStall)
+	c.macAccumulate(int64(rnVal)*int64(rmVal), false)
+	c.multiplierBusyUntil = c.cycles + 4
 }
 
 // opMACW: MAC.W @Rm+,@Rn+ - multiply-accumulate word.
@@ -453,8 +451,8 @@ func opMACW(c *CPU) {
 	extraStall := uint8(0)
 	if c.cycles < c.multiplierBusyUntil {
 		delta := c.multiplierBusyUntil - c.cycles
-		if delta > 2 {
-			extraStall = uint8(delta - 2)
+		if delta > 1 {
+			extraStall = uint8(delta - 1)
 		}
 	}
 	if extraStall > 1 { // Table 7.1 max: MAC.W 2 to 3 (only 1 extra allowed)
@@ -464,12 +462,14 @@ func opMACW(c *CPU) {
 	m := regM(c.ir)
 
 	// Cycle 1: read @Rn, post-increment
-	c.pendingVal = uint32(c.Read16(c.reg.R[n]))
+	rnVal := int16(c.Read16(c.reg.R[n]))
 	c.reg.R[n] += 2
-	c.pendingN = n | (m << 4)
-	c.stepBus = BusRead
+	c.cycles += 1 + uint64(extraStall) // MA: read @Rm
+	rmVal := int16(c.Read16(c.reg.R[m]))
+	c.reg.R[m] += 2
 	c.cycles++
-	c.setPending(popMACW, 1+extraStall)
+	c.macAccumulate(int64(int32(rnVal)*int32(rmVal)), true)
+	c.multiplierBusyUntil = c.cycles + 2
 }
 
 // opDT: DT Rn - Rn--; T = (Rn == 0) ? 1 : 0

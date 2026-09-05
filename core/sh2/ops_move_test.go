@@ -11,7 +11,7 @@ func TestOpMOVReg(t *testing.T) {
 		// 0x6353: MOV R5,R3
 		cpu := newDecodeTestCPU(0x6353)
 		cpu.reg.R[5] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xDEADBEEF {
 			t.Errorf("R3 = 0x%08X, want 0xDEADBEEF", cpu.reg.R[3])
 		}
@@ -20,7 +20,7 @@ func TestOpMOVReg(t *testing.T) {
 	t.Run("MOVI_positive", func(t *testing.T) {
 		// 0xE37F: MOV #0x7F,R3 (positive)
 		cpu := newDecodeTestCPU(0xE37F)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x0000007F {
 			t.Errorf("R3 = 0x%08X, want 0x0000007F", cpu.reg.R[3])
 		}
@@ -29,7 +29,7 @@ func TestOpMOVReg(t *testing.T) {
 	t.Run("MOVI_negative", func(t *testing.T) {
 		// 0xE380: MOV #0x80,R3 (negative, sign-extends to 0xFFFFFF80)
 		cpu := newDecodeTestCPU(0xE380)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFFFF80 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFFFF80", cpu.reg.R[3])
 		}
@@ -43,7 +43,7 @@ func TestOpMOVLoad(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6350)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write8(0x80, 0x42)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x00000042 {
 			t.Errorf("R3 = 0x%08X, want 0x00000042", cpu.reg.R[3])
 		}
@@ -54,7 +54,7 @@ func TestOpMOVLoad(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6350)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write8(0x80, 0xFF)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFFFFFF {
 			t.Errorf("R3 = 0x%08X, want 0xFFFFFFFF", cpu.reg.R[3])
 		}
@@ -65,7 +65,7 @@ func TestOpMOVLoad(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6351)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write16(0x80, 0x1234)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x00001234 {
 			t.Errorf("R3 = 0x%08X, want 0x00001234", cpu.reg.R[3])
 		}
@@ -76,7 +76,7 @@ func TestOpMOVLoad(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6351)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write16(0x80, 0x8000)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFF8000 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFF8000", cpu.reg.R[3])
 		}
@@ -87,7 +87,7 @@ func TestOpMOVLoad(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6352)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write32(0x80, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
 		}
@@ -101,7 +101,7 @@ func TestOpMOVStore(t *testing.T) {
 		cpu := newDecodeTestCPU(0x2350)
 		cpu.reg.R[3] = 0x80
 		cpu.reg.R[5] = 0xABCDEF42
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read8(0x80)
 		if got != 0x42 {
 			t.Errorf("@0x80 = 0x%02X, want 0x42", got)
@@ -113,7 +113,7 @@ func TestOpMOVStore(t *testing.T) {
 		cpu := newDecodeTestCPU(0x2351)
 		cpu.reg.R[3] = 0x80
 		cpu.reg.R[5] = 0xABCD1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read16(0x80)
 		if got != 0x1234 {
 			t.Errorf("@0x80 = 0x%04X, want 0x1234", got)
@@ -125,7 +125,7 @@ func TestOpMOVStore(t *testing.T) {
 		cpu := newDecodeTestCPU(0x2352)
 		cpu.reg.R[3] = 0x80
 		cpu.reg.R[5] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read32(0x80)
 		if got != 0xDEADBEEF {
 			t.Errorf("@0x80 = 0x%08X, want 0xDEADBEEF", got)
@@ -140,7 +140,7 @@ func TestOpMOVPostInc(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6354)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write8(0x80, 0x42)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x00000042 {
 			t.Errorf("R3 = 0x%08X, want 0x00000042", cpu.reg.R[3])
 		}
@@ -154,7 +154,7 @@ func TestOpMOVPostInc(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6355)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write16(0x80, 0x1234)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x00001234 {
 			t.Errorf("R3 = 0x%08X, want 0x00001234", cpu.reg.R[3])
 		}
@@ -168,7 +168,7 @@ func TestOpMOVPostInc(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6356)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write32(0x80, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
 		}
@@ -182,7 +182,7 @@ func TestOpMOVPostInc(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6554)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write8(0x80, 0x42)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		// R5 gets the loaded value, no post-increment
 		if cpu.reg.R[5] != 0x00000042 {
 			t.Errorf("R5 = 0x%08X, want 0x00000042", cpu.reg.R[5])
@@ -197,7 +197,7 @@ func TestOpMOVPreDec(t *testing.T) {
 		cpu := newDecodeTestCPU(0x2354)
 		cpu.reg.R[3] = 0x84
 		cpu.reg.R[5] = 0xAB
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x83 {
 			t.Errorf("R3 = 0x%08X, want 0x83", cpu.reg.R[3])
 		}
@@ -212,7 +212,7 @@ func TestOpMOVPreDec(t *testing.T) {
 		cpu := newDecodeTestCPU(0x2355)
 		cpu.reg.R[3] = 0x84
 		cpu.reg.R[5] = 0x1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x82 {
 			t.Errorf("R3 = 0x%08X, want 0x82", cpu.reg.R[3])
 		}
@@ -227,7 +227,7 @@ func TestOpMOVPreDec(t *testing.T) {
 		cpu := newDecodeTestCPU(0x2356)
 		cpu.reg.R[3] = 0x88
 		cpu.reg.R[5] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x84 {
 			t.Errorf("R3 = 0x%08X, want 0x84", cpu.reg.R[3])
 		}
@@ -246,7 +246,7 @@ func TestOpMOVR0Idx(t *testing.T) {
 		cpu.reg.R[0] = 0x10
 		cpu.reg.R[3] = 0x70
 		cpu.reg.R[5] = 0xAB
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read8(0x80)
 		if got != 0xAB {
 			t.Errorf("@0x80 = 0x%02X, want 0xAB", got)
@@ -259,7 +259,7 @@ func TestOpMOVR0Idx(t *testing.T) {
 		cpu.reg.R[0] = 0x10
 		cpu.reg.R[3] = 0x70
 		cpu.reg.R[5] = 0x1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read16(0x80)
 		if got != 0x1234 {
 			t.Errorf("@0x80 = 0x%04X, want 0x1234", got)
@@ -272,7 +272,7 @@ func TestOpMOVR0Idx(t *testing.T) {
 		cpu.reg.R[0] = 0x10
 		cpu.reg.R[3] = 0x70
 		cpu.reg.R[5] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read32(0x80)
 		if got != 0xDEADBEEF {
 			t.Errorf("@0x80 = 0x%08X, want 0xDEADBEEF", got)
@@ -287,7 +287,7 @@ func TestOpMOVR0Idx(t *testing.T) {
 		cpu.reg.R[0] = 0x10
 		cpu.reg.R[5] = 0x70
 		cpu.bus.Write8(0x80, 0x90) // 0x90 sign-extends to 0xFFFFFF90
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFFFF90 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFFFF90", cpu.reg.R[3])
 		}
@@ -299,7 +299,7 @@ func TestOpMOVR0Idx(t *testing.T) {
 		cpu.reg.R[0] = 0x10
 		cpu.reg.R[5] = 0x70
 		cpu.bus.Write16(0x80, 0x8042)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFF8042 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFF8042", cpu.reg.R[3])
 		}
@@ -311,7 +311,7 @@ func TestOpMOVR0Idx(t *testing.T) {
 		cpu.reg.R[0] = 0x10
 		cpu.reg.R[5] = 0x70
 		cpu.bus.Write32(0x80, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
 		}
@@ -325,7 +325,7 @@ func TestOpMOVGBR(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC004)
 		cpu.reg.GBR = 0x80
 		cpu.reg.R[0] = 0xAB
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read8(0x84)
 		if got != 0xAB {
 			t.Errorf("@0x84 = 0x%02X, want 0xAB", got)
@@ -337,7 +337,7 @@ func TestOpMOVGBR(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC104)
 		cpu.reg.GBR = 0x80
 		cpu.reg.R[0] = 0x1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read16(0x88)
 		if got != 0x1234 {
 			t.Errorf("@0x88 = 0x%04X, want 0x1234", got)
@@ -349,7 +349,7 @@ func TestOpMOVGBR(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC204)
 		cpu.reg.GBR = 0x80
 		cpu.reg.R[0] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read32(0x90)
 		if got != 0xDEADBEEF {
 			t.Errorf("@0x90 = 0x%08X, want 0xDEADBEEF", got)
@@ -361,7 +361,7 @@ func TestOpMOVGBR(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC404)
 		cpu.reg.GBR = 0x80
 		cpu.bus.Write8(0x84, 0x90)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFFFF90 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFFFF90", cpu.reg.R[0])
 		}
@@ -372,7 +372,7 @@ func TestOpMOVGBR(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC504)
 		cpu.reg.GBR = 0x80
 		cpu.bus.Write16(0x88, 0x8042)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFF8042 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFF8042", cpu.reg.R[0])
 		}
@@ -383,7 +383,7 @@ func TestOpMOVGBR(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC604)
 		cpu.reg.GBR = 0x80
 		cpu.bus.Write32(0x90, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xCAFEBABE {
 			t.Errorf("R0 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[0])
 		}
@@ -397,7 +397,7 @@ func TestOpMOVDisp4(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8053)
 		cpu.reg.R[5] = 0x80
 		cpu.reg.R[0] = 0xAB
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read8(0x83)
 		if got != 0xAB {
 			t.Errorf("@0x83 = 0x%02X, want 0xAB", got)
@@ -409,7 +409,7 @@ func TestOpMOVDisp4(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8153)
 		cpu.reg.R[5] = 0x80
 		cpu.reg.R[0] = 0x1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read16(0x86)
 		if got != 0x1234 {
 			t.Errorf("@0x86 = 0x%04X, want 0x1234", got)
@@ -421,7 +421,7 @@ func TestOpMOVDisp4(t *testing.T) {
 		cpu := newDecodeTestCPU(0x1353)
 		cpu.reg.R[3] = 0x80
 		cpu.reg.R[5] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		got := cpu.bus.Read32(0x8C)
 		if got != 0xDEADBEEF {
 			t.Errorf("@0x8C = 0x%08X, want 0xDEADBEEF", got)
@@ -433,7 +433,7 @@ func TestOpMOVDisp4(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8453)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write8(0x83, 0x90)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFFFF90 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFFFF90", cpu.reg.R[0])
 		}
@@ -444,7 +444,7 @@ func TestOpMOVDisp4(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8553)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write16(0x86, 0x8042)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFF8042 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFF8042", cpu.reg.R[0])
 		}
@@ -455,7 +455,7 @@ func TestOpMOVDisp4(t *testing.T) {
 		cpu := newDecodeTestCPU(0x5353)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write32(0x8C, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
 		}
@@ -470,7 +470,7 @@ func TestOpMOVPC(t *testing.T) {
 		// addr = 0x12 + 2 + 2*2 = 0x18
 		cpu := newDecodeTestCPU(0x9302)
 		cpu.bus.Write16(0x18, 0x8042)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFF8042 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFF8042", cpu.reg.R[3])
 		}
@@ -482,7 +482,7 @@ func TestOpMOVPC(t *testing.T) {
 		// addr = ((0x12+2) & ~3) + 2*4 = (0x14 & ~3) + 8 = 0x14 + 8 = 0x1C
 		cpu := newDecodeTestCPU(0xD302)
 		cpu.bus.Write32(0x1C, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
 		}
@@ -499,7 +499,7 @@ func TestOpMOVPC(t *testing.T) {
 		cpu.LoadResetVectors()
 		bus.Write16(0x12, 0xD301) // MOV.L @(1*4,PC),R3
 		bus.Write32(0x18, 0x12345678)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x12345678 {
 			t.Errorf("R3 = 0x%08X, want 0x12345678", cpu.reg.R[3])
 		}
@@ -510,7 +510,7 @@ func TestOpMOVPC(t *testing.T) {
 		// Opcode at 0x10, fetchPC advances to 0x12
 		// R0 = ((0x12+2) & ~3) + 2*4 = 0x14 + 8 = 0x1C
 		cpu := newDecodeTestCPU(0xC702)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0x1C {
 			t.Errorf("R0 = 0x%08X, want 0x1C", cpu.reg.R[0])
 		}
@@ -525,7 +525,7 @@ func TestOpMOVPC(t *testing.T) {
 		cpu := New(bus, true)
 		cpu.LoadResetVectors()
 		bus.Write16(0x12, 0xC701) // MOVA @(1*4,PC),R0
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0x18 {
 			t.Errorf("R0 = 0x%08X, want 0x18", cpu.reg.R[0])
 		}
@@ -553,7 +553,7 @@ func TestOpMOVPC(t *testing.T) {
 		bus.Write32(0x2C, 0xCAFEBABE)
 		bus.Write32(0x4C, 0x0BADBAD0) // slot-relative address (wrong)
 		for i := 0; i < 8 && cpu.reg.R[3] == 0; i++ {
-			cpu.Clock()
+			cpu.Step()
 		}
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
@@ -567,7 +567,7 @@ func TestOpMOVPC(t *testing.T) {
 		bus.Write16(0x28, 0x8042)
 		bus.Write16(0x4A, 0x1111) // slot-relative address (wrong)
 		for i := 0; i < 8 && cpu.reg.R[3] == 0; i++ {
-			cpu.Clock()
+			cpu.Step()
 		}
 		if cpu.reg.R[3] != 0xFFFF8042 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFF8042", cpu.reg.R[3])
@@ -579,7 +579,7 @@ func TestOpMOVPC(t *testing.T) {
 		// PC = 0x22 + 2; R0 = (0x24 & ~3) + 8 = 0x2C
 		cpu, _ := newDelaySlotCPU(0xC702)
 		for i := 0; i < 8 && cpu.reg.R[0] == 0; i++ {
-			cpu.Clock()
+			cpu.Step()
 		}
 		if cpu.reg.R[0] != 0x2C {
 			t.Errorf("R0 = 0x%08X, want 0x2C", cpu.reg.R[0])
@@ -593,7 +593,7 @@ func TestOpMOVT(t *testing.T) {
 		// 0x0329: MOVT R3 (regN=3, nibble1=2, nibble0=9)
 		cpu := newDecodeTestCPU(0x0329)
 		cpu.reg.SetT()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 1 {
 			t.Errorf("R3 = %d, want 1", cpu.reg.R[3])
 		}
@@ -602,7 +602,7 @@ func TestOpMOVT(t *testing.T) {
 	t.Run("T_clear", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0329)
 		cpu.reg.ClearT()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0 {
 			t.Errorf("R3 = %d, want 0", cpu.reg.R[3])
 		}
@@ -615,7 +615,7 @@ func TestOpSWAP(t *testing.T) {
 		// 0x6358: SWAP.B R5,R3
 		cpu := newDecodeTestCPU(0x6358)
 		cpu.reg.R[5] = 0xAABB1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		// Upper 16 bits preserved, lower two bytes swapped
 		// (0xAABB0000) | ((0x34)<<8) | ((0x12)&0xFF)
 		want := uint32(0xAABB3412)
@@ -628,7 +628,7 @@ func TestOpSWAP(t *testing.T) {
 		// 0x6359: SWAP.W R5,R3
 		cpu := newDecodeTestCPU(0x6359)
 		cpu.reg.R[5] = 0xAABB1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		want := uint32(0x1234AABB)
 		if cpu.reg.R[3] != want {
 			t.Errorf("R3 = 0x%08X, want 0x%08X", cpu.reg.R[3], want)
@@ -642,38 +642,11 @@ func TestOpXTRCT(t *testing.T) {
 	cpu := newDecodeTestCPU(0x235D)
 	cpu.reg.R[5] = 0xAABBCCDD
 	cpu.reg.R[3] = 0x11223344
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	// Rn = (Rm << 16) | (Rn >> 16) = (0xCCDD0000) | (0x1122) = 0xCCDD1122
 	want := uint32(0xCCDD1122)
 	if cpu.reg.R[3] != want {
 		t.Errorf("R3 = 0x%08X, want 0x%08X", cpu.reg.R[3], want)
-	}
-}
-
-// TestOpNonMemoryBusNone verifies that arithmetic, logic, and shift
-// instructions report BusNone (they perform no memory access).
-func TestOpNonMemoryBusNone(t *testing.T) {
-	tests := []struct {
-		name  string
-		op    uint16
-		setup func(*CPU)
-	}{
-		// ADD R5,R3: 0x335C
-		{"ADD", 0x335C, func(c *CPU) { c.reg.R[5] = 1 }},
-		// AND R5,R3: 0x2359
-		{"AND", 0x2359, func(c *CPU) { c.reg.R[3] = 0xFF; c.reg.R[5] = 0x0F }},
-		// SHLL R3: 0x4300
-		{"SHLL", 0x4300, func(c *CPU) { c.reg.R[3] = 1 }},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cpu := newDecodeTestCPU(tt.op)
-			tt.setup(cpu)
-			s := cpu.Clock()
-			if s.Bus != BusNone {
-				t.Errorf("bus = %d, want BusNone (%d)", s.Bus, BusNone)
-			}
-		})
 	}
 }
 
@@ -685,7 +658,7 @@ func TestOpMOVRegExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6333)
 		cpu.reg.R[3] = 0xDEADBEEF
 		cpu.reg.SetT()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xDEADBEEF {
 			t.Errorf("R3 = 0x%08X, want 0xDEADBEEF", cpu.reg.R[3])
 		}
@@ -697,7 +670,7 @@ func TestOpMOVRegExtras(t *testing.T) {
 		// MOV R0,R3: 0x6303
 		cpu := newDecodeTestCPU(0x6303)
 		cpu.reg.R[0] = 0xABCDEF01
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xABCDEF01 {
 			t.Errorf("R3 = 0x%08X, want 0xABCDEF01", cpu.reg.R[3])
 		}
@@ -709,7 +682,7 @@ func TestOpMOVIExtras(t *testing.T) {
 	// MOV #0,R3: 0xE300
 	cpu := newDecodeTestCPU(0xE300)
 	cpu.reg.R[3] = 0xDEADBEEF
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[3] != 0 {
 		t.Errorf("R3 = 0x%08X, want 0", cpu.reg.R[3])
 	}
@@ -732,7 +705,7 @@ func TestOpMOVBLExtras(t *testing.T) {
 			cpu := newDecodeTestCPU(0x6350)
 			cpu.reg.R[5] = 0x80
 			cpu.bus.Write8(0x80, tt.mem)
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[3] != tt.wantRn {
 				t.Errorf("R3 = 0x%08X, want 0x%08X", cpu.reg.R[3], tt.wantRn)
 			}
@@ -756,7 +729,7 @@ func TestOpMOVWLExtras(t *testing.T) {
 			cpu := newDecodeTestCPU(0x6351)
 			cpu.reg.R[5] = 0x80
 			cpu.bus.Write16(0x80, tt.mem)
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[3] != tt.wantRn {
 				t.Errorf("R3 = 0x%08X, want 0x%08X", cpu.reg.R[3], tt.wantRn)
 			}
@@ -770,7 +743,7 @@ func TestOpMOVLLExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6352)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write32(0x80, 0x80000000)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x80000000 {
 			t.Errorf("R3 = 0x%08X, want 0x80000000", cpu.reg.R[3])
 		}
@@ -786,7 +759,7 @@ func TestOpMOVStoreTruncation(t *testing.T) {
 		cpu.reg.R[5] = 0xAABBCCDD
 		cpu.bus.Write8(0x7F, 0x11)
 		cpu.bus.Write8(0x81, 0x22)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read8(0x80); got != 0xDD {
 			t.Errorf("mem[0x80] = 0x%02X, want 0xDD", got)
 		}
@@ -803,7 +776,7 @@ func TestOpMOVStoreTruncation(t *testing.T) {
 		cpu.reg.R[5] = 0xAABB1234
 		cpu.bus.Write16(0x7E, 0x1111)
 		cpu.bus.Write16(0x82, 0x2222)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read16(0x80); got != 0x1234 {
 			t.Errorf("mem[0x80] = 0x%04X, want 0x1234", got)
 		}
@@ -831,7 +804,7 @@ func TestOpMOVBPExtras(t *testing.T) {
 			cpu := newDecodeTestCPU(0x6354)
 			cpu.reg.R[5] = 0x80
 			cpu.bus.Write8(0x80, tt.mem)
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[3] != tt.wantRn {
 				t.Errorf("R3 = 0x%08X, want 0x%08X", cpu.reg.R[3], tt.wantRn)
 			}
@@ -848,7 +821,7 @@ func TestOpMOVWPExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6355)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write16(0x80, 0x8000)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFF8000 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFF8000", cpu.reg.R[3])
 		}
@@ -861,7 +834,7 @@ func TestOpMOVWPExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6555)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write16(0x80, 0x1234)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[5] != 0x00001234 {
 			t.Errorf("R5 = 0x%08X, want 0x1234", cpu.reg.R[5])
 		}
@@ -874,7 +847,7 @@ func TestOpMOVLPExtras(t *testing.T) {
 	cpu := newDecodeTestCPU(0x6556)
 	cpu.reg.R[5] = 0x80
 	cpu.bus.Write32(0x80, 0xCAFEBABE)
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[5] != 0xCAFEBABE {
 		t.Errorf("R5 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[5])
 	}
@@ -887,7 +860,7 @@ func TestOpMOVPreDecExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x2354)
 		cpu.reg.R[3] = 0x84
 		cpu.reg.R[5] = 0xAABBCCDD
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read8(0x83); got != 0xDD {
 			t.Errorf("mem[0x83] = 0x%02X, want 0xDD", got)
 		}
@@ -900,7 +873,7 @@ func TestOpMOVPreDecExtras(t *testing.T) {
 		// Rm read uses original value.
 		cpu := newDecodeTestCPU(0x2335)
 		cpu.reg.R[3] = 0x84
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x82 {
 			t.Errorf("R3 = 0x%08X, want 0x82", cpu.reg.R[3])
 		}
@@ -912,7 +885,7 @@ func TestOpMOVPreDecExtras(t *testing.T) {
 		// MOV.L R3,@-R3: 0x2336
 		cpu := newDecodeTestCPU(0x2336)
 		cpu.reg.R[3] = 0x88
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x84 {
 			t.Errorf("R3 = 0x%08X, want 0x84", cpu.reg.R[3])
 		}
@@ -931,7 +904,7 @@ func TestOpMOVR0IdxExtras(t *testing.T) {
 		cpu.reg.R[0] = 0
 		cpu.reg.R[3] = 0x80
 		cpu.reg.R[5] = 0xAB
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read8(0x80); got != 0xAB {
 			t.Errorf("mem[0x80] = 0x%02X, want 0xAB", got)
 		}
@@ -941,7 +914,7 @@ func TestOpMOVR0IdxExtras(t *testing.T) {
 		cpu.reg.R[0] = 0
 		cpu.reg.R[3] = 0x80
 		cpu.reg.R[5] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read32(0x80); got != 0xDEADBEEF {
 			t.Errorf("mem[0x80] = 0x%08X, want 0xDEADBEEF", got)
 		}
@@ -951,7 +924,7 @@ func TestOpMOVR0IdxExtras(t *testing.T) {
 		cpu.reg.R[0] = 0x10
 		cpu.reg.R[5] = 0x70
 		cpu.bus.Write8(0x80, 0x42)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x00000042 {
 			t.Errorf("R3 = 0x%08X, want 0x42", cpu.reg.R[3])
 		}
@@ -965,7 +938,7 @@ func TestOpMOVGBRExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC000)
 		cpu.reg.GBR = 0x200
 		cpu.reg.R[0] = 0x55
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read8(0x200); got != 0x55 {
 			t.Errorf("mem[0x200] = 0x%02X, want 0x55", got)
 		}
@@ -975,7 +948,7 @@ func TestOpMOVGBRExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC0FF)
 		cpu.reg.GBR = 0x200
 		cpu.reg.R[0] = 0xAA
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read8(0x2FF); got != 0xAA {
 			t.Errorf("mem[0x2FF] = 0x%02X, want 0xAA", got)
 		}
@@ -985,7 +958,7 @@ func TestOpMOVGBRExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC1FF)
 		cpu.reg.GBR = 0x200
 		cpu.reg.R[0] = 0x1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read16(0x3FE); got != 0x1234 {
 			t.Errorf("mem[0x3FE] = 0x%04X, want 0x1234", got)
 		}
@@ -995,7 +968,7 @@ func TestOpMOVGBRExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC2FF)
 		cpu.reg.GBR = 0x200
 		cpu.reg.R[0] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read32(0x5FC); got != 0xDEADBEEF {
 			t.Errorf("mem[0x5FC] = 0x%08X, want 0xDEADBEEF", got)
 		}
@@ -1005,7 +978,7 @@ func TestOpMOVGBRExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC400)
 		cpu.reg.GBR = 0x200
 		cpu.bus.Write8(0x200, 0x80)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFFFF80 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFFFF80", cpu.reg.R[0])
 		}
@@ -1015,7 +988,7 @@ func TestOpMOVGBRExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0xC500)
 		cpu.reg.GBR = 0x200
 		cpu.bus.Write16(0x200, 0x8000)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFF8000 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFF8000", cpu.reg.R[0])
 		}
@@ -1029,7 +1002,7 @@ func TestOpMOVDisp4Extras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8050)
 		cpu.reg.R[5] = 0x80
 		cpu.reg.R[0] = 0xAB
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read8(0x80); got != 0xAB {
 			t.Errorf("mem[0x80] = 0x%02X, want 0xAB", got)
 		}
@@ -1039,7 +1012,7 @@ func TestOpMOVDisp4Extras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x805F)
 		cpu.reg.R[5] = 0x80
 		cpu.reg.R[0] = 0xAB
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read8(0x8F); got != 0xAB {
 			t.Errorf("mem[0x8F] = 0x%02X, want 0xAB", got)
 		}
@@ -1049,7 +1022,7 @@ func TestOpMOVDisp4Extras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x815F)
 		cpu.reg.R[5] = 0x80
 		cpu.reg.R[0] = 0x1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read16(0x9E); got != 0x1234 {
 			t.Errorf("mem[0x9E] = 0x%04X, want 0x1234", got)
 		}
@@ -1059,7 +1032,7 @@ func TestOpMOVDisp4Extras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x135F)
 		cpu.reg.R[3] = 0x80
 		cpu.reg.R[5] = 0xDEADBEEF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if got := cpu.bus.Read32(0xBC); got != 0xDEADBEEF {
 			t.Errorf("mem[0xBC] = 0x%08X, want 0xDEADBEEF", got)
 		}
@@ -1069,7 +1042,7 @@ func TestOpMOVDisp4Extras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8450)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write8(0x80, 0x80)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFFFF80 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFFFF80", cpu.reg.R[0])
 		}
@@ -1078,7 +1051,7 @@ func TestOpMOVDisp4Extras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8550)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write16(0x80, 0x8000)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xFFFF8000 {
 			t.Errorf("R0 = 0x%08X, want 0xFFFF8000", cpu.reg.R[0])
 		}
@@ -1088,7 +1061,7 @@ func TestOpMOVDisp4Extras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x5350)
 		cpu.reg.R[5] = 0x80
 		cpu.bus.Write32(0x80, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
 		}
@@ -1102,7 +1075,7 @@ func TestOpMOVPCExtras(t *testing.T) {
 		// MOV.W @(2*2,PC),R3: 0x9302 - load 0x8000 sign-extends.
 		cpu := newDecodeTestCPU(0x9302)
 		cpu.bus.Write16(0x18, 0x8000)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xFFFF8000 {
 			t.Errorf("R3 = 0x%08X, want 0xFFFF8000", cpu.reg.R[3])
 		}
@@ -1111,7 +1084,7 @@ func TestOpMOVPCExtras(t *testing.T) {
 		// MOV.W @(0,PC),R3: 0x9300; addr = (0x12+2) = 0x14
 		cpu := newDecodeTestCPU(0x9300)
 		cpu.bus.Write16(0x14, 0x1234)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x00001234 {
 			t.Errorf("R3 = 0x%08X, want 0x1234", cpu.reg.R[3])
 		}
@@ -1120,7 +1093,7 @@ func TestOpMOVPCExtras(t *testing.T) {
 		// MOV.W @(0xFF*2,PC),R3: 0x93FF; addr = 0x14 + 0x1FE = 0x212
 		cpu := newDecodeTestCPU(0x93FF)
 		cpu.bus.Write16(0x212, 0x5555)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0x00005555 {
 			t.Errorf("R3 = 0x%08X, want 0x5555", cpu.reg.R[3])
 		}
@@ -1129,7 +1102,7 @@ func TestOpMOVPCExtras(t *testing.T) {
 		// MOV.L @(0,PC),R3: 0xD300; addr = (0x14 & ~3) + 0 = 0x14
 		cpu := newDecodeTestCPU(0xD300)
 		cpu.bus.Write32(0x14, 0xDEADBEEF)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xDEADBEEF {
 			t.Errorf("R3 = 0x%08X, want 0xDEADBEEF", cpu.reg.R[3])
 		}
@@ -1138,7 +1111,7 @@ func TestOpMOVPCExtras(t *testing.T) {
 		// MOV.L @(0xFF*4,PC),R3: 0xD3FF; addr = 0x14 + 0x3FC = 0x410
 		cpu := newDecodeTestCPU(0xD3FF)
 		cpu.bus.Write32(0x410, 0xCAFEBABE)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCAFEBABE {
 			t.Errorf("R3 = 0x%08X, want 0xCAFEBABE", cpu.reg.R[3])
 		}
@@ -1146,7 +1119,7 @@ func TestOpMOVPCExtras(t *testing.T) {
 	t.Run("mova_disp_zero", func(t *testing.T) {
 		// MOVA @(0,PC),R0: 0xC700; R0 = (0x14 & ~3) + 0 = 0x14
 		cpu := newDecodeTestCPU(0xC700)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0x14 {
 			t.Errorf("R0 = 0x%08X, want 0x14", cpu.reg.R[0])
 		}
@@ -1154,7 +1127,7 @@ func TestOpMOVPCExtras(t *testing.T) {
 	t.Run("mova_disp_max", func(t *testing.T) {
 		// MOVA @(0xFF*4,PC),R0: 0xC7FF; R0 = 0x14 + 0x3FC = 0x410
 		cpu := newDecodeTestCPU(0xC7FF)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0x410 {
 			t.Errorf("R0 = 0x%08X, want 0x410", cpu.reg.R[0])
 		}
@@ -1169,7 +1142,7 @@ func TestOpMOVTExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0329)
 		cpu.reg.R[3] = 0xFFFFFFFF
 		cpu.reg.SetT()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 1 {
 			t.Errorf("R3 = 0x%08X, want 1 (upper bits should be 0)", cpu.reg.R[3])
 		}
@@ -1177,7 +1150,7 @@ func TestOpMOVTExtras(t *testing.T) {
 	t.Run("movt_preserves_t_after_write", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0329)
 		cpu.reg.SetT()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1 (unchanged)", cpu.reg.T())
 		}
@@ -1191,7 +1164,7 @@ func TestOpSWAPExtras(t *testing.T) {
 		// SWAP.B R5,R3: 0x6358 - upper 16 bits of Rm preserved in Rn.
 		cpu := newDecodeTestCPU(0x6358)
 		cpu.reg.R[5] = 0xDEAD1122
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xDEAD2211 {
 			t.Errorf("R3 = 0x%08X, want 0xDEAD2211", cpu.reg.R[3])
 		}
@@ -1199,7 +1172,7 @@ func TestOpSWAPExtras(t *testing.T) {
 	t.Run("swapb_zero", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x6358)
 		cpu.reg.R[5] = 0
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0 {
 			t.Errorf("R3 = 0x%08X, want 0", cpu.reg.R[3])
 		}
@@ -1208,7 +1181,7 @@ func TestOpSWAPExtras(t *testing.T) {
 		// SWAP.B R3,R3: 0x6338
 		cpu := newDecodeTestCPU(0x6338)
 		cpu.reg.R[3] = 0xAABB1122
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xAABB2211 {
 			t.Errorf("R3 = 0x%08X, want 0xAABB2211", cpu.reg.R[3])
 		}
@@ -1217,7 +1190,7 @@ func TestOpSWAPExtras(t *testing.T) {
 		// SWAP.W R5,R3: 0x6359
 		cpu := newDecodeTestCPU(0x6359)
 		cpu.reg.R[5] = 0
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0 {
 			t.Errorf("R3 = 0x%08X, want 0", cpu.reg.R[3])
 		}
@@ -1226,7 +1199,7 @@ func TestOpSWAPExtras(t *testing.T) {
 		// SWAP.W R3,R3: 0x6339
 		cpu := newDecodeTestCPU(0x6339)
 		cpu.reg.R[3] = 0xAABBCCDD
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[3] != 0xCCDDAABB {
 			t.Errorf("R3 = 0x%08X, want 0xCCDDAABB", cpu.reg.R[3])
 		}
@@ -1241,7 +1214,7 @@ func TestOpXTRCTExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x235D)
 		cpu.reg.R[5] = 0
 		cpu.reg.R[3] = 0xAABBCCDD
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		// Rn = (0 << 16) | (0xAABBCCDD >> 16) = 0xAABB
 		if cpu.reg.R[3] != 0x0000AABB {
 			t.Errorf("R3 = 0x%08X, want 0xAABB", cpu.reg.R[3])
@@ -1251,69 +1224,10 @@ func TestOpXTRCTExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x235D)
 		cpu.reg.R[5] = 0xAABBCCDD
 		cpu.reg.R[3] = 0
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		// Rn = (0xAABBCCDD << 16) | (0 >> 16) = 0xCCDD0000
 		if cpu.reg.R[3] != 0xCCDD0000 {
 			t.Errorf("R3 = 0x%08X, want 0xCCDD0000", cpu.reg.R[3])
 		}
 	})
-}
-
-func TestOpMOVBusActivity(t *testing.T) {
-	tests := []struct {
-		name    string
-		op      uint16
-		setup   func(*CPU)
-		wantBus BusActivity
-	}{
-		// Loads -> BusRead
-		{"MOVBL", 0x6350, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write8(0x80, 0x42) }, BusRead},
-		{"MOVWL", 0x6351, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write16(0x80, 0x1234) }, BusRead},
-		{"MOVLL", 0x6352, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write32(0x80, 0xCAFE) }, BusRead},
-		{"MOVBP", 0x6354, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write8(0x80, 0x42) }, BusRead},
-		{"MOVWP", 0x6355, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write16(0x80, 0x1234) }, BusRead},
-		{"MOVLP", 0x6356, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write32(0x80, 0xCAFE) }, BusRead},
-		{"MOVBL0", 0x035C, func(c *CPU) { c.reg.R[0] = 0x10; c.reg.R[5] = 0x70; c.bus.Write8(0x80, 0x42) }, BusRead},
-		{"MOVWL0", 0x035D, func(c *CPU) { c.reg.R[0] = 0x10; c.reg.R[5] = 0x70; c.bus.Write16(0x80, 0x1234) }, BusRead},
-		{"MOVLL0", 0x035E, func(c *CPU) { c.reg.R[0] = 0x10; c.reg.R[5] = 0x70; c.bus.Write32(0x80, 0xCAFE) }, BusRead},
-		{"MOVBLG", 0xC404, func(c *CPU) { c.reg.GBR = 0x80; c.bus.Write8(0x84, 0x42) }, BusRead},
-		{"MOVWLG", 0xC504, func(c *CPU) { c.reg.GBR = 0x80; c.bus.Write16(0x88, 0x1234) }, BusRead},
-		{"MOVLLG", 0xC604, func(c *CPU) { c.reg.GBR = 0x80; c.bus.Write32(0x90, 0xCAFE) }, BusRead},
-		{"MOVBL4", 0x8453, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write8(0x83, 0x42) }, BusRead},
-		{"MOVWL4", 0x8553, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write16(0x86, 0x1234) }, BusRead},
-		{"MOVLL4", 0x5353, func(c *CPU) { c.reg.R[5] = 0x80; c.bus.Write32(0x8C, 0xCAFE) }, BusRead},
-		{"MOVWI", 0x9302, func(c *CPU) { c.bus.Write16(0x18, 0x1234) }, BusRead},
-		{"MOVLI", 0xD302, func(c *CPU) { c.bus.Write32(0x1C, 0xCAFE) }, BusRead},
-		// Stores -> BusWrite
-		{"MOVBS", 0x2350, func(c *CPU) { c.reg.R[3] = 0x80; c.reg.R[5] = 0xAB }, BusWrite},
-		{"MOVWS", 0x2351, func(c *CPU) { c.reg.R[3] = 0x80; c.reg.R[5] = 0x1234 }, BusWrite},
-		{"MOVLS", 0x2352, func(c *CPU) { c.reg.R[3] = 0x80; c.reg.R[5] = 0xDEAD }, BusWrite},
-		{"MOVBM", 0x2354, func(c *CPU) { c.reg.R[3] = 0x84; c.reg.R[5] = 0xAB }, BusWrite},
-		{"MOVWM", 0x2355, func(c *CPU) { c.reg.R[3] = 0x84; c.reg.R[5] = 0x1234 }, BusWrite},
-		{"MOVLM", 0x2356, func(c *CPU) { c.reg.R[3] = 0x88; c.reg.R[5] = 0xDEAD }, BusWrite},
-		{"MOVBS0", 0x0354, func(c *CPU) { c.reg.R[0] = 0x10; c.reg.R[3] = 0x70; c.reg.R[5] = 0xAB }, BusWrite},
-		{"MOVWS0", 0x0355, func(c *CPU) { c.reg.R[0] = 0x10; c.reg.R[3] = 0x70; c.reg.R[5] = 0x1234 }, BusWrite},
-		{"MOVLS0", 0x0356, func(c *CPU) { c.reg.R[0] = 0x10; c.reg.R[3] = 0x70; c.reg.R[5] = 0xDEAD }, BusWrite},
-		{"MOVBSG", 0xC004, func(c *CPU) { c.reg.GBR = 0x80; c.reg.R[0] = 0xAB }, BusWrite},
-		{"MOVWSG", 0xC104, func(c *CPU) { c.reg.GBR = 0x80; c.reg.R[0] = 0x1234 }, BusWrite},
-		{"MOVLSG", 0xC204, func(c *CPU) { c.reg.GBR = 0x80; c.reg.R[0] = 0xDEAD }, BusWrite},
-		{"MOVBS4", 0x8053, func(c *CPU) { c.reg.R[5] = 0x80; c.reg.R[0] = 0xAB }, BusWrite},
-		{"MOVWS4", 0x8153, func(c *CPU) { c.reg.R[5] = 0x80; c.reg.R[0] = 0x1234 }, BusWrite},
-		{"MOVLS4", 0x1353, func(c *CPU) { c.reg.R[3] = 0x80; c.reg.R[5] = 0xDEAD }, BusWrite},
-		// Non-memory -> BusNone
-		{"MOV", 0x6353, func(c *CPU) { c.reg.R[5] = 0xDEAD }, BusNone},
-		{"MOVI", 0xE37F, func(c *CPU) {}, BusNone},
-		{"MOVA", 0xC702, func(c *CPU) {}, BusNone},
-		{"MOVT", 0x0329, func(c *CPU) {}, BusNone},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			cpu := newDecodeTestCPU(tt.op)
-			tt.setup(cpu)
-			s := cpu.Clock()
-			if s.Bus != tt.wantBus {
-				t.Errorf("bus = %d, want %d", s.Bus, tt.wantBus)
-			}
-		})
-	}
 }

@@ -134,7 +134,7 @@ func (c *CPU) cacheFill(way int, addr uint32) {
 	// Read the 16-byte line as one transaction so it cannot be torn by
 	// a concurrent write from another bus master (Section 8.4.1).
 	var line [16]byte
-	stall := c.bus.SH2FillLine(base, &line, c.frameCyc, !c.isMaster)
+	stall := c.bus.SH2FillLine(base, &line, int64(c.cycles), !c.isMaster)
 	copy(c.cacheData[off:off+16], line[:])
 	c.cacheTouch(entry, way)
 	c.busStall += stall
@@ -158,7 +158,7 @@ func (c *CPU) cacheRead8(addr uint32) uint8 {
 		return c.cacheData[cacheDataOff(way, addr)]
 	}
 	if c.ccr&ccrOD != 0 {
-		v, stall := c.bus.SH2Read8(addr, c.frameCyc, !c.isMaster)
+		v, stall := c.bus.SH2Read8(addr, int64(c.cycles), !c.isMaster)
 		c.busStall += stall
 		return v
 	}
@@ -174,7 +174,7 @@ func (c *CPU) cacheRead16(addr uint32) uint16 {
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
 	if c.ccr&ccrOD != 0 {
-		v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+		v, stall := c.bus.SH2Read16(addr, int64(c.cycles), !c.isMaster)
 		c.busStall += stall
 		return v
 	}
@@ -192,7 +192,7 @@ func (c *CPU) cacheRead32(addr uint32) uint32 {
 			uint32(c.cacheData[off+2])<<8 | uint32(c.cacheData[off+3])
 	}
 	if c.ccr&ccrOD != 0 {
-		v, stall := c.bus.SH2Read32(addr, c.frameCyc, !c.isMaster)
+		v, stall := c.bus.SH2Read32(addr, int64(c.cycles), !c.isMaster)
 		c.busStall += stall
 		return v
 	}
@@ -225,7 +225,7 @@ func (c *CPU) cacheFetch16(addr uint32) uint16 {
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
 	if c.ccr&ccrID != 0 {
-		v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+		v, stall := c.bus.SH2Read16(addr, int64(c.cycles), !c.isMaster)
 		c.busStall += stall
 		return v
 	}

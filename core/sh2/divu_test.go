@@ -543,7 +543,7 @@ func TestDIVUOverflowOVFIEOne_DVDNTLNotOverwritten(t *testing.T) {
 // not accessing the division unit can be parallel-processed."
 // erings satisfies this in the degenerate case because division
 // completes instantaneously and never presents a stall window to
-// the CPU. Drive a NOP through cpu.Clock() immediately after a
+// the CPU. Drive a NOP through the CPU immediately after a
 // DVDNT write and verify it retires in a single cycle with no
 // pending op. Comment: the HM spec describes hardware behavior
 // we model by the absence of stall state rather than explicit
@@ -560,11 +560,8 @@ func TestDIVUConcurrentNonDivuInstructionDoesNotStall(t *testing.T) {
 	cpu.writeOnChip(0xFFFFFF04, 100)
 
 	cyclesBefore := cpu.cycles
-	cpu.Clock() // run the NOP
+	cpu.RunUntil(cpu.cycles + uint64(1)) // run the NOP
 
-	if cpu.pendingOp != popNone {
-		t.Errorf("NOP after DVDNT write left pendingOp=%d; expected none", cpu.pendingOp)
-	}
 	if cpu.reg.PC != 0x402 {
 		t.Errorf("NOP after DVDNT write did not advance PC: PC=0x%08X want 0x402", cpu.reg.PC)
 	}

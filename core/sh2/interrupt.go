@@ -164,9 +164,7 @@ func (c *CPU) acceptInterrupt(level uint8, vec uint16, fromIRL bool) bool {
 		// Use a synthetic opcode $FFFF to mark interrupt acceptance
 		c.TraceFunc(c.reg.PC, 0xFFFF)
 	}
-	c.pendingVal = c.reg.SR
-	c.pendingVal2 = c.reg.PC
-	c.pendingAddr = uint32(vec)
+	sr, pc := c.reg.SR, c.reg.PC
 
 	ilvl := level
 	if ilvl > 15 {
@@ -179,20 +177,43 @@ func (c *CPU) acceptInterrupt(level uint8, vec uint16, fromIRL bool) bool {
 	}
 
 	c.halted = false
-	c.cycles++
-	c.setPending(popException, 4)
+	// Programming Manual Section 7.4.7 Figure 7.95: after the ID stage
+	// the sequence is EX EX MA MA EX MA EX EX, with the handler's IF in
+	// the final EX slot and its ID following. Counted per Section 7.1.4
+	// that is 9 cycles from this EX to the handler's first EX; the
+	// SH7604 Hardware Manual Figure 5.7 shows the same sequence.
+	c.cycles += 2 // EX, EX; MA: write SR
+	c.reg.R[15] -= 4
+	c.Write32(c.reg.R[15], sr)
+	c.cycles++ // MA: write PC
+	c.reg.R[15] -= 4
+	c.Write32(c.reg.R[15], pc)
+	c.cycles += 2 // EX vector calc; MA: read vector
+	c.reg.PC = c.Read32(c.reg.VBR + uint32(vec)*4)
+	c.cycles += 4
 	return true
 }
 
+// Cycle counts of the synchronous exception sequences, from the first
+// EX of the sequence to the handler's first EX, counted per Programming
+// Manual Section 7.1.4. Figure 7.96: the address error sequence has
+// the interrupt's ten stages, 9 cycles. Figure 7.97: the illegal
+// instruction sequence has nine stages, 8 cycles.
+const (
+	exceptionAddrErrorCycles = 9
+	exceptionIllegalCycles   = 8
+)
+
 // serviceException pushes SR and PC onto the stack and jumps to the
-// exception vector handler. Used for synchronous exceptions (address
-// errors, illegal instructions). Runs atomically (not decomposed).
-// The stack pushes and the vector fetch are ordinary memory accesses,
-// so they go through the cache: a write-through store updates a hit
-// line (Section 8.4.2), keeping a cached stack line coherent for the
-// handler's RTE pop. A misaligned R15 or VBR would recurse through
-// addressError, so those fall back to the raw bus path.
-func (c *CPU) serviceException(vec uint16) {
+// exception vector handler, charging cycles for the sequence. Used for
+// synchronous exceptions (address errors, illegal instructions). Runs
+// atomically (not decomposed). The stack pushes and the vector fetch
+// are ordinary memory accesses, so they go through the cache: a
+// write-through store updates a hit line (Section 8.4.2), keeping a
+// cached stack line coherent for the handler's RTE pop. A misaligned
+// R15 or VBR would recurse through addressError, so those fall back to
+// the raw bus path.
+func (c *CPU) serviceException(vec uint16, cycles uint64) {
 	if c.reg.R[15]&3 == 0 {
 		c.reg.R[15] -= 4
 		c.Write32(c.reg.R[15], c.reg.SR)
@@ -210,5 +231,5 @@ func (c *CPU) serviceException(vec uint16) {
 	} else {
 		c.reg.PC = c.bus.Read32(vecAddr)
 	}
-	c.cycles += 5
+	c.cycles += cycles
 }

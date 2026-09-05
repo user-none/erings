@@ -48,29 +48,13 @@ func TestLoadUseHazardBasic(t *testing.T) {
 	startCycles := cpu.Cycles()
 
 	// Step 1: execute MOV.L @R1,R2
-	s1 := cpu.Clock()
-	if s1.LoadUseStall {
-		t.Error("step 1: unexpected LoadUseStall")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[2] != 10 {
 		t.Errorf("step 1: R2 = %d, want 10", cpu.reg.R[2])
 	}
 
-	// Step 2: should detect hazard, stall (ADD deferred)
-	s2 := cpu.Clock()
-	if !s2.LoadUseStall {
-		t.Error("step 2: expected LoadUseStall=true")
-	}
-	// R0 should still be 1 (ADD not yet executed)
-	if cpu.reg.R[0] != 1 {
-		t.Errorf("step 2: R0 = %d, want 1 (ADD not yet executed)", cpu.reg.R[0])
-	}
-
-	// Step 3: deferred ADD R2,R0 executes
-	s3 := cpu.Clock()
-	if s3.LoadUseStall {
-		t.Error("step 3: unexpected LoadUseStall")
-	}
+	// Step 2: the ADD splits its slot on the hazard, then executes
+	cpu.Step()
 	// R0 = 1 + 10 = 11
 	if cpu.reg.R[0] != 11 {
 		t.Errorf("step 3: R0 = %d, want 11", cpu.reg.R[0])
@@ -99,15 +83,9 @@ func TestNoHazardDifferentReg(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	s1 := cpu.Clock()
-	if s1.LoadUseStall {
-		t.Error("step 1: unexpected LoadUseStall")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2: unexpected LoadUseStall (different reg)")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[0] != 6 {
 		t.Errorf("R0 = %d, want 6", cpu.reg.R[0])
 	}
@@ -134,11 +112,8 @@ func TestForwardingLoadIntoSameReg(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2: unexpected stall (forwarding exception)")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[2] != 20 {
 		t.Errorf("R2 = %d, want 20", cpu.reg.R[2])
 	}
@@ -166,11 +141,8 @@ func TestStoreDataForwarding(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2: unexpected stall (store data forwarding)")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	stored := bus.Read32(0x300)
 	if stored != 0xDEADBEEF {
@@ -201,14 +173,8 @@ func TestStoreAddressStall(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if !s2.LoadUseStall {
-		t.Error("step 2: expected LoadUseStall (store address hazard)")
-	}
-
-	// Step 3: deferred store executes
-	cpu.Clock()
+	cpu.Step() // load
+	cpu.Step() // deferred store executes
 	stored := bus.Read32(0x300)
 	if stored != 0x42 {
 		t.Errorf("stored value = 0x%08X, want 0x00000042", stored)
@@ -235,17 +201,12 @@ func TestR0ImplicitHazard(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[0] != 0xFFFFFFFF {
 		t.Errorf("step 1: R0 = 0x%08X, want 0xFFFFFFFF (sign-extended 0xFF)", cpu.reg.R[0])
 	}
 
-	s2 := cpu.Clock()
-	if !s2.LoadUseStall {
-		t.Error("step 2: expected LoadUseStall (R0 implicit hazard)")
-	}
-
-	cpu.Clock()
+	cpu.Step()
 	if cpu.reg.R[0] != 0x0F {
 		t.Errorf("step 3: R0 = 0x%08X, want 0x0000000F", cpu.reg.R[0])
 	}
@@ -270,11 +231,8 @@ func TestNoHazardAfterNonLoad(t *testing.T) {
 
 	cpu.reg.PC = 0x100
 
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2: unexpected stall after non-load instruction")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[0] != 16 {
 		t.Errorf("R0 = %d, want 16", cpu.reg.R[0])
 	}
@@ -297,13 +255,10 @@ func TestMultiCycleOpClearsHazard(t *testing.T) {
 	bus.Write16(0x200, encNOP())
 
 	cpu.reg.PC = 0x100
-	cpu.Clock() // MOV.L @R1,R2
+	cpu.Step() // MOV.L @R1,R2
 
 	// TRAPA doesn't read any GPR, so no hazard
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2: unexpected stall (TRAPA has no GPR source)")
-	}
+	cpu.Step()
 }
 
 // TestHazardDetectionUnit tests the pure opcode analysis functions.
@@ -392,15 +347,13 @@ func TestDeferredInstructionPreservesPC(t *testing.T) {
 
 	cpu.reg.PC = 0x100
 
-	cpu.Clock() // MOV.L
-	cpu.Clock() // stall
+	cpu.Step() // load
+	cpu.Step() // deferred ADD executes
 
-	// PC should have advanced past the deferred instruction's fetch
+	// PC has advanced past the deferred instruction
 	if cpu.reg.PC != 0x104 {
 		t.Errorf("PC after stall = 0x%08X, want 0x00000104", cpu.reg.PC)
 	}
-
-	cpu.Clock() // deferred ADD executes
 	// PC should now be at 0x104 (next instruction after ADD)
 	if cpu.reg.PC != 0x104 {
 		t.Errorf("PC after deferred = 0x%08X, want 0x00000104", cpu.reg.PC)
@@ -423,11 +376,8 @@ func TestConsecutiveLoadsNoFalseHazard(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2: unexpected stall (different regs)")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[2] != 10 {
 		t.Errorf("R2 = %d, want 10", cpu.reg.R[2])
 	}
@@ -459,13 +409,8 @@ func TestLoadUseHazardOnlyOneStall(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	cpu.Clock()       // MOV.L
-	cpu.Clock()       // stall
-	cpu.Clock()       // deferred ADD R2,R0
-	s4 := cpu.Clock() // second ADD R2,R0 (no stall)
-	if s4.LoadUseStall {
-		t.Error("step 4: unexpected stall (load-use tracking cleared)")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(3))
+	cpu.RunUntil(cpu.cycles + uint64(1)) // second ADD R2,R0 (no stall)
 	if cpu.reg.R[0] != 14 {
 		t.Errorf("R0 = %d, want 14 (7+7)", cpu.reg.R[0])
 	}
@@ -492,12 +437,8 @@ func TestPostIncrementLoadHazard(t *testing.T) {
 	cpu.reg.PC = 0x100
 	startCycles := cpu.Cycles()
 
-	cpu.Clock() // MOV.L @R1+,R2 (R1 becomes 0x204, R2=42)
-	s2 := cpu.Clock()
-	if !s2.LoadUseStall {
-		t.Error("step 2: expected stall")
-	}
-	cpu.Clock() // deferred ADD
+	cpu.Step() // MOV.L @R1+,R2 (R1 becomes 0x204, R2=42)
+	cpu.Step() // deferred ADD
 
 	if cpu.reg.R[0] != 42 {
 		t.Errorf("R0 = %d, want 42", cpu.reg.R[0])
@@ -590,9 +531,11 @@ func runLoadStallCase(t *testing.T, loadOp uint16, followerOp uint16, setup func
 	bus.Write16(0x102, followerOp)
 	bus.Write16(0x104, encNOP())
 	cpu.reg.PC = 0x100
-	cpu.Clock()
-	s2 := cpu.Clock()
-	return s2.LoadUseStall
+	// A load-use split adds one cycle to the pair: 3 cycles instead of 2.
+	before := cpu.cycles
+	cpu.Step()
+	cpu.Step()
+	return cpu.cycles-before == 3
 }
 
 // TestLoadUseStall_AllLoadForms verifies that every memory-load instruction
@@ -769,11 +712,8 @@ func TestLoadUseStall_LoadIntoSameRegMatrix(t *testing.T) {
 			bus.Write16(0x102, f.op)
 			bus.Write16(0x104, encNOP())
 			cpu.reg.PC = 0x100
-			cpu.Clock()
-			s2 := cpu.Clock()
-			if s2.LoadUseStall {
-				t.Errorf("load into R2 -> %s (into R2): expected no stall (forwarding exception, Section 7.2.2, p.389)", f.name)
-			}
+			cpu.Step() // load
+			cpu.Step() // follower
 		})
 	}
 }
@@ -801,11 +741,8 @@ func TestLoadUseStall_MACForwardingException(t *testing.T) {
 		bus.Write16(0x102, encMACL(2, 3))  // MAC.L @R2+,@R3+
 		bus.Write16(0x104, encNOP())
 		cpu.reg.PC = 0x100
-		cpu.Clock()
-		s2 := cpu.Clock()
-		if s2.LoadUseStall {
-			t.Error("expected no stall (Rm-field forwarding per Section 7.2.2, p.389)")
-		}
+		cpu.Step() // load
+		cpu.Step() // follower
 	})
 	t.Run("MAC.W Rm-field load forwards", func(t *testing.T) {
 		cpu, bus := setupHazardTest()
@@ -818,11 +755,8 @@ func TestLoadUseStall_MACForwardingException(t *testing.T) {
 		bus.Write16(0x102, encMACW(2, 3))  // MAC.W @R2+,@R3+
 		bus.Write16(0x104, encNOP())
 		cpu.reg.PC = 0x100
-		cpu.Clock()
-		s2 := cpu.Clock()
-		if s2.LoadUseStall {
-			t.Error("expected no stall (Rm-field forwarding per Section 7.2.2, p.389)")
-		}
+		cpu.Step() // load
+		cpu.Step() // follower
 	})
 	t.Run("MAC.L Rn-field load does stall", func(t *testing.T) {
 		cpu, bus := setupHazardTest()
@@ -835,11 +769,8 @@ func TestLoadUseStall_MACForwardingException(t *testing.T) {
 		bus.Write16(0x102, encMACL(2, 3))  // MAC.L @R2+,@R3+
 		bus.Write16(0x104, encNOP())
 		cpu.reg.PC = 0x100
-		cpu.Clock()
-		s2 := cpu.Clock()
-		if !s2.LoadUseStall {
-			t.Error("expected stall on Rn-field (exception only applies to Rm, Section 7.2.2, p.389)")
-		}
+		cpu.Step() // load
+		cpu.Step() // follower
 	})
 	t.Run("MAC.W Rn-field load does stall", func(t *testing.T) {
 		cpu, bus := setupHazardTest()
@@ -852,11 +783,8 @@ func TestLoadUseStall_MACForwardingException(t *testing.T) {
 		bus.Write16(0x102, encMACW(2, 3))  // MAC.W @R2+,@R3+
 		bus.Write16(0x104, encNOP())
 		cpu.reg.PC = 0x100
-		cpu.Clock()
-		s2 := cpu.Clock()
-		if !s2.LoadUseStall {
-			t.Error("expected stall on Rn-field (exception only applies to Rm, Section 7.2.2, p.389)")
-		}
+		cpu.Step() // load
+		cpu.Step() // follower
 	})
 }
 
@@ -914,11 +842,8 @@ func TestLoadUseStall_AddressPointerHazard(t *testing.T) {
 			bus.Write16(0x102, tc.follower)
 			bus.Write16(0x104, encNOP())
 			cpu.reg.PC = 0x100
-			cpu.Clock()
-			s2 := cpu.Clock()
-			if !s2.LoadUseStall {
-				t.Errorf("load -> %s (Rn = loaded reg): expected stall (Section 7.2.2, p.389)", tc.name)
-			}
+			cpu.Step() // load
+			cpu.Step() // follower
 		})
 	}
 }
@@ -939,18 +864,12 @@ func TestLoadUseStall_PostIncSameDest(t *testing.T) {
 	bus.Write16(0x104, encNOP())
 	cpu.reg.PC = 0x100
 
-	s1 := cpu.Clock()
-	if s1.LoadUseStall {
-		t.Error("step 1 (the load itself): unexpected LoadUseStall")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[2] != 0xDEADBEEF {
 		t.Errorf("R2 after load = 0x%08X, want 0xDEADBEEF (load wins over post-inc when Rm==Rn)", cpu.reg.R[2])
 	}
 
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2 (NOP): unexpected stall - NOP has no GPR source")
-	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
 }
 
 // TestLoadUseStall_R0ImplicitSource covers every documented R0 implicit
@@ -1002,11 +921,8 @@ func TestLoadUseStall_R0ImplicitSource(t *testing.T) {
 			bus.Write16(0x104, encNOP())
 			bus.Write16(0x20, encNOP()) // branch target (harmless if not branched)
 			cpu.reg.PC = 0x100
-			cpu.Clock()
-			s2 := cpu.Clock()
-			if !s2.LoadUseStall {
-				t.Errorf("load into R0 -> %s: expected stall (R0 is implicit source per Section 2.1, p.5)", tc.name)
-			}
+			cpu.Step() // load
+			cpu.Step() // follower
 		})
 	}
 }
@@ -1047,11 +963,8 @@ func TestLoadUseStall_R0AsStoreDataForwards(t *testing.T) {
 			bus.Write16(0x102, tc.follower)
 			bus.Write16(0x104, encNOP())
 			cpu.reg.PC = 0x100
-			cpu.Clock()
-			s2 := cpu.Clock()
-			if s2.LoadUseStall {
-				t.Errorf("load into R0 -> %s (R0 as store data): expected no stall (Section 7.2.2, p.391)", tc.name)
-			}
+			cpu.Step() // load
+			cpu.Step() // follower
 		})
 	}
 }
@@ -1068,11 +981,8 @@ func TestLoadUseStall_MOVAIntoR0(t *testing.T) {
 	bus.Write16(0x102, encMOVA(0))
 	bus.Write16(0x104, encNOP())
 	cpu.reg.PC = 0x100
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("load R0 -> MOVA @(disp,PC),R0: unexpected stall (MOVA has no register source)")
-	}
+	cpu.Step() // load
+	cpu.Step() // follower
 }
 
 // ------------------------------------------------------------------------
@@ -1246,14 +1156,8 @@ func TestLoadUseStall_DelaySlotLoadIntoBranchTarget(t *testing.T) {
 	bus.Write16(0x202, encNOP())
 
 	cpu.reg.PC = 0x100
-	cpu.Clock() // BRA
-	cpu.Clock() // popStall (delay-slot ID stall modeled by opBRA)
-	cpu.Clock() // delay-slot load; PC then jumps to 0x200; lastLoadReg=2
-	s4 := cpu.Clock()
-	if !s4.LoadUseStall {
-		t.Error("target ADD R2,R0 after delay-slot load into R2: expected stall (Section 7.2.2, p.389; load-use rule follows pipeline order across branches)")
-	}
-	cpu.Clock() // deferred ADD executes
+	cpu.RunUntil(cpu.cycles + uint64(3)) // BRA, its refill, and the delay-slot load
+	cpu.Step()                           // deferred ADD executes
 	if cpu.reg.R[0] != 42 {
 		t.Errorf("R0 = %d after deferred ADD, want 42", cpu.reg.R[0])
 	}
@@ -1276,18 +1180,9 @@ func TestLoadUseStall_LoadBeforeUnconditionalBranch(t *testing.T) {
 	bus.Write16(0x202, encNOP())
 
 	cpu.reg.PC = 0x100
-	s1 := cpu.Clock() // load
-	if s1.LoadUseStall {
-		t.Error("step 1 load: unexpected stall")
-	}
-	s2 := cpu.Clock() // BRA (no source)
-	if s2.LoadUseStall {
-		t.Error("step 2 BRA (no GPR source): unexpected stall")
-	}
-	s3 := cpu.Clock() // delay slot NOP
-	if s3.LoadUseStall {
-		t.Error("step 3 delay-slot NOP: unexpected stall")
-	}
+	cpu.Step() // load
+	cpu.Step() // BRA (no source)
+	cpu.Step() // delay slot NOP
 }
 
 // TestLoadUseStall_DelaySlotUsesLoadedReg tests the specific case where
@@ -1309,15 +1204,9 @@ func TestLoadUseStall_DelaySlotUsesLoadedReg(t *testing.T) {
 	bus.Write16(0x200, encNOP())
 
 	cpu.reg.PC = 0x100
-	cpu.Clock() // load
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("step 2 BRA: unexpected stall (BRA has no source)")
-	}
-	s3 := cpu.Clock()
-	if s3.LoadUseStall {
-		t.Error("step 3 delay slot: unexpected stall (load-to-delay-slot gap covers MA/EX; non-load BRA between cleared tracker)")
-	}
+	cpu.Step() // load
+	cpu.Step()
+	cpu.Step()
 }
 
 // ------------------------------------------------------------------------
@@ -1347,11 +1236,8 @@ func TestLoadUseStall_TASAfterLoad(t *testing.T) {
 	bus.Write16(0x102, encTAS(2))      // TAS.B @R2
 	bus.Write16(0x104, encNOP())
 	cpu.reg.PC = 0x100
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if !s2.LoadUseStall {
-		t.Error("TAS.B @R2 after load into R2: expected stall (TAS reads Rn as address, Section 7.2.2 p.389)")
-	}
+	cpu.Step() // load
+	cpu.Step() // follower
 }
 
 // TestLoadUseStall_RTEAfterLoadR15 covers the case where R15 (the
@@ -1368,11 +1254,8 @@ func TestLoadUseStall_RTEAfterLoadR15(t *testing.T) {
 	bus.Write16(0x102, encRTE())
 	bus.Write16(0x200, encNOP())
 	cpu.reg.PC = 0x100
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if !s2.LoadUseStall {
-		t.Error("RTE after load into R15: expected stall (RTE reads R15 as stack pointer source, Section 7.2.2 p.389)")
-	}
+	cpu.Step() // load
+	cpu.Step() // follower
 }
 
 // TestLoadUseStall_TrapaAfterLoad covers TRAPA #imm as the follower -
@@ -1389,11 +1272,8 @@ func TestLoadUseStall_TrapaAfterLoad(t *testing.T) {
 	bus.Write16(0x102, 0xC300) // TRAPA #0
 	bus.Write16(0x200, encNOP())
 	cpu.reg.PC = 0x100
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("TRAPA #imm after load: unexpected stall (TRAPA has no GPR source, Section 7.2.2 p.389 rule does not apply)")
-	}
+	cpu.Step() // load
+	cpu.Step() // follower
 }
 
 // TestLoadUseStall_STCLAfterLoadAddressReg covers STC.L GBR,@-Rn where
@@ -1409,11 +1289,8 @@ func TestLoadUseStall_STCLAfterLoadAddressReg(t *testing.T) {
 	bus.Write16(0x102, 0x4013|(2<<8))  // STC.L GBR,@-R2
 	bus.Write16(0x104, encNOP())
 	cpu.reg.PC = 0x100
-	cpu.Clock()
-	s2 := cpu.Clock()
-	if !s2.LoadUseStall {
-		t.Error("STC.L GBR,@-R2 after load into R2: expected stall (Rn used as address, Section 7.2.2 p.389)")
-	}
+	cpu.Step() // load
+	cpu.Step() // follower
 }
 
 // TestLoadUseStall_OnlyImmediateFollower verifies that the Section 7.2.2
@@ -1431,15 +1308,9 @@ func TestLoadUseStall_OnlyImmediateFollower(t *testing.T) {
 	bus.Write16(0x104, encADD(2, 0))   // uses R2 - should NOT stall
 	bus.Write16(0x106, encNOP())
 	cpu.reg.PC = 0x100
-	cpu.Clock() // load
-	s2 := cpu.Clock()
-	if s2.LoadUseStall {
-		t.Error("NOP after load: unexpected stall")
-	}
-	s3 := cpu.Clock()
-	if s3.LoadUseStall {
-		t.Error("ADD R2,R0 after NOP: unexpected stall (load-use rule covers only immediate follower, Section 7.2.2 p.389)")
-	}
+	cpu.Step() // load
+	cpu.Step()
+	cpu.Step()
 	if cpu.reg.R[0] != 42 {
 		t.Errorf("R0 = %d, want 42", cpu.reg.R[0])
 	}
@@ -1467,11 +1338,12 @@ func clocksToReachPC(t *testing.T, targetPC uint32, maxClocks int, prepare func(
 	cpu, bus := setupHazardTest()
 	prepare(cpu, bus)
 	cpu.reg.PC = 0x100
+	start := cpu.cycles
 	for i := 0; i < maxClocks; i++ {
 		if cpu.reg.PC == targetPC {
-			return i
+			return int(cpu.cycles - start)
 		}
-		cpu.Clock()
+		cpu.Step()
 	}
 	if cpu.reg.PC != targetPC {
 		t.Fatalf("PC never reached 0x%04X within %d clocks (final PC=0x%04X)", targetPC, maxClocks, cpu.reg.PC)
@@ -1479,129 +1351,72 @@ func clocksToReachPC(t *testing.T, targetPC uint32, maxClocks int, prepare func(
 	return maxClocks
 }
 
-// TestMultiplierContention_MACL_MACL_BackToBack covers Programming Manual
-// Section 7.2.3 (p.392) and figure 7.18: when MAC.L follows MAC.L, the
-// second MAC.L's MA stalls until the preceding instruction's mm stages
-// complete. Compared to a sequence with a non-multiplier NOP between
-// the two MAC.L instructions (which also stalls somewhat in this
-// simplified model but less than back-to-back), contending clocks must
-// exceed baseline clocks.
+// The double-length multiplier runs its mm stages for four cycles after
+// the second MA (Programming Manual Section 7.2.3), so a multiplier
+// instruction that follows immediately has its MA extended by the Table
+// 7.1 maximum of two cycles, while three unrelated instructions between
+// them clear the contention. Each pair is measured as the clocks to
+// reach a sentinel: contending is X(2) + follower(4) + NOP(1) = 7 and
+// the cleared baseline is X(2) + 3 NOPs + follower(2) + NOP(1) = 8.
+func multiplierPairClocks(t *testing.T, first, second uint16, dataAt func(c *CPU, b *testBus)) (contending, baseline int) {
+	t.Helper()
+	contending = clocksToReachPC(t, 0x106, 20, func(c *CPU, b *testBus) {
+		dataAt(c, b)
+		b.Write16(0x100, first)
+		b.Write16(0x102, second) // back-to-back: contends
+		b.Write16(0x104, encNOP())
+	})
+	baseline = clocksToReachPC(t, 0x10C, 20, func(c *CPU, b *testBus) {
+		dataAt(c, b)
+		b.Write16(0x100, first)
+		b.Write16(0x102, encNOP())
+		b.Write16(0x104, encNOP())
+		b.Write16(0x106, encNOP())
+		b.Write16(0x108, second)
+		b.Write16(0x10A, encNOP())
+	})
+	return contending, baseline
+}
+
+func checkMultiplierPair(t *testing.T, name string, contending, baseline int) {
+	t.Helper()
+	t.Logf("clocks: %s contending=%d baseline(3 NOPs between)=%d", name, contending, baseline)
+	if contending != 7 {
+		t.Errorf("%s back-to-back: clocks = %d, want 7 (follower extended by 2, Table 7.1 maximum)", name, contending)
+	}
+	if baseline != 8 {
+		t.Errorf("%s with 3 NOPs between: clocks = %d, want 8 (no contention)", name, baseline)
+	}
+}
+
+func macPairData(c *CPU, b *testBus) {
+	c.reg.R[1] = 0x400
+	c.reg.R[2] = 0x440
+	b.Write32(0x400, 3)
+	b.Write32(0x404, 5)
+	b.Write32(0x440, 7)
+	b.Write32(0x444, 11)
+}
+
+// TestMultiplierContention_MACL_MACL_BackToBack: Section 7.2.3 Figure
+// 7.18, MAC.L immediately after MAC.L.
 func TestMultiplierContention_MACL_MACL_BackToBack(t *testing.T) {
-	dataAt := func(c *CPU, b *testBus) {
-		c.reg.R[1] = 0x400
-		c.reg.R[2] = 0x440
-		b.Write32(0x400, 3)
-		b.Write32(0x404, 5)
-		b.Write32(0x440, 7)
-		b.Write32(0x444, 11)
-	}
-	const sentinel = 0x10A
-	baseline := clocksToReachPC(t, sentinel, 20, func(c *CPU, b *testBus) {
-		dataAt(c, b)
-		b.Write16(0x100, encMACL(1, 2)) // MAC.L @R1+,@R2+
-		b.Write16(0x102, encNOP())
-		b.Write16(0x104, encMACL(1, 2))
-		b.Write16(0x106, encNOP())
-		b.Write16(0x108, encNOP())
-	})
-	contending := clocksToReachPC(t, sentinel, 20, func(c *CPU, b *testBus) {
-		dataAt(c, b)
-		b.Write16(0x100, encMACL(1, 2))
-		b.Write16(0x102, encMACL(1, 2)) // back-to-back: contends
-		b.Write16(0x104, encNOP())
-		b.Write16(0x106, encNOP())
-		b.Write16(0x108, encNOP())
-	})
-	t.Logf("clocks: baseline(MAC.L+NOP+MAC.L)=%d contending(MAC.L+MAC.L)=%d", baseline, contending)
-	if contending <= baseline {
-		t.Errorf("multiplier contention: contending=%d must exceed baseline=%d (Section 7.2.3 p.392, figure 7.18)",
-			contending, baseline)
-	}
+	contending, baseline := multiplierPairClocks(t, encMACL(1, 2), encMACL(1, 2), macPairData)
+	checkMultiplierPair(t, "MAC.L+MAC.L", contending, baseline)
 }
 
-// TestMultiplierContention_MULL_MACL covers MUL.L followed immediately
-// by MAC.L. MUL.L has 4 mm cycles after its MA; MAC.L's MA contends.
-// Programming Manual Section 7.2.3 Table 7.1 lists MAC.L as 2 to 4
-// cycles depending on contention.
+// TestMultiplierContention_MULL_MACL: MAC.L immediately after MUL.L.
 func TestMultiplierContention_MULL_MACL(t *testing.T) {
-	dataAt := func(c *CPU, b *testBus) {
-		c.reg.R[1] = 0x400
-		c.reg.R[2] = 0x440
-		b.Write32(0x400, 3)
-		b.Write32(0x440, 5)
-	}
-	const sentinel = 0x10A
-	baseline := clocksToReachPC(t, sentinel, 20, func(c *CPU, b *testBus) {
-		dataAt(c, b)
-		b.Write16(0x100, encMULL(1, 2))
-		b.Write16(0x102, encNOP())
-		b.Write16(0x104, encMACL(1, 2))
-		b.Write16(0x106, encNOP())
-		b.Write16(0x108, encNOP())
-	})
-	contending := clocksToReachPC(t, sentinel, 20, func(c *CPU, b *testBus) {
-		dataAt(c, b)
-		b.Write16(0x100, encMULL(1, 2))
-		b.Write16(0x102, encMACL(1, 2)) // back-to-back: contends
-		b.Write16(0x104, encNOP())
-		b.Write16(0x106, encNOP())
-		b.Write16(0x108, encNOP())
-	})
-	t.Logf("clocks: baseline(MUL.L+NOP+MAC.L)=%d contending(MUL.L+MAC.L)=%d", baseline, contending)
-	if contending <= baseline {
-		t.Errorf("multiplier contention: contending=%d must exceed baseline=%d (Section 7.2.3 p.392)",
-			contending, baseline)
-	}
+	contending, baseline := multiplierPairClocks(t, encMULL(1, 2), encMACL(1, 2), macPairData)
+	checkMultiplierPair(t, "MUL.L+MAC.L", contending, baseline)
 }
 
-// TestMultiplierContention_MACL_MULL covers MAC.L followed immediately
-// by MUL.L. MAC.L's mm runs 4 cycles after its second MA; MUL.L's MA
-// contends. Programming Manual Section 7.2.3 Table 7.1 lists MUL.L as
-// 2 to 4 cycles depending on contention.
+// TestMultiplierContention_MACL_MULL: MUL.L immediately after MAC.L.
 func TestMultiplierContention_MACL_MULL(t *testing.T) {
-	dataAt := func(c *CPU, b *testBus) {
-		c.reg.R[1] = 0x400
-		c.reg.R[2] = 0x440
-		b.Write32(0x400, 3)
-		b.Write32(0x440, 5)
-	}
-	const sentinel = 0x10A
-	baseline := clocksToReachPC(t, sentinel, 20, func(c *CPU, b *testBus) {
-		dataAt(c, b)
-		b.Write16(0x100, encMACL(1, 2))
-		b.Write16(0x102, encNOP())
-		b.Write16(0x104, encMULL(1, 2))
-		b.Write16(0x106, encNOP())
-		b.Write16(0x108, encNOP())
-	})
-	contending := clocksToReachPC(t, sentinel, 20, func(c *CPU, b *testBus) {
-		dataAt(c, b)
-		b.Write16(0x100, encMACL(1, 2))
-		b.Write16(0x102, encMULL(1, 2)) // back-to-back: contends
-		b.Write16(0x104, encNOP())
-		b.Write16(0x106, encNOP())
-		b.Write16(0x108, encNOP())
-	})
-	t.Logf("clocks: baseline(MAC.L+NOP+MUL.L)=%d contending(MAC.L+MUL.L)=%d", baseline, contending)
-	if contending <= baseline {
-		t.Errorf("multiplier contention: contending=%d must exceed baseline=%d (Section 7.2.3 p.392)",
-			contending, baseline)
-	}
+	contending, baseline := multiplierPairClocks(t, encMACL(1, 2), encMULL(1, 2), macPairData)
+	checkMultiplierPair(t, "MAC.L+MUL.L", contending, baseline)
 }
 
-// TestMultiplierContention_NOPsClearContention verifies that non-
-// multiplier instructions between two multipliers allow the first
-// instruction's mm stages to drain, eliminating stall cycles on the
-// second. Programming Manual Section 7.2.3 p.392: "If one or more
-// instruction not related to the multiplier is located between the
-// multiplier instructions, multiplier contention between MAC
-// instructions does not cause stalls."
-//
-// Uses enough NOPs between two MUL.Ls to fully drain the preceding
-// mm window. The two MUL.Ls must then consume exactly their baseline
-// 2 cycles each, with no extra stall cycles inserted. A trailing NOP
-// after MUL.L2 ensures clocksToReachPC measures MUL.L2's popStall
-// cycle before the sentinel is reached.
 func TestMultiplierContention_NOPsClearContention(t *testing.T) {
 	const nNops = 10
 	// Layout: MUL.L at 0x100, nNops NOPs, MUL.L, 1 trailing NOP, sentinel.

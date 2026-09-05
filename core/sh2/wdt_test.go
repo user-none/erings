@@ -487,8 +487,8 @@ func TestWDTOVFLatchedWhileIMASKBlocks(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("WDT interrupt not accepted at IMASK=14 with level 15")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("accepted vec = 0x%X, want 0x50 (VCRWDT ITI)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("accepted vec = 0x%X, want 0x50 (VCRWDT ITI)", acceptedVector(cpu))
 	}
 }
 

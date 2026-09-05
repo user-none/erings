@@ -357,34 +357,6 @@ func TestCacheDataArrayRAM(t *testing.T) {
 	}
 }
 
-// TestBusStallDrains: the stall debt drains one cycle per Clock()
-// before the next instruction executes.
-func TestBusStallDrains(t *testing.T) {
-	const stall = 3
-	bus := newTestBus(0x100)
-	for a := 0; a+1 < len(bus.mem); a += 2 { // NOPs
-		bus.mem[a], bus.mem[a+1] = 0x00, 0x09
-	}
-	cpu := New(bus, true)
-	cpu.reg.PC = 0
-	cpu.busStall = stall // simulate one access's debt
-	start := cpu.Cycles()
-
-	for i := 0; i < stall; i++ {
-		cpu.Clock()
-		if cpu.reg.PC != 0 {
-			t.Fatalf("instruction executed during stall drain at step %d", i)
-		}
-	}
-	cpu.Clock() // debt drained: the NOP executes
-	if cpu.reg.PC != 2 {
-		t.Error("instruction did not execute after stall drained")
-	}
-	if got := cpu.Cycles() - start; got != uint64(stall)+1 {
-		t.Errorf("cycles = %d, want %d", got, stall+1)
-	}
-}
-
 // TestFetchLineMemoInvalidation: the fetch-line memo serves sequential
 // fetches from the resolved line, observes write hits (it holds a
 // location, not data), and never survives eviction of its line or a

@@ -154,7 +154,7 @@ type Bus struct {
 	cdblock   *CDBlock // CD Block (A-Bus CS2)
 
 	// MINIT/SINIT FRT-capture signals from a CPU's bus write inside
-	// Clock() to its own step loop. Each is read on the same goroutine
+	// Step to its own walk loop. Each is read on the same goroutine
 	// that writes it, so a plain bool suffices: minitWritten lives entirely
 	// on the master/main goroutine, sinitWritten on the slave/secondary
 	// worker, under the MINIT->slave / SINIT->master write convention.
@@ -172,15 +172,14 @@ type Bus struct {
 	// is forced to wait for access and execution speed decreases"). When
 	// one SH-2 accesses an area, the bus is occupied for the full
 	// transaction; the other SH-2's next access to that area is charged
-	// the cycles until it frees. busyUntil[area] is the frame-relative
-	// system cycle at which the area's in-flight access completes,
-	// read-modify-written under the area lock and reset per frame. The
-	// accessing CPU's current frame cycle is passed in (CPU.frameCyc) -
-	// the frame-loop timeline the barrier keeps aligned within
-	// syncChunkCycles, NOT each CPU's executed count (which would lag
-	// across an SSH-off gap). The full per-region transaction durations
-	// the window advances by live in the package-global access-cost
-	// tables in bus_timing.go.
+	// the cycles until it frees. busyUntil[area] is the system cycle
+	// at which the area's in-flight access completes, read-modify-written
+	// under the area lock. The accessing CPU's cycle counter is passed
+	// in: the master's counts every cycle from power-on, the slave's is
+	// brought up to the system cycle when it is enabled, and the barrier
+	// keeps the two aligned within syncChunkCycles. The full per-region
+	// transaction durations the window advances by live in the
+	// package-global access-cost tables in bus_timing.go.
 	busyUntil [areaCount]int64
 
 	masterPendingWrite pendingWrite

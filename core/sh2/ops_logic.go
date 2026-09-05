@@ -57,52 +57,41 @@ func opTSTI(c *CPU) {
 }
 
 // opANDB: AND.B #imm,@(R0,GBR) - mem[R0+GBR] &= imm8
-// 3 cycles: cycle 1 EX+MA read, cycle 2 EX logic, cycle 3 MA write
+// 3 cycles: EX+MA read, EX logic, MA write
 func opANDB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
-	c.pendingAddr = addr
-	c.pendingVal = uint32(c.Read8(addr))
-	c.pendingImm = uint32(imm8(c.ir))
-	c.pendingN = 0 // AND
-	c.stepBus = BusRead
+	v := c.Read8(addr) & imm8(c.ir)
+	c.cycles += 2 // EX logic, MA: write
+	c.Write8(addr, v)
 	c.cycles++
-	c.setPending(popMemRMW, 2)
 }
 
 // opORB: OR.B #imm,@(R0,GBR) - mem[R0+GBR] |= imm8
-// 3 cycles: cycle 1 EX+MA read, cycle 2 EX logic, cycle 3 MA write
+// 3 cycles: EX+MA read, EX logic, MA write
 func opORB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
-	c.pendingAddr = addr
-	c.pendingVal = uint32(c.Read8(addr))
-	c.pendingImm = uint32(imm8(c.ir))
-	c.pendingN = 1 // OR
-	c.stepBus = BusRead
+	v := c.Read8(addr) | imm8(c.ir)
+	c.cycles += 2 // EX logic, MA: write
+	c.Write8(addr, v)
 	c.cycles++
-	c.setPending(popMemRMW, 2)
 }
 
 // opXORB: XOR.B #imm,@(R0,GBR) - mem[R0+GBR] ^= imm8
-// 3 cycles: cycle 1 EX+MA read, cycle 2 EX logic, cycle 3 MA write
+// 3 cycles: EX+MA read, EX logic, MA write
 func opXORB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
-	c.pendingAddr = addr
-	c.pendingVal = uint32(c.Read8(addr))
-	c.pendingImm = uint32(imm8(c.ir))
-	c.pendingN = 2 // XOR
-	c.stepBus = BusRead
+	v := c.Read8(addr) ^ imm8(c.ir)
+	c.cycles += 2 // EX logic, MA: write
+	c.Write8(addr, v)
 	c.cycles++
-	c.setPending(popMemRMW, 2)
 }
 
 // opTSTB: TST.B #imm,@(R0,GBR) - T = (mem[R0+GBR] & imm8 == 0) ? 1 : 0
-// 3 cycles: cycle 1 EX+MA read+test, cycles 2-3 idle
+// 3 cycles: EX+MA read+test, 2 idle
 func opTSTB(c *CPU) {
 	addr := c.reg.R[0] + c.reg.GBR
 	c.reg.SetTVal(c.Read8(addr)&imm8(c.ir) == 0)
-	c.stepBus = BusRead
-	c.cycles++
-	c.setPending(popStall, 2)
+	c.cycles += 3
 }
 
 // opNOT: NOT Rm,Rn - Rn = ~Rm

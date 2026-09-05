@@ -29,7 +29,7 @@ func TestOpLogicReg(t *testing.T) {
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetT() // T should be unchanged
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -77,7 +77,7 @@ func TestOpANDBoundaries(t *testing.T) {
 				}
 				cpu.reg.SetTVal(tBefore)
 				before := cpu.cycles
-				cpu.Clock()
+				cpu.RunUntil(cpu.cycles + uint64(1))
 				if cpu.reg.R[n] != tt.wantRn {
 					t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 				}
@@ -128,7 +128,7 @@ func TestOpORBoundaries(t *testing.T) {
 				}
 				cpu.reg.SetTVal(tBefore)
 				before := cpu.cycles
-				cpu.Clock()
+				cpu.RunUntil(cpu.cycles + uint64(1))
 				if cpu.reg.R[n] != tt.wantRn {
 					t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 				}
@@ -179,7 +179,7 @@ func TestOpXORBoundaries(t *testing.T) {
 				}
 				cpu.reg.SetTVal(tBefore)
 				before := cpu.cycles
-				cpu.Clock()
+				cpu.RunUntil(cpu.cycles + uint64(1))
 				if cpu.reg.R[n] != tt.wantRn {
 					t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 				}
@@ -222,7 +222,7 @@ func TestOpTST(t *testing.T) {
 				cpu.reg.R[m] = tt.rm
 			}
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -259,7 +259,7 @@ func TestOpNOT(t *testing.T) {
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetT() // T should be unchanged
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -278,7 +278,7 @@ func TestOpNOTPreservesTClear(t *testing.T) {
 	cpu := newDecodeTestCPU(0x6357)
 	cpu.reg.R[5] = 0x5A5A5A5A
 	cpu.reg.SetTVal(false)
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[3] != 0xA5A5A5A5 {
 		t.Errorf("R3 = 0x%08X, want 0xA5A5A5A5", cpu.reg.R[3])
 	}
@@ -320,7 +320,7 @@ func TestOpLogicImm(t *testing.T) {
 			cpu.reg.R[0] = tt.r0
 			cpu.reg.SetT() // T should be unchanged
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[0] != tt.wantR0 {
 				t.Errorf("R0 = 0x%08X, want 0x%08X", cpu.reg.R[0], tt.wantR0)
 			}
@@ -354,7 +354,7 @@ func TestOpTSTI(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			cpu.reg.R[0] = tt.r0
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -398,21 +398,7 @@ func TestOpLogicByte(t *testing.T) {
 			cpu.reg.SetT() // T should be unchanged
 			before := cpu.cycles
 
-			// Cycle 1: read
-			s1 := cpu.Clock()
-			if s1.Bus != BusRead {
-				t.Errorf("cycle 1: bus = %d, want BusRead", s1.Bus)
-			}
-			// Cycle 2: logic
-			s2 := cpu.Clock()
-			if s2.Bus != BusNone {
-				t.Errorf("cycle 2: bus = %d, want BusNone", s2.Bus)
-			}
-			// Cycle 3: write
-			s3 := cpu.Clock()
-			if s3.Bus != BusWrite {
-				t.Errorf("cycle 3: bus = %d, want BusWrite", s3.Bus)
-			}
+			cpu.Step()
 
 			got := cpu.bus.Read8(addr)
 			if got != tt.wantByte {
@@ -452,9 +438,7 @@ func TestOpLogicBytePreservesNeighbors(t *testing.T) {
 			cpu.bus.Write8(addr+1, 0x22)
 			cpu.bus.Write8(addr+2, 0x33)
 
-			cpu.Clock()
-			cpu.Clock()
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(3))
 
 			if got := cpu.bus.Read8(addr); got != tt.wantByte {
 				t.Errorf("mem[0x%X] = 0x%02X, want 0x%02X", addr, got, tt.wantByte)
@@ -498,14 +482,7 @@ func TestOpTSTB(t *testing.T) {
 			cpu.bus.Write8(addr, tt.memByte)
 			before := cpu.cycles
 
-			// Cycle 1: read + test
-			s1 := cpu.Clock()
-			if s1.Bus != BusRead {
-				t.Errorf("cycle 1: bus = %d, want BusRead", s1.Bus)
-			}
-			// Cycles 2-3: idle
-			cpu.Clock()
-			cpu.Clock()
+			cpu.Step()
 
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)

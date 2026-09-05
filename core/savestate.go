@@ -41,13 +41,13 @@ const (
 	// erings) with a "state is from a newer version" error. Raised
 	// when fields are added; older files simply lack the new fields,
 	// which read as zero values on load.
-	stateVersion = uint32(5)
+	stateVersion = uint32(6)
 
 	// stateMinVersion is the oldest state-file version Deserialize
 	// accepts. A file below it is rejected with a distinct "state is
 	// too old" error. Raised only when a format change drops
 	// compatibility with older files entirely.
-	stateMinVersion = uint32(1)
+	stateMinVersion = uint32(6)
 
 	stateTagLen = 16
 )
@@ -305,20 +305,8 @@ func buildSH2Core(w *fieldWriter, st *sh2.State) {
 	w.flag("nmiPending", st.Exec.NMIPending)
 	w.flag("nmiReq", st.Exec.NMIReq)
 	w.flag("intInhibit", st.Exec.IntInhibit)
-	w.u8("pendingOp", st.Exec.PendingOp)
-	w.u8("pendingStep", st.Exec.PendingStep)
-	w.u8("pendingCount", st.Exec.PendingCount)
-	w.u8("pendingN", st.Exec.PendingN)
-	w.u32("pendingAddr", st.Exec.PendingAddr)
-	w.u32("pendingVal", st.Exec.PendingVal)
-	w.u32("pendingVal2", st.Exec.PendingVal2)
-	w.u32("pendingImm", st.Exec.PendingImm)
 	w.u8("lastLoadReg", st.Exec.LastLoadReg)
-	w.u16("deferredOp", st.Exec.DeferredOp)
-	w.flag("hasDeferred", st.Exec.HasDeferred)
-	w.flag("loadUseStall", st.Exec.LoadUseStall)
 	w.u64("multiplierBusyUntil", st.Exec.MultiplierBusyUntil)
-	w.u32("busStall", st.Exec.BusStall)
 	w.u64("nextPeripheralEvent", st.Exec.NextPeripheralEvent)
 	w.u32("fetchLineAddr", st.Exec.FetchLineAddr)
 	w.i64("fetchLineWay", int64(st.Exec.FetchLineWay))
@@ -371,8 +359,7 @@ func buildSH2Core(w *fieldWriter, st *sh2.State) {
 	w.u16("dmac.dmaor", st.DMAC.DMAOR)
 	w.raw("dmac.drcr", st.DMAC.DRCR[:])
 	w.i64("dmac.nextCh", int64(st.DMAC.NextCh))
-	w.i64s("dmac.stallCycles", []int64{int64(st.DMAC.StallCycles[0]), int64(st.DMAC.StallCycles[1])})
-	w.i64("dmac.stallCh", int64(st.DMAC.StallCh))
+	w.i64s("dmac.completesAt", []int64{int64(st.DMAC.CompletesAt[0]), int64(st.DMAC.CompletesAt[1])})
 
 	w.u8("wdt.wtcsr", st.WDT.WTCSR)
 	w.u8("wdt.wtcnt", st.WDT.WTCNT)
@@ -1154,6 +1141,7 @@ func buildEmu(w *fieldWriter, e *Emulator) {
 	w.u64("lineWidthAccum", e.lineWidthAccum)
 	w.u32("lastTrueClock", e.lastTrueClock)
 	w.u32("lastD", e.lastD)
+	w.u64("frameStart", e.frameStart)
 }
 
 // buildStateBody assembles every chunk into the uncompressed container
@@ -1723,20 +1711,8 @@ func decodeSH2Core(r *fieldReader, st *sh2.State) {
 	st.Exec.NMIPending = r.flag("nmiPending")
 	st.Exec.NMIReq = r.flag("nmiReq")
 	st.Exec.IntInhibit = r.flag("intInhibit")
-	st.Exec.PendingOp = r.u8("pendingOp")
-	st.Exec.PendingStep = r.u8("pendingStep")
-	st.Exec.PendingCount = r.u8("pendingCount")
-	st.Exec.PendingN = r.u8("pendingN")
-	st.Exec.PendingAddr = r.u32("pendingAddr")
-	st.Exec.PendingVal = r.u32("pendingVal")
-	st.Exec.PendingVal2 = r.u32("pendingVal2")
-	st.Exec.PendingImm = r.u32("pendingImm")
 	st.Exec.LastLoadReg = r.u8("lastLoadReg")
-	st.Exec.DeferredOp = r.u16("deferredOp")
-	st.Exec.HasDeferred = r.flag("hasDeferred")
-	st.Exec.LoadUseStall = r.flag("loadUseStall")
 	st.Exec.MultiplierBusyUntil = r.u64("multiplierBusyUntil")
-	st.Exec.BusStall = r.u32("busStall")
 	st.Exec.NextPeripheralEvent = r.u64("nextPeripheralEvent")
 	st.Exec.FetchLineAddr = r.u32("fetchLineAddr")
 	st.Exec.FetchLineWay = r.iRange("fetchLineWay", 0, 3)
@@ -1791,20 +1767,14 @@ func decodeSH2Core(r *fieldReader, st *sh2.State) {
 	st.DMAC.DMAOR = r.u16("dmac.dmaor")
 	copy(st.DMAC.DRCR[:], r.take("dmac.drcr", 2))
 	st.DMAC.NextCh = r.iRange("dmac.nextCh", 0, 1)
-	st.DMAC.StallCh = r.iRange("dmac.stallCh", -1, 1)
-	st.DMAC.StallCycles = [2]int{-1, -1}
-	switch d := r.take("dmac.stallCycles", -1); len(d) {
+	switch d := r.take("dmac.completesAt", -1); len(d) {
 	case 16:
-		st.DMAC.StallCycles[0] = int(int64(binary.BigEndian.Uint64(d)))
-		st.DMAC.StallCycles[1] = int(int64(binary.BigEndian.Uint64(d[8:])))
-	case 8:
-		if st.DMAC.StallCh >= 0 {
-			st.DMAC.StallCycles[st.DMAC.StallCh] = int(int64(binary.BigEndian.Uint64(d)))
-		}
+		st.DMAC.CompletesAt[0] = binary.BigEndian.Uint64(d)
+		st.DMAC.CompletesAt[1] = binary.BigEndian.Uint64(d[8:])
 	case 0:
-		// Field absent: predates the countdown, both channels idle.
+		// Field absent: no transfer in progress on either channel.
 	default:
-		r.fail("field dmac.stallCycles size %d, want 8 or 16", len(d))
+		r.fail("field dmac.completesAt size %d, want 16", len(d))
 	}
 
 	st.WDT.WTCSR = r.u8("wdt.wtcsr")
@@ -3043,12 +3013,14 @@ func decodeEmu(e *Emulator, r *fieldReader) func() {
 	lineWidthAccum := r.u64("lineWidthAccum")
 	lastTrueClock := r.u32("lastTrueClock")
 	lastD := r.u32("lastD")
+	frameStart := r.u64("frameStart")
 	return func() {
 		e.pendingSystemReset.Store(pendingSystemReset)
 		e.pendingMasterNMI.Store(pendingMasterNMI)
 		e.lineWidthAccum = lineWidthAccum
 		e.lastTrueClock = lastTrueClock
 		e.lastD = lastD
+		e.frameStart = frameStart
 	}
 }
 

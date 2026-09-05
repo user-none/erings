@@ -31,12 +31,6 @@ func TestNewInitialState(t *testing.T) {
 				t.Errorf("lastLoadReg = 0x%02X, want 0xFF", cpu.lastLoadReg)
 			}
 		})
-		t.Run("no_pending_op"+suffix, func(t *testing.T) {
-			cpu := New(newTestBus(0x100), master)
-			if cpu.pendingOp != popNone {
-				t.Errorf("pendingOp = %d, want popNone", cpu.pendingOp)
-			}
-		})
 		t.Run("not_halted"+suffix, func(t *testing.T) {
 			cpu := New(newTestBus(0x100), master)
 			if cpu.Halted() {
@@ -203,21 +197,8 @@ func dirtyResettableFields(c *CPU) {
 	c.nmiPending = true
 	c.intInhibit = true
 	c.irl.Store(7<<16 | 0x3F)
-	c.pendingOp = popTAS
-	c.pendingStep = 2
-	c.pendingCount = 3
-	c.pendingN = 9
-	c.pendingAddr = 0xBEEF
-	c.pendingVal = 0x1234
-	c.pendingVal2 = 0x5678
-	c.pendingImm = 0x20
 	c.lastLoadReg = 5
-	c.deferredOp = 0xABCD
-	c.hasDeferred = true
-	c.loadUseStall = true
 	c.multiplierBusyUntil = 0x12345678
-	c.stepBus = BusWrite
-	c.branchTaken = true
 	c.ccr = 0xFF
 	c.sbycr = 0xDF
 	c.bcr1 = 0xABCD
@@ -352,32 +333,14 @@ func TestReset(t *testing.T) {
 	t.Run("clears_pending_op", func(t *testing.T) {
 		cpu := setup()
 		cpu.Reset()
-		if cpu.pendingOp != popNone {
-			t.Errorf("pendingOp = %d, want popNone", cpu.pendingOp)
-		}
-		if cpu.pendingStep != 0 {
-			t.Errorf("pendingStep = %d, want 0", cpu.pendingStep)
-		}
-		if cpu.pendingCount != 0 {
-			t.Errorf("pendingCount = %d, want 0", cpu.pendingCount)
-		}
 	})
 	t.Run("clears_deferred_op", func(t *testing.T) {
 		cpu := setup()
 		cpu.Reset()
-		if cpu.hasDeferred {
-			t.Error("hasDeferred = true, want false")
-		}
-		if cpu.deferredOp != 0 {
-			t.Errorf("deferredOp = 0x%04X, want 0", cpu.deferredOp)
-		}
 	})
 	t.Run("clears_load_use_state", func(t *testing.T) {
 		cpu := setup()
 		cpu.Reset()
-		if cpu.loadUseStall {
-			t.Error("loadUseStall = true, want false")
-		}
 		if cpu.lastLoadReg != 0xFF {
 			t.Errorf("lastLoadReg = 0x%02X, want 0xFF", cpu.lastLoadReg)
 		}
@@ -392,12 +355,6 @@ func TestReset(t *testing.T) {
 	t.Run("clears_step_bus_and_branch_taken", func(t *testing.T) {
 		cpu := setup()
 		cpu.Reset()
-		if cpu.stepBus != BusNone {
-			t.Errorf("stepBus = %d, want BusNone", cpu.stepBus)
-		}
-		if cpu.branchTaken {
-			t.Error("branchTaken = true, want false")
-		}
 	})
 	t.Run("clears_ccr_and_sbycr", func(t *testing.T) {
 		cpu := setup()
@@ -501,17 +458,6 @@ func TestReset(t *testing.T) {
 		}
 	})
 
-	t.Run("reset_during_pending_op", func(t *testing.T) {
-		cpu := setup()
-		cpu.pendingOp = popTAS
-		cpu.pendingStep = 1
-		cpu.pendingCount = 3
-		cpu.Reset()
-		if cpu.pendingOp != popNone || cpu.pendingStep != 0 || cpu.pendingCount != 0 {
-			t.Errorf("pending state not cleared: op=%d step=%d count=%d",
-				cpu.pendingOp, cpu.pendingStep, cpu.pendingCount)
-		}
-	})
 	t.Run("reset_during_delay_slot", func(t *testing.T) {
 		cpu := setup()
 		cpu.inDelay = true
@@ -543,9 +489,7 @@ func TestCycles(t *testing.T) {
 			cpu.bus.Write16(addr, nopOpcode)
 		}
 		start := cpu.Cycles()
-		for i := 0; i < 5; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(5))
 		if cpu.Cycles()-start != 5 {
 			t.Errorf("Cycles delta = %d, want 5", cpu.Cycles()-start)
 		}
@@ -574,7 +518,7 @@ func TestHalted(t *testing.T) {
 	t.Run("true_after_sleep_ex_cycle", func(t *testing.T) {
 		// SLEEP is 0x001B.
 		cpu := newDecodeTestCPU(0x001B)
-		cpu.Clock()
+		cpu.Step()
 		if !cpu.Halted() {
 			t.Error("Halted() = false after SLEEP executed, want true")
 		}
@@ -596,15 +540,14 @@ func TestHalted(t *testing.T) {
 		// Unmask everything so NMI (level 16) is accepted.
 		cpu.reg.SR = 0
 
-		// First Clock runs SLEEP's EX stage.
-		cpu.Clock()
+		cpu.Step()
 		if !cpu.Halted() {
 			t.Fatal("CPU not halted after SLEEP EX")
 		}
 		// Fire NMI and clock until halted is cleared by acceptInterrupt.
 		cpu.NMI()
 		for i := 0; i < 16 && cpu.Halted(); i++ {
-			cpu.Clock()
+			cpu.Step()
 		}
 		if cpu.Halted() {
 			t.Error("Halted() still true after NMI; expected wake")
@@ -669,15 +612,6 @@ func TestSetPC(t *testing.T) {
 		cpu.SetPC(0xFFFFFFFE)
 		if cpu.reg.PC != 0xFFFFFFFE {
 			t.Errorf("PC = 0x%08X, want 0xFFFFFFFE", cpu.reg.PC)
-		}
-	})
-	t.Run("does_not_clear_pending_op", func(t *testing.T) {
-		cpu := New(newTestBus(0x100), true)
-		cpu.pendingOp = popTAS
-		cpu.pendingCount = 2
-		cpu.SetPC(0x100)
-		if cpu.pendingOp != popTAS {
-			t.Errorf("pendingOp = %d, want popTAS (SetPC should not touch pending state)", cpu.pendingOp)
 		}
 	})
 }
@@ -772,7 +706,7 @@ func TestSetIRLAck(t *testing.T) {
 		// acceptInterrupt calls irlAck synchronously inside Clock() when
 		// processInterrupt returns true.
 		for i := 0; i < 8 && count == 0; i++ {
-			cpu.Clock()
+			cpu.Step()
 		}
 		if count != 1 {
 			t.Errorf("irlAck called %d times, want 1", count)
@@ -786,7 +720,7 @@ func TestSetIRLAck(t *testing.T) {
 		// The bus has no program, but processInterrupt happens before fetch.
 		cpu.SetPC(0x10)
 		cpu.bus.Write16(0x10, nopOpcode)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 	})
 	t.Run("callback_replaceable", func(t *testing.T) {
 		cpu := New(newTestBus(0x100), true)

@@ -137,11 +137,14 @@ type Emulator struct {
 	sinitPending atomic.Bool
 
 	frameTotalCycles int64
-	// Cycle debt from draining a TAS that straddled a stepping-loop
-	// boundary: the master carries into its next line, the slave into
-	// its next chunk. Each is owned by its stepping goroutine.
-	masterTASCarry uint32
-	slaveTASCarry  int64
+	// frameStart is the system cycle at which the current frame began.
+	// Each SH-2's cycle counter is the system clock, so a CPU's position
+	// in the frame is its counter minus frameStart, and an instruction
+	// that overshoots a chunk, a line, or the frame end carries into the
+	// next through the counter. A slave enabled part way through a frame
+	// has its counter brought up to the current system cycle first.
+	// Written on the main goroutine between frames.
+	frameStart uint64
 
 	// Save-state scratch, reused across Serialize calls: rewind
 	// captures at up to every-other-frame rates, and fresh 12+ MB

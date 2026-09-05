@@ -193,13 +193,13 @@ func TestDecodeAllGroups(t *testing.T) {
 				cpu.bus.Write16(0x20, tt.op)
 				cpu.reg.PC = 0x20
 				cpu.bus.Write32(0x10, 0x00000080)
-				cpu.Clock()
+				cpu.Step()
 				if cpu.reg.PC != 0x80 {
 					t.Errorf("PC = 0x%08X, want 0x80 (exception handler)", cpu.reg.PC)
 				}
 				return
 			}
-			cpu.Clock()
+			cpu.Step()
 			if cpu.reg.PC != 0x12 {
 				t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 			}
@@ -241,7 +241,7 @@ func TestDecodeGroup0(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
-			cpu.Clock()
+			cpu.Step()
 			if cpu.reg.PC != 0x12 {
 				t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 			}
@@ -273,7 +273,7 @@ func TestDecodeGroup2(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
-			cpu.Clock()
+			cpu.Step()
 			if cpu.reg.PC != 0x12 {
 				t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 			}
@@ -304,7 +304,7 @@ func TestDecodeGroup3(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
-			cpu.Clock()
+			cpu.Step()
 			if cpu.reg.PC != 0x12 {
 				t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 			}
@@ -360,7 +360,7 @@ func TestDecodeGroup4(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
-			cpu.Clock()
+			cpu.Step()
 			if cpu.reg.PC != 0x12 {
 				t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 			}
@@ -393,7 +393,7 @@ func TestDecodeGroup6(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
-			cpu.Clock()
+			cpu.Step()
 			if cpu.reg.PC != 0x12 {
 				t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 			}
@@ -424,7 +424,7 @@ func TestDecodeGroup8(t *testing.T) {
 			if tt.name == "BF" {
 				cpu.reg.SetT()
 			}
-			cpu.Clock()
+			cpu.Step()
 			if cpu.reg.PC != 0x12 {
 				t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 			}
@@ -457,7 +457,7 @@ func TestDecodeGroupC(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
-			cpu.Clock()
+			cpu.Step()
 			// TRAPA changes PC to the vector address
 			if tt.name == "TRAPA" {
 				return

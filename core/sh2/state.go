@@ -7,9 +7,8 @@ package sh2
 // save states. State() and SetState() are pure field copies: nothing
 // is re-derived, invalidated, or recomputed on restore, so a
 // round-trip covers every field with no carve-outs. Excluded are only
-// per-cycle scratch set fresh before any read (ir, addrError, stepBus,
-// branchTaken, frameCyc) and construction wiring (bus, callbacks,
-// isMaster).
+// scratch set fresh before any read (ir, addrError) and
+// construction wiring (bus, callbacks, isMaster).
 //
 // The consumer serializes these fields itself (the sh2 package exposes
 // state, it does not serialize); field encodings and their stability
@@ -40,22 +39,9 @@ type ExecState struct {
 	NMIReq     bool
 	IntInhibit bool
 
-	PendingOp    uint8
-	PendingStep  uint8
-	PendingCount uint8
-	PendingN     uint8
-	PendingAddr  uint32
-	PendingVal   uint32
-	PendingVal2  uint32
-	PendingImm   uint32
-
-	LastLoadReg  uint8
-	DeferredOp   uint16
-	HasDeferred  bool
-	LoadUseStall bool
+	LastLoadReg uint8
 
 	MultiplierBusyUntil uint64
-	BusStall            uint32
 	NextPeripheralEvent uint64
 
 	// Fetch-line memo. Captured verbatim: it stays coherent because
@@ -137,8 +123,7 @@ type DMACState struct {
 	DMAOR       uint16
 	DRCR        [2]uint8
 	NextCh      int
-	StallCycles [2]int
-	StallCh     int
+	CompletesAt [2]uint64
 }
 
 // WDTState holds the watchdog timer state.
@@ -165,20 +150,8 @@ func (c *CPU) State() State {
 	s.Exec.NMIPending = c.nmiPending
 	s.Exec.NMIReq = c.nmiReq.Load()
 	s.Exec.IntInhibit = c.intInhibit
-	s.Exec.PendingOp = c.pendingOp
-	s.Exec.PendingStep = c.pendingStep
-	s.Exec.PendingCount = c.pendingCount
-	s.Exec.PendingN = c.pendingN
-	s.Exec.PendingAddr = c.pendingAddr
-	s.Exec.PendingVal = c.pendingVal
-	s.Exec.PendingVal2 = c.pendingVal2
-	s.Exec.PendingImm = c.pendingImm
 	s.Exec.LastLoadReg = c.lastLoadReg
-	s.Exec.DeferredOp = c.deferredOp
-	s.Exec.HasDeferred = c.hasDeferred
-	s.Exec.LoadUseStall = c.loadUseStall
 	s.Exec.MultiplierBusyUntil = c.multiplierBusyUntil
-	s.Exec.BusStall = c.busStall
 	s.Exec.NextPeripheralEvent = c.nextPeripheralEvent
 	s.Exec.FetchLineAddr = c.fetchLineAddr
 	s.Exec.FetchLineWay = c.fetchLineWay
@@ -189,7 +162,7 @@ func (c *CPU) State() State {
 	s.Cache.CCR = c.ccr
 	s.Cache.Data = c.cacheData
 	// TODO: this is translating to an older format for compatibility. If the emulator save
-	//       state has a breaking change this should be changed to mirror the implementation. 
+	//       state has a breaking change this should be changed to mirror the implementation.
 	for entry := 0; entry < 64; entry++ {
 		for way := 0; way < 4; way++ {
 			stored := c.cacheTags[entry][way]
@@ -240,8 +213,7 @@ func (c *CPU) State() State {
 	s.DMAC.DMAOR = c.dmac.dmaor
 	s.DMAC.DRCR = c.dmac.drcr
 	s.DMAC.NextCh = c.dmac.nextCh
-	s.DMAC.StallCycles = c.dmac.stallCycles
-	s.DMAC.StallCh = c.dmac.stallCh
+	s.DMAC.CompletesAt = c.dmac.completesAt
 
 	s.WDT.WTCSR = c.wdt.wtcsr
 	s.WDT.WTCNT = c.wdt.wtcnt
@@ -268,20 +240,8 @@ func (c *CPU) SetState(s *State) {
 	c.nmiPending = s.Exec.NMIPending
 	c.nmiReq.Store(s.Exec.NMIReq)
 	c.intInhibit = s.Exec.IntInhibit
-	c.pendingOp = s.Exec.PendingOp
-	c.pendingStep = s.Exec.PendingStep
-	c.pendingCount = s.Exec.PendingCount
-	c.pendingN = s.Exec.PendingN
-	c.pendingAddr = s.Exec.PendingAddr
-	c.pendingVal = s.Exec.PendingVal
-	c.pendingVal2 = s.Exec.PendingVal2
-	c.pendingImm = s.Exec.PendingImm
 	c.lastLoadReg = s.Exec.LastLoadReg
-	c.deferredOp = s.Exec.DeferredOp
-	c.hasDeferred = s.Exec.HasDeferred
-	c.loadUseStall = s.Exec.LoadUseStall
 	c.multiplierBusyUntil = s.Exec.MultiplierBusyUntil
-	c.busStall = s.Exec.BusStall
 	c.nextPeripheralEvent = s.Exec.NextPeripheralEvent
 	c.fetchLineAddr = s.Exec.FetchLineAddr
 	c.fetchLineWay = s.Exec.FetchLineWay
@@ -292,7 +252,7 @@ func (c *CPU) SetState(s *State) {
 	c.ccr = s.Cache.CCR
 	c.cacheData = s.Cache.Data
 	// TODO: this is translating to an older format for compatibility. If the emulator save
-	//       state has a breaking change this should be changed to mirror the implementation. 
+	//       state has a breaking change this should be changed to mirror the implementation.
 	for entry := 0; entry < 64; entry++ {
 		for way := 0; way < 4; way++ {
 			stored := s.Cache.Tag[way][entry] &^ cacheValidBit
@@ -345,8 +305,8 @@ func (c *CPU) SetState(s *State) {
 	c.dmac.dmaor = s.DMAC.DMAOR
 	c.dmac.drcr = s.DMAC.DRCR
 	c.dmac.nextCh = s.DMAC.NextCh
-	c.dmac.stallCycles = s.DMAC.StallCycles
-	c.dmac.stallCh = s.DMAC.StallCh
+	c.dmac.completesAt = s.DMAC.CompletesAt
+	c.dmac.recomputeBurstOpen()
 
 	c.wdt.wtcsr = s.WDT.WTCSR
 	c.wdt.wtcnt = s.WDT.WTCNT

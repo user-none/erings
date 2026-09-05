@@ -87,8 +87,8 @@ func TestFRTSubPriorityICIBeatsOCIA(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI should beat OCIA)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI should beat OCIA)", acceptedVector(cpu))
 	}
 }
 
@@ -109,8 +109,8 @@ func TestFRTOCIABOCIBShareOCIVector(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("accepted vec = 0x%X, want 0x50", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("accepted vec = 0x%X, want 0x50", acceptedVector(cpu))
 	}
 }
 
@@ -130,8 +130,8 @@ func TestFRTSubPriorityOCIBBeatsOVI(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("accepted vec = 0x%X, want 0x50 (OCIB should beat OVI)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("accepted vec = 0x%X, want 0x50 (OCIB should beat OVI)", acceptedVector(cpu))
 	}
 }
 
@@ -146,8 +146,8 @@ func TestFRTSubPriorityOVIOnly(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x60 {
-		t.Errorf("accepted vec = 0x%X, want 0x60", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x60 {
+		t.Errorf("accepted vec = 0x%X, want 0x60", acceptedVector(cpu))
 	}
 }
 
@@ -179,8 +179,8 @@ func TestFRTTickToInterruptOCIA(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("FRT interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x52 {
-		t.Errorf("accepted vec = 0x%X, want 0x52", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x52 {
+		t.Errorf("accepted vec = 0x%X, want 0x52", acceptedVector(cpu))
 	}
 	if cpu.reg.IMASK() != 7 {
 		t.Errorf("IMASK after accept = %d, want 7", cpu.reg.IMASK())
@@ -209,8 +209,8 @@ func TestFRTTickToInterruptOverflow(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("FRT overflow interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x60 {
-		t.Errorf("accepted vec = 0x%X, want 0x60", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x60 {
+		t.Errorf("accepted vec = 0x%X, want 0x60", acceptedVector(cpu))
 	}
 }
 
@@ -274,8 +274,8 @@ func TestFRTInputCaptureAssertsWhenEnabled(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("ICI interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("accepted vec = 0x%X, want 0x40", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("accepted vec = 0x%X, want 0x40", acceptedVector(cpu))
 	}
 }
 
@@ -367,8 +367,8 @@ func TestDIVUDivideByZeroRoutesInterrupt(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("DIVU interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x48 {
-		t.Errorf("accepted vec = 0x%X, want 0x48", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x48 {
+		t.Errorf("accepted vec = 0x%X, want 0x48", acceptedVector(cpu))
 	}
 	if cpu.reg.IMASK() != 6 {
 		t.Errorf("IMASK after accept = %d, want 6", cpu.reg.IMASK())
@@ -392,8 +392,8 @@ func TestDIVUSignedOverflowRoutesInterrupt(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("DIVU interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x52 {
-		t.Errorf("accepted vec = 0x%X, want 0x52", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x52 {
+		t.Errorf("accepted vec = 0x%X, want 0x52", acceptedVector(cpu))
 	}
 }
 
@@ -414,8 +414,8 @@ func TestDIVU64By32OverflowRoutesInterrupt(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("DIVU interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x3C {
-		t.Errorf("accepted vec = 0x%X, want 0x3C", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x3C {
+		t.Errorf("accepted vec = 0x%X, want 0x3C", acceptedVector(cpu))
 	}
 }
 
@@ -777,8 +777,8 @@ func TestFRTSubPriorityICIBeatsOVI(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI should beat OVI)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI should beat OVI)", acceptedVector(cpu))
 	}
 }
 
@@ -798,8 +798,8 @@ func TestFRTSubPriorityICIBeatsOCIB(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI should beat OCIB)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI should beat OCIB)", acceptedVector(cpu))
 	}
 }
 
@@ -820,8 +820,8 @@ func TestFRTSubPriorityICIWinsWhenAllFlagsSet(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI wins all-set tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("accepted vec = 0x%X, want 0x40 (ICI wins all-set tie)", acceptedVector(cpu))
 	}
 }
 
@@ -888,8 +888,8 @@ func TestDIVUVCRDIVHighBitsIgnored(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("DIVU interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x7F {
-		t.Errorf("accepted vec = 0x%X, want 0x7F (VCRDIV bits 15-7 masked)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x7F {
+		t.Errorf("accepted vec = 0x%X, want 0x7F (VCRDIV bits 15-7 masked)", acceptedVector(cpu))
 	}
 }
 
@@ -909,8 +909,8 @@ func TestDMACVCRDMAHighBitIgnored(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("DMAC interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x7F {
-		t.Errorf("accepted vec = 0x%X, want 0x7F (VCRDMA bit 7 masked)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x7F {
+		t.Errorf("accepted vec = 0x%X, want 0x7F (VCRDMA bit 7 masked)", acceptedVector(cpu))
 	}
 }
 
@@ -931,8 +931,8 @@ func TestWDTVCRWDTLowByteDoesNotAffectITI(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("WDT interrupt not accepted")
 	}
-	if cpu.pendingAddr != 0x42 {
-		t.Errorf("accepted vec = 0x%X, want 0x42 (BCMV must not leak)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x42 {
+		t.Errorf("accepted vec = 0x%X, want 0x42 (BCMV must not leak)", acceptedVector(cpu))
 	}
 }
 
@@ -1061,8 +1061,8 @@ func TestRouteFRTInterruptsPriorityLevel1Routes(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted at level 1")
 	}
-	if cpu.pendingAddr != 0x60 {
-		t.Errorf("accepted vec = 0x%X, want 0x60", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x60 {
+		t.Errorf("accepted vec = 0x%X, want 0x60", acceptedVector(cpu))
 	}
 	if cpu.reg.IMASK() != 1 {
 		t.Errorf("IMASK after accept = %d, want 1", cpu.reg.IMASK())
@@ -1119,20 +1119,18 @@ func TestDMACDEIAcceptedAfterStallEnds(t *testing.T) {
 
 	// Drain stall via Clock(). CPU should not advance while stalling.
 	for cpu.dmac.Stalling() {
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 	}
 
 	// After stall drains, TE is latched and INTC pending bit is set.
 	if !cpu.dmac.IRQAsserted(0) {
 		t.Fatal("DMAC ch0 not asserted after stall drained")
 	}
-	// Next Clock accepts the DEI.
-	cpu.Clock()
-	if cpu.pendingOp != popException {
-		t.Fatalf("DEI not accepted after stall end; pendingOp=%d", cpu.pendingOp)
-	}
-	if cpu.pendingAddr != 0x4E {
-		t.Errorf("accepted vec = 0x%X, want 0x4E (VCRDMA0)", cpu.pendingAddr)
+	// The next boundary accepts the DEI.
+	fillVectorMarkers(cpu)
+	cpu.Step()
+	if got := acceptedVector(cpu); got != 0x4E {
+		t.Errorf("accepted vec = 0x%X, want 0x4E (VCRDMA0)", got)
 	}
 	if cpu.reg.IMASK() != 7 {
 		t.Errorf("IMASK after accept = %d, want 7", cpu.reg.IMASK())
@@ -1168,8 +1166,8 @@ func TestWDTOVFLatchedThroughIntInhibit(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("WDT not accepted on the check after inhibit drained")
 	}
-	if cpu.pendingAddr != 0x58 {
-		t.Errorf("accepted vec = 0x%X, want 0x58", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x58 {
+		t.Errorf("accepted vec = 0x%X, want 0x58", acceptedVector(cpu))
 	}
 }
 
@@ -1259,13 +1257,11 @@ func TestFRTInputCaptureEndToEndAccepted(t *testing.T) {
 	cpu.frt.tier = tierICIE | 0x01
 
 	cpu.FRTInputCapture()
-	cpu.Clock()
+	fillVectorMarkers(cpu)
+	cpu.Step()
 
-	if cpu.pendingOp != popException {
-		t.Fatalf("pendingOp = %d, want popException", cpu.pendingOp)
-	}
-	if cpu.pendingAddr != 0x4A {
-		t.Errorf("pendingAddr = 0x%X, want 0x4A (VCRC ICI)", cpu.pendingAddr)
+	if got := acceptedVector(cpu); got != 0x4A {
+		t.Errorf("accepted vector = 0x%X, want 0x4A (VCRC ICI)", got)
 	}
 	if cpu.reg.IMASK() != 0xB {
 		t.Errorf("IMASK after accept = %d, want 0xB", cpu.reg.IMASK())
@@ -1291,13 +1287,10 @@ func TestFRTInputCapturePriorityOverrideByOCIA(t *testing.T) {
 	cpu.intc.AssertSource(isrcFRT)
 	// Then input capture fires.
 	cpu.FRTInputCapture()
+	fillVectorMarkers(cpu)
+	cpu.Step()
 
-	cpu.Clock()
-
-	if cpu.pendingOp != popException {
-		t.Fatalf("pendingOp = %d, want popException", cpu.pendingOp)
-	}
-	if cpu.pendingAddr != 0x51 {
-		t.Errorf("pendingAddr = 0x%X, want 0x51 (ICI beats OCIA)", cpu.pendingAddr)
+	if got := acceptedVector(cpu); got != 0x51 {
+		t.Errorf("accepted vector = 0x%X, want 0x51 (ICI beats OCIA)", got)
 	}
 }

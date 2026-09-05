@@ -174,7 +174,6 @@ func (e *Emulator) RunFrame() {
 	e.masterCycles.Store(0)
 	e.secondaryCycles.Store(0)
 	e.vdpLinesWalked.Store(0)
-	e.bus.resetContention()
 	e.vdp2.ResetRotArm()
 	e.frameLineWidth = e.systemCyclesPerScanline
 	e.frameScanlines = e.scanlines
@@ -202,36 +201,28 @@ func (e *Emulator) RunFrame() {
 		// below, not here.
 		spinWait(&e.vdpLinesWalked, int64(line)+1-vdpSlackLines)
 
-		// Walk the line in sync chunks: the master steps, the VDP2
-		// intra-line position advances, then the barrier publishes the
-		// master's position, delivers any pending SINIT capture, and waits
-		// for the slave to reach the position before the next chunk.
-		cyc := e.masterTASCarry
-		e.masterTASCarry = 0
-		for cyc < lineWidth {
+		// Walk the line in sync chunks: the master runs to the chunk's
+		// cycle target, the VDP2 intra-line position advances, then the
+		// barrier publishes the master's position, delivers any pending
+		// SINIT capture, and waits for the slave to reach the position
+		// before the next chunk. An instruction that overshoots the
+		// target carries into the next chunk through the cycle counter.
+		for cyc := uint32(0); cyc < lineWidth; {
 			chunk := lineWidth - cyc
 			if chunk > syncChunkCycles {
 				chunk = syncChunkCycles
 			}
-			for c := uint32(0); c < chunk; c++ {
-				e.stepMaster(pos + int64(cyc) + int64(c))
+			cyc += chunk
+			target := e.frameStart + uint64(pos) + uint64(cyc)
+			e.master.RunUntil(target)
+			// A MINIT write in this chunk flags the cross-CPU FRT
+			// capture; the slave latches its own FRT at its next
+			// barrier.
+			if e.bus.MINITWritten() {
+				e.minitPending.Store(true)
 			}
 			vdp2.TickSystemCycles(chunk)
-			cyc += chunk
 			e.sh2Barrier(&e.masterCycles, &e.secondaryCycles, pos+int64(cyc), e.master, &e.sinitPending, e.master.FRTInputCapture)
-		}
-		// Finish a TAS that straddled the line boundary before the next
-		// line's VDP-slack wait (or, on the last line, the frame-end
-		// waits): those can block, and blocking while the TAS bus claim is
-		// held would deadlock the slave spinning on it. Extra cycles carry
-		// into the next line.
-		for e.master.InTAS() {
-			e.stepMaster(pos + int64(cyc))
-			vdp2.TickSystemCycles(1)
-			cyc++
-		}
-		if cyc > lineWidth {
-			e.masterTASCarry = cyc - lineWidth
 		}
 		pos += int64(lineWidth)
 
@@ -251,6 +242,10 @@ func (e *Emulator) RunFrame() {
 	spinWait(&e.secondaryCycles, e.frameTotalCycles)
 	<-e.vdpJobChFinished
 
+	// The frame's cycles are behind both CPUs: the next frame's positions
+	// start at zero, any overshoot carried in the counters.
+	e.frameStart += uint64(e.frameTotalCycles)
+
 	smpc.TickFrame()
 
 	e.audioBuffer = scsp.MixBuffer()
@@ -261,46 +256,20 @@ func (e *Emulator) RunFrame() {
 	}
 }
 
-// stepMaster advances the master SH-2 by one cycle. The load-use stall is
-// modeled inside Clock(). frameCyc is the master's frame-relative cycle,
-// published to the bus for inter-CPU contention timing. A MINIT write flags
-// the cross-CPU FRT capture; the slave latches its own FRT at its next sync
-// barrier, within a chunk.
-func (e *Emulator) stepMaster(frameCyc int64) {
-	e.master.SetFrameCyc(frameCyc)
-	state := e.master.Clock()
-	if state.Bus == sh2.BusWrite && e.bus.MINITWritten() {
-		e.minitPending.Store(true)
-	}
-}
-
-// stepSlave advances the slave SH-2 by one cycle, mirroring stepMaster: a
-// SINIT write flags the master's FRT capture for the master's next barrier.
-func (e *Emulator) stepSlave(frameCyc int64) {
-	e.slave.SetFrameCyc(frameCyc)
-	state := e.slave.Clock()
-	if state.Bus == sh2.BusWrite && e.bus.SINITWritten() {
-		e.sinitPending.Store(true)
-	}
-}
-
 // sh2Barrier publishes this goroutine's clock position and spin-waits until
 // the peer reaches it, holding the two SH-2 clocks within syncChunkCycles.
 // It also delivers a pending cross-CPU FRT input capture: when the peer
 // wrote MINIT/SINIT since the last barrier, the receiving CPU latches its
 // own FRT here, on its own goroutine, within a chunk of the write.
 //
-// The wait is skipped mid-TAS (this CPU holds a bus claim across cycles
-// that the peer may be waiting on, so waiting here would deadlock) and at
-// the frame end (RunFrame's frame-end wait covers the boundary). Both
-// conditions only change through this goroutine's own stepping, so they
-// are evaluated once instead of per wait iteration.
+// The wait is skipped at the frame end (RunFrame's frame-end wait covers
+// the boundary).
 func (e *Emulator) sh2Barrier(pub, peer *atomic.Int64, myPos int64, cpu *sh2.CPU, pending *atomic.Bool, capture func()) {
 	pub.Store(myPos)
 	if pending.CompareAndSwap(true, false) {
 		capture()
 	}
-	if cpu.InTAS() || myPos >= e.frameTotalCycles {
+	if myPos >= e.frameTotalCycles {
 		return
 	}
 	spins := 0
@@ -466,20 +435,18 @@ func (e *Emulator) walkSecondaryFrame() {
 				chunk = rem
 			}
 			if smpc.SSHEnabled() {
-				c := e.slaveTASCarry
-				e.slaveTASCarry = 0
-				for ; c < chunk; c++ {
-					e.stepSlave(pos + c)
+				// A slave held in reset stopped counting: bring it up to
+				// the current system cycle so it runs only from this chunk
+				// onward and expresses the shared clock to the bus.
+				now := e.frameStart + uint64(pos)
+				if e.slave.Cycles() < now {
+					e.slave.SyncClock(now)
 				}
-				// Finish a TAS that straddled the chunk boundary before
-				// the component ticks below. Prevents deadlock if one
-				// of the other components needs the bus.
-				for e.slave.InTAS() {
-					e.stepSlave(pos + c)
-					c++
-				}
-				if c > chunk {
-					e.slaveTASCarry = c - chunk
+				e.slave.RunUntil(now + uint64(chunk))
+				// A SINIT write flags the master's FRT capture for the
+				// master's next barrier.
+				if e.bus.SINITWritten() {
+					e.sinitPending.Store(true)
 				}
 			}
 			w := uint32(chunk)

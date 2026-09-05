@@ -20,6 +20,7 @@ func setupIntCPU(t *testing.T) *CPU {
 	cpu.reg.R[15] = 0x0800
 	cpu.reg.SR = 0
 	cpu.reg.PC = 0x0400
+	fillVectorMarkers(cpu)
 	return cpu
 }
 
@@ -70,8 +71,8 @@ func TestEqualLevelDIVUBeatsDMAC0(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("accepted vec = 0x%X, want 0x40 (DIVU should beat DMAC0 on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("accepted vec = 0x%X, want 0x40 (DIVU should beat DMAC0 on tie)", acceptedVector(cpu))
 	}
 }
 
@@ -88,8 +89,8 @@ func TestEqualLevelDMAC0BeatsDMAC1(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("accepted vec = 0x%X, want 0x50 (DMAC0 should beat DMAC1 on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("accepted vec = 0x%X, want 0x50 (DMAC0 should beat DMAC1 on tie)", acceptedVector(cpu))
 	}
 }
 
@@ -108,8 +109,8 @@ func TestEqualLevelDIVUBeatsFRT(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x30 {
-		t.Errorf("accepted vec = 0x%X, want 0x30 (DIVU should beat FRT on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x30 {
+		t.Errorf("accepted vec = 0x%X, want 0x30 (DIVU should beat FRT on tie)", acceptedVector(cpu))
 	}
 }
 
@@ -130,8 +131,8 @@ func TestLostRequestPreservedOnPreempt(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("first accept failed")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("first accept vec = 0x%X, want 0x40", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("first accept vec = 0x%X, want 0x40", acceptedVector(cpu))
 	}
 
 	// After accept, IMASK is 10; DMAC0 at level 5 still latched
@@ -145,18 +146,14 @@ func TestLostRequestPreservedOnPreempt(t *testing.T) {
 	clearDIVU(cpu)
 	cpu.reg.SR = 0
 
-	// Drain the exception dispatch so pendingOp returns to popNone
-	// and processInterrupt will be called by the outer Clock loop.
-	for cpu.pendingOp != popNone {
-		cpu.stepPending()
-	}
+	// Complete the exception sequence.
 
 	// Now DMAC0 at level 5 should fire.
 	if !cpu.processInterrupt() {
 		t.Fatal("DMAC0 interrupt should be delivered after DIVU handler clears")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("second accept vec = 0x%X, want 0x50 (DMAC0 preserved across preempt)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("second accept vec = 0x%X, want 0x50 (DMAC0 preserved across preempt)", acceptedVector(cpu))
 	}
 }
 
@@ -205,8 +202,8 @@ func TestNMIOverridesIMASK15(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("NMI not accepted with IMASK=15")
 	}
-	if cpu.pendingAddr != uint32(vecNMI) {
-		t.Errorf("accepted vec = 0x%X, want 0x%X", cpu.pendingAddr, vecNMI)
+	if acceptedVector(cpu) != vecNMI {
+		t.Errorf("accepted vec = 0x%X, want 0x%X", acceptedVector(cpu), vecNMI)
 	}
 }
 
@@ -223,8 +220,8 @@ func TestIRLCoexistsWithInternalHigher(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("accepted vec = 0x%X, want 0x50 (IRL level 8 > DIVU level 3)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("accepted vec = 0x%X, want 0x50 (IRL level 8 > DIVU level 3)", acceptedVector(cpu))
 	}
 }
 
@@ -241,8 +238,8 @@ func TestIRLCoexistsWithInternalLower(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x40 {
-		t.Errorf("accepted vec = 0x%X, want 0x40 (DIVU level 10 > IRL level 3)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x40 {
+		t.Errorf("accepted vec = 0x%X, want 0x40 (DIVU level 10 > IRL level 3)", acceptedVector(cpu))
 	}
 }
 
@@ -360,8 +357,8 @@ func TestTieBreakDMAC0BeatsWDT(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("accepted vec = 0x%X, want 0x50 (DMAC0 should beat WDT on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("accepted vec = 0x%X, want 0x50 (DMAC0 should beat WDT on tie)", acceptedVector(cpu))
 	}
 }
 
@@ -380,8 +377,8 @@ func TestTieBreakDMAC1BeatsWDT(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x60 {
-		t.Errorf("accepted vec = 0x%X, want 0x60 (DMAC1 should beat WDT on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x60 {
+		t.Errorf("accepted vec = 0x%X, want 0x60 (DMAC1 should beat WDT on tie)", acceptedVector(cpu))
 	}
 }
 
@@ -397,8 +394,8 @@ func TestTieBreakDMAC0BeatsFRT(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x50 {
-		t.Errorf("accepted vec = 0x%X, want 0x50 (DMAC0 should beat FRT on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x50 {
+		t.Errorf("accepted vec = 0x%X, want 0x50 (DMAC0 should beat FRT on tie)", acceptedVector(cpu))
 	}
 }
 
@@ -414,8 +411,8 @@ func TestTieBreakDMAC1BeatsFRT(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x60 {
-		t.Errorf("accepted vec = 0x%X, want 0x60 (DMAC1 should beat FRT on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x60 {
+		t.Errorf("accepted vec = 0x%X, want 0x60 (DMAC1 should beat FRT on tie)", acceptedVector(cpu))
 	}
 }
 
@@ -434,8 +431,8 @@ func TestTieBreakWDTBeatsFRT(t *testing.T) {
 	if !cpu.processInterrupt() {
 		t.Fatal("no interrupt accepted")
 	}
-	if cpu.pendingAddr != 0x42 {
-		t.Errorf("accepted vec = 0x%X, want 0x42 (WDT should beat FRT on tie)", cpu.pendingAddr)
+	if acceptedVector(cpu) != 0x42 {
+		t.Errorf("accepted vec = 0x%X, want 0x42 (WDT should beat FRT on tie)", acceptedVector(cpu))
 	}
 }
 

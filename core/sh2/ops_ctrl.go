@@ -28,8 +28,7 @@ func opNOP(c *CPU) {
 
 func opSLEEP(c *CPU) {
 	c.halted = true
-	c.cycles++
-	c.setPending(popStall, 2)
+	c.cycles += 3
 }
 
 // The LDC/LDC.L/STC/STC.L/LDS/LDS.L/STS/STS.L families are
@@ -61,36 +60,42 @@ func opLDCVBR(c *CPU) {
 }
 
 // LDC.L @Rm+,SR - memory to SR, post-increment
-// 3 cycles: cycle 1 EX, cycle 2 MA read, cycle 3 WB
+// 3 cycles: EX, MA read, WB
 func opLDCMSR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
-	c.pendingAddr = c.reg.R[n]
-	c.pendingN = n | (0 << 4) // CR type 0 = SR
-	c.cycles++
-	c.setPending(popLDCL, 2)
+	addr := c.reg.R[n]
+	c.cycles++ // MA: read
+	v := c.Read32(addr)
+	c.reg.SR = v & srMask
+	c.reg.R[n] = addr + 4
+	c.cycles += 2 // WB
 }
 
 // LDC.L @Rm+,GBR - memory to GBR, post-increment
-// 3 cycles: cycle 1 EX, cycle 2 MA read, cycle 3 WB
+// 3 cycles: EX, MA read, WB
 func opLDCMGBR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
-	c.pendingAddr = c.reg.R[n]
-	c.pendingN = n | (1 << 4) // CR type 1 = GBR
-	c.cycles++
-	c.setPending(popLDCL, 2)
+	addr := c.reg.R[n]
+	c.cycles++ // MA: read
+	v := c.Read32(addr)
+	c.reg.GBR = v
+	c.reg.R[n] = addr + 4
+	c.cycles += 2 // WB
 }
 
 // LDC.L @Rm+,VBR - memory to VBR, post-increment
-// 3 cycles: cycle 1 EX, cycle 2 MA read, cycle 3 WB
+// 3 cycles: EX, MA read, WB
 func opLDCMVBR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
-	c.pendingAddr = c.reg.R[n]
-	c.pendingN = n | (2 << 4) // CR type 2 = VBR
-	c.cycles++
-	c.setPending(popLDCL, 2)
+	addr := c.reg.R[n]
+	c.cycles++ // MA: read
+	v := c.Read32(addr)
+	c.reg.VBR = v
+	c.reg.R[n] = addr + 4
+	c.cycles += 2 // WB
 }
 
 // STC SR,Rn - SR to register
@@ -115,39 +120,36 @@ func opSTCVBR(c *CPU) {
 }
 
 // STC.L SR,@-Rn - SR to memory, pre-decrement
-// 2 cycles: cycle 1 EX (pre-decrement, save), cycle 2 MA write
+// 2 cycles: EX (pre-decrement), MA write
 func opSTCMSR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
-	c.pendingAddr = c.reg.R[n]
-	c.pendingVal = c.reg.SR
+	c.cycles++ // MA: write
+	c.Write32(c.reg.R[n], c.reg.SR)
 	c.cycles++
-	c.setPending(popSTCL, 1)
 }
 
 // STC.L GBR,@-Rn - GBR to memory, pre-decrement
-// 2 cycles: cycle 1 EX (pre-decrement, save), cycle 2 MA write
+// 2 cycles: EX (pre-decrement), MA write
 func opSTCMGBR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
-	c.pendingAddr = c.reg.R[n]
-	c.pendingVal = c.reg.GBR
+	c.cycles++ // MA: write
+	c.Write32(c.reg.R[n], c.reg.GBR)
 	c.cycles++
-	c.setPending(popSTCL, 1)
 }
 
 // STC.L VBR,@-Rn - VBR to memory, pre-decrement
-// 2 cycles: cycle 1 EX (pre-decrement, save), cycle 2 MA write
+// 2 cycles: EX (pre-decrement), MA write
 func opSTCMVBR(c *CPU) {
 	c.inhibitInterruptNext()
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
-	c.pendingAddr = c.reg.R[n]
-	c.pendingVal = c.reg.VBR
+	c.cycles++ // MA: write
+	c.Write32(c.reg.R[n], c.reg.VBR)
 	c.cycles++
-	c.setPending(popSTCL, 1)
 }
 
 // LDS Rm,MACH - register to MACH
@@ -198,7 +200,6 @@ func opLDSMMACH(c *CPU) {
 	n := regN(c.ir)
 	c.reg.MACH = c.Read32(c.reg.R[n])
 	c.reg.R[n] += 4
-	c.stepBus = BusRead
 	c.cycles++
 }
 
@@ -208,7 +209,6 @@ func opLDSMMACL(c *CPU) {
 	n := regN(c.ir)
 	c.reg.MACL = c.Read32(c.reg.R[n])
 	c.reg.R[n] += 4
-	c.stepBus = BusRead
 	c.cycles++
 }
 
@@ -218,7 +218,6 @@ func opLDSMPR(c *CPU) {
 	n := regN(c.ir)
 	c.reg.PR = c.Read32(c.reg.R[n])
 	c.reg.R[n] += 4
-	c.stepBus = BusRead
 	c.cycles++
 }
 
@@ -228,7 +227,6 @@ func opSTSMMACH(c *CPU) {
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
 	c.Write32(c.reg.R[n], c.reg.MACH)
-	c.stepBus = BusWrite
 	c.cycles++
 }
 
@@ -238,7 +236,6 @@ func opSTSMMACL(c *CPU) {
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
 	c.Write32(c.reg.R[n], c.reg.MACL)
-	c.stepBus = BusWrite
 	c.cycles++
 }
 
@@ -248,18 +245,22 @@ func opSTSMPR(c *CPU) {
 	n := regN(c.ir)
 	c.reg.R[n] -= 4
 	c.Write32(c.reg.R[n], c.reg.PR)
-	c.stepBus = BusWrite
 	c.cycles++
 }
 
 // TRAPA #imm - trap always
-// 8 cycles: cycle 1 EX, cycle 2 MA write SR, cycle 3 MA write PC,
-// cycle 4 EX vector calc, cycle 5 MA read vector, cycles 6-8 pipeline refill
+// 8 cycles (Programming Manual Figure 7.93, Table 7.1): EX, MA write
+// SR, MA write PC, EX vector calc, MA read vector, 3 pipeline refill.
 func opTRAPA(c *CPU) {
 	imm := uint32(imm8(c.ir))
-	c.pendingVal = c.reg.SR
-	c.pendingVal2 = c.reg.PC
-	c.pendingImm = imm
-	c.cycles++
-	c.setPending(popTRAPA, 7)
+	sr, pc := c.reg.SR, c.reg.PC
+	c.cycles++ // MA: write SR
+	c.reg.R[15] -= 4
+	c.Write32(c.reg.R[15], sr)
+	c.cycles++ // MA: write PC
+	c.reg.R[15] -= 4
+	c.Write32(c.reg.R[15], pc)
+	c.cycles += 2 // EX vector calc, MA: read vector
+	c.reg.PC = c.Read32(c.reg.VBR + (imm << 2))
+	c.cycles += 4
 }

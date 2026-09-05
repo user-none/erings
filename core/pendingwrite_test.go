@@ -131,17 +131,3 @@ func TestChargeWritePeerContention(t *testing.T) {
 		t.Fatalf("peer access stall = %d, want %d", got, want)
 	}
 }
-
-// resetContention clears both CPUs' pending writes.
-func TestPendingWriteReset(t *testing.T) {
-	b := newContentionTestBus()
-	b.chargeWrite(areaCPUBus, uint32(wramWriteCost()), 100, false)
-	b.chargeWrite(areaCPUBus, uint32(wramWriteCost()), 100, true)
-	b.resetContention()
-	if got := b.pendingWriteOf(false).wait(0); got != 0 {
-		t.Fatalf("master wait after reset = %d, want 0", got)
-	}
-	if got := b.pendingWriteOf(true).wait(0); got != 0 {
-		t.Fatalf("slave wait after reset = %d, want 0", got)
-	}
-}

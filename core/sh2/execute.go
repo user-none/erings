@@ -23,27 +23,17 @@ func (c *CPU) execute() {
 		return
 	}
 
-	var op uint16
-	if c.hasDeferred {
-		op = c.deferredOp
-		c.hasDeferred = false
-	} else {
-		c.prevPC = c.reg.PC
+	c.prevPC = c.reg.PC
 
-		op = c.fetchPC()
-		if c.addrError {
-			return
-		}
+	op := c.fetchPC()
+	if c.addrError {
+		return
+	}
 
-		// Check load-use hazard before executing
-		prevLoad := c.lastLoadReg
-		if prevLoad != 0xFF && loadUseHazard(op, prevLoad) {
-			c.deferredOp = op
-			c.hasDeferred = true
-			c.loadUseStall = true
-			c.cycles++
-			return
-		}
+	// Load-use hazard: the slot splits and this instruction's EX is
+	// delayed one cycle (Programming Manual Section 7.2.2).
+	if prevLoad := c.lastLoadReg; prevLoad != 0xFF && loadUseHazard(op, prevLoad) {
+		c.cycles++
 	}
 
 	c.lastLoadReg = 0xFF // clear before decode; load ops will set it

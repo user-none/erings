@@ -16,14 +16,7 @@ func TestOpBT(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8902)
 		cpu.reg.SetT()
 		// Step 1: EX (branch taken), steps 2-3: pipeline refill
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set on EX cycle")
-		}
-		// 2 more stall cycles
-		for i := 0; i < 2; i++ {
-			cpu.Clock()
-		}
+		cpu.Step()
 		if cpu.reg.PC != 0x18 {
 			t.Errorf("PC = 0x%08X, want 0x18", cpu.reg.PC)
 		}
@@ -37,9 +30,7 @@ func TestOpBT(t *testing.T) {
 		// BT -4 -> disp=-2 (0xFE), target = (0x10+4) + (-2)*2 = 0x10
 		cpu := newDecodeTestCPU(0x89FE)
 		cpu.reg.SetT()
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.PC != 0x10 {
 			t.Errorf("PC = 0x%08X, want 0x10", cpu.reg.PC)
 		}
@@ -48,13 +39,9 @@ func TestOpBT(t *testing.T) {
 	t.Run("not_taken", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8902)
 		cpu.reg.ClearT()
-		s := cpu.Clock()
-		// PC should just advance past the instruction
+		cpu.RunUntil(cpu.cycles + uint64(1)) // PC should just advance past the instruction
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
-		}
-		if s.BranchTaken {
-			t.Error("BranchTaken should not be set when not taken")
 		}
 	})
 }
@@ -65,12 +52,7 @@ func TestOpBF(t *testing.T) {
 		// BF +6 -> disp=3, target = (0x10+4) + 3*2 = 0x1A
 		cpu := newDecodeTestCPU(0x8B03)
 		cpu.reg.ClearT()
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
-		cpu.Clock()
-		cpu.Clock()
+		cpu.Step()
 		if cpu.reg.PC != 0x1A {
 			t.Errorf("PC = 0x%08X, want 0x1A", cpu.reg.PC)
 		}
@@ -80,9 +62,7 @@ func TestOpBF(t *testing.T) {
 		// BF -6 -> disp=-3 (0xFD), target = (0x10+4) + (-3)*2 = 0x0E
 		cpu := newDecodeTestCPU(0x8BFD)
 		cpu.reg.ClearT()
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.PC != 0x0E {
 			t.Errorf("PC = 0x%08X, want 0x0E", cpu.reg.PC)
 		}
@@ -91,7 +71,7 @@ func TestOpBF(t *testing.T) {
 	t.Run("not_taken", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8B03)
 		cpu.reg.SetT()
-		cpu.Clock()
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
@@ -107,18 +87,12 @@ func TestOpBTS(t *testing.T) {
 		// Write NOP at 0x12 as delay slot
 		cpu.bus.Write16(0x12, nopOpcode)
 		// Step 1: executes BT/S, sets up delayed branch + popStall(1)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		// PC should be at delay slot (0x12) after fetch
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("after BT/S step: PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
-		// Step 2: delay-slot ID stall (popStall)
-		cpu.Clock()
-		// Step 3: executes delay slot NOP, then branch takes effect
-		cpu.Clock()
+		cpu.Step() // delay slot; the branch takes effect
 		if cpu.reg.PC != 0x18 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x18", cpu.reg.PC)
 		}
@@ -127,15 +101,12 @@ func TestOpBTS(t *testing.T) {
 	t.Run("not_taken", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8D02)
 		cpu.reg.ClearT()
-		s := cpu.Clock()
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
 		if cpu.inDelay {
 			t.Error("inDelay should be false when not taken")
-		}
-		if s.BranchTaken {
-			t.Error("BranchTaken should not be set when not taken")
 		}
 	})
 }
@@ -147,17 +118,11 @@ func TestOpBFS(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8F02)
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, nopOpcode)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("after BF/S step: PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
-		// Step 2: delay-slot ID stall (popStall)
-		cpu.Clock()
-		// Step 3: delay slot executes, branch takes effect
-		cpu.Clock()
+		cpu.Step() // delay slot; the branch takes effect
 		if cpu.reg.PC != 0x18 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x18", cpu.reg.PC)
 		}
@@ -166,7 +131,7 @@ func TestOpBFS(t *testing.T) {
 	t.Run("not_taken", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8F02)
 		cpu.reg.SetT()
-		cpu.Clock()
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
@@ -182,17 +147,11 @@ func TestOpBRA(t *testing.T) {
 		// BRA +20 -> disp=10 (0x00A), target = (0x10+4) + 10*2 = 0x28
 		cpu := newDecodeTestCPU(0xA00A)
 		cpu.bus.Write16(0x12, nopOpcode)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("after BRA step: PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
-		// Step 2: delay-slot ID stall (popStall)
-		cpu.Clock()
-		// Step 3: delay slot executes, branch takes effect
-		cpu.Clock()
+		cpu.Step() // delay slot; the branch takes effect
 		if cpu.reg.PC != 0x28 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x28", cpu.reg.PC)
 		}
@@ -202,9 +161,7 @@ func TestOpBRA(t *testing.T) {
 		// BRA -4 -> disp=-2 (0xFFE), target = (0x10+4) + (-2)*2 = 0x10
 		cpu := newDecodeTestCPU(0xAFFE)
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock() // BRA
-		cpu.Clock() // stall
-		cpu.Clock() // delay slot
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.PC != 0x10 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x10", cpu.reg.PC)
 		}
@@ -217,16 +174,12 @@ func TestOpBSR(t *testing.T) {
 		// BSR +20 -> disp=10, target = (0x10+4) + 10*2 = 0x28
 		cpu := newDecodeTestCPU(0xB00A)
 		cpu.bus.Write16(0x12, nopOpcode)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		// PR should be set to instruction after delay slot = 0x10+4 = 0x14
 		if cpu.reg.PR != 0x14 {
 			t.Errorf("PR = 0x%08X, want 0x14", cpu.reg.PR)
 		}
-		cpu.Clock() // stall
-		cpu.Clock() // delay slot
+		cpu.Step() // delay slot; the branch takes effect
 		if cpu.reg.PC != 0x28 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x28", cpu.reg.PC)
 		}
@@ -240,15 +193,11 @@ func TestOpBRAF(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0323)
 		cpu.reg.R[3] = 0x20
 		cpu.bus.Write16(0x12, nopOpcode)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("after BRAF step: PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
-		cpu.Clock() // stall
-		cpu.Clock() // delay slot
+		cpu.Step() // delay slot; the branch takes effect
 		// target = 0x14 + 0x20 = 0x34
 		if cpu.reg.PC != 0x34 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x34", cpu.reg.PC)
@@ -263,15 +212,11 @@ func TestOpBSRF(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0303)
 		cpu.reg.R[3] = 0x20
 		cpu.bus.Write16(0x12, nopOpcode)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		if cpu.reg.PR != 0x14 {
 			t.Errorf("PR = 0x%08X, want 0x14", cpu.reg.PR)
 		}
-		cpu.Clock() // stall
-		cpu.Clock() // delay slot
+		cpu.Step() // delay slot; the branch takes effect
 		// target = 0x14 + 0x20 = 0x34
 		if cpu.reg.PC != 0x34 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x34", cpu.reg.PC)
@@ -286,15 +231,11 @@ func TestOpJMP(t *testing.T) {
 		cpu := newDecodeTestCPU(0x432B)
 		cpu.reg.R[3] = 0x200
 		cpu.bus.Write16(0x12, nopOpcode)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("after JMP step: PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
-		cpu.Clock() // stall
-		cpu.Clock() // delay slot
+		cpu.Step() // delay slot; the branch takes effect
 		if cpu.reg.PC != 0x200 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x200", cpu.reg.PC)
 		}
@@ -308,13 +249,12 @@ func TestOpJSR(t *testing.T) {
 		cpu := newDecodeTestCPU(0x430B)
 		cpu.reg.R[3] = 0x200
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
+		cpu.Step()
 		// PR = 0x10+4 = 0x14
 		if cpu.reg.PR != 0x14 {
 			t.Errorf("PR = 0x%08X, want 0x14", cpu.reg.PR)
 		}
-		cpu.Clock() // stall
-		cpu.Clock() // delay slot
+		cpu.Step() // delay slot; the branch takes effect
 		if cpu.reg.PC != 0x200 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x200", cpu.reg.PC)
 		}
@@ -328,15 +268,11 @@ func TestOpRTS(t *testing.T) {
 		cpu := newDecodeTestCPU(0x000B)
 		cpu.reg.PR = 0x300
 		cpu.bus.Write16(0x12, nopOpcode)
-		s := cpu.Clock()
-		if !s.BranchTaken {
-			t.Error("BranchTaken not set")
-		}
+		cpu.Step()
 		if cpu.reg.PC != 0x12 {
 			t.Errorf("after RTS step: PC = 0x%08X, want 0x12", cpu.reg.PC)
 		}
-		cpu.Clock() // stall
-		cpu.Clock() // delay slot
+		cpu.Step() // delay slot; the branch takes effect
 		if cpu.reg.PC != 0x300 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x300", cpu.reg.PC)
 		}
@@ -360,23 +296,7 @@ func TestOpRTE(t *testing.T) {
 		cpu.bus.Write32(sp+4, srTMask|srSMask) // saved SR with T=1, S=1
 		cpu.bus.Write16(0x12, nopOpcode)
 
-		// Cycle 1: EX
-		cpu.Clock()
-
-		// Cycle 2: MA read PC
-		s2 := cpu.Clock()
-		if s2.Bus != BusRead {
-			t.Errorf("cycle 2: bus = %d, want BusRead", s2.Bus)
-		}
-
-		// Cycle 3: MA read SR, set up delay branch
-		s3 := cpu.Clock()
-		if s3.Bus != BusRead {
-			t.Errorf("cycle 3: bus = %d, want BusRead", s3.Bus)
-		}
-
-		// Cycle 4: delay-slot ID stall
-		cpu.Clock()
+		cpu.Step()
 
 		// After pending clears, PC should be at delay slot
 		if cpu.reg.PC != 0x12 {
@@ -384,7 +304,7 @@ func TestOpRTE(t *testing.T) {
 		}
 
 		// Cycle 5: delay slot
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.PC != 0x400 {
 			t.Errorf("after delay slot: PC = 0x%08X, want 0x400", cpu.reg.PC)
 		}
@@ -410,9 +330,7 @@ func TestOpRTE(t *testing.T) {
 		cpu.bus.Write32(sp+4, 0xFFFFFFFF) // all bits set
 		cpu.bus.Write16(0x12, nopOpcode)
 		// 4 cycles for RTE + 1 for delay slot
-		for i := 0; i < 5; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(5))
 		if cpu.reg.SR != srMask {
 			t.Errorf("SR = 0x%08X, want 0x%08X", cpu.reg.SR, srMask)
 		}
@@ -426,9 +344,7 @@ func TestOpRTE(t *testing.T) {
 		cpu.bus.Write32(sp+4, 0)
 		cpu.bus.Write16(0x12, nopOpcode)
 		// RTE = 4 cycles + 1 delay slot = 5 total
-		for i := 0; i < 5; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(5))
 		if cpu.cycles != 5 {
 			t.Errorf("total cycles = %d, want 5", cpu.cycles)
 		}
@@ -456,9 +372,7 @@ func TestOpBTBoundaries(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			cpu.reg.SetT()
 			before := cpu.cycles
-			cpu.Clock()
-			cpu.Clock()
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(3))
 			if cpu.reg.PC != tt.wantPC {
 				t.Errorf("PC = 0x%08X, want 0x%08X", cpu.reg.PC, tt.wantPC)
 			}
@@ -474,7 +388,7 @@ func TestOpBTCyclesNotTaken(t *testing.T) {
 	cpu := newDecodeTestCPU(0x8902)
 	cpu.reg.ClearT()
 	before := cpu.cycles
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if int(cpu.cycles-before) != 1 {
 		t.Errorf("cycles = %d, want 1 (not taken)", cpu.cycles-before)
 	}
@@ -497,9 +411,7 @@ func TestOpBFBoundaries(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			cpu.reg.ClearT()
 			before := cpu.cycles
-			cpu.Clock()
-			cpu.Clock()
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(3))
 			if cpu.reg.PC != tt.wantPC {
 				t.Errorf("PC = 0x%08X, want 0x%08X", cpu.reg.PC, tt.wantPC)
 			}
@@ -515,7 +427,7 @@ func TestOpBFCyclesNotTaken(t *testing.T) {
 	cpu := newDecodeTestCPU(0x8B02)
 	cpu.reg.SetT()
 	before := cpu.cycles
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if int(cpu.cycles-before) != 1 {
 		t.Errorf("cycles = %d, want 1 (not taken)", cpu.cycles-before)
 	}
@@ -529,9 +441,7 @@ func TestOpBTSDelaySlot(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8D02)
 		cpu.reg.SetT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1 (SETT in delay slot)", cpu.reg.T())
 		}
@@ -545,7 +455,7 @@ func TestOpBTSDelaySlot(t *testing.T) {
 		// If BT/S were to execute the delay slot, SETT would set T=1.
 		cpu.bus.Write16(0x12, settOpcode)
 		before := cpu.cycles
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.T() != 0 {
 			t.Errorf("T = %d, want 0 (delay slot must not execute)", cpu.reg.T())
 		}
@@ -562,9 +472,7 @@ func TestOpBFSDelaySlot(t *testing.T) {
 		cpu := newDecodeTestCPU(0x8F02)
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1 (SETT in delay slot)", cpu.reg.T())
 		}
@@ -577,7 +485,7 @@ func TestOpBFSDelaySlot(t *testing.T) {
 		cpu.reg.SetT()
 		cpu.bus.Write16(0x12, 0x0008) // CLRT would clear T if it ran
 		before := cpu.cycles
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1 (delay slot must not execute)", cpu.reg.T())
 		}
@@ -605,9 +513,7 @@ func TestOpBRABoundaries(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			cpu.bus.Write16(0x12, nopOpcode)
 			before := cpu.cycles
-			cpu.Clock()
-			cpu.Clock()
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(3))
 			if cpu.reg.PC != tt.wantPC {
 				t.Errorf("PC = 0x%08X, want 0x%08X", cpu.reg.PC, tt.wantPC)
 			}
@@ -625,9 +531,7 @@ func TestOpBRADelaySlotExecutes(t *testing.T) {
 	cpu := newDecodeTestCPU(0xA00A)
 	cpu.reg.ClearT()
 	cpu.bus.Write16(0x12, settOpcode)
-	cpu.Clock()
-	cpu.Clock()
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(3))
 	if cpu.reg.T() != 1 {
 		t.Errorf("T = %d, want 1 (SETT in delay slot)", cpu.reg.T())
 	}
@@ -640,7 +544,7 @@ func TestOpBSRExtras(t *testing.T) {
 	t.Run("bsr_pr_is_return_address", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0xB00A)
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
+		cpu.Step()
 		if cpu.reg.PR != 0x14 {
 			t.Errorf("PR = 0x%08X, want 0x14", cpu.reg.PR)
 		}
@@ -649,9 +553,7 @@ func TestOpBSRExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0xB00A)
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1 (SETT in delay slot)", cpu.reg.T())
 		}
@@ -659,9 +561,7 @@ func TestOpBSRExtras(t *testing.T) {
 	t.Run("bsr_disp_max_positive", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0xB7FF)
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.PC != 0x1012 {
 			t.Errorf("PC = 0x%08X, want 0x1012", cpu.reg.PC)
 		}
@@ -669,9 +569,7 @@ func TestOpBSRExtras(t *testing.T) {
 	t.Run("bsr_disp_max_negative", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0xB800)
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.PC != 0xFFFFF014 {
 			t.Errorf("PC = 0x%08X, want 0xFFFFF014", cpu.reg.PC)
 		}
@@ -686,9 +584,7 @@ func TestOpBRAFExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0323) // BRAF R3
 		cpu.reg.R[3] = 0
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.PC != 0x14 {
 			t.Errorf("PC = 0x%08X, want 0x14", cpu.reg.PC)
 		}
@@ -698,9 +594,7 @@ func TestOpBRAFExtras(t *testing.T) {
 		cpu.reg.R[3] = 0x20
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1", cpu.reg.T())
 		}
@@ -714,7 +608,7 @@ func TestOpBSRFExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0303) // BSRF R3
 		cpu.reg.R[3] = 0x200
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
+		cpu.Step()
 		// PR must be 0x14 (return address), not the target 0x214.
 		if cpu.reg.PR != 0x14 {
 			t.Errorf("PR = 0x%08X, want 0x14 (return address, not target)", cpu.reg.PR)
@@ -725,9 +619,7 @@ func TestOpBSRFExtras(t *testing.T) {
 		cpu.reg.R[3] = 0x20
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1", cpu.reg.T())
 		}
@@ -742,9 +634,7 @@ func TestOpJMPExtras(t *testing.T) {
 		cpu.reg.R[3] = 0x200
 		cpu.reg.PR = 0xDEADBEEF
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.PR != 0xDEADBEEF {
 			t.Errorf("PR = 0x%08X, want 0xDEADBEEF (unchanged)", cpu.reg.PR)
 		}
@@ -754,9 +644,7 @@ func TestOpJMPExtras(t *testing.T) {
 		cpu.reg.R[3] = 0x200
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1", cpu.reg.T())
 		}
@@ -771,9 +659,7 @@ func TestOpJSRExtras(t *testing.T) {
 		cpu.reg.R[3] = 0x200
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1", cpu.reg.T())
 		}
@@ -788,9 +674,7 @@ func TestOpRTSExtras(t *testing.T) {
 		cpu.reg.PR = 0x300
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1", cpu.reg.T())
 		}
@@ -803,9 +687,7 @@ func TestOpRTSExtras(t *testing.T) {
 		cpu.reg.PR = 0x300
 		cpu.reg.SR = srTMask | srSMask
 		cpu.bus.Write16(0x12, nopOpcode)
-		cpu.Clock()
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(3))
 		if cpu.reg.SR != srTMask|srSMask {
 			t.Errorf("SR = 0x%08X, want 0x%08X (unchanged)", cpu.reg.SR, srTMask|srSMask)
 		}
@@ -822,9 +704,7 @@ func TestOpRTEExtras(t *testing.T) {
 		cpu.bus.Write32(sp, 0x400)
 		cpu.bus.Write32(sp+4, 0)
 		cpu.bus.Write16(0x12, nopOpcode)
-		for i := 0; i < 5; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(5))
 		if cpu.reg.R[15] != sp+8 {
 			t.Errorf("SP = 0x%08X, want 0x%08X (advanced by 8)", cpu.reg.R[15], sp+8)
 		}
@@ -837,9 +717,7 @@ func TestOpRTEExtras(t *testing.T) {
 		cpu.bus.Write32(sp, 0xABCD1234)
 		cpu.bus.Write32(sp+4, 0)
 		cpu.bus.Write16(0x12, nopOpcode)
-		for i := 0; i < 5; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(5))
 		if cpu.reg.PC != 0xABCD1234 {
 			t.Errorf("PC = 0x%08X, want 0xABCD1234", cpu.reg.PC)
 		}
@@ -852,9 +730,7 @@ func TestOpRTEExtras(t *testing.T) {
 		cpu.bus.Write32(sp+4, 0)
 		cpu.reg.ClearT()
 		cpu.bus.Write16(0x12, settOpcode)
-		for i := 0; i < 5; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(5))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1 (SETT in delay slot)", cpu.reg.T())
 		}
@@ -878,9 +754,7 @@ func TestOpRTEMasksSRReservedBits(t *testing.T) {
 	cpu.bus.Write32(sp+4, 0xFFFFFFFF) // stacked SR with reserved bits poisoned
 	cpu.bus.Write16(0x12, nopOpcode)  // delay slot NOP
 
-	for i := 0; i < 5; i++ {
-		cpu.Clock()
-	}
+	cpu.RunUntil(cpu.cycles + uint64(5))
 
 	if cpu.reg.SR != 0x3F3 {
 		t.Errorf("restored SR = 0x%08X, want 0x000003F3 (srMask)", cpu.reg.SR)
@@ -902,9 +776,7 @@ func TestOpRTEMasksSRFromArbitraryStackFrame(t *testing.T) {
 	cpu.bus.Write32(sp+4, 0xAAAAFBF3)
 	cpu.bus.Write16(0x12, nopOpcode)
 
-	for i := 0; i < 5; i++ {
-		cpu.Clock()
-	}
+	cpu.RunUntil(cpu.cycles + uint64(5))
 
 	wantSR := uint32(0x3F3)
 	if cpu.reg.SR != wantSR {

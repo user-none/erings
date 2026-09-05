@@ -33,7 +33,7 @@ func TestOpAddSub(t *testing.T) {
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetT() // T should be unchanged
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -67,7 +67,7 @@ func TestOpADDI(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.SetT()
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -99,7 +99,7 @@ func TestOpDT(t *testing.T) {
 			n := regN(0x4310)
 			cpu.reg.R[n] = tt.rn
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -143,7 +143,7 @@ func TestOpEXT(t *testing.T) {
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetT() // T should be unchanged
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -196,7 +196,7 @@ func TestOpCMPReg(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -229,7 +229,7 @@ func TestOpCMPSingle(t *testing.T) {
 			n := regN(tt.op)
 			cpu.reg.R[n] = tt.rn
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -243,7 +243,7 @@ func TestOpCMPSingle(t *testing.T) {
 	t.Run("CMPIM_equal", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x880A) // #10
 		cpu.reg.R[0] = 10
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1", cpu.reg.T())
 		}
@@ -251,7 +251,7 @@ func TestOpCMPSingle(t *testing.T) {
 	t.Run("CMPIM_not_equal", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x880A)
 		cpu.reg.R[0] = 11
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.T() != 0 {
 			t.Errorf("T = %d, want 0", cpu.reg.T())
 		}
@@ -259,7 +259,7 @@ func TestOpCMPSingle(t *testing.T) {
 	t.Run("CMPIM_negative_imm", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x88FF) // #-1
 		cpu.reg.R[0] = 0xFFFFFFFF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.T() != 1 {
 			t.Errorf("T = %d, want 1", cpu.reg.T())
 		}
@@ -289,7 +289,7 @@ func TestOpCMPSTR(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -325,7 +325,7 @@ func TestOpADDC(t *testing.T) {
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetTVal(tt.tIn)
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -361,7 +361,7 @@ func TestOpADDV(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -400,7 +400,7 @@ func TestOpSUBC(t *testing.T) {
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetTVal(tt.tIn)
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -436,7 +436,7 @@ func TestOpSUBV(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -473,7 +473,7 @@ func TestOpNEGC(t *testing.T) {
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetTVal(tt.tIn)
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -492,7 +492,7 @@ func TestOpDIV0(t *testing.T) {
 	t.Run("DIV0U", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0019)
 		cpu.reg.SR |= srQMask | srMMask | srTMask
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.SR&(srQMask|srMMask|srTMask) != 0 {
 			t.Errorf("SR = 0x%08X, want Q=0 M=0 T=0", cpu.reg.SR)
 		}
@@ -505,7 +505,7 @@ func TestOpDIV0(t *testing.T) {
 		m := regM(0x2357)
 		cpu.reg.R[n] = 0x7FFFFFFF // MSB=0 -> Q=0
 		cpu.reg.R[m] = 0x7FFFFFFF // MSB=0 -> M=0
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.SR&srQMask != 0 {
 			t.Error("Q should be 0")
 		}
@@ -523,7 +523,7 @@ func TestOpDIV0(t *testing.T) {
 		m := regM(0x2357)
 		cpu.reg.R[n] = 0x80000000 // MSB=1 -> Q=1
 		cpu.reg.R[m] = 0x7FFFFFFF // MSB=0 -> M=0
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.SR&srQMask == 0 {
 			t.Error("Q should be 1")
 		}
@@ -541,7 +541,7 @@ func TestOpDIV0(t *testing.T) {
 		m := regM(0x2357)
 		cpu.reg.R[n] = 0x80000000 // Q=1
 		cpu.reg.R[m] = 0x80000000 // M=1
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.SR&srQMask == 0 {
 			t.Error("Q should be 1")
 		}
@@ -586,9 +586,7 @@ func TestOpDIV1(t *testing.T) {
 		cpu.reg.R[2] = 48 // low 32 bits of dividend (quotient accumulator)
 
 		// Execute: DIV0U + 32*(ROTCL+DIV1) + ROTCL = 1 + 64 + 1 = 66 steps
-		for i := 0; i < 66; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(66))
 
 		if cpu.reg.R[2] != 8 {
 			t.Errorf("R2 (quotient) = %d, want 8", cpu.reg.R[2])
@@ -617,9 +615,7 @@ func TestOpDIV1(t *testing.T) {
 		cpu.reg.R[1] = 0   // high dividend
 		cpu.reg.R[2] = 100 // low dividend
 
-		for i := 0; i < 66; i++ {
-			cpu.Clock()
-		}
+		cpu.RunUntil(cpu.cycles + uint64(66))
 
 		if cpu.reg.R[2] != 14 {
 			t.Errorf("R2 (quotient) = %d, want 14", cpu.reg.R[2])
@@ -643,7 +639,7 @@ func TestOpDIV1(t *testing.T) {
 		cpu.reg.R[m] = 1
 		cpu.reg.SR &^= srQMask | srMMask | srTMask
 
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 
 		// Q should be 0 per manual (Q=1, tmp1=borrow=1, Q=!tmp1=0)
 		if cpu.reg.SR&srQMask != 0 {
@@ -669,8 +665,7 @@ func TestOpMUL(t *testing.T) {
 		cpu.reg.R[m] = 7
 		cpu.reg.SetT()
 		before := cpu.cycles
-		cpu.Clock() // EX
-		cpu.Clock() // stall
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACL != 42 {
 			t.Errorf("MACL = 0x%08X, want 42", cpu.reg.MACL)
 		}
@@ -688,8 +683,7 @@ func TestOpMUL(t *testing.T) {
 		m := regM(0x0357)
 		cpu.reg.R[n] = 0x10000
 		cpu.reg.R[m] = 0x10000
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACL != 0 {
 			t.Errorf("MACL = 0x%08X, want 0", cpu.reg.MACL)
 		}
@@ -703,7 +697,7 @@ func TestOpMUL(t *testing.T) {
 		cpu.reg.R[n] = 100
 		cpu.reg.R[m] = 200
 		before := cpu.cycles
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 20000 {
 			t.Errorf("MACL = 0x%08X, want 20000", cpu.reg.MACL)
 		}
@@ -718,7 +712,7 @@ func TestOpMUL(t *testing.T) {
 		m := regM(0x235F)
 		cpu.reg.R[n] = 0xFFFF
 		cpu.reg.R[m] = 2
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 0xFFFFFFFE {
 			t.Errorf("MACL = 0x%08X, want 0xFFFFFFFE", cpu.reg.MACL)
 		}
@@ -732,7 +726,7 @@ func TestOpMUL(t *testing.T) {
 		cpu.reg.R[n] = 100
 		cpu.reg.R[m] = 200
 		before := cpu.cycles
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 20000 {
 			t.Errorf("MACL = 0x%08X, want 20000", cpu.reg.MACL)
 		}
@@ -747,7 +741,7 @@ func TestOpMUL(t *testing.T) {
 		m := regM(0x235E)
 		cpu.reg.R[n] = 0xFFFF
 		cpu.reg.R[m] = 2
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 0x1FFFE {
 			t.Errorf("MACL = 0x%08X, want 0x1FFFE", cpu.reg.MACL)
 		}
@@ -780,8 +774,7 @@ func TestOpDMUL(t *testing.T) {
 			cpu.reg.SetT()
 			before := cpu.cycles
 			// 2 cycles: 1 EX + 1 stall
-			cpu.Clock()
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(2))
 			if cpu.reg.MACH != tt.wantMACH {
 				t.Errorf("MACH = 0x%08X, want 0x%08X", cpu.reg.MACH, tt.wantMACH)
 			}
@@ -817,16 +810,7 @@ func TestOpMAC(t *testing.T) {
 		cpu.reg.SetT()
 		before := cpu.cycles
 
-		// Cycle 1: read @Rn
-		s1 := cpu.Clock()
-		if s1.Bus != BusRead {
-			t.Errorf("cycle 1: bus = %d, want BusRead", s1.Bus)
-		}
-		// Cycle 2: read @Rm + accumulate
-		s2 := cpu.Clock()
-		if s2.Bus != BusRead {
-			t.Errorf("cycle 2: bus = %d, want BusRead", s2.Bus)
-		}
+		cpu.Step()
 
 		// 10 * 20 + 5 = 205
 		if cpu.reg.MACL != 205 {
@@ -862,8 +846,7 @@ func TestOpMAC(t *testing.T) {
 		cpu.reg.MACL = 0
 		cpu.reg.SR |= srSMask
 
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 
 		if cpu.reg.MACH != 0x00007FFF {
 			t.Errorf("MACH = 0x%08X, want 0x00007FFF", cpu.reg.MACH)
@@ -890,14 +873,7 @@ func TestOpMAC(t *testing.T) {
 		cpu.reg.SetT()
 		before := cpu.cycles
 
-		s1 := cpu.Clock()
-		if s1.Bus != BusRead {
-			t.Errorf("cycle 1: bus = %d, want BusRead", s1.Bus)
-		}
-		s2 := cpu.Clock()
-		if s2.Bus != BusRead {
-			t.Errorf("cycle 2: bus = %d, want BusRead", s2.Bus)
-		}
+		cpu.Step()
 
 		if cpu.reg.MACL != 205 {
 			t.Errorf("MACL = %d, want 205", cpu.reg.MACL)
@@ -929,8 +905,7 @@ func TestOpMAC(t *testing.T) {
 		cpu.reg.MACL = 0x7FFFFFFF
 		cpu.reg.SR |= srSMask
 
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 
 		if cpu.reg.MACL != 0x7FFFFFFF {
 			t.Errorf("MACL = 0x%08X, want 0x7FFFFFFF", cpu.reg.MACL)
@@ -966,7 +941,7 @@ func TestOpADDExtras(t *testing.T) {
 				cpu.reg.R[m] = tt.rm
 			}
 			cpu.reg.SetTVal(false) // ADD must not change T
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -997,7 +972,7 @@ func TestOpADDIExtras(t *testing.T) {
 			n := regN(tt.op)
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.SetTVal(false)
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -1033,7 +1008,7 @@ func TestOpSUBExtras(t *testing.T) {
 				cpu.reg.R[m] = tt.rm
 			}
 			cpu.reg.SetTVal(false)
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -1054,7 +1029,7 @@ func TestOpNEGExtras(t *testing.T) {
 	m := regM(0x635B)
 	cpu.reg.R[m] = 0x80000000
 	cpu.reg.SetTVal(false)
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.R[n] != 0x80000000 {
 		t.Errorf("neg_min_int: R[%d] = 0x%08X, want 0x80000000", n, cpu.reg.R[n])
 	}
@@ -1086,7 +1061,7 @@ func TestOpADDCExtras(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetTVal(tt.tIn)
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -1120,7 +1095,7 @@ func TestOpADDVExtras(t *testing.T) {
 			m := regM(0x335F)
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -1153,7 +1128,7 @@ func TestOpSUBCExtras(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetTVal(tt.tIn)
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -1185,7 +1160,7 @@ func TestOpSUBVExtras(t *testing.T) {
 			m := regM(0x335B)
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -1205,7 +1180,7 @@ func TestOpNEGCExtras(t *testing.T) {
 		m := regM(0x635A)
 		cpu.reg.R[m] = 0x80000000
 		cpu.reg.SetTVal(false)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[n] != 0x80000000 {
 			t.Errorf("R[%d] = 0x%08X, want 0x80000000", n, cpu.reg.R[n])
 		}
@@ -1219,7 +1194,7 @@ func TestOpNEGCExtras(t *testing.T) {
 		m := regM(0x635A)
 		cpu.reg.R[m] = 0xCAFEBABE
 		cpu.reg.SetTVal(false)
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[m] != 0xCAFEBABE {
 			t.Errorf("R[%d] = 0x%08X, want 0xCAFEBABE (unchanged)", m, cpu.reg.R[m])
 		}
@@ -1274,7 +1249,7 @@ func TestOpCMPExtras(t *testing.T) {
 					cpu.reg.R[m] = tt.rm
 				}
 			}
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -1300,7 +1275,7 @@ func TestOpCMPIMExtras(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			cpu.reg.R[0] = tt.r0
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -1329,7 +1304,7 @@ func TestOpCMPSTRExtras(t *testing.T) {
 			m := regM(0x235C)
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.R[m] = tt.rm
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
 			}
@@ -1344,7 +1319,7 @@ func TestOpDIV0UExtras(t *testing.T) {
 		cpu.reg.R[0] = 0xAAAAAAAA
 		cpu.reg.R[1] = 0xBBBBBBBB
 		cpu.reg.R[3] = 0xCCCCCCCC
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[0] != 0xAAAAAAAA || cpu.reg.R[1] != 0xBBBBBBBB || cpu.reg.R[3] != 0xCCCCCCCC {
 			t.Errorf("general registers were modified")
 		}
@@ -1352,7 +1327,7 @@ func TestOpDIV0UExtras(t *testing.T) {
 	t.Run("div0u_clears_from_dirty_state", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0019)
 		cpu.reg.SR |= srQMask | srMMask | srTMask
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.SR&(srQMask|srMMask|srTMask) != 0 {
 			t.Errorf("SR = 0x%08X, want M=0 Q=0 T=0 after DIV0U", cpu.reg.SR)
 		}
@@ -1368,7 +1343,7 @@ func TestOpDIV0SExtras(t *testing.T) {
 		m := regM(0x2357)
 		cpu.reg.R[n] = 0
 		cpu.reg.R[m] = 0x80000000
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.SR&srQMask != 0 {
 			t.Error("Q should be 0")
 		}
@@ -1386,7 +1361,7 @@ func TestOpDIV0SExtras(t *testing.T) {
 		m := regM(0x2357)
 		cpu.reg.R[n] = 0x80000000
 		cpu.reg.R[m] = 0
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.SR&srQMask == 0 {
 			t.Error("Q should be 1")
 		}
@@ -1409,8 +1384,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x0357)
 		cpu.reg.R[n] = 0xFFFFFFFF // -1
 		cpu.reg.R[m] = 5
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACL != 0xFFFFFFFB {
 			t.Errorf("MACL = 0x%08X, want 0xFFFFFFFB", cpu.reg.MACL)
 		}
@@ -1421,8 +1395,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x0357)
 		cpu.reg.R[n] = 0
 		cpu.reg.R[m] = 0xDEADBEEF
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACL != 0 {
 			t.Errorf("MACL = 0x%08X, want 0", cpu.reg.MACL)
 		}
@@ -1434,8 +1407,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x0357)
 		cpu.reg.R[n] = 0xFFFFFFFF
 		cpu.reg.R[m] = 0xFFFFFFFF
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACL != 1 {
 			t.Errorf("MACL = 0x%08X, want 1", cpu.reg.MACL)
 		}
@@ -1448,7 +1420,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x235F)
 		cpu.reg.R[n] = 0xFFFF // -1 as int16
 		cpu.reg.R[m] = 0xFFFE // -2 as int16
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 2 {
 			t.Errorf("MACL = 0x%08X, want 2", cpu.reg.MACL)
 		}
@@ -1459,7 +1431,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x235F)
 		cpu.reg.R[n] = 0
 		cpu.reg.R[m] = 0x1234
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 0 {
 			t.Errorf("MACL = 0x%08X, want 0", cpu.reg.MACL)
 		}
@@ -1471,7 +1443,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x235F)
 		cpu.reg.R[n] = 0xDEAD_0003 // low 16 = 3
 		cpu.reg.R[m] = 0xBEEF_0004 // low 16 = 4
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 12 {
 			t.Errorf("MACL = 0x%08X, want 12", cpu.reg.MACL)
 		}
@@ -1485,7 +1457,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x235E)
 		cpu.reg.R[n] = 0xFFFF
 		cpu.reg.R[m] = 0xFFFF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 0xFFFE0001 {
 			t.Errorf("MACL = 0x%08X, want 0xFFFE0001", cpu.reg.MACL)
 		}
@@ -1496,7 +1468,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x235E)
 		cpu.reg.R[n] = 0
 		cpu.reg.R[m] = 0xFFFF
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 0 {
 			t.Errorf("MACL = 0x%08X, want 0", cpu.reg.MACL)
 		}
@@ -1507,7 +1479,7 @@ func TestOpMULExtras(t *testing.T) {
 		m := regM(0x235E)
 		cpu.reg.R[n] = 0xCAFE_0100
 		cpu.reg.R[m] = 0xBABE_0003
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.MACL != 0x300 {
 			t.Errorf("MACL = 0x%08X, want 0x300", cpu.reg.MACL)
 		}
@@ -1525,8 +1497,7 @@ func TestOpDMULExtras(t *testing.T) {
 		m := regM(0x335D)
 		cpu.reg.R[n] = 0xFFFFFFFE
 		cpu.reg.R[m] = 0xFFFFFFFD
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACH != 0 || cpu.reg.MACL != 6 {
 			t.Errorf("MACH:MACL = %08X:%08X, want 0:6", cpu.reg.MACH, cpu.reg.MACL)
 		}
@@ -1538,8 +1509,7 @@ func TestOpDMULExtras(t *testing.T) {
 		m := regM(0x335D)
 		cpu.reg.R[n] = 0x7FFFFFFF
 		cpu.reg.R[m] = 0x7FFFFFFF
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACH != 0x3FFFFFFF || cpu.reg.MACL != 0x00000001 {
 			t.Errorf("MACH:MACL = %08X:%08X, want 3FFFFFFF:00000001",
 				cpu.reg.MACH, cpu.reg.MACL)
@@ -1551,8 +1521,7 @@ func TestOpDMULExtras(t *testing.T) {
 		m := regM(0x335D)
 		cpu.reg.R[n] = 0
 		cpu.reg.R[m] = 0x7FFFFFFF
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACH != 0 || cpu.reg.MACL != 0 {
 			t.Errorf("MACH:MACL = %08X:%08X, want 0:0", cpu.reg.MACH, cpu.reg.MACL)
 		}
@@ -1566,8 +1535,7 @@ func TestOpDMULExtras(t *testing.T) {
 		m := regM(0x3355)
 		cpu.reg.R[n] = 0xFFFFFFFF
 		cpu.reg.R[m] = 0xFFFFFFFF
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACH != 0xFFFFFFFE || cpu.reg.MACL != 0x00000001 {
 			t.Errorf("MACH:MACL = %08X:%08X, want FFFFFFFE:00000001",
 				cpu.reg.MACH, cpu.reg.MACL)
@@ -1579,8 +1547,7 @@ func TestOpDMULExtras(t *testing.T) {
 		m := regM(0x3355)
 		cpu.reg.R[n] = 0xFFFFFFFF
 		cpu.reg.R[m] = 0
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACH != 0 || cpu.reg.MACL != 0 {
 			t.Errorf("MACH:MACL = %08X:%08X, want 0:0", cpu.reg.MACH, cpu.reg.MACL)
 		}
@@ -1592,8 +1559,7 @@ func TestOpDMULExtras(t *testing.T) {
 		m := regM(0x3355)
 		cpu.reg.R[n] = 0x80000000
 		cpu.reg.R[m] = 2
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACH != 1 || cpu.reg.MACL != 0 {
 			t.Errorf("MACH:MACL = %08X:%08X, want 1:0", cpu.reg.MACH, cpu.reg.MACL)
 		}
@@ -1615,8 +1581,7 @@ func TestOpMACExtras(t *testing.T) {
 		cpu.reg.R[m] = 0x200
 		cpu.reg.MACH = 0
 		cpu.reg.MACL = 100
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		// -1 * 1 = -1; 64-bit(0:100) + -1 = 64-bit(0:99)
 		if cpu.reg.MACL != 99 {
 			t.Errorf("MACL = %d, want 99", cpu.reg.MACL)
@@ -1637,8 +1602,7 @@ func TestOpMACExtras(t *testing.T) {
 		cpu.reg.R[n] = 0x100
 		cpu.reg.MACH = 0
 		cpu.reg.MACL = 0
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACL != 200 {
 			t.Errorf("MACL = %d, want 200", cpu.reg.MACL)
 		}
@@ -1659,8 +1623,7 @@ func TestOpMACExtras(t *testing.T) {
 		cpu.reg.MACH = 0
 		cpu.reg.MACL = 0
 		cpu.reg.SR |= srSMask
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		// Product saturates to -0x800000000000: MACH=0xFFFF8000, MACL=0.
 		if cpu.reg.MACH != 0xFFFF8000 {
 			t.Errorf("MACH = 0x%08X, want 0xFFFF8000", cpu.reg.MACH)
@@ -1682,8 +1645,7 @@ func TestOpMACExtras(t *testing.T) {
 		cpu.reg.MACH = 0
 		cpu.reg.MACL = 0
 		cpu.reg.SR &^= srSMask
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		// 0x7FFFFFFF * 0x7FFFFFFF = 0x3FFFFFFF_00000001
 		if cpu.reg.MACH != 0x3FFFFFFF {
 			t.Errorf("MACH = 0x%08X, want 0x3FFFFFFF", cpu.reg.MACH)
@@ -1705,8 +1667,7 @@ func TestOpMACExtras(t *testing.T) {
 		cpu.reg.MACH = 0xFFFFFFFF
 		cpu.reg.MACL = 0x80000000 // acc = -0x80000000
 		cpu.reg.SR |= srSMask
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		// -0x80000000 + -1 saturates to -0x80000000
 		if cpu.reg.MACL != 0x80000000 {
 			t.Errorf("MACL = 0x%08X, want 0x80000000", cpu.reg.MACL)
@@ -1723,8 +1684,7 @@ func TestOpMACExtras(t *testing.T) {
 		cpu.reg.R[n] = 0x100
 		cpu.reg.MACH = 0
 		cpu.reg.MACL = 0
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		if cpu.reg.MACL != 12 {
 			t.Errorf("MACL = %d, want 12", cpu.reg.MACL)
 		}
@@ -1745,8 +1705,7 @@ func TestOpMACExtras(t *testing.T) {
 		cpu.reg.MACH = 0
 		cpu.reg.MACL = 0
 		cpu.reg.SR &^= srSMask
-		cpu.Clock()
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(2))
 		// Product = -1 * 2 = -2
 		if cpu.reg.MACL != 0xFFFFFFFE {
 			t.Errorf("MACL = 0x%08X, want 0xFFFFFFFE", cpu.reg.MACL)
@@ -1762,7 +1721,7 @@ func TestOpDTExtras(t *testing.T) {
 		cpu := newDecodeTestCPU(0x4310)
 		n := regN(0x4310)
 		cpu.reg.R[n] = 2
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[n] != 1 {
 			t.Errorf("R[%d] = %d, want 1", n, cpu.reg.R[n])
 		}
@@ -1780,7 +1739,7 @@ func TestOpDTExtras(t *testing.T) {
 				cpu.reg.R[i] = uint32(0xA0 + i)
 			}
 		}
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		for i := 0; i < 16; i++ {
 			if uint8(i) != n && cpu.reg.R[i] != uint32(0xA0+i) {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X (untouched)", i, cpu.reg.R[i], uint32(0xA0+i))
@@ -1819,7 +1778,7 @@ func TestOpEXTExtras(t *testing.T) {
 			// For rm==rn the same register holds rm first, then gets overwritten.
 			cpu.reg.R[m] = tt.rm
 			cpu.reg.SetT()
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}

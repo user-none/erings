@@ -88,35 +88,35 @@ func (b *testBus) WriteRMW8(addr uint32, val uint8) { b.Write8(addr, val) }
 // The SH2* methods model bus-access timing on the real bus; the test bus
 // reports its configured per-access stall (default 0) in place of the real
 // bus's region cost + contention.
-func (b *testBus) SH2Read8(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
+func (b *testBus) SH2Read8(addr uint32, now int64, slave bool) (uint8, uint32) {
 	return b.Read8(addr), b.stallRead
 }
-func (b *testBus) SH2Read16(addr uint32, frameCyc int64, slave bool) (uint16, uint32) {
+func (b *testBus) SH2Read16(addr uint32, now int64, slave bool) (uint16, uint32) {
 	return b.Read16(addr), b.stallRead
 }
-func (b *testBus) SH2Read32(addr uint32, frameCyc int64, slave bool) (uint32, uint32) {
+func (b *testBus) SH2Read32(addr uint32, now int64, slave bool) (uint32, uint32) {
 	return b.Read32(addr), b.stallRead
 }
-func (b *testBus) SH2Write8(addr uint32, val uint8, frameCyc int64, slave bool) uint32 {
+func (b *testBus) SH2Write8(addr uint32, val uint8, now int64, slave bool) uint32 {
 	b.Write8(addr, val)
 	return b.stallWrite
 }
-func (b *testBus) SH2Write16(addr uint32, val uint16, frameCyc int64, slave bool) uint32 {
+func (b *testBus) SH2Write16(addr uint32, val uint16, now int64, slave bool) uint32 {
 	b.Write16(addr, val)
 	return b.stallWrite
 }
-func (b *testBus) SH2Write32(addr uint32, val uint32, frameCyc int64, slave bool) uint32 {
+func (b *testBus) SH2Write32(addr uint32, val uint32, now int64, slave bool) uint32 {
 	b.Write32(addr, val)
 	return b.stallWrite
 }
-func (b *testBus) SH2FillLine(base uint32, dst *[16]byte, frameCyc int64, slave bool) uint32 {
+func (b *testBus) SH2FillLine(base uint32, dst *[16]byte, now int64, slave bool) uint32 {
 	b.ReadCacheLine(base, dst)
 	return b.stallFill
 }
-func (b *testBus) SH2RMWRead(addr uint32, frameCyc int64, slave bool) (uint8, uint32) {
+func (b *testBus) SH2RMWRead(addr uint32, now int64, slave bool) (uint8, uint32) {
 	return b.Read8(addr), b.stallRead
 }
-func (b *testBus) SH2RMWWrite(addr uint32, val uint8, frameCyc int64) uint32 {
+func (b *testBus) SH2RMWWrite(addr uint32, val uint8, now int64) uint32 {
 	b.Write8(addr, val)
 	return b.stallWrite
 }
@@ -218,7 +218,7 @@ func TestAddressErrorWordRead(t *testing.T) {
 	cpu.reg.PC = 0x200
 	cpu.reg.R[1] = 0x301 // odd -> address error
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	if cpu.reg.PC != handler {
 		t.Errorf("PC = 0x%08X, want 0x%08X", cpu.reg.PC, handler)
@@ -240,7 +240,7 @@ func TestAddressErrorWordWrite(t *testing.T) {
 	cpu.reg.R[0] = 0x303 // odd -> address error
 	cpu.reg.R[1] = 0xBEEF
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	if cpu.reg.PC != handler {
 		t.Errorf("PC = 0x%08X, want 0x%08X", cpu.reg.PC, handler)
@@ -256,7 +256,7 @@ func TestAddressErrorLongRead(t *testing.T) {
 	cpu.reg.PC = 0x200
 	cpu.reg.R[1] = 0x302 // aligned to 2 but not 4 -> address error
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	if cpu.reg.PC != handler {
 		t.Errorf("PC = 0x%08X, want 0x%08X", cpu.reg.PC, handler)
@@ -273,7 +273,7 @@ func TestAddressErrorLongWrite(t *testing.T) {
 	cpu.reg.R[0] = 0x306 // not 4-aligned -> address error
 	cpu.reg.R[1] = 0xDEADBEEF
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	if cpu.reg.PC != handler {
 		t.Errorf("PC = 0x%08X, want 0x%08X", cpu.reg.PC, handler)
@@ -292,7 +292,7 @@ func TestAddressErrorStacking(t *testing.T) {
 	sp := uint32(0x800)
 	cpu.reg.R[15] = sp
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	// SR and PC should be stacked
 	stackedPC := bus.Read32(cpu.reg.R[15])
@@ -334,7 +334,7 @@ func TestAddressErrorHandlerFetchFromVBR(t *testing.T) {
 
 	bus.Write16(0x300, 0x6011) // MOV.W @R1,R0
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	if cpu.reg.PC != handler {
 		t.Errorf("PC = 0x%08X, want 0x%08X (handler from VBR + 9*4 = 0x%08X)",
@@ -358,7 +358,7 @@ func TestNoAddressErrorByteAccess(t *testing.T) {
 	cpu.reg.R[1] = 0x301 // odd, but byte access is OK
 	bus.Write8(0x301, 0x42)
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	// Should execute normally, no address error
 	if cpu.reg.PC != 0x202 {
@@ -381,7 +381,7 @@ func TestNoAddressErrorAlignedAccess(t *testing.T) {
 	cpu.reg.R[1] = 0x300 // 4-aligned
 	bus.Write32(0x300, 0xCAFEBABE)
 
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 
 	if cpu.reg.PC != 0x202 {
 		t.Errorf("PC = 0x%08X, want 0x00000202 (no error)", cpu.reg.PC)
@@ -569,17 +569,13 @@ func TestJMPToOddAddressAddressErrors(t *testing.T) {
 	bus.Write16(0x200, 0x402B) // JMP @R0
 	bus.Write16(0x202, 0x0009) // NOP delay slot
 
-	cpu.Clock()
-	// Drain popStall refill and delay slot.
-	for cpu.pendingOp == popStall {
-		cpu.Clock()
-	}
-	cpu.Clock() // execute delay slot, take branch
+	cpu.Step() // JMP
+	cpu.Step() // delay slot, take branch
 	if cpu.reg.PC != 0x301 {
 		t.Fatalf("after delay slot: PC = 0x%08X, want 0x301 (odd target)", cpu.reg.PC)
 	}
 	// Next Clock fetches at the odd PC and traps.
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.PC != handler {
 		t.Errorf("address-error handler not taken: PC = 0x%08X, want 0x%X", cpu.reg.PC, handler)
 	}
@@ -609,7 +605,7 @@ func TestBSRToOddAddressAddressErrors(t *testing.T) {
 	bus.Write16(0x200, 0x0203) // BSRF R2 = 0000 nnnn 0000 0011
 	bus.Write16(0x202, 0x0009) // NOP delay slot
 
-	cpu.Clock()
+	cpu.Step()
 	// PM BSRF: PC (address of instruction after delay slot) -> PR.
 	// For BSRF at 0x200 with delay slot at 0x202, the return address
 	// is 0x204.
@@ -617,14 +613,11 @@ func TestBSRToOddAddressAddressErrors(t *testing.T) {
 		t.Fatalf("BSRF PR = 0x%08X, want 0x204 (return addr after delay slot)",
 			cpu.reg.PR)
 	}
-	for cpu.pendingOp == popStall {
-		cpu.Clock()
-	}
-	cpu.Clock() // delay slot + branch
+	cpu.Step() // delay slot + branch
 	if cpu.reg.PC != 0x301 {
 		t.Fatalf("after delay slot: PC = 0x%08X, want 0x301", cpu.reg.PC)
 	}
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.PC != handler {
 		t.Errorf("handler not entered: PC = 0x%08X", cpu.reg.PC)
 	}
@@ -644,15 +637,12 @@ func TestRTSToOddPRAddressErrors(t *testing.T) {
 	bus.Write16(0x200, 0x000B) // RTS
 	bus.Write16(0x202, 0x0009) // NOP delay slot
 
-	cpu.Clock()
-	for cpu.pendingOp == popStall {
-		cpu.Clock()
-	}
-	cpu.Clock() // delay slot + branch
+	cpu.Step() // RTS
+	cpu.Step() // delay slot, take branch
 	if cpu.reg.PC != 0x301 {
 		t.Fatalf("after delay slot: PC = 0x%08X, want 0x301", cpu.reg.PC)
 	}
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.PC != handler {
 		t.Errorf("handler not entered: PC = 0x%08X", cpu.reg.PC)
 	}

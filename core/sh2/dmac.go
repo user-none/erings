@@ -3,6 +3,8 @@
 
 package sh2
 
+import "math"
+
 // dmaChan holds per-channel DMA state.
 type dmaChan struct {
 	sar    uint32 // Source Address Register
@@ -20,8 +22,15 @@ type DMAC struct {
 	nextCh int      // Next channel for round-robin priority (0 or 1)
 	bus    Bus      // Memory access for transfers
 
-	stallCycles [2]int // stallCycles is the per-channel bus-occupation countdown in cycles (-1 = no transfer in progress).
-	stallCh     int    // channel most recently kicked (-1 = none)
+	// completesAt is the absolute CPU cycle at which each channel's
+	// bus-occupation window closes and TE is set; 0 means no transfer
+	// is in progress. The window is the occupation cycles following the
+	// kick cycle, so a kick in cycle K with cost N completes at K+1+N.
+	completesAt [2]uint64
+	// burstOpen is true while a burst-mode (CHCR TB) window is open,
+	// the condition under which the CPU is held off the bus. Kept as a
+	// flag because the CPU checks it before every instruction.
+	burstOpen bool
 }
 
 // Reset returns the DMAC to power-on state.
@@ -32,25 +41,30 @@ func (d *DMAC) Reset() {
 	d.drcr[0] = 0
 	d.drcr[1] = 0
 	d.nextCh = 1 // after reset, ch1 has priority in round-robin mode
-	d.stallCycles = [2]int{-1, -1}
-	d.stallCh = -1
+	d.completesAt = [2]uint64{}
+	d.burstOpen = false
 }
 
-// Active returns true while any channel's bus-occupation countdown is running.
+// Active returns true while any channel's bus-occupation window is open.
 func (d *DMAC) Active() bool {
-	return d.stallCycles[0] >= 0 || d.stallCycles[1] >= 0
+	return d.completesAt[0] != 0 || d.completesAt[1] != 0
 }
 
 // Stalling returns true if the DMAC is locking the CPU off the bus.
 // Only burst-mode transfers (CHCR TB, bit 4) hold the bus until the
 // transfer end condition is satisfied.
 func (d *DMAC) Stalling() bool {
-	for ch := range d.stallCycles {
-		if d.stallCycles[ch] >= 0 && d.ch[ch].chcr&0x10 != 0 {
-			return true
+	return d.burstOpen
+}
+
+// recomputeBurstOpen refreshes burstOpen from the open windows.
+func (d *DMAC) recomputeBurstOpen() {
+	d.burstOpen = false
+	for ch := range d.completesAt {
+		if d.completesAt[ch] != 0 && d.ch[ch].chcr&0x10 != 0 {
+			d.burstOpen = true
 		}
 	}
-	return false
 }
 
 // IRQAsserted returns true when the DMAC channel's transfer-end
@@ -61,24 +75,32 @@ func (d *DMAC) IRQAsserted(ch int) bool {
 	return d.ch[ch].chcr&0x06 == 0x06
 }
 
-// Tick decrements the active countdowns by one cycle. When a channel's
-// countdown reaches zero, TE is set on it. Returns the channel number
-// that completed, or -1 if no completion occurred. If both channels
-// complete on the same cycle the second is reported on the next tick.
-func (d *DMAC) Tick() int {
-	done := -1
-	for ch := range d.stallCycles {
-		if d.stallCycles[ch] < 0 {
-			continue
+// NextEvent returns the earliest open window's completion cycle, or
+// math.MaxUint64 when no transfer is in progress.
+func (d *DMAC) NextEvent() uint64 {
+	next := uint64(math.MaxUint64)
+	for ch := range d.completesAt {
+		if at := d.completesAt[ch]; at != 0 && at < next {
+			next = at
 		}
-		if d.stallCycles[ch] > 0 {
-			d.stallCycles[ch]--
-		}
-		if d.stallCycles[ch] == 0 && done < 0 {
+	}
+	return next
+}
+
+// fireDue closes every window whose completion cycle has been reached
+// by now, setting TE on those channels. Returns a bit mask of the
+// channels that completed (bit 0 for channel 0, bit 1 for channel 1).
+func (d *DMAC) fireDue(now uint64) int {
+	done := 0
+	for ch := range d.completesAt {
+		if at := d.completesAt[ch]; at != 0 && now >= at {
 			d.ch[ch].chcr |= 2 // Set TE
-			d.stallCycles[ch] = -1
-			done = ch
+			d.completesAt[ch] = 0
+			done |= 1 << ch
 		}
+	}
+	if done != 0 {
+		d.recomputeBurstOpen()
 	}
 	return done
 }
@@ -115,7 +137,7 @@ func (d *DMAC) Read(addr uint32) uint32 {
 // Write writes a DMAC register by full address (0xFFFFFF80-0xFFFFFFB0).
 // Returns the channel number (0 or 1) if a transfer completed and
 // interrupt should be checked, or -1 otherwise.
-func (d *DMAC) Write(addr uint32, val uint32) int {
+func (d *DMAC) Write(addr uint32, val uint32, now uint64) int {
 	switch addr {
 	case 0xFFFFFF80:
 		d.ch[0].sar = val
@@ -124,7 +146,7 @@ func (d *DMAC) Write(addr uint32, val uint32) int {
 	case 0xFFFFFF88:
 		d.ch[0].tcr = val & 0xFFFFFF
 	case 0xFFFFFF8C:
-		return d.writeCHCR(0, val)
+		return d.writeCHCR(0, val, now)
 	case 0xFFFFFF90:
 		d.ch[1].sar = val
 	case 0xFFFFFF94:
@@ -132,18 +154,18 @@ func (d *DMAC) Write(addr uint32, val uint32) int {
 	case 0xFFFFFF98:
 		d.ch[1].tcr = val & 0xFFFFFF
 	case 0xFFFFFF9C:
-		return d.writeCHCR(1, val)
+		return d.writeCHCR(1, val, now)
 	case 0xFFFFFFA0:
 		d.ch[0].vcrdma = val & 0x7F
 	case 0xFFFFFFA8:
 		d.ch[1].vcrdma = val & 0x7F
 	case 0xFFFFFFB0:
-		return d.writeDMAOR(val)
+		return d.writeDMAOR(val, now)
 	}
 	return -1
 }
 
-func (d *DMAC) writeCHCR(ch int, val uint32) int {
+func (d *DMAC) writeCHCR(ch int, val uint32, now uint64) int {
 	chcr := val & 0xFFFF // only lower 16 bits valid
 	// TE is write-0-to-clear: preserve TE unless written as 0
 	if chcr&2 != 0 {
@@ -151,12 +173,12 @@ func (d *DMAC) writeCHCR(ch int, val uint32) int {
 	}
 	d.ch[ch].chcr = chcr
 	if d.transferReady(ch) {
-		d.execute(ch)
+		d.execute(ch, now)
 	}
 	return -1
 }
 
-func (d *DMAC) writeDMAOR(val uint32) int {
+func (d *DMAC) writeDMAOR(val uint32, now uint64) int {
 	newVal := uint16(val) & 0x000F
 	// AE (bit 2) and NMIF (bit 1) are write-0-to-clear
 	ae := d.dmaor & 4
@@ -174,17 +196,17 @@ func (d *DMAC) writeDMAOR(val uint32) int {
 	// aborts it. Cancel the countdowns without setting TE so no DEI
 	// fires - DEI is only raised on normal completion.
 	if oldDME != 0 && d.dmaor&1 == 0 && d.Active() {
-		d.stallCycles = [2]int{-1, -1}
-		d.stallCh = -1
+		d.completesAt = [2]uint64{}
+		d.burstOpen = false
 		return -1
 	}
-	return d.runReady()
+	return d.runReady(now)
 }
 
 // runReady selects and executes the highest priority ready channel.
 // Returns -1; completion is deferred via the stall countdown.
 // DMAOR bit 3 (PR): 0 = fixed priority (ch0 > ch1), 1 = round-robin.
-func (d *DMAC) runReady() int {
+func (d *DMAC) runReady(now uint64) int {
 	first := 0
 	if d.dmaor&0x08 != 0 {
 		first = d.nextCh
@@ -192,14 +214,14 @@ func (d *DMAC) runReady() int {
 	second := first ^ 1
 
 	if d.transferReady(first) {
-		d.execute(first)
+		d.execute(first, now)
 		if d.dmaor&0x08 != 0 {
 			d.nextCh = second
 		}
 		return -1
 	}
 	if d.transferReady(second) {
-		d.execute(second)
+		d.execute(second, now)
 		if d.dmaor&0x08 != 0 {
 			d.nextCh = first
 		}
@@ -216,7 +238,7 @@ func (d *DMAC) transferReady(ch int) bool {
 	// Matches SH-7604 HW manual sec 9.5 Note 2 guidance that DE must
 	// be cleared before CHCR is rewritten. In cycle-steal mode both
 	// channels' requests are accepted (HM Sec 9.5, channel priorities).
-	if d.stallCycles[ch] >= 0 {
+	if d.completesAt[ch] != 0 {
 		return false
 	}
 	// DMAOR: DME=1, AE=0, NMIF=0
@@ -228,7 +250,7 @@ func (d *DMAC) transferReady(ch int) bool {
 	return chcr&1 != 0 && chcr&2 == 0
 }
 
-func (d *DMAC) execute(ch int) {
+func (d *DMAC) execute(ch int, now uint64) {
 	c := &d.ch[ch]
 	chcr := c.chcr
 
@@ -307,8 +329,12 @@ func (d *DMAC) execute(ch int) {
 	c.dar = dst
 	c.tcr = 0
 
-	d.stallCycles[ch] = int(stall)
-	d.stallCh = ch
+	// The occupation window is the stall cycles following the kick
+	// cycle; TE lands on the cycle after it in both bus modes.
+	d.completesAt[ch] = now + 1 + uint64(stall)
+	if chcr&0x10 != 0 {
+		d.burstOpen = true
+	}
 }
 
 // ReadDRCR reads a DRCR register (byte access at 0xFFFFFE71-0xFFFFFE72).

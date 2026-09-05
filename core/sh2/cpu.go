@@ -5,50 +5,11 @@ package sh2
 
 import "sync/atomic"
 
-// BusActivity describes what bus operation the CPU performed on a clock cycle.
-type BusActivity uint8
-
-const (
-	BusNone  BusActivity = iota // No bus access
-	BusRead                     // Memory read
-	BusWrite                    // Memory write
-	BusHeld                     // Bus held for atomic operation (TAS.B)
-)
-
-// ClockState describes what the CPU did during a Clock() call.
-type ClockState struct {
-	Bus          BusActivity // Bus activity this clock cycle
-	LoadUseStall bool        // Next instruction stalls on this load result
-	BranchTaken  bool        // A branch was resolved (taken) this clock cycle
-}
-
-// Pending op identifiers for multi-cycle instruction decomposition.
-const (
-	popNone      uint8 = iota
-	popStall           // Generic stall cycles (BT/BF refill, SLEEP tail, MUL)
-	popSTCL            // STC.L @-Rn: cycle 2 write
-	popLDCL            // LDC.L @Rm+,CR: cycle 2 read, cycle 3 WB
-	popMemRMW          // AND.B/OR.B/XOR.B: cycle 2 logic, cycle 3 write
-	popTAS             // TAS.B: cycles 2-4 (read/held/write)
-	popRTE             // RTE: cycles 2-3 (read PC, read SR)
-	popTRAPA           // TRAPA: cycles 2-8
-	popException       // serviceException: cycles 2-5
-	popMACW            // MAC.W: cycle 2 (second read + accumulate)
-	popMACL            // MAC.L: cycle 2 (second read + accumulate)
-)
-
 // CPU implements the Hitachi SH-2 processor core.
 type CPU struct {
 	reg    Registers
 	bus    Bus
 	cycles uint64
-
-	// frameCyc is this CPU's current frame-relative system cycle, set by
-	// the emulator each step. Passed into the contended bus access methods
-	// so inter-CPU contention is timed against a clock both CPUs share.
-	// Kept on the CPU (written only by its own goroutine) rather than the
-	// shared bus to avoid false sharing on a per-cycle write.
-	frameCyc int64
 
 	ir uint16 // Current instruction register (raw opcode)
 
@@ -90,21 +51,8 @@ type CPU struct {
 	irl    atomic.Uint32
 	irlAck func(vec uint16) // Called with the accepted vector when the SH-2 accepts an IRL interrupt
 
-	// Multi-cycle micro-op state
-	pendingOp    uint8  // which pending operation (popNone = ready)
-	pendingStep  uint8  // sub-step within pending op (0-based)
-	pendingCount uint8  // total remaining steps
-	pendingN     uint8  // saved register index / sub-type
-	pendingAddr  uint32 // saved address
-	pendingVal   uint32 // saved value 1 (read result, SR, etc.)
-	pendingVal2  uint32 // saved value 2 (PC for exception/TRAPA)
-	pendingImm   uint32 // saved immediate
-
 	// Load-use hazard tracking
-	lastLoadReg  uint8  // GPR destination of previous load (0xFF = none)
-	deferredOp   uint16 // opcode deferred by load-use stall
-	hasDeferred  bool   // a deferred instruction is waiting
-	loadUseStall bool   // set during stall cycle, read by Clock()
+	lastLoadReg uint8 // GPR destination of previous load (0xFF = none)
 
 	// multiplierBusyUntil is the absolute cycles value at which the
 	// background multiplier "mm" stages of the preceding MUL/MAC
@@ -115,10 +63,6 @@ type CPU struct {
 	// documented in the package README.
 	multiplierBusyUntil uint64
 
-	// Per-clock-cycle state set by instruction execution, read by Clock()
-	stepBus     BusActivity
-	branchTaken bool
-
 	// On-chip peripherals
 	intc INTC
 	frt  FRT
@@ -127,8 +71,8 @@ type CPU struct {
 	wdt  WDT
 
 	// nextPeripheralEvent is the earliest absolute CPU cycle at which
-	// any on-chip peripheral (FRT or WDT) has work due. It is the cached
-	// min of frt.nextEvent and wdt.nextEvent so the per-cycle deadline
+	// any on-chip peripheral (FRT, WDT, or a DMAC window) has work due.
+	// It is the cached min of their deadlines so the per-instruction deadline
 	// gate is a single compare. Kept in sync via recomputeFRTEvent /
 	// recomputeWDTEvent and the tail of tickPeripherals.
 	nextPeripheralEvent uint64
@@ -165,8 +109,8 @@ type CPU struct {
 	// fills), cache-through and uncached accesses, and write-through
 	// writes (the CPU waits for the internal-bus write to complete,
 	// Section 8.4.2). Cache hits cost nothing (Section 8.4.1: one cycle,
-	// pipelined). Drained one cycle per Clock() before the next
-	// instruction executes.
+	// pipelined). Charged to the cycle counter when the instruction
+	// completes, before the next instruction executes.
 	// External bus-access wait states (region cost + slave arbitration +
 	// inter-CPU contention) are computed by the Bus implementation and
 	// returned from the SH2* access methods.
@@ -245,16 +189,8 @@ func (c *CPU) Reset() {
 	c.nmiReq.Store(false)
 	c.intInhibit = false
 	c.irl.Store(0)
-	c.pendingOp = popNone
-	c.pendingStep = 0
-	c.pendingCount = 0
-	c.hasDeferred = false
-	c.deferredOp = 0
-	c.loadUseStall = false
 	c.lastLoadReg = 0xFF
 	c.multiplierBusyUntil = 0
-	c.stepBus = BusNone
-	c.branchTaken = false
 	c.ccr = 0
 	c.busStall = 0
 	c.fetchLineAddr = fetchLineInvalid
@@ -272,224 +208,105 @@ func (c *CPU) Reset() {
 	c.LoadResetVectors()
 }
 
-// Clock advances the CPU by exactly one cycle and returns per-cycle state.
-func (c *CPU) Clock() ClockState {
+// Step runs the CPU for one unit of work: one instruction, charged its
+// full cycle cost with wait states included, or one interrupt
+// acceptance. It returns false without doing anything when the CPU is
+// halted or held off the bus by a burst DMA transfer; RunUntil advances
+// the clock instead.
+func (c *CPU) Step() bool {
 	c.addrError = false
-	c.loadUseStall = false
 
-	// Cycle-steal DMAC transfer: the bus write returns to the CPU after
-	// each transfer unit (HM Sec 9.5, Bus Modes, Fig 9.10), so the CPU
-	// keeps executing while the bus-occupation countdown runs in the
-	// background.
-	if c.dmac.Active() && !c.dmac.Stalling() {
-		if ch := c.dmac.Tick(); ch >= 0 {
-			c.routeDMACInterrupt(ch)
-		}
-	}
-
-	if c.pendingOp != popNone {
-		c.lastLoadReg = 0xFF
-		return c.stepPending()
-	}
-
-	// Bus-access wait states: drain the stall debt the previous instruction
-	// accumulated before executing the next one. Like load-use stall, no
-	// interrupt window is exposed mid-access, so this returns before the
-	// interrupt check below.
-	if c.busStall > 0 {
-		c.busStall--
-		c.cycles++
-		if c.peripheralsDue() {
-			c.tickPeripherals()
-		}
-		return ClockState{}
-	}
-
-	// DMAC bus stall: CPU cannot execute while DMA transfer is in progress.
 	if c.dmac.Stalling() {
-		c.cycles++
-		if c.peripheralsDue() {
-			c.tickPeripherals()
-		}
-		if ch := c.dmac.Tick(); ch >= 0 {
-			c.routeDMACInterrupt(ch)
-		}
-		return ClockState{}
+		return false
 	}
-
-	c.stepBus = BusNone
-	c.branchTaken = false
 
 	// Fold a cross-thread NMI request into the on-thread NMI state
-	// between instructions. Load before CAS: this runs every cycle and
-	// the flag is almost never set, while a failed CAS is still a locked
-	// read-modify-write that takes exclusive ownership of a cache line
-	// another thread writes.
+	// between instructions. Load before CAS: the flag is almost never
+	// set, while a failed CAS is still a locked read-modify-write that
+	// takes exclusive ownership of a cache line another thread writes.
 	if c.nmiReq.Load() && c.nmiReq.CompareAndSwap(true, false) {
 		c.NMI()
 	}
 
-	// Don't accept interrupts during load-use stall cycles.
-	// On real SH-2, pipeline stalls resolve internally without
-	// exposing an interrupt window.
-	if !c.hasDeferred && c.interruptPending() && c.processInterrupt() {
+	if c.interruptPending() && c.processInterrupt() {
 		c.lastLoadReg = 0xFF
+		c.chargeStall()
 		if c.peripheralsDue() {
 			c.tickPeripherals()
 		}
-		bus := c.stepBus
-		c.stepBus = BusNone
-		return ClockState{
-			Bus:         bus,
-			BranchTaken: c.branchTaken,
-		}
+		return true
 	}
 
 	if c.halted {
-		// SLEEP: CPU is halted until an interrupt wakes it.
-		// The normal interrupt check at the top of Clock()
-		// handles wake-up: processInterrupt clears halted and
-		// sets up the exception. Nothing additional needed here.
-		c.cycles++
-		if c.peripheralsDue() {
-			c.tickPeripherals()
-		}
-		return ClockState{}
+		return false
 	}
 
 	c.execute()
+	c.chargeStall()
 	if c.peripheralsDue() {
 		c.tickPeripherals()
 	}
-	bus := c.stepBus
-	c.stepBus = BusNone
-	bt := c.branchTaken
-	c.branchTaken = false
+	return true
+}
 
-	return ClockState{
-		Bus:          bus,
-		LoadUseStall: c.loadUseStall,
-		BranchTaken:  bt,
+// RunUntil runs the CPU until its cycle counter reaches target, stopping
+// at the first instruction boundary at or after it, so the counter may
+// end up to one instruction's cost past target. While the CPU is halted
+// or held off the bus by a burst DMA transfer, the clock jumps to the
+// nearer of the next peripheral deadline and target and fires what is
+// due, so a wake-up interrupt or the transfer end is seen at its cycle.
+func (c *CPU) RunUntil(target uint64) {
+	for c.cycles < target {
+		if !c.Step() {
+			c.idleTo(target)
+		}
 	}
 }
 
-// stepPending continues a multi-cycle instruction in progress.
-func (c *CPU) stepPending() ClockState {
-	c.cycles++
-	c.pendingStep++
+// idleTo advances the clock without executing, to the nearer of the
+// next peripheral deadline and limit, and fires any deadline reached.
+func (c *CPU) idleTo(limit uint64) {
+	next := min(limit, c.nextPeripheralEvent)
+	if next > c.cycles {
+		c.cycles = next
+	}
 	if c.peripheralsDue() {
 		c.tickPeripherals()
 	}
-	var bus BusActivity
-
-	switch c.pendingOp {
-	case popStall:
-		bus = BusNone
-	case popSTCL:
-		bus = c.stepSTCL()
-	case popLDCL:
-		bus = c.stepLDCL()
-	case popMemRMW:
-		bus = c.stepMemRMW()
-	case popTAS:
-		bus = c.stepTAS()
-	case popRTE:
-		bus = c.stepRTE()
-	case popTRAPA:
-		bus = c.stepTRAPA()
-	case popException:
-		bus = c.stepException()
-	case popMACW:
-		bus = c.stepMACW()
-	case popMACL:
-		bus = c.stepMACL()
-	}
-
-	c.pendingCount--
-	if c.pendingCount == 0 {
-		c.pendingOp = popNone
-	}
-
-	return ClockState{Bus: bus}
 }
 
-// setPending sets up a multi-cycle pending operation.
-func (c *CPU) setPending(op uint8, count uint8) {
-	c.pendingOp = op
-	c.pendingStep = 0
-	c.pendingCount = count
+// chargeStall adds the wait states the instruction just executed
+// accumulated to the cycle counter.
+func (c *CPU) chargeStall() {
+	c.cycles += uint64(c.busStall)
+	c.busStall = 0
 }
 
-func (c *CPU) stepSTCL() BusActivity {
-	// Cycle 2: MA write
-	c.Write32(c.pendingAddr, c.pendingVal)
-	return BusWrite
-}
-
-func (c *CPU) stepLDCL() BusActivity {
-	reg := c.pendingN & 0x0F
-	crType := c.pendingN >> 4
-	switch c.pendingStep {
-	case 1: // Cycle 2: MA read
-		c.pendingVal = c.Read32(c.pendingAddr)
-		return BusRead
-	case 2: // Cycle 3: WB - write to target CR, post-increment
-		switch crType {
-		case 0:
-			c.reg.SR = c.pendingVal & srMask
-		case 1:
-			c.reg.GBR = c.pendingVal
-		case 2:
-			c.reg.VBR = c.pendingVal
+// macAccumulate adds product to the 64-bit MAC accumulator with the
+// saturation the S bit selects: 32-bit for MAC.W (sat32) and 48-bit for
+// MAC.L.
+func (c *CPU) macAccumulate(product int64, sat32 bool) {
+	acc := int64(uint64(c.reg.MACH)<<32 | uint64(c.reg.MACL))
+	acc += product
+	if c.reg.S() {
+		if sat32 {
+			if acc > 0x7FFFFFFF {
+				acc = 0x7FFFFFFF
+			} else if acc < -0x80000000 {
+				acc = -0x80000000
+			}
+		} else {
+			const max48 = int64(0x7FFFFFFFFFFF)
+			const min48 = -int64(0x800000000000)
+			if acc > max48 {
+				acc = max48
+			} else if acc < min48 {
+				acc = min48
+			}
 		}
-		c.reg.R[reg] = c.pendingAddr + 4
 	}
-	return BusNone
-}
-func (c *CPU) stepMemRMW() BusActivity {
-	switch c.pendingStep {
-	case 1: // Cycle 2: EX - apply logic op
-		switch c.pendingN {
-		case 0: // AND
-			c.pendingVal &= c.pendingImm
-		case 1: // OR
-			c.pendingVal |= c.pendingImm
-		case 2: // XOR
-			c.pendingVal ^= c.pendingImm
-		}
-		return BusNone
-	case 2: // Cycle 3: MA - write result
-		c.Write8(c.pendingAddr, uint8(c.pendingVal))
-		return BusWrite
-	}
-	return BusNone
-}
-
-// InTAS reports whether a TAS.B read-modify-write is in progress. TAS is
-// the only operation that keeps a bus claim held across cycles (SH7604
-// Sec 7.10), so a scheduler running the two CPUs on separate threads must
-// not park this CPU at a cross-thread sync point mid-TAS: the other CPU
-// would stall on the held claim while this one waits, deadlocking. The
-// scheduler lets the TAS finish (releasing the claim) before waiting.
-func (c *CPU) InTAS() bool {
-	return c.pendingOp == popTAS
-}
-
-func (c *CPU) stepTAS() BusActivity {
-	switch c.pendingStep {
-	case 1: // Cycle 2: MA read, test, set T
-		val := c.tasRead8(c.pendingAddr)
-		c.reg.SetTVal(val == 0)
-		c.pendingVal = uint32(val)
-		return BusHeld
-	case 2: // Cycle 3: MA internal (modify)
-		c.pendingVal |= 0x80
-		return BusHeld
-	case 3: // Cycle 4: MA write
-		c.tasWrite8(c.pendingAddr, uint8(c.pendingVal))
-		return BusHeld
-	}
-	return BusNone
+	c.reg.MACL = uint32(acc)
+	c.reg.MACH = uint32(uint64(acc) >> 32)
 }
 
 // tasRead8 / tasWrite8 mirror read8 / write8 but route the external
@@ -511,7 +328,7 @@ func (c *CPU) tasRead8(addr uint32) uint8 {
 	}
 	// TAS reads are cache-through even in the cache area - the address
 	// tag is not compared (SH7604 manual Section 8.4.4).
-	v, stall := c.bus.SH2RMWRead(addr, c.frameCyc, !c.isMaster)
+	v, stall := c.bus.SH2RMWRead(addr, int64(c.cycles), !c.isMaster)
 	c.busStall += stall
 	return v
 }
@@ -533,130 +350,7 @@ func (c *CPU) tasWrite8(addr uint32, val uint8) {
 		c.cacheData[addr&0xFFF] = val
 		return
 	}
-	c.busStall += c.bus.SH2RMWWrite(addr, val, c.frameCyc)
-}
-func (c *CPU) stepRTE() BusActivity {
-	switch c.pendingStep {
-	case 1: // Cycle 2: MA - read PC from stack
-		c.pendingVal = c.Read32(c.pendingAddr)
-		c.reg.R[15] = c.pendingAddr + 4
-		return BusRead
-	case 2: // Cycle 3: MA - read SR from stack, set up delay branch
-		c.reg.SR = c.Read32(c.pendingAddr+4) & srMask
-		c.reg.R[15] = c.pendingAddr + 8
-		c.delayBranch(c.pendingVal)
-		return BusRead
-	}
-	return BusNone
-}
-func (c *CPU) stepTRAPA() BusActivity {
-	switch c.pendingStep {
-	case 1: // Cycle 2: MA write SR
-		c.reg.R[15] -= 4
-		c.Write32(c.reg.R[15], c.pendingVal)
-		return BusWrite
-	case 2: // Cycle 3: MA write PC
-		c.reg.R[15] -= 4
-		c.Write32(c.reg.R[15], c.pendingVal2)
-		return BusWrite
-	case 3: // Cycle 4: EX vector calc
-		c.pendingAddr = c.reg.VBR + (c.pendingImm << 2)
-		return BusNone
-	case 4: // Cycle 5: MA read vector
-		c.reg.PC = c.Read32(c.pendingAddr)
-		return BusRead
-	default: // Cycles 6-8: pipeline refill
-		return BusNone
-	}
-}
-func (c *CPU) stepException() BusActivity {
-	switch c.pendingStep {
-	case 1: // Cycle 2: MA write SR
-		c.reg.R[15] -= 4
-		c.Write32(c.reg.R[15], c.pendingVal)
-		return BusWrite
-	case 2: // Cycle 3: MA write PC
-		c.reg.R[15] -= 4
-		c.Write32(c.reg.R[15], c.pendingVal2)
-		return BusWrite
-	case 3: // Cycle 4: MA read vector
-		c.reg.PC = c.Read32(c.reg.VBR + c.pendingAddr*4)
-		return BusRead
-	case 4: // Cycle 5: pipeline refill
-		return BusNone
-	}
-	return BusNone
-}
-func (c *CPU) stepMACW() BusActivity {
-	// If pendingCount > 1, this is a stall step for multiplier
-	// contention (Section 7.2.3). The real second MA and accumulate
-	// run only on the final step (pendingCount == 1 at top, before
-	// stepPending decrements).
-	if c.pendingCount != 1 {
-		return BusNone
-	}
-
-	// Cycle 2 (final step): read @Rm, post-increment, multiply-accumulate
-	m := c.pendingN >> 4
-
-	rmVal := int16(c.Read16(c.reg.R[m]))
-	c.reg.R[m] += 2
-
-	rnVal := int16(c.pendingVal)
-	product := int64(int32(rnVal) * int32(rmVal))
-	acc := int64(uint64(c.reg.MACH)<<32 | uint64(c.reg.MACL))
-	acc += product
-
-	if c.reg.S() {
-		if acc > 0x7FFFFFFF {
-			acc = 0x7FFFFFFF
-		} else if acc < -0x80000000 {
-			acc = -0x80000000
-		}
-	}
-
-	c.reg.MACL = uint32(acc)
-	c.reg.MACH = uint32(uint64(acc) >> 32)
-	// mm runs 2 cycles after the second MA.
-	c.multiplierBusyUntil = c.cycles + 2
-	return BusRead
-}
-
-func (c *CPU) stepMACL() BusActivity {
-	// If pendingCount > 1, this is a stall step for multiplier
-	// contention (Section 7.2.3). The real second MA and accumulate
-	// run only on the final step (pendingCount == 1 at top, before
-	// stepPending decrements).
-	if c.pendingCount != 1 {
-		return BusNone
-	}
-
-	// Cycle 2 (final step): read @Rm, post-increment, multiply-accumulate
-	m := c.pendingN >> 4
-
-	rmVal := int32(c.Read32(c.reg.R[m]))
-	c.reg.R[m] += 4
-
-	rnVal := int32(c.pendingVal)
-	product := int64(rnVal) * int64(rmVal)
-	acc := int64(uint64(c.reg.MACH)<<32 | uint64(c.reg.MACL))
-	acc += product
-
-	if c.reg.S() {
-		const max48 = int64(0x7FFFFFFFFFFF)
-		const min48 = -int64(0x800000000000)
-		if acc > max48 {
-			acc = max48
-		} else if acc < min48 {
-			acc = min48
-		}
-	}
-
-	c.reg.MACL = uint32(acc)
-	c.reg.MACH = uint32(uint64(acc) >> 32)
-	// mm runs 4 cycles after the second MA.
-	c.multiplierBusyUntil = c.cycles + 4
-	return BusRead
+	c.busStall += c.bus.SH2RMWWrite(addr, val, int64(c.cycles))
 }
 
 // Cycles returns the total number of cycles executed.
@@ -664,13 +358,20 @@ func (c *CPU) Cycles() uint64 {
 	return c.cycles
 }
 
-// SetFrameCyc sets this CPU's current frame-relative system cycle, used to
-// time inter-CPU bus contention. The emulator calls it before each step so the
-// clock advances with the CPU; callers that drive Clock() directly and care
-// about bus timing must advance it too, or repeated Work-RAM accesses will
-// appear to contend with themselves (a stuck clock never clears its busyUntil).
-func (c *CPU) SetFrameCyc(cyc int64) {
-	c.frameCyc = cyc
+// SyncClock advances the cycle counter to the shared system clock after
+// time the CPU spent held in reset, without executing anything. The
+// on-chip timers did not count during that time, so they are resynced
+// to the new instant. The emulator calls this when it enables the slave
+// so both CPUs' counters express the same clock to the bus.
+func (c *CPU) SyncClock(to uint64) {
+	if to <= c.cycles {
+		return
+	}
+	c.cycles = to
+	c.frt.lastSync = to
+	c.wdt.lastSync = to
+	c.recomputeFRTEvent()
+	c.recomputeWDTEvent()
 }
 
 // Halted returns true if the CPU is halted (via SLEEP instruction).
@@ -805,7 +506,11 @@ func (c *CPU) NMIRequest() { c.nmiReq.Store(true) }
 // fetchPC reads a 16-bit instruction at PC and advances PC by 2.
 func (c *CPU) fetchPC() uint16 {
 	if c.reg.PC&1 != 0 {
+		// No handler runs for the failed fetch, so the EX cycle the
+		// data-access callers of addressError charge themselves is
+		// charged here.
 		c.addressError()
+		c.cycles++
 		return 0
 	}
 	val := c.fetchInstr(c.reg.PC)
@@ -828,7 +533,7 @@ func (c *CPU) fetchInstr(addr uint32) uint16 {
 		off := addr & 0xFFE
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
-	v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+	v, stall := c.bus.SH2Read16(addr, int64(c.cycles), !c.isMaster)
 	c.busStall += stall
 	return v
 }
@@ -863,7 +568,7 @@ func (c *CPU) Read16(addr uint32) uint16 {
 		off := addr & 0xFFE
 		return uint16(c.cacheData[off])<<8 | uint16(c.cacheData[off+1])
 	}
-	v, stall := c.bus.SH2Read16(addr, c.frameCyc, !c.isMaster)
+	v, stall := c.bus.SH2Read16(addr, int64(c.cycles), !c.isMaster)
 	c.busStall += stall
 	return v
 }
@@ -898,7 +603,7 @@ func (c *CPU) Read32(addr uint32) uint32 {
 			uint32(c.cacheData[off+2])<<8 |
 			uint32(c.cacheData[off+3])
 	}
-	v, stall := c.bus.SH2Read32(addr, c.frameCyc, !c.isMaster)
+	v, stall := c.bus.SH2Read32(addr, int64(c.cycles), !c.isMaster)
 	c.busStall += stall
 	return v
 }
@@ -932,7 +637,7 @@ func (c *CPU) Write16(addr uint32, val uint16) {
 		c.cacheData[off+1] = uint8(val)
 		return
 	}
-	c.busStall += c.bus.SH2Write16(addr, val, c.frameCyc, !c.isMaster)
+	c.busStall += c.bus.SH2Write16(addr, val, int64(c.cycles), !c.isMaster)
 }
 
 // write32 writes a 32-bit value with alignment check. Partition
@@ -969,13 +674,18 @@ func (c *CPU) Write32(addr uint32, val uint32) {
 		c.cacheData[off+3] = uint8(val)
 		return
 	}
-	c.busStall += c.bus.SH2Write32(addr, val, c.frameCyc, !c.isMaster)
+	c.busStall += c.bus.SH2Write32(addr, val, int64(c.cycles), !c.isMaster)
 }
 
-// addressError triggers a CPU address error exception.
+// addressError triggers a CPU address error exception. The sequence
+// costs exceptionAddrErrorCycles from the faulting instruction's EX;
+// the instruction handler that made the failing access charges that EX
+// cycle itself after the access returns, so one less is charged here.
+// The stacked PC is the address after the faulting instruction
+// (Hardware Manual Table 4.11), which is where fetch left it.
 func (c *CPU) addressError() {
 	c.addrError = true
-	c.serviceException(vecCPUAddr)
+	c.serviceException(vecCPUAddr, exceptionAddrErrorCycles-1)
 }
 
 // isOnChip returns true if the address is in the on-chip peripheral area.
@@ -1009,7 +719,7 @@ func (c *CPU) Read8(addr uint32) uint8 {
 	case 4, 6: // data array (Section 8.4.8)
 		return c.cacheData[addr&0xFFF]
 	}
-	v, stall := c.bus.SH2Read8(addr, c.frameCyc, !c.isMaster)
+	v, stall := c.bus.SH2Read8(addr, int64(c.cycles), !c.isMaster)
 	c.busStall += stall
 	return v
 }
@@ -1067,7 +777,7 @@ func (c *CPU) Write8(addr uint32, val uint8) {
 		c.cacheData[addr&0xFFF] = val
 		return
 	}
-	c.busStall += c.bus.SH2Write8(addr, val, c.frameCyc, !c.isMaster)
+	c.busStall += c.bus.SH2Write8(addr, val, int64(c.cycles), !c.isMaster)
 }
 
 // writeOnChip8 handles byte writes to on-chip peripherals with correct
@@ -1164,6 +874,11 @@ func (c *CPU) readOnChip(addr uint32) (uint32, bool) {
 		return c.divu.Read(addr & 0xFFFFFFFC), true
 	case addr >= 0xFFFFFF80 && addr <= 0xFFFFFFB0:
 		// DMAC registers (32-bit access)
+		// A window that closed by now sets TE before the read sees it.
+		if c.dmac.Active() {
+			c.fireDMAC(c.cycles)
+			c.syncPeripheralDeadline()
+		}
 		return c.dmac.Read(addr & 0xFFFFFFFC), true
 	case addr >= 0xFFFFFFE0 && addr <= 0xFFFFFFE3:
 		// BSC BCR1: 16-bit register. Manual Sec 7.2 Table 7.2 Note 1
@@ -1271,7 +986,10 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 	case addr >= 0xFFFFFF80 && addr <= 0xFFFFFFB0:
 		// DMAC registers (32-bit access)
 		dmacReg := addr & 0xFFFFFFFC
-		ch := c.dmac.Write(dmacReg, val)
+		ch := c.dmac.Write(dmacReg, val, c.cycles)
+		// A kick opens a window and a DME clear closes them: refresh
+		// the cached deadline either way.
+		c.syncPeripheralDeadline()
 		if ch >= 0 {
 			c.routeDMACInterrupt(ch)
 		}
@@ -1295,7 +1013,7 @@ func (c *CPU) writeOnChip(addr uint32, val uint32) bool {
 
 // peripheralsDue reports whether any on-chip peripheral deadline has
 // been reached this cycle. tickPeripherals is a no-op otherwise, so
-// gating the call on this avoids the per-cycle function-call overhead
+// gating the call on this avoids the per-instruction function-call overhead
 // in the common case where no deadline is due. Backed by the cached
 // combined deadline so this is a single compare, inlined at the Clock
 // call sites.
@@ -1307,7 +1025,7 @@ func (c *CPU) peripheralsDue() bool {
 // deadline. Called wherever frt.nextEvent or wdt.nextEvent may have
 // changed so peripheralsDue stays exact.
 func (c *CPU) syncPeripheralDeadline() {
-	c.nextPeripheralEvent = min(c.frt.nextEvent, c.wdt.nextEvent)
+	c.nextPeripheralEvent = min(c.frt.nextEvent, c.wdt.nextEvent, c.dmac.NextEvent())
 }
 
 // recomputeFRTEvent recomputes the FRT deadline and refreshes the
@@ -1343,6 +1061,7 @@ func (c *CPU) tickPeripherals() {
 			}
 		}
 	}
+	c.fireDMAC(c.cycles)
 	// fireDue reschedules frt/wdt.nextEvent internally; refresh the
 	// cached combined deadline so the next gate check is exact.
 	c.syncPeripheralDeadline()
@@ -1403,6 +1122,20 @@ func (c *CPU) routeDIVUInterrupt() {
 		return
 	}
 	c.intc.AssertSource(isrcDIVU)
+}
+
+// fireDMAC closes any DMAC window that completed by now and routes the
+// transfer-end interrupts of the channels that completed.
+func (c *CPU) fireDMAC(now uint64) {
+	if !c.dmac.Active() {
+		return
+	}
+	done := c.dmac.fireDue(now)
+	for ch := 0; ch < 2; ch++ {
+		if done&(1<<ch) != 0 {
+			c.routeDMACInterrupt(ch)
+		}
+	}
 }
 
 // routeDMACInterrupt marks the DMAC channel source as possibly

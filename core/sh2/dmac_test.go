@@ -32,7 +32,7 @@ func TestDMACCHCRMask16Bit(t *testing.T) {
 	d, _ := dmacFixture(16)
 	// Value covers the full high half plus every low-half bit except TE.
 	// DMAOR.DME=0 so DE=1 does not kick a transfer.
-	d.Write(0xFFFFFF8C, 0xFFFFFFFD)
+	d.Write(0xFFFFFF8C, 0xFFFFFFFD, 0)
 	if d.Read(0xFFFFFF8C) != 0x0000FFFD {
 		t.Errorf("CHCR0 mask = 0x%08X, want 0x0000FFFD", d.Read(0xFFFFFF8C))
 	}
@@ -43,7 +43,7 @@ func TestDMACCHCRMask16Bit(t *testing.T) {
 // them 0.
 func TestDMACDMAORMaskWrite1ToFlags(t *testing.T) {
 	d, _ := dmacFixture(16)
-	d.Write(0xFFFFFFB0, 0xFFFFFFFF)
+	d.Write(0xFFFFFFB0, 0xFFFFFFFF, 0)
 	got := d.Read(0xFFFFFFB0)
 	// PR (bit 3) and DME (bit 0) are normal R/W so they become 1.
 	// AE (bit 2) and NMIF (bit 1) start 0 and can't be set by software.
@@ -58,12 +58,12 @@ func TestDMACDMAORAEWriteZeroClears(t *testing.T) {
 	d.dmaor = 0x04 // AE=1 (set by hardware in real life)
 	// Write 0xFFFFFFFF: attempting to set all bits; AE should remain 1
 	// (write 1 has no effect on write-0-to-clear bit).
-	d.Write(0xFFFFFFB0, 0xFFFFFFFF)
+	d.Write(0xFFFFFFB0, 0xFFFFFFFF, 0)
 	if d.dmaor&0x04 == 0 {
 		t.Error("Write AE=1 cleared AE; must be preserved")
 	}
 	// Write 0: clears AE.
-	d.Write(0xFFFFFFB0, 0x00000000)
+	d.Write(0xFFFFFFB0, 0x00000000, 0)
 	if d.dmaor&0x04 != 0 {
 		t.Errorf("Write AE=0 did not clear AE: DMAOR = 0x%04X", d.dmaor)
 	}
@@ -73,11 +73,11 @@ func TestDMACDMAORAEWriteZeroClears(t *testing.T) {
 func TestDMACDMAORNMIFWriteZeroClears(t *testing.T) {
 	d, _ := dmacFixture(16)
 	d.dmaor = 0x02 // NMIF=1
-	d.Write(0xFFFFFFB0, 0xFFFFFFFF)
+	d.Write(0xFFFFFFB0, 0xFFFFFFFF, 0)
 	if d.dmaor&0x02 == 0 {
 		t.Error("Write NMIF=1 cleared NMIF; must be preserved")
 	}
-	d.Write(0xFFFFFFB0, 0x00000000)
+	d.Write(0xFFFFFFB0, 0x00000000, 0)
 	if d.dmaor&0x02 != 0 {
 		t.Errorf("Write NMIF=0 did not clear NMIF: DMAOR = 0x%04X", d.dmaor)
 	}
@@ -113,8 +113,8 @@ func TestDMACDEZeroPreventsStart(t *testing.T) {
 	d.ch[0].sar = 0
 	d.ch[0].dar = 8
 	d.ch[0].tcr = 1
-	d.dmaor = 0x01                   // DME=1
-	d.Write(0xFFFFFF8C, 0x0000_5200) // CHCR with DE=0
+	d.dmaor = 0x01                      // DME=1
+	d.Write(0xFFFFFF8C, 0x0000_5200, 0) // CHCR with DE=0
 	if bus.mem[8] != 0 {
 		t.Errorf("transfer occurred with DE=0: dst=0x%02X", bus.mem[8])
 	}
@@ -132,7 +132,7 @@ func TestDMACTESetPreventsRestart(t *testing.T) {
 	d.ch[0].chcr = 0x02 // TE=1
 	// Attempt to enable via write. writeCHCR preserves TE on write 1 and
 	// clears on 0; preserving TE=1 must block transferReady.
-	d.Write(0xFFFFFF8C, 0x0000_5203)
+	d.Write(0xFFFFFF8C, 0x0000_5203, 0)
 	if bus.mem[8] != 0 {
 		t.Errorf("transfer ran despite TE=1: dst=0x%02X", bus.mem[8])
 	}
@@ -156,16 +156,13 @@ func TestDMACFixedPriorityChannel0First(t *testing.T) {
 	d.ch[1].chcr = 0x5201
 
 	// DMAOR: DME=1, PR=0 -> fixed priority.
-	d.Write(0xFFFFFFB0, 0x00000001)
+	d.Write(0xFFFFFFB0, 0x00000001, 0)
 
 	if bus.mem[16] != 0xA0 {
 		t.Errorf("ch0 dst = 0x%02X, want 0xA0 (ch0 should win fixed priority)", bus.mem[16])
 	}
 	if bus.mem[17] != 0 {
 		t.Errorf("ch1 dst = 0x%02X, want 0 (ch1 should wait for ch0)", bus.mem[17])
-	}
-	if d.stallCh != 0 {
-		t.Errorf("stallCh = %d, want 0 (ch0 holding bus)", d.stallCh)
 	}
 }
 
@@ -187,16 +184,13 @@ func TestDMACRoundRobinFirstIsChannel1(t *testing.T) {
 	d.ch[1].chcr = 0x5201
 
 	// DMAOR: DME=1, PR=1 -> round-robin.
-	d.Write(0xFFFFFFB0, 0x00000009)
+	d.Write(0xFFFFFFB0, 0x00000009, 0)
 
 	if bus.mem[17] != 0xB0 {
 		t.Errorf("ch1 dst = 0x%02X, want 0xB0 (ch1 wins first in round-robin)", bus.mem[17])
 	}
 	if bus.mem[16] != 0 {
 		t.Errorf("ch0 dst = 0x%02X, want 0 (ch0 should wait)", bus.mem[16])
-	}
-	if d.stallCh != 1 {
-		t.Errorf("stallCh = %d, want 1 (ch1 first)", d.stallCh)
 	}
 }
 
@@ -229,7 +223,7 @@ func TestDMACStallTicksPeripherals(t *testing.T) {
 
 	// Drain the stall via Clock().
 	for cpu.dmac.Stalling() {
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 	}
 	// WDT uses deadline scheduling; read WTCNT via the bus path so
 	// the sync surfaces the current counter.
@@ -248,20 +242,23 @@ func TestDMACStallTicksPeripherals(t *testing.T) {
 // (which starts from a manually-set TE) by driving TE through a
 // real transfer + stall drain.
 func TestDMACTEPersistsUntilSoftwareClear(t *testing.T) {
-	d, bus := dmacFixture(32)
+	bus := newTestBus(0x1000)
+	cpu := New(bus, true)
+	nopProgram(cpu)
+	d := &cpu.dmac
 	bus.mem[0] = 0xA0
 	d.ch[0].sar = 0
 	d.ch[0].dar = 16
 	d.ch[0].tcr = 1
 	d.dmaor = 0x01
-	d.Write(0xFFFFFF8C, 0x5201) // DM=01 SM=01 TS=00 DE=1 (byte)
+	d.Write(0xFFFFFF8C, 0x5201, 0) // DM=01 SM=01 TS=00 DE=1 (byte)
 	if !d.Active() {
 		t.Fatal("setup: countdown not running after kick")
 	}
 	// Drain the countdown. testBus returns 2 per access; 1 byte -> 4
 	// cycles.
 	for d.Active() {
-		d.Tick()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 	}
 	if d.ch[0].chcr&0x02 == 0 {
 		t.Fatal("TE not set after transfer completed")
@@ -272,7 +269,7 @@ func TestDMACTEPersistsUntilSoftwareClear(t *testing.T) {
 	// DE bit to 1 will not enable a transfer." We drive the write-1
 	// semantics: writing 1 to TE must preserve the latch regardless
 	// of other bits.
-	d.Write(0xFFFFFF8C, 0x5202) // DE=0 TE=1
+	d.Write(0xFFFFFF8C, 0x5202, 0) // DE=0 TE=1
 	if d.ch[0].chcr&0x02 == 0 {
 		t.Error("Write TE=1 cleared TE; must be preserved")
 	}
@@ -281,7 +278,7 @@ func TestDMACTEPersistsUntilSoftwareClear(t *testing.T) {
 		t.Error("CHCR read after completed transfer does not reflect TE=1")
 	}
 	// Write 0 to TE (DE also 0) -> cleared.
-	d.Write(0xFFFFFF8C, 0x5200)
+	d.Write(0xFFFFFF8C, 0x5200, 0)
 	if d.ch[0].chcr&0x02 != 0 {
 		t.Errorf("Write TE=0 did not clear TE: CHCR=0x%04X", d.ch[0].chcr)
 	}
@@ -317,7 +314,7 @@ func TestDMACCycleStealCPUKeepsExecuting(t *testing.T) {
 	}
 
 	pcBefore := cpu.reg.PC
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.PC == pcBefore {
 		t.Errorf("PC did not advance during cycle-steal transfer: PC=0x%08X",
 			cpu.reg.PC)
@@ -326,8 +323,12 @@ func TestDMACCycleStealCPUKeepsExecuting(t *testing.T) {
 
 // Companion to TestDMACCycleStealCPUKeepsExecuting: completion timing
 // is unchanged by the non-stalling bus mode. The testBus charges 2
-// cycles per access, so one longword unit costs 4 (read + write); TE
-// must set on the cycle the countdown expires and not before.
+// cycles per access, so one longword unit occupies the bus for 4 cycles
+// following the kick cycle, and TE lands on the cycle after that
+// window: kicked here in cycle 0, the window is cycles 1-4 and TE is
+// set once cycle 4 completes, so the instruction at cycle 5 sees it,
+// the same cycle a burst transfer of the same length would release the
+// CPU.
 func TestDMACCycleStealCompletionTiming(t *testing.T) {
 	bus := newTestBus(0x1000)
 	cpu := New(bus, true)
@@ -344,16 +345,16 @@ func TestDMACCycleStealCompletionTiming(t *testing.T) {
 	cpu.dmac.dmaor = 1
 	cpu.writeOnChip(0xFFFFFF8C, 0x5801)
 
-	// One longword unit: stall = 2 (read) + 2 (write) = 4 cycles.
-	for i := 0; i < 3; i++ {
-		cpu.Clock()
+	// One longword unit: 2 (read) + 2 (write) = a 4-cycle window.
+	for i := 0; i < 4; i++ {
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.dmac.ch[0].chcr&0x02 != 0 {
-			t.Fatalf("TE set after %d cycles, want 4", i+1)
+			t.Fatalf("TE set after %d cycles, want 5", i+1)
 		}
 	}
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.dmac.ch[0].chcr&0x02 == 0 {
-		t.Error("TE not set after 4 cycles")
+		t.Error("TE not set after 5 cycles")
 	}
 	if cpu.dmac.Active() {
 		t.Error("DMAC still active after countdown expiry")
@@ -387,7 +388,7 @@ func TestDMACCycleStealAcceptsInterrupt(t *testing.T) {
 
 	cpu.SetIRL(8, 0x42)
 	for i := 0; i < 50 && cpu.reg.PC != 0x500; i++ {
-		cpu.Clock()
+		cpu.Step()
 	}
 	if cpu.reg.PC != 0x500 {
 		t.Fatalf("IRL not dispatched during cycle-steal transfer: PC=0x%08X",
@@ -422,7 +423,7 @@ func TestDMACBurstBlocksCPUExecution(t *testing.T) {
 
 	pcBefore := cpu.reg.PC
 	cyclesBefore := cpu.cycles
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.PC != pcBefore {
 		t.Errorf("PC advanced during burst DMAC stall: PC=0x%08X, was 0x%08X",
 			cpu.reg.PC, pcBefore)
@@ -451,10 +452,9 @@ func TestDMACCrossChannelKickPreservesCountdown(t *testing.T) {
 	cpu.dmac.ch[0].tcr = 64
 	cpu.dmac.dmaor = 1
 	cpu.writeOnChip(0xFFFFFF8C, 0x5801)
-	if cpu.dmac.stallCycles[0] <= 0 {
+	if !cpu.dmac.Active() {
 		t.Fatal("setup: ch0 countdown not running")
 	}
-	ch0Before := cpu.dmac.stallCycles[0]
 
 	// ch1: short transfer kicked while ch0 is in flight.
 	bus.Write32(0x200, 0xBABECAFE)
@@ -466,15 +466,10 @@ func TestDMACCrossChannelKickPreservesCountdown(t *testing.T) {
 	if bus.Read32(0x700) != 0xBABECAFE {
 		t.Error("ch1 transfer did not execute while ch0 in flight")
 	}
-	if cpu.dmac.stallCycles[0] != ch0Before {
-		t.Errorf("ch0 countdown disturbed by ch1 kick: %d, was %d",
-			cpu.dmac.stallCycles[0], ch0Before)
-	}
-	// ch1 completes first (4 cycles) and sets its own TE; ch0 keeps
-	// counting.
-	for i := 0; i < 4; i++ {
-		cpu.Clock()
-	}
+	// ch1 completes first (a 4-cycle window after the kick cycle, TE set
+	// once cycle 4 completes) and sets its own TE; ch0 keeps counting.
+	nopProgram(cpu)
+	cpu.RunUntil(cpu.cycles + uint64(5))
 	if cpu.dmac.ch[1].chcr&0x02 == 0 {
 		t.Error("ch1 TE not set after its countdown expired")
 	}
@@ -483,6 +478,16 @@ func TestDMACCrossChannelKickPreservesCountdown(t *testing.T) {
 	}
 	if !cpu.dmac.Active() {
 		t.Error("ch0 countdown no longer active after ch1 completion")
+	}
+	// ch0's window is 64 units x 4 cycles after its kick cycle 0,
+	// undisturbed by the ch1 kick: TE is set once cycle 256 completes.
+	cpu.RunUntil(cpu.cycles + uint64(251))
+	if cpu.dmac.ch[0].chcr&0x02 != 0 {
+		t.Error("ch0 TE set before its window closed")
+	}
+	cpu.RunUntil(cpu.cycles + uint64(1))
+	if cpu.dmac.ch[0].chcr&0x02 == 0 {
+		t.Error("ch0 TE not set at the cycle after its window")
 	}
 }
 

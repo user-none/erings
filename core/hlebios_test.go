@@ -150,8 +150,7 @@ func TestHLEDispatcherLowersSR(t *testing.T) {
 			returned = true
 			break
 		}
-		master.SetFrameCyc(int64(i)) // advance the contention clock as the emulator does per step
-		master.Clock()
+		master.Step()
 	}
 
 	if srAtHandler == ^uint32(0) {
@@ -190,7 +189,7 @@ func TestHLEMagicAddrTrapsAndReturnsViaPR(t *testing.T) {
 	// jump to PR. We don't need to verify the service's side effect
 	// here - Boot's wiring is verified by TestHLEBootDispatchTableWired,
 	// and the service body has its own dedicated test below.
-	master.Clock()
+	master.Step()
 
 	if got := master.Registers().PC; got != returnAddr {
 		t.Errorf("after magic-addr trap, PC = %08X, want %08X (PR)", got, returnAddr)
@@ -482,9 +481,9 @@ func TestHLEDispatchInvokesService(t *testing.T) {
 	master.SetPC(hleSysSetUint)
 	master.SetReg(4, 2)
 	master.SetReg(5, 0xCAFEBABE)
-	_ = master.Clock()
+	master.Step()
 	if got := bus.readWramHU32(wramHUIntTable + 2*4); got != 0xCAFEBABE {
-		t.Errorf("after Clock, slot 2 = %08X, want CAFEBABE", got)
+		t.Errorf("after Step, slot 2 = %08X, want CAFEBABE", got)
 	}
 }
 

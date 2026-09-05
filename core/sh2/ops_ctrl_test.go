@@ -57,7 +57,7 @@ func TestOpSimple(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			tt.setup(cpu)
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			elapsed := int(cpu.cycles - before)
 			if !tt.check(cpu) {
 				t.Errorf("%s: check failed, want %s", tt.name, tt.wantDesc)
@@ -73,15 +73,10 @@ func TestOpSLEEP(t *testing.T) {
 	cpu := newDecodeTestCPU(0x001B)
 	before := cpu.cycles
 
-	// Cycle 1: EX - sets halted
-	cpu.Clock()
+	cpu.Step()
 	if !cpu.halted {
 		t.Error("SLEEP: halted = false, want true")
 	}
-
-	// Cycles 2-3: stall
-	cpu.Clock()
-	cpu.Clock()
 
 	elapsed := int(cpu.cycles - before)
 	if elapsed != 3 {
@@ -89,7 +84,7 @@ func TestOpSLEEP(t *testing.T) {
 	}
 
 	// After pending clears, subsequent steps are 1-cycle halted
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if int(cpu.cycles-before) != 4 {
 		t.Errorf("SLEEP+halted: cycles = %d, want 4", cpu.cycles-before)
 	}
@@ -112,7 +107,7 @@ func TestOpLDC(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			cpu.reg.R[tt.reg] = tt.val
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			got := tt.check(cpu)
 			want := tt.val
 			if tt.name == "LDC_SR" {
@@ -145,7 +140,7 @@ func TestOpSTC(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			tt.setup(cpu)
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[tt.destR] != tt.want {
 				t.Errorf("%s: R[%d] = 0x%X, want 0x%X", tt.name, tt.destR, cpu.reg.R[tt.destR], tt.want)
 			}
@@ -173,7 +168,7 @@ func TestOpLDS(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			cpu.reg.R[tt.reg] = tt.val
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if tt.check(cpu) != tt.val {
 				t.Errorf("%s: got 0x%X, want 0x%X", tt.name, tt.check(cpu), tt.val)
 			}
@@ -201,7 +196,7 @@ func TestOpSTS(t *testing.T) {
 			cpu := newDecodeTestCPU(tt.op)
 			tt.setup(cpu)
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[tt.destR] != tt.want {
 				t.Errorf("%s: R[%d] = 0x%X, want 0x%X", tt.name, tt.destR, cpu.reg.R[tt.destR], tt.want)
 			}
@@ -234,15 +229,7 @@ func TestOpLDCM(t *testing.T) {
 			bus.Write32(addr, tt.val)
 			before := cpu.cycles
 
-			// Cycle 1: EX
-			cpu.Clock()
-			// Cycle 2: MA read
-			s2 := cpu.Clock()
-			if s2.Bus != BusRead {
-				t.Errorf("cycle 2: bus = %d, want BusRead", s2.Bus)
-			}
-			// Cycle 3: WB
-			cpu.Clock()
+			cpu.Step()
 
 			want := tt.val
 			if tt.masked {
@@ -282,13 +269,7 @@ func TestOpSTCM(t *testing.T) {
 			cpu.reg.R[tt.destR] = addr
 			before := cpu.cycles
 
-			// Cycle 1: EX (pre-decrement)
-			cpu.Clock()
-			// Cycle 2: MA write
-			s2 := cpu.Clock()
-			if s2.Bus != BusWrite {
-				t.Errorf("cycle 2: bus = %d, want BusWrite", s2.Bus)
-			}
+			cpu.Step()
 
 			if cpu.reg.R[tt.destR] != addr-4 {
 				t.Errorf("%s: R[%d] = 0x%X, want 0x%X", tt.name, tt.destR, cpu.reg.R[tt.destR], addr-4)
@@ -325,7 +306,7 @@ func TestOpLDSM(t *testing.T) {
 			bus := cpu.bus.(*testBus)
 			bus.Write32(addr, tt.val)
 			before := cpu.cycles
-			s := cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			got := tt.check(cpu)
 			if got != tt.val {
 				t.Errorf("%s: got 0x%X, want 0x%X", tt.name, got, tt.val)
@@ -335,9 +316,6 @@ func TestOpLDSM(t *testing.T) {
 			}
 			if int(cpu.cycles-before) != 1 {
 				t.Errorf("%s: cycles = %d, want 1", tt.name, cpu.cycles-before)
-			}
-			if s.Bus != BusRead {
-				t.Errorf("%s: bus = %d, want BusRead", tt.name, s.Bus)
 			}
 		})
 	}
@@ -362,7 +340,7 @@ func TestOpSTSM(t *testing.T) {
 			addr := uint32(0x100)
 			cpu.reg.R[tt.destR] = addr
 			before := cpu.cycles
-			s := cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[tt.destR] != addr-4 {
 				t.Errorf("%s: R[%d] = 0x%X, want 0x%X", tt.name, tt.destR, cpu.reg.R[tt.destR], addr-4)
 			}
@@ -373,9 +351,6 @@ func TestOpSTSM(t *testing.T) {
 			}
 			if int(cpu.cycles-before) != 1 {
 				t.Errorf("%s: cycles = %d, want 1", tt.name, cpu.cycles-before)
-			}
-			if s.Bus != BusWrite {
-				t.Errorf("%s: bus = %d, want BusWrite", tt.name, s.Bus)
 			}
 		})
 	}
@@ -396,9 +371,7 @@ func TestOpTRAPA(t *testing.T) {
 	before := cpu.cycles
 
 	// Step through all 8 cycles
-	for i := 0; i < 8; i++ {
-		cpu.Clock()
-	}
+	cpu.RunUntil(cpu.cycles + uint64(8))
 
 	// PC should now be the vector value
 	if cpu.reg.PC != 0x800 {
@@ -425,32 +398,6 @@ func TestOpTRAPA(t *testing.T) {
 	elapsed := int(cpu.cycles - before)
 	if elapsed != 8 {
 		t.Errorf("TRAPA: cycles = %d, want 8", elapsed)
-	}
-}
-
-func TestOpTRAPABusActivity(t *testing.T) {
-	cpu := newDecodeTestCPU(0xC320)
-	cpu.reg.VBR = 0x400
-	cpu.reg.SR = 0xF0
-	cpu.reg.R[15] = 0x200
-	bus := cpu.bus.(*testBus)
-	bus.Write32(0x480, 0x00000800)
-
-	wantBus := []BusActivity{
-		BusNone,  // Cycle 1: EX
-		BusWrite, // Cycle 2: write SR
-		BusWrite, // Cycle 3: write PC
-		BusNone,  // Cycle 4: vector calc
-		BusRead,  // Cycle 5: read vector
-		BusNone,  // Cycle 6: refill
-		BusNone,  // Cycle 7: refill
-		BusNone,  // Cycle 8: refill
-	}
-	for i, want := range wantBus {
-		s := cpu.Clock()
-		if s.Bus != want {
-			t.Errorf("cycle %d: bus = %d, want %d", i+1, s.Bus, want)
-		}
 	}
 }
 
@@ -551,7 +498,7 @@ func TestInterruptInhibitAfterLDC(t *testing.T) {
 	if cpu.intInhibit {
 		t.Error("intInhibit should be cleared after check")
 	}
-	if cpu.pendingOp == popException {
+	if acceptedVector(cpu) >= 0 {
 		t.Error("exception dispatch should not be scheduled")
 	}
 
@@ -583,9 +530,6 @@ func TestInterruptInhibitAfterLDCL(t *testing.T) {
 	}
 
 	// Drain the two pending cycles - processInterrupt is not called here.
-	for cpu.pendingOp != popNone {
-		cpu.stepPending()
-	}
 	if !cpu.intInhibit {
 		t.Error("intInhibit should still be set after multi-cycle drain")
 	}
@@ -662,7 +606,7 @@ func TestInhibitOneShot(t *testing.T) {
 func TestOpCLRTPreservesOtherBits(t *testing.T) {
 	cpu := newDecodeTestCPU(0x0008)
 	cpu.reg.SR = srTMask | srSMask | srMMask | srQMask
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	var want uint32 = srSMask | srMMask | srQMask
 	if cpu.reg.SR != want {
 		t.Errorf("SR = 0x%08X, want 0x%08X (only T cleared)", cpu.reg.SR, want)
@@ -673,7 +617,7 @@ func TestOpCLRTPreservesOtherBits(t *testing.T) {
 func TestOpCLRTWhenAlreadyZero(t *testing.T) {
 	cpu := newDecodeTestCPU(0x0008)
 	cpu.reg.ClearT()
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.T() != 0 {
 		t.Errorf("T = %d, want 0", cpu.reg.T())
 	}
@@ -684,7 +628,7 @@ func TestOpCLRTWhenAlreadyZero(t *testing.T) {
 func TestOpSETTPreservesOtherBits(t *testing.T) {
 	cpu := newDecodeTestCPU(0x0018)
 	cpu.reg.SR = srSMask | srMMask | srQMask
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	var want uint32 = srTMask | srSMask | srMMask | srQMask
 	if cpu.reg.SR != want {
 		t.Errorf("SR = 0x%08X, want 0x%08X (only T set)", cpu.reg.SR, want)
@@ -695,7 +639,7 @@ func TestOpSETTPreservesOtherBits(t *testing.T) {
 func TestOpSETTWhenAlreadyOne(t *testing.T) {
 	cpu := newDecodeTestCPU(0x0018)
 	cpu.reg.SetT()
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.T() != 1 {
 		t.Errorf("T = %d, want 1", cpu.reg.T())
 	}
@@ -711,7 +655,7 @@ func TestOpCLRMACPreservesGeneralRegs(t *testing.T) {
 	for i := 0; i < 16; i++ {
 		cpu.reg.R[i] = uint32(0x100 + i)
 	}
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.MACH != 0 || cpu.reg.MACL != 0 {
 		t.Errorf("MACH:MACL = %08X:%08X, want 0:0", cpu.reg.MACH, cpu.reg.MACL)
 	}
@@ -731,7 +675,7 @@ func TestOpNOPPreservesSR(t *testing.T) {
 	cpu := newDecodeTestCPU(0x0009)
 	cpu.reg.SR = srTMask | srSMask | srMMask | srQMask
 	before := cpu.reg.SR
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.SR != before {
 		t.Errorf("SR = 0x%08X, want 0x%08X", cpu.reg.SR, before)
 	}
@@ -744,7 +688,7 @@ func TestOpSTCSRReflectsTBit(t *testing.T) {
 		// STC SR,R5: 0x0502
 		cpu := newDecodeTestCPU(0x0502)
 		cpu.reg.SR = srTMask | srSMask
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[5] != srTMask|srSMask {
 			t.Errorf("R5 = 0x%08X, want 0x%08X", cpu.reg.R[5], srTMask|srSMask)
 		}
@@ -752,7 +696,7 @@ func TestOpSTCSRReflectsTBit(t *testing.T) {
 	t.Run("stcsr_t_0", func(t *testing.T) {
 		cpu := newDecodeTestCPU(0x0502)
 		cpu.reg.SR = srSMask
-		cpu.Clock()
+		cpu.RunUntil(cpu.cycles + uint64(1))
 		if cpu.reg.R[5] != srSMask {
 			t.Errorf("R5 = 0x%08X, want 0x%08X", cpu.reg.R[5], srSMask)
 		}
@@ -766,8 +710,7 @@ func TestOpSTCMWithSP(t *testing.T) {
 	cpu := newDecodeTestCPU(0x4F03)
 	cpu.reg.SR = srTMask | srSMask
 	cpu.reg.R[15] = 0x200
-	cpu.Clock()
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(2))
 	if cpu.reg.R[15] != 0x1FC {
 		t.Errorf("R15 = 0x%08X, want 0x1FC", cpu.reg.R[15])
 	}
@@ -784,7 +727,7 @@ func TestOpLDCSRMasksReservedBits(t *testing.T) {
 	// LDC R5,SR: 0x450E
 	cpu := newDecodeTestCPU(0x450E)
 	cpu.reg.R[5] = 0xFFFFFFFF
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(1))
 	if cpu.reg.SR != srMask {
 		t.Errorf("SR = 0x%08X, want 0x%08X (reserved bits should be 0)", cpu.reg.SR, srMask)
 	}
@@ -799,9 +742,7 @@ func TestOpLDCMSRMasksReservedBits(t *testing.T) {
 	cpu.reg.R[3] = addr
 	bus := cpu.bus.(*testBus)
 	bus.Write32(addr, 0xFFFFFFFF)
-	cpu.Clock()
-	cpu.Clock()
-	cpu.Clock()
+	cpu.RunUntil(cpu.cycles + uint64(3))
 	if cpu.reg.SR != srMask {
 		t.Errorf("SR = 0x%08X, want 0x%08X", cpu.reg.SR, srMask)
 	}
@@ -822,9 +763,7 @@ func TestOpTRAPAImmZero(t *testing.T) {
 	bus.Write32(0x400, 0x00000900) // vector at VBR + 0
 
 	before := cpu.cycles
-	for i := 0; i < 8; i++ {
-		cpu.Clock()
-	}
+	cpu.RunUntil(cpu.cycles + uint64(8))
 	if cpu.reg.PC != 0x900 {
 		t.Errorf("PC = 0x%08X, want 0x900", cpu.reg.PC)
 	}
@@ -848,9 +787,7 @@ func TestOpTRAPAImmMax(t *testing.T) {
 	// Vector at VBR + 0xFF*4 = 0x400 + 0x3FC = 0x7FC
 	bus.Write32(0x7FC, 0x00000A00)
 
-	for i := 0; i < 8; i++ {
-		cpu.Clock()
-	}
+	cpu.RunUntil(cpu.cycles + uint64(8))
 	if cpu.reg.PC != 0xA00 {
 		t.Errorf("PC = 0x%08X, want 0xA00", cpu.reg.PC)
 	}
@@ -867,9 +804,7 @@ func TestOpTRAPAPushesSRAndPC(t *testing.T) {
 	bus.Write32(0x440, 0x00000B00) // VBR + 0x10*4
 
 	returnAddr := cpu.reg.PC + 2
-	for i := 0; i < 8; i++ {
-		cpu.Clock()
-	}
+	cpu.RunUntil(cpu.cycles + uint64(8))
 	// After TRAPA, R15 -= 8. SR pushed at R15+4 (original R15-4),
 	// PC pushed at R15 (original R15-8).
 	if bus.Read32(0x1FC) != srTMask|srSMask {

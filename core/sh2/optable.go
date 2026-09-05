@@ -28,8 +28,12 @@ func init() {
 	registerGroupE()
 }
 
+// opIllegal raises the general illegal instruction exception. The
+// stacked PC is the start address of the illegal instruction (Hardware
+// Manual Table 4.11), so PC is wound back from the post-fetch value.
 func opIllegal(c *CPU) {
-	c.serviceException(vecIllegalInstr)
+	c.reg.PC = c.prevPC
+	c.serviceException(vecIllegalInstr, exceptionIllegalCycles)
 }
 
 // fillRange assigns handler to all opcodes in [base, base+count).

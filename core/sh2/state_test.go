@@ -33,20 +33,8 @@ func fillCPUState(c *CPU) {
 	c.nmiPending = true
 	c.nmiReq.Store(true)
 	c.intInhibit = true
-	c.pendingOp = 3
-	c.pendingStep = 2
-	c.pendingCount = 5
-	c.pendingN = 7
-	c.pendingAddr = 0x06001000
-	c.pendingVal = 0x11111111
-	c.pendingVal2 = 0x22222222
-	c.pendingImm = 0x33333333
 	c.lastLoadReg = 9
-	c.deferredOp = 0x600C
-	c.hasDeferred = true
-	c.loadUseStall = true
 	c.multiplierBusyUntil = 111222333
-	c.busStall = 17
 	c.nextPeripheralEvent = 444555666
 	c.fetchLineAddr = 0x06000110
 	c.fetchLineWay = 2
@@ -108,8 +96,7 @@ func fillCPUState(c *CPU) {
 	c.dmac.dmaor = 0x0001
 	c.dmac.drcr = [2]uint8{0x01, 0x02}
 	c.dmac.nextCh = 1
-	c.dmac.stallCycles = [2]int{23, 24}
-	c.dmac.stallCh = 1
+	c.dmac.completesAt = [2]uint64{23, 24}
 
 	c.wdt.wtcsr = 0x25
 	c.wdt.wtcnt = 0x9C
@@ -184,8 +171,8 @@ func TestStateSpotValues(t *testing.T) {
 	if s.IRL != 0x000E0047 {
 		t.Errorf("IRL = %08x", s.IRL)
 	}
-	if s.Exec.PendingVal2 != 0x22222222 {
-		t.Errorf("Exec.PendingVal2 = %08x", s.Exec.PendingVal2)
+	if s.Exec.MultiplierBusyUntil != 111222333 {
+		t.Errorf("Exec.MultiplierBusyUntil = %d", s.Exec.MultiplierBusyUntil)
 	}
 	if s.Exec.FetchLineWay != 2 {
 		t.Errorf("Exec.FetchLineWay = %d", s.Exec.FetchLineWay)
@@ -225,7 +212,6 @@ var stateCoverage = map[reflect.Type]map[string]string{
 		"reg":                 "captured",
 		"bus":                 "skip-construction",
 		"cycles":              "captured",
-		"frameCyc":            "skip-scratch",
 		"ir":                  "skip-scratch",
 		"halted":              "captured",
 		"addrError":           "skip-scratch",
@@ -237,21 +223,9 @@ var stateCoverage = map[reflect.Type]map[string]string{
 		"intInhibit":          "captured",
 		"irl":                 "captured",
 		"irlAck":              "skip-construction",
-		"pendingOp":           "captured",
-		"pendingStep":         "captured",
-		"pendingCount":        "captured",
-		"pendingN":            "captured",
-		"pendingAddr":         "captured",
-		"pendingVal":          "captured",
-		"pendingVal2":         "captured",
-		"pendingImm":          "captured",
 		"lastLoadReg":         "captured",
-		"deferredOp":          "captured",
-		"hasDeferred":         "captured",
-		"loadUseStall":        "captured",
+		"busStall":            "skip-scratch",
 		"multiplierBusyUntil": "captured",
-		"stepBus":             "skip-scratch",
-		"branchTaken":         "skip-scratch",
 		"intc":                "captured",
 		"frt":                 "captured",
 		"divu":                "captured",
@@ -265,7 +239,6 @@ var stateCoverage = map[reflect.Type]map[string]string{
 		"fetchLineAddr":       "captured",
 		"fetchLineWay":        "captured",
 		"fetchLineOff":        "captured",
-		"busStall":            "captured",
 		"sbycr":               "captured",
 		"bcr1":                "captured",
 		"isMaster":            "skip-construction",
@@ -293,7 +266,7 @@ var stateCoverage = map[reflect.Type]map[string]string{
 	reflect.TypeOf(DMAC{}): {
 		"ch": "captured", "dmaor": "captured", "drcr": "captured",
 		"nextCh": "captured", "bus": "skip-construction",
-		"stallCycles": "captured", "stallCh": "captured",
+		"completesAt": "captured", "burstOpen": "skip-derived",
 	},
 	reflect.TypeOf(dmaChan{}): {
 		"sar": "captured", "dar": "captured", "tcr": "captured",

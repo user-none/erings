@@ -53,7 +53,7 @@ func TestOpShift1(t *testing.T) {
 			n := regN(tt.op)
 			cpu.reg.R[n] = tt.rn
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -112,7 +112,7 @@ func TestOpShiftN(t *testing.T) {
 				cpu.reg.R[n] = tt.rn
 				cpu.reg.SetTVal(tBefore)
 				before := cpu.cycles
-				cpu.Clock()
+				cpu.RunUntil(cpu.cycles + uint64(1))
 				if cpu.reg.R[n] != tt.wantRn {
 					t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 				}
@@ -159,7 +159,7 @@ func TestOpRotate(t *testing.T) {
 			n := regN(tt.op)
 			cpu.reg.R[n] = tt.rn
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}
@@ -205,7 +205,7 @@ func TestOpRotateCarry(t *testing.T) {
 			cpu.reg.R[n] = tt.rn
 			cpu.reg.SetTVal(tt.tBefore)
 			before := cpu.cycles
-			cpu.Clock()
+			cpu.RunUntil(cpu.cycles + uint64(1))
 			if cpu.reg.R[n] != tt.wantRn {
 				t.Errorf("R[%d] = 0x%08X, want 0x%08X", n, cpu.reg.R[n], tt.wantRn)
 			}

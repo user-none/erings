@@ -54,14 +54,14 @@ full pipeline but does implement:
 - Load-use hazard detection with 1-cycle stall insertion
 - Store data forwarding (stores to the same register as a prior load
   do not stall)
-- Multi-cycle instruction decomposition via the pending operation system
-- Per-cycle bus activity tracking (BusNone, BusRead, BusWrite, BusHeld)
+- Per-instruction execution: each instruction completes in one Step and
+  charges its full cycle count, advancing the cycle counter between its
+  bus accesses so each access carries the bus clock of its own stage
 
 ### Multi-Cycle Instructions
 
-Complex instructions are decomposed into per-cycle micro-ops using the
-pending operation system. Each Clock() call advances exactly one cycle.
-Decomposed instructions include:
+Instructions with more than one cycle charge their Programming Manual
+Section 5 count; the accesses listed run at the cycle offsets given:
 
 - STC.L @-Rn (2 cycles)
 - LDC.L @Rm+,CR (3 cycles)
@@ -71,8 +71,15 @@ Decomposed instructions include:
 - RTE (3 cycles: EX, read PC, read SR + delay branch)
 - TRAPA (8 cycles: EX, write SR, write PC, vector calc, read vector,
   3 pipeline refill)
-- Interrupt exception (5 cycles: internal, write SR, write PC, read
-  vector, pipeline refill)
+- Interrupt exception (9 cycles: 2 internal, write SR, write PC,
+  vector address calculation, read vector, 3 pipeline refill including
+  the handler's ID slot; Programming Manual Section 7.4.7 Figure 7.95
+  counted per Section 7.1.4, and SH7604 Hardware Manual Figure 5.7)
+- Address error exception (9 cycles from the faulting instruction's
+  EX, Figure 7.96, charged atomically) and general illegal instruction
+  exception (8 cycles, Figure 7.97, charged atomically). The illegal
+  instruction stacks its own start address and the address error the
+  address after the faulting instruction (Hardware Manual Table 4.11).
 - MAC.W/MAC.L (2 cycles: read @Rn, read @Rm + accumulate)
 
 ### Multiplier Contention
@@ -98,12 +105,14 @@ multiplier-type instruction, but do not themselves stall on a
 preceding mm.
 
 The stall is implemented by tracking a per-CPU cycle timestamp at which
-mm completes and by folding stall cycles into the follower's pending-op
-count when its EX stage begins before that timestamp. The stall value
-is clamped to each follower's Table 7.1 maximum extra-cycle count, so
-total cycle counts match the documented ranges exactly in all pairings
-(non-contending cases hit the Table 7.1 minimum; contending cases hit
-the Table 7.1 maximum).
+mm completes. A follower's multiplier MA runs one cycle after its EX
+(its first pending step), so when its EX begins before that timestamp
+the stall is the busy time remaining after the EX cycle, added to the
+follower's cycle count. The stall value is clamped to each
+follower's Table 7.1 maximum extra-cycle count, so total cycle counts
+match the documented ranges exactly in all pairings (non-contending
+cases hit the Table 7.1 minimum; contending cases hit the Table 7.1
+maximum).
 
 ### IF/MA Bus Contention (not modeled)
 
@@ -115,8 +124,8 @@ longword-aligned code in on-chip memory has a single IF fetch two
 instructions in one bus cycle; subsequent fetches consume no bus and
 do not contend.
 
-This contention is not modeled. Each Clock() call charges exactly one
-cycle. Cycle counts are therefore understated for code with a high
+This contention is not modeled. Each instruction charges its documented
+cycle count. Cycle counts are therefore understated for code with a high
 memory-access density. System-level timing is largely unaffected
 because peripheral schedulers (VDP1/VDP2/SCU/SCSP) tick on scanline or
 sample boundaries rather than exact SH-2 cycles, so the internal
@@ -161,12 +170,14 @@ wrong as a result:
    post-increments for LDC.L / LDS.L / RTE / MAC.W / MAC.L, the WB
    write to GBR/VBR/SR/MACH/MACL/PR for LDC.L / LDS.L, the delay
    branch setup for RTE) is partly done and partly not, depending on
-   which step inside the multi-cycle pending op the failure occurred.
-2. **Stacked PC is wrong.** `serviceException` saves the live PC at
-   the moment of the failing access. For most pending ops PC was
-   already advanced past the failing instruction during fetch, so the
-   stacked value resembles HM's "next instruction" but is not derived
-   from a defined snapshot point and may differ for delayed branches.
+   which access within the instruction failed.
+2. **Stacked PC is only right for single-cycle accesses.**
+   `serviceException` saves the live PC at the moment of the failing
+   access. For an access made by a single-cycle instruction that is
+   the address after the instruction, as Table 4.11 requires. For a
+   failing access inside a multi-cycle instruction, or in a delay slot,
+   the value
+   is not derived from a defined snapshot point.
 3. **Misaligned SP at exception entry recurses incorrectly.** When SR
    or PC is pushed to a misaligned R15 the nested `bus.Write32` writes
    garbage at the misaligned bus address (`testBus` and the production
@@ -356,10 +367,13 @@ memory-to-memory transfers.
 - Shared DMAOR with DME, PR (fixed vs round-robin), AE, NMIF flags.
 - Transfer sizes: byte, word, longword, 16-byte burst (CHCR.TS).
 - Source/destination addressing modes: fixed, increment, decrement.
-- Transfers move data atomically on register write; the CPU is stalled
-  for a region-aware bus-occupation cost accumulated across each unit
-  access via `Bus.AccessCycles`. Transfer-end interrupt is gated by
-  CHCR.IE and routed via VCRDMAn.
+- Transfers move data atomically on register write, then a per-channel
+  bus-occupation window runs for the region-aware cost accumulated
+  across each unit access via `Bus.AccessCycles`, tracked as the
+  absolute cycle at which it closes. In burst mode (CHCR.TB) the CPU is
+  stalled for the window; in cycle-steal mode it keeps executing (HM
+  Sec 9.5). In both modes TE is set on the cycle after the window, and
+  the transfer-end interrupt is gated by CHCR.IE and routed via VCRDMAn.
 - NMI sets DMAOR.NMIF, blocking new transfer starts until software
   clears it.
 - Registers: SAR0/1, DAR0/1, TCR0/1, CHCR0/1, VCRDMA0/1, DMAOR, DRCR0/1
@@ -373,13 +387,13 @@ memory-to-memory transfers.
   not route any external DMA peripherals to the SH-2 DMAC; only
   auto-request and dual-address mode are used. The corresponding CHCR
   and DRCR bits are stored but not consulted.
-- Cycle-steal vs burst-mode selection (CHCR.TB). Transfers move data
-  atomically on trigger rather than interleaving with CPU access at the
-  bus level. The post-transfer stall window prevents observable CPU
-  activity during the transfer, so visible ordering matches burst-mode
-  semantics; cycle-steal-style interleaving is not available. One
-  consequence is that an NMI mid-stall (Sec 9.3.8 "Conditions for Both
-  Channels Ending Simultaneously") cannot abort a partially-transferred
+- Bus-level interleaving in cycle-steal mode. Transfers move data
+  atomically on trigger in both bus modes rather than one unit per bus
+  grant; cycle-steal mode only differs in letting the CPU execute
+  during the occupation countdown, so the CPU cannot observe a
+  partially transferred block. One consequence is that an NMI
+  mid-countdown (Sec 9.3.8 "Conditions for Both Channels Ending
+  Simultaneously") cannot abort a partially-transferred
   block: the data has already moved by the time the stall starts, and
   CHCR.TE is latched when the stall drains. Hardware would only set TE
   if the NMI-coincident unit was the final one. The NMIF gate on future
@@ -446,18 +460,18 @@ so memory-heavy code runs at hardware rate; cache hits cost nothing:
 - The CPU's instruction-execution accesses go through the `Bus`
   interface's `SH2*` methods (`SH2Read8/16/32`, `SH2Write8/16/32`,
   `SH2FillLine`, `SH2RMWRead`/`SH2RMWWrite`), each passing the CPU's
-  frame cycle (`SetFrameCyc`) and master/slave flag. The Bus
+  cycle counter, the system clock, and master/slave flag. The Bus
   implementation computes the whole access stall and returns it; the CPU
   adds it to `busStall`. This package defines the interface and applies
   the returned stall - it holds no cost tables of its own.
-- The frame cycle and master/slave flag are passed precisely so the Bus
+- The cycle counter and master/slave flag are passed precisely so the Bus
   implementation can model the wait state it owns: per-region access
   cost, the slave SH-2's per-access bus-arbitration penalty, and
   inter-CPU bus contention (one CPU waiting on the other's in-flight
   shared-bus access).
-- `busStall` debt is drained one cycle per `Clock()` before the next
-  instruction executes (the same deferred-cycle pattern as load-use
-  stall), so each access extends its instruction by its cost.
+- `busStall` debt is charged to the cycle counter when the instruction
+  completes, before the next instruction executes, so each access
+  extends its instruction by its cost.
 - On-chip registers and data-array accesses are internal and never
   charged. The plain `Read*/Write*` interface methods (used by callers
   with no instruction-execution timing) are untimed.

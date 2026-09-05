@@ -5,8 +5,6 @@ package core
 
 import (
 	"testing"
-
-	"github.com/user-none/erings/core/sh2"
 )
 
 func TestNewEmulator(t *testing.T) {
@@ -207,14 +205,6 @@ func TestEmulatorSlaveDisabledByDefault(t *testing.T) {
 	if e.smpc.SSHEnabled() {
 		t.Error("slave SH-2 should be disabled by default")
 	}
-}
-
-// Verify the sh2 package types are accessible (compilation test).
-func TestSH2BusActivityTypes(t *testing.T) {
-	_ = sh2.BusNone
-	_ = sh2.BusRead
-	_ = sh2.BusWrite
-	_ = sh2.BusHeld
 }
 
 func TestEmulatorGetTimingNTSC(t *testing.T) {

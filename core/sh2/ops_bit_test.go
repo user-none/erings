@@ -30,23 +30,7 @@ func TestOpTAS(t *testing.T) {
 			cpu.bus.Write8(addr, tt.initByte)
 			before := cpu.cycles
 
-			// Cycle 1: EX
-			cpu.Clock()
-			// Cycle 2: MA read (bus held)
-			s2 := cpu.Clock()
-			if s2.Bus != BusHeld {
-				t.Errorf("cycle 2: bus = %d, want BusHeld", s2.Bus)
-			}
-			// Cycle 3: MA internal (bus held)
-			s3 := cpu.Clock()
-			if s3.Bus != BusHeld {
-				t.Errorf("cycle 3: bus = %d, want BusHeld", s3.Bus)
-			}
-			// Cycle 4: MA write (bus held)
-			s4 := cpu.Clock()
-			if s4.Bus != BusHeld {
-				t.Errorf("cycle 4: bus = %d, want BusHeld", s4.Bus)
-			}
+			cpu.Step()
 
 			if cpu.reg.T() != tt.wantT {
 				t.Errorf("T = %d, want %d", cpu.reg.T(), tt.wantT)
@@ -95,9 +79,7 @@ func TestOpTASPreservesNeighbors(t *testing.T) {
 			// Target byte = 0x10 (nonzero so T=0 after TAS, and bit 7 gets set).
 			cpu.bus.Write8(target, 0x10)
 
-			for i := 0; i < 4; i++ {
-				cpu.Clock()
-			}
+			cpu.RunUntil(cpu.cycles + uint64(4))
 
 			wantTarget := byte(0x10 | 0x80)
 			if got := cpu.bus.Read8(target); got != wantTarget {
