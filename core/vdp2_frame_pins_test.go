@@ -214,6 +214,78 @@ func goldenSixLayersPAL256(t *testing.T) *VDP2 {
 	return v
 }
 
+// goldenFullFrame is a scene with content on every row: an NBG0 gradient
+// bitmap (priority 4) masked by W0 on the left half, a rotated RBG0
+// gradient bitmap (priority 3) color-calculating against an EXBG
+// position-encoded frame (priority 2), and a sprite dot pattern
+// (priority 5).
+func goldenFullFrame(t *testing.T) *VDP2 {
+	v := newTestVDP2()
+	v.regs[vdp2BGON] = 0x0001 | 1<<4
+	// NBG0: 256-color bitmap 512x256, dot = (x*3 + y) & 0xFF.
+	v.regs[vdp2CHCTLA] = 0x0012
+	v.regs[vdp2BMPNA] = 0x0000
+	v.regs[vdp2MPOFN] = 0x0000
+	for y := 0; y < 256; y++ {
+		for x := 0; x < 512; x++ {
+			v.vram[y*512+x] = uint8(x*3 + y)
+		}
+	}
+	for i := 1; i < 256; i++ {
+		writeCRAM16Test(v, uint32(i), uint16(i*0x0421)&0x7FFF)
+	}
+	// RBG0: 256-color bitmap at map offset 2 (0x40000), dot = (x ^ y) & 0xFF,
+	// rotated by 30 degrees (A = E = 0.866, B = -0.5, D = 0.5).
+	v.regs[vdp2CHCTLB] = 0x1200
+	v.regs[vdp2BMPNB] = 0x0000
+	v.regs[vdp2MPOFR] = 0x0002
+	for y := 0; y < 256; y++ {
+		for x := 0; x < 512; x++ {
+			v.vram[0x40000+y*512+x] = uint8(x ^ y)
+		}
+	}
+	v.regs[vdp2RPMD] = 0x0000
+	v.regs[vdp2RPTAU] = 0x0000
+	v.regs[vdp2RPTAL] = 0xA000
+	p := uint32(0x14000)
+	writeRotParam32(v, p, 0x10, 0x0001, 0x0000) // DYst = 1.0
+	writeRotParam32(v, p, 0x14, 0x0001, 0x0000) // DX = 1.0
+	writeRotParam32(v, p, 0x1C, 0x0000, 0xDDC0) // A = 0.866
+	writeRotParam32(v, p, 0x20, 0x000F, 0x8000) // B = -0.5
+	writeRotParam32(v, p, 0x28, 0x0000, 0x8000) // D = 0.5
+	writeRotParam32(v, p, 0x2C, 0x0000, 0xDDC0) // E = 0.866
+	writeRotParam32(v, p, 0x4C, 0x0001, 0x0000) // kx = 1.0
+	writeRotParam32(v, p, 0x50, 0x0001, 0x0000) // ky = 1.0
+	// EXBG in the NBG1 slot, position-encoded frame.
+	v.regs[vdp2EXTEN] = 0x0001
+	v.SetEXBGSource(&fakeEXBGUnsized{rgb: exbgTestFrame(320, 224), w: 320, h: 224})
+	// Priorities: sprite 5, NBG0 4, RBG0 3, EXBG 2.
+	v.regs[vdp2PRINA] = 0x0204
+	v.regs[vdp2PRIR] = 0x0003
+	v.regs[vdp2SPCTL] = 0x0000
+	v.regs[vdp2PRISA] = 0x0005
+	writeCRAM16Test(v, 5, 0x03FF)
+	writeCRAM16Test(v, 6, 0x7C1F)
+	writeCRAM16Test(v, 7, 0x03E0)
+	// W0 masks NBG0 on x 0..159.
+	v.regs[vdp2WPSX0], v.regs[vdp2WPEX0] = 0, 318
+	v.regs[vdp2WPSY0], v.regs[vdp2WPEY0] = 0, 223
+	v.regs[vdp2WCTLA] = 0x0002
+	// RBG0 color calculation, ratio 16.
+	v.regs[vdp2CCCTL] = 1 << 4
+	v.regs[vdp2CCRR] = 16
+	fb := vdp1FBView{data: make([]byte, 512*256*2), width: 512, height: 256}
+	for y := 0; y < 224; y++ {
+		for x := 0; x < 320; x++ {
+			if (x+y)%5 == 0 {
+				setFBPixel16(fb, x, y, 0x0005+uint16((x/3)%3))
+			}
+		}
+	}
+	renderTestFrameFB(v, fb)
+	return v
+}
+
 // TestGoldenVDP2Scenes pins the software renderer's output on full-frame
 // synthetic scenes as per-band hashes. A mismatch means the renderer's
 // output changed; the pixel tests locate the cause, this test detects it.
@@ -233,7 +305,7 @@ func TestGoldenVDP2Scenes(t *testing.T) {
 		build func(t *testing.T) *VDP2
 		want  []uint32
 	}{
-		{"six layers 320x224", goldenSixLayers, repeatHash(0x23608C9D, 0xD3B468C5, 28)},
+		{"six layers 320x224", goldenSixLayers, repeatHash(0x91E4D22D, 0xD3B468C5, 28)},
 		{"RBG0 window coefficient line color", goldenRBG0WindowCoefficient, []uint32{
 			0xA3A41DF5, 0x70DF95C5, 0xDAC29A85, 0x70DF95C5, 0xDAC29A85, 0x70DF95C5, 0xDAC29A85,
 			0x70DF95C5, 0xDAC29A85, 0x70DF95C5, 0xDAC29A85, 0x70DF95C5, 0x4A9D1FA8, 0xDF66A7E5,
@@ -243,8 +315,14 @@ func TestGoldenVDP2Scenes(t *testing.T) {
 		{"RBG1 over RBG0", goldenRBG1OverRBG0, append([]uint32{0x434771F5, 0xAF20B725}, repeatHash(0x6CE75CC5, 0x6CE75CC5, 26)...)},
 		{"hi-res sprite window CC", goldenHiResSpriteWindowCC, repeatHash(0x1E57C155, 0x8340A5C5, 28)},
 		{"LSMD3 line scroll both fields", goldenLSMD3LineScroll, repeatHash(0x62A0EF51, 0x030A0FC5, 56)},
-		{"six layers 352 wide", goldenSixLayers352, repeatHash(0x09629B1D, 0x7B7CE345, 28)},
-		{"six layers PAL 256 lines", goldenSixLayersPAL256, repeatHash(0x23608C9D, 0xD3B468C5, 32)},
+		{"six layers 352 wide", goldenSixLayers352, repeatHash(0xA63F7CAD, 0x7B7CE345, 28)},
+		{"six layers PAL 256 lines", goldenSixLayersPAL256, repeatHash(0x91E4D22D, 0xD3B468C5, 32)},
+		{"full frame", goldenFullFrame, []uint32{
+			0x0264A601, 0x65869440, 0xA9E8C71D, 0x2F8DE399, 0xD92E700C, 0x239402BD, 0x5B3206DD,
+			0x0D54BAAF, 0x4F3BA1D9, 0xDEDB10EC, 0x37B83DD4, 0x408BFAF9, 0xA5C2A969, 0x62B42088,
+			0xC45BB989, 0x009DD2A3, 0x3C456790, 0x9EBE5294, 0x66C5919D, 0x151243B6, 0xD18FCE1A,
+			0xF3ABA1CD, 0x018D0527, 0x4ADF0307, 0xA1A1954E, 0x3BD5DC6E, 0x997B93EE, 0x0EC9255D,
+		}},
 	}
 	for _, s := range scenes {
 		t.Run(s.name, func(t *testing.T) {

@@ -29,9 +29,9 @@ func setupSixLayerScene(t *testing.T) (*VDP2, vdp1FBView) {
 	v.regs[vdp2MPCDN3] = 0x000C
 	v.regs[vdp2PRINB] |= 2 << 8
 	writeVRAM16(v, 0x30000, 0x0000)
-	writeVRAM16(v, 0x30002, 0x0004)
+	writeVRAM16(v, 0x30002, 0x0008)
 	for i := 0; i < 64; i++ {
-		v.vram[0x80+i] = 40
+		v.vram[0x100+i] = 40
 	}
 	writeCRAM16Test(v, 40, 0x7FFF)
 
@@ -221,4 +221,108 @@ func TestCompositeBackScreenTableOffsetShadowWindow(t *testing.T) {
 	expectOut(t, v, 0, 1, 10, 255, 0, 0, "line 1 back screen green + offset")
 	expectOut(t, v, 2, 1, 5, 127, 0, 1, "line 1 shadowed back screen")
 	expectOut(t, v, 6, 0, 255, 0, 0, 0, "outside the window: NBG0")
+}
+
+// TestCompositeSixLayers704 verifies the six-layer scene at 704 dots: the
+// same dot-unit window coordinates, sprite x halving, and RBG0 dot pairs
+// as 640, on the wider row.
+func TestCompositeSixLayers704(t *testing.T) {
+	v, fb := setupSixLayerScene(t)
+	v.regs[vdp2TVMD] = 0x8003 // 704x224
+	v.recalcTiming()
+	if v.activeWidth != 704 {
+		t.Fatalf("active width %d, want 704", v.activeWidth)
+	}
+	renderTestFrameFB(v, fb)
+	want := [][3]int{colYellow, colYellow, colYellow, colYellow, colBlue, colBlue, colBlue, colBlue, colYellow, colMagenta, colMagenta}
+	expectRow(t, v, 0, want, "704-dot row 0")
+	expectOut(t, v, 31, 0, 255, 0, 255, 0, "RBG0 dot pairs reach x 31")
+	expectOut(t, v, 32, 0, 0, 0, 0, 0, "past the RBG0 cells")
+}
+
+// TestPAL256LinePixels verifies the composite on a PAL 256-line frame: a
+// bitmap layer covers all 256 rows, the per-line back screen table is
+// read at line 250, and a window with a Y range of 240-255 masks the
+// layer on those rows.
+func TestPAL256LinePixels(t *testing.T) {
+	v := newTestVDP2()
+	v.SetPAL(true)
+	v.regs[vdp2TVMD] = 0x8020 // 320x256
+	v.recalcTiming()
+	if v.activeLines != 256 {
+		t.Fatalf("active lines %d, want 256", v.activeLines)
+	}
+	v.regs[vdp2BGON] = 0x0001
+	v.regs[vdp2CHCTLA] = 0x0012 // 256-color bitmap 512x256
+	v.regs[vdp2PRINA] = 0x0001
+	for i := 0; i < 512*256; i++ {
+		v.vram[i] = 10
+	}
+	writeCRAM16Test(v, 10, 0x03E0) // green
+	v.regs[vdp2BKTAU] = 0x8002
+	v.regs[vdp2BKTAL] = 0xC000
+	writeVRAM16(v, 0x58000+250*2, 0xFC00) // line 250 blue, others black
+	v.regs[vdp2WPSX0], v.regs[vdp2WPEX0] = 0, 640
+	v.regs[vdp2WPSY0], v.regs[vdp2WPEY0] = 240, 255
+	v.regs[vdp2WCTLA] = 0x0002
+	renderTestFrame(v)
+	expectOut(t, v, 0, 239, 0, 255, 0, 0, "line 239: bitmap")
+	expectOut(t, v, 0, 240, 0, 0, 0, 0, "line 240: masked, black back screen")
+	expectOut(t, v, 0, 250, 0, 0, 255, 0, "line 250: masked, blue back screen entry")
+	expectOut(t, v, 0, 255, 0, 0, 0, 0, "line 255: masked")
+}
+
+// setLSMD2 puts the VDP2 into single-density interlace (TVMD LSMD=10).
+func setLSMD2(v *VDP2) {
+	v.regs[vdp2TVMD] = 0x8080
+	v.recalcTiming()
+	v.BeginFrame()
+}
+
+// TestLSMD2LineTableIndexHalving verifies that in single-density interlace
+// the per-line tables are indexed by y/2 (each entry covers a line pair):
+// the W0 line window on a scroll layer and the rotation parameter window
+// on RBG0.
+func TestLSMD2LineTableIndexHalving(t *testing.T) {
+	// Line window table at 0x40000: entry 0 masks x 0..4, entry 1 is
+	// excluded, entry 2 masks x 0..4.
+	writeTable := func(v *VDP2) {
+		writeVRAM16(v, 0x40000, 0)
+		writeVRAM16(v, 0x40002, 8)
+		writeVRAM16(v, 0x40004, 20)
+		writeVRAM16(v, 0x40006, 0)
+		writeVRAM16(v, 0x40008, 0)
+		writeVRAM16(v, 0x4000A, 8)
+	}
+
+	v := setupNBG0FullTile(t)
+	v.regs[vdp2BKTAU] = 0x0002
+	v.regs[vdp2BKTAL] = 0xC000
+	writeVRAM16(v, 0x58000, 0xFC00)
+	v.regs[vdp2WCTLA] = 0x0002
+	v.regs[vdp2WPSY0], v.regs[vdp2WPEY0] = 0, 15
+	v.regs[vdp2LWTA0U] = 0x8002
+	v.regs[vdp2LWTA0L] = 0x0000
+	writeTable(v)
+	setLSMD2(v)
+	renderTestFrame(v)
+	expectOut(t, v, 2, 0, 0, 0, 255, 0, "lines 0-1 use entry 0: masked")
+	expectOut(t, v, 2, 1, 0, 0, 255, 0, "lines 0-1 use entry 0: masked")
+	expectOut(t, v, 2, 2, 255, 0, 0, 0, "lines 2-3 use entry 1: excluded")
+	expectOut(t, v, 2, 3, 255, 0, 0, 0, "lines 2-3 use entry 1: excluded")
+	expectOut(t, v, 2, 4, 0, 0, 255, 0, "lines 4-5 use entry 2: masked")
+
+	// Rotation parameter window with the same table: parameter B inside.
+	v = setupRBG0ParamAB(t)
+	v.regs[vdp2RPMD] = 0x0003
+	v.regs[vdp2WCTLD] = 0x0002
+	v.regs[vdp2LWTA0U] = 0x8002
+	v.regs[vdp2LWTA0L] = 0x0000
+	writeTable(v)
+	setLSMD2(v)
+	buf := make([]uint32, 352*256)
+	renderTestRBG0(v, buf)
+	expectRGB(t, v, buf, 2, 1, 0, 255, 0, "RP window lines 0-1: B")
+	expectRGB(t, v, buf, 2, 2, 255, 0, 0, "RP window lines 2-3: A")
+	expectRGB(t, v, buf, 2, 5, 0, 255, 0, "RP window lines 4-5: B")
 }

@@ -106,6 +106,211 @@ func TestMSBSpriteShadowOnTopSprite(t *testing.T) {
 	expectOut(t, v, 0, 0, 0, 255, 0, 0, "NBG0 above the sprite shadow is unaffected")
 }
 
+// addNBG3White adds NBG3 (256-color, white, page 12, character 8 at cell
+// 0x100) at the given priority to a three-layer scene.
+func addNBG3White(v *VDP2, pri uint16) {
+	v.regs[vdp2BGON] |= 0x0008
+	v.regs[vdp2CHCTLB] |= 0x0020
+	v.regs[vdp2PNCN3] = 0x0000
+	v.regs[vdp2MPABN3] = 0x000C
+	v.regs[vdp2MPCDN3] = 0x000C
+	v.regs[vdp2PRINB] = (v.regs[vdp2PRINB] &^ 0x0700) | pri<<8
+	writeVRAM16(v, 0x30000, 0x0000)
+	writeVRAM16(v, 0x30002, 0x0008)
+	for i := 0; i < 64; i++ {
+		v.vram[0x100+i] = 40
+	}
+	writeCRAM16Test(v, 40, 0x7FFF)
+}
+
+// normalShadowFB returns a sprite frame buffer with a type 0 normal
+// shadow pixel at (x, 0).
+func normalShadowFB(x int) vdp1FBView {
+	fb := vdp1FBView{data: make([]byte, 512*256*2), width: 512, height: 256}
+	setFBPixel16(fb, x, 0, 0x07FE)
+	return fb
+}
+
+// TestShadowPerLayer verifies the per-layer normal shadow enables (SDCTL
+// bits 1-4): a normal shadow sprite of the highest priority halves the
+// top layer only when that layer's bit is set, for NBG1, NBG2, NBG3, and
+// RBG0.
+func TestShadowPerLayer(t *testing.T) {
+	cases := []struct {
+		name  string
+		build func(t *testing.T) *VDP2
+		bit   uint16
+		color [3]int
+	}{
+		{"NBG1", func(t *testing.T) *VDP2 { return setupThreeNBGLayers(t, 3, 5, 1) }, 1 << 1, [3]int{255, 0, 0}},
+		{"NBG2", func(t *testing.T) *VDP2 { return setupThreeNBGLayers(t, 1, 3, 5) }, 1 << 2, [3]int{0, 0, 255}},
+		{"NBG3", func(t *testing.T) *VDP2 {
+			v := setupThreeNBGLayers(t, 5, 3, 1)
+			addNBG3White(v, 7)
+			return v
+		}, 1 << 3, [3]int{255, 255, 255}},
+		{"RBG0", setupRBG0ParamAB, 1 << 4, [3]int{255, 0, 0}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			v := tc.build(t)
+			v.regs[vdp2SPCTL] = 0x0000
+			v.regs[vdp2PRISA] = 0x0007
+			v.regs[vdp2SDCTL] = tc.bit
+			renderTestFrameFB(v, normalShadowFB(2))
+			expectOut(t, v, 2, 0, tc.color[0]/2, tc.color[1]/2, tc.color[2]/2, 1, "shadow enabled")
+			expectOut(t, v, 3, 0, tc.color[0], tc.color[1], tc.color[2], 0, "no shadow pixel")
+
+			v = tc.build(t)
+			v.regs[vdp2SPCTL] = 0x0000
+			v.regs[vdp2PRISA] = 0x0007
+			v.regs[vdp2SDCTL] = 0
+			renderTestFrameFB(v, normalShadowFB(2))
+			expectOut(t, v, 2, 0, tc.color[0], tc.color[1], tc.color[2], 0, "shadow disabled")
+		})
+	}
+}
+
+// TestColorOffsetPerLayer verifies the color offset enable and A/B select
+// per layer (CLOFEN and CLOFSL bits 1-4) for NBG1, NBG2, NBG3, and RBG0:
+// offset A is R-16 G+10, offset B is R-32 G+20.
+func TestColorOffsetPerLayer(t *testing.T) {
+	cases := []struct {
+		name  string
+		build func(t *testing.T) *VDP2
+		bit   uint16
+		color [3]int
+	}{
+		{"NBG1", func(t *testing.T) *VDP2 { return setupThreeNBGLayers(t, 3, 5, 1) }, 1 << 1, [3]int{255, 0, 0}},
+		{"NBG2", func(t *testing.T) *VDP2 { return setupThreeNBGLayers(t, 1, 3, 5) }, 1 << 2, [3]int{0, 0, 255}},
+		{"NBG3", func(t *testing.T) *VDP2 {
+			v := setupThreeNBGLayers(t, 5, 3, 1)
+			addNBG3White(v, 7)
+			return v
+		}, 1 << 3, [3]int{255, 255, 255}},
+		{"RBG0", setupRBG0ParamAB, 1 << 4, [3]int{255, 0, 0}},
+	}
+	clamp := func(c int) int {
+		if c < 0 {
+			return 0
+		}
+		if c > 255 {
+			return 255
+		}
+		return c
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			run := func(clofen, clofsl uint16) *VDP2 {
+				v := tc.build(t)
+				v.regs[vdp2CLOFEN] = clofen
+				v.regs[vdp2CLOFSL] = clofsl
+				v.regs[vdp2COAR], v.regs[vdp2COAG], v.regs[vdp2COAB] = 0x1F0, 10, 0
+				v.regs[vdp2COBR], v.regs[vdp2COBG], v.regs[vdp2COBB] = 0x1E0, 20, 0
+				renderTestFrame(v)
+				return v
+			}
+			r, g, b := tc.color[0], tc.color[1], tc.color[2]
+			v := run(0, 0)
+			expectOut(t, v, 0, 0, r, g, b, 0, "offset disabled")
+			v = run(tc.bit, 0)
+			expectOut(t, v, 0, 0, clamp(r-16), clamp(g+10), b, 0, "offset A")
+			v = run(tc.bit, tc.bit)
+			expectOut(t, v, 0, 0, clamp(r-32), clamp(g+20), b, 0, "offset B")
+			// Another layer's enable bit does not apply to this layer.
+			v = run(0x0001&^tc.bit|0x0020, 0)
+			expectOut(t, v, 0, 0, r, g, b, 0, "other layers' enables")
+		})
+	}
+}
+
+// solidEXBGSource provides a solid-color external frame.
+type solidEXBGSource struct {
+	rgb  []uint32
+	w, h int
+}
+
+func (s *solidEXBGSource) MpegFrameRGB() ([]uint32, int, int, bool) {
+	return s.rgb, s.w, s.h, true
+}
+
+func newSolidEXBGSource(w, h int, rgb uint32) *solidEXBGSource {
+	s := &solidEXBGSource{rgb: make([]uint32, w*h), w: w, h: h}
+	for i := range s.rgb {
+		s.rgb[i] = rgb
+	}
+	return s
+}
+
+// TestEXBGComposite verifies EXBG in the composite: it is masked by the
+// NBG1 slot's window, color-calculates with the NBG1 slot's ratio, and
+// loses a priority tie to NBG0 like NBG1 would.
+func TestEXBGComposite(t *testing.T) {
+	build := func() *VDP2 {
+		v := setupThreeNBGLayers(t, 5, 0, 0) // NBG0 green at x 0..7, priority 5
+		v.regs[vdp2EXTEN] = 0x0001
+		v.regs[vdp2PRINA] = 0x0505 // NBG0 5, NBG1 slot (EXBG) 5
+		v.SetEXBGSource(newSolidEXBGSource(320, 224, 0xFFFFFF))
+		v.regs[vdp2BKTAU] = 0x0002
+		v.regs[vdp2BKTAL] = 0xC000
+		writeVRAM16(v, 0x58000, 0xFC00) // blue back screen
+		return v
+	}
+
+	// Priority tie: NBG0 wins at x 0..7, EXBG shows beyond.
+	v := build()
+	renderTestFrame(v)
+	expectOut(t, v, 0, 0, 0, 255, 0, 0, "tie: NBG0 over EXBG")
+	expectOut(t, v, 8, 0, 255, 255, 255, 0, "EXBG where NBG0 is absent")
+
+	// NBG1 slot window W0 (x 0..4) masks EXBG; NBG0 off.
+	v = build()
+	v.regs[vdp2PRINA] = 0x0500
+	v.regs[vdp2WPSX0], v.regs[vdp2WPEX0] = 0, 8
+	v.regs[vdp2WPSY0], v.regs[vdp2WPEY0] = 0, 15
+	v.regs[vdp2WCTLA] = 0x0200
+	renderTestFrame(v)
+	expectOut(t, v, 2, 0, 0, 0, 255, 0, "EXBG masked by the NBG1 slot window")
+	expectOut(t, v, 6, 0, 255, 255, 255, 0, "EXBG outside the window")
+
+	// NBG1 slot color calculation over the back screen.
+	v = build()
+	v.regs[vdp2PRINA] = 0x0500
+	v.regs[vdp2CCCTL] = 0x0002
+	v.regs[vdp2CCRNA] = 16 << 8
+	renderTestFrame(v)
+	expectOut(t, v, 20, 0, 119, 119, 255, 2, "EXBG blends with the NBG1 slot ratio")
+}
+
+// TestRenderToPartialRow verifies the walker's partial-row rendering: a
+// row rendered in two spans reads character data live, so a VRAM write
+// between the spans changes the second span, while a CRAM write between
+// spans applies from the next line (the CRAM cache is rebuilt per line).
+func TestRenderToPartialRow(t *testing.T) {
+	v := setupNBG0FullTile(t)      // 4bpp tile, dot 3 of palette 1 (CRAM 19) red
+	writeCRAM16Test(v, 20, 0x03E0) // palette 1 dot 4: green
+	v.BeginFrame()
+	v.BeginLine(0, vdp1FBView{})
+	v.RenderTo(4)
+	for i := uint32(0); i < 0x20; i++ {
+		v.WriteVRAM(0x20+i, 0x44) // tile dots become 4
+	}
+	v.WriteCRAM16(38, 0x7C00) // palette 1 dot 3 becomes blue
+	v.RenderTo(v.frame.width)
+	expectOut(t, v, 3, 0, 255, 0, 0, 0, "first span: original dot and color")
+	expectOut(t, v, 4, 0, 0, 255, 0, 0, "second span: VRAM write visible")
+
+	// Next line: the tile is green (dot 4) everywhere; restore dot 3 on
+	// half the tile to show the CRAM write has applied.
+	for i := uint32(0); i < 0x20; i += 4 {
+		v.WriteVRAM(0x20+i, 0x33)
+		v.WriteVRAM(0x20+i+1, 0x33)
+	}
+	v.RenderLine(1, vdp1FBView{})
+	expectOut(t, v, 0, 1, 0, 0, 255, 0, "next line: CRAM write applied")
+	expectOut(t, v, 4, 1, 0, 255, 0, 0, "next line: dot 4 still green")
+}
+
 // TestCoefficientLineColorInsertion verifies the line color screen taken
 // from a rotation coefficient (KLCE): the CRAM address is the line color
 // table entry's bits 10:7 over the coefficient's 7 line color bits
@@ -255,9 +460,9 @@ func TestLayerCCRatioRegisters(t *testing.T) {
 	v.regs[vdp2MPCDN3] = 0x000C
 	v.regs[vdp2PRINB] |= 7 << 8
 	writeVRAM16(v, 0x30000, 0x0000)
-	writeVRAM16(v, 0x30002, 0x0004)
+	writeVRAM16(v, 0x30002, 0x0008)
 	for i := 0; i < 64; i++ {
-		v.vram[0x80+i] = 40
+		v.vram[0x100+i] = 40
 	}
 	writeCRAM16Test(v, 40, 0x7FFF)
 	v.regs[vdp2CCCTL] = 0x0008
@@ -459,9 +664,9 @@ func TestExtendedCCGating(t *testing.T) {
 	v.regs[vdp2MPCDN3] = 0x000C
 	v.regs[vdp2PRINB] |= 1 << 8
 	writeVRAM16(v, 0x30000, 0x0000)
-	writeVRAM16(v, 0x30002, 0x0004)
+	writeVRAM16(v, 0x30002, 0x0008)
 	for i := 0; i < 64; i++ {
-		v.vram[0x80+i] = 40
+		v.vram[0x100+i] = 40
 	}
 	writeCRAM16Test(v, 40, 0x7FFF)
 	v.regs[vdp2CCCTL] = 0x0403

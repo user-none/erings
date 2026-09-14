@@ -549,3 +549,43 @@ func TestNBGBitmapMosaicAndNegativeScroll(t *testing.T) {
 	renderTestNBG(v, 0, buf)
 	expectRGB(t, v, buf, 0, 0, 0, 0, 255, "scroll (-1,-1) reads dot (511,255)")
 }
+
+// TestNBGMapOffsetOneWord2x2 verifies the NBG0 map offset (MPOFN bits 2:0)
+// adds 64 pages to the map register page, and the rendered 1-word 2x2
+// character path: with 2x2 characters and 1-word names a page is 0x800
+// bytes, so map offset 1 puts plane A's page at 0x20000. The 1-word
+// name's character bits 9:0 are shifted left by 2 for 2x2 characters.
+func TestNBGMapOffsetOneWord2x2(t *testing.T) {
+	build := func(mpofn uint16) *VDP2 {
+		v := newTestVDP2()
+		v.regs[vdp2BGON] = 0x0001
+		v.regs[vdp2CHCTLA] = 0x0001 // 16-color, 2x2 characters
+		v.regs[vdp2PNCN0] = 0x8000  // 1-word names, no supplement bits
+		v.regs[vdp2MPABN0] = 0x0000
+		v.regs[vdp2MPCDN0] = 0x0000
+		v.regs[vdp2MPOFN] = mpofn
+		v.regs[vdp2PRINA] = 0x0001
+		writeRBGTestTile(v, 0x400, rbgTestRed)
+		writeRBGTestTile(v, 0x401, rbgTestGreen)
+		writeRBGTestTile(v, 0x402, rbgTestBlue)
+		writeRBGTestTile(v, 0x403, 0x6)
+		writeRBGTestPalette(v)
+		v.cram[44], v.cram[45] = 0x7F, 0xFF
+		// Cell (0,0) of the page at 0x20000: palette 1, character 0x400.
+		writeVRAM16(v, 0x20000, 0x1100)
+		return v
+	}
+	buf := make([]uint32, 352*256)
+
+	v := build(0x0001)
+	renderTestNBG(v, 0, buf)
+	expectRGB(t, v, buf, 0, 0, 255, 0, 0, "map offset 1: top-left sub-cell")
+	expectRGB(t, v, buf, 8, 0, 0, 255, 0, "map offset 1: top-right sub-cell")
+	expectRGB(t, v, buf, 0, 8, 0, 0, 255, "map offset 1: bottom-left sub-cell")
+	expectRGB(t, v, buf, 8, 8, 255, 255, 255, "map offset 1: bottom-right sub-cell")
+
+	v = build(0x0000)
+	clear(buf)
+	renderTestNBG(v, 0, buf)
+	expectTransparent(t, v, buf, 0, 0, "map offset 0: page at 0 is empty")
+}

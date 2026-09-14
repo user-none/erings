@@ -5381,6 +5381,218 @@ func TestDistortedSpriteGapFillHalfTransparent(t *testing.T) {
 	}
 }
 
+// writeScaledTwoCoord writes a two-coordinate scaled sprite command at
+// addr with the given color mode, CMDCOLR, 8x8 character at 0x1000, and
+// destination corners.
+func writeScaledTwoCoord(v *VDP1, addr uint32, colorMode, colr uint16, x1, y1, x2, y2 int16) {
+	writeCmd16(v, addr+0x00, 0x0001)
+	writeCmd16(v, addr+0x04, colorMode<<3)
+	writeCmd16(v, addr+0x06, colr)
+	writeCmd16(v, addr+0x08, 0x1000/8)
+	writeCmd16(v, addr+0x0A, 0x0108)
+	writeCmd16(v, addr+0x0C, uint16(x1))
+	writeCmd16(v, addr+0x0E, uint16(y1))
+	writeCmd16(v, addr+0x14, uint16(x2))
+	writeCmd16(v, addr+0x16, uint16(y2))
+}
+
+// TestScaledAndDistortedColorModes123 verifies the CLUT (mode 1), 64-color
+// bank (mode 2), and 128-color bank (mode 3) texture formats on scaled
+// and distorted sprites, which the normal sprite tests cover already.
+func TestScaledAndDistortedColorModes123(t *testing.T) {
+	// 4bpp texture: dot = column + 1. CLUT at 0x2000: entry d = 0x8000|d.
+	clutTexture := func(v *VDP1) {
+		for y := 0; y < 8; y++ {
+			for p := 0; p < 4; p++ {
+				v.WriteVRAM(0x1000+uint32(y*4+p), uint8((2*p+1)<<4|(2*p+2)))
+			}
+		}
+		for d := uint32(0); d < 16; d++ {
+			writeCmd16(v, 0x2000+d*2, 0x8000|uint16(d))
+		}
+	}
+	bankTexture := func(v *VDP1, dot uint8) {
+		for i := 0; i < 64; i++ {
+			v.WriteVRAM(0x1000+uint32(i), dot)
+		}
+	}
+	cases := []struct {
+		name    string
+		mode    uint16
+		colr    uint16
+		texture func(v *VDP1)
+		pixel   func(x int) uint16
+	}{
+		{"CLUT", 1, 0x2000 / 8, clutTexture, func(x int) uint16 { return 0x8000 | uint16(x+1) }},
+		{"64-color bank", 2, 0x0140, func(v *VDP1) { bankTexture(v, 0x3F) }, func(int) uint16 { return 0x017F }},
+		{"128-color bank", 3, 0x0180, func(v *VDP1) { bankTexture(v, 0x7F) }, func(int) uint16 { return 0x01FF }},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name+" scaled 2x", func(t *testing.T) {
+			v := newDrawTestVDP1()
+			writeScaledTwoCoord(v, 0x00, tc.mode, tc.colr, 0, 0, 15, 15)
+			writeDrawEnd(v, 0x20)
+			tc.texture(v)
+			v.VBlankIn()
+			drainDrawing(v)
+			for x := 0; x < 16; x++ {
+				if got, want := readFBPixel(v, x, 9), tc.pixel(x/2); got != want {
+					t.Errorf("pixel (%d,9) = 0x%04X, want 0x%04X", x, got, want)
+				}
+			}
+		})
+		t.Run(tc.name+" distorted", func(t *testing.T) {
+			v := newDrawTestVDP1()
+			writeDistortedSprite(v, 0x00, 0, 0, 7, 0, 7, 7, 0, 7, tc.mode, tc.colr, 0x1000, 8, 8)
+			writeDrawEnd(v, 0x20)
+			tc.texture(v)
+			v.VBlankIn()
+			drainDrawing(v)
+			for x := 0; x < 8; x++ {
+				if got, want := readFBPixel(v, x, 5), tc.pixel(x); got != want {
+					t.Errorf("pixel (%d,5) = 0x%04X, want 0x%04X", x, got, want)
+				}
+			}
+		})
+	}
+}
+
+// TestDistortedAndScaled4bppEndCodes verifies end codes in the 16-color
+// bank format (dot 0xF) on distorted and scaled sprites: the first end
+// code is skipped and the second terminates the line.
+func TestDistortedAndScaled4bppEndCodes(t *testing.T) {
+	// Row dots: 1, 2, F, 3, 4, F, 5, 6.
+	texture := func(v *VDP1) {
+		v.WriteVRAM(0x1000, 0x12)
+		v.WriteVRAM(0x1001, 0xF3)
+		v.WriteVRAM(0x1002, 0x4F)
+		v.WriteVRAM(0x1003, 0x56)
+	}
+	want := []uint16{0x0101, 0x0102, 0, 0x0103, 0x0104, 0, 0, 0}
+	check := func(t *testing.T, v *VDP1, what string) {
+		t.Helper()
+		for x, w := range want {
+			if got := readFBPixel(v, x, 0); got != w {
+				t.Errorf("%s: pixel (%d,0) = 0x%04X, want 0x%04X", what, x, got, w)
+			}
+		}
+	}
+
+	v := newDrawTestVDP1()
+	writeDistortedSprite(v, 0x00, 0, 0, 7, 0, 7, 0, 0, 0, 0, 0x0100, 0x1000, 8, 1)
+	writeDrawEnd(v, 0x20)
+	texture(v)
+	v.VBlankIn()
+	drainDrawing(v)
+	check(t, v, "distorted")
+
+	v = newDrawTestVDP1()
+	writeCmd16(v, 0x00, 0x0001)
+	writeCmd16(v, 0x04, 0x0000) // mode 0, end codes enabled
+	writeCmd16(v, 0x06, 0x0100)
+	writeCmd16(v, 0x08, 0x1000/8)
+	writeCmd16(v, 0x0A, 0x0101) // 8x1
+	writeCmd16(v, 0x0C, 0)
+	writeCmd16(v, 0x0E, 0)
+	writeCmd16(v, 0x14, 7)
+	writeCmd16(v, 0x16, 0)
+	writeDrawEnd(v, 0x20)
+	texture(v)
+	v.VBlankIn()
+	drainDrawing(v)
+	check(t, v, "scaled 1:1")
+}
+
+// TestRotationFrameBufferHeight verifies the rotation 8-bit TV mode (TVMR
+// TVM=011) gives a 512-row frame buffer: a sprite at y 300 draws there,
+// while in the normal mode the same sprite lies below the 256-row clip.
+func TestRotationFrameBufferHeight(t *testing.T) {
+	draw := func(tvmr uint16) *VDP1 {
+		v := newDrawTestVDP1()
+		v.Write(0x00, tvmr)
+		// System clip (511,511): the frame buffer size is the only limit.
+		writeCmd16(v, 0x00, 0x0009)
+		writeCmd16(v, 0x14, 511)
+		writeCmd16(v, 0x16, 511)
+		writeCmd16(v, 0x20, 0x0000)
+		writeCmd16(v, 0x24, 0x0020)
+		writeCmd16(v, 0x26, 0x0100)
+		writeCmd16(v, 0x28, 0x1000/8)
+		writeCmd16(v, 0x2A, 0x0108)
+		writeCmd16(v, 0x2C, 4)
+		writeCmd16(v, 0x2E, 300)
+		writeDrawEnd(v, 0x40)
+		for i := 0; i < 64; i++ {
+			v.WriteVRAM(0x1000+uint32(i), 0x11)
+		}
+		v.VBlankIn()
+		drainDrawing(v)
+		return v
+	}
+	v := draw(0x0003)
+	if !v.FBRotated() || v.fbHeight() != 512 || !v.is8bpp() {
+		t.Fatalf("TVM=011: rotated=%v height=%d 8bpp=%v, want true 512 true", v.FBRotated(), v.fbHeight(), v.is8bpp())
+	}
+	if got := readFBPixel8(v, 4, 300); got != 0x11 {
+		t.Errorf("rotation mode: pixel (4,300) = 0x%02X, want 0x11", got)
+	}
+	if cx, cy := v.clipBounds(); cx != 511 || cy != 511 {
+		t.Errorf("rotation mode clip bounds = (%d,%d), want (511,511)", cx, cy)
+	}
+
+	v = draw(0x0000)
+	if v.FBRotated() || v.fbHeight() != 256 {
+		t.Fatalf("TVM=000: rotated=%v height=%d, want false 256", v.FBRotated(), v.fbHeight())
+	}
+	if cx, cy := v.clipBounds(); cx != 511 || cy != 255 {
+		t.Errorf("normal mode clip bounds = (%d,%d), want (511,255)", cx, cy)
+	}
+	if got := readFBPixel(v, 4, 300&255); got != 0 {
+		t.Errorf("normal mode: row 300 is clipped, row 44 = 0x%04X, want 0", got)
+	}
+}
+
+// TestSprites8bppFrameBuffer verifies scaled and distorted sprites draw
+// into an 8-bit frame buffer (TVMR TVM=001, hi-res 1024x256): each dot
+// stores the low byte of the color.
+func TestSprites8bppFrameBuffer(t *testing.T) {
+	texture := func(v *VDP1) {
+		for y := 0; y < 8; y++ {
+			for x := 0; x < 8; x++ {
+				v.WriteVRAM(0x1000+uint32(y*8+x), uint8(0x20+x))
+			}
+		}
+	}
+	v := newDrawTestVDP1()
+	v.Write(0x00, 0x0001)
+	writeScaledTwoCoord(v, 0x00, 4, 0x0100, 0, 0, 15, 15)
+	writeDrawEnd(v, 0x20)
+	texture(v)
+	v.VBlankIn()
+	drainDrawing(v)
+	if v.fbWidth() != 1024 || !v.is8bpp() {
+		t.Fatalf("TVM=001: width=%d 8bpp=%v, want 1024 true", v.fbWidth(), v.is8bpp())
+	}
+	for x := 0; x < 16; x++ {
+		if got, want := readFBPixel8(v, x, 3), uint8(0x20+x/2); got != want {
+			t.Errorf("scaled 8bpp: pixel (%d,3) = 0x%02X, want 0x%02X", x, got, want)
+		}
+	}
+
+	v = newDrawTestVDP1()
+	v.Write(0x00, 0x0001)
+	writeDistortedSprite(v, 0x00, 0, 0, 7, 0, 7, 7, 0, 7, 4, 0x0100, 0x1000, 8, 8)
+	writeDrawEnd(v, 0x20)
+	texture(v)
+	v.VBlankIn()
+	drainDrawing(v)
+	for x := 0; x < 8; x++ {
+		if got, want := readFBPixel8(v, x, 6), uint8(0x20+x); got != want {
+			t.Errorf("distorted 8bpp: pixel (%d,6) = 0x%02X, want 0x%02X", x, got, want)
+		}
+	}
+}
+
 // TestDistortedSpriteFlipVAndHSSParity verifies the vertical flip
 // (CMDCTRL bit 5) on a distorted sprite and the high speed shrink
 // sampling parity (FBCR EOS) when a connecting line is shorter than the

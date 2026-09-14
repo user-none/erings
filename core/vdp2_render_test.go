@@ -2369,9 +2369,9 @@ func setupTwoNBGLayers(t *testing.T, priNBG0, priNBG1 uint8) *VDP2 {
 	v.vram[0x10000] = 0x00
 	v.vram[0x10001] = 0x00
 	v.vram[0x10002] = 0x00
-	v.vram[0x10003] = 0x02
+	v.vram[0x10003] = 0x04
 	for i := 0; i < 64; i++ {
-		v.vram[0x40+i] = 20
+		v.vram[0x80+i] = 20
 	}
 	v.cram[20*2] = 0x00
 	v.cram[20*2+1] = 0x1F // red = (255, 0, 0)
@@ -4852,24 +4852,24 @@ func setupThreeNBGLayers(t *testing.T, priNBG0, priNBG1, priNBG2 uint8) *VDP2 {
 	v.cram[10*2] = 0x03
 	v.cram[10*2+1] = 0xE0 // green = (0, 255, 0)
 
-	// NBG1: PND at page 4 (0x10000), charNum=2, dot=20 -> red
+	// NBG1: PND at page 4 (0x10000), charNum=4 (cell 0x80), dot=20 -> red
 	v.vram[0x10000] = 0x00
 	v.vram[0x10001] = 0x00
 	v.vram[0x10002] = 0x00
-	v.vram[0x10003] = 0x02
+	v.vram[0x10003] = 0x04
 	for i := 0; i < 64; i++ {
-		v.vram[0x40+i] = 20
+		v.vram[0x80+i] = 20
 	}
 	v.cram[20*2] = 0x00
 	v.cram[20*2+1] = 0x1F // red = (255, 0, 0)
 
-	// NBG2: PND at page 8 (0x20000), charNum=3, dot=30 -> blue
+	// NBG2: PND at page 8 (0x20000), charNum=6 (cell 0xC0), dot=30 -> blue
 	v.vram[0x20000] = 0x00
 	v.vram[0x20001] = 0x00
 	v.vram[0x20002] = 0x00
-	v.vram[0x20003] = 0x03
+	v.vram[0x20003] = 0x06
 	for i := 0; i < 64; i++ {
-		v.vram[0x60+i] = 30
+		v.vram[0xC0+i] = 30
 	}
 	v.cram[30*2] = 0x7C
 	v.cram[30*2+1] = 0x00 // blue = (0, 0, 255)
@@ -6721,7 +6721,7 @@ func TestBurningRangersTitleColorCalc(t *testing.T) {
 	// NBG1 (text) = red (helper default 0x001F); leave as-is.
 
 	// NBG2: enabled, 16-color, priority 3, green. Plane at 0x8000
-	// (MPABN2=2 -> 2*0x4000), char 4 -> cell 0x80, dot 5 -> CRAM index 5.
+	// (MPABN2=2 -> 2*0x4000), char 0x10 -> cell 0x200, dot 5 -> CRAM index 5.
 	v.regs[vdp2BGON] = 0x0007 // NBG0, NBG1, NBG2
 	v.regs[vdp2CHCTLB] = 0x0000
 	v.regs[vdp2PNCN2] = 0x0000
@@ -6731,9 +6731,9 @@ func TestBurningRangersTitleColorCalc(t *testing.T) {
 	v.vram[0x8000] = 0x00
 	v.vram[0x8001] = 0x00
 	v.vram[0x8002] = 0x00
-	v.vram[0x8003] = 0x04 // charNum 4
+	v.vram[0x8003] = 0x10 // charNum 0x10
 	for i := 0; i < 0x20; i++ {
-		v.vram[0x80+i] = 0x55 // 4bpp dots = 5
+		v.vram[0x200+i] = 0x55 // 4bpp dots = 5
 	}
 	v.cram[5*2] = 0x03
 	v.cram[5*2+1] = 0xE0 // CRAM index 5 = green (0,255,0)
