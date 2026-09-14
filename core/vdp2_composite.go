@@ -142,7 +142,13 @@ func (v *VDP2) compositeSpanSetup(y int) func(x0, x1 int) {
 				stype := v.classifyShadow(spPixel)
 				if stype != shadowNone {
 					shadowType = stype
-				} else {
+				}
+				// A sprite shadow (MSB shadow with non-zero dot color,
+				// manual Sec 14.1) is an already-written sprite with a
+				// shadow added: it competes as a normal sprite pixel and
+				// is halved below when it is the top image. The other
+				// shadow kinds have no pixel of their own.
+				if stype == shadowNone || stype == shadowMSBSprite {
 					pri, spCCBits, colorMSB, sr, sg, sb := v.decodeSpritePixel(spPixel)
 					// Per VDP2 manual Sec 11.1 Priority Function:
 					// "When the value of the priority number is 0, it
@@ -293,8 +299,8 @@ func (v *VDP2) compositeSpanSetup(y int) func(x0, x1 int) {
 				if top.layerID != 5 {
 					// Scroll layers always use palette format
 					topCCEnabled = false
-				} else if v.frame.regs[vdp2SPCTL]&0x10 == 0 {
-					// Sprites in all-palette mode
+				} else if v.frame.regs[vdp2SPCTL]&0x20 == 0 {
+					// Sprites in all-palette mode (SPCLMD=0)
 					topCCEnabled = false
 				}
 			}
@@ -518,7 +524,8 @@ func (v *VDP2) compositeSpanSetup(y int) func(x0, x1 int) {
 					}
 				}
 			case shadowMSBSprite:
-				// MSB sprite shadow darkens the sprite below
+				// Sprite shadow: the sprite itself displays at half
+				// brightness when it is the top image (manual Sec 14.1).
 				if top.layerID == 5 {
 					r = r / 2
 					g = g / 2

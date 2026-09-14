@@ -371,6 +371,8 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 		subCellScale = 2
 	case 2, 3:
 		subCellScale = 4
+	case 4:
+		subCellScale = 8
 	}
 
 	var entrySize uint32
@@ -760,6 +762,12 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 						} else {
 							ovR, ovG, ovB = rgb555ToRGB(raw)
 						}
+					case 4:
+						var op bool
+						ovR, ovG, ovB, op = v.readCellPixel32bpp(ovCellAddr, ovDotX, ovDotY)
+						if !op && !cfg.transpOff {
+							ovTransp = true
+						}
 					}
 
 					ovPriority := cfg.priority
@@ -773,7 +781,7 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 					case 2:
 						// Mode 2 needs the special priority bit set and an sfcode
 						// match (manual Table 11.2); palette formats only.
-						if cfg.colorMode != 3 {
+						if cfg.colorMode < 3 {
 							if ovSpecialPri && sfcodeMatches(v.sfcodeForScreen(4), ovDotColor) {
 								ovPriority = (ovPriority & 0xFE) | 1
 							} else {
@@ -793,11 +801,11 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 					case 1:
 						ovCCEnabled = screenCC && ovSpecialCC
 					case 2:
-						if cfg.colorMode != 3 {
+						if cfg.colorMode < 3 {
 							ovCCEnabled = screenCC && ovSpecialCC && sfcodeMatches(v.sfcodeForScreen(4), ovDotColor)
 						}
 					case 3:
-						if cfg.colorMode == 3 {
+						if cfg.colorMode >= 3 {
 							ovCCEnabled = screenCC
 						} else {
 							ovCCEnabled = screenCC && ovCramCCBit
@@ -922,6 +930,12 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 				} else {
 					r, g, b = rgb555ToRGB(raw)
 				}
+			case 4:
+				var op bool
+				r, g, b, op = v.readCellPixel32bpp(cellAddr, dx, dy)
+				if !op && !cfg.transpOff {
+					transp = true
+				}
 			}
 
 			// Compute effective priority with special priority function
@@ -936,7 +950,7 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 			case 2:
 				// Mode 2 needs the special priority bit set and an sfcode match
 				// (manual Table 11.2); palette formats only.
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					if specialPriBit && sfcodeMatches(v.sfcodeForScreen(4), dotColor) {
 						priority = (priority & 0xFE) | 1
 					} else {
@@ -957,11 +971,11 @@ func (v *VDP2) rbg0CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 			case 1:
 				ccEnabled = screenCC && specialCCBit
 			case 2:
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					ccEnabled = screenCC && specialCCBit && sfcodeMatches(v.sfcodeForScreen(4), dotColor)
 				}
 			case 3:
-				if cfg.colorMode == 3 {
+				if cfg.colorMode >= 3 {
 					ccEnabled = screenCC
 				} else {
 					ccEnabled = screenCC && cramCCBit
@@ -1008,8 +1022,11 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 	screenOverB := rf.screenOverB
 	paramABase, paramBBase := rf.paramABase, rf.paramBBase
 
-	// Bitmap base address: mapOffset (from MPOFR) * 0x20000
-	baseAddr := cfg.mapOffset * 0x20000
+	// Bitmap base address per rotation parameter: MPOFR RAMP (bits 2:0)
+	// for parameter A and RBMP (bits 6:4) for parameter B, each times
+	// 0x20000 (VDP2 manual, Map Offset Register).
+	baseAddrA := cfg.mapOffset * 0x20000
+	baseAddrB := rf.mapOffsetB * 0x20000
 
 	bmpW := cfg.bmpWidth
 	bmpH := cfg.bmpHeight
@@ -1098,6 +1115,10 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			if cfg.rpMode == 3 && v.isRPWindowB(x, y) {
 				useA = false
 			}
+			baseAddr := baseAddrA
+			if !useA {
+				baseAddr = baseAddrB
+			}
 
 			var pf *rbgPerFrame
 			var pp *rotParams
@@ -1170,6 +1191,7 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 					ky = pp.ky
 					xpVal = pf.xp
 					curScreenOver = screenOverB
+					baseAddr = baseAddrB
 
 					if coefEnB {
 						mode3B := coefModeB == 3
@@ -1292,6 +1314,16 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 				} else {
 					r, g, b = rgb555ToRGB(raw)
 				}
+			case 4: // 16.7M (32bpp RGB direct)
+				addr := baseAddr + uint32(mapY*bmpW+mapX)*4
+				w0 := v.readVRAM16(addr)
+				w1 := v.readVRAM16(addr + 2)
+				b = uint8(w0)
+				g = uint8(w1 >> 8)
+				r = uint8(w1)
+				if w0&0x8000 == 0 && !cfg.transpOff {
+					transp = true
+				}
 			}
 
 			// Compute effective priority with special priority function
@@ -1306,7 +1338,7 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			case 2:
 				// Mode 2 needs the bitmap special priority bit set and an sfcode
 				// match (manual Table 11.2); palette formats only.
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					if cfg.bmpSpecialPri && sfcodeMatches(v.sfcodeForScreen(4), dotColor) {
 						priority = (priority & 0xFE) | 1
 					} else {
@@ -1327,11 +1359,11 @@ func (v *VDP2) rbg0BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			case 1:
 				ccEnabled = screenCC && cfg.bmpSpecialCC
 			case 2:
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					ccEnabled = screenCC && cfg.bmpSpecialCC && sfcodeMatches(v.sfcodeForScreen(4), dotColor)
 				}
 			case 3:
-				if cfg.colorMode == 3 {
+				if cfg.colorMode >= 3 {
 					ccEnabled = screenCC
 				} else {
 					ccEnabled = screenCC && cramCCBit
@@ -1392,6 +1424,8 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 		subCellScale = 2
 	case 2, 3:
 		subCellScale = 4
+	case 4:
+		subCellScale = 8
 	}
 
 	var entrySize uint32
@@ -1587,6 +1621,12 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 						} else {
 							ovR, ovG, ovB = rgb555ToRGB(raw)
 						}
+					case 4:
+						var op bool
+						ovR, ovG, ovB, op = v.readCellPixel32bpp(ovCellAddr, ovDotX, ovDotY)
+						if !op && !cfg.transpOff {
+							ovTransp = true
+						}
 					}
 
 					ovPriority := cfg.priority
@@ -1600,7 +1640,7 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 					case 2:
 						// Mode 2 needs the special priority bit set and an sfcode
 						// match (manual Table 11.2); palette formats only.
-						if cfg.colorMode != 3 {
+						if cfg.colorMode < 3 {
 							if ovSpecialPri && sfcodeMatches(v.sfcodeForScreen(0), ovDotColor) {
 								ovPriority = (ovPriority & 0xFE) | 1
 							} else {
@@ -1620,11 +1660,11 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 					case 1:
 						ovCCEnabled = screenCC && ovSpecialCC
 					case 2:
-						if cfg.colorMode != 3 {
+						if cfg.colorMode < 3 {
 							ovCCEnabled = screenCC && ovSpecialCC && sfcodeMatches(v.sfcodeForScreen(0), ovDotColor)
 						}
 					case 3:
-						if cfg.colorMode == 3 {
+						if cfg.colorMode >= 3 {
 							ovCCEnabled = screenCC
 						} else {
 							ovCCEnabled = screenCC && ovCramCCBit
@@ -1743,6 +1783,12 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 				} else {
 					r, g, b = rgb555ToRGB(raw)
 				}
+			case 4:
+				var op bool
+				r, g, b, op = v.readCellPixel32bpp(cellAddr, dx, dy)
+				if !op && !cfg.transpOff {
+					transp = true
+				}
 			}
 
 			priority := cfg.priority
@@ -1756,7 +1802,7 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 			case 2:
 				// Mode 2 needs the special priority bit set and an sfcode match
 				// (manual Table 11.2); palette formats only.
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					if specialPriBit && sfcodeMatches(v.sfcodeForScreen(0), dotColor) {
 						priority = (priority & 0xFE) | 1
 					} else {
@@ -1776,11 +1822,11 @@ func (v *VDP2) rbg1CellSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y i
 			case 1:
 				ccEnabled = screenCC && specialCCBit
 			case 2:
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					ccEnabled = screenCC && specialCCBit && sfcodeMatches(v.sfcodeForScreen(0), dotColor)
 				}
 			case 3:
-				if cfg.colorMode == 3 {
+				if cfg.colorMode >= 3 {
 					ccEnabled = screenCC
 				} else {
 					ccEnabled = screenCC && cramCCBit
@@ -1984,6 +2030,16 @@ func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 				} else {
 					r, g, b = rgb555ToRGB(raw)
 				}
+			case 4: // 16.7M (32bpp RGB direct)
+				pixOff := baseAddr + uint32((mapY*bmpW+mapX)*4)
+				w0 := v.readVRAM16(pixOff)
+				w1 := v.readVRAM16(pixOff + 2)
+				b = uint8(w0)
+				g = uint8(w1 >> 8)
+				r = uint8(w1)
+				if w0&0x8000 == 0 && !cfg.transpOff {
+					transp = true
+				}
 			}
 
 			// Compute effective priority with special priority function
@@ -1998,7 +2054,7 @@ func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			case 2:
 				// Mode 2 needs the bitmap special priority bit set and an sfcode
 				// match (manual Table 11.2); palette formats only.
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					if cfg.bmpSpecialPri && sfcodeMatches(v.sfcodeForScreen(0), dotColor) {
 						priority = (priority & 0xFE) | 1
 					} else {
@@ -2019,11 +2075,11 @@ func (v *VDP2) rbg1BitmapSpanSetup(buf []uint32, cfg *rbgConfig, rf *rbgFrame, y
 			case 1:
 				ccEnabled = screenCC && cfg.bmpSpecialCC
 			case 2:
-				if cfg.colorMode != 3 {
+				if cfg.colorMode < 3 {
 					ccEnabled = screenCC && cfg.bmpSpecialCC && sfcodeMatches(v.sfcodeForScreen(0), dotColor)
 				}
 			case 3:
-				if cfg.colorMode == 3 {
+				if cfg.colorMode >= 3 {
 					ccEnabled = screenCC
 				} else {
 					ccEnabled = screenCC && cramCCBit

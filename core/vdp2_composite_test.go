@@ -50,6 +50,60 @@ func TestHiResPaletteCCRestriction(t *testing.T) {
 	v.hiRes = true
 	renderTestFrame(v)
 	expectOut(t, v, 0, 0, 135, 119, 0, 2, "hi-res CRAM mode 0: blends")
+
+	// Sprites: the restriction applies to palette-format sprite data,
+	// selected by SPCTL SPCLMD (bit 5). SPWINEN (bit 4) has no bearing.
+	sprite := func(spctl uint16, pixel uint16) *VDP2 {
+		v := newTestVDP2()
+		v.regs[vdp2SPCTL] = spctl | 0x0700 // all priorities calculate
+		v.regs[vdp2PRISA] = 0x0005
+		v.regs[vdp2CCCTL] = 1 << 6
+		v.regs[vdp2CCRSA] = 16
+		v.regs[vdp2RAMCTL] = 0x1000
+		v.regs[vdp2BKTAU] = 0x0002
+		v.regs[vdp2BKTAL] = 0xC000
+		writeVRAM16(v, 0x58000, 0xFC00) // blue back screen
+		writeCRAM16Test(v, 5, 0x001F)
+		v.hiRes = true
+		data := make([]byte, 512*256*2)
+		data[0], data[1] = uint8(pixel>>8), uint8(pixel)
+		renderTestFrameFB(v, vdp1FBView{data: data, width: 512, height: 256})
+		return v
+	}
+	v = sprite(0x0000, 0x0005) // palette only
+	expectOut(t, v, 0, 0, 255, 0, 0, 0, "hi-res CRAM mode 1 palette sprite (SPCLMD=0): no CC")
+	v = sprite(0x0010, 0x0005) // palette only, sprite window enabled
+	expectOut(t, v, 0, 0, 255, 0, 0, 0, "hi-res CRAM mode 1 palette sprite (SPWINEN set): no CC")
+	v = sprite(0x0020, 0x801F) // mixed mode, RGB pixel
+	expectOut(t, v, 0, 0, 119, 0, 135, 2, "hi-res CRAM mode 1 RGB sprite (SPCLMD=1): blends")
+}
+
+// TestMSBSpriteShadowOnTopSprite verifies the sprite shadow (VDP2 manual
+// Sec 14.1 MSB Shadow): a type 2-7 sprite pixel with the MSB set and
+// non-zero dot color is the already-written sprite with a shadow added,
+// displayed at half brightness when it is the top image, and it does not
+// affect a higher-priority layer above it.
+func TestMSBSpriteShadowOnTopSprite(t *testing.T) {
+	build := func(nbgPri uint8) (*VDP2, vdp1FBView) {
+		v := setupThreeNBGLayers(t, nbgPri, 0, 0) // NBG0 green at x 0..7
+		v.regs[vdp2SPCTL] = 0x0006
+		v.regs[vdp2PRISA] = 0x0005
+		writeCRAM16Test(v, 5, 0x001F)
+		fb := vdp1FBView{data: make([]byte, 512*256*2), width: 512, height: 256}
+		setFBPixel16(fb, 0, 0, 0x8005) // sprite shadow, red
+		setFBPixel16(fb, 1, 0, 0x0005) // plain sprite, red
+		setFBPixel16(fb, 9, 0, 0x8005) // sprite shadow over the back screen
+		return v, fb
+	}
+	v, fb := build(3)
+	renderTestFrameFB(v, fb)
+	expectOut(t, v, 0, 0, 127, 0, 0, 1, "sprite shadow on top: half brightness")
+	expectOut(t, v, 1, 0, 255, 0, 0, 0, "plain sprite on top")
+	expectOut(t, v, 9, 0, 127, 0, 0, 1, "sprite shadow over the back screen")
+
+	v, fb = build(7)
+	renderTestFrameFB(v, fb)
+	expectOut(t, v, 0, 0, 0, 255, 0, 0, "NBG0 above the sprite shadow is unaffected")
 }
 
 // TestCoefficientLineColorInsertion verifies the line color screen taken

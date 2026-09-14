@@ -187,6 +187,85 @@ func TestRBG0RPMD1ParamBPlaneSize(t *testing.T) {
 	expectRGB(t, v, buf, 0, 0, 0, 0, 255, "RPMD=1 B plane 2x1: cell 64 is plane A page 1")
 }
 
+// TestRBG0BitmapParamBMapOffset verifies a bitmap RBG0 dot rendered
+// through rotation parameter B reads the bitmap at parameter B's map
+// offset (MPOFR RBMP bits 6:4, VDP2 manual Map Offset Register p.85),
+// while parameter A dots keep parameter A's offset.
+func TestRBG0BitmapParamBMapOffset(t *testing.T) {
+	setup := func() *VDP2 {
+		v := setupRBG0BitmapParamAB(t)
+		v.regs[vdp2MPOFR] = 0x0010 // RAMP 0, RBMP 1 -> B bitmap at 0x20000
+		writeRBGParamBIdentity(v, 0)
+		for x := 0; x < 48; x++ {
+			v.vram[0x20000+x] = 7 // blue
+		}
+		v.cram[14], v.cram[15] = 0x7C, 0x00
+		return v
+	}
+	buf := make([]uint32, 352*256)
+
+	v := setup()
+	v.regs[vdp2RPMD] = 0x0001
+	renderTestRBG0(v, buf)
+	expectRGB(t, v, buf, 0, 0, 0, 0, 255, "RPMD=1 reads the parameter B bitmap")
+
+	v = setup()
+	v.regs[vdp2RPMD] = 0x0000
+	clear(buf)
+	renderTestRBG0(v, buf)
+	expectRGB(t, v, buf, 0, 0, 255, 0, 0, "RPMD=0 reads the parameter A bitmap")
+
+	v = setup()
+	v.regs[vdp2RPMD] = 0x0003
+	v.regs[vdp2WCTLD] = 0x0002
+	v.regs[vdp2WPSX0], v.regs[vdp2WPEX0] = 0, 20
+	v.regs[vdp2WPSY0], v.regs[vdp2WPEY0] = 0, 7
+	clear(buf)
+	renderTestRBG0(v, buf)
+	expectRGB(t, v, buf, 3, 0, 0, 0, 255, "RPMD=3 inside W0: parameter B bitmap")
+	expectRGB(t, v, buf, 12, 0, 255, 0, 0, "RPMD=3 outside W0: parameter A bitmap")
+}
+
+// fill32 writes count consecutive 32-bit dots (two big-endian words) at
+// addr.
+func fill32(v *VDP2, addr uint32, count int, w0, w1 uint16) {
+	for i := 0; i < count; i++ {
+		writeVRAM16(v, addr+uint32(i)*4, w0)
+		writeVRAM16(v, addr+uint32(i)*4+2, w1)
+	}
+}
+
+// TestRBGCell2x2ColorMode16M verifies 2x2 characters in the 16,770,000
+// color format on RBG0 and RBG1: a 32-bit-per-dot cell is 256 bytes, so
+// consecutive sub-cells are 8 character-number units apart.
+func TestRBGCell2x2ColorMode16M(t *testing.T) {
+	for _, tc := range []struct {
+		name   string
+		setup  func(t *testing.T) *VDP2
+		render func(v *VDP2, buf []uint32)
+		chctl  int
+		val    uint16
+	}{
+		{"RBG0", setupRBG0Identity, renderTestRBG0, vdp2CHCTLB, 4<<12 | 0x0100},
+		{"RBG1", setupRBG1Identity, renderTestRBG1, vdp2CHCTLA, 4<<4 | 0x0001},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			v := tc.setup(t)
+			v.regs[tc.chctl] = tc.val
+			fill32(v, 0x8000, 64, 0x8000, 0x00FF) // top-left: red
+			fill32(v, 0x8100, 64, 0x8000, 0xFF00) // top-right: green
+			fill32(v, 0x8200, 64, 0x80FF, 0x0000) // bottom-left: blue
+			writeVRAM16(v, 0, 0x0000)
+			writeVRAM16(v, 2, 0x0400)
+			buf := make([]uint32, 352*256)
+			tc.render(v, buf)
+			expectRGB(t, v, buf, 0, 0, 255, 0, 0, "top-left sub-cell")
+			expectRGB(t, v, buf, 8, 0, 0, 255, 0, "top-right sub-cell")
+			expectRGB(t, v, buf, 0, 8, 0, 0, 255, "bottom-left sub-cell")
+		})
+	}
+}
+
 // TestRBG0RPMD3WindowSelectsParamCell verifies RPMD mode 3 shows
 // parameter B inside the rotation parameter window's active area and
 // parameter A outside it (VDP2 manual Sec 6.1 Table 6.4 and Sec 6 p.190),
@@ -679,16 +758,20 @@ func TestRBG0CellColorModes(t *testing.T) {
 		{"256-color", 1, func(v *VDP2) {
 			for i := uint32(0); i < 64; i++ {
 				v.vram[0x8000+i] = 5
-				v.vram[0x8080+i] = 0
+				v.vram[0x8100+i] = 0
 			}
 		}, [3]uint8{0, 255, 0}},
 		{"2048-color", 2, func(v *VDP2) {
 			fillVRAM16(v, 0x8000, 64, 0x0005)
-			fillVRAM16(v, 0x8080, 64, 0x0000)
+			fillVRAM16(v, 0x8100, 64, 0x0000)
 		}, [3]uint8{0, 255, 0}},
 		{"32768-color", 3, func(v *VDP2) {
 			fillVRAM16(v, 0x8000, 64, 0x801F)
-			fillVRAM16(v, 0x8080, 64, 0x001F)
+			fillVRAM16(v, 0x8100, 64, 0x001F)
+		}, [3]uint8{255, 0, 0}},
+		{"16770000-color", 4, func(v *VDP2) {
+			fill32(v, 0x8000, 64, 0x8000, 0x00FF)
+			fill32(v, 0x8100, 64, 0x0000, 0x00FF)
 		}, [3]uint8{255, 0, 0}},
 	}
 	for _, m := range modes {
@@ -696,11 +779,11 @@ func TestRBG0CellColorModes(t *testing.T) {
 			v := setupRBG0Identity(t)
 			v.regs[vdp2CHCTLB] = m.chcn << 12
 			// Cell (0,0) -> character 0x400 (0x8000), cell (1,0) ->
-			// character 0x404 (0x8080); palette 0.
+			// character 0x408 (0x8100); palette 0.
 			writeVRAM16(v, 0, 0x0000)
 			writeVRAM16(v, 2, 0x0400)
 			writeVRAM16(v, 4, 0x0000)
-			writeVRAM16(v, 6, 0x0404)
+			writeVRAM16(v, 6, 0x0408)
 			m.fill(v)
 			v.cram[0], v.cram[1] = 0x03, 0xE0   // entry 0: green
 			v.cram[10], v.cram[11] = 0x00, 0x1F // entry 5: red
@@ -813,6 +896,10 @@ func TestRBG0BitmapColorModes(t *testing.T) {
 		{"32768-color", 3, func(v *VDP2) {
 			writeVRAM16(v, 0, 0x801F)
 			writeVRAM16(v, 2, 0x001F)
+		}, [3]uint8{255, 0, 0}},
+		{"16770000-color", 4, func(v *VDP2) {
+			fill32(v, 0, 1, 0x8000, 0x00FF)
+			fill32(v, 4, 1, 0x0000, 0x00FF)
 		}, [3]uint8{255, 0, 0}},
 	}
 	for _, m := range modes {
@@ -975,6 +1062,10 @@ func TestRBG1BitmapColorModes(t *testing.T) {
 			writeVRAM16(v, 0, 0x801F)
 			writeVRAM16(v, 2, 0x001F)
 		}, [3]uint8{255, 0, 0}},
+		{"16770000-color", 4, func(v *VDP2) {
+			fill32(v, 0, 1, 0x8000, 0x00FF)
+			fill32(v, 4, 1, 0x0000, 0x00FF)
+		}, [3]uint8{255, 0, 0}},
 	}
 	for _, m := range modes {
 		t.Run(m.name, func(t *testing.T) {
@@ -1009,16 +1100,20 @@ func TestRBG1CellColorModes(t *testing.T) {
 		{"256-color", 1, func(v *VDP2) {
 			for i := uint32(0); i < 64; i++ {
 				v.vram[0x8000+i] = 5
-				v.vram[0x8080+i] = 0
+				v.vram[0x8100+i] = 0
 			}
 		}, [3]uint8{0, 255, 0}},
 		{"2048-color", 2, func(v *VDP2) {
 			fillVRAM16(v, 0x8000, 64, 0x0005)
-			fillVRAM16(v, 0x8080, 64, 0x0000)
+			fillVRAM16(v, 0x8100, 64, 0x0000)
 		}, [3]uint8{0, 255, 0}},
 		{"32768-color", 3, func(v *VDP2) {
 			fillVRAM16(v, 0x8000, 64, 0x801F)
-			fillVRAM16(v, 0x8080, 64, 0x001F)
+			fillVRAM16(v, 0x8100, 64, 0x001F)
+		}, [3]uint8{255, 0, 0}},
+		{"16770000-color", 4, func(v *VDP2) {
+			fill32(v, 0x8000, 64, 0x8000, 0x00FF)
+			fill32(v, 0x8100, 64, 0x0000, 0x00FF)
 		}, [3]uint8{255, 0, 0}},
 	}
 	for _, m := range modes {
@@ -1028,7 +1123,7 @@ func TestRBG1CellColorModes(t *testing.T) {
 			writeVRAM16(v, 0, 0x0000)
 			writeVRAM16(v, 2, 0x0400)
 			writeVRAM16(v, 4, 0x0000)
-			writeVRAM16(v, 6, 0x0404)
+			writeVRAM16(v, 6, 0x0408)
 			m.fill(v)
 			v.cram[0], v.cram[1] = 0x03, 0xE0   // entry 0: green
 			v.cram[10], v.cram[11] = 0x00, 0x1F // entry 5: red
@@ -1980,6 +2075,19 @@ func TestRBGScreenOverPatternFormats(t *testing.T) {
 			s.render(v, buf)
 			expectTransparent(t, v, buf, 0, 0, "32K over dot MSB clear")
 		})
+		t.Run(s.name+" 16770000-color", func(t *testing.T) {
+			v := base(t)
+			v.regs[s.chctl] = 4 << s.chShif
+			fill32(v, 0x8000, 64, 0x8000, 0xFF00) // green, MSB set
+			v.regs[s.ovpn] = 0x0000
+			buf := make([]uint32, 352*256)
+			s.render(v, buf)
+			expectRGB(t, v, buf, 0, 0, 0, 255, 0, "16M over dot")
+			fill32(v, 0x8000, 64, 0x0000, 0xFF00) // MSB clear: transparent
+			clear(buf)
+			s.render(v, buf)
+			expectTransparent(t, v, buf, 0, 0, "16M over dot MSB clear")
+		})
 		t.Run(s.name+" 2x2", func(t *testing.T) {
 			v := base(t)
 			v.regs[s.chctl] = s.chSize
@@ -2222,6 +2330,20 @@ func TestRBGSpecialCCMode3RGB(t *testing.T) {
 			writeVRAM16(v, 0, 0x801F)
 			return v
 		}, renderTestRBG0, 8, 1 << 4},
+		{"RBG0 cell 16M", func(t *testing.T) *VDP2 {
+			v := setupRBG0Identity(t)
+			v.regs[vdp2CHCTLB] = 0x4000
+			fill32(v, 0x8000, 64, 0x8000, 0x00FF)
+			writeVRAM16(v, 0, 0x0000)
+			writeVRAM16(v, 2, 0x0400)
+			return v
+		}, renderTestRBG0, 8, 1 << 4},
+		{"RBG1 bitmap 16M", func(t *testing.T) *VDP2 {
+			v := setupRBG1BitmapScene(t)
+			v.regs[vdp2CHCTLA] = 0x0042
+			fill32(v, 0, 1, 0x8000, 0x00FF)
+			return v
+		}, renderTestRBG1, 0, 1 << 0},
 		{"RBG0 over pattern", func(t *testing.T) *VDP2 {
 			v := setupRBG0Identity(t)
 			v.regs[vdp2CHCTLB] = 0x3000
