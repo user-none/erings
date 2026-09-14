@@ -5316,3 +5316,339 @@ func TestDIEDisplayFBAccessor(t *testing.T) {
 			v.DisplayFB(0)[0], v.DisplayFB(1)[0])
 	}
 }
+
+// newDrawTestVDP1 returns a VDP1 with PTMR=2 (draw at V-Blank IN).
+func newDrawTestVDP1() *VDP1 {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+	return v
+}
+
+// TestDistortedSpriteGapFillHalfTransparent verifies the anti-alias gap
+// fill on a strongly distorted sprite under half-transparency: the
+// covered pixel set equals the replace-mode coverage, and every drawn
+// pixel is a half-transparent blend (single or double write) of the
+// white texel over black.
+func TestDistortedSpriteGapFillHalfTransparent(t *testing.T) {
+	run := func(cc uint16) *VDP1 {
+		v := newDrawTestVDP1()
+		// A(0,0) B(3,9) C(3,19) D(0,10): steep connecting lines.
+		writeDistortedSprite(v, 0x00, 0, 0, 3, 9, 3, 19, 0, 10, 5, 0x0000, 0x1000, 8, 8)
+		writeCmd16(v, 0x04, 5<<3|cc)
+		writeDrawEnd(v, 0x20)
+		for i := 0; i < 8*8; i++ {
+			writeCmd16(v, 0x1000+uint32(i*2), 0xFFFF)
+		}
+		v.VBlankIn()
+		// Opaque black destination so half-transparency has a pixel to
+		// blend with (a transparent destination takes the source as is).
+		for i := 0; i < len(v.drawFB); i += 2 {
+			v.drawFB[i], v.drawFB[i+1] = 0x80, 0x00
+		}
+		drainDrawing(v)
+		return v
+	}
+	replace := run(0)
+	half := run(3)
+	drawn := 0
+	for y := 0; y < 20; y++ {
+		for x := 0; x < 4; x++ {
+			r := readFBPixel(replace, x, y)
+			h := readFBPixel(half, x, y)
+			if (r != 0x8000) != (h != 0x8000) {
+				t.Errorf("pixel (%d,%d): replace 0x%04X, half-transparent 0x%04X (coverage differs)", x, y, r, h)
+				continue
+			}
+			if h == 0x8000 {
+				continue
+			}
+			drawn++
+			// Each half-transparent write of white over the current
+			// value moves every channel halfway to 31: 15, 23, 27, ...
+			// The steep lines overdraw heavily, so any such gray is a
+			// valid blend; a plain source write (31 on the first pass)
+			// would show as 0xFFFF.
+			cr, cg, cb := h&0x1F, (h>>5)&0x1F, (h>>10)&0x1F
+			if h&0x8000 == 0 || cr != cg || cg != cb || cr < 15 || cr > 30 {
+				t.Errorf("pixel (%d,%d) = 0x%04X, want a repeated half blend of white over black", x, y, h)
+			}
+		}
+	}
+	// Four columns fully covered over rows 0..19 minus the corners cut
+	// by the slanted top and bottom edges.
+	if drawn < 40 {
+		t.Errorf("drawn pixels = %d, want at least 40", drawn)
+	}
+}
+
+// TestDistortedSpriteFlipVAndHSSParity verifies the vertical flip
+// (CMDCTRL bit 5) on a distorted sprite and the high speed shrink
+// sampling parity (FBCR EOS) when a connecting line is shorter than the
+// texture width.
+func TestDistortedSpriteFlipVAndHSSParity(t *testing.T) {
+	v := newDrawTestVDP1()
+	writeDistortedSprite(v, 0x00, 0, 0, 7, 0, 7, 3, 0, 3, 4, 0x0100, 0x1000, 8, 4)
+	writeCmd16(v, 0x00, 0x0002|0x0020) // vertical flip
+	writeDrawEnd(v, 0x20)
+	for y := 0; y < 4; y++ {
+		for x := 0; x < 8; x++ {
+			v.WriteVRAM(0x1000+uint32(y*8+x), uint8(0x10+y))
+		}
+	}
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readFBPixel(v, 0, 0); got != 0x0113 {
+		t.Errorf("flipV row 0 = 0x%04X, want 0x0113 (texture row 3)", got)
+	}
+	if got := readFBPixel(v, 0, 3); got != 0x0110 {
+		t.Errorf("flipV row 3 = 0x%04X, want 0x0110 (texture row 0)", got)
+	}
+
+	for _, odd := range []bool{false, true} {
+		v := newDrawTestVDP1()
+		if odd {
+			v.Write(0x02, 0x0010) // FBCR EOS: sample odd columns
+		}
+		// 4-dot wide destination from an 8-dot texture: HSS shrink.
+		writeDistortedSprite(v, 0x00, 0, 0, 3, 0, 3, 3, 0, 3, 4, 0x0100, 0x1000, 8, 4)
+		writeCmd16(v, 0x04, 4<<3|0x1000) // HSS
+		writeDrawEnd(v, 0x20)
+		for y := 0; y < 4; y++ {
+			for x := 0; x < 8; x++ {
+				v.WriteVRAM(0x1000+uint32(y*8+x), uint8(0x10+x))
+			}
+		}
+		v.VBlankIn()
+		drainDrawing(v)
+		want := uint16(0x0110)
+		if odd {
+			want = 0x0111
+		}
+		if got := readFBPixel(v, 0, 0); got != want {
+			t.Errorf("HSS odd=%v: pixel (0,0) = 0x%04X, want 0x%04X", odd, got, want)
+		}
+	}
+}
+
+// TestSmallBudgetResumeMatchesDrain verifies every command type drawn
+// under a tiny per-call cycle budget (forcing mid-command yields and
+// resumes) produces the same framebuffer as an uninterrupted draw.
+func TestSmallBudgetResumeMatchesDrain(t *testing.T) {
+	type cmd struct {
+		name  string
+		write func(v *VDP1)
+	}
+	texture := func(v *VDP1) {
+		for i := 0; i < 64; i++ {
+			v.WriteVRAM(0x1000+uint32(i), uint8(0x10+i%8))
+		}
+	}
+	cmds := []cmd{
+		{"gouraud line", func(v *VDP1) {
+			grda := writeGouraudTable(v, 0x4210, 0x421F, 0x421F, 0x4210)
+			writeLine(v, 5, 5, 60, 20, 0x8000)
+			writeCmd16(v, 0x04, 0x0004)
+			writeCmd16(v, 0x1C, grda)
+		}},
+		{"gouraud polyline", func(v *VDP1) {
+			grda := writeGouraudTable(v, 0x4210, 0x421F, 0x4210, 0x421F)
+			writePolyline(v, 0x00, 10, 10, 60, 12, 55, 40, 12, 38, 0x8000)
+			writeCmd16(v, 0x04, 0x0004)
+			writeCmd16(v, 0x1C, grda)
+			writeDrawEnd(v, 0x20)
+		}},
+		{"polygon", func(v *VDP1) {
+			writePolygon(v, 0x00, 10, 10, 60, 12, 55, 40, 12, 38, 0x8123)
+			writeDrawEnd(v, 0x20)
+		}},
+		{"normal sprite", func(v *VDP1) {
+			writeCmd16(v, 0x00, 0x0000)
+			writeCmd16(v, 0x04, 0x0020)
+			writeCmd16(v, 0x06, 0x0100)
+			writeCmd16(v, 0x08, 0x1000/8)
+			writeCmd16(v, 0x0A, 0x0108)
+			writeCmd16(v, 0x0C, 10)
+			writeCmd16(v, 0x0E, 10)
+			writeDrawEnd(v, 0x20)
+			texture(v)
+		}},
+		{"scaled sprite", func(v *VDP1) {
+			writeCmd16(v, 0x00, 0x0001)
+			writeCmd16(v, 0x04, 0x0020)
+			writeCmd16(v, 0x06, 0x0100)
+			writeCmd16(v, 0x08, 0x1000/8)
+			writeCmd16(v, 0x0A, 0x0108)
+			writeCmd16(v, 0x0C, 10)
+			writeCmd16(v, 0x0E, 10)
+			writeCmd16(v, 0x14, 40)
+			writeCmd16(v, 0x16, 30)
+			writeDrawEnd(v, 0x20)
+			texture(v)
+		}},
+		{"distorted sprite", func(v *VDP1) {
+			writeDistortedSprite(v, 0x00, 10, 10, 60, 12, 55, 40, 12, 38, 4, 0x0100, 0x1000, 8, 8)
+			writeDrawEnd(v, 0x20)
+			texture(v)
+		}},
+	}
+	for _, c := range cmds {
+		full := newDrawTestVDP1()
+		c.write(full)
+		full.VBlankIn()
+		drainDrawing(full)
+
+		small := newDrawTestVDP1()
+		c.write(small)
+		small.VBlankIn()
+		small.latchPending()
+		if small.ptmr == 2 && !small.drawActive && !small.drawPending {
+			small.startDraw()
+		}
+		for i := 0; i < 200000 && small.drawActive; i++ {
+			small.TickSystemCycles(3)
+		}
+		if small.drawActive {
+			t.Fatalf("%s: draw did not finish under the small budget", c.name)
+		}
+		for y := 0; y < 48; y++ {
+			for x := 0; x < 72; x++ {
+				if a, b := readFBPixel(full, x, y), readFBPixel(small, x, y); a != b {
+					t.Errorf("%s: pixel (%d,%d) drain 0x%04X, small budget 0x%04X", c.name, x, y, a, b)
+				}
+			}
+		}
+	}
+}
+
+// TestScaledSpriteZoomPointLowerRightAndFlips verifies the zoom point
+// lower-right placement (CMDCTRL ZP=1111: the point is the sprite's
+// lower-right corner), the two-coordinate mode with both coordinates
+// reversed (both flips implied), the vertical flip bit, and the rejected
+// parameter cases (zero size, negative display size, zoom point 0).
+func TestScaledSpriteZoomPointLowerRightAndFlips(t *testing.T) {
+	texture := func(v *VDP1) {
+		for y := 0; y < 8; y++ {
+			for x := 0; x < 8; x++ {
+				v.WriteVRAM(0x1000+uint32(y*8+x), uint8(0x10+y*8+x))
+			}
+		}
+	}
+	base := func(v *VDP1) {
+		writeCmd16(v, 0x04, 0x0020)
+		writeCmd16(v, 0x06, 0x0100)
+		writeCmd16(v, 0x08, 0x1000/8)
+		writeCmd16(v, 0x0A, 0x0108)
+		writeDrawEnd(v, 0x20)
+		texture(v)
+	}
+
+	// Lower-right zoom point at (20,20), display size 7x7: covers
+	// (13,13)..(20,20) with texel (0,0) at (13,13).
+	v := newDrawTestVDP1()
+	writeCmd16(v, 0x00, 0x0001|0x0F00)
+	writeCmd16(v, 0x0C, 20)
+	writeCmd16(v, 0x0E, 20)
+	writeCmd16(v, 0x10, 7)
+	writeCmd16(v, 0x12, 7)
+	base(v)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readFBPixel(v, 13, 13); got != 0x0110 {
+		t.Errorf("lower-right zoom: pixel (13,13) = 0x%04X, want 0x0110", got)
+	}
+	if got := readFBPixel(v, 20, 20); got != 0x0100|0x10+63 {
+		t.Errorf("lower-right zoom: pixel (20,20) = 0x%04X, want 0x%04X", got, 0x0100|0x10+63)
+	}
+	if got := readFBPixel(v, 21, 20); got != 0 {
+		t.Errorf("lower-right zoom: pixel (21,20) = 0x%04X, want 0", got)
+	}
+
+	// Two-coordinate mode with C above-left of A: both axes flip.
+	v = newDrawTestVDP1()
+	writeCmd16(v, 0x00, 0x0001)
+	writeCmd16(v, 0x0C, 17)
+	writeCmd16(v, 0x0E, 17)
+	writeCmd16(v, 0x14, 10)
+	writeCmd16(v, 0x16, 10)
+	base(v)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readFBPixel(v, 10, 10); got != 0x0100|0x10+63 {
+		t.Errorf("reversed coordinates: pixel (10,10) = 0x%04X, want last texel", got)
+	}
+	if got := readFBPixel(v, 17, 17); got != 0x0110 {
+		t.Errorf("reversed coordinates: pixel (17,17) = 0x%04X, want first texel", got)
+	}
+
+	// Vertical flip bit on a scaled sprite.
+	v = newDrawTestVDP1()
+	writeCmd16(v, 0x00, 0x0001|0x0020)
+	writeCmd16(v, 0x0C, 10)
+	writeCmd16(v, 0x0E, 10)
+	writeCmd16(v, 0x14, 17)
+	writeCmd16(v, 0x16, 17)
+	base(v)
+	v.VBlankIn()
+	drainDrawing(v)
+	if got := readFBPixel(v, 10, 10); got != 0x0100|0x10+56 {
+		t.Errorf("flipV: pixel (10,10) = 0x%04X, want texel (0,7)", got)
+	}
+
+	// Rejected parameters draw nothing.
+	for _, tc := range []struct {
+		name string
+		ctrl uint16
+		size uint16
+		xb   uint16
+	}{
+		{"zero size", 0x0001 | 0x0500, 0x0000, 7},
+		{"negative display width", 0x0001 | 0x0500, 0x0108, 0xFFF9},
+		{"zoom point 0", 0x0001 | 0x0400, 0x0108, 7},
+	} {
+		v := newDrawTestVDP1()
+		writeCmd16(v, 0x00, tc.ctrl)
+		writeCmd16(v, 0x0C, 10)
+		writeCmd16(v, 0x0E, 10)
+		writeCmd16(v, 0x10, tc.xb)
+		writeCmd16(v, 0x12, 7)
+		base(v)
+		writeCmd16(v, 0x0A, tc.size)
+		v.VBlankIn()
+		drainDrawing(v)
+		for y := 0; y < 24; y++ {
+			for x := 0; x < 24; x++ {
+				if got := readFBPixel(v, x, y); got != 0 {
+					t.Errorf("%s: pixel (%d,%d) = 0x%04X, want 0", tc.name, x, y, got)
+				}
+			}
+		}
+	}
+}
+
+// TestInvalidColorModeDrawsNothing verifies a sprite with color mode 6
+// or 7 (reserved) reads every dot as 0 and draws nothing.
+func TestInvalidColorModeDrawsNothing(t *testing.T) {
+	for _, mode := range []uint16{6, 7} {
+		v := newDrawTestVDP1()
+		writeCmd16(v, 0x00, 0x0000)
+		writeCmd16(v, 0x04, mode<<3)
+		writeCmd16(v, 0x06, 0x0100)
+		writeCmd16(v, 0x08, 0x1000/8)
+		writeCmd16(v, 0x0A, 0x0108)
+		writeCmd16(v, 0x0C, 0)
+		writeCmd16(v, 0x0E, 0)
+		writeDrawEnd(v, 0x20)
+		for i := 0; i < 128; i++ {
+			v.WriteVRAM(0x1000+uint32(i), 0xFF)
+		}
+		v.VBlankIn()
+		drainDrawing(v)
+		for y := 0; y < 8; y++ {
+			for x := 0; x < 8; x++ {
+				if got := readFBPixel(v, x, y); got != 0 {
+					t.Errorf("mode %d: pixel (%d,%d) = 0x%04X, want 0", mode, x, y, got)
+				}
+			}
+		}
+	}
+}

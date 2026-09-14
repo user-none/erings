@@ -884,3 +884,34 @@ func TestVDP2FieldBit(t *testing.T) {
 		t.Errorf("LSMD=3 + mosaic fieldBit = %d, want 0 (downgrade)", got)
 	}
 }
+
+// TestVBlankOutLinePAL verifies the V-Blank-OUT line on a PAL frame with
+// a 224-line display: the border is (256 - 224) / 2 lines above the
+// frame boundary.
+func TestVBlankOutLinePAL(t *testing.T) {
+	v := NewVDP2(NewSCU())
+	v.SetPAL(true)
+	v.regs[vdp2TVMD] = 0x8000
+	v.recalcTiming()
+	if got, want := v.vblankOutLine(), v.linesPerFrame-16; got != want {
+		t.Errorf("PAL 224-line V-Blank-OUT line = %d, want %d", got, want)
+	}
+}
+
+// TestSCYNMidDisplayWriteRecording verifies mid-display writes to the
+// NBG1 and NBG3 vertical scroll registers are recorded for the current
+// line (the NBG0 and NBG2 cases are covered by the vertical scroll
+// rebase tests).
+func TestSCYNMidDisplayWriteRecording(t *testing.T) {
+	v := NewVDP2(NewSCU())
+	v.vLine = 7
+	v.Write(uint32(vdp2SCYDN1*2), 0x8000)
+	v.Write(uint32(vdp2SCYIN1*2), 0x0123)
+	v.Write(uint32(vdp2SCYN3*2), 0x0045)
+	if !v.scynSet[7][1] || v.scynRec[7][1] != 0x0123<<8|0x80 {
+		t.Errorf("NBG1: set=%v rec=0x%X, want set with 0x12380", v.scynSet[7][1], v.scynRec[7][1])
+	}
+	if !v.scynSet[7][3] || v.scynRec[7][3] != 0x0045<<8 {
+		t.Errorf("NBG3: set=%v rec=0x%X, want set with 0x4500", v.scynSet[7][3], v.scynRec[7][3])
+	}
+}
