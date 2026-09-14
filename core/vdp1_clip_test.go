@@ -274,3 +274,55 @@ func TestPreClipRejectAllCommands(t *testing.T) {
 		}
 	}
 }
+
+// TestSystemClipCommandFieldWidths checks the system clipping
+// coordinate set command's coordinate widths. Per the VDP1 User's
+// Manual section 7.1, the command table defines CMDXC as a 10-bit
+// lower-right X coordinate and CMDYC as a 9-bit lower-right Y
+// coordinate, the bits above each field being ignored, so a clipping
+// coordinate is never negative. The values below set every ignored
+// bit, including bit 12, which a drawing command's coordinate would
+// sign-extend.
+func TestSystemClipCommandFieldWidths(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+
+	writeCmd16(v, 0x00, 0x0009)     // type=0x9
+	writeCmd16(v, 0x14, 0xFC00|255) // XC
+	writeCmd16(v, 0x16, 0xFE00|200) // YC
+
+	writeDrawEnd(v, 0x20)
+	v.VBlankIn()
+	drainDrawing(v)
+
+	if v.sysClipX != 255 || v.sysClipY != 200 {
+		t.Errorf("sysClip = (%d,%d), want (255,200)", v.sysClipX, v.sysClipY)
+	}
+}
+
+// TestUserClipCommandFieldWidths checks the user clipping coordinate
+// set command's coordinate widths. Per the VDP1 User's Manual section
+// 7.2, the command table defines CMDXA and CMDXC as 10-bit X
+// coordinates and CMDYA and CMDYC as 9-bit Y coordinates, the bits
+// above each field being ignored.
+func TestUserClipCommandFieldWidths(t *testing.T) {
+	v := NewVDP1(NewSCU())
+	v.Write(0x04, 2)
+
+	writeCmd16(v, 0x00, 0x0008)     // type=0x8
+	writeCmd16(v, 0x0C, 0xFC00|10)  // XA
+	writeCmd16(v, 0x0E, 0xFE00|20)  // YA
+	writeCmd16(v, 0x14, 0xFC00|100) // XC
+	writeCmd16(v, 0x16, 0xFE00|120) // YC
+
+	writeDrawEnd(v, 0x20)
+	v.VBlankIn()
+	drainDrawing(v)
+
+	if v.userClipX1 != 10 || v.userClipY1 != 20 {
+		t.Errorf("user clip upper-left = (%d,%d), want (10,20)", v.userClipX1, v.userClipY1)
+	}
+	if v.userClipX2 != 100 || v.userClipY2 != 120 {
+		t.Errorf("user clip lower-right = (%d,%d), want (100,120)", v.userClipX2, v.userClipY2)
+	}
+}

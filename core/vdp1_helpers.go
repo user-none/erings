@@ -94,7 +94,9 @@ func clipSegParam(x0, y0, x1, y1, clipX, clipY int) (t0, t1 float64, ok bool) {
 // clipBounds returns the effective system clip bounds clamped to the
 // frame buffer dimensions for the current mode. Under double interlace
 // (DIE=1) the Y range doubles; writePixel then halves surviving Y
-// values to the physical FB row.
+// values to the physical FB row. The bounds are never negative: the
+// clipping command decodes them from unsigned fields (clipCoordX,
+// clipCoordY), and a state file is the one other source.
 func (v *VDP1) clipBounds() (int, int) {
 	clipX := int(v.sysClipX)
 	clipY := int(v.sysClipY)
@@ -105,6 +107,12 @@ func (v *VDP1) clipBounds() (int, int) {
 	}
 	if clipY > maxY {
 		clipY = maxY
+	}
+	if clipX < 0 {
+		clipX = 0
+	}
+	if clipY < 0 {
+		clipY = 0
 	}
 	return clipX, clipY
 }
@@ -226,6 +234,18 @@ func signExtendCoord13(v uint16) int16 {
 	}
 	return int16(v)
 }
+
+// clipCoordX and clipCoordY narrow a coordinate of the system or user
+// clipping coordinate set command to its field. Per the VDP1 User's
+// Manual sections 7.1 and 7.2, the two clipping command tables define
+// CMDXA and CMDXC as a 10-bit X coordinate and CMDYA and CMDYC as a
+// 9-bit Y coordinate, the bits above each field being ignored, so a
+// clipping coordinate is unsigned and the clip bounds are never
+// negative. Section 7.1 states operation cannot be ensured for a
+// negative system clipping coordinate.
+func clipCoordX(v int16) int16 { return v & 0x3FF }
+
+func clipCoordY(v int16) int16 { return v & 0x1FF }
 
 // writePixel writes a pixel to the draw framebuffer, applying color
 // calculation and MSB on processing. This is the common pixel output

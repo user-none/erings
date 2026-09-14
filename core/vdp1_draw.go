@@ -409,14 +409,14 @@ func (v *VDP1) processCommands(budget int32) (consumed int32, endBit bool) {
 		case 0x6:
 			c, done = v.startLine(&cmd, budget-consumed)
 		case 0x8:
-			v.userClipX1 = cmd.xa
-			v.userClipY1 = cmd.ya
-			v.userClipX2 = cmd.xc
-			v.userClipY2 = cmd.yc
+			v.userClipX1 = clipCoordX(cmd.xa)
+			v.userClipY1 = clipCoordY(cmd.ya)
+			v.userClipX2 = clipCoordX(cmd.xc)
+			v.userClipY2 = clipCoordY(cmd.yc)
 			done = true
 		case 0x9:
-			v.sysClipX = cmd.xc
-			v.sysClipY = cmd.yc
+			v.sysClipX = clipCoordX(cmd.xc)
+			v.sysClipY = clipCoordY(cmd.yc)
 			done = true
 		case 0xA:
 			v.localX = cmd.xa
