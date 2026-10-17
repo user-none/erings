@@ -97,6 +97,73 @@ func TestSetRenderer(t *testing.T) {
 	}
 }
 
+// TestRendererOption checks the renderer option: the requested mode
+// is GPU by default, the option's values change it without opening a
+// renderer, an unknown value keeps it, and Start selects it. A
+// requested Software leaves the software renderer from construction
+// in place.
+func TestRendererOption(t *testing.T) {
+	if !slices.Equal(RendererNames(), []string{"GPU", "Software"}) {
+		t.Fatalf("renderer names %q", RendererNames())
+	}
+	e := NewEmulator()
+	defer e.Close()
+	if e.requestedRenderer != RendererGPU {
+		t.Fatal("default requested renderer is not GPU")
+	}
+	sw := e.renderer
+	e.SetOption("renderer", "Software")
+	if e.requestedRenderer != RendererSoftware {
+		t.Fatal("Software not requested")
+	}
+	e.SetOption("renderer", "GPU")
+	if e.requestedRenderer != RendererGPU {
+		t.Fatal("GPU not requested")
+	}
+	e.SetOption("renderer", "Software")
+	e.SetOption("renderer", "neither")
+	if e.requestedRenderer != RendererSoftware {
+		t.Fatal("unknown value changed the requested renderer")
+	}
+	if e.renderer != sw {
+		t.Fatal("the option opened a renderer")
+	}
+	if err := e.SetBIOS("main_bios", make([]byte, biosSize)); err != nil {
+		t.Fatal(err)
+	}
+	if err := e.Start(); err != nil {
+		t.Fatal(err)
+	}
+	if e.Renderer() != RendererSoftware || e.renderer != sw {
+		t.Fatalf("after Start renderer %T mode %d", e.renderer, e.Renderer())
+	}
+}
+
+// TestSetRendererKeptByStart checks that an explicit selection is the
+// requested mode: Start keeps a SetRenderer's software over the
+// option's GPU.
+func TestSetRendererKeptByStart(t *testing.T) {
+	e := NewEmulator()
+	defer e.Close()
+	e.SetOption("renderer", "GPU")
+	if err := e.SetRenderer(RendererSoftware); err != nil {
+		t.Fatal(err)
+	}
+	if e.requestedRenderer != RendererSoftware {
+		t.Fatal("SetRenderer did not set the requested renderer")
+	}
+	sw := e.renderer
+	if err := e.SetBIOS("main_bios", make([]byte, biosSize)); err != nil {
+		t.Fatal(err)
+	}
+	if err := e.Start(); err != nil {
+		t.Fatal(err)
+	}
+	if e.Renderer() != RendererSoftware || e.renderer != sw {
+		t.Fatalf("after Start renderer %T mode %d", e.renderer, e.Renderer())
+	}
+}
+
 // orderLog records the order of the calls a GPU renderer makes on
 // its submission, buffers, and device.
 type orderLog struct {

@@ -94,6 +94,15 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 				Category:    coreif.CoreOptionCategoryVideo,
 				PerGame:     true,
 			},
+			{
+				Key:         "renderer",
+				Label:       "Renderer",
+				Description: "Render on the GPU or in software",
+				Type:        coreif.CoreOptionSelect,
+				Default:     "GPU",
+				Values:      core.RendererNames(),
+				Category:    coreif.CoreOptionCategoryVideo,
+			},
 		},
 		BIOSOptions: []coreif.BIOSOption{
 			{
@@ -207,14 +216,10 @@ func (e *emulator) SetOption(key string, value string)  { e.emu.SetOption(key, v
 func (e *emulator) SetRom(data []byte)                  {} // Saturn is disc-only
 func (e *emulator) Close()                              { e.emu.Close() }
 
-// Start selects the GPU renderer, falling back to software when it
-// cannot open, then starts the core. The renderer is selected here,
-// after every option is applied, so it opens once at the chosen
+// Start starts the core, which selects the renderer option's
+// renderer after every option is applied, so it opens at the chosen
 // upscale.
-func (e *emulator) Start() {
-	e.emu.SetRenderer(core.RendererGPU)
-	e.emu.Start()
-}
+func (e *emulator) Start() { e.emu.Start() }
 
 // RenderInfo implements coreif.RenderInfoProvider.
 func (e *emulator) RenderInfo() coreif.RenderInfo {

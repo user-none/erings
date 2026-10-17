@@ -156,14 +156,24 @@ func (e *Emulator) SetUpscale(name string) error {
 	return e.openRenderer(e.rendererMode)
 }
 
+// rendererNames are the renderer option's values.
+var rendererNames = [...]string{"GPU", "Software"}
+
+// RendererNames lists the renderer option's values, "GPU" and
+// "Software".
+func RendererNames() []string { return append([]string(nil), rendererNames[:]...) }
+
 // SetRenderer selects the renderer before the first frame. A request
 // for the active mode does nothing. Otherwise the mode's renderer
-// opens in place of the active one (openRenderer).
+// opens in place of the active one (openRenderer). The mode left
+// active becomes the requested mode, so Start keeps it.
 func (e *Emulator) SetRenderer(mode Renderer) error {
-	if mode == e.rendererMode {
-		return nil
+	var err error
+	if mode != e.rendererMode {
+		err = e.openRenderer(mode)
 	}
-	return e.openRenderer(mode)
+	e.requestedRenderer = e.rendererMode
+	return err
 }
 
 // openRenderer closes the active renderer and opens the mode's at the

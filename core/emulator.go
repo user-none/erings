@@ -27,10 +27,13 @@ type Emulator struct {
 
 	// The renderer (renderer.go): the software renderer by default,
 	// the GPU renderer after SetRenderer; rendererErr keeps a
-	// runtime failure that forced software mode.
-	renderer     frameRenderer
-	rendererMode Renderer
-	rendererErr  error
+	// runtime failure that forced software mode. requestedRenderer
+	// is the mode Start selects: GPU by default, the renderer option's
+	// mode, or the mode a SetRenderer left active.
+	renderer          frameRenderer
+	rendererMode      Renderer
+	rendererErr       error
+	requestedRenderer Renderer
 
 	// renderShift is log2 of the scale N the frame renders at
 	// (SetUpscale): 0 renders at the native resolution with the
@@ -202,6 +205,7 @@ func NewEmulator() *Emulator {
 		cdblock: cdblock,
 	}
 	e.useSoftwareRenderer()
+	e.requestedRenderer = RendererGPU
 
 	// Wire boundary-crossing callbacks. SCU drives master IRL. SMPC
 	// requests the master NMI, defers its system reset to the frame
@@ -439,6 +443,14 @@ func (e *Emulator) SetOption(key string, value string) {
 	case "upscale":
 		// An unknown value leaves the active scale as it is.
 		e.SetUpscale(value)
+	case "renderer":
+		// An unknown value leaves the requested renderer as it is.
+		switch value {
+		case "GPU":
+			e.requestedRenderer = RendererGPU
+		case "Software":
+			e.requestedRenderer = RendererSoftware
+		}
 	}
 }
 
@@ -467,8 +479,12 @@ func (e *Emulator) SetBIOS(key string, data []byte) error {
 // is not retained on the emulator: it stays alive only through the
 // closures it wires into master.HLEHook / slave.HLEHook, and is
 // otherwise invisible to the rest of the emulator. Real-BIOS boots
-// construct nothing and leave the CPU hooks nil.
+// construct nothing and leave the CPU hooks nil. The requested
+// renderer is selected first; a GPU that cannot open falls back to
+// software without failing Start.
 func (e *Emulator) Start() error {
+	e.SetRenderer(e.requestedRenderer)
+
 	if !e.hasBIOS {
 		hle := NewHLEBIOS(e.bus, e.master, e.slave)
 		if err := hle.Boot(e.ipImage); err != nil {
