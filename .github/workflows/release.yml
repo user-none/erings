@@ -1,0 +1,134 @@
+name: Release
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    name: Check tag and update keys
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check tag and update keys
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPDATE_KEYS: ${{ vars.UPDATE_KEYS }}
+        run: |
+          if ! [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag $GITHUB_REF_NAME is not vMAJOR.MINOR.PATCH" >&2
+            exit 1
+          fi
+          # The release notes come from the tag annotation.
+          type=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$GITHUB_REF_NAME" --jq .object.type)
+          if [ "$type" != tag ]; then
+            echo "Tag $GITHUB_REF_NAME is not annotated" >&2
+            exit 1
+          fi
+          # Comma separated algorithm:base64 entries. Limiting the characters
+          # means the value needs no quoting in make, the shell, or -ldflags.
+          if ! [[ "$UPDATE_KEYS" =~ ^[a-z0-9]+:[A-Za-z0-9+/=]+(,[a-z0-9]+:[A-Za-z0-9+/=]+)*$ ]]; then
+            echo "UPDATE_KEYS is missing or malformed" >&2
+            exit 1
+          fi
+
+  build:
+    needs: preflight
+    uses: ./.github/workflows/build.yml
+    with:
+      release: true
+      update_keys: ${{ vars.UPDATE_KEYS }}
+
+  release:
+    name: Create draft release
+    needs: build
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Read release notes from the tag
+        shell: bash
+        run: |
+          # Checkout does not keep the tag annotation, so fetch the tag itself.
+          git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          git tag -l --format='%(contents)' "$GITHUB_REF_NAME" \
+            | sed -E '/^-----BEGIN (PGP SIGNATURE|SSH SIGNATURE|SIGNED MESSAGE)-----$/,$d' \
+            > "$RUNNER_TEMP/notes.md"
+
+      - name: Download release zips
+        uses: actions/download-artifact@v8
+        with:
+          pattern: release-*
+          path: dist
+          merge-multiple: true
+
+      - name: Write manifest
+        working-directory: dist
+        shell: bash
+        run: |
+          v="$GITHUB_REF_NAME"
+          assets='[]'
+          add() {
+            local platform=$1 file=$2 binary=$3
+            local size sha bsize bsha
+            if [ ! -f "$file" ]; then
+              echo "Missing $file" >&2
+              exit 1
+            fi
+            size=$(stat -c %s "$file")
+            sha=$(sha256sum "$file" | cut -d ' ' -f 1)
+            bsize=$(unzip -p "$file" "$binary" | wc -c)
+            bsha=$(unzip -p "$file" "$binary" | sha256sum | cut -d ' ' -f 1)
+            assets=$(jq -c \
+              --arg platform "$platform" --arg file "$file" \
+              --argjson size "$size" --arg sha "$sha" \
+              --arg path "$binary" --argjson bsize "$bsize" --arg bsha "$bsha" \
+              '. + [{platform: $platform, file: $file, size: $size, sha256: $sha,
+                binary: {path: $path, size: $bsize, sha256: $bsha}}]' <<< "$assets")
+          }
+          add windows-amd64 "erings-$v-windows-amd64.zip" erings.exe
+          add windows-arm64 "erings-$v-windows-arm64.zip" erings.exe
+          add macos-arm64 "erings-$v-macos.zip" erings.app/Contents/MacOS/erings
+          add linux-x86_64 "erings-$v-linux-x86_64.zip" "erings-$v-x86_64.AppImage"
+          add linux-aarch64 "erings-$v-linux-aarch64.zip" "erings-$v-aarch64.AppImage"
+          jq -n --arg version "$v" --argjson assets "$assets" \
+            '{schema: 1, app: "erings", version: $version, assets: $assets}' > manifest.json
+          cat manifest.json
+
+      - name: Sign manifest
+        working-directory: dist
+        shell: bash
+        env:
+          UPDATE_SIGNING_KEY: ${{ secrets.UPDATE_SIGNING_KEY }}
+          UPDATE_KEYS: ${{ vars.UPDATE_KEYS }}
+        run: |
+          key="$RUNNER_TEMP/update_signing.pem"
+          trap 'rm -f "$key"' EXIT
+          (umask 077; printf '%s\n' "$UPDATE_SIGNING_KEY" > "$key")
+          # The signing key must match a stamped public key or the
+          # application cannot verify this release.
+          pub=$(openssl pkey -in "$key" -pubout -outform DER | tail -c 32 | base64 -w0)
+          case ",$UPDATE_KEYS," in
+            *",ed25519:$pub,"*) ;;
+            *) echo "The signing key does not match any key in UPDATE_KEYS" >&2; exit 1 ;;
+          esac
+          sig=$(openssl pkeyutl -sign -rawin -inkey "$key" -in manifest.json | base64 -w0)
+          printf 'ed25519 %s\n' "$sig" > manifest.sig
+
+      - name: Create draft release
+        working-directory: dist
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --draft --verify-tag \
+            --title "$GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" \
+            erings-*.zip manifest.json manifest.sig
