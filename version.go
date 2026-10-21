@@ -23,6 +23,12 @@ var Version = defaultVersion
 // the literal placeholder.
 var archiveVersion = "$Format:%(describe:tags)$"
 
+// updateKeys holds the update signing public keys as a comma separated list
+// of algorithm:base64 entries. It is empty in the source and only set at link
+// time by the release workflow with -ldflags
+// "-X github.com/user-none/erings.updateKeys=...".
+var updateKeys string
+
 func init() {
 	// A link-time override (CI and make builds) takes precedence.
 	if Version != defaultVersion {

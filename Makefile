@@ -41,6 +41,15 @@ ifneq ($(VERSION),)
 VERSION_LDFLAGS := -X github.com/user-none/erings.Version=$(VERSION)
 endif
 
+# Update signing public keys stamped into the binary with -ldflags. Only the
+# release workflow supplies them (make ... UPDATE_KEYS=...). When empty no keys
+# are injected and the update system is off. The value only holds base64
+# characters, ':' and ',' so it needs no quoting.
+UPDATE_KEYS ?=
+ifneq ($(UPDATE_KEYS),)
+UPDATE_KEYS_LDFLAGS := -X github.com/user-none/erings.updateKeys=$(UPDATE_KEYS)
+endif
+
 # The macOS bundle's versions, stamped into its Info.plist from VERSION.
 # CFBundleShortVersionString must be dotted integers, so it is the release
 # tag without its leading v, or 0.0.0 for a commit hash or no VERSION (the
@@ -65,7 +74,7 @@ all: desktop
 
 # Build the desktop binary
 desktop:
-	go build -ldflags "$(VERSION_LDFLAGS)" -o $(BUILD_DIR)/erings ./cmd/desktop/
+	go build -ldflags "$(VERSION_LDFLAGS) $(UPDATE_KEYS_LDFLAGS)" -o $(BUILD_DIR)/erings ./cmd/desktop/
 
 # Compile the compute packages to signed DXIL for the DX12 backend. The
 # HLSL sources go under the build tree and the blobs into the directory
@@ -76,11 +85,11 @@ dxil:
 # Build the Windows desktop binary as a GUI subsystem app so no console
 # window is opened when it runs, with the dxil embedded.
 windows: dxil
-	go build -ldflags '-H=windowsgui -s -w -extldflags "-static -lpthread" $(VERSION_LDFLAGS)' -o $(BUILD_DIR)/erings.exe ./cmd/desktop/
+	go build -ldflags '-H=windowsgui -s -w -extldflags "-static -lpthread" $(VERSION_LDFLAGS) $(UPDATE_KEYS_LDFLAGS)' -o $(BUILD_DIR)/erings.exe ./cmd/desktop/
 
 # Build a Linux AppImage.
 appimage:
-	go build -ldflags "-s -w $(VERSION_LDFLAGS)" -o $(BUILD_DIR)/erings ./cmd/desktop/
+	go build -ldflags "-s -w $(VERSION_LDFLAGS) $(UPDATE_KEYS_LDFLAGS)" -o $(BUILD_DIR)/erings ./cmd/desktop/
 	@rm -rf $(APPDIR)
 	APPIMAGE_EXTRACT_AND_RUN=1 ARCH=$(APPIMAGE_ARCH) OUTPUT=$(APPIMAGE_NAME) $(LINUXDEPLOY) \
 		--appdir $(APPDIR) \
@@ -94,7 +103,7 @@ appimage:
 
 # Build macOS .app bundle.
 macos: icons
-	go build -ldflags "-s -w $(VERSION_LDFLAGS)" -o $(BUILD_DIR)/erings ./cmd/desktop/
+	go build -ldflags "-s -w $(VERSION_LDFLAGS) $(UPDATE_KEYS_LDFLAGS)" -o $(BUILD_DIR)/erings ./cmd/desktop/
 	@echo "Creating $(APP_NAME).app bundle..."
 	@mkdir -p "$(APP_BUNDLE)/Contents/MacOS"
 	@mkdir -p "$(APP_BUNDLE)/Contents/Resources"
