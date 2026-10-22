@@ -43,7 +43,8 @@ jobs:
         shell: bash
         run: |
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then
-            echo "VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
+            # Release tags are vMAJOR.MINOR.PATCH; the v is only part of the tag
+            echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
           else
             echo "VERSION=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
           fi

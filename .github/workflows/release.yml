@@ -73,7 +73,8 @@ jobs:
         working-directory: dist
         shell: bash
         run: |
-          v="$GITHUB_REF_NAME"
+          # The version is the tag without its v, as stamped by build.yml
+          version="${GITHUB_REF_NAME#v}"
           assets='[]'
           add() {
             local platform=$1 file=$2 binary=$3
@@ -93,12 +94,12 @@ jobs:
               '. + [{platform: $platform, file: $file, size: $size, sha256: $sha,
                 binary: {path: $path, size: $bsize, sha256: $bsha}}]' <<< "$assets")
           }
-          add windows-amd64 "erings-$v-windows-amd64.zip" erings.exe
-          add windows-arm64 "erings-$v-windows-arm64.zip" erings.exe
-          add macos-arm64 "erings-$v-macos.zip" erings.app/Contents/MacOS/erings
-          add linux-x86_64 "erings-$v-linux-x86_64.zip" "erings-$v-x86_64.AppImage"
-          add linux-aarch64 "erings-$v-linux-aarch64.zip" "erings-$v-aarch64.AppImage"
-          jq -n --arg version "$v" --argjson assets "$assets" \
+          add windows-amd64 "erings-$version-windows-amd64.zip" erings.exe
+          add windows-arm64 "erings-$version-windows-arm64.zip" erings.exe
+          add macos-arm64 "erings-$version-macos.zip" erings.app/Contents/MacOS/erings
+          add linux-x86_64 "erings-$version-linux-x86_64.zip" "erings-$version-x86_64.AppImage"
+          add linux-aarch64 "erings-$version-linux-aarch64.zip" "erings-$version-aarch64.AppImage"
+          jq -n --arg version "$version" --argjson assets "$assets" \
             '{schema: 1, app: "erings", version: $version, assets: $assets}' > manifest.json
           cat manifest.json
 

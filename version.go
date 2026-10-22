@@ -29,14 +29,24 @@ var archiveVersion = "$Format:%(describe:tags)$"
 // "-X github.com/user-none/erings.updateKeys=...".
 var updateKeys string
 
+// UpdateKeys returns the update signing public keys stamped into the binary,
+// or nil when none were.
+func UpdateKeys() []string {
+	if updateKeys == "" {
+		return nil
+	}
+	return strings.Split(updateKeys, ",")
+}
+
 func init() {
 	// A link-time override (CI and make builds) takes precedence.
 	if Version != defaultVersion {
 		return
 	}
 
-	// A release source archive carries the tag via export-subst.
+	// A release source archive carries the tag via export-subst. The tag's
+	// leading v is not part of the version.
 	if !strings.HasPrefix(archiveVersion, "$Format:") && archiveVersion != "" {
-		Version = archiveVersion
+		Version = strings.TrimPrefix(archiveVersion, "v")
 	}
 }

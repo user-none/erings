@@ -51,14 +51,13 @@ UPDATE_KEYS_LDFLAGS := -X github.com/user-none/erings.updateKeys=$(UPDATE_KEYS)
 endif
 
 # The macOS bundle's versions, stamped into its Info.plist from VERSION.
-# CFBundleShortVersionString must be dotted integers, so it is the release
-# tag without its leading v, or 0.0.0 for a commit hash or no VERSION (the
-# binary's own default). CFBundleVersion carries VERSION as given.
-ifneq ($(filter v0% v1% v2% v3% v4% v5% v6% v7% v8% v9%,$(VERSION)),)
-BUNDLE_SHORT_VERSION := $(patsubst v%,%,$(VERSION))
-else
-BUNDLE_SHORT_VERSION := 0.0.0
-endif
+# CFBundleShortVersionString must be dotted integers, so it is VERSION when
+# that is a release version (MAJOR.MINOR.PATCH), or 0.0.0 for a commit hash
+# or no VERSION (the binary's own default). A commit hash can start with a
+# digit, so the whole value is matched. It is recursively expanded, so the
+# shell check runs only when the macos target uses it. CFBundleVersion
+# carries VERSION as given.
+BUNDLE_SHORT_VERSION = $(if $(shell echo '$(VERSION)' | grep -Ex '[0-9]+\.[0-9]+\.[0-9]+'),$(VERSION),0.0.0)
 BUNDLE_VERSION := $(if $(VERSION),$(VERSION),0.0.0)
 
 # The version segment is dropped when no VERSION is supplied (plain local builds).

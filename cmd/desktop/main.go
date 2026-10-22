@@ -13,6 +13,7 @@ import (
 	"os"
 
 	"github.com/user-none/eblitui/desktop"
+	"github.com/user-none/erings"
 	"github.com/user-none/erings/adapter"
 )
 
@@ -27,6 +28,17 @@ func main() {
 	factory := &adapter.Factory{}
 
 	desktop.SetAppIcon(icon)
+
+	// Release builds have the update signing keys stamped in; other builds
+	// have none and the update system stays off
+	desktop.SetUpdateConfig(desktop.UpdateConfig{
+		ManifestURL:    "https://github.com/user-none/erings/releases/latest/download/manifest.json",
+		SignatureURL:   "https://github.com/user-none/erings/releases/latest/download/manifest.sig",
+		ReleasePageURL: "https://github.com/user-none/erings/releases/tag/v{version}",
+		AppName:        erings.Name,
+		Version:        erings.Version,
+		Keys:           erings.UpdateKeys(),
+	})
 
 	if *discPath != "" {
 		options := map[string]string{"fast_boot": "true"}
