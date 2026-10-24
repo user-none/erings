@@ -10,7 +10,7 @@ require (
 	github.com/hajimehoshi/ebiten/v2 v2.10.5
 	github.com/klauspost/compress v1.20.1
 	github.com/user-none/eblitui/coreif v0.9.0
-	github.com/user-none/eblitui/desktop v0.6.1
+	github.com/user-none/eblitui/desktop v0.7.0
 	github.com/user-none/eblitui/romloader v0.4.1
 	github.com/user-none/eblitui/rumble v1.0.0
 	github.com/user-none/go-chip-m68k v0.1.2
@@ -20,7 +20,6 @@ require (
 )
 
 require (
-	github.com/TheTitanrain/w32 v0.0.0-20180517000239-4f5cfb03fabf // indirect
 	github.com/andybalholm/brotli v1.2.0 // indirect
 	github.com/bodgit/plumbing v1.3.0 // indirect
 	github.com/bodgit/sevenzip v1.6.1 // indirect
@@ -34,7 +33,6 @@ require (
 	github.com/nwaples/rardecode/v2 v2.2.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.29 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
-	github.com/sqweek/dialog v0.0.0-20240226140203-065105509627 // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
 	github.com/user-none/eblitui/rdb v0.2.0 // indirect
