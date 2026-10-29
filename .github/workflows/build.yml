@@ -8,7 +8,7 @@ on:
   workflow_call:
     inputs:
       release:
-        description: Build for a release (requires update keys, uploads the zips)
+        description: Build for a release (requires update keys, uploads the release assets)
         type: boolean
         default: false
       update_keys:
@@ -87,9 +87,8 @@ jobs:
       - name: Build (Linux)
         if: runner.os == 'Linux'
         run: |
+          # The AppImage is a single file and is the release asset as is
           make appimage VERSION="$VERSION" APPIMAGE_ARCH="$APPIMAGE_ARCH" UPDATE_KEYS="$UPDATE_KEYS"
-          cd build
-          zip "erings-$VERSION-linux-$APPIMAGE_ARCH.zip" "erings-$VERSION-$APPIMAGE_ARCH.AppImage"
 
       - name: Install make (Windows)
         if: runner.os == 'Windows'
@@ -190,10 +189,12 @@ jobs:
           name: erings-${{ env.VERSION }}-macos
           path: build/erings.app
 
-      - name: Upload release zip
+      - name: Upload release asset
         if: inputs.release
         uses: actions/upload-artifact@v7
         with:
           name: release-${{ runner.os }}-${{ runner.arch }}
-          path: build/erings-*.zip
+          path: |
+            build/erings-*.zip
+            build/erings-*.AppImage
           if-no-files-found: error

@@ -62,7 +62,7 @@ jobs:
             | sed -E '/^-----BEGIN (PGP SIGNATURE|SSH SIGNATURE|SIGNED MESSAGE)-----$/,$d' \
             > "$RUNNER_TEMP/notes.md"
 
-      - name: Download release zips
+      - name: Download release assets
         uses: actions/download-artifact@v8
         with:
           pattern: release-*
@@ -76,6 +76,9 @@ jobs:
           # The version is the tag without its v, as stamped by build.yml
           version="${GITHUB_REF_NAME#v}"
           assets='[]'
+          # add records a release asset. The binary is the path of the
+          # application binary inside a zip asset. Without one the asset is
+          # the binary itself, as with an AppImage.
           add() {
             local platform=$1 file=$2 binary=$3
             local size sha bsize bsha
@@ -85,8 +88,14 @@ jobs:
             fi
             size=$(stat -c %s "$file")
             sha=$(sha256sum "$file" | cut -d ' ' -f 1)
-            bsize=$(unzip -p "$file" "$binary" | wc -c)
-            bsha=$(unzip -p "$file" "$binary" | sha256sum | cut -d ' ' -f 1)
+            if [ -n "$binary" ]; then
+              bsize=$(unzip -p "$file" "$binary" | wc -c)
+              bsha=$(unzip -p "$file" "$binary" | sha256sum | cut -d ' ' -f 1)
+            else
+              binary=$file
+              bsize=$size
+              bsha=$sha
+            fi
             assets=$(jq -c \
               --arg platform "$platform" --arg file "$file" \
               --argjson size "$size" --arg sha "$sha" \
@@ -97,8 +106,8 @@ jobs:
           add windows-amd64 "erings-$version-windows-amd64.zip" erings.exe
           add windows-arm64 "erings-$version-windows-arm64.zip" erings.exe
           add macos-arm64 "erings-$version-macos.zip" erings.app/Contents/MacOS/erings
-          add linux-x86_64 "erings-$version-linux-x86_64.zip" "erings-$version-x86_64.AppImage"
-          add linux-aarch64 "erings-$version-linux-aarch64.zip" "erings-$version-aarch64.AppImage"
+          add linux-x86_64 "erings-$version-x86_64.AppImage"
+          add linux-aarch64 "erings-$version-aarch64.AppImage"
           jq -n --arg version "$version" --argjson assets "$assets" \
             '{schema: 1, app: "erings", version: $version, assets: $assets}' > manifest.json
           cat manifest.json
@@ -132,4 +141,4 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" --draft --verify-tag \
             --title "$GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" \
-            erings-*.zip manifest.json manifest.sig
+            erings-*.zip erings-*.AppImage manifest.json manifest.sig
