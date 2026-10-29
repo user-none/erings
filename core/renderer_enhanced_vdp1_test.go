@@ -142,7 +142,8 @@ func enhancedVDP1Drive(t *testing.T, s benchVDP1Scene, shift uint32) (*enhancedR
 	t.Helper()
 	v1 := s.build()
 	v2 := spriteVDP2()
-	e := newEnhancedRenderer(v2, v1, shift)
+	v2.setEnhance(enhanceConfig{shift: shift})
+	e := newEnhancedRenderer(v2, v1)
 	d := &vdp1FrameDrive{v1: v1, v2: v2, g: e}
 	d.frames(t)
 	d.change()
@@ -279,7 +280,8 @@ func TestEnhancedVDP1StateLoadMatchesWalk(t *testing.T) {
 	stateLoadList(v1)
 	const shift = 1
 	e.renderer.close()
-	r := newEnhancedRenderer(e.vdp2, v1, shift)
+	e.vdp2.setEnhance(enhanceConfig{shift: shift})
+	r := newEnhancedRenderer(e.vdp2, v1)
 	defer r.close()
 	e.renderer = r
 	d := &vdp1FrameDrive{v1: v1, v2: e.vdp2, g: r}
@@ -308,7 +310,8 @@ func TestEnhancedVDP1ResetDropsWaitingEntry(t *testing.T) {
 	resetList(v1)
 	const shift = 1
 	e.renderer.close()
-	r := newEnhancedRenderer(e.vdp2, v1, shift)
+	e.vdp2.setEnhance(enhanceConfig{shift: shift})
+	r := newEnhancedRenderer(e.vdp2, v1)
 	defer r.close()
 	e.renderer = r
 	d := &vdp1FrameDrive{v1: v1, v2: e.vdp2, g: r}
@@ -427,6 +430,7 @@ func TestScaleSpriteRowSubRows(t *testing.T) {
 	pixel := func(x, y int) uint16 { return uint16(y*1031 + x*17) }
 	for shift := uint32(1); shift <= 3; shift++ {
 		n := 1 << shift
+		v.setEnhance(enhanceConfig{shift: shift})
 		for _, tc := range []struct {
 			name   string
 			mode   uint32
@@ -461,7 +465,7 @@ func TestScaleSpriteRowSubRows(t *testing.T) {
 					BaseX: xst + rot.dxst*int64(y), BaseY: yst + rot.dyst*int64(y), DX: dx, DY: dy}
 				for k := range n {
 					r := native
-					v.scaleSpriteRow(&r, int32(k), shift)
+					v.scaleSpriteRow(&r, int32(k))
 					for _, x := range []int{0, 1, n - 1, n, 3*n + 1, 150 * n, sw/(1<<tc.halve) - 1} {
 						var got, want uint32
 						switch tc.mode {

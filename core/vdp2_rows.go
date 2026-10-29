@@ -138,10 +138,22 @@ type lineRecord struct {
 // mode returns.
 type frameRows struct {
 	lines []lineRecord
+
+	// siblings holds, by field line, the sibling record BeginLine
+	// builds beside the row's with deinterlacing on
+	// (siblingLineSetup): the other display line of the field line
+	// pair, from the same line state. It is allocated by the first
+	// frame that takes two records per line (latchRecordsPerLine).
+	// Only the enhanced renderers read it, through deriveRows, and
+	// only while recordsPerLine is 2.
+	siblings []lineRecord
 }
 
 // rowRecord is row y's record.
 func (v *VDP2) rowRecord(y int) *lineRecord { return &v.rows.lines[y] }
+
+// siblingRecord is row y's sibling record.
+func (v *VDP2) siblingRecord(y int) *lineRecord { return &v.rows.siblings[y] }
 
 // placeRow places a copy of a row record at a row slot, the row of the
 // layer and line color buffers its spans write and the composite
@@ -173,8 +185,9 @@ func placeRowFrom(dst, src *lineRecord, slot int32) {
 }
 
 // rowInputs writes the inputs row y's chain names that no span writes
-// into row slot of the layer and line color buffers, at the scale
-// shift the buffers' rows are at: sub-row k of the external image row
+// into row slot of the layer and line color buffers, at the
+// configuration's scale shift the buffers' rows are at: sub-row k of
+// the external image row
 // into the NBG1 layer buffer (exbgCopyRow), and an empty line color
 // row for each rotation layer. A rotation span writes a dot's line
 // color only where the coefficient supplies one, so the row starts
@@ -182,13 +195,13 @@ func placeRowFrom(dst, src *lineRecord, slot int32) {
 // earlier row's data. The software renderers write a row's inputs
 // through it; the GPU renderer stages the same inputs for the device
 // (gpuRowInputs).
-func (v *VDP2) rowInputs(r *lineRecord, layers *[layerCount]compute.Layer, lineColors *[2]compute.LineColor, slot, y, k int, shift uint32) {
-	width := v.frame.width << shift
+func (v *VDP2) rowInputs(r *lineRecord, layers *[layerCount]compute.Layer, lineColors *[2]compute.LineColor, slot, y, k int) {
+	width := v.frame.width << v.enhance.cfg.shift
 	row := slot * width
 	for i := 0; i < int(r.NSpans); i++ {
 		switch entry, layer := spanKind(r.Spans[i]); entry {
 		case entryExternal:
-			v.exbgCopyRow(layers[layer], slot, y, k, shift)
+			v.exbgCopyRow(layers[layer], slot, y, k)
 		case entryRBGCell, entryRBGBitmap:
 			clear(lineColors[layer-screen.LayerRBG0][row : row+width])
 		}

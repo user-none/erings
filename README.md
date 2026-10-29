@@ -41,6 +41,7 @@ have fun playing some amazing classic games.
 - Runs through the eblitui desktop UI
 - RetroAchievements
 - RuMbLe support for various games
+- Cheats
 - NTSC and PAL regions
 - A 4MB extended RAM cartridge
 - Two player digital controllers with per controller configuration profiles
@@ -48,6 +49,8 @@ have fun playing some amazing classic games.
 - Save states
 - MPEG card
 - Internal resolution upscaling
+- Visual Enhancements
+  - Deinterlacing of double-density interlaced games
 
 BIOS region patching is supported. Meaning you can use a US BIOS to play
 Japanese games or a Japanese BIOS to play US games. Or just use the HLE BIOS

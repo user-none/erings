@@ -300,12 +300,19 @@ type VDP2 struct {
 	cramCacheValid bool
 
 	// Row window state built by BeginLine (buildLineWindows) and
-	// consumed by the composite setup.
-	lineWin lineWindows
+	// consumed by the composite setup, and the sibling row's with
+	// deinterlacing on (siblingLineSetup).
+	lineWin    lineWindows
+	siblingWin lineWindows
 
 	// rows holds the per-row render state BeginLine builds
 	// (vdp2_rows.go). Both renderers consume it.
 	rows frameRows
+
+	// enhance is the enhancement state (enhance.go): the configuration
+	// the emulator set, which the enhanced renderers and the shared
+	// derivation code read.
+	enhance enhanceState
 
 	// Dirty page maps of VRAM and CRAM (vdp2_delta.go): every write
 	// marks its page, and the GPU renderer takes the marked pages at
@@ -620,7 +627,7 @@ func (v *VDP2) ActiveLines() uint16 { return v.activeLines }
 // display-density change only: screen coordinate generation (layer
 // vertical stepping, per-displayed-line table walks, window coordinate
 // spaces) stays in the programmed double-density space (frame.lsmd3);
-// only output geometry (DisplayHeight, frameOutRow, the geometry-change
+// only output geometry (DisplayHeight, frameOutRowAt, the geometry-change
 // blank) consults this helper.
 func (v *VDP2) effectiveInterlace() uint8 {
 	if v.interlace == 3 {

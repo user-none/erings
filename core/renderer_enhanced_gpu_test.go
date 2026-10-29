@@ -23,6 +23,7 @@ import (
 func enhancedGPUVDP1Matches(t *testing.T, s benchVDP1Scene, shift uint32, open func(v2 *VDP2, v1 *VDP1) (*enhancedGPURenderer, error)) {
 	t.Helper()
 	v1, v2 := s.build(), spriteVDP2()
+	v2.setEnhance(enhanceConfig{shift: shift})
 	g, err := open(v2, v1)
 	if err != nil {
 		t.Skip(err)
@@ -65,7 +66,7 @@ func TestExecEnhancedGPUVDP1MatchesEnhancedSoftware(t *testing.T) {
 					if err != nil {
 						t.Fatal(err)
 					}
-					return newEnhancedGPURenderer(v2, v1, prog, gpuBatchLines>>shift, shift)
+					return newEnhancedGPURenderer(v2, v1, prog, gpuBatchLines>>shift)
 				})
 			})
 		}
@@ -79,7 +80,7 @@ func TestEnhancedGPUVDP1MatchesEnhancedSoftware(t *testing.T) {
 		for shift := uint32(0); shift <= 2; shift++ {
 			t.Run(fmt.Sprintf("%s shift %d", s.name, shift), func(t *testing.T) {
 				enhancedGPUVDP1Matches(t, s.benchVDP1Scene, shift, func(v2 *VDP2, v1 *VDP1) (*enhancedGPURenderer, error) {
-					return openEnhancedGPURenderer(v2, v1, shift)
+					return openEnhancedGPURenderer(v2, v1)
 				})
 			})
 		}
@@ -104,7 +105,8 @@ func TestEnhancedGPUVDP1StateLoadMatchesWalk(t *testing.T) {
 		t.Fatal(err)
 	}
 	e.renderer.close()
-	g, err := newEnhancedGPURenderer(e.vdp2, v1, prog, gpuBatchLines>>shift, shift)
+	e.vdp2.setEnhance(enhanceConfig{shift: shift})
+	g, err := newEnhancedGPURenderer(e.vdp2, v1, prog, gpuBatchLines>>shift)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -170,7 +172,9 @@ func TestGPUStepPieces(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				g, err := newEnhancedGPURenderer(NewVDP2(NewSCU()), v1, prog, 1, shift)
+				v2 := NewVDP2(NewSCU())
+				v2.setEnhance(enhanceConfig{shift: shift})
+				g, err := newEnhancedGPURenderer(v2, v1, prog, 1)
 				if err != nil {
 					t.Fatal(err)
 				}

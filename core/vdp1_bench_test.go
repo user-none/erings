@@ -341,7 +341,7 @@ func benchVDP1GPU(tb testing.TB, v *VDP1, prog *hostgpu.Program) *gpuRenderer {
 		if g, err = openGPURenderer(v2, v); err != nil {
 			tb.Skip(err)
 		}
-	} else if g, err = newGPURenderer(v2, v, prog, gpuBatchLines, 0); err != nil {
+	} else if g, err = newGPURenderer(v2, v, prog, gpuBatchLines, false); err != nil {
 		tb.Fatal(err)
 	}
 	tb.Cleanup(g.close)

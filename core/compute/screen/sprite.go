@@ -224,20 +224,28 @@ const (
 // under 640 columns), and for the rotated read the coordinate at
 // column 0 and its per-column step from rotation parameter A (VDP1
 // manual Sec 1.2; rotation is prohibited in hi-res). The coordinate
-// is .10 at native and carried at 10 + ScaleShift fraction bits at
-// scale, so the shift down by 10 lands in the scaled frame buffer.
-// The step stays native and is applied per scaled column.
+// is .10 at native and carried at 10 + Shift fraction bits at scale,
+// Shift being the scale shift, so the shift down by 10 lands in the
+// scaled frame buffer. The step stays native and is applied per
+// scaled column. Height is the buffer's physical rows at the scale.
+// Doubled is 1 when the buffer holds every row of the doubled Y range
+// under double interlace, physical row r at doubled rows 2r and
+// 2r + 1: the rotated read then takes doubled row 2r + Parity of the
+// physical row r its coordinate lands on, with the scaled sub-row kept.
 type SpriteRow struct {
-	Mode   uint32
-	Width  int32
-	Height int32
-	Row    uint32
-	Halve  uint32
-	Is8bpp bool
-	BaseX  int64
-	BaseY  int64
-	DX     int64
-	DY     int64
+	Mode    uint32
+	Width   int32
+	Height  int32
+	Row     uint32
+	Halve   uint32
+	Shift   uint32
+	Doubled uint32
+	Parity  uint32
+	Is8bpp  bool
+	BaseX   int64
+	BaseY   int64
+	DX      int64
+	DY      int64
 }
 
 // SpritePixel16 reads column x of a 16-bit direct-read row: zero past
@@ -259,15 +267,19 @@ func SpritePixel8(fb compute.VDP1FB, r *SpriteRow, x int32) uint32 {
 }
 
 // SpritePixelRotated reads column x through the rotated read
-// coordinate: zero outside the frame buffer.
+// coordinate: zero outside the frame buffer. The coordinate lands on
+// a physical row; in a doubled buffer the row read is that row's
+// doubled row of the read's parity, the scaled sub-row kept.
 func SpritePixelRotated(fb compute.VDP1FB, r *SpriteRow, x int32) uint32 {
 	sx := int32((r.BaseX + r.DX*int64(x)) >> 10)
 	sy := int32((r.BaseY + r.DY*int64(x)) >> 10)
 	if sx < 0 || sx >= r.Width || sy < 0 || sy >= r.Height {
 		return 0
 	}
+	sub := sy & (int32(1)<<r.Shift - 1)
+	row := ((sy>>r.Shift)<<r.Doubled+int32(r.Parity))<<r.Shift + sub
 	if r.Is8bpp {
-		return uint32(fb.U8(uint32(sy*r.Width + sx)))
+		return uint32(fb.U8(uint32(row*r.Width + sx)))
 	}
-	return uint32(fb.U16BE(uint32(sy*r.Width+sx) * 2))
+	return uint32(fb.U16BE(uint32(row*r.Width+sx) * 2))
 }

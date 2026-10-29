@@ -53,6 +53,7 @@ func main() {
 	loadState := flag.String("load-state", "", "Path to a save state file to load at startup, replaying inputs from there. Requires the same disc and BIOS the state was captured with; the replay must have been recorded from this state.")
 	renderer := flag.String("renderer", "gpu", "Renderer: gpu (fails if the GPU renderer cannot initialize) or software.")
 	upscale := flag.String("upscale", "1x", "Internal resolution: 1x (native), 2x, 4x, 8x, or 16x.")
+	deinterlace := flag.Bool("deinterlace", false, "Deinterlace: remove comb artifacts in interlaced games.")
 	flag.Usage = func() {
 		fmt.Fprintln(os.Stderr, "Usage: capture [flags] <disc> <replay>")
 		flag.PrintDefaults()
@@ -69,6 +70,9 @@ func main() {
 	emu := core.NewEmulator()
 	if err := emu.SetUpscale(*upscale); err != nil {
 		log.Fatalf("upscale: %v", err)
+	}
+	if err := emu.SetDeinterlace(*deinterlace); err != nil {
+		log.Fatalf("deinterlace: %v", err)
 	}
 	if err := emu.SetRendererByName(*renderer); err != nil {
 		log.Fatalf("renderer: %v", err)

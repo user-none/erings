@@ -37,19 +37,21 @@ type enhancedRenderer struct {
 	pages             []uint32          // a take's pages, reused
 }
 
-// newEnhancedRenderer opens the enhanced renderer at the scale shift:
-// the layer and line color buffers hold the N sub-rows of one row, the
-// output frame buffer the frame the VDP2 has latched at N times each
-// axis, starting black, and the pair the frame buffers at N times each
-// axis. From here the VDP1 keeps the CPU's frame buffer writes for the
-// renderer's take, every byte of both buffers marked written, so the
-// first take expands the whole CPU pair into the pair.
-func newEnhancedRenderer(v *VDP2, v1 *VDP1, shift uint32) *enhancedRenderer {
+// newEnhancedRenderer opens the enhanced renderer at the VDP2's
+// enhancement configuration: the row store and the layer and line
+// color buffers hold the row slots of one line at the bound
+// (VDP2.maxRowSlots, grow), the N sub-rows of each of its records,
+// the output frame buffer the frame the VDP2 has latched at N times
+// each axis, starting black, and the pair the frame buffers at N
+// times each axis and the row factor (VDP2.rowFactor). From here
+// the VDP1 keeps the CPU's frame buffer writes for the renderer's
+// take, every byte of both buffers marked written, so the first take
+// expands the whole CPU pair into the pair.
+func newEnhancedRenderer(v *VDP2, v1 *VDP1) *enhancedRenderer {
 	e := &enhancedRenderer{
 		vdp2:  v,
 		vdp1:  v1,
-		shift: shift,
-		rows:  make([]lineRecord, 1<<shift),
+		shift: v.enhance.cfg.shift,
 		fbWrites: draw.FBWrites{
 			Store: new(compute.VDP1PageStore),
 			Masks: new(compute.MaskStore),
@@ -71,19 +73,28 @@ func newEnhancedRenderer(v *VDP2, v1 *VDP1, shift uint32) *enhancedRenderer {
 
 // grow gives the layer, line color, and output frame buffers the
 // lengths the latched frame needs, one row slot per sub-row, and
-// returns the sizes.
+// returns the sizes. The row store first grows to the bound on a
+// row's slots (VDP2.maxRowSlots), which the first frame with two
+// records per line doubles.
 func (e *enhancedRenderer) grow() renderSizes {
+	if n := e.vdp2.maxRowSlots(); len(e.rows) < n {
+		e.rows = make([]lineRecord, n)
+	}
 	var s renderSizes
-	e.outputFramebuffer, s = growRenderBuffers(e.vdp2, e.shift, len(e.rows), &e.in, e.outputFramebuffer)
+	e.outputFramebuffer, s = growRenderBuffers(e.vdp2, len(e.rows), &e.in, e.outputFramebuffer)
 	return s
 }
 
-// beginFrame grows the buffers when BeginFrame latched a new geometry,
-// then blanks the scaled displayed rows of the output frame buffer
-// when the VDP2 blanked the frame (a geometry change or the display
-// off).
+// beginFrame records the draw half's layout (VDP2.beginField), growing
+// the pair at the first doubled half (growPair), grows the buffers
+// when BeginFrame latched a new geometry, then blanks the scaled
+// displayed rows of the output frame buffer when the VDP2 blanked the
+// frame (a geometry change or the display off).
 func (e *enhancedRenderer) beginFrame() {
 	v := e.vdp2
+	if v.beginField(e.vdp1) {
+		e.growPair()
+	}
 	if v.frame.resized {
 		e.grow()
 	}
@@ -92,24 +103,25 @@ func (e *enhancedRenderer) beginFrame() {
 	}
 }
 
-// beginLine derives row y's sub-row records, each placed at its own
-// row slot (sub-row k at slot k), and writes each sub-row's inputs the
-// chain names that the row setup does not into its slot (rowInputs).
+// beginLine derives row y's records (deriveRows), places record k at
+// row slot k, and writes the inputs no span writes into each slot
+// (rowInputs).
 func (e *enhancedRenderer) beginLine(y int) {
 	v := e.vdp2
 	if !v.lineActive {
 		return
 	}
+	n := v.rowSlots()
+	v.deriveRows(e.rows[:n], y)
 	native := v.rowRecord(y)
-	for k := range e.rows {
-		v.scaleRow(&e.rows[k], native, int32(k), e.shift)
+	for k := range n {
 		placeRow(&e.rows[k], int32(k))
-		v.rowInputs(native, &e.in.Layers, &e.in.LineColors, k, y, k, e.shift)
+		v.rowInputs(native, &e.in.Layers, &e.in.LineColors, k, y, k&(1<<e.shift-1))
 	}
 }
 
-// renderLine renders the row's sub-rows, the sprite layer read from
-// the half of the pair the row's VDP1 frame buffer view names by
+// renderLine renders the row's derived records, the sprite layer read
+// from the half of the pair the row's VDP1 frame buffer view names by
 // physical index, or noSpriteFB when the row has none.
 func (e *enhancedRenderer) renderLine(int) {
 	v := e.vdp2
@@ -121,7 +133,7 @@ func (e *enhancedRenderer) renderLine(int) {
 		e.in.Sprite = e.vdp1FB[e.vdp1.physicalBuffer(v.lineFB.data)]
 	}
 	width := int32(v.frame.width) << e.shift
-	for k := range e.rows {
+	for k := range v.rowSlots() {
 		v.renderRecord(&e.rows[k], &e.in, e.outputFramebuffer, width)
 	}
 }
@@ -134,27 +146,19 @@ func (e *enhancedRenderer) vdp1Line(int) {
 }
 
 // takeOps takes the CPU's frame buffer writes and then the list's
-// entries not yet taken, in order, up to the first entry whose
-// records are not final (entryRecordsFinal) unless all is set: at
-// scale a distorted sprite's entry reads the record of the line
-// after its last, which the walk writes a tick or two later, and an
-// entry drawn before it is written differs from one drawn after it.
-// The entry waits and the entries after it wait with it, so the pair
-// takes them in the list's order. The CPU writes do not wait: each
-// take applies the writes made since the last, so a write made while
-// an entry waits lands before the entry's draw. At the end of the
-// display, before the list restarts, every entry is taken as it
-// stands.
+// entries the shared take yields (opTake), in order, and draws each
+// derived entry into its half of the pair at once. The CPU writes do
+// not wait: each take applies the writes made since the last, so a
+// write made while an entry waits lands before the entry's draw. At
+// the end of the display, before the list restarts, every entry is
+// taken as it stands.
 func (e *enhancedRenderer) takeOps(all bool) {
+	v, v2 := e.vdp1, e.vdp2
 	e.takeFBWrites()
-	v := e.vdp1
 	b := draw.Buffers{VRAM: (*compute.VDP1VRAM)(v.vram), Records: v.lineRecords}
 	var op draw.DrawOp
-	end := v.opsReady(!all && e.shift != 0)
-	for v.opsTaken < end {
-		src := &v.ops[v.opsTaken]
-		v.opsTaken++
-		scaleOp(&op, src, e.shift)
+	take := v2.beginOps(v, true, all)
+	for _, ok := take.next(&op); ok; _, ok = take.next(&op) {
 		b.FB = e.vdp1FB[op.Buffer&1]
 		if op.Kind == draw.OpErase {
 			draw.EraseRows(b.FB, &op, 0, draw.OpLines(&op))
@@ -164,16 +168,30 @@ func (e *enhancedRenderer) takeOps(all bool) {
 	}
 }
 
+// growPair replaces the pair with halves at the row factor's size, at
+// the frame start that recorded the first doubled half, which marked
+// every byte of both CPU frame buffers written (VDP2.beginField), so
+// the field's first take fills the new halves from the CPU pair
+// through the layout mapping.
+func (e *enhancedRenderer) growPair() {
+	s := bufferSizes(e.shift, len(e.rows), e.vdp2.frame.width, e.vdp2.DisplayHeight(), 0, e.vdp2.rowFactor())
+	for i := range e.vdp1FB {
+		if len(e.vdp1FB[i]) < s.pairBytes {
+			e.vdp1FB[i] = make(compute.VDP1FB, s.pairBytes)
+		}
+	}
+}
+
 // takeFBWrites takes the pages of each frame buffer the CPU wrote
 // since the last take, with the bytes' marks (VDP1.takeFBPages), and
 // writes each marked byte into its block of the pair half, the page
-// copy params holding the scale and the frame buffer's native width
-// and pixel size.
+// copy params holding the scale, the frame buffer's native width and
+// pixel size, and the half's layout (pageCopyParams).
 func (e *enhancedRenderer) takeFBWrites() {
 	v := e.vdp1
 	w := &e.fbWrites
-	params := draw.PageCopyParams{ScaleShift: e.shift, FBWidth: uint32(v.fbWidth()), Is8bpp: v.is8bpp()}
 	for h := range e.vdp1FB {
+		params := e.vdp2.pageCopyParams(v, uint32(h))
 		var slots int
 		slots, e.pages = v.takeFBPages(uint32(h), 0, w.Table[:], w.Masks[:], w.Store[:], e.pages)
 		for i := range uint32(slots * compute.PageBytes) {
@@ -226,8 +244,10 @@ func (e *enhancedRenderer) displayHeight() int {
 // register-derived fields are the native row's. The layer buffer row
 // each span writes and the composite reads is the row slot, which
 // placeRow sets on the derived record. It reads the rotation state as
-// the row's setup left it, so it runs at the row's setup point.
-func (v *VDP2) scaleRow(dst, native *lineRecord, k int32, shift uint32) {
+// the row's setup left it, so it runs at the row's setup point. The
+// shift is the configuration's.
+func (v *VDP2) scaleRow(dst, native *lineRecord, k int32) {
+	shift := v.enhance.cfg.shift
 	*dst = *native
 	n := int32(1) << shift
 	vram := (*compute.VDP2VRAM)(v.vram)
@@ -241,7 +261,7 @@ func (v *VDP2) scaleRow(dst, native *lineRecord, k int32, shift uint32) {
 			p.Screen.ScaleShift = shift
 			screen.ResolveNBGLine(vram, p)
 		case entryRBGCell, entryRBGBitmap:
-			v.scaleRBGRow(&dst.RBG[layer-screen.LayerRBG0], layer == screen.LayerRBG1, k, shift)
+			v.scaleRBGRow(&dst.RBG[layer-screen.LayerRBG0], layer == screen.LayerRBG1, k)
 		case entryGradation:
 			g := &dst.Grad
 			g.Width *= n
@@ -257,7 +277,7 @@ func (v *VDP2) scaleRow(dst, native *lineRecord, k int32, shift uint32) {
 				c.Runs.Runs[r].X0 *= n
 				c.Runs.Runs[r].X1 *= n
 			}
-			v.scaleSpriteRow(&c.SpriteRow, k, shift)
+			v.scaleSpriteRow(&c.SpriteRow, k)
 		}
 	}
 }
@@ -271,8 +291,10 @@ func (v *VDP2) scaleRow(dst, native *lineRecord, k int32, shift uint32) {
 // sub-row k at N times the row's start plus k steps of the start's
 // per-line advance (dXst, dYst): the frame buffer coordinate and the
 // screen coordinate scale together, and the rotation's line counter
-// counts display lines, so sub-row k is k over N of one advance.
-func (v *VDP2) scaleSpriteRow(r *screen.SpriteRow, k int32, shift uint32) {
+// counts display lines, so sub-row k is k over N of one advance. The
+// shift is the configuration's.
+func (v *VDP2) scaleSpriteRow(r *screen.SpriteRow, k int32) {
+	shift := v.enhance.cfg.shift
 	switch r.Mode {
 	case screen.SpriteRead16:
 		r.Row = (r.Row<<shift + uint32(k)*uint32(r.Width)*2) << shift
@@ -282,6 +304,7 @@ func (v *VDP2) scaleSpriteRow(r *screen.SpriteRow, k int32, shift uint32) {
 		rot := &v.frame.sprRotA
 		r.BaseX = r.BaseX<<shift + int64(k)*rot.dxst
 		r.BaseY = r.BaseY<<shift + int64(k)*rot.dyst
+		r.Shift = shift
 	}
 	r.Width <<= shift
 	r.Height <<= shift
@@ -342,6 +365,29 @@ func scaleOp(dst, src *draw.DrawOp, shift uint32) {
 	p.ScaleShift = shift
 }
 
+// deriveOp derives into dst the entry src as the renderer draws it:
+// scaled (scaleOp), and for a doubled half drawn at every row of the
+// doubled Y range. A drawing op under DIE carries Y in the doubled
+// range (VDP1 manual Table 1.2), and the walk keeps only the DIL
+// parity's rows and halves Y. Clearing DIE makes the same draw keep
+// every row at full Y. An erase op has physical rows and no DIE, so
+// its rectangle is doubled instead, row r covering doubled rows 2r
+// and 2r + 1. FBHeight doubles for both, since it bounds the rows.
+func deriveOp(dst, src *draw.DrawOp, shift uint32, l fbHalfLayout) {
+	scaleOp(dst, src, shift)
+	if !l.doubled {
+		return
+	}
+	p := &dst.Pixel
+	if src.Kind == draw.OpErase {
+		dst.Y[0] *= 2
+		dst.Y[2] = 2*(dst.Y[2]+1) - 1
+	} else {
+		p.DIE = 0
+	}
+	p.FBHeight *= 2
+}
+
 // scaleRBGRow carries p, a copy of a rotation screen's native row, to
 // sub-row k at the scale shift. The width and the horizontal mosaic
 // scale, and the rotation parameter window's X ranges scale as window
@@ -357,8 +403,10 @@ func scaleOp(dst, src *draw.DrawOp, shift uint32) {
 // coefficient at its own row coefficient address, as the native row
 // setup reads the row's. The row's vertical count is p's Y, the native
 // record's field line, since p is not yet placed at a row slot. rbg1
-// selects RBG1, which reads parameter B only.
-func (v *VDP2) scaleRBGRow(p *screen.RBGParams, rbg1 bool, k int32, shift uint32) {
+// selects RBG1, which reads parameter B only. The shift is the
+// configuration's.
+func (v *VDP2) scaleRBGRow(p *screen.RBGParams, rbg1 bool, k int32) {
+	shift := v.enhance.cfg.shift
 	fs := &v.frame
 	rf, needA, needB := &fs.rbg0F, fs.rbg0F.needA, fs.rbg0F.needB
 	if rbg1 {

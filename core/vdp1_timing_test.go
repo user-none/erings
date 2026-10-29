@@ -307,7 +307,7 @@ func TestSerializeSyncsDevicePair(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(e.vdp2, e.vdp1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(e.vdp2, e.vdp1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}

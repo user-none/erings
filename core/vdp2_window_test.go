@@ -172,8 +172,8 @@ func TestBuildLineWindowsRuns(t *testing.T) {
 			v.Write(vdp2WCTLA*2, 0x000A)
 			tc.set(v)
 			v.BeginFrame()
-			v.buildLineWindows(tc.y)
 			lw := &v.lineWin
+			v.buildLineWindows(lw, tc.y, v.frame.field)
 			if int(lw.runs.N) != len(tc.want) {
 				t.Fatalf("%d runs, want %d: %v", lw.runs.N, len(tc.want), lw.runs.Runs[:lw.runs.N])
 			}

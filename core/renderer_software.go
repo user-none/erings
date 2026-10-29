@@ -38,7 +38,7 @@ func newSoftwareRenderer(v *VDP2) *softwareRenderer {
 // grow gives the buffers the lengths the latched frame needs, at one
 // row slot.
 func (r *softwareRenderer) grow() {
-	r.outputFramebuffer, _ = growRenderBuffers(r.vdp2, 0, 1, &r.in, r.outputFramebuffer)
+	r.outputFramebuffer, _ = growRenderBuffers(r.vdp2, 1, &r.in, r.outputFramebuffer)
 }
 
 // beginFrame grows the buffers when BeginFrame latched a new geometry,
@@ -61,7 +61,7 @@ func (r *softwareRenderer) beginLine(y int) {
 	if !v.lineActive {
 		return
 	}
-	v.rowInputs(v.rowRecord(y), &r.in.Layers, &r.in.LineColors, 0, y, 0, 0)
+	v.rowInputs(v.rowRecord(y), &r.in.Layers, &r.in.LineColors, 0, y, 0)
 }
 
 // renderLine renders the prepared row whole (renderRecord) from a copy

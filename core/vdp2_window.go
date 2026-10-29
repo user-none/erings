@@ -29,9 +29,11 @@ type lineWindows struct {
 // lineWindows.ctl.
 const winCtlCC = 6
 
-// windowParams gathers the window registers and display state from
-// the line snapshot for the render window functions.
-func (v *VDP2) windowParams() screen.WindowParams {
+// windowParamsAt gathers the window registers and display state from
+// the line snapshot for the render window functions, at field parity
+// field (siblingLineSetup), which under double-density interlace
+// places field line y at display line 2y + field.
+func (v *VDP2) windowParamsAt(field int) screen.WindowParams {
 	regs := &v.frame.regs
 	p := screen.WindowParams{
 		WPSX:  [2]uint32{uint32(regs[vdp2WPSX0]), uint32(regs[vdp2WPSX1])},
@@ -40,7 +42,7 @@ func (v *VDP2) windowParams() screen.WindowParams {
 		WPEY:  [2]uint32{uint32(regs[vdp2WPEY0]), uint32(regs[vdp2WPEY1])},
 		LWTAU: [2]uint32{uint32(regs[vdp2LWTA0U]), uint32(regs[vdp2LWTA1U])},
 		LWTAL: [2]uint32{uint32(regs[vdp2LWTA0L]), uint32(regs[vdp2LWTA1L])},
-		Field: uint32(v.frame.field),
+		Field: uint32(field),
 		HiRes: v.frame.hiRes,
 		LSMD3: v.frame.lsmd3,
 		Intl2: v.frame.effIntl == 2,
@@ -48,13 +50,13 @@ func (v *VDP2) windowParams() screen.WindowParams {
 	return p
 }
 
-// buildLineWindows latches the layer control bytes for row y, resolves
-// W0 and W1 when some control byte enables them, and splits the row
-// into runs at their edges. Within a run every layer's window result
-// is constant apart from the sprite window term, which the composite
+// buildLineWindows latches the layer control bytes for row y into lw,
+// resolves W0 and W1 when some control byte enables them at the row's
+// display line for field parity field, and splits the row into
+// runs at their edges. Within a run every layer's window result is
+// constant apart from the sprite window term, which the composite
 // joins per pixel.
-func (v *VDP2) buildLineWindows(y int) {
-	lw := &v.lineWin
+func (v *VDP2) buildLineWindows(lw *lineWindows, y, field int) {
 	regs := &v.frame.regs
 	lw.ctl[0] = uint8(regs[vdp2WCTLA])
 	lw.ctl[1] = uint8(regs[vdp2WCTLA] >> 8)
@@ -70,7 +72,7 @@ func (v *VDP2) buildLineWindows(y int) {
 
 	var w0, w1 screen.LineWindow
 	if en&0x0A != 0 {
-		p := v.windowParams()
+		p := v.windowParamsAt(field)
 		vram := (*compute.VDP2VRAM)(v.vram)
 		if en&0x02 != 0 {
 			w0 = screen.ResolveLineWindow(vram, p, int32(y), 0)

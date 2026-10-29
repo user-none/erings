@@ -270,7 +270,7 @@ func TestNewGPURenderer(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(e.vdp2, e.vdp1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(e.vdp2, e.vdp1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -279,7 +279,7 @@ func TestNewGPURenderer(t *testing.T) {
 			t.Errorf("entry %s has no pipeline", entryNames[i])
 		}
 	}
-	sizes := bufferSizes(0, gpuStagingRegions*g.batchRows, e.vdp2.frame.width, e.vdp2.DisplayHeight(), g.fbPixels)
+	sizes := bufferSizes(0, gpuStagingRegions*g.batchRows, e.vdp2.frame.width, e.vdp2.DisplayHeight(), g.fbPixels, 1)
 	if len(g.all) == 0 || g.deviceFramebuffer == nil || g.deviceFramebuffer.Size() != sizes.framebufferWords*4 {
 		t.Error("the buffers were not allocated")
 	}
@@ -337,7 +337,7 @@ func TestNewGPURenderer(t *testing.T) {
 	if prog, err = hostgpu.Build(dev, parent, subs...); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := newGPURenderer(e.vdp2, e.vdp1, prog, gpuBatchLines, 0); err == nil {
+	if _, err := newGPURenderer(e.vdp2, e.vdp1, prog, gpuBatchLines, false); err == nil {
 		t.Fatal("construction succeeded without buffers")
 	}
 	if !dev.closed {
@@ -687,7 +687,7 @@ func TestGPUEncodeParamsBounds(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(v, NewVDP1(NewSCU()), prog, rowRecordMax, 0)
+	g, err := newGPURenderer(v, NewVDP1(NewSCU()), prog, rowRecordMax, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -739,7 +739,7 @@ func TestGPUGrowFailureEndsFrame(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -803,10 +803,11 @@ func TestGPUFrameNoAllocs(t *testing.T) {
 		open func(v *VDP2, prog *hostgpu.Program) (frameRenderer, error)
 	}{
 		{"gpu", func(v *VDP2, prog *hostgpu.Program) (frameRenderer, error) {
-			return newGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines, 0)
+			return newGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines, false)
 		}},
 		{"enhanced gpu 2x", func(v *VDP2, prog *hostgpu.Program) (frameRenderer, error) {
-			return newEnhancedGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines>>1, 1)
+			v.setEnhance(enhanceConfig{shift: 1})
+			return newEnhancedGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines>>1)
 		}},
 	}
 	for _, o := range opens {
@@ -901,7 +902,7 @@ func TestGPUTakePages(t *testing.T) {
 	}
 	v1 := NewVDP1(NewSCU())
 	v1.displayFB[100] = 0xAB
-	g, err := newGPURenderer(v, v1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(v, v1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -996,7 +997,7 @@ func TestGPUEndFrameWithoutSubmission(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1094,7 +1095,7 @@ func TestGPUBatches(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		g, err := newGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines, 0)
+		g, err := newGPURenderer(v, NewVDP1(NewSCU()), prog, gpuBatchLines, false)
 		if err != nil {
 			t.Fatal(err)
 		}

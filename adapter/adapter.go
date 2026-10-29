@@ -95,6 +95,15 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 				PerGame:     true,
 			},
 			{
+				Key:         "deinterlace",
+				Label:       "Deinterlace",
+				Description: "Remove comb artifacts in interlaced games",
+				Type:        coreif.CoreOptionBool,
+				Default:     "false",
+				Category:    coreif.CoreOptionCategoryVideo,
+				PerGame:     true,
+			},
+			{
 				Key:         "renderer",
 				Label:       "Renderer",
 				Description: "Render on the GPU or in software",

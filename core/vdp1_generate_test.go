@@ -258,7 +258,7 @@ func (d *vdp1Device) load(tb testing.TB, in vdp1GenerateInput) {
 	d.vram = buffer(compute.VDP1VRAMSize, hostgpu.BufferUpload)
 	d.pre = buffer(compute.VDP1FBSize, hostgpu.BufferUpload)
 	d.fb = buffer(compute.VDP1FBSize, hostgpu.BufferWorking)
-	s := bufferSizes(0, 0, 0, 0, compute.VDP1FBSize)
+	s := bufferSizes(0, 0, 0, 0, compute.VDP1FBSize, 1)
 	d.stamps = buffer(s.stamps*4, hostgpu.BufferWorking)
 	d.heads = buffer(s.heads*4, hostgpu.BufferWorking)
 	d.pool = buffer(s.pool*4, hostgpu.BufferWorking)

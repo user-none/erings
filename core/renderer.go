@@ -93,14 +93,14 @@ func growFramebuffer(f compute.Framebuffer, words int) compute.Framebuffer {
 }
 
 // growRenderBuffers gives the host render buffers of a renderer on the
-// walker the lengths bufferSizes names for the frame v latched at the
-// scale shift and slots row slots: each layer and line color buffer of
-// in that is shorter is replaced, and the output frame buffer f is
-// returned grown (growFramebuffer). The layer and line color buffers
-// hold only the rows in flight, so nothing is copied. It returns the
-// frame buffer and the sizes.
-func growRenderBuffers(v *VDP2, shift uint32, slots int, in *screen.CompositeInputs, f compute.Framebuffer) (compute.Framebuffer, renderSizes) {
-	s := bufferSizes(shift, slots, v.frame.width, v.DisplayHeight(), 0)
+// walker the lengths bufferSizes names for the frame v latched at its
+// configured scale shift and slots row slots: each layer and line
+// color buffer of in that is shorter is replaced, and the output frame
+// buffer f is returned grown (growFramebuffer). The layer and line
+// color buffers hold only the rows in flight, so nothing is copied. It
+// returns the frame buffer and the sizes.
+func growRenderBuffers(v *VDP2, slots int, in *screen.CompositeInputs, f compute.Framebuffer) (compute.Framebuffer, renderSizes) {
+	s := bufferSizes(v.enhance.cfg.shift, slots, v.frame.width, v.DisplayHeight(), 0, v.rowFactor())
 	for i := range in.Layers {
 		if len(in.Layers[i]) < s.layerWords {
 			in.Layers[i] = make(compute.Layer, s.layerWords)
@@ -133,12 +133,13 @@ var upscaleNames = [...]string{"1x", "2x", "4x", "8x", "16x"}
 func UpscaleNames() []string { return append([]string(nil), upscaleNames[:]...) }
 
 // SetUpscale selects the scale the frame renders at by its option
-// value, "1x" through "16x": at 1x the accurate renderers render at
-// the native resolution, and above it the enhanced renderers render
-// at the scale on both axes. A request for the active scale does
-// nothing. A change reopens the active renderer at the new scale, so
-// it is made before the first frame; a GPU failure on the reopen
-// falls back to software and returns the reason.
+// value, "1x" through "16x": at 1x with every other enhancement off
+// the accurate renderers render at the native resolution, and
+// otherwise the enhanced renderers render at the scale on both axes.
+// A request for the active scale does nothing. A change reopens the
+// active renderer at the new scale, so it is made before the first
+// frame; a GPU failure on the reopen falls back to software and
+// returns the reason.
 func (e *Emulator) SetUpscale(name string) error {
 	shift := -1
 	for i, n := range upscaleNames {
@@ -149,10 +150,27 @@ func (e *Emulator) SetUpscale(name string) error {
 	if shift < 0 {
 		return fmt.Errorf("unknown upscale %q (1x, 2x, 4x, 8x, or 16x)", name)
 	}
-	if uint32(shift) == e.renderShift {
+	if uint32(shift) == e.enhance.shift {
 		return nil
 	}
-	e.renderShift = uint32(shift)
+	e.enhance.shift = uint32(shift)
+	return e.openRenderer(e.rendererMode)
+}
+
+// SetDeinterlace turns deinterlacing on or off. With it on, the
+// enhanced renderers render both parities of each field under
+// double-density interlace, so the frame has no comb. A request for
+// the active state does nothing. A change reopens the renderer, which
+// at 1x switches between the accurate and enhanced renderers. It must
+// be made before the first frame, because the row stores grow only at
+// the geometry change that first shows double-density interlace
+// (VDP2.latchRecordsPerLine). A GPU failure on the reopen falls back
+// to software and returns the reason.
+func (e *Emulator) SetDeinterlace(on bool) error {
+	if on == e.enhance.deinterlace {
+		return nil
+	}
+	e.enhance.deinterlace = on
 	return e.openRenderer(e.rendererMode)
 }
 
@@ -176,33 +194,36 @@ func (e *Emulator) SetRenderer(mode Renderer) error {
 	return err
 }
 
-// openRenderer closes the active renderer and opens the mode's at the
-// upscale. The active renderer closes before the next opens, so its
-// device and buffers are released before another device is opened.
-// GPU mode initializes synchronously (device, pipeline build,
-// buffers); on any failure software becomes active and the reason is
-// returned. Above 1x GPU mode opens the enhanced GPU renderer and
+// openRenderer closes the active renderer and opens the mode's with
+// the enhancement configuration, which the VDP2 is given first so the
+// renderer and the shared derivation code read it. The active
+// renderer closes before the next opens, so its device and buffers
+// are released before another device is opened. GPU mode initializes
+// synchronously (device, pipeline build, buffers); on any failure
+// software becomes active and the reason is returned. With any
+// enhancement on, GPU mode opens the enhanced GPU renderer and
 // software mode the enhanced software renderer, which a GPU failure
-// falls back to.
+// falls back to; with every enhancement off, the accurate renderers.
 func (e *Emulator) openRenderer(mode Renderer) error {
 	e.renderer.close()
 	e.renderer = nil
+	e.vdp2.setEnhance(e.enhance)
 	var err error
 	if mode == RendererGPU {
 		var r frameRenderer
-		if e.renderShift == 0 {
+		if !e.enhance.enabled() {
 			r, err = openGPURenderer(e.vdp2, e.vdp1)
 		} else {
-			r, err = openEnhancedGPURenderer(e.vdp2, e.vdp1, e.renderShift)
+			r, err = openEnhancedGPURenderer(e.vdp2, e.vdp1)
 		}
 		if err == nil {
 			e.renderer, e.rendererMode = r, RendererGPU
 			// The GPU renderer's device draws the pair; the walk
 			// charges cycles without drawing until a CPU read of the
 			// frame buffer asks for the pair (servicePair). The
-			// enhanced one draws a pair of its own at scale, and the
-			// walk keeps the CPU pair.
-			e.vdp1.setPairKept(e.renderShift != 0)
+			// enhanced one draws a pair of its own, and the walk
+			// keeps the CPU pair.
+			e.vdp1.setPairKept(e.enhance.enabled())
 			return nil
 		}
 		err = gpuError(err)
@@ -212,20 +233,22 @@ func (e *Emulator) openRenderer(mode Renderer) error {
 }
 
 // useSoftwareRenderer makes the software renderer the active one: the
-// accurate renderer at 1x, the enhanced renderer above it. The walk
-// keeps the CPU pair from here on. After a runtime failure the pair
-// is stale until the next frame change and the draws behind it: the
-// device's draws never reached it, and the CPU's frame buffer writes
-// made while the pair was not kept went to the shadow alone
+// accurate renderer with every enhancement off, the enhanced renderer
+// with any on, at the configuration the VDP2 already holds: the one
+// openRenderer gave it, or the zero configuration of a new emulator.
+// The walk keeps the CPU pair from here on. After a runtime failure
+// the pair is stale until the next frame change and the draws behind
+// it: the device's draws never reached it, and the CPU's frame buffer
+// writes made while the pair was not kept went to the shadow alone
 // (fbWriteTarget) and are not brought back.
 func (e *Emulator) useSoftwareRenderer() {
 	if e.renderer != nil {
 		e.renderer.close()
 	}
-	if e.renderShift == 0 {
+	if !e.enhance.enabled() {
 		e.renderer = newSoftwareRenderer(e.vdp2)
 	} else {
-		e.renderer = newEnhancedRenderer(e.vdp2, e.vdp1, e.renderShift)
+		e.renderer = newEnhancedRenderer(e.vdp2, e.vdp1)
 	}
 	e.rendererMode = RendererSoftware
 	e.vdp1.setPairKept(true)
@@ -275,7 +298,7 @@ type RenderInfo struct {
 
 // RenderInfo returns the active renderer's description.
 func (e *Emulator) RenderInfo() RenderInfo {
-	return RenderInfo{Backend: e.renderer.backend(), Device: e.renderer.device(), Scale: 1 << e.renderShift}
+	return RenderInfo{Backend: e.renderer.backend(), Device: e.renderer.device(), Scale: 1 << e.enhance.shift}
 }
 
 // GPUError reports the runtime failure that switched the session to

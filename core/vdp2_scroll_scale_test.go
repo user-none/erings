@@ -10,12 +10,21 @@ import (
 	"github.com/user-none/erings/core/compute/screen"
 )
 
+// scaleRowAt is scaleRow at the scale shift, the VDP2's configuration
+// restored after, so a native render around it is unchanged.
+func scaleRowAt(v *VDP2, dst, native *lineRecord, k int32, shift uint32) {
+	cfg := v.enhance.cfg
+	v.enhance.cfg.shift = shift
+	v.scaleRow(dst, native, k)
+	v.enhance.cfg = cfg
+}
+
 // scaledNBGRow is sub-row k of layer's row in the native record at
 // the scale shift (scaleRow), resolved again at row 0 so it draws
 // into a buffer of one scaled row.
 func scaledNBGRow(v *VDP2, native *lineRecord, layer int, k int32, shift uint32) screen.NBGParams {
 	var r lineRecord
-	v.scaleRow(&r, native, k, shift)
+	scaleRowAt(v, &r, native, k, shift)
 	p := r.NBG[layer]
 	p.Y = 0
 	screen.ResolveNBGLine((*compute.VDP2VRAM)(v.vram), &p)
@@ -42,7 +51,7 @@ func drawNBGRow(v *VDP2, entry int, p *screen.NBGParams) compute.Layer {
 // point.
 func scaledRBGRow(v *VDP2, native *lineRecord, layer int, k int32, shift uint32) screen.RBGParams {
 	var r lineRecord
-	v.scaleRow(&r, native, k, shift)
+	scaleRowAt(v, &r, native, k, shift)
 	p := r.RBG[layer-screen.LayerRBG0]
 	p.Y = 0
 	screen.PrepareRBGRow(&p)

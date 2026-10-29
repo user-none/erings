@@ -33,7 +33,7 @@ func newTestVDP2() *VDP2 {
 // renderLineTest produces the complete frame row y through r in one
 // call: beginRow plus the render point, the software renderer's row
 // schedule. A row writes only r's layer buffers, its RBG line-color
-// buffers, and its frame row frameOutRow(y).
+// buffers, and its frame row frameOutRowAt(y, field).
 func (v *VDP2) renderLineTest(r *softwareRenderer, y int, fb vdp1FBView) {
 	beginRow(v, r, y, fb)
 	r.renderLine(y)
@@ -4074,7 +4074,7 @@ func TestLineWindowX(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			v := newTestVDP2()
 			v.frame.hiRes = tc.hiRes
-			if got := int(screen.LineWindowX(v.windowParams(), uint32(tc.raw))); got != tc.want {
+			if got := int(screen.LineWindowX(v.windowParamsAt(v.frame.field), uint32(tc.raw))); got != tc.want {
 				t.Errorf("LineWindowX(0x%04X) = %d, want %d", tc.raw, got, tc.want)
 			}
 		})
@@ -7277,23 +7277,23 @@ func TestLineTableY(t *testing.T) {
 	// Non-interlace: y passed through
 	v.interlace = 0
 	v.BeginFrame()
-	if got := screen.LineTableY(v.windowParams(), 5); got != 5 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 5); got != 5 {
 		t.Errorf("non-interlace LineTableY(5) = %d, want 5", got)
 	}
 
 	// Single-density: y/2
 	v.interlace = 2
 	v.BeginFrame()
-	if got := screen.LineTableY(v.windowParams(), 0); got != 0 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 0); got != 0 {
 		t.Errorf("single-density LineTableY(0) = %d, want 0", got)
 	}
-	if got := screen.LineTableY(v.windowParams(), 1); got != 0 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 1); got != 0 {
 		t.Errorf("single-density LineTableY(1) = %d, want 0", got)
 	}
-	if got := screen.LineTableY(v.windowParams(), 2); got != 1 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 2); got != 1 {
 		t.Errorf("single-density LineTableY(2) = %d, want 1", got)
 	}
-	if got := screen.LineTableY(v.windowParams(), 3); got != 1 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 3); got != 1 {
 		t.Errorf("single-density LineTableY(3) = %d, want 1", got)
 	}
 
@@ -7301,18 +7301,18 @@ func TestLineTableY(t *testing.T) {
 	v.interlace = 3
 	v.oddField = false
 	v.BeginFrame()
-	if got := screen.LineTableY(v.windowParams(), 5); got != 10 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 5); got != 10 {
 		t.Errorf("double-density even-field LineTableY(5) = %d, want 10", got)
 	}
-	if got := screen.LineTableY(v.windowParams(), 0); got != 0 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 0); got != 0 {
 		t.Errorf("double-density even-field LineTableY(0) = %d, want 0", got)
 	}
 	v.oddField = true
 	v.BeginFrame()
-	if got := screen.LineTableY(v.windowParams(), 5); got != 11 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 5); got != 11 {
 		t.Errorf("double-density odd-field LineTableY(5) = %d, want 11", got)
 	}
-	if got := screen.LineTableY(v.windowParams(), 0); got != 1 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 0); got != 1 {
 		t.Errorf("double-density odd-field LineTableY(0) = %d, want 1", got)
 	}
 }
@@ -7847,10 +7847,10 @@ func TestLineTableYLSMD3WithMosaicStaysDoubled(t *testing.T) {
 	v.oddField = false
 	v.BeginFrame()
 
-	if got := screen.LineTableY(v.windowParams(), 5); got != 10 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 5); got != 10 {
 		t.Errorf("LSMD=3 + mosaic LineTableY(5) = %d, want 10 (doubled)", got)
 	}
-	if got := screen.LineTableY(v.windowParams(), 10); got != 20 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 10); got != 20 {
 		t.Errorf("LSMD=3 + mosaic LineTableY(10) = %d, want 20 (doubled)", got)
 	}
 
@@ -7858,7 +7858,7 @@ func TestLineTableYLSMD3WithMosaicStaysDoubled(t *testing.T) {
 	// pins the field term to 0, so both fields read the same entries.
 	v.oddField = true
 	v.BeginFrame()
-	if got := screen.LineTableY(v.windowParams(), 5); got != 10 {
+	if got := screen.LineTableY(v.windowParamsAt(v.frame.field), 5); got != 10 {
 		t.Errorf("LSMD=3 + mosaic odd field LineTableY(5) = %d, want 10 (field term 0)", got)
 	}
 }
@@ -8367,7 +8367,7 @@ func TestEXBGWindowOriginConversion(t *testing.T) {
 // rpWindowBTest resolves the rotation parameter window for row y and
 // reports whether it selects parameter B at x.
 func rpWindowBTest(v *VDP2, x, y int) bool {
-	w := v.rbgRPWindow(y)
+	w := v.rbgRPWindow(y, v.frame.field)
 	return screen.RPWindowB(&w, int32(x))
 }
 

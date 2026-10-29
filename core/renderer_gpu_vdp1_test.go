@@ -20,7 +20,7 @@ import (
 // the draw, at the sizes bufferSizes gives for the frame buffer mode
 // with the most pixels at their finest addressing, one per byte.
 func newRoundState() *compute.RoundState {
-	s := bufferSizes(0, 0, 0, 0, compute.VDP1FBSize)
+	s := bufferSizes(0, 0, 0, 0, compute.VDP1FBSize, 1)
 	return &compute.RoundState{
 		Stamps: make(compute.OrderStamps, s.stamps),
 		Heads:  make(compute.FragmentHeads, s.heads),
@@ -378,18 +378,6 @@ func vdp1DriveChange(v1 *VDP1) {
 	}
 }
 
-// view is the VDP1 buffer the rows sample, as the frame loop takes
-// it: the display buffer.
-func (d *vdp1FrameDrive) view() vdp1FBView {
-	return vdp1FBView{
-		data:    d.v1.DisplayFB(),
-		is8bpp:  d.v1.Is8bpp(),
-		width:   d.v1.FBWidth(),
-		height:  d.v1.FBHeight(),
-		rotated: d.v1.FBRotated(),
-	}
-}
-
 // frames drives frames until the scene's draw has completed and at
 // least two frames have run, so a draw longer than a frame, which
 // the manual change mode keeps in one buffer, is taken whole.
@@ -411,11 +399,11 @@ func (d *vdp1FrameDrive) frame(frame int) {
 	for line := 0; line < vdp1DriveScanlines; line++ {
 		if line == 1 {
 			d.change()
-			beginRow(d.v2, d.g, 0, d.view())
+			beginRow(d.v2, d.g, 0, d.v2.vdp1View(d.v1))
 			d.g.renderLine(0)
 		}
 		if line >= 1 && line < active {
-			beginRow(d.v2, d.g, line, d.view())
+			beginRow(d.v2, d.g, line, d.v2.vdp1View(d.v1))
 		}
 		if line == active {
 			d.g.endDisplay()
@@ -632,7 +620,7 @@ func TestGPUVDP1TransferOverMatchesWalk(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -692,7 +680,7 @@ func vdp1FrameOnDevice(t *testing.T, s benchVDP1Scene, dev *execDevice, v1 *VDP1
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -752,7 +740,7 @@ func TestGPUVDP1PairSyncMatchesWalk(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, 0)
+			g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, false)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -824,7 +812,7 @@ func TestGPUVDP1SplitOpGrowsRegion(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(v2, v1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -869,7 +857,7 @@ func TestGPUVDP1StateLoadMatchesWalk(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := newGPURenderer(e.vdp2, v1, prog, gpuBatchLines, 0)
+	g, err := newGPURenderer(e.vdp2, v1, prog, gpuBatchLines, false)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -919,10 +907,11 @@ func TestGPUVDP1FrameNoAllocs(t *testing.T) {
 		open func(v2 *VDP2, v1 *VDP1, prog *hostgpu.Program) (frameRenderer, error)
 	}{
 		{"gpu", func(v2 *VDP2, v1 *VDP1, prog *hostgpu.Program) (frameRenderer, error) {
-			return newGPURenderer(v2, v1, prog, gpuBatchLines, 0)
+			return newGPURenderer(v2, v1, prog, gpuBatchLines, false)
 		}},
 		{"enhanced gpu 2x", func(v2 *VDP2, v1 *VDP1, prog *hostgpu.Program) (frameRenderer, error) {
-			return newEnhancedGPURenderer(v2, v1, prog, gpuBatchLines>>1, 1)
+			v2.setEnhance(enhanceConfig{shift: 1})
+			return newEnhancedGPURenderer(v2, v1, prog, gpuBatchLines>>1)
 		}},
 	}
 	for _, o := range opens {
@@ -965,7 +954,7 @@ func TestGPUVDP1FrameNoAllocs(t *testing.T) {
 func TestRoundStateSizes(t *testing.T) {
 	for shift := uint32(0); shift <= 3; shift++ {
 		for _, px := range []int{512 * 256, 1024 * 256, 512 * 512} {
-			s := bufferSizes(shift, 0, 0, 0, px)
+			s := bufferSizes(shift, 0, 0, 0, px, 1)
 			for name, n := range map[string]int{"stamps": s.stamps, "heads": s.heads, "pool": s.pool} {
 				if n <= 0 || n&(n-1) != 0 {
 					t.Errorf("shift %d pixels %d: %s length %d is not a power of two", shift, px, name, n)
@@ -976,7 +965,7 @@ func TestRoundStateSizes(t *testing.T) {
 			}
 		}
 	}
-	s := bufferSizes(0, 0, 0, 0, compute.VDP1FBSize)
+	s := bufferSizes(0, 0, 0, 0, compute.VDP1FBSize, 1)
 	if got, want := draw.FragmentCap(uint32(s.pool)), uint32(s.pool/draw.FragmentWords-1); got != want {
 		t.Errorf("fragment cap %d, want %d", got, want)
 	}

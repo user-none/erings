@@ -13,7 +13,8 @@ import (
 // TestBufferSizes holds every size bufferSizes gives to its form: the
 // dynamic buffers a power of two, at least what the geometry needs and
 // less than twice it, and the fixed ones at their formulas, at every
-// scale, slot count, display, and VDP1 frame buffer mode.
+// scale, slot count, display, VDP1 frame buffer mode, and pair row
+// factor, which doubles the pair, the stamps, and the heads alone.
 func TestBufferSizes(t *testing.T) {
 	pow2At := func(name string, got, need int) {
 		t.Helper()
@@ -26,17 +27,19 @@ func TestBufferSizes(t *testing.T) {
 			for _, width := range []int{0, 320, 352, 640, 704} {
 				for _, height := range []int{0, 224, 240, 256, 448, 480, 512} {
 					for _, px := range []int{0, 512 * 256, 1024 * 256, 512 * 512} {
-						s := bufferSizes(shift, slots, width, height, px)
-						rows := slots * (width << shift)
-						pow2At("layer words", s.layerWords, rows)
-						pow2At("line color bytes", s.lineColorBytes, rows)
-						pow2At("frame buffer words", s.framebufferWords, (width<<shift)*(height<<shift))
-						pow2At("stamps", s.stamps, px<<(2*shift))
-						if s.rowRecords != slots || s.copyRows != 2*(slots>>shift) {
-							t.Fatalf("shift %d slots %d: row records %d copy rows %d", shift, slots, s.rowRecords, s.copyRows)
-						}
-						if s.pairBytes != compute.VDP1FBSize<<(2*shift) || s.heads != compute.VDP1FBSize/2<<(2*shift) || s.pool != gpuFragmentPoolWords {
-							t.Fatalf("shift %d: pair %d heads %d pool %d", shift, s.pairBytes, s.heads, s.pool)
+						for rowFactor := 1; rowFactor <= 2; rowFactor++ {
+							s := bufferSizes(shift, slots, width, height, px, rowFactor)
+							rows := slots * (width << shift)
+							pow2At("layer words", s.layerWords, rows)
+							pow2At("line color bytes", s.lineColorBytes, rows)
+							pow2At("frame buffer words", s.framebufferWords, (width<<shift)*(height<<shift))
+							pow2At("stamps", s.stamps, px*rowFactor<<(2*shift))
+							if s.rowRecords != slots || s.copyRows != 2*(slots>>shift) {
+								t.Fatalf("shift %d slots %d: row records %d copy rows %d", shift, slots, s.rowRecords, s.copyRows)
+							}
+							if s.pairBytes != compute.VDP1FBSize*rowFactor<<(2*shift) || s.heads != compute.VDP1FBSize/2*rowFactor<<(2*shift) || s.pool != gpuFragmentPoolWords {
+								t.Fatalf("shift %d factor %d: pair %d heads %d pool %d", shift, rowFactor, s.pairBytes, s.heads, s.pool)
+							}
 						}
 					}
 				}

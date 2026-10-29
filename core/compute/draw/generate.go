@@ -142,12 +142,16 @@ func Resolve(fb compute.VDP1FB, rs *compute.RoundState, i uint32) {
 // the band holds the bytes of page table entry Base+s, and the copy
 // writes them to that page of the memory. A frame buffer band also
 // carries the scale its frame buffer is held at (ScaleShift, 0
-// native) and the native frame buffer's width in pixels and pixel
-// size, which place a staged byte's pixel in the scaled buffer.
+// native), the native frame buffer's width in pixels and pixel size,
+// which place a staged byte's pixel in the scaled buffer, and the
+// buffer's layout: Doubled is 1 when the buffer holds every row of
+// the doubled Y range under double interlace, where native row r is
+// doubled rows 2r and 2r + 1, both of which take the byte.
 type PageCopyParams struct {
 	Base       uint32
 	ScaleShift uint32
 	FBWidth    uint32
+	Doubled    uint32
 	Is8bpp     bool
 }
 
@@ -183,8 +187,11 @@ func CopyVDP1Pages(vram *compute.VDP1VRAM, pages *VRAMPages, p *PageCopyParams, 
 // the byte as written. At scale the byte is one lane of a native
 // pixel (the address over two in a 16-bit buffer, the address in an
 // 8-bit one), and it is written to the same lane of every pixel of
-// that pixel's N by N block at the scaled width. Entry point: one
-// thread per byte.
+// that pixel's N by N block at the scaled width; into a doubled
+// buffer the pixel's rows are 2r and 2r + 1, both written, since a
+// CPU write under double interlace is the game's picture for both
+// fields. A native buffer at native scale takes the byte at its
+// address. Entry point: one thread per byte.
 func CopyFBPages(fb compute.VDP1FB, writes *FBWrites, p *PageCopyParams, i uint32) {
 	slot := p.Base + i/compute.PageBytes
 	b := i % compute.PageBytes
@@ -194,7 +201,7 @@ func CopyFBPages(fb compute.VDP1FB, writes *FBWrites, p *PageCopyParams, i uint3
 	addr := writes.Table[slot]*compute.PageBytes + b
 	v := writes.Store.U8(slot*compute.PageBytes + b)
 	shift := p.ScaleShift
-	if shift == 0 {
+	if shift == 0 && p.Doubled == 0 {
 		fb.PutU8(addr, v)
 		return
 	}
@@ -207,12 +214,14 @@ func CopyFBPages(fb compute.VDP1FB, writes *FBWrites, p *PageCopyParams, i uint3
 	}
 	width := p.FBWidth << shift
 	x := pixel % p.FBWidth << shift
-	y := pixel / p.FBWidth << shift
 	n := uint32(1) << shift
-	for dy := range n {
-		row := (y + dy) * width
-		for dx := range n {
-			fb.PutU8((row+x+dx)*size+lane, v)
+	for q := range 1 + p.Doubled {
+		y := (pixel/p.FBWidth<<p.Doubled + q) << shift
+		for dy := range n {
+			row := (y + dy) * width
+			for dx := range n {
+				fb.PutU8((row+x+dx)*size+lane, v)
+			}
 		}
 	}
 }

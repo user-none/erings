@@ -244,12 +244,13 @@ func (v *VDP2) rotArmBits(y int) uint16 {
 }
 
 // rbgRPWindow resolves the rotation parameter window (WCTLD low byte)
-// for field-line y: each window's enable and area bits and, when the
-// row lies in the window, its X range. The rectangle window is
-// bounded by its Y registers; the line window reads the row's table
-// entry with no Y bound, per the current model. The render
+// for field line y at field parity field (siblingLineSetup): each
+// window's enable and area bits and, when the row lies in the window,
+// its X range. The rectangle window
+// is bounded by its Y registers; the line window reads the row's
+// table entry with no Y bound, per the current model. The render
 // vdp2.RPWindowB selects parameter B in the active area (Sec 6).
-func (v *VDP2) rbgRPWindow(y int) screen.RPWindow {
+func (v *VDP2) rbgRPWindow(y, field int) screen.RPWindow {
 	regs := &v.frame.regs
 	wctld := regs[vdp2WCTLD]
 	var w screen.RPWindow
@@ -258,7 +259,7 @@ func (v *VDP2) rbgRPWindow(y int) screen.RPWindow {
 	w.Area[0] = wctld&1 != 0
 	w.Area[1] = wctld&(1<<2) != 0
 	w.LogicAnd = wctld&(1<<7) != 0
-	wp := v.windowParams()
+	wp := v.windowParamsAt(field)
 	dispY := screen.DisplayY(wp, int32(y))
 	for i := 0; i < 2; i++ {
 		if !w.En[i] {
@@ -339,7 +340,7 @@ func (v *VDP2) rbgLineParams(cfg *rbgConfig, rf *rbgFrame, y int, rbg1 bool) scr
 		p.DispY = int32(y*2 + v.frame.field)
 	}
 	if p.RPMode == 3 {
-		p.Window = v.rbgRPWindow(y)
+		p.Window = v.rbgRPWindow(y, v.frame.field)
 	}
 
 	vcnt := int64(y)

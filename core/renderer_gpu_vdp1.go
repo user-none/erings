@@ -117,9 +117,10 @@ type gpuVDP1Line struct {
 	buffer uint32
 	frags  uint32 // the fragments the record's destination-reading ops can append, at most the capacity
 	// fbCopy is the params of the record's copies of CPU frame buffer
-	// writes but the base: the scale shift, and the frame buffer's
-	// native width and pixel size as the take found them.
-	fbCopy draw.PageCopyParams
+	// writes into each half but the base: the scale shift, the frame
+	// buffer's native width and pixel size as the take found them,
+	// and the half's layout (VDP2.pageCopyParams).
+	fbCopy [2]draw.PageCopyParams
 	band   gpuPageSet   // the VDP1 pages of the VRAM band taken at the line
 	pages  gpuPageSet   // the pages the record's ops read (addOpPages)
 	chunks [2]gpuChunks // by class, the chunks of the record's ops, an erase record's in the large class
@@ -288,24 +289,22 @@ func (g *gpuRenderer) vdp1Line(int) {
 	g.takeVDP1(false)
 }
 
-// takeVDP1 is the take of vdp1Line, of the entries not yet taken up
-// to the first whose records are not final (entryRecordsFinal) unless
-// all is set: the enhanced renderer draws a distorted sprite's entry
-// from the record of the line after its last, which the walk writes
-// a tick or two later, and the batch's records are copied when it is
-// submitted, so an entry is taken once the records it reads are
-// final. The entries after it wait with it, so the region takes them
-// in the list's order. At the end of the display, before the list
+// takeVDP1 is the take of vdp1Line: the VRAM pages and CPU frame
+// buffer writes since the last take, then the entries the shared take
+// yields (opTake), staged into the region as the line's records. The
+// batch's line records are copied when it is submitted, so the take's
+// wait for final records holds for the device as it does for the
+// software renderer. At the end of the display, before the list
 // restarts, every entry is taken as it stands.
 func (g *gpuRenderer) takeVDP1(all bool) {
+	v, v2 := g.vdp1, g.vdp2
 	s := &g.staging[g.cur]
 	if s.vdp1Slots+vdp1VRAMPages > gpuStoreVDP1Pages || s.fbSlots+2*vdp1FBPages > gpuStoreVDP1Pages {
 		g.submitBatch()
 		s = &g.staging[g.cur]
 	}
-	v := g.vdp1
-	end := v.opsReady(!all && g.enhanced)
-	if end > v.opsTaken && len(v.lineRecords) > s.recWords {
+	take := v2.beginOps(v, g.enhanced, all)
+	if take.end > v.opsTaken && len(v.lineRecords) > s.recWords {
 		if err := g.growVDP1(s, s.opCap, len(v.lineRecords)); err != nil {
 			g.failure = err
 			return
@@ -326,8 +325,7 @@ func (g *gpuRenderer) takeVDP1(all bool) {
 		rec.fb[h][1] = s.fbSlots
 	}
 	var scaled draw.DrawOp
-	for i := v.opsTaken; i < end; i++ {
-		op := &v.ops[i]
+	for op, ok := take.next(&scaled); ok; op, ok = take.next(&scaled) {
 		// A frame buffer holds at most one pixel per byte, which bounds
 		// the op's pixels whatever its params hold.
 		if px := min(int(op.Pixel.FBWidth)*int(op.Pixel.FBHeight), compute.VDP1FBSize); px > g.fbPixels {
@@ -337,11 +335,11 @@ func (g *gpuRenderer) takeVDP1(all bool) {
 				return
 			}
 		}
-		// The enhanced renderer draws the entry scaled (scaleOp); the
-		// line records stay the native op's.
+		// The enhanced renderer draws the entry as the take derived
+		// it for its pair (deriveOp); the line records stay the native
+		// op's.
 		dev := op
 		if g.enhanced {
-			scaleOp(&scaled, op, g.shift)
 			dev = &scaled
 		}
 		class := opClass(dev)
@@ -371,7 +369,6 @@ func (g *gpuRenderer) takeVDP1(all bool) {
 		}
 		g.putPieces(s, &rec, op, dev, class)
 	}
-	v.opsTaken = end
 	g.pushVDP1Line(s, &rec)
 }
 
@@ -471,7 +468,7 @@ func (g *gpuRenderer) putPieces(s *gpuStaging, rec *gpuVDP1Line, op, dev *draw.D
 		if !g.enhanced {
 			return p
 		}
-		scaleOp(&scaled, p, g.shift)
+		deriveOp(&scaled, p, g.shift, g.vdp2.enhance.half[p.Buffer&1])
 		return &scaled
 	}
 	if perLine := gpuLineFragments(dev, g.shift); perLine <= g.fragmentCap {
@@ -553,9 +550,9 @@ func (g *gpuRenderer) putPiece(s *gpuStaging, rec *gpuVDP1Line, piece *draw.Draw
 func (g *gpuRenderer) newVDP1Line(s *gpuStaging) gpuVDP1Line {
 	v := g.vdp1
 	rec := gpuVDP1Line{erase: -1}
-	rec.fbCopy = draw.PageCopyParams{ScaleShift: g.shift, FBWidth: uint32(v.fbWidth()), Is8bpp: v.is8bpp()}
 	rec.vram = [2]int{s.vdp1Slots, s.vdp1Slots}
 	for h := range rec.fb {
+		rec.fbCopy[h] = g.vdp2.pageCopyParams(v, uint32(h))
 		rec.fb[h] = [2]int{s.fbSlots, s.fbSlots}
 	}
 	for c := range rec.ops {
@@ -634,7 +631,7 @@ func (g *gpuRenderer) encodeVDP1(cmds hostgpu.Commands, s *gpuStaging) {
 		if r.fb[0][1] > r.fb[0][0] || r.fb[1][1] > r.fb[1][0] {
 			g.flushVDP1(cmds, s, &round)
 			for h := range r.fb {
-				g.encodeFBCopy(cmds, s, gpuVDP1CopyKinds*i+1+h, uint32(h), r.fb[h], r.fbCopy)
+				g.encodeFBCopy(cmds, s, gpuVDP1CopyKinds*i+1+h, uint32(h), r.fb[h], r.fbCopy[h])
 			}
 			cmds.Barrier()
 		}

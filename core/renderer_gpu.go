@@ -121,9 +121,10 @@ type gpuStaging struct {
 //
 // The row records, the layer and line color buffers, and the page
 // copy params hold row slots, not the frame: each staging region owns
-// batchRows << shift consecutive slots, and a batch's rows take its
-// region's slots in order, a row's sub-rows in order. The page copy
-// params hold two rows per row of the region, at every shift. The
+// batchRows * maxRowSlots consecutive slots, and a batch's rows take
+// its region's slots in order, a row's derived records in order. The
+// page copy params hold two rows per row of the region, at every
+// shift. The
 // walker waits on a region's last submission before it fills the
 // region again, which is also what frees the region's slots.
 type gpuRenderer struct {
@@ -196,21 +197,30 @@ type gpuRenderer struct {
 
 	// batchRows is the rows per submission, at most rowRecordMax, and
 	// the rows of each staging region. shift is the scale shift the
-	// rows render at, 0 native: a row has 1 << shift row slots, one
-	// per sub-row, and the rows render at the scaled width. enhanced
-	// is set on the enhanced renderer's core: the upload places the
-	// rows' sub-row records from subRows in place of the VDP2's row
-	// records, and the VDP1's entries are drawn scaled (scaleOp).
-	// subRows holds the sub-row records of the rows set up and not yet
-	// submitted, row y's sub-row k at ((y mod batchRows) << shift) + k.
-	// fbPixels is the native pixels of the largest VDP1 frame buffer
-	// mode an op has drawn in, at their finest addressing, which with
-	// the shift sizes the order stamps.
-	batchRows int
-	shift     uint32
-	enhanced  bool
-	subRows   []lineRecord
-	fbPixels  int
+	// rows render at, 0 native; the rows render at the scaled width.
+	// maxRowSlots is the bound on the row slots a row takes
+	// (VDP2.maxRowSlots), one per derived record, 1 at native, which
+	// rises once, at the first frame with two records per line
+	// (beginFrame): a region owns batchRows * maxRowSlots slots from
+	// its index times that, fixed before and after the rise. rowSlots
+	// is the slots a row of the frame takes (VDP2.rowSlots), taken at
+	// the frame start and at most maxRowSlots: a batch's rows pack by
+	// it inside their region, so a run's rows are consecutive slots.
+	// enhanced is set on the enhanced renderer's core: the upload
+	// places the rows' derived records from subRows in place of the
+	// VDP2's row records, and the VDP1's entries are drawn scaled
+	// (scaleOp). subRows holds the derived records of the rows set up
+	// and not yet submitted, row y's record k at (y mod batchRows) *
+	// maxRowSlots + k. fbPixels is the native pixels of the largest
+	// VDP1 frame buffer mode an op has drawn in, at their finest
+	// addressing, which with the shift sizes the order stamps.
+	batchRows   int
+	shift       uint32
+	maxRowSlots int
+	rowSlots    int
+	enhanced    bool
+	subRows     []lineRecord
+	fbPixels    int
 
 	// The frame's progress: the region being filled, the first row of
 	// the batch being recorded, the rows ended so far, the CRAM mode
@@ -262,23 +272,28 @@ func openGPURenderer(v *VDP2, v1 *VDP1) (*gpuRenderer, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newGPURenderer(v, v1, prog, gpuBatchLines, 0)
+	return newGPURenderer(v, v1, prog, gpuBatchLines, false)
 }
 
 // newGPURenderer takes the compute sources built on a device,
 // resolves the entry points, allocates the buffers, and copies the
-// VDP1's VRAM and frame buffers to the device, or at a scale shift
-// above 0 clears the device pair, which starts empty there. Every page
-// of VDP2 VRAM and CRAM is marked, so the first row take delivers
-// both whole into the device copies. It submits every batchRows rows,
-// at least 1 and at most rowRecordMax, and renders the rows at the
-// scale shift. On failure the device is closed.
-func newGPURenderer(v *VDP2, v1 *VDP1, prog *hostgpu.Program, batchRows int, shift uint32) (*gpuRenderer, error) {
+// VDP1's VRAM to the device, and its frame buffers for the accurate
+// renderer or, for the enhanced renderer's core (enhanced set),
+// clears the device pair, which starts empty there. Every page of
+// VDP2 VRAM and CRAM is marked, so the first row take delivers both
+// whole into the device copies. It submits every batchRows rows, at
+// least 1 and at most rowRecordMax, and renders the rows at the VDP2's
+// configured scale shift, which is 0 for the accurate renderer, opened
+// with every enhancement off. On failure the device is closed.
+func newGPURenderer(v *VDP2, v1 *VDP1, prog *hostgpu.Program, batchRows int, enhanced bool) (*gpuRenderer, error) {
 	g := &gpuRenderer{
 		vdp2: v, vdp1: v1, prog: prog, paletteMode: -1, stampsStale: true,
-		batchRows: min(max(batchRows, 1), rowRecordMax),
-		shift:     shift,
-		fbPixels:  v1.fbWidth() * v1.fbHeight(),
+		batchRows:   min(max(batchRows, 1), rowRecordMax),
+		shift:       v.enhance.cfg.shift,
+		enhanced:    enhanced,
+		maxRowSlots: v.maxRowSlots(),
+		rowSlots:    v.rowSlots(),
+		fbPixels:    v1.fbWidth() * v1.fbHeight(),
 	}
 	var err error
 	for i, name := range entryNames {
@@ -297,7 +312,7 @@ func newGPURenderer(v *VDP2, v1 *VDP1, prog *hostgpu.Program, batchRows int, shi
 			g.all = append(g.all, *dst)
 		}
 	}
-	slots := g.batchRows << shift
+	slots := g.batchRows * g.maxRowSlots
 	buffer(&g.vram, compute.VDP2VRAMSize, hostgpu.BufferWorking)
 	buffer(&g.cram, compute.CRAMSize, hostgpu.BufferWorking)
 	buffer(&g.palette, compute.PaletteWords*4, hostgpu.BufferWorking)
@@ -361,9 +376,11 @@ func newGPURenderer(v *VDP2, v1 *VDP1, prog *hostgpu.Program, batchRows int, shi
 // frame buffer writes are shadowed from here on, and the marks are
 // cleared before the copies into the staging, so a write landing
 // between is marked and delivered again. The VRAM goes through the
-// staging in one submission and the pair, at shift 0, in a second,
-// each waited for before the staging is written again. At a scale
-// shift above 0 the device pair is cleared instead.
+// staging in one submission and, for the accurate renderer, the pair
+// in a second, each waited for before the staging is written again.
+// The enhanced renderer's core clears the device pair instead: it
+// draws a pair of its own, which the first take fills from the CPU
+// pair (newEnhancedGPURenderer).
 func (g *gpuRenderer) setupVDP1() error {
 	v1 := g.vdp1
 	v1.fbWritesTaken = true
@@ -379,13 +396,13 @@ func (g *gpuRenderer) setupVDP1() error {
 		for i := range v1.fbMask[h] {
 			v1.fbMask[h][i].Store(0)
 		}
-		if g.shift == 0 {
+		if !g.enhanced {
 			copy(g.stage.Bytes()[h*compute.VDP1FBSize:], v1.physicalFB(uint32(h)))
 		}
 	}
 	return g.waitedSubmit(func(cmds hostgpu.Commands) {
 		for h := range g.vdp1FB {
-			if g.shift == 0 {
+			if !g.enhanced {
 				cmds.Copy(g.vdp1FB[h], 0, g.stage, h*compute.VDP1FBSize, compute.VDP1FBSize)
 			} else {
 				cmds.Fill(g.vdp1FB[h], 0, g.vdp1FB[h].Size(), 0)
@@ -422,12 +439,15 @@ type gpuGrowth struct {
 // rows, and copy params hold nothing across a frame, a replaced device
 // frame buffer is blanked by the next submission, and replaced order
 // stamps are stale, since a new working buffer's contents are not
-// defined. The pair and the round state's heads and pool depend on
-// the scale shift alone, so only open allocates them. The host views
-// are rebuilt.
+// defined. The pair and the round state's heads depend on the scale
+// shift and the pair's row factor, so open allocates them and the
+// frame start that records the first doubled half grows them
+// (beginFrame), the field's first take filling the new halves from
+// the CPU pair; the pool depends on nothing. The host views are
+// rebuilt.
 func (g *gpuRenderer) grow() error {
 	v := g.vdp2
-	s := bufferSizes(g.shift, gpuStagingRegions*g.batchRows<<g.shift, v.frame.width, v.DisplayHeight(), g.fbPixels)
+	s := bufferSizes(g.shift, gpuStagingRegions*g.batchRows*g.maxRowSlots, v.frame.width, v.DisplayHeight(), g.fbPixels, v.rowFactor())
 	var record lineRecord
 	want := []gpuGrowth{
 		{&g.rows, s.rowRecords * int(unsafe.Sizeof(record)), hostgpu.BufferUpload},
@@ -522,13 +542,34 @@ func (g *gpuRenderer) beginLine(int) {}
 // as of that point on both schedules. The regions keep cycling across
 // frames: a region is emptied when the filling moves to it, after its
 // submission. When BeginFrame latched a new geometry the buffers grow
-// to it before any row renders. A failed growth leaves buffers too
+// to it before any row renders, the row slot stores to the session's
+// bound on a row's slots (VDP2.maxRowSlots), which only a geometry
+// change raises, and the enhanced core's pair, stamps, and heads grow
+// at the first doubled half it records (VDP2.beginField). A raised
+// bound moves the regions' fixed ranges: the growth waits for the last
+// submission before it replaces the buffers in use, so no region is
+// still reading its old range. A failed growth leaves buffers too
 // small for the frame, so the frame goes no further on the device
 // (submitBatch) and the frame loop switches to software.
 func (g *gpuRenderer) beginFrame() {
 	g.submitBatch()
 	v := g.vdp2
-	if v.frame.resized {
+	grow := v.frame.resized
+	if n := v.maxRowSlots(); n > g.maxRowSlots {
+		g.maxRowSlots = n
+		if g.enhanced {
+			g.subRows = make([]lineRecord, g.batchRows*n)
+		}
+	}
+	// The enhanced core's first doubled half: the pair, stamps, and
+	// heads grow to the row factor, and beginField marked every byte
+	// of both CPU frame buffers written, so the field's first take
+	// fills the new halves from the CPU pair through the layout
+	// mapping. The frame's rows bind the display half below, after the
+	// growth, and composite after that take, so row 0 reads the filled
+	// new display half.
+	growPair := g.enhanced && v.beginField(g.vdp1)
+	if grow || growPair {
 		if err := g.grow(); err != nil {
 			g.failure = err
 			return
@@ -546,6 +587,7 @@ func (g *gpuRenderer) beginFrame() {
 	g.batchStart, g.rowsEnded, g.paletteMode = 0, 0, -1
 	g.spriteBind = nil
 	g.width = v.frame.width << g.shift
+	g.rowSlots = v.rowSlots()
 }
 
 // resetStaging empties region i for filling, after the wait on the
@@ -709,20 +751,22 @@ func (g *gpuRenderer) submitBatch() {
 		copy(s.rec.Bytes()[s.recLo*4:], unsafe.Slice((*byte)(unsafe.Pointer(unsafe.SliceData(words))), len(words)*4))
 	}
 	// Row a is the region's first row; a batch holds at most
-	// batchRows rows, and row y's sub-rows take the slots from
-	// (base + y - a) << shift.
+	// batchRows rows, and row y's derived records take the rowSlots
+	// slots from region + (y - a) * rowSlots, packed inside the
+	// region's fixed range, so a run's rows are consecutive slots.
 	base := g.cur * g.batchRows
+	region := base * g.maxRowSlots
 	for y := a; y < b; y++ {
 		src := lines[y : y+1]
 		if g.enhanced {
-			i := (y % g.batchRows) << g.shift
-			src = g.subRows[i : i+1<<g.shift]
+			i := (y % g.batchRows) * g.maxRowSlots
+			src = g.subRows[i : i+g.rowSlots]
 		}
-		slot := (base + y - a) << g.shift
+		slot := region + (y-a)*g.rowSlots
 		for k := range src {
 			g.rowView[slot+k] = src[k]
 			placeRowFrom(&g.rowView[slot+k], &src[k], int32(slot+k))
-			g.gpuRowInputs(s, &lines[y], slot+k, y, k)
+			g.gpuRowInputs(s, &lines[y], slot+k, y, k&(1<<g.shift-1))
 		}
 	}
 	if g.failure != nil {
@@ -748,7 +792,7 @@ func (g *gpuRenderer) submitBatch() {
 	prev := a
 	for _, bd := range g.boundaries(lines, a, b, s.bands) {
 		if bd.line > prev {
-			g.encodeRows(cmds, lines, prev, bd.line, base+prev-a)
+			g.encodeRows(cmds, lines, prev, bd.line, region+(prev-a)*g.rowSlots)
 			cmds.Barrier()
 		}
 		cramPages := false
@@ -771,7 +815,7 @@ func (g *gpuRenderer) submitBatch() {
 		prev = bd.line
 	}
 	if prev < b {
-		g.encodeRows(cmds, lines, prev, b, base+prev-a)
+		g.encodeRows(cmds, lines, prev, b, region+(prev-a)*g.rowSlots)
 	}
 	s.sub = cmds.Commit()
 	g.sub = s.sub
@@ -789,7 +833,7 @@ func (g *gpuRenderer) submitBatch() {
 // external row and each rotation layer at most once, so a row past
 // them is a failure, not an overflow.
 func (g *gpuRenderer) gpuRowInputs(s *gpuStaging, r *lineRecord, slot, y, k int) {
-	slots := g.batchRows << g.shift
+	slots := g.batchRows * g.maxRowSlots
 	for i := 0; i < int(r.NSpans); i++ {
 		switch entry, layer := spanKind(r.Spans[i]); entry {
 		case entryExternal:
@@ -798,7 +842,7 @@ func (g *gpuRenderer) gpuRowInputs(s *gpuStaging, r *lineRecord, slot, y, k int)
 				g.failure = fmt.Errorf("external row %d past the region's rows", n)
 				return
 			}
-			g.vdp2.exbgCopyRow(g.extView, slot, y, k, g.shift)
+			g.vdp2.exbgCopyRow(g.extView, slot, y, k)
 			s.extRows = append(s.extRows, gpuExtRow{slot: slot, layer: layer})
 		case entryRBGCell, entryRBGBitmap:
 			rbg := layer - screen.LayerRBG0
@@ -976,8 +1020,8 @@ func (g *gpuRenderer) dispatchIndex(cmds hostgpu.Commands, entry int, buffers []
 }
 
 // encodeRows renders rows [a, b), whose records are at the row slots
-// from slot << shift on, 1 << shift slots per row: the layer runs, a
-// barrier, the gradation rows, a barrier, and the composite runs.
+// from slot on, rowSlots slots per row: the layer runs, a barrier,
+// the gradation rows, a barrier, and the composite runs.
 func (g *gpuRenderer) encodeRows(cmds hostgpu.Commands, lines []lineRecord, a, b, slot int) {
 	var record lineRecord
 	stride := uint32(unsafe.Sizeof(record))
@@ -1002,12 +1046,13 @@ func (g *gpuRenderer) encodeRows(cmds hostgpu.Commands, lines []lineRecord, a, b
 }
 
 // encodeRun dispatches one run of rows whose records start at row slot
-// (base + run.first) << shift, the run's sub-rows one dispatch row
-// each. The segment is the run's unit: a cell at the scale for a cell
-// span, the whole row for the gradation, one dot otherwise.
-func (g *gpuRenderer) encodeRun(cmds hostgpu.Commands, run gpuRun, base int, width, stride uint32) {
+// first + run.first * rowSlots, first being the slot of the rows'
+// first row, the run's derived records one dispatch row each. The
+// segment is the run's unit: a cell at the scale for a cell span, the
+// whole row for the gradation, one dot otherwise.
+func (g *gpuRenderer) encodeRun(cmds hostgpu.Commands, run gpuRun, first int, width, stride uint32) {
 	var record lineRecord
-	rows := run.n << g.shift
+	rows := run.n * g.rowSlots
 	rec := hostgpu.Dispatch{
 		BoundX:       width,
 		BoundY:       uint32(rows),
@@ -1044,7 +1089,7 @@ func (g *gpuRenderer) encodeRun(cmds hostgpu.Commands, run gpuRun, base int, wid
 	if run.entry == entryNBGCell || run.entry == entryRBGCell {
 		rec.Segment = gpuCellSegment << g.shift
 	}
-	rec.ParamsOffset = uint32(offset) + uint32((base+run.first)<<g.shift)*stride
+	rec.ParamsOffset = uint32(offset) + uint32(first+run.first*g.rowSlots)*stride
 	seg := int(rec.Segment)
 	g.dispatch(cmds, run.entry, buffers, rec, [2]int{(int(width) + seg - 1) / seg, rows})
 }

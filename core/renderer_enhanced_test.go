@@ -89,7 +89,7 @@ func TestEnhancedScale1MatchesSoftware(t *testing.T) {
 			sw, swFB := s.build()
 			en, enFB := s.build()
 			software := newSoftwareRenderer(sw)
-			enhanced := newEnhancedRenderer(en, NewVDP1(NewSCU()), 0)
+			enhanced := newEnhancedRenderer(en, NewVDP1(NewSCU()))
 			for _, f := range equivalenceFrames {
 				if f.before != nil {
 					f.before(sw)
@@ -118,7 +118,8 @@ func TestEnhancedFrameBlockCorners(t *testing.T) {
 				sw, swFB := s.build()
 				en, enFB := s.build()
 				software := newSoftwareRenderer(sw)
-				enhanced := newEnhancedRenderer(en, NewVDP1(NewSCU()), shift)
+				en.setEnhance(enhanceConfig{shift: shift})
+				enhanced := newEnhancedRenderer(en, NewVDP1(NewSCU()))
 				n := 1 << shift
 				for _, f := range equivalenceFrames {
 					if f.before != nil {
@@ -335,7 +336,8 @@ func TestEnhancedRendererNoAllocs(t *testing.T) {
 	for _, s := range enhancedScenes() {
 		t.Run(s.name, func(t *testing.T) {
 			v, fb := s.build()
-			e := newEnhancedRenderer(v, NewVDP1(NewSCU()), 1)
+			v.setEnhance(enhanceConfig{shift: 1})
+			e := newEnhancedRenderer(v, NewVDP1(NewSCU()))
 			frame := func() { renderFrame(v, e, fb, nil) }
 			frame()
 			if n := testing.AllocsPerRun(3, frame); n != 0 {

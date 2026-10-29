@@ -133,7 +133,7 @@ func testVDP1Pixel(v *VDP2, x, y int) uint32 {
 		return 0
 	}
 	fb := compute.VDP1FB(v.lineFB.data)
-	r := v.spriteRow(y)
+	r := v.spriteRowAt(y, v.frame.field)
 	switch r.Mode {
 	case screen.SpriteRead16:
 		return screen.SpritePixel16(fb, &r, int32(x))

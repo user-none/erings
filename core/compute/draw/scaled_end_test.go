@@ -303,9 +303,11 @@ func TestGenerateScaledEntryBounds(t *testing.T) {
 	}
 }
 
-// TestCopyFBPagesScaled checks the page copy at every scale and both
-// pixel sizes: each staged byte lands on its lane of every pixel of
-// its native pixel's N by N block and nowhere else.
+// TestCopyFBPagesScaled checks the page copy at every scale, both
+// pixel sizes, and both buffer layouts: each staged byte lands on its
+// lane of every pixel of its native pixel's N by N block and nowhere
+// else, the block's row being the native row's in a native buffer and
+// both doubled rows 2r and 2r + 1 in a doubled one.
 func TestCopyFBPagesScaled(t *testing.T) {
 	for _, is8 := range []bool{false, true} {
 		fbWidth := uint32(512)
@@ -314,33 +316,37 @@ func TestCopyFBPagesScaled(t *testing.T) {
 			fbWidth, size = 1024, 1
 		}
 		for shift := uint32(0); shift <= 3; shift++ {
-			writes := FBWrites{Store: new(compute.VDP1PageStore), Masks: new(compute.MaskStore), Table: new(compute.PageTable)}
-			writes.Table[0] = 37
-			written := []uint32{0, 1, 2, 1023, 777}
-			for _, b := range written {
-				writes.Store[b] = uint8(0x40 + b)
-				writes.Masks[b/32] |= 1 << (b & 31)
-			}
-			fb := make(compute.VDP1FB, compute.VDP1FBSize<<(2*shift))
-			p := PageCopyParams{ScaleShift: shift, FBWidth: fbWidth, Is8bpp: is8}
-			for i := range uint32(compute.PageBytes) {
-				CopyFBPages(fb, &writes, &p, i)
-			}
-			want := make([]byte, len(fb))
-			n := uint32(1) << shift
-			for _, b := range written {
-				addr := 37*compute.PageBytes + b
-				pixel, lane := addr/size, addr%size
-				x, y := pixel%fbWidth*n, pixel/fbWidth*n
-				for dy := range n {
-					for dx := range n {
-						want[((y+dy)*fbWidth*n+x+dx)*size+lane] = uint8(0x40 + b)
+			for doubled := uint32(0); doubled <= 1; doubled++ {
+				writes := FBWrites{Store: new(compute.VDP1PageStore), Masks: new(compute.MaskStore), Table: new(compute.PageTable)}
+				writes.Table[0] = 37
+				written := []uint32{0, 1, 2, 1023, 777}
+				for _, b := range written {
+					writes.Store[b] = uint8(0x40 + b)
+					writes.Masks[b/32] |= 1 << (b & 31)
+				}
+				fb := make(compute.VDP1FB, compute.VDP1FBSize<<doubled<<(2*shift))
+				p := PageCopyParams{ScaleShift: shift, FBWidth: fbWidth, Is8bpp: is8, Doubled: doubled}
+				for i := range uint32(compute.PageBytes) {
+					CopyFBPages(fb, &writes, &p, i)
+				}
+				want := make([]byte, len(fb))
+				n := uint32(1) << shift
+				for _, b := range written {
+					addr := 37*compute.PageBytes + b
+					pixel, lane := addr/size, addr%size
+					for q := range 1 + doubled {
+						x, y := pixel%fbWidth*n, (pixel/fbWidth<<doubled+q)*n
+						for dy := range n {
+							for dx := range n {
+								want[((y+dy)*fbWidth*n+x+dx)*size+lane] = uint8(0x40 + b)
+							}
+						}
 					}
 				}
-			}
-			for i := range fb {
-				if fb[i] != want[i] {
-					t.Fatalf("8bpp %v shift %d: byte %d = %#02x, want %#02x", is8, shift, i, fb[i], want[i])
+				for i := range fb {
+					if fb[i] != want[i] {
+						t.Fatalf("8bpp %v shift %d doubled %d: byte %d = %#02x, want %#02x", is8, shift, doubled, i, fb[i], want[i])
+					}
 				}
 			}
 		}

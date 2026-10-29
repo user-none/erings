@@ -18,6 +18,28 @@ type vdp1FBView struct {
 	width   int
 	height  int
 	rotated bool
+
+	// The layout of the half of the renderer-owned pair that mirrors
+	// data. The accurate renderers sample data itself, which is always
+	// native, and never see a doubled view.
+	fbHalfLayout
+}
+
+// vdp1View returns the VDP1 view a row samples: the display buffer from
+// the frame change, its format and geometry, and the layout of the
+// renderer's half that mirrors it. setEnhance clears the layouts when
+// deinterlacing goes off, so the accurate renderers, which sample the
+// buffer itself, always see a native view.
+func (v *VDP2) vdp1View(v1 *VDP1) vdp1FBView {
+	fb := v1.DisplayFB()
+	return vdp1FBView{
+		data:         fb,
+		is8bpp:       v1.Is8bpp(),
+		width:        v1.FBWidth(),
+		height:       v1.FBHeight(),
+		rotated:      v1.FBRotated(),
+		fbHalfLayout: v.enhance.half[v1.physicalBuffer(fb)],
+	}
 }
 
 // vdp2Frame holds the working render state.
@@ -68,8 +90,13 @@ type vdp2Frame struct {
 	// Sec 5.2 display coordinate formula). A SCYN write during the
 	// display takes effect from the following line with per-screen
 	// semantics (see the BeginLine rebase); without mid-display writes
-	// the base equals the SCYN registers.
-	nbgYBaseFP [4]int32
+	// the base equals the SCYN registers. nbgYBaseFPSibling is the
+	// base the other parity's field holds, for the sibling row with
+	// deinterlacing on (siblingLineSetup): the same, except that an
+	// NBG2 or NBG3 line counter reload rebases to that field's display
+	// line.
+	nbgYBaseFP        [4]int32
+	nbgYBaseFPSibling [4]int32
 
 	// EXBG occupies NBG1's slot: NBG1's priority, color calculation,
 	// and window registers apply, and NBG1's own rendering is
@@ -376,10 +403,12 @@ func (v *VDP2) BeginFrame() {
 	fs.effIntl = v.effectiveInterlace()
 	fs.field = v.fieldBit()
 	fs.lsmd3 = v.interlace == 3
+	v.latchRecordsPerLine()
 
 	// NBG vertical counters load from the top-of-display SCYN capture;
 	// mid-display SCYN writes rebase them per line in BeginLine.
 	fs.nbgYBaseFP = v.scynFrame
+	fs.nbgYBaseFPSibling = v.scynFrame
 
 	// A geometry change reinterprets the framebuffer's row layout:
 	// pixels written under the previous stride/height are meaningless
@@ -395,7 +424,10 @@ func (v *VDP2) BeginFrame() {
 	fs.blanked = false
 	fs.resized = fs.width != prevWidth || fs.height != prevHeight || fs.effIntl != prevIntl
 	if fs.resized {
-		fs.fieldBootstrap = fs.effIntl == 3
+		// With deinterlacing on every frame writes both fields' rows
+		// (enhance.go), so there is no half-bright frame to bootstrap
+		// over.
+		fs.fieldBootstrap = fs.effIntl == 3 && !v.enhance.cfg.deinterlace
 		fs.blanked = true
 	}
 
@@ -713,6 +745,45 @@ func (v *VDP2) BeginLine(y int, fb vdp1FBView) {
 	r.Spans[n] = spanWord(entryComposite, 0)
 	n++
 	r.NSpans = uint32(n)
+	if v.recordsPerLine() == 2 {
+		v.siblingLineSetup(y)
+	}
+}
+
+// siblingLineSetup builds row y's sibling record with deinterlacing on
+// (enhance.go): the record for the other display line of the field
+// line pair, 2y + 1 - field, from the same line state, advancing none.
+// The setup helpers take that parity as field: the frame's field for
+// the row, the other for the sibling. The chain is the row's. Scroll
+// screens are rebuilt at the sibling line, which moves their source
+// row, line scroll entry, and mosaic row. Rotation screens keep the
+// row's parameters, since their Vcnt counts field lines, except the
+// display line (screen-over row) and the rotation parameter window.
+// The gradation and the external image row are the row's. The
+// composite is rebuilt at the sibling line: its per-line tables,
+// windows, output row, and sprite read are the other parity's.
+func (v *VDP2) siblingLineSetup(y int) {
+	fs := &v.frame
+	native, sib := v.rowRecord(y), v.siblingRecord(y)
+	field := 1 - fs.field
+	sib.NSpans, sib.Spans = native.NSpans, native.Spans
+	for i := 0; i < int(native.NSpans); i++ {
+		switch entry, layer := spanKind(native.Spans[i]); entry {
+		case entryNBGCell, entryNBGBitmap:
+			v.nbgSpanSetupInto(&sib.NBG[layer], &fs.nbg[layer], layer, y, field)
+		case entryRBGCell, entryRBGBitmap:
+			p := &sib.RBG[layer-screen.LayerRBG0]
+			*p = native.RBG[layer-screen.LayerRBG0]
+			p.DispY = int32(y*2 + field)
+			if p.RPMode == 3 {
+				p.Window = v.rbgRPWindow(y, field)
+			}
+		case entryGradation:
+			sib.Grad = native.Grad
+		case entryComposite:
+			v.compositeSpanSetupInto(&sib.Comp, &v.siblingWin, y, field)
+		}
+	}
 }
 
 // rebaseSCYN applies the mid-display SCYN writes recorded during line
@@ -743,8 +814,13 @@ func (v *VDP2) rebaseSCYN(y int) {
 		}
 		if s < 2 {
 			fs.nbgYBaseFP[s] = v.scynRec[y-1][s]
+			fs.nbgYBaseFPSibling[s] = v.scynRec[y-1][s]
 		} else {
 			fs.nbgYBaseFP[s] = v.scynRec[y-1][s] - dispY*0x100
+			// The other parity's line counter reloads at its own
+			// display line, one past or before this one, so the
+			// sibling's rows step with its field (siblingLineSetup).
+			fs.nbgYBaseFPSibling[s] = v.scynRec[y-1][s] - (dispY+1-2*int32(fs.field))*0x100
 		}
 	}
 }
@@ -792,14 +868,14 @@ func (v *VDP2) setupSpriteRotation(y int, fb vdp1FBView) {
 // from the screen origin. The $A2-$A4 output controls are not
 // applied.
 //
-// At a scale shift above 0 it writes sub-row k of row y into row slot
-// of a buffer whose rows are N times the frame's width (N = 1 <<
-// shift). The placement is the native row's; each sub-dot and sub-row
-// samples the video at its own position, the native step divided by
-// N, so the sub-dot at a block corner reads the native dot's video
-// pixel. At shift 0 it is the native row.
-func (v *VDP2) exbgCopyRow(buf []uint32, slot, y, k int, shift uint32) {
-	n := 1 << shift
+// At a configured scale shift above 0 it writes sub-row k of row y
+// into row slot of a buffer whose rows are N times the frame's width
+// (N = 1 << shift). The placement is the native row's; each sub-dot
+// and sub-row samples the video at its own position, the native step
+// divided by N, so the sub-dot at a block corner reads the native
+// dot's video pixel. At shift 0 it is the native row.
+func (v *VDP2) exbgCopyRow(buf []uint32, slot, y, k int) {
+	n := 1 << v.enhance.cfg.shift
 	width := v.frame.width
 	base := uint32(v.frame.exbgPri) << 24
 	if v.frame.exbgCC {
@@ -860,12 +936,12 @@ func (v *VDP2) exbgCopyRow(buf []uint32, slot, y, k int, shift uint32) {
 	}
 }
 
-// frameOutRow maps a field-line index (0..height-1) to the framebuffer
-// row for the field latched by BeginFrame: y*2 + field under LSMD=3,
-// identity otherwise.
-func (v *VDP2) frameOutRow(y int) int {
+// frameOutRowAt maps field line y to its output frame buffer row at
+// field parity field (siblingLineSetup): 2y + field under effective
+// LSMD=3, otherwise y.
+func (v *VDP2) frameOutRowAt(y, field int) int {
 	if v.frame.effIntl == 3 {
-		return y*2 + v.frame.field
+		return y*2 + field
 	}
 	return y
 }

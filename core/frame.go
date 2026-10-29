@@ -354,15 +354,6 @@ func (e *Emulator) walkVDPFrame() {
 	lineWidth := int64(e.frameCyclesPerScanline)
 	scanlines := int64(e.frameScanlines)
 	activeLines := int64(e.vdpWalkActiveLines)
-	fbView := func() vdp1FBView {
-		return vdp1FBView{
-			data:    vdp1.DisplayFB(),
-			is8bpp:  vdp1.Is8bpp(),
-			width:   vdp1.FBWidth(),
-			height:  vdp1.FBHeight(),
-			rotated: vdp1.FBRotated(),
-		}
-	}
 	for line := int64(0); line < scanlines; line++ {
 		// Line-boundary sync: walk this line only after both CPUs
 		// have completed it.
@@ -394,12 +385,12 @@ func (e *Emulator) walkVDPFrame() {
 			vdp2.BeginFrame()
 			renderer.beginFrame()
 			if activeLines > 0 {
-				beginRow(vdp2, renderer, 0, fbView())
+				beginRow(vdp2, renderer, 0, vdp2.vdp1View(vdp1))
 				renderer.renderLine(0)
 			}
 		}
 		if line >= 1 && line < activeLines {
-			beginRow(vdp2, renderer, int(line), fbView())
+			beginRow(vdp2, renderer, int(line), vdp2.vdp1View(vdp1))
 		}
 		if line == activeLines {
 			renderer.endDisplay()

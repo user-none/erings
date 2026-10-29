@@ -286,7 +286,7 @@ func TestEXBGScaledBlockCorners(t *testing.T) {
 			native := make([]uint32, width*height)
 			lit := 0
 			for y := range height {
-				v.exbgCopyRow(native, y, y, 0, 0)
+				v.exbgCopyRow(native, y, y, 0)
 			}
 			for _, px := range native {
 				if px != 0 {
@@ -307,11 +307,13 @@ func TestEXBGScaledBlockCorners(t *testing.T) {
 				n := 1 << shift
 				sw := width * n
 				scaled := make([]uint32, sw*height*n)
+				v.enhance.cfg.shift = shift
 				for y := range height {
 					for k := range n {
-						v.exbgCopyRow(scaled, y*n+k, y, k, shift)
+						v.exbgCopyRow(scaled, y*n+k, y, k)
 					}
 				}
+				v.enhance.cfg.shift = 0
 				scaledCols, scaledRows := make(map[int]bool), make(map[int]bool)
 				for y := range height {
 					for x := range width {

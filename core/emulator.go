@@ -35,11 +35,13 @@ type Emulator struct {
 	rendererErr       error
 	requestedRenderer Renderer
 
-	// renderShift is log2 of the scale N the frame renders at
-	// (SetUpscale): 0 renders at the native resolution with the
-	// accurate renderers, and 1 to 4 render at 2x, 4x, 8x, or 16x on
-	// both axes with the enhanced renderers.
-	renderShift uint32
+	// enhance is the enhancement configuration (enhance.go): the scale
+	// shift (SetUpscale), log2 of the scale N the frame renders at, 1
+	// to 4 for 2x, 4x, 8x, or 16x on both axes, and whether
+	// deinterlacing is on (SetDeinterlace). With every enhancement off
+	// the accurate renderers render at the native resolution; with any
+	// on the enhanced renderers render.
+	enhance enhanceConfig
 
 	// Per-frame timing derived from VDP2
 	systemCyclesPerScanline uint32
@@ -443,6 +445,8 @@ func (e *Emulator) SetOption(key string, value string) {
 	case "upscale":
 		// An unknown value leaves the active scale as it is.
 		e.SetUpscale(value)
+	case "deinterlace":
+		e.SetDeinterlace(value == "true")
 	case "renderer":
 		// An unknown value leaves the requested renderer as it is.
 		switch value {

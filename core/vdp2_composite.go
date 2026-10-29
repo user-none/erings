@@ -16,19 +16,26 @@ const layerCCBit = screen.LayerCCBit
 // by screen.CompositeSpan, which composes pixels [x0,x1) of the row:
 // the back screen color is the blend bottom, held as a value, and the
 // layers composite over it. y is a field-line index; the output row is
-// frameOutRow(y). Registers come from the line snapshot; the
+// frameOutRowAt(y, field). Registers come from the line snapshot; the
 // back-screen, line-window, and line-color table addresses are
 // resolved here at line start. Layer buffers are consulted only for
 // layers enabled this line, so stale rows in disabled layers' buffers
 // are never read.
 func (v *VDP2) compositeSpanSetup(y int) {
+	v.compositeSpanSetupInto(&v.rowRecord(y).Comp, &v.lineWin, y, v.frame.field)
+}
+
+// compositeSpanSetupInto is compositeSpanSetup into cp with the row's
+// window state built into lw, for the display line of field line y at
+// field parity field (siblingLineSetup): the line's per-line tables,
+// windows, output row, and sprite read are that parity's.
+func (v *VDP2) compositeSpanSetupInto(cp *screen.CompositeParams, lw *lineWindows, y, field int) {
 	fs := &v.frame
 	regs := &fs.regs
-	cp := &v.rowRecord(y).Comp
 	*cp = screen.CompositeParams{
 		Width:          int32(fs.width),
 		Y:              int32(y),
-		FBRow:          int32(v.frameOutRow(y)),
+		FBRow:          int32(v.frameOutRowAt(y, field)),
 		FieldBootstrap: flag32(fs.fieldBootstrap),
 		CCMD:           fs.ccmd,
 		CCRTMD:         fs.ccrtmd,
@@ -58,7 +65,7 @@ func (v *VDP2) compositeSpanSetup(y int) {
 	// color for the whole screen vs one color per line. Bit 15 of the
 	// back screen data itself is ignored (VDP2 manual Figure 7.5); the
 	// color fields display regardless of its value.
-	wp := v.windowParams()
+	wp := v.windowParamsAt(field)
 	bktau := regs[vdp2BKTAU]
 	bkAddr := ((uint32(bktau&0x07) << 16) | uint32(regs[vdp2BKTAL])) * 2
 	if bktau&0x8000 != 0 {
@@ -141,11 +148,11 @@ func (v *VDP2) compositeSpanSetup(y int) {
 	// Window state for the row: W0 and W1 split the row into runs over
 	// which each layer's window result is constant; only the sprite
 	// window term varies per pixel.
-	v.buildLineWindows(y)
-	cp.Runs = v.lineWin.runs
+	v.buildLineWindows(lw, y, field)
+	cp.Runs = lw.runs
 	for run := int32(0); run < cp.Runs.N; run++ {
 		rr := cp.Runs.Runs[run]
-		for i, ctl := range v.lineWin.ctl {
+		for i, ctl := range lw.ctl {
 			cp.RunState[run][i] = screen.WindowRunState(uint32(ctl), rr.W0, rr.W1)
 		}
 	}
@@ -153,7 +160,7 @@ func (v *VDP2) compositeSpanSetup(y int) {
 	// Sprite decode and frame buffer row read for the row.
 	v.buildCRAMCache()
 	cp.Sprite = v.buildSpriteDecode()
-	cp.SpriteRow = v.spriteRow(y)
+	cp.SpriteRow = v.spriteRowAt(y, field)
 	// The sprite window bit is the frame buffer MSB while SPWINEN
 	// selects the sprite window; with it clear no pixel is inside.
 	cp.SWBit = 0

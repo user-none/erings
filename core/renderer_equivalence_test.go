@@ -107,7 +107,8 @@ func TestEnhancedGPUMatchesEnhancedSoftware(t *testing.T) {
 		for _, s := range enhancedScenes() {
 			t.Run(fmt.Sprintf("%s shift %d", s.name, shift), func(t *testing.T) {
 				gpuMatchesSoftware(t, s, func(v *VDP2, v1 *VDP1) (*enhancedGPURenderer, error) {
-					return openEnhancedGPURenderer(v, v1, shift)
+					v.setEnhance(enhanceConfig{shift: shift})
+					return openEnhancedGPURenderer(v, v1)
 				}, openEnhancedRenderer(shift))
 			})
 		}
@@ -132,7 +133,8 @@ func TestExecEnhancedGPUMatchesEnhancedSoftware(t *testing.T) {
 						if err != nil {
 							return nil, err
 						}
-						return newEnhancedGPURenderer(v, v1, prog, rows, shift)
+						v.setEnhance(enhanceConfig{shift: shift})
+						return newEnhancedGPURenderer(v, v1, prog, rows)
 					}, openEnhancedRenderer(shift))
 				})
 			}
@@ -159,12 +161,13 @@ func TestExecEnhancedGPUSubmitWithinRow(t *testing.T) {
 				if err != nil {
 					t.Fatal(err)
 				}
-				g, err := newEnhancedGPURenderer(v, NewVDP1(NewSCU()), prog, rows, shift)
+				v.setEnhance(enhanceConfig{shift: shift})
+				g, err := newEnhancedGPURenderer(v, NewVDP1(NewSCU()), prog, rows)
 				if err != nil {
 					t.Fatal(err)
 				}
 				defer g.close()
-				ref := newEnhancedRenderer(sw, NewVDP1(NewSCU()), shift)
+				ref := openEnhancedRenderer(shift)(sw)
 				defer ref.close()
 				renderFrame(sw, ref, swFB, nil)
 				v.BeginFrame()
@@ -199,7 +202,10 @@ func openSoftwareRenderer(v *VDP2) frameRenderer { return newSoftwareRenderer(v)
 // scale shift on v, with a VDP1 of its own, the reference the enhanced
 // GPU renderer is compared with over scenes with no sprite layer.
 func openEnhancedRenderer(shift uint32) func(v *VDP2) frameRenderer {
-	return func(v *VDP2) frameRenderer { return newEnhancedRenderer(v, NewVDP1(NewSCU()), shift) }
+	return func(v *VDP2) frameRenderer {
+		v.setEnhance(enhanceConfig{shift: shift})
+		return newEnhancedRenderer(v, NewVDP1(NewSCU()))
+	}
 }
 
 // TestExecGPUVDP2MatchesSoftware runs the GPU renderer on the exec
@@ -219,7 +225,7 @@ func TestExecGPUVDP2MatchesSoftware(t *testing.T) {
 					if err != nil {
 						return nil, err
 					}
-					return newGPURenderer(v, v1, prog, rows, 0)
+					return newGPURenderer(v, v1, prog, rows, false)
 				}, openSoftwareRenderer)
 			})
 		}

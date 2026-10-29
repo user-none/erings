@@ -5,28 +5,50 @@ package core
 
 import "github.com/user-none/erings/core/compute/screen"
 
-// spriteRow describes the VDP1 frame buffer read for field-line y
+// spriteRowAt describes the VDP1 frame buffer read for field-line y
 // (screen.SpriteRow): the direct 16-bit or 8-bit row read, with
 // hi-res halving the column for a 16-bit buffer, or the rotated read
 // from rotation parameter A. The caller passes a field-line y in
-// [0, activeLines); the frame buffer holds one field's rows, so no Y
-// halving applies.
-func (v *VDP2) spriteRow(y int) screen.SpriteRow {
+// [0, activeLines). A native half holds one field's rows, so field
+// line y reads physical row y with no Y halving. In a doubled half
+// (fbHalfLayout) the row reads doubled row 2y + dil, which holds what
+// physical row y holds natively. The rotated read keeps its coordinate
+// in physical rows and carries the doubled flag and parity, so the
+// pixel read takes that parity's row (screen.SpritePixelRotated).
+//
+// field is the read's field parity (siblingLineSetup). The sibling, at
+// the other parity, reads doubled row 2y + 1 - dil in a doubled half,
+// the other parity the same command list drew into that half. In a
+// native half it reads physical row y as the row does, the native line
+// doubling of the sprite layer. Its rotated read starts one display
+// line of the per-line step (VDP1 manual Sec 1.2) from the row's,
+// forward on field 0 and back on field 1, from the state the row's
+// setup armed.
+func (v *VDP2) spriteRowAt(y, field int) screen.SpriteRow {
 	fb := &v.lineFB
 	r := screen.SpriteRow{Width: int32(fb.width), Height: int32(fb.height)}
+	lines := field - v.frame.field
+	row, parity := y, fb.dil^field^v.frame.field
+	if fb.doubled {
+		row = 2*y + parity
+	}
 	switch {
 	case fb.data == nil || y >= fb.height:
 	case v.lineSprRot.enabled:
 		r.Mode = screen.SpriteReadRotated
-		r.BaseX, r.BaseY = v.lineSprRot.baseX, v.lineSprRot.baseY
+		r.BaseX = v.lineSprRot.baseX + int64(lines)*v.frame.sprRotA.dxst
+		r.BaseY = v.lineSprRot.baseY + int64(lines)*v.frame.sprRotA.dyst
 		r.DX, r.DY = v.lineSprRot.dx, v.lineSprRot.dy
 		r.Is8bpp = fb.is8bpp
+		if fb.doubled {
+			r.Doubled, r.Parity = 1, uint32(parity)
+		}
 	case fb.is8bpp:
 		r.Mode = screen.SpriteRead8
-		r.Row = uint32(y * fb.width)
+		r.Row = uint32(row * fb.width)
 	default:
 		r.Mode = screen.SpriteRead16
-		r.Row = uint32(y*fb.width) * 2
+		r.Row = uint32(row*fb.width) * 2
 		if v.frame.hiRes {
 			r.Halve = 1
 		}

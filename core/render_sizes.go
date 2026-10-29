@@ -26,13 +26,16 @@ type renderSizes struct {
 
 // bufferSizes gives the length of every renderer-owned buffer at the
 // scale shift for a renderer holding slots row slots, a frame width
-// dots wide with height displayed rows, and a VDP1 frame buffer mode
-// of fbPixels pixels at their finest addressing. A row slot is a row
-// of the layer and line color buffers, so those hold the rows a
-// renderer has between their setup and their render, never a whole
-// frame. The dynamic buffers are rounded up to a power of two, the
-// mask their helpers need.
-func bufferSizes(shift uint32, slots, width, height, fbPixels int) renderSizes {
+// dots wide with height displayed rows, a VDP1 frame buffer mode of
+// fbPixels pixels at their finest addressing, and the pair's row
+// factor (VDP2.rowFactor), 2 when a half holds every row of the
+// doubled Y range, which doubles the pair and the stamps and heads
+// that hold one entry per pair pixel. A row slot is a row of the
+// layer and line color buffers, so those hold the rows a renderer has
+// between their setup and their render, never a whole frame. The
+// dynamic buffers are rounded up to a power of two, the mask their
+// helpers need.
+func bufferSizes(shift uint32, slots, width, height, fbPixels, rowFactor int) renderSizes {
 	rows := slots * (width << shift)
 	area := 2 * shift
 	return renderSizes{
@@ -41,9 +44,9 @@ func bufferSizes(shift uint32, slots, width, height, fbPixels int) renderSizes {
 		framebufferWords: pow2((width << shift) * (height << shift)),
 		rowRecords:       slots,
 		copyRows:         2 * (slots >> shift),
-		pairBytes:        compute.VDP1FBSize << area,
-		stamps:           pow2(fbPixels << area),
-		heads:            compute.VDP1FBSize / 2 << area,
+		pairBytes:        compute.VDP1FBSize * rowFactor << area,
+		stamps:           pow2(fbPixels * rowFactor << area),
+		heads:            compute.VDP1FBSize / 2 * rowFactor << area,
 		pool:             gpuFragmentPoolWords,
 	}
 }

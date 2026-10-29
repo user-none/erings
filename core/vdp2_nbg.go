@@ -271,9 +271,11 @@ func (v *VDP2) sfcodeForScreen(screen int) uint8 {
 }
 
 // nbgParams fills the render params for row y of NBG screen bg from
-// the decoded configuration and the frame state; the row's line
-// scroll values are resolved by screen.ResolveNBGLine.
-func (v *VDP2) nbgParams(cfg *nbgConfig, bg, y int) screen.NBGParams {
+// the decoded configuration and the frame state, at field parity
+// field (siblingLineSetup), which under double-density interlace
+// places the row at display line 2y + field. The row's line scroll
+// values are resolved by screen.ResolveNBGLine.
+func (v *VDP2) nbgParams(cfg *nbgConfig, bg, y, field int) screen.NBGParams {
 	p := screen.NBGParams{
 		Width: int32(v.frame.width),
 		Y:     int32(y),
@@ -313,7 +315,7 @@ func (v *VDP2) nbgParams(cfg *nbgConfig, bg, y int) screen.NBGParams {
 		LineInterval:  int32(cfg.lineInterval),
 		LineTableAddr: cfg.lineTableAddr,
 		ScrollXFP:     cfg.scrollXFP,
-		ScrollYBaseFP: v.frame.nbgYBaseFP[bg],
+		ScrollYBaseFP: v.nbgYBaseAt(bg, field),
 		IncXFP:        cfg.incXFP,
 		IncYFP:        cfg.incYFP,
 	}
@@ -321,16 +323,31 @@ func (v *VDP2) nbgParams(cfg *nbgConfig, bg, y int) screen.NBGParams {
 		p.MapRegs[i] = uint32(cfg.mapRegs[i])
 	}
 	if v.frame.lsmd3 {
-		p.DispY = int32(y*2 + v.frame.field)
+		p.DispY = int32(y*2 + field)
 	}
 	return p
+}
+
+// nbgYBaseAt returns NBG screen bg's vertical scroll base at field
+// parity field (siblingLineSetup): the frame's base for the frame's
+// field, the sibling base for the other (vdp2Frame.nbgYBaseFPSibling).
+func (v *VDP2) nbgYBaseAt(bg, field int) int32 {
+	if field != v.frame.field {
+		return v.frame.nbgYBaseFPSibling[bg]
+	}
+	return v.frame.nbgYBaseFP[bg]
 }
 
 // nbgSpanSetup prepares row y of an NBG scroll screen: it builds the
 // row's render params and resolves the line scroll table. y is a
 // field-line index in 0..activeLines-1.
 func (v *VDP2) nbgSpanSetup(cfg *nbgConfig, bg, y int) {
-	pp := &v.rowRecord(y).NBG[bg]
-	*pp = v.nbgParams(cfg, bg, y)
+	v.nbgSpanSetupInto(&v.rowRecord(y).NBG[bg], cfg, bg, y, v.frame.field)
+}
+
+// nbgSpanSetupInto is nbgSpanSetup into pp at field parity field
+// (siblingLineSetup).
+func (v *VDP2) nbgSpanSetupInto(pp *screen.NBGParams, cfg *nbgConfig, bg, y, field int) {
+	*pp = v.nbgParams(cfg, bg, y, field)
 	screen.ResolveNBGLine((*compute.VDP2VRAM)(v.vram), pp)
 }

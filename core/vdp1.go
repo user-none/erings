@@ -401,16 +401,23 @@ func (v *VDP1) fbWriteTarget() []byte {
 // whole pair at its next take: the buffers were replaced outside the
 // write funnel (save state load, a renderer's open).
 func (v *VDP1) resyncFB() {
+	for h := range v.fbShadow {
+		v.resyncFBHalf(uint32(h))
+	}
+}
+
+// resyncFBHalf marks every byte of frame buffer half h as written by
+// the CPU (resyncFB), so a renderer takes the whole half at its next
+// take: the renderer changed how it lays the half out.
+func (v *VDP1) resyncFBHalf(h uint32) {
 	if !v.fbWritesTaken {
 		return
 	}
-	for h := range v.fbShadow {
-		copy(v.fbShadow[h], v.physicalFB(uint32(h)))
-		for i := range v.fbMask[h] {
-			v.fbMask[h][i].Store(^uint64(0))
-		}
-		v.fbDirty[h].markAll(vdp1FBPages)
+	copy(v.fbShadow[h], v.physicalFB(h))
+	for i := range v.fbMask[h] {
+		v.fbMask[h][i].Store(^uint64(0))
 	}
+	v.fbDirty[h].markAll(vdp1FBPages)
 }
 
 // takeFBPages takes the pages of frame buffer half h the CPU has
