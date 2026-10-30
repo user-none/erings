@@ -6,6 +6,7 @@ package spirv
 import (
 	"go/constant"
 	"math"
+	"slices"
 
 	"github.com/user-none/erings/internal/hostgpu/compile"
 )
@@ -223,9 +224,15 @@ func (f *fn) stmt(s compile.Stmt) {
 
 // ifStmt emits a selection construct: the condition, the then block,
 // the else block when there is one, and the merge block. An else-if
-// chain nests as a selection inside the else block.
+// chain nests as a selection inside the else block. Without an else,
+// the then block's trailing assignments of a value the block does not
+// change are emitted in the merge block as selects (selectTail).
 func (f *fn) ifStmt(s *compile.If) {
 	cond := f.expr(s.Cond)
+	body, moved := s.Then.Stmts, []selected(nil)
+	if s.Else == nil {
+		body, moved = f.selectTail(s.Then)
+	}
 	then, merge := f.b.id(), f.b.id()
 	els := merge
 	if s.Else != nil {
@@ -235,7 +242,7 @@ func (f *fn) ifStmt(s *compile.If) {
 	f.emit(opBranchConditional, cond, then, els)
 	f.terminated = true
 	f.block(then)
-	f.stmts(s.Then.Stmts)
+	f.stmts(body)
 	f.jump(merge)
 	if s.Else != nil {
 		f.block(els)
@@ -243,6 +250,133 @@ func (f *fn) ifStmt(s *compile.If) {
 		f.jump(merge)
 	}
 	f.block(merge)
+	// The target takes the value when the condition held and keeps its
+	// own otherwise. A path that leaves the then block early reaches
+	// neither the assignment nor the merge.
+	for _, a := range moved {
+		v := f.result(opSelect, f.m.typeOf(a.target.T), cond, f.expr(a.value), f.expr(a.target))
+		f.store(f.varOf(a.target.Index), v)
+	}
+}
+
+// selected is an assignment selectTail moves to the merge block: the
+// target local and the value, a constant or a local read.
+type selected struct {
+	target *compile.LocalRef
+	value  compile.Expr
+}
+
+// selectTail splits a then block into the statements emitted in it and
+// its trailing assignments the merge block makes as selects. The tail
+// is the longest run at the block's end of declarations of a constant
+// or a local, which stay in the block, and assignments that move: a
+// scalar local declared outside the block, which is not a reference
+// parameter, assigned a constant or a local. A local declared in the
+// block and not assigned there stands for its declaration's value, in
+// turn when that is another such local. The
+// local read must be declared outside the block and not written in it,
+// so it holds at the merge the value the assignment would have read;
+// it is not a reference parameter. The moved assignments are in order
+// after every statement the block keeps, so their order with it holds.
+func (f *fn) selectTail(b *compile.Block) ([]compile.Stmt, []selected) {
+	declared := map[int]compile.Expr{}
+	written := map[int]bool{}
+	mark := func(x compile.Expr) {
+		if r, ok := root(x); ok {
+			written[r] = true
+		}
+	}
+	walk(b, func(s compile.Stmt) {
+		switch s := s.(type) {
+		case *compile.VarDecl:
+			declared[s.Local] = s.Init
+		case *compile.Assign:
+			for _, t := range s.Targets {
+				mark(t)
+			}
+		}
+	}, func(x compile.Expr) {
+		if c, ok := x.(*compile.Call); ok {
+			callee := &f.m.e.m.Funcs[c.Func]
+			cw := f.m.e.writes(c.Func)
+			for j, a := range c.Args {
+				if callee.Locals[j].Kind == compile.RefParam && cw[j] {
+					mark(a)
+				}
+			}
+		}
+	})
+	plain := func(l int) bool {
+		return l >= f.f.NumParams || f.f.Locals[l].Kind == compile.ValueParam
+	}
+	// value is what the merge block reads for a tail value, or nil when
+	// the block may change it.
+	value := func(x compile.Expr) compile.Expr {
+		for {
+			r, ok := x.(*compile.LocalRef)
+			if !ok {
+				break
+			}
+			init, ok := declared[r.Index]
+			if !ok || written[r.Index] {
+				break
+			}
+			x = init
+		}
+		switch v := x.(type) {
+		case *compile.Const:
+			return v
+		case *compile.LocalRef:
+			if _, ok := declared[v.Index]; ok || written[v.Index] || !plain(v.Index) {
+				return nil
+			}
+			return v
+		}
+		return nil
+	}
+	var moved []selected
+	end := len(b.Stmts)
+	for ; end > 0; end-- {
+		switch s := b.Stmts[end-1].(type) {
+		case *compile.VarDecl:
+			switch s.Init.(type) {
+			case *compile.Const, *compile.LocalRef:
+				continue
+			}
+		case *compile.Assign:
+			if len(s.Targets) != 1 {
+				break
+			}
+			t, ok := s.Targets[0].(*compile.LocalRef)
+			if !ok || !plain(t.Index) {
+				break
+			}
+			if _, ok := t.T.(compile.Scalar); !ok {
+				break
+			}
+			if _, ok := declared[t.Index]; ok {
+				break
+			}
+			if v := value(s.Values[0]); v != nil {
+				moved = append(moved, selected{target: t, value: v})
+				continue
+			}
+		}
+		// A statement outside the tail's forms ends it.
+		break
+	}
+	if len(moved) == 0 {
+		return b.Stmts, nil
+	}
+	slices.Reverse(moved)
+	body := make([]compile.Stmt, 0, len(b.Stmts)-len(moved))
+	body = append(body, b.Stmts[:end]...)
+	for _, s := range b.Stmts[end:] {
+		if _, ok := s.(*compile.VarDecl); ok {
+			body = append(body, s)
+		}
+	}
+	return body, moved
 }
 
 // switchStmt emits a switch construct: the selector, a bool tag as

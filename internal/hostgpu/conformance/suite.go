@@ -68,6 +68,7 @@ var Entries = []Entry{
 	index("ShortCircuit", conformance.ShortCircuit),
 	index("Tables", conformance.Tables),
 	index("Control", conformance.Control),
+	index("CacheTail", conformance.CacheTail),
 	// 1003 dots in segments of 8 over two rows with their own params:
 	// the last segment clamps to 3 dots, and the grid of 126 segments
 	// overshoots the workgroup it is rounded to.

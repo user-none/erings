@@ -649,6 +649,33 @@ func Control(in compute.Layer, mem *compute.VDP2VRAM, out compute.Layer, p *Prob
 	out[i*8+7] = w0&^w1 | w0&w1
 }
 
+// CacheTail checks a loop-carried cache whose key and flag are set at
+// the end of an if with no else, through a parallel assignment from a
+// local declared in the block. The key changes every four steps, so
+// the cache both misses and hits, and each step records the cached
+// value, the key, and the miss count. A swap at the end of a second if
+// exchanges two values the block itself reads.
+func CacheTail(in compute.Layer, mem *compute.VDP2VRAM, out compute.Layer, p *Probe, i uint32) {
+	have := false
+	last := uint32(0)
+	val := uint32(0)
+	misses := uint32(0)
+	a, b := in[i*8], in[i*8+1]
+	for j := uint32(0); j < 8; j++ {
+		key := in[i*8+(j>>2)] >> 30
+		if !have || key != last {
+			val = key*0x9E3779B1 ^ in[i*8+j]
+			misses++
+			k := key
+			last, have = k, true
+		}
+		if key&1 != 0 {
+			a, b = b, a
+		}
+		out[i*8+j] = val ^ last<<8 ^ misses<<16 ^ a ^ b>>1
+	}
+}
+
 // Segments is a span entry and checks the wrapper contract: each
 // thread receives a segment [x0, x1) clamped at the bound, and the
 // row's params, whose G field is the row. Each dot records its

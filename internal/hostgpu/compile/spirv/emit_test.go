@@ -659,6 +659,111 @@ func Entry(out *compute.Words, p *P, x uint32) {
 	t.Fatal("Entry has no 64-bit subtraction from a constant")
 }
 
+// TestEmitSelectTail checks the then block's trailing assignments of a
+// value the block does not change: an if with no else makes them as
+// selects on the branch's condition after the block, and the forms the
+// rule excludes keep their stores in the block.
+func TestEmitSelectTail(t *testing.T) {
+	const head = `package sub
+
+import "example.com/compute"
+
+type P struct{ N uint32 }
+
+func set(v *uint32, c uint32, on bool) {
+	if on {
+		*v = c
+	}
+}
+
+func bump(v *uint32) { *v++ }
+
+`
+	cases := []struct {
+		name string
+		body string
+		want int
+	}{
+		// The cache's key, through a local declared in the block, and
+		// its flag, a constant.
+		{"cache", `
+	have, last, n := false, uint32(0), uint32(0)
+	for i := uint32(0); i < p.N; i++ {
+		c := (x + i) >> 2
+		if !have || c != last {
+			n += c * 3
+			k := c
+			last, have = k, true
+		}
+	}
+	out[x&255] = n + last`, 2},
+		// The value is written in the block.
+		{"written", `
+	last := uint32(0)
+	c := x >> 2
+	if c != p.N {
+		c++
+		last = c
+	}
+	out[x&255] = last`, 0},
+		// The value is written through a call.
+		{"call", `
+	last := uint32(0)
+	c := x >> 2
+	if c != p.N {
+		bump(&c)
+		last = c
+	}
+	out[x&255] = last`, 0},
+		// The if has an else.
+		{"else", `
+	last, n := uint32(0), uint32(0)
+	c := x >> 2
+	if c != p.N {
+		last = c
+	} else {
+		n++
+	}
+	out[x&255] = last + n`, 0},
+		// The target is a reference parameter.
+		{"reference", `
+	last := uint32(0)
+	set(&last, x>>2, x&1 != 0)
+	out[x&255] = last`, 0},
+		// A swap reads values the block writes.
+		{"swap", `
+	a, b := x, p.N
+	if x&1 != 0 {
+		a, b = b, a
+	}
+	out[x&255] = a ^ b<<1`, 0},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			src := head + "func Entry(out *compute.Words, p *P, x uint32) {" + c.body + "\n}\n"
+			_, d := emitFixture(t, src)
+			conds := map[uint32]bool{}
+			var sels []inst
+			for _, in := range d.insts {
+				switch in.opcode {
+				case opBranchConditional:
+					conds[in.operands[0]] = true
+				case opSelect:
+					sels = append(sels, in)
+				}
+			}
+			if len(sels) != c.want {
+				t.Fatalf("%d selects, want %d", len(sels), c.want)
+			}
+			for _, in := range sels {
+				if !conds[in.operands[2]] {
+					t.Errorf("select %d's condition %d is no branch's", in.operands[1], in.operands[2])
+				}
+			}
+		})
+	}
+}
+
 func TestEmitDeterministic(t *testing.T) {
 	a := emitSrc(t).Entries[0].Code
 	b := emitSrc(t).Entries[0].Code
