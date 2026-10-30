@@ -632,6 +632,33 @@ func Entry(out *compute.Words, p *P, x uint32) {
 	t.Fatal("Entry has no switch")
 }
 
+// TestEmitWideNegation checks that negating a 64-bit integer is a
+// subtraction from a 64-bit zero, whose constant decode holds to two
+// value words.
+func TestEmitWideNegation(t *testing.T) {
+	const src = `package sub
+
+import "example.com/compute"
+
+type P struct{ V int64 }
+
+func Entry(out *compute.Words, p *P, x uint32) {
+	out[x&255] = uint32(-(p.V + int64(x)))
+}
+`
+	_, d := emitFixture(t, src)
+	consts := constants(d)
+	for _, in := range functionBodies(d)["Entry"] {
+		if in.opcode != opISub {
+			continue
+		}
+		if ty := d.types[in.operands[0]]; ty.opcode == opTypeInt && ty.operands[1] == 64 && consts[in.operands[2]] {
+			return
+		}
+	}
+	t.Fatal("Entry has no 64-bit subtraction from a constant")
+}
+
 func TestEmitDeterministic(t *testing.T) {
 	a := emitSrc(t).Entries[0].Code
 	b := emitSrc(t).Entries[0].Code

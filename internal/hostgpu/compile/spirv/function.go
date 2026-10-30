@@ -402,11 +402,11 @@ func (f *fn) expr(x compile.Expr) uint32 {
 			// bits of the exact result, so negating the minimum wraps
 			// to the minimum; OpSNegate's description states no such
 			// wrap.
-			zero := f.b.constant(t, 0)
+			zero := []uint32{0}
 			if x.T.(compile.Scalar).Width() > 32 {
-				zero = f.b.constant(t, 0, 0)
+				zero = append(zero, 0)
 			}
-			return f.result(opISub, t, zero, v)
+			return f.result(opISub, t, f.b.constant(t, zero...), v)
 		case compile.Not:
 			return f.result(opLogicalNot, t, v)
 		case compile.BitComplement:

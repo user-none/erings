@@ -104,6 +104,16 @@ func decode(t *testing.T, code []uint32) *decoded {
 			d.names[in.operands[0]] = literal(in.operands[1:])
 		case opTypeVoid, opTypeBool, opTypeInt, opTypeFloat, opTypeVector, opTypeArray, opTypeRuntimeArray, opTypeStruct, opTypePointer, opTypeFunction:
 			d.types[in.operands[0]] = in
+		case opConstant:
+			// A scalar constant's value is one word per 32 bits of its
+			// type's width, after the type and the result id.
+			ty, ok := d.types[in.operands[0]]
+			if !ok || ty.opcode != opTypeInt && ty.opcode != opTypeFloat {
+				t.Fatalf("constant %d of type %d, not a declared scalar", in.operands[1], in.operands[0])
+			}
+			if want := int(ty.operands[1]+31) / 32; len(in.operands)-2 != want {
+				t.Fatalf("constant %d of width %d has %d value words, want %d", in.operands[1], ty.operands[1], len(in.operands)-2, want)
+			}
 		}
 	}
 	return d
