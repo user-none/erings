@@ -26,7 +26,8 @@ You can build the HLSL files only using:
 go run ./utils/dxil_gen -dxc ""
 ```
 
-If the dxil files are not precompiled, the DX12 backend
-reports that and the renderer runs in software. The device tests
-are skipped. Run `make dxil` again after any change to core/compute, then
+If the dxil files are not precompiled, the renderer option does not
+offer Direct3D 12 and Vulkan is the default GPU renderer. Opening the
+DX12 backend directly reports how to embed the files, and the DX12
+device tests are skipped. Run `make dxil` again after any change to core/compute, then
 rebuild. `make windows` runs both steps.

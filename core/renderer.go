@@ -6,6 +6,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"slices"
 	"unsafe"
 
 	"github.com/user-none/erings/core/compute"
@@ -154,7 +155,7 @@ func (e *Emulator) SetUpscale(name string) error {
 		return nil
 	}
 	e.enhance.shift = uint32(shift)
-	return e.openRenderer(e.rendererMode)
+	return e.openRenderer(e.rendererMode, e.renderer.backend())
 }
 
 // SetDeinterlace turns deinterlacing on or off. With it on, the
@@ -171,32 +172,51 @@ func (e *Emulator) SetDeinterlace(on bool) error {
 		return nil
 	}
 	e.enhance.deinterlace = on
-	return e.openRenderer(e.rendererMode)
+	return e.openRenderer(e.rendererMode, e.renderer.backend())
 }
 
-// rendererNames are the renderer option's values.
-var rendererNames = [...]string{"GPU", "Software"}
+// RendererNames lists the renderer option's values: the backends the
+// GPU renderer can run on in this build, the platform's default first
+// (backend.Names), then Software.
+func RendererNames() []string { return append(backend.Names(), softwareBackend) }
 
-// RendererNames lists the renderer option's values, "GPU" and
-// "Software".
-func RendererNames() []string { return append([]string(nil), rendererNames[:]...) }
-
-// SetRenderer selects the renderer before the first frame. A request
-// for the active mode does nothing. Otherwise the mode's renderer
-// opens in place of the active one (openRenderer). The mode left
-// active becomes the requested mode, so Start keeps it.
-func (e *Emulator) SetRenderer(mode Renderer) error {
-	var err error
-	if mode != e.rendererMode {
-		err = e.openRenderer(mode)
+// defaultBackend is the platform's default backend, or empty where
+// the build has none.
+func defaultBackend() string {
+	if names := backend.Names(); len(names) > 0 {
+		return names[0]
 	}
-	e.requestedRenderer = e.rendererMode
-	return err
+	return ""
 }
 
-// openRenderer closes the active renderer and opens the mode's with
-// the enhancement configuration, which the VDP2 is given first so the
-// renderer and the shared derivation code read it. The active
+// rendererFor maps a renderer option value to its mode and, for GPU
+// mode, the backend; ok is false for a value RendererNames does not
+// list.
+func rendererFor(value string) (mode Renderer, b string, ok bool) {
+	if value == softwareBackend {
+		return RendererSoftware, "", true
+	}
+	if slices.Contains(backend.Names(), value) {
+		return RendererGPU, value, true
+	}
+	return 0, "", false
+}
+
+// setRenderer selects the mode, and for GPU mode the backend, before
+// the first frame. A request for the active mode, on the active
+// backend for GPU mode, does nothing. Otherwise the mode's renderer
+// opens in place of the active one (openRenderer).
+func (e *Emulator) setRenderer(mode Renderer, b string) error {
+	if mode == e.rendererMode && (mode != RendererGPU || b == e.renderer.backend()) {
+		return nil
+	}
+	return e.openRenderer(mode, b)
+}
+
+// openRenderer closes the active renderer and opens the mode's, GPU
+// mode on backend b, with the enhancement configuration, which the
+// VDP2 is given first so the renderer and the shared derivation code
+// read it. The active
 // renderer closes before the next opens, so its device and buffers
 // are released before another device is opened. GPU mode initializes
 // synchronously (device, pipeline build, buffers); on any failure
@@ -204,7 +224,7 @@ func (e *Emulator) SetRenderer(mode Renderer) error {
 // enhancement on, GPU mode opens the enhanced GPU renderer and
 // software mode the enhanced software renderer, which a GPU failure
 // falls back to; with every enhancement off, the accurate renderers.
-func (e *Emulator) openRenderer(mode Renderer) error {
+func (e *Emulator) openRenderer(mode Renderer, b string) error {
 	e.renderer.close()
 	e.renderer = nil
 	e.vdp2.setEnhance(e.enhance)
@@ -212,9 +232,9 @@ func (e *Emulator) openRenderer(mode Renderer) error {
 	if mode == RendererGPU {
 		var r frameRenderer
 		if !e.enhance.enabled() {
-			r, err = openGPURenderer(e.vdp2, e.vdp1)
+			r, err = openGPURenderer(e.vdp2, e.vdp1, b)
 		} else {
-			r, err = openEnhancedGPURenderer(e.vdp2, e.vdp1)
+			r, err = openEnhancedGPURenderer(e.vdp2, e.vdp1, b)
 		}
 		if err == nil {
 			e.renderer, e.rendererMode = r, RendererGPU
@@ -226,7 +246,7 @@ func (e *Emulator) openRenderer(mode Renderer) error {
 			e.vdp1.setPairKept(e.enhance.enabled())
 			return nil
 		}
-		err = gpuError(err)
+		err = gpuError(b, err)
 	}
 	e.useSoftwareRenderer()
 	return err
@@ -256,18 +276,6 @@ func (e *Emulator) useSoftwareRenderer() {
 
 // Renderer reports the active renderer.
 func (e *Emulator) Renderer() Renderer { return e.rendererMode }
-
-// SetRendererByName selects the renderer from its flag name, "gpu" or
-// "software".
-func (e *Emulator) SetRendererByName(name string) error {
-	switch name {
-	case "gpu":
-		return e.SetRenderer(RendererGPU)
-	case "software":
-		return e.SetRenderer(RendererSoftware)
-	}
-	return fmt.Errorf("unknown renderer %q (gpu or software)", name)
-}
 
 // softwareBackend is the backend name of the software renderers.
 const softwareBackend = "Software"
@@ -306,14 +314,14 @@ func (e *Emulator) RenderInfo() RenderInfo {
 func (e *Emulator) GPUError() error { return e.rendererErr }
 
 // rendererFailed switches the emulator to software for the rest of
-// the session after a runtime failure
+// the session after a runtime failure of the active GPU renderer
 func (e *Emulator) rendererFailed(err error) {
-	e.rendererErr = errors.Join(e.rendererErr, gpuError(err))
+	e.rendererErr = errors.Join(e.rendererErr, gpuError(e.renderer.backend(), err))
 	e.useSoftwareRenderer()
 }
 
 // gpuError places a GPU renderer's failure, at open or at run time:
 // the GPU renderer and the backend it runs on.
-func gpuError(err error) error {
-	return fmt.Errorf("GPU renderer (%s): %w", backend.Name, err)
+func gpuError(b string, err error) error {
+	return fmt.Errorf("GPU renderer (%s): %w", b, err)
 }

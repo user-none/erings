@@ -2,9 +2,10 @@
 
 hostgpu is the host side of the GPU renderer. It takes the compute
 packages' embedded source, compiles it to an intermediate
-representation, and has the platform's backend lower the IR to its
-compute shaders and run them. The renderer in core uses package
-hostgpu and opens the platform's backend through hostgpu/backend. The
+representation, and has a backend lower the IR to its compute
+shaders and run them. The renderer in core uses package hostgpu and
+opens one of the platform's backends, by name, through
+hostgpu/backend. The
 language-level contract, the Go
 the compute functions are written in and its semantics, is
 core/compute/README.md; this file specifies the IR those semantics
@@ -23,8 +24,8 @@ Pipeline:
 Everything runs at renderer initialization inside the emulator
 process, except the DX12 backend's compile: the HLSL is emitted and
 compiled to signed DXIL by a build step (make dxil, which runs
-utils/dxil_gen), a Windows binary built with the DX12 backend embeds
-the blobs in dx12/dxil/, and the backend at initialization lowers the
+utils/dxil_gen), a Windows binary embeds the blobs in dx12/dxil/,
+and the backend at initialization lowers the
 same sources
 for the entry layouts and takes each entry's blob by name. dx12/dxil/
 README.md describes that step.
@@ -35,12 +36,18 @@ Packages:
 - compile/msl, compile/hlsl, and compile/spirv: the emitters.
 - conformance: the conformance vectors and the Go reference runs the
   backend tests compare against.
-- metal (macOS), dx12 (Windows), and vulkan (Linux, and Windows
-  under the vulkan build tag): the backends.
+- metal (macOS), dx12 (Windows), and vulkan (Linux and Windows): the
+  backends.
 - devicetest: the device and conformance tests every backend runs on
   its own opened device, written once over the hostgpu interfaces. A
   backend's test files open its device and call them.
-- backend: opens the platform's backend and builds the sources on it.
+- backend: lists the backends the build can open on the platform, the
+  platform's default first (Names), and opens one by name and builds
+  the sources on it (Open). macOS lists Metal and Linux Vulkan.
+  Windows lists Direct3D 12, the default, and Vulkan; a Windows build
+  without the embedded DXIL lists Vulkan alone. The renderer option
+  offers these names and Software. A backend that fails to open or to
+  run falls back to the software renderer, never to another backend.
 
 
 ## Design properties
@@ -539,9 +546,9 @@ Notes:
 - The renderer names the host side through hostgpu and
   hostgpu/backend: Source, the Program built from the sources with its
   pipelines by entry point name, Device, Buffer, Commands, the
-  Dispatch record, GroupLoad, and the backend's Open and Name. The
-  compile stage and its emitters are behind hostgpu.Build, which the
-  backend package calls after opening the platform's backend.
+  Dispatch record, GroupLoad, and the backend package's Names and
+  Open. The compile stage and its emitters are behind hostgpu.Build,
+  which the backend package calls after opening the named backend.
 
 
 ## Buffer binding model

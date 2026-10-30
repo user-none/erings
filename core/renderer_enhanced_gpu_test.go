@@ -80,7 +80,7 @@ func TestEnhancedGPUVDP1MatchesEnhancedSoftware(t *testing.T) {
 		for shift := uint32(0); shift <= 2; shift++ {
 			t.Run(fmt.Sprintf("%s shift %d", s.name, shift), func(t *testing.T) {
 				enhancedGPUVDP1Matches(t, s.benchVDP1Scene, shift, func(v2 *VDP2, v1 *VDP1) (*enhancedGPURenderer, error) {
-					return openEnhancedGPURenderer(v2, v1)
+					return openEnhancedGPURenderer(v2, v1, defaultBackend())
 				})
 			})
 		}

@@ -10,10 +10,13 @@ import (
 	"github.com/user-none/erings/internal/hostgpu/metal"
 )
 
-// Name is the backend Open opens, for display.
-const Name = "Metal"
+// names lists Metal, the platform's one backend.
+func names() []string { return []string{Metal} }
 
-// open opens the platform's backend, Metal.
-func open() (hostgpu.Device, error) {
+// open opens the named backend, which can only be Metal.
+func open(name string) (hostgpu.Device, error) {
+	if name != Metal {
+		return nil, unknown(name)
+	}
 	return metal.Open()
 }

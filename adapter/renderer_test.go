@@ -13,7 +13,7 @@ import (
 
 // TestRendererOption checks the declared renderer option: a video
 // select over the core's renderer names, not per game, whose default
-// is GPU.
+// is the first, the platform's default backend.
 func TestRendererOption(t *testing.T) {
 	var opt *coreif.CoreOption
 	opts := (&Factory{}).SystemInfo().CoreOptions
@@ -37,7 +37,7 @@ func TestRendererOption(t *testing.T) {
 	if !slices.Equal(opt.Values, core.RendererNames()) {
 		t.Fatalf("values %q", opt.Values)
 	}
-	if opt.Default != "GPU" {
+	if opt.Default != core.RendererNames()[0] {
 		t.Fatalf("default %q", opt.Default)
 	}
 }

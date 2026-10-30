@@ -51,7 +51,7 @@ func main() {
 	fastBoot := flag.Bool("fast-boot", false, "Skip the real BIOS boot animation and enter the disc IP directly (real BIOS only; no effect with the HLE BIOS).")
 	outDir := flag.String("out", "capture_output", "Output root directory for captured artifacts (created if missing).")
 	loadState := flag.String("load-state", "", "Path to a save state file to load at startup, replaying inputs from there. Requires the same disc and BIOS the state was captured with; the replay must have been recorded from this state.")
-	renderer := flag.String("renderer", "gpu", "Renderer: gpu (fails if the GPU renderer cannot initialize) or software.")
+	renderer := flag.String("renderer", core.RendererNames()[0], "Renderer, in any case: one of "+strings.Join(core.RendererNames(), ", ")+". A graphics API that cannot initialize exits.")
 	upscale := flag.String("upscale", "1x", "Internal resolution: 1x (native), 2x, 4x, 8x, or 16x.")
 	deinterlace := flag.Bool("deinterlace", false, "Deinterlace: remove comb artifacts in interlaced games.")
 	flag.Usage = func() {
@@ -74,9 +74,11 @@ func main() {
 	if err := emu.SetDeinterlace(*deinterlace); err != nil {
 		log.Fatalf("deinterlace: %v", err)
 	}
-	if err := emu.SetRendererByName(*renderer); err != nil {
-		log.Fatalf("renderer: %v", err)
+	rendererValue, ok := rendererOption(*renderer)
+	if !ok {
+		log.Fatalf("renderer: unknown %q (one of %s)", *renderer, strings.Join(core.RendererNames(), ", "))
 	}
+	emu.SetOption("renderer", rendererValue)
 
 	if *biosPath != "" {
 		biosData, err := os.ReadFile(*biosPath)
@@ -138,6 +140,9 @@ func main() {
 
 	if err := emu.Start(); err != nil {
 		log.Fatalf("emulator start failed: %v", err)
+	}
+	if got := emu.RenderInfo().Backend; got != rendererValue {
+		log.Fatalf("renderer: %s did not initialize (running %s)", rendererValue, got)
 	}
 
 	// State load happens after Start so the boot path has run (HLE
@@ -278,6 +283,17 @@ func readGameID(disc *romloader.Disc) string {
 		return ""
 	}
 	return strings.TrimSpace(strings.TrimRight(string(user[0x20:0x2A]), " "))
+}
+
+// rendererOption is the renderer option value a -renderer flag names,
+// matched in any case, and whether it names one.
+func rendererOption(name string) (string, bool) {
+	for _, v := range core.RendererNames() {
+		if strings.EqualFold(name, v) {
+			return v, true
+		}
+	}
+	return "", false
 }
 
 // sanitizeID reduces a disc product number to a safe filename component,

@@ -93,7 +93,9 @@ func writeMemoryMidFrame(v *VDP2, y, lines int) {
 func TestGPUVDP2MatchesSoftware(t *testing.T) {
 	for _, s := range benchVDP2Scenes() {
 		t.Run(s.name, func(t *testing.T) {
-			gpuMatchesSoftware(t, s, openGPURenderer, openSoftwareRenderer)
+			gpuMatchesSoftware(t, s, func(v *VDP2, v1 *VDP1) (*gpuRenderer, error) {
+				return openGPURenderer(v, v1, defaultBackend())
+			}, openSoftwareRenderer)
 		})
 	}
 }
@@ -108,7 +110,7 @@ func TestEnhancedGPUMatchesEnhancedSoftware(t *testing.T) {
 			t.Run(fmt.Sprintf("%s shift %d", s.name, shift), func(t *testing.T) {
 				gpuMatchesSoftware(t, s, func(v *VDP2, v1 *VDP1) (*enhancedGPURenderer, error) {
 					v.setEnhance(enhanceConfig{shift: shift})
-					return openEnhancedGPURenderer(v, v1)
+					return openEnhancedGPURenderer(v, v1, defaultBackend())
 				}, openEnhancedRenderer(shift))
 			})
 		}

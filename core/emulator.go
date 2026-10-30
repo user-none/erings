@@ -25,15 +25,16 @@ type Emulator struct {
 	scsp    *SCSP
 	cdblock *CDBlock
 
-	// The renderer (renderer.go): the software renderer by default,
-	// the GPU renderer after SetRenderer; rendererErr keeps a
-	// runtime failure that forced software mode. requestedRenderer
-	// is the mode Start selects: GPU by default, the renderer option's
-	// mode, or the mode a SetRenderer left active.
+	// The renderer (renderer.go): the software renderer until Start
+	// opens the requested one; rendererErr keeps a runtime failure
+	// that forced software mode. requestedRenderer and
+	// requestedBackend are what Start opens: GPU on the platform's
+	// default backend, or the renderer option's value.
 	renderer          frameRenderer
 	rendererMode      Renderer
 	rendererErr       error
 	requestedRenderer Renderer
+	requestedBackend  string
 
 	// enhance is the enhancement configuration (enhance.go): the scale
 	// shift (SetUpscale), log2 of the scale N the frame renders at, 1
@@ -207,7 +208,7 @@ func NewEmulator() *Emulator {
 		cdblock: cdblock,
 	}
 	e.useSoftwareRenderer()
-	e.requestedRenderer = RendererGPU
+	e.requestedRenderer, e.requestedBackend = RendererGPU, defaultBackend()
 
 	// Wire boundary-crossing callbacks. SCU drives master IRL. SMPC
 	// requests the master NMI, defers its system reset to the frame
@@ -448,12 +449,13 @@ func (e *Emulator) SetOption(key string, value string) {
 	case "deinterlace":
 		e.SetDeinterlace(value == "true")
 	case "renderer":
-		// An unknown value leaves the requested renderer as it is.
-		switch value {
-		case "GPU":
-			e.requestedRenderer = RendererGPU
-		case "Software":
-			e.requestedRenderer = RendererSoftware
+		// Software, or a backend the GPU renderer runs on. An unknown
+		// value leaves the requested renderer as it is.
+		if mode, b, ok := rendererFor(value); ok {
+			e.requestedRenderer = mode
+			if mode == RendererGPU {
+				e.requestedBackend = b
+			}
 		}
 	}
 }
@@ -487,7 +489,7 @@ func (e *Emulator) SetBIOS(key string, data []byte) error {
 // renderer is selected first; a GPU that cannot open falls back to
 // software without failing Start.
 func (e *Emulator) Start() error {
-	e.SetRenderer(e.requestedRenderer)
+	e.setRenderer(e.requestedRenderer, e.requestedBackend)
 
 	if !e.hasBIOS {
 		hle := NewHLEBIOS(e.bus, e.master, e.slave)

@@ -292,9 +292,7 @@ func TestEmulatorStartIsNoOp(t *testing.T) {
 	if err := e.SetBIOS("main_bios", bios); err != nil {
 		t.Fatal(err)
 	}
-	if err := e.SetRenderer(RendererSoftware); err != nil {
-		t.Fatal(err)
-	}
+	e.SetOption("renderer", "Software")
 
 	if err := e.Start(); err != nil {
 		t.Errorf("Start with BIOS loaded returned error: %v", err)

@@ -1,7 +1,7 @@
 // Copyright 2026 The erings Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-//go:build windows && vulkan
+//go:build windows
 
 package vulkan
 

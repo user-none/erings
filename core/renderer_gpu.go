@@ -128,10 +128,11 @@ type gpuStaging struct {
 // walker waits on a region's last submission before it fills the
 // region again, which is also what frees the region's slots.
 type gpuRenderer struct {
-	vdp2  *VDP2
-	vdp1  *VDP1
-	prog  *hostgpu.Program
-	pipes [entryCount]hostgpu.Pipeline // by entry constant
+	vdp2        *VDP2
+	vdp1        *VDP1
+	prog        *hostgpu.Program
+	backendName string                       // the backend prog runs on, as backend.Names lists it
+	pipes       [entryCount]hostgpu.Pipeline // by entry constant
 
 	// The VDP1's working buffers (renderer_gpu_vdp1.go): its VRAM,
 	// advanced by the staged pages, the frame buffer pair by physical
@@ -264,15 +265,20 @@ func ComputeSources() (parent hostgpu.Source, subs []hostgpu.Source) {
 	}
 }
 
-// openGPURenderer builds the compute sources on the platform's
-// backend and makes the GPU renderer on it.
-func openGPURenderer(v *VDP2, v1 *VDP1) (*gpuRenderer, error) {
+// openGPURenderer builds the compute sources on the named backend and
+// makes the GPU renderer on it.
+func openGPURenderer(v *VDP2, v1 *VDP1, name string) (*gpuRenderer, error) {
 	parent, subs := ComputeSources()
-	prog, err := backend.Open(parent, subs...)
+	prog, err := backend.Open(name, parent, subs...)
 	if err != nil {
 		return nil, err
 	}
-	return newGPURenderer(v, v1, prog, gpuBatchLines, false)
+	g, err := newGPURenderer(v, v1, prog, gpuBatchLines, false)
+	if err != nil {
+		return nil, err
+	}
+	g.backendName = name
+	return g, nil
 }
 
 // newGPURenderer takes the compute sources built on a device,
@@ -518,7 +524,7 @@ func (g *gpuRenderer) close() {
 	g.prog.Device.Close()
 }
 
-func (g *gpuRenderer) backend() string { return backend.Name }
+func (g *gpuRenderer) backend() string { return g.backendName }
 
 func (g *gpuRenderer) device() string { return g.prog.Device.Name() }
 

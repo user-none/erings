@@ -26,16 +26,21 @@ type enhancedGPURenderer struct {
 	*gpuRenderer
 }
 
-// openEnhancedGPURenderer builds the compute sources on the
-// platform's backend and makes the enhanced GPU renderer on it at the
-// VDP2's enhancement configuration.
-func openEnhancedGPURenderer(v *VDP2, v1 *VDP1) (*enhancedGPURenderer, error) {
+// openEnhancedGPURenderer builds the compute sources on the named
+// backend and makes the enhanced GPU renderer on it at the VDP2's
+// enhancement configuration.
+func openEnhancedGPURenderer(v *VDP2, v1 *VDP1, name string) (*enhancedGPURenderer, error) {
 	parent, subs := ComputeSources()
-	prog, err := backend.Open(parent, subs...)
+	prog, err := backend.Open(name, parent, subs...)
 	if err != nil {
 		return nil, err
 	}
-	return newEnhancedGPURenderer(v, v1, prog, gpuBatchLines)
+	r, err := newEnhancedGPURenderer(v, v1, prog, gpuBatchLines)
+	if err != nil {
+		return nil, err
+	}
+	r.backendName = name
+	return r, nil
 }
 
 // newEnhancedGPURenderer makes the enhanced GPU renderer on the
@@ -72,6 +77,6 @@ func (e *enhancedGPURenderer) beginLine(y int) {
 // syncPair does nothing: the walk keeps the CPU pair.
 func (e *enhancedGPURenderer) syncPair(int) {}
 
-func (e *enhancedGPURenderer) backend() string { return backend.Name }
+func (e *enhancedGPURenderer) backend() string { return e.backendName }
 
 func (e *enhancedGPURenderer) device() string { return e.prog.Device.Name() }

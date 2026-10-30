@@ -672,7 +672,7 @@ func BenchmarkVDP2(b *testing.B) {
 			})
 			b.Run("gpu", func(b *testing.B) {
 				v, fb := s.build()
-				g, err := openGPURenderer(v, NewVDP1(NewSCU()))
+				g, err := openGPURenderer(v, NewVDP1(NewSCU()), defaultBackend())
 				if err != nil {
 					b.Skip(err)
 				}

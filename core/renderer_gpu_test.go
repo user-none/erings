@@ -72,10 +72,9 @@ func renderFuncName(fn any) string {
 	return full[strings.LastIndexByte(full, '.')+1:]
 }
 
-// TestSetRenderer checks the default renderer and the name
-// selection: the emulator starts on software with register capture
-// on, and a flag name is gpu or software.
-func TestSetRenderer(t *testing.T) {
+// TestDefaultRenderer checks the renderer before Start: the emulator
+// starts on software with register capture on.
+func TestDefaultRenderer(t *testing.T) {
 	e := NewEmulator()
 	if e.Renderer() != RendererSoftware {
 		t.Fatal("default renderer is not software")
@@ -89,70 +88,55 @@ func TestSetRenderer(t *testing.T) {
 	if e.RendererName() != "Software" {
 		t.Fatalf("software renderer name %q", e.RendererName())
 	}
-	if err := e.SetRendererByName("neither"); err == nil {
-		t.Fatal("unknown renderer name accepted")
+}
+
+// TestRendererNames checks the renderer option's values: the
+// platform's backends, the default first, then Software.
+func TestRendererNames(t *testing.T) {
+	names := RendererNames()
+	if !slices.Equal(names, append(backend.Names(), "Software")) {
+		t.Fatalf("renderer names %q, backends %q", names, backend.Names())
 	}
-	if err := e.SetRendererByName("software"); err != nil {
-		t.Fatal(err)
+	if b := backend.Names(); len(b) > 0 && b[0] != defaultBackend() {
+		t.Fatalf("default backend %q, backends %q", defaultBackend(), b)
+	}
+	if slices.Contains(names, "GPU") {
+		t.Fatal("GPU is a renderer value")
 	}
 }
 
 // TestRendererOption checks the renderer option: the requested mode
-// is GPU by default, the option's values change it without opening a
-// renderer, an unknown value keeps it, and Start selects it. A
-// requested Software leaves the software renderer from construction
-// in place.
+// is GPU on the default backend by default, the option's values
+// change it without opening a renderer, an unknown value such as the
+// former GPU keeps it, and Start selects it. A requested Software
+// leaves the software renderer from construction in place.
 func TestRendererOption(t *testing.T) {
-	if !slices.Equal(RendererNames(), []string{"GPU", "Software"}) {
-		t.Fatalf("renderer names %q", RendererNames())
-	}
 	e := NewEmulator()
 	defer e.Close()
-	if e.requestedRenderer != RendererGPU {
-		t.Fatal("default requested renderer is not GPU")
+	if e.requestedRenderer != RendererGPU || e.requestedBackend != defaultBackend() {
+		t.Fatalf("default requested renderer %d on %q", e.requestedRenderer, e.requestedBackend)
 	}
 	sw := e.renderer
 	e.SetOption("renderer", "Software")
 	if e.requestedRenderer != RendererSoftware {
 		t.Fatal("Software not requested")
 	}
-	e.SetOption("renderer", "GPU")
-	if e.requestedRenderer != RendererGPU {
-		t.Fatal("GPU not requested")
+	for _, b := range backend.Names() {
+		e.SetOption("renderer", b)
+		if e.requestedRenderer != RendererGPU || e.requestedBackend != b {
+			t.Fatalf("%q requested renderer %d on %q", b, e.requestedRenderer, e.requestedBackend)
+		}
 	}
 	e.SetOption("renderer", "Software")
-	e.SetOption("renderer", "neither")
-	if e.requestedRenderer != RendererSoftware {
-		t.Fatal("unknown value changed the requested renderer")
+	for _, v := range []string{"neither", "GPU"} {
+		e.SetOption("renderer", v)
+		if e.requestedRenderer != RendererSoftware {
+			t.Fatalf("unknown value %q changed the requested renderer", v)
+		}
 	}
 	if e.renderer != sw {
 		t.Fatal("the option opened a renderer")
 	}
-	if err := e.SetBIOS("main_bios", make([]byte, biosSize)); err != nil {
-		t.Fatal(err)
-	}
-	if err := e.Start(); err != nil {
-		t.Fatal(err)
-	}
-	if e.Renderer() != RendererSoftware || e.renderer != sw {
-		t.Fatalf("after Start renderer %T mode %d", e.renderer, e.Renderer())
-	}
-}
-
-// TestSetRendererKeptByStart checks that an explicit selection is the
-// requested mode: Start keeps a SetRenderer's software over the
-// option's GPU.
-func TestSetRendererKeptByStart(t *testing.T) {
-	e := NewEmulator()
-	defer e.Close()
-	e.SetOption("renderer", "GPU")
-	if err := e.SetRenderer(RendererSoftware); err != nil {
-		t.Fatal(err)
-	}
-	if e.requestedRenderer != RendererSoftware {
-		t.Fatal("SetRenderer did not set the requested renderer")
-	}
-	sw := e.renderer
 	if err := e.SetBIOS("main_bios", make([]byte, biosSize)); err != nil {
 		t.Fatal(err)
 	}
@@ -325,8 +309,8 @@ func TestNewGPURenderer(t *testing.T) {
 			t.Errorf("%s allocated as kind %d, want %d", k.name, k.b.Kind(), k.want)
 		}
 	}
-	if g.backend() != backend.Name || g.device() != "test" {
-		t.Errorf("backend %q, device %q", g.backend(), g.device())
+	if g.device() != "test" {
+		t.Errorf("device %q", g.device())
 	}
 	g.close()
 	if !dev.closed || g.all != nil {
@@ -345,28 +329,31 @@ func TestNewGPURenderer(t *testing.T) {
 	}
 }
 
-// TestSetRendererClosesActive checks the switch on any platform: a
-// request for the active mode does nothing, and a request for the
-// other mode closes the active GPU renderer's device before the new
-// one opens, whether the request then succeeds or fails.
-func TestSetRendererClosesActive(t *testing.T) {
+// TestSetRendererSwitch checks the switch on any platform: a request
+// for the active mode, on the active backend for GPU mode, does
+// nothing; a request for software or for another backend closes the
+// active GPU renderer's device before the new renderer opens; and a
+// backend that cannot open falls back to software with an error
+// naming it.
+func TestSetRendererSwitch(t *testing.T) {
 	install := func(e *Emulator) *testDevice {
 		dev := &testDevice{}
-		e.renderer = &gpuRenderer{vdp2: e.vdp2, vdp1: e.vdp1, prog: &hostgpu.Program{Device: dev}}
+		e.renderer = &gpuRenderer{vdp2: e.vdp2, vdp1: e.vdp1, prog: &hostgpu.Program{Device: dev}, backendName: "First"}
 		e.rendererMode = RendererGPU
 		return dev
 	}
 
 	e := NewEmulator()
-	if err := e.SetRenderer(RendererSoftware); err != nil || e.Renderer() != RendererSoftware {
+	defer e.Close()
+	if err := e.setRenderer(RendererSoftware, ""); err != nil || e.Renderer() != RendererSoftware {
 		t.Fatalf("a software request on the software renderer: err %v, renderer %d", err, e.Renderer())
 	}
 	dev := install(e)
-	if err := e.SetRenderer(RendererGPU); err != nil || dev.closed || e.Renderer() != RendererGPU {
-		t.Fatalf("a GPU request on a GPU renderer: err %v, closed %v, renderer %d", err, dev.closed, e.Renderer())
+	if err := e.setRenderer(RendererGPU, "First"); err != nil || dev.closed || e.Renderer() != RendererGPU {
+		t.Fatalf("a request on the active backend: err %v, closed %v, renderer %d", err, dev.closed, e.Renderer())
 	}
 
-	if err := e.SetRenderer(RendererSoftware); err != nil {
+	if err := e.setRenderer(RendererSoftware, ""); err != nil {
 		t.Fatal(err)
 	}
 	if !dev.closed {
@@ -374,6 +361,18 @@ func TestSetRendererClosesActive(t *testing.T) {
 	}
 	if e.Renderer() != RendererSoftware {
 		t.Fatalf("after a software request: renderer %d", e.Renderer())
+	}
+
+	dev = install(e)
+	err := e.setRenderer(RendererGPU, "Missing")
+	if !dev.closed {
+		t.Fatal("a request on another backend left the active device open")
+	}
+	if err == nil || !strings.Contains(err.Error(), "GPU renderer (Missing)") {
+		t.Fatalf("error %v", err)
+	}
+	if e.Renderer() != RendererSoftware {
+		t.Fatalf("after the failure: renderer %d", e.Renderer())
 	}
 }
 

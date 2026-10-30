@@ -773,7 +773,7 @@ func TestGPUVDP1FrameMatchesWalkDevice(t *testing.T) {
 		t.Run(s.name, func(t *testing.T) {
 			v1 := s.build()
 			v2, _ := benchVDP2Scenes()[0].build()
-			g, err := openGPURenderer(v2, v1)
+			g, err := openGPURenderer(v2, v1, defaultBackend())
 			if err != nil {
 				t.Skip(err)
 			}

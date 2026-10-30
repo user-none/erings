@@ -181,7 +181,7 @@ Flags:
 | `-fast-boot` | false | Skip the real BIOS boot animation (real BIOS only; no effect with the HLE BIOS). |
 | `-out` | `capture_output` | Output root directory, created if missing. |
 | `-load-state` | (none) | Save state to load at startup; the replay must have been recorded from this state with the same disc and BIOS. |
-| `-renderer` | `gpu` | Renderer: `gpu` (exits if the GPU renderer cannot initialize) or `software`. |
+| `-renderer` | the platform's default graphics API | Renderer, in any case: a graphics API the build offers (`Vulkan`, `"Direct3D 12"`, `Metal`), or `Software`. Exits if the graphics API cannot initialize. |
 | `-upscale` | `1x` | Internal resolution: `1x` (native), `2x`, `4x`, `8x`, or `16x`. |
 
 Example:

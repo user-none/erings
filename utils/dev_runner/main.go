@@ -12,6 +12,7 @@ import (
 	"os/signal"
 	"runtime"
 	"runtime/pprof"
+	"strings"
 	"syscall"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -25,6 +26,17 @@ import (
 // memProfileRate is the bytes allocated per sampled allocation while
 // -memprofile is set.
 const memProfileRate = 4096
+
+// rendererOption is the renderer option value a -renderer flag names,
+// matched in any case, and whether it names one.
+func rendererOption(name string) (string, bool) {
+	for _, v := range core.RendererNames() {
+		if strings.EqualFold(name, v) {
+			return v, true
+		}
+	}
+	return "", false
+}
 
 // writeMemProfile writes the allocation profile to path, every
 // allocation sampled since start, when path is set.
@@ -59,7 +71,7 @@ func main() {
 	debugServerPort := flag.Int("debug-server-port", 5000, "Debug server TCP port.")
 	p1Pad := flag.String("p1-pad", "0", "Gamepad index for player 1, or \"none\". Keyboard is always player 1.")
 	p2Pad := flag.String("p2-pad", "1", "Gamepad index for player 2, or \"none\".")
-	renderer := flag.String("renderer", "gpu", "Renderer: gpu (fails if the GPU renderer cannot initialize) or software.")
+	renderer := flag.String("renderer", core.RendererNames()[0], "Renderer, in any case: one of "+strings.Join(core.RendererNames(), ", ")+". A graphics API that cannot initialize exits.")
 	upscale := flag.String("upscale", "1x", "Internal resolution: 1x (native), 2x, 4x, 8x, or 16x.")
 	deinterlace := flag.Bool("deinterlace", false, "Deinterlace: remove comb artifacts in interlaced games.")
 	flag.Parse()
@@ -112,10 +124,11 @@ func main() {
 	if err := emu.SetDeinterlace(*deinterlace); err != nil {
 		log.Fatalf("deinterlace: %v", err)
 	}
-	if err := emu.SetRendererByName(*renderer); err != nil {
-		log.Fatalf("renderer: %v", err)
+	rendererValue, ok := rendererOption(*renderer)
+	if !ok {
+		log.Fatalf("renderer: unknown %q (one of %s)", *renderer, strings.Join(core.RendererNames(), ", "))
 	}
-	fmt.Printf("[RENDER] renderer: %s\n", emu.RendererName())
+	emu.SetOption("renderer", rendererValue)
 
 	if *biosPath != "" {
 		biosData, err := os.ReadFile(*biosPath)
@@ -206,6 +219,10 @@ func main() {
 	if err := emu.Start(); err != nil {
 		log.Fatalf("emulator start failed: %v", err)
 	}
+	if got := emu.RenderInfo().Backend; got != rendererValue {
+		log.Fatalf("renderer: %s did not initialize (running %s)", rendererValue, got)
+	}
+	fmt.Printf("[RENDER] renderer: %s\n", emu.RendererName())
 
 	// State load happens after Start so the boot path has run (HLE
 	// service hooks wired, workers spawned but parked) and before the

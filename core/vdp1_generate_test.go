@@ -207,13 +207,13 @@ type vdp1Device struct {
 	ops                 int
 }
 
-// openVDP1Device builds the compute sources on the platform's
+// openVDP1Device builds the compute sources on the platform's default
 // backend, skipping the test where there is none, and resolves the
 // generate pipeline.
 func openVDP1Device(tb testing.TB) *vdp1Device {
 	tb.Helper()
 	parent, subs := ComputeSources()
-	prog, err := backend.Open(parent, subs...)
+	prog, err := backend.Open(defaultBackend(), parent, subs...)
 	if err != nil {
 		tb.Skip(err)
 	}

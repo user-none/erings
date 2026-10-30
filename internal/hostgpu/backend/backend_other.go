@@ -7,10 +7,10 @@ package backend
 
 import "github.com/user-none/erings/internal/hostgpu"
 
-// Name is empty: the platform has no backend.
-const Name = ""
+// names lists nothing: the platform has no backend.
+func names() []string { return nil }
 
 // open reports ErrUnavailable: the platform has no backend.
-func open() (hostgpu.Device, error) {
-	return nil, hostgpu.ErrUnavailable
+func open(name string) (hostgpu.Device, error) {
+	return nil, unknown(name)
 }

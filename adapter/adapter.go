@@ -106,9 +106,9 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 			{
 				Key:         "renderer",
 				Label:       "Renderer",
-				Description: "Render on the GPU or in software",
+				Description: "Render on the GPU through a graphics API, or in software",
 				Type:        coreif.CoreOptionSelect,
-				Default:     "GPU",
+				Default:     core.RendererNames()[0],
 				Values:      core.RendererNames(),
 				Category:    coreif.CoreOptionCategoryVideo,
 			},

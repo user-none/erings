@@ -30,11 +30,25 @@ var backendBlobs embed.FS
 // RendererShaders is the renderer's compiled entry points by name, or
 // the reporting set when the directory holds only the placeholder.
 func RendererShaders() fs.FS {
-	sub, err := fs.Sub(embedded, "dxil/renderer")
-	if err != nil || !hasBlobs(sub) {
-		return missing{}
+	if sub, ok := rendererSet(); ok {
+		return sub
 	}
-	return sub
+	return missing{}
+}
+
+// HasRendererShaders reports whether the build embeds the renderer's
+// compiled entry points, a file in the directory besides the
+// placeholder.
+func HasRendererShaders() bool {
+	_, ok := rendererSet()
+	return ok
+}
+
+// rendererSet is the renderer's directory of the embedded set and
+// whether it holds a blob.
+func rendererSet() (fs.FS, bool) {
+	sub, err := fs.Sub(embedded, "dxil/renderer")
+	return sub, err == nil && hasBlobs(sub)
 }
 
 // hasBlobs reports whether the set holds a file other than the
