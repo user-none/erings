@@ -1,0 +1,23 @@
+{
+  "serial": "T-9104G",
+  "title": "Ooedo Renaissance",
+  "native_title": "大江戸ルネッサンス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-12-18",
+  "developer": "Bits Laboratory",
+  "publisher": "Victor Interactive Software",
+  "genres": [
+    "Construction and Management Simulation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Ooedo Renaissance is an economic simulation game based on an earlier PC release. This conversion of the game retains the same general premise and structure, but makes several major changes; most notably, the game has changed from a real-time progression to turn-based, with the player deciding all their actions and policy changes on a month-by-month basis. This version also completely overhauls the visual style, with an isometric perspective of the city and a new cartoonish look to the characters. It also puts more emphasis on story elements and specific objectives to provide more guidance to the player over the sandbox experience of the original game."
+}

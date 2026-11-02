@@ -1,0 +1,25 @@
+{
+  "serial": "T-10604G V",
+  "title": "Senryaku Shougi",
+  "native_title": "戦略将棋",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 938833 002198"
+  ],
+  "release_date": "1995-11-17",
+  "developer": "Electronic Arts Victor",
+  "publisher": "Electronic Arts Victor",
+  "genres": [
+    "Board Game"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Senryaku Shōgi is a digital conversion of the traditional Japanese board game Shogi for one or two players. It features two main game modes: a match play mode against another player or the computer at seven different skill levels, and a \"conquest\" mode where the player must defeat a series of increasingly-difficult computer opponents. There are a variety of options including starting layouts and turn time limits, and the ability to save up to four previous matches in full to review later."
+}

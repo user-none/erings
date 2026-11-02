@@ -1,0 +1,25 @@
+{
+  "serial": "T-8129H-50",
+  "title": "Virtual Open Tennis",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "3 455198 206449"
+  ],
+  "release_date": "1995-10-27",
+  "developer": "Arc System Works",
+  "publisher": "Acclaim Entertainment",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "One of only two tennis games released for the Saturn. Features include a 3 modes of play (tournament, exhibition and practice), 3 playing surfaces and 10 players."
+}

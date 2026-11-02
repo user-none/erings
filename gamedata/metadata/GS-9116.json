@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9116",
+  "title": "Sega Rally Championship Plus",
+  "native_title": "セガラリー・チャンピオンシップ・プラス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091163"
+  ],
+  "release_date": "1996-09-26",
+  "developer": "Sega AM3 R&D Division",
+  "publisher": "Sega",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Sega Rally was a major success in the arcades, bringing rally-style racing to the masses before the Colin McRae games. Four detailed tracks have been created, with a succession of stomach-churning bends and jumps, and you can choose from 3 different cars. As well as the main championship, there is a time-trial mode featuring a ghost car to beat, so you always know how your run compares with your best-ever. Two machines can be linked for multi-player action. The handling of the cars is unrealistic, to put the focus on action and instant playability."
+}

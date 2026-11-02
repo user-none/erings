@@ -1,0 +1,25 @@
+{
+  "serial": "T-5714G",
+  "title": "GT24",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 907859 109129"
+  ],
+  "release_date": "1998-05-28",
+  "developer": "Natsume",
+  "publisher": "Jaleco",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "GT24 is an arcade-style racing game and a modified port of the 1996 arcade game Super GT 24h. It features one new track for a total of three in both regular and reverse configurations, two new vehicles for a total of six, and five different pit crews. Three game modes are included: Time Trial, Grand Prix, and a 24-hour Endurance race mode (which can be configured as 12, 24, or 48 minutes real time) that includes a full day/night cycle that changes as the race progresses."
+}

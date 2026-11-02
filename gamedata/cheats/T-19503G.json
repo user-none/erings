@@ -1,0 +1,18 @@
+{
+  "serial": "T-19503G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "1606ABB2 FFFF"
+    },
+    {
+      "name": "9999 Attack",
+      "code": "10244238 270F\n10244318 270F\n102443F8 270F\n102444D8 270F"
+    },
+    {
+      "name": "9999 Defense",
+      "code": "1024423A 270F\n1024431A 270F\n102443FA 270F\n102444DA 270F"
+    }
+  ]
+}

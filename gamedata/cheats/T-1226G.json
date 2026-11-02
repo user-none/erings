@@ -1,0 +1,250 @@
+{
+  "serial": "T-1226G",
+  "master_code": "F6000914 C321\nB6000B00 0000",
+  "cheats": [
+    {
+      "name": "Stage Is Apocalypse Now",
+      "code": "360F5113 0000"
+    },
+    {
+      "name": "(Player 1) Energy Can Fill Up Entirely After Switching Fighters",
+      "code": "160F421A 0090"
+    },
+    {
+      "name": "(Player 1) Does Minimum Damage",
+      "code": "160F4240 0000"
+    },
+    {
+      "name": "(Player 1) Is Invisible",
+      "code": "160F4044 0000"
+    },
+    {
+      "name": "(Player 1) Extended Link Combos",
+      "code": "360F4064 0000"
+    },
+    {
+      "name": "(Player 1) Have Turbo Buttons",
+      "code": "160F40C0 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Winning Poses",
+      "code": "160F4106 0000"
+    },
+    {
+      "name": "(Player 1) Multi Fireballs",
+      "code": "160F4340 0000"
+    },
+    {
+      "name": "(Player 1) Cant Be Launched",
+      "code": "160F40E0 0000"
+    },
+    {
+      "name": "(Player 1) Extra Hit Spinkicks",
+      "code": "160F403C 0000"
+    },
+    {
+      "name": "(Player 1) Falls Into Combo",
+      "code": "160F40E8 FFFF"
+    },
+    {
+      "name": "(Player 1) Stay Down Longer",
+      "code": "160F40E6 FFFF"
+    },
+    {
+      "name": "(Player 1) Auto 2 in 1 Combo",
+      "code": "160F40CE FFFF"
+    },
+    {
+      "name": "(Player 2) Energy Can Fill Up Entirely After Switching Fighters",
+      "code": "160F461A 0090"
+    },
+    {
+      "name": "(Player 2) Does Minimum Damage",
+      "code": "160F4640 0000"
+    },
+    {
+      "name": "(Player 2) Extended Link Combos",
+      "code": "360F4464 0000"
+    },
+    {
+      "name": "(Player 2) Have Turbo Buttons",
+      "code": "160F44C0 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Winning Poses",
+      "code": "160F4506 0000"
+    },
+    {
+      "name": "(Player 2) Cant Be Launched",
+      "code": "160F44E0 0000"
+    },
+    {
+      "name": "(Player 2) Extra Hit Spinkicks",
+      "code": "160F443C 0000"
+    },
+    {
+      "name": "(Player 2) Falls Into Combo",
+      "code": "160F44E8 FFFF"
+    },
+    {
+      "name": "(Player 2) Stay Down Longer",
+      "code": "160F44E6 FFFF"
+    },
+    {
+      "name": "(Player 2) Auto 2 in 1 Combo",
+      "code": "160F44CE FFFF"
+    },
+    {
+      "name": "Player 1 is Wolverine",
+      "code": "D600710E 8000\n360F4053 0000"
+    },
+    {
+      "name": "Player 1 is Cyclops",
+      "code": "D600710E 8000\n360F4053 0002"
+    },
+    {
+      "name": "Player 1 is Storm",
+      "code": "D600710E 8000\n360F4053 0004"
+    },
+    {
+      "name": "Player 1 is Rouge",
+      "code": "D600710E 8000\n360F4053 0006"
+    },
+    {
+      "name": "Player 1 is Gambit",
+      "code": "D600710E 8000\n360F4053 0008"
+    },
+    {
+      "name": "Player 1 is Sabretooth",
+      "code": "D600710E 8000\n360F4053 000A"
+    },
+    {
+      "name": "Player 1 is Juggernaut (Sometimes Crashes)",
+      "code": "D600710E 8000\n360F4053 000C"
+    },
+    {
+      "name": "Player 1 is Magneto",
+      "code": "D600710E 8000\n360F4053 000E"
+    },
+    {
+      "name": "Player 1 is Apocalypse (Versus mode only)",
+      "code": "D600710E 8000\n360F4053 0010"
+    },
+    {
+      "name": "Player 1 is Ryu",
+      "code": "D600710E 8000\n360F4053 0012"
+    },
+    {
+      "name": "Player 1 is Ken",
+      "code": "D600710E 8000\n360F4053 0014"
+    },
+    {
+      "name": "Player 1 is Chun-Li",
+      "code": "D600710E 8000\n360F4053 0016"
+    },
+    {
+      "name": "Player 1 is Dhalsim",
+      "code": "D600710E 8000\n360F4053 0018"
+    },
+    {
+      "name": "Player 1 is Zangief",
+      "code": "D600710E 8000\n360F4053 001A"
+    },
+    {
+      "name": "Player 1 is Vega",
+      "code": "D600710E 8000\n360F4053 001C"
+    },
+    {
+      "name": "Player 1 is Gouki",
+      "code": "D600710E 8000\n360F4053 001E"
+    },
+    {
+      "name": "Player 1 is Nash",
+      "code": "D600710E 8000\n360F4053 0020"
+    },
+    {
+      "name": "Player 1 is Cammy",
+      "code": "D600710E 8000\n360F4053 0022"
+    },
+    {
+      "name": "Player 1 is Street Fighter Zero version of Chun Li",
+      "code": "D600710E 8000\n360F4053 0024"
+    },
+    {
+      "name": "Player 2 is Wolverine",
+      "code": "D600711A 8000\n360F4453 0000"
+    },
+    {
+      "name": "Player 2 is Cyclops",
+      "code": "D600711A 8000\n360F4453 0002"
+    },
+    {
+      "name": "Player 2 is Storm",
+      "code": "D600711A 8000\n360F4453 0004"
+    },
+    {
+      "name": "Player 2 is Rouge",
+      "code": "D600711A 8000\n360F4453 0006"
+    },
+    {
+      "name": "Player 2 is Gambit",
+      "code": "D600711A 8000\n360F4453 0008"
+    },
+    {
+      "name": "Player 2 is Sabretooth",
+      "code": "D600711A 8000\n360F4453 000A"
+    },
+    {
+      "name": "Player 2 is Juggernaut (Sometimes Crashes)",
+      "code": "D600711A 8000\n360F4453 000C"
+    },
+    {
+      "name": "Player 2 is Magneto",
+      "code": "D600711A 8000\n360F4453 000E"
+    },
+    {
+      "name": "Player 2 is Apocalypse (Versus mode only)",
+      "code": "D600711A 8000\n360F4453 0010"
+    },
+    {
+      "name": "Player 2 is Ryu",
+      "code": "D600711A 8000\n360F4453 0012"
+    },
+    {
+      "name": "Player 2 is Ken",
+      "code": "D600711A 8000\n360F4453 0014"
+    },
+    {
+      "name": "Player 2 is Chun-Li",
+      "code": "D600711A 8000\n360F4453 0016"
+    },
+    {
+      "name": "Player 2 is Dhalsim",
+      "code": "D600711A 8000\n360F4453 0018"
+    },
+    {
+      "name": "Player 2 is Zangief",
+      "code": "D600711A 8000\n360F4453 001A"
+    },
+    {
+      "name": "Player 2 is Vega",
+      "code": "D600711A 8000\n360F4453 001C"
+    },
+    {
+      "name": "Player 2 is Gouki",
+      "code": "D600711A 8000\n360F4453 001E"
+    },
+    {
+      "name": "Player 2 is Nash",
+      "code": "D600711A 8000\n360F4453 0020"
+    },
+    {
+      "name": "Player 2 is Cammy",
+      "code": "D600711A 8000\n360F4453 0022"
+    },
+    {
+      "name": "Player 2 is Street Fighter Zero version of Chun Li",
+      "code": "D600711A 8000\n360F4453 0024"
+    }
+  ]
+}

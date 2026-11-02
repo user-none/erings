@@ -1,0 +1,30 @@
+{
+  "serial": "T-7008G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160CDC68 0004"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "160CFE40 0003"
+    },
+    {
+      "name": "(Player 1) Max Gun Power",
+      "code": "160CEEF0 0005"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160CDC72 0004"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160D52EC 0003"
+    },
+    {
+      "name": "(Player 2) Max Gun Power",
+      "code": "160D4192 0005"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "serial": "MK-81204V1",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Rockets",
+      "code": "1609E598 0005\n160D3AD2 0005"
+    }
+  ]
+}

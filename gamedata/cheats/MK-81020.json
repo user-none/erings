@@ -1,0 +1,82 @@
+{
+  "serial": "MK-81020",
+  "master_code": "F6000914 C30A\nB6062800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "160FFC12 EA30"
+    },
+    {
+      "name": "Infinite Speed Thrusts",
+      "code": "160FFE56 0064"
+    },
+    {
+      "name": "Infinite Blue Orbs",
+      "code": "160FFE58 63FF"
+    },
+    {
+      "name": "1 Orb Needed to Finish Level",
+      "code": "160FFEC2 0000"
+    },
+    {
+      "name": "Start On Stage 1",
+      "code": "160FFC14 0000"
+    },
+    {
+      "name": "Start On Boss 1",
+      "code": "160FFC14 0101"
+    },
+    {
+      "name": "Start On Stage 2",
+      "code": "160FFC14 0202"
+    },
+    {
+      "name": "Start On Boss 2",
+      "code": "160FFC14 0303"
+    },
+    {
+      "name": "Start On Stage 3",
+      "code": "160FFC14 0404"
+    },
+    {
+      "name": "Start On Boss 3",
+      "code": "160FFC14 0505"
+    },
+    {
+      "name": "Start On Stage 4",
+      "code": "160FFC14 0606"
+    },
+    {
+      "name": "Start On Boss 4",
+      "code": "160FFC14 0707"
+    },
+    {
+      "name": "Start On Stage 5",
+      "code": "160FFC14 0808"
+    },
+    {
+      "name": "Start On Boss 5",
+      "code": "160FFC14 0909"
+    },
+    {
+      "name": "Start On Stage 6",
+      "code": "160FFC14 0A0A"
+    },
+    {
+      "name": "Start On Boss 6",
+      "code": "160FFC14 0B0B"
+    },
+    {
+      "name": "Start On Stage 7",
+      "code": "160FFC14 0C0C\n160FFC14 0E0E"
+    },
+    {
+      "name": "Start On End Boss (ending 1)",
+      "code": "160FFC14 0D0D"
+    },
+    {
+      "name": "Start On End Boss (ending 2)",
+      "code": "160FFC14 0F0F"
+    }
+  ]
+}

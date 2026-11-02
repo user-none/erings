@@ -1,0 +1,14 @@
+{
+  "serial": "T-1311G",
+  "master_code": "F6000924 C305",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160662F4 FFFF"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160667B4 FFFF"
+    }
+  ]
+}

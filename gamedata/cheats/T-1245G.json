@@ -1,0 +1,390 @@
+{
+  "serial": "T-1245G",
+  "master_code": "F6000924 C305\nB6000B00 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Health for Player 1 (Disc 1)",
+      "code": "160E0990 00A0"
+    },
+    {
+      "name": "Unlimited Silver for Player 1 (Disc 1)",
+      "code": "160E09C6 00FF"
+    },
+    {
+      "name": "Unlimited Exp. for Player 1 (Disc 1)",
+      "code": "160E09C0 FFFF"
+    },
+    {
+      "name": "Unlimited Health for Player 1 (Disc 2)",
+      "code": "160E0832 0060"
+    },
+    {
+      "name": "Unlimited Silver for Player 1 (Disc 2)",
+      "code": "160E08E4 00FF"
+    },
+    {
+      "name": "Unlimited Items In Ring for Player 1 (Disc 2)",
+      "code": "160E0918 0902"
+    },
+    {
+      "name": "Unlimited Health for Player 2 (Disc 2)",
+      "code": "160E0A32 0060"
+    },
+    {
+      "name": "Unlimited Silver for Player 2 (Disc 2)",
+      "code": "1601F674 0104"
+    },
+    {
+      "name": "Unlimited Keys (Disc 2)",
+      "code": "160E0398 0009"
+    },
+    {
+      "name": "Player 1 starts with MM RING",
+      "code": "160E0910 0027"
+    },
+    {
+      "name": "Player 1 starts with FB RING",
+      "code": "160E0910 0127"
+    },
+    {
+      "name": "Player 1 starts with LB RING",
+      "code": "160E0910 0227"
+    },
+    {
+      "name": "Player 1 starts with I RING",
+      "code": "160E0910 0327"
+    },
+    {
+      "name": "Player 1 starts with PO RING",
+      "code": "160E0910 0427"
+    },
+    {
+      "name": "Player 1 starts with CL RING",
+      "code": "160E0910 0527"
+    },
+    {
+      "name": "Player 1 starts with CSW RING",
+      "code": "160E0910 0627"
+    },
+    {
+      "name": "Player 1 starts with DS RING",
+      "code": "160E0910 0727"
+    },
+    {
+      "name": "Player 1 starts with I SPELL",
+      "code": "160E0910 0827"
+    },
+    {
+      "name": "Player 1 starts with H SPELL",
+      "code": "160E0910 0927"
+    },
+    {
+      "name": "Player 1 starts with PO SPELL",
+      "code": "160E0910 0A27"
+    },
+    {
+      "name": "Player 1 starts with MM SPELL",
+      "code": "160E0910 0B27"
+    },
+    {
+      "name": "Player 1 starts with FB SPELL",
+      "code": "160E0910 0C27"
+    },
+    {
+      "name": "Player 1 starts with LB SPELL",
+      "code": "160E0910 0D27"
+    },
+    {
+      "name": "Player 1 starts with IS SPELL",
+      "code": "160E0910 0E27"
+    },
+    {
+      "name": "Player 1 starts with CE SPELL",
+      "code": "160E0910 0F27"
+    },
+    {
+      "name": "Player 1 starts with FS SPELL",
+      "code": "160E0910 1027"
+    },
+    {
+      "name": "Player 1 starts with WF SPELL",
+      "code": "160E0910 1127"
+    },
+    {
+      "name": "Player 1 starts with PI SPELL",
+      "code": "160E0910 1227"
+    },
+    {
+      "name": "Player 1 starts with RG SPELL",
+      "code": "160E0910 1327"
+    },
+    {
+      "name": "Player 1 starts with CK SPELL",
+      "code": "160E0910 1427"
+    },
+    {
+      "name": "Player 1 starts with MS SPELL",
+      "code": "160E0910 1527"
+    },
+    {
+      "name": "Player 1 starts with PK SPELL",
+      "code": "160E0910 1627"
+    },
+    {
+      "name": "Player 1 starts with HP SPELL",
+      "code": "160E0910 1727"
+    },
+    {
+      "name": "Player 1 starts with CL SPELL",
+      "code": "160E0910 1827"
+    },
+    {
+      "name": "Player 1 starts with SS SPELL",
+      "code": "160E0910 1927"
+    },
+    {
+      "name": "Player 1 starts with IP SPELL",
+      "code": "160E0910 1A27"
+    },
+    {
+      "name": "Player 1 starts with HW SPELL",
+      "code": "160E0910 1B27"
+    },
+    {
+      "name": "Player 1 starts with EQ SPELL",
+      "code": "160E0910 1C27"
+    },
+    {
+      "name": "Player 1 starts with B SPELL",
+      "code": "160E0910 1D27"
+    },
+    {
+      "name": "Player 1 starts with S SPELL",
+      "code": "160E0910 1E27"
+    },
+    {
+      "name": "Player 1 starts with CSW SPELL",
+      "code": "160E0910 1F27"
+    },
+    {
+      "name": "Player 1 starts with CCW SPELL",
+      "code": "160E0910 2027"
+    },
+    {
+      "name": "Player 1 starts with DAGGER",
+      "code": "160E0910 2127"
+    },
+    {
+      "name": "Player 1 starts with S.DAGGER",
+      "code": "160E0910 2227"
+    },
+    {
+      "name": "Player 1 starts with ARROW",
+      "code": "160E0910 2327"
+    },
+    {
+      "name": "Player 1 starts with ARROW",
+      "code": "160E0910 2427"
+    },
+    {
+      "name": "Player 1 starts with S.ARROW",
+      "code": "160E0910 2527"
+    },
+    {
+      "name": "Player 1 starts with B.ARROW",
+      "code": "160E0910 2627"
+    },
+    {
+      "name": "Player 1 starts with BOMB",
+      "code": "160E0910 2727"
+    },
+    {
+      "name": "Player 1 starts with L.BOMB",
+      "code": "160E0910 2827"
+    },
+    {
+      "name": "Player 1 starts with HAMMER",
+      "code": "160E0910 2927"
+    },
+    {
+      "name": "Player 1 starts with B OF E",
+      "code": "160E0910 2A27"
+    },
+    {
+      "name": "Player 1 starts with EOF W",
+      "code": "160E0910 2B27"
+    },
+    {
+      "name": "Player 1 starts with SLING",
+      "code": "160E0910 2C27"
+    },
+    {
+      "name": "Player 1 starts with SHIELD",
+      "code": "160E0910 2D27"
+    },
+    {
+      "name": "Player 1 starts with NS SWORD",
+      "code": "160E0910 2E27"
+    },
+    {
+      "name": "Player 1 starts with NS SWORD",
+      "code": "160E0910 2F27"
+    },
+    {
+      "name": "Player 1 starts with NS SWORD",
+      "code": "160E0910 3027"
+    },
+    {
+      "name": "Player 1 starts with NS SWORD",
+      "code": "160E0910 3127"
+    },
+    {
+      "name": "Player 1 starts with S.SWORD",
+      "code": "160E0910 3227"
+    },
+    {
+      "name": "Player 1 starts with S.SWORD",
+      "code": "160E0910 3327"
+    },
+    {
+      "name": "Player 1 starts with S.SWORD",
+      "code": "160E0910 3427"
+    },
+    {
+      "name": "Player 1 starts with S.SWORD",
+      "code": "160E0910 3527"
+    },
+    {
+      "name": "Player 1 starts with THS SWORD",
+      "code": "160E0910 3627"
+    },
+    {
+      "name": "Player 1 starts with BS1 SWORD",
+      "code": "160E0910 3727"
+    },
+    {
+      "name": "Player 1 starts with BS2 SWORD",
+      "code": "160E0910 3827"
+    },
+    {
+      "name": "Player 1 starts with DS SWORD",
+      "code": "160E0910 3927"
+    },
+    {
+      "name": "Player 1 starts with HA SWORD",
+      "code": "160E0910 3A27"
+    },
+    {
+      "name": "Player 1 starts with SL SWORD",
+      "code": "160E0910 3B27"
+    },
+    {
+      "name": "Player 1 starts with CS1 SWORD",
+      "code": "160E0910 3C27"
+    },
+    {
+      "name": "Player 1 starts with CS2 SWORD",
+      "code": "160E0910 3D27"
+    },
+    {
+      "name": "Player 1 starts with SF SWORD",
+      "code": "160E0910 3E27"
+    },
+    {
+      "name": "Player 1 starts with ICE SWORD",
+      "code": "160E0910 3F27"
+    },
+    {
+      "name": "Player 1 starts with L SWORD",
+      "code": "160E0910 4027"
+    },
+    {
+      "name": "Player 1 starts with SF SWORD",
+      "code": "160E0910 4127"
+    },
+    {
+      "name": "Player 1 starts with HA AXE",
+      "code": "160E0910 4227"
+    },
+    {
+      "name": "Player 1 starts with HA AXE",
+      "code": "160E0910 4327"
+    },
+    {
+      "name": "Player 1 starts with HA AXE",
+      "code": "160E0910 4427"
+    },
+    {
+      "name": "Player 1 starts with HA AXE",
+      "code": "160E0910 4527"
+    },
+    {
+      "name": "Player 1 starts with BA AXE",
+      "code": "160E0910 4627"
+    },
+    {
+      "name": "Player 1 starts with MACE",
+      "code": "160E0910 4727"
+    },
+    {
+      "name": "Player 1 starts with MACE",
+      "code": "160E0910 4827"
+    },
+    {
+      "name": "Player 1 starts with MACE",
+      "code": "160E0910 4927"
+    },
+    {
+      "name": "Player 1 starts with MACE",
+      "code": "160E0910 4A27"
+    },
+    {
+      "name": "Player 1 starts with WAR HAMMER",
+      "code": "160E0910 4B27"
+    },
+    {
+      "name": "Player 1 starts with MORNING STAR",
+      "code": "160E0910 4C27"
+    },
+    {
+      "name": "Player 1 starts with SE STAFF",
+      "code": "160E0910 4D27"
+    },
+    {
+      "name": "Player 1 starts with SM STAFF",
+      "code": "160E0910 4E27"
+    },
+    {
+      "name": "Player 1 starts with SW STAFF",
+      "code": "160E0910 4F27"
+    },
+    {
+      "name": "Player 1 starts with SS STAFF",
+      "code": "160E0910 5027"
+    },
+    {
+      "name": "Player 1 starts with S.STAFF",
+      "code": "160E0910 5127"
+    },
+    {
+      "name": "Player 1 starts with WC STAFF",
+      "code": "160E0910 5227"
+    },
+    {
+      "name": "Player 1 starts with WF STAFF",
+      "code": "160E0910 5327"
+    },
+    {
+      "name": "Player 1 starts with WL STAFF",
+      "code": "160E0910 5427"
+    },
+    {
+      "name": "Player 1 starts with WD STAFF",
+      "code": "160E0910 5527"
+    },
+    {
+      "name": "Player 1 starts with EMPTY",
+      "code": "160E0910 5627"
+    }
+  ]
+}

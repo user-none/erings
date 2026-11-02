@@ -1,0 +1,990 @@
+{
+  "serial": "T-12705H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "16036936 FFFF"
+    },
+    {
+      "name": "No Random Battles",
+      "code": "160EF100 0000\n160C5238 0000"
+    },
+    {
+      "name": "Everywhere Else Everything Is Free",
+      "code": "1601CFBC 0009\n1601C680 A005\n1601C7D2 0009"
+    },
+    {
+      "name": "Walk Through Walls (Towns & Dungeons) Hold L and R",
+      "code": "D6036642 0088\n160AB782 A03A\n160AB854 A030\n160AB980 A027\n160ABA5A A029"
+    },
+    {
+      "name": "Unlimited Spearmint",
+      "code": "360367B4 0063"
+    },
+    {
+      "name": "Unlimited Mint",
+      "code": "360367B5 0063"
+    },
+    {
+      "name": "Unlimited Grizzle Fang",
+      "code": "360367B6 0063"
+    },
+    {
+      "name": "Unlimited Peppermint",
+      "code": "360367B7 0063"
+    },
+    {
+      "name": "Unlimited Banshee Tear",
+      "code": "360367B8 0063"
+    },
+    {
+      "name": "Unlimited Calm Herb",
+      "code": "360367B9 0063"
+    },
+    {
+      "name": "Unlimited Life Root",
+      "code": "360367BA 0063"
+    },
+    {
+      "name": "Unlimited Warp Wing",
+      "code": "360367BB 0063"
+    },
+    {
+      "name": "Unlimited Mink Tonic",
+      "code": "360367BC 0063"
+    },
+    {
+      "name": "Unlimited Miracle Mango",
+      "code": "360367BD 0063"
+    },
+    {
+      "name": "Unlimited Power Potato",
+      "code": "360367BE 0063"
+    },
+    {
+      "name": "Unlimited Rations Kit",
+      "code": "360367BF 0063"
+    },
+    {
+      "name": "Unlimited Gag",
+      "code": "360367C0 0063"
+    },
+    {
+      "name": "Unlimited Magic Tomato",
+      "code": "360367C1 0063"
+    },
+    {
+      "name": "Unlimited Eerie Ring",
+      "code": "360367C2 0063"
+    },
+    {
+      "name": "Unlimited Pink Rogue",
+      "code": "360367C3 0063"
+    },
+    {
+      "name": "Unlimited Dragon Horn",
+      "code": "360367C4 0063"
+    },
+    {
+      "name": "Unlimited Silver Candlestick",
+      "code": "360367C5 0063"
+    },
+    {
+      "name": "Unlimited Magic Shield",
+      "code": "360367C6 0063"
+    },
+    {
+      "name": "Unlimited Ivory Stamp",
+      "code": "360367C7 0063"
+    },
+    {
+      "name": "Unlimited Hells Chime",
+      "code": "360367C8 0063"
+    },
+    {
+      "name": "Unlimited Black Rosary",
+      "code": "360367C9 0063"
+    },
+    {
+      "name": "Unlimited False Teeth",
+      "code": "360367CA 0063"
+    },
+    {
+      "name": "Unlimited Sunglasses",
+      "code": "360367CB 0063"
+    },
+    {
+      "name": "Unlimited Quest Pass",
+      "code": "360367CC 0063"
+    },
+    {
+      "name": "Unlimited Mystic Forge",
+      "code": "360367CD 0063"
+    },
+    {
+      "name": "Unlimited Dummy",
+      "code": "360367CE 0063"
+    },
+    {
+      "name": "Unlimited Cirrus",
+      "code": "360367CF 0063"
+    },
+    {
+      "name": "Unlimited Short Sword",
+      "code": "360367D0 0063"
+    },
+    {
+      "name": "Unlimited Long Sword",
+      "code": "360367D1 0063"
+    },
+    {
+      "name": "Unlimited Scimitar",
+      "code": "360367D2 0063"
+    },
+    {
+      "name": "Unlimited Cutlass",
+      "code": "360367D3 0063"
+    },
+    {
+      "name": "Unlimited Broad Sword",
+      "code": "360367D4 0063"
+    },
+    {
+      "name": "Unlimited Bastard Sword",
+      "code": "360367D5 0063"
+    },
+    {
+      "name": "Unlimited Falchion",
+      "code": "360367D6 0063"
+    },
+    {
+      "name": "Unlimited Great Sword",
+      "code": "360367D7 0063"
+    },
+    {
+      "name": "Unlimited Flame Saber",
+      "code": "360367D8 0063"
+    },
+    {
+      "name": "Unlimited Knight Saber",
+      "code": "360367D9 0063"
+    },
+    {
+      "name": "Unlimited Freeze Rapier",
+      "code": "360367DA 0063"
+    },
+    {
+      "name": "Unlimited Earth Sword",
+      "code": "360367DB 0063"
+    },
+    {
+      "name": "Unlimited Jewel Sword",
+      "code": "360367DC 0063"
+    },
+    {
+      "name": "Unlimited Guys Sword",
+      "code": "360367DD 0063"
+    },
+    {
+      "name": "Unlimited Royal Blade",
+      "code": "360367DE 0063"
+    },
+    {
+      "name": "Unlimited Skull Killer",
+      "code": "360367DF 0063"
+    },
+    {
+      "name": "Unlimited Hope Sword",
+      "code": "360367E0 0063"
+    },
+    {
+      "name": "Unlimited Material Sword",
+      "code": "360367E1 0063"
+    },
+    {
+      "name": "Unlimited Fiend Buster",
+      "code": "360367E2 0063"
+    },
+    {
+      "name": "Unlimited Evil Blade",
+      "code": "360367E3 0063"
+    },
+    {
+      "name": "Unlimited Eerie Sword",
+      "code": "360367E4 0063"
+    },
+    {
+      "name": "Unlimited Bola",
+      "code": "360367E5 0063"
+    },
+    {
+      "name": "Unlimited Darts",
+      "code": "360367E6 0063"
+    },
+    {
+      "name": "Unlimited Wolfs Nail",
+      "code": "360367E7 0063"
+    },
+    {
+      "name": "Unlimited Ninja Stars",
+      "code": "360367E8 0063"
+    },
+    {
+      "name": "Unlimited Franciska",
+      "code": "360367E9 0063"
+    },
+    {
+      "name": "Unlimited Grenades",
+      "code": "360367EA 0063"
+    },
+    {
+      "name": "Unlimited Willow Leaf",
+      "code": "360367EB 0063"
+    },
+    {
+      "name": "Unlimited Thunder Nail",
+      "code": "360367EC 0063"
+    },
+    {
+      "name": "Unlimited Dark Disc",
+      "code": "360367ED 0063"
+    },
+    {
+      "name": "Unlimited Southern Cross",
+      "code": "360367EE 0063"
+    },
+    {
+      "name": "Unlimited Amazon Nail",
+      "code": "360367EF 0063"
+    },
+    {
+      "name": "Unlimited Orithalicon",
+      "code": "360367F0 0063"
+    },
+    {
+      "name": "Unlimited Sakuras YoYo",
+      "code": "360367F1 0063"
+    },
+    {
+      "name": "Unlimited History Crow",
+      "code": "360367F2 0063"
+    },
+    {
+      "name": "Unlimited Balsam",
+      "code": "360367F3 0063"
+    },
+    {
+      "name": "Unlimited Moon Disc",
+      "code": "360367F4 0063"
+    },
+    {
+      "name": "Unlimited W Hook",
+      "code": "360367F5 0063"
+    },
+    {
+      "name": "Unlimited Slugger S",
+      "code": "360367F6 0063"
+    },
+    {
+      "name": "Unlimited Tomahawk G",
+      "code": "360367F7 0063"
+    },
+    {
+      "name": "Unlimited V's YoYo",
+      "code": "360367F8 0063"
+    },
+    {
+      "name": "Unlimited Moonlight",
+      "code": "360367F9 0063"
+    },
+    {
+      "name": "Unlimited Kotetu",
+      "code": "360367FA 0063"
+    },
+    {
+      "name": "Unlimited Shura",
+      "code": "360367FB 0063"
+    },
+    {
+      "name": "Unlimited Copper Racoon",
+      "code": "360367FC 0063"
+    },
+    {
+      "name": "Unlimited Mondos Katana",
+      "code": "360367FD 0063"
+    },
+    {
+      "name": "Unlimited Nihil",
+      "code": "360367FE 0063"
+    },
+    {
+      "name": "Unlimited Murasame",
+      "code": "360367FF 0063"
+    },
+    {
+      "name": "Unlimited Taishakuten",
+      "code": "36036800 0063"
+    },
+    {
+      "name": "Unlimited White Fox",
+      "code": "36036801 0063"
+    },
+    {
+      "name": "Unlimited Brakenel",
+      "code": "36036802 0063"
+    },
+    {
+      "name": "Unlimited Bizen Osafune",
+      "code": "36036803 0063"
+    },
+    {
+      "name": "Unlimited Wind Bell",
+      "code": "36036804 0063"
+    },
+    {
+      "name": "Unlimited Hyakki",
+      "code": "36036805 0063"
+    },
+    {
+      "name": "Unlimited Izayoi",
+      "code": "36036806 0063"
+    },
+    {
+      "name": "Unlimited Pyrom",
+      "code": "36036807 0063"
+    },
+    {
+      "name": "Unlimited Eagle Dagger",
+      "code": "36036808 0063"
+    },
+    {
+      "name": "Unlimited Long Spear",
+      "code": "36036809 0063"
+    },
+    {
+      "name": "Unlimited Javelin",
+      "code": "3603680A 0063"
+    },
+    {
+      "name": "Unlimited Glaive",
+      "code": "3603680B 0063"
+    },
+    {
+      "name": "Unlimited Halbert",
+      "code": "3603680C 0063"
+    },
+    {
+      "name": "Unlimited Heavy Lance",
+      "code": "3603680D 0063"
+    },
+    {
+      "name": "Unlimited Double Lancer",
+      "code": "3603680E 0063"
+    },
+    {
+      "name": "Unlimited Trident",
+      "code": "3603680F 0063"
+    },
+    {
+      "name": "Unlimited Purchizan",
+      "code": "36036810 0063"
+    },
+    {
+      "name": "Unlimited Phalanx",
+      "code": "36036811 0063"
+    },
+    {
+      "name": "Unlimited Sky Javelin",
+      "code": "36036812 0063"
+    },
+    {
+      "name": "Unlimited Beastrans",
+      "code": "36036813 0063"
+    },
+    {
+      "name": "Unlimited Godly Lance",
+      "code": "36036814 0063"
+    },
+    {
+      "name": "Unlimited Meiji Staff",
+      "code": "36036815 0063"
+    },
+    {
+      "name": "Unlimited Power Staff",
+      "code": "36036816 0063"
+    },
+    {
+      "name": "Unlimited Flame Rod",
+      "code": "36036817 0063"
+    },
+    {
+      "name": "Unlimited Minky Rod",
+      "code": "36036818 0063"
+    },
+    {
+      "name": "Unlimited Grace Rod",
+      "code": "36036819 0063"
+    },
+    {
+      "name": "Unlimited Blizzard Rod",
+      "code": "3603681A 0063"
+    },
+    {
+      "name": "Unlimited Harmony Cane",
+      "code": "3603681B 0063"
+    },
+    {
+      "name": "Unlimited Ancient Cane",
+      "code": "3603681C 0063"
+    },
+    {
+      "name": "Unlimited Sophias Cane",
+      "code": "3603681D 0063"
+    },
+    {
+      "name": "Unlimited Regular Clothes",
+      "code": "3603681E 0063"
+    },
+    {
+      "name": "Unlimited Cotton Armor",
+      "code": "3603681F 0063"
+    },
+    {
+      "name": "Unlimited Leather Armor",
+      "code": "36036820 0063"
+    },
+    {
+      "name": "Unlimited Hard Leather",
+      "code": "36036821 0063"
+    },
+    {
+      "name": "Unlimited Ring Mail",
+      "code": "36036822 0063"
+    },
+    {
+      "name": "Unlimited Splint Mail",
+      "code": "36036823 0063"
+    },
+    {
+      "name": "Unlimited Banded Mail",
+      "code": "36036824 0063"
+    },
+    {
+      "name": "Unlimited Chain Mail",
+      "code": "36036825 0063"
+    },
+    {
+      "name": "Unlimited Plate Mail",
+      "code": "36036826 0063"
+    },
+    {
+      "name": "Unlimited Knight Suit",
+      "code": "36036827 0063"
+    },
+    {
+      "name": "Unlimited Hero Armor",
+      "code": "36036828 0063"
+    },
+    {
+      "name": "Unlimited Mythril Mail",
+      "code": "36036829 0063"
+    },
+    {
+      "name": "Unlimited Fire Armor",
+      "code": "3603682A 0063"
+    },
+    {
+      "name": "Unlimited Lightning Armor",
+      "code": "3603682B 0063"
+    },
+    {
+      "name": "Unlimited Vision Armor",
+      "code": "3603682C 0063"
+    },
+    {
+      "name": "Unlimited Wind Armor",
+      "code": "3603682D 0063"
+    },
+    {
+      "name": "Unlimited Dragon Mail",
+      "code": "3603682E 0063"
+    },
+    {
+      "name": "Unlimited Holy Armor",
+      "code": "3603682F 0063"
+    },
+    {
+      "name": "Unlimited Ancient Armor",
+      "code": "36036830 0063"
+    },
+    {
+      "name": "Unlimited Rune Mail",
+      "code": "36036831 0063"
+    },
+    {
+      "name": "Unlimited Dress Clothes",
+      "code": "36036832 0063"
+    },
+    {
+      "name": "Unlimited Singers Dress",
+      "code": "36036833 0063"
+    },
+    {
+      "name": "Unlimited Sacred Robe",
+      "code": "36036834 0063"
+    },
+    {
+      "name": "Unlimited Love Leotard",
+      "code": "36036835 0063"
+    },
+    {
+      "name": "Unlimited Half Coat",
+      "code": "36036836 0063"
+    },
+    {
+      "name": "Unlimited Protection Dress",
+      "code": "36036837 0063"
+    },
+    {
+      "name": "Unlimited Amazon Cloth",
+      "code": "36036838 0063"
+    },
+    {
+      "name": "Unlimited Gale Bikini",
+      "code": "36036839 0063"
+    },
+    {
+      "name": "Unlimited Wind Dress",
+      "code": "3603683A 0063"
+    },
+    {
+      "name": "Unlimited Combat Dress",
+      "code": "3603683B 0063"
+    },
+    {
+      "name": "Unlimited Purity Robe",
+      "code": "3603683C 0063"
+    },
+    {
+      "name": "Unlimited Fairys Clothes",
+      "code": "3603683D 0063"
+    },
+    {
+      "name": "Unlimited Angel Feathers",
+      "code": "3603683E 0063"
+    },
+    {
+      "name": "Unlimited Magic Bikini",
+      "code": "3603683F 0063"
+    },
+    {
+      "name": "Unlimited Angel Dress",
+      "code": "36036840 0063"
+    },
+    {
+      "name": "Unlimited Saints Robe",
+      "code": "36036841 0063"
+    },
+    {
+      "name": "Unlimited Thin Robe",
+      "code": "36036842 0063"
+    },
+    {
+      "name": "Unlimited Silk Robe",
+      "code": "36036843 0063"
+    },
+    {
+      "name": "Unlimited Overlords Robe",
+      "code": "36036844 0063"
+    },
+    {
+      "name": "Unlimited Fairy Robe",
+      "code": "36036845 0063"
+    },
+    {
+      "name": "Unlimited Queen Robe",
+      "code": "36036846 0063"
+    },
+    {
+      "name": "Unlimited Stardust Robe",
+      "code": "36036847 0063"
+    },
+    {
+      "name": "Unlimited Holy Robe",
+      "code": "36036848 0063"
+    },
+    {
+      "name": "Unlimited Magical Robe",
+      "code": "36036849 0063"
+    },
+    {
+      "name": "Unlimited Goddess Robe",
+      "code": "3603684A 0063"
+    },
+    {
+      "name": "Unlimited Small Shield",
+      "code": "3603684B 0063"
+    },
+    {
+      "name": "Unlimited Large Shield",
+      "code": "3603684C 0063"
+    },
+    {
+      "name": "Unlimited Kite Shield",
+      "code": "3603684D 0063"
+    },
+    {
+      "name": "Unlimited Round Shield",
+      "code": "3603684E 0063"
+    },
+    {
+      "name": "Unlimited Tower Shield",
+      "code": "3603684F 0063"
+    },
+    {
+      "name": "Unlimited Knight Shield",
+      "code": "36036850 0063"
+    },
+    {
+      "name": "Unlimited Hero Shield",
+      "code": "36036851 0063"
+    },
+    {
+      "name": "Unlimited Mirror Shield",
+      "code": "36036852 0063"
+    },
+    {
+      "name": "Unlimited Phoenix Shield",
+      "code": "36036853 0063"
+    },
+    {
+      "name": "Unlimited Mail",
+      "code": "36036854 0063"
+    },
+    {
+      "name": "Unlimited Turtle Shell",
+      "code": "36036855 0063"
+    },
+    {
+      "name": "Unlimited Buckler",
+      "code": "36036856 0063"
+    },
+    {
+      "name": "Unlimited Jewel Shield",
+      "code": "36036857 0063"
+    },
+    {
+      "name": "Unlimited Hell Shield",
+      "code": "36036858 0063"
+    },
+    {
+      "name": "Unlimited Calm Shield",
+      "code": "36036859 0063"
+    },
+    {
+      "name": "Unlimited Phoenix Feather",
+      "code": "3603685A 0063"
+    },
+    {
+      "name": "Unlimited Star Pin",
+      "code": "3603685B 0063"
+    },
+    {
+      "name": "Unlimited Sophias Mantle",
+      "code": "3603685C 0063"
+    },
+    {
+      "name": "Unlimited Marthas Ring",
+      "code": "3603685D 0063"
+    },
+    {
+      "name": "Unlimited Protect Ring",
+      "code": "3603685E 0063"
+    },
+    {
+      "name": "Unlimited Holy Symbol",
+      "code": "3603685F 0063"
+    },
+    {
+      "name": "Unlimited Overlords Ring",
+      "code": "36036860 0063"
+    },
+    {
+      "name": "Unlimited Gale Boots",
+      "code": "36036861 0063"
+    },
+    {
+      "name": "Unlimited Knight Bracelet",
+      "code": "36036862 0063"
+    },
+    {
+      "name": "Unlimited Force Ring",
+      "code": "36036863 0063"
+    },
+    {
+      "name": "Unlimited Guys Medallion",
+      "code": "36036864 0063"
+    },
+    {
+      "name": "Unlimited Goddess Tiara",
+      "code": "36036865 0063"
+    },
+    {
+      "name": "Unlimited Amulet",
+      "code": "36036866 0063"
+    },
+    {
+      "name": "Unlimited Olivias Ribbon",
+      "code": "36036867 0063"
+    },
+    {
+      "name": "Level 99 After 1 Battle (Hero)",
+      "code": "160366B0 FFFF"
+    },
+    {
+      "name": "Maximum HP (Hero)",
+      "code": "16036694 270F"
+    },
+    {
+      "name": "Unlimited HP (Hero)",
+      "code": "16036696 270F"
+    },
+    {
+      "name": "Maximum Magic (Hero)",
+      "code": "16036698 270F"
+    },
+    {
+      "name": "Unlimited MP (Hero)",
+      "code": "1603669A 270F"
+    },
+    {
+      "name": "Maximum Hit (Hero)",
+      "code": "3603669C 00FF"
+    },
+    {
+      "name": "Maximum Avoid (Hero)",
+      "code": "3603669E 00FF"
+    },
+    {
+      "name": "Maximum ATT (Hero)",
+      "code": "360366A0 00FF"
+    },
+    {
+      "name": "Maximum DEF (Hero)",
+      "code": "360366A4 00FF"
+    },
+    {
+      "name": "Maximum Resist (Hero)",
+      "code": "360366A8 00FF"
+    },
+    {
+      "name": "Maximum Wisdom (Hero)",
+      "code": "360366AA 00FF"
+    },
+    {
+      "name": "Maximum Agility (Hero)",
+      "code": "360366AC 00FF"
+    },
+    {
+      "name": "Level 99 After 1 Battle (Eka)",
+      "code": "160366E4 FFFF"
+    },
+    {
+      "name": "Maximum HP (Eka)",
+      "code": "160366C8 270F"
+    },
+    {
+      "name": "Unlimited HP (Eka)",
+      "code": "160366CA 270F"
+    },
+    {
+      "name": "Maximum Magic (Eka)",
+      "code": "160366CC 270F"
+    },
+    {
+      "name": "Unlimited MP (Eka)",
+      "code": "160366CE 270F"
+    },
+    {
+      "name": "Maximum Hit (Eka)",
+      "code": "360366D0 00FF"
+    },
+    {
+      "name": "Maximum Avoid (Eka)",
+      "code": "360366D2 00FF"
+    },
+    {
+      "name": "Maximum ATT (Eka)",
+      "code": "360366D4 00FF"
+    },
+    {
+      "name": "Maximum DEF (Eka)",
+      "code": "360366D8 00FF"
+    },
+    {
+      "name": "Maximum Resist (Eka)",
+      "code": "360366DC 00FF"
+    },
+    {
+      "name": "Maximum Wisdom (Eka)",
+      "code": "360366DE 00FF"
+    },
+    {
+      "name": "Maximum Agility (Eka)",
+      "code": "360366E0 00FF"
+    },
+    {
+      "name": "Level 99 After 1 Battle (Leos/Kia)",
+      "code": "16036718 FFFF"
+    },
+    {
+      "name": "Maximum HP (Leos/Kia)",
+      "code": "160366FC 270F"
+    },
+    {
+      "name": "Unlimited HP (Leos/Kia)",
+      "code": "160366FE 270F"
+    },
+    {
+      "name": "Maximum Magic (Leos/Kia)",
+      "code": "16036700 270F"
+    },
+    {
+      "name": "Unlimited MP (Leos/Kia)",
+      "code": "16036702 270F"
+    },
+    {
+      "name": "Maximum Hit (Leos/Kia)",
+      "code": "36036704 00FF"
+    },
+    {
+      "name": "Maximum Avoid (Leos/Kia)",
+      "code": "36036706 00FF"
+    },
+    {
+      "name": "Maximum ATT (Leos/Kia)",
+      "code": "36036708 00FF"
+    },
+    {
+      "name": "Maximum DEF (Leos/Kia)",
+      "code": "3603670C 00FF"
+    },
+    {
+      "name": "Maximum Resist (Leos/Kia)",
+      "code": "36036710 00FF"
+    },
+    {
+      "name": "Maximum Wisdom (Leos/Kia)",
+      "code": "36036712 00FF"
+    },
+    {
+      "name": "Maximum Agility (Leos/Kia)",
+      "code": "36036714 00FF"
+    },
+    {
+      "name": "Level 99 After 1 Battle (Gryzz)",
+      "code": "1603674C FFFF"
+    },
+    {
+      "name": "Maximum HP (Gryzz)",
+      "code": "16036730 270F"
+    },
+    {
+      "name": "Unlimited HP (Gryzz)",
+      "code": "16036732 270F"
+    },
+    {
+      "name": "Maximum Magic (Gryzz)",
+      "code": "16036734 270F"
+    },
+    {
+      "name": "Unlimited MP (Gryzz)",
+      "code": "16036736 270F"
+    },
+    {
+      "name": "Maximum Hit (Gryzz)",
+      "code": "36036738 00FF"
+    },
+    {
+      "name": "Maximum Avoid (Gryzz)",
+      "code": "3603673A 00FF"
+    },
+    {
+      "name": "Maximum ATT (Gryzz)",
+      "code": "3603673C 00FF"
+    },
+    {
+      "name": "Maximum DEF (Gryzz)",
+      "code": "36036740 00FF"
+    },
+    {
+      "name": "Maximum Resist (Gryzz)",
+      "code": "36036744 00FF"
+    },
+    {
+      "name": "Maximum Wisdom (Gryzz)",
+      "code": "36036746 00FF"
+    },
+    {
+      "name": "Maximum Agility (Gryzz)",
+      "code": "36036748 00FF"
+    },
+    {
+      "name": "Level 99 After 1 Battle (Amon)",
+      "code": "16036780 FFFF"
+    },
+    {
+      "name": "Maximum HP (Amon)",
+      "code": "16036764 270F"
+    },
+    {
+      "name": "Unlimited HP (Amon)",
+      "code": "16036766 270F"
+    },
+    {
+      "name": "Maximum Magic (Amon)",
+      "code": "16036768 270F"
+    },
+    {
+      "name": "Unlimited MP (Amon)",
+      "code": "1603676A 270F"
+    },
+    {
+      "name": "Maximum Hit (Amon)",
+      "code": "3603676C 00FF"
+    },
+    {
+      "name": "Maximum Avoid (Amon)",
+      "code": "3603676E 00FF"
+    },
+    {
+      "name": "Maximum ATT (Amon)",
+      "code": "36036770 00FF"
+    },
+    {
+      "name": "Maximum DEF (Amon)",
+      "code": "36036774 00FF"
+    },
+    {
+      "name": "Maximum Resist (Amon)",
+      "code": "36036778 00FF"
+    },
+    {
+      "name": "Maximum Wisdom (Amon)",
+      "code": "3603677A 00FF"
+    },
+    {
+      "name": "Maximum Agility (Amon)",
+      "code": "3603677C 00FF"
+    },
+    {
+      "name": "No Random Battles (World Map)",
+      "code": "160EF100 0000"
+    },
+    {
+      "name": "No Random Battles (Elsewhere)",
+      "code": "160C5238 0000"
+    }
+  ]
+}

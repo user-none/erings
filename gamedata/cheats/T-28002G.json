@@ -1,0 +1,70 @@
+{
+  "serial": "T-28002G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "1609B018 03E7"
+    },
+    {
+      "name": "Reiko Loveable",
+      "code": "1609B1C4 00C8"
+    },
+    {
+      "name": "Miko Loveable",
+      "code": "1609B1C6 00C8"
+    },
+    {
+      "name": "Mizuho Loveable",
+      "code": "1609B1C8 00C8"
+    },
+    {
+      "name": "Mayumi Loveable",
+      "code": "1609B1CA 00C8"
+    },
+    {
+      "name": "Ryoko Loveable",
+      "code": "1609B1CC 00C8"
+    },
+    {
+      "name": "Tina Loveable",
+      "code": "1609B1CE 00C8"
+    },
+    {
+      "name": "Nana Loveable",
+      "code": "1609B1D0 00C8"
+    },
+    {
+      "name": "Miyuki Loveable",
+      "code": "1609B1D2 00C8"
+    },
+    {
+      "name": "Al Loveable",
+      "code": "1609B1D4 00C8"
+    },
+    {
+      "name": "Shizuka Loveable",
+      "code": "1609B1D6 00C8"
+    },
+    {
+      "name": "Mahoko Loveable",
+      "code": "1609B1D8 00C8"
+    },
+    {
+      "name": "Minaisu Loveable",
+      "code": "1609B1DA 00C8"
+    },
+    {
+      "name": "Maki Loveable",
+      "code": "1609B1DC 00C8"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "10200012 0009"
+    },
+    {
+      "name": "Invincibility",
+      "code": "16070336 0060"
+    }
+  ]
+}

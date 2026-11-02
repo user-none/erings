@@ -1,0 +1,27 @@
+{
+  "serial": "T-16406H",
+  "title": "True Pinball",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 20295 10006 3",
+    "3 546430 001141"
+  ],
+  "release_date": "1996-04-05",
+  "developer": "Digital Illusions",
+  "publisher": "Ocean Software",
+  "genres": [
+    "Pinball"
+  ],
+  "max_players": 8,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "This is True Pinball... This is attention to detail on every level. This is ball physics: table design: 2D and 3D views: six ball multiballs: video modes and incredible music. This is an experience heightened by the excitement of accurate pinball simulation. Prepare yourself for the speed - prepare yourself for the shock - this is True Pinball.\n\nTrue Pinball is a console version of Pinball Illusions that has 4 different tables, named \"Extreme Sports\", \"Vikings - The Tales\", \"Ricochet\" and \"Babewatch\"."
+}

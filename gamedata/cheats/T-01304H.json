@@ -1,0 +1,14 @@
+{
+  "serial": "T-01304H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Smart Bombs",
+      "code": "16045E58 0003"
+    },
+    {
+      "name": "Infinite Shield",
+      "code": "16043D34 1000"
+    }
+  ]
+}

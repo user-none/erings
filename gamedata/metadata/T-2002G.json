@@ -1,0 +1,25 @@
+{
+  "serial": "T-2002G",
+  "title": "World Evolution Soccer",
+  "native_title": "ワールド・エボリューション・サッカー",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988126 610036"
+  ],
+  "release_date": "1997-06-27",
+  "developer": "Jack Pot",
+  "publisher": "Asmik",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "World Evolution Soccer is a soccer game featuring 32 national teams with no official league license. Three modes are included: a World Cup season mode, a single-match Exhibition mode, and a Party Mode for a four-team mini-tournament. A notable feature is the high level of team formation and strategy customization, allowing the player to tweak how the CPU controls their team's players; this can be adjusted not just before a game but also during breaks in a match."
+}

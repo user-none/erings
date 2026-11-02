@@ -1,0 +1,30 @@
+{
+  "serial": "MK-81200",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time (Arcade Mode)",
+      "code": "1607EAAE 0318"
+    },
+    {
+      "name": "Race Backwards",
+      "code": "1600B056 0000"
+    },
+    {
+      "name": "Race Sideways",
+      "code": "1600B056 4000"
+    },
+    {
+      "name": "Race Sideways (Other Way)",
+      "code": "1600B056 C000"
+    },
+    {
+      "name": "Always Come in 1st Place",
+      "code": "16048072 0001\n16048074 0001\n16048076 0001"
+    },
+    {
+      "name": "Infinite Time to Choose Car",
+      "code": "1607EBCE 06F0"
+    }
+  ]
+}

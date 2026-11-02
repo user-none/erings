@@ -1,0 +1,102 @@
+{
+  "serial": "T-8144H",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Infinite Energy",
+      "code": "16058B68 0320"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "16058B60 0320"
+    },
+    {
+      "name": "Infinite Boosters",
+      "code": "16058B6C 0003"
+    },
+    {
+      "name": "Machine Gun Always at Single Fire",
+      "code": "36058BBA 0001"
+    },
+    {
+      "name": "Machine Gun Always at Double Fire",
+      "code": "36058BBA 0002"
+    },
+    {
+      "name": "Machine Gun Always at Triple Fire",
+      "code": "36058BBA 0003"
+    },
+    {
+      "name": "Enable 1st Primary",
+      "code": "36058BBF 0001"
+    },
+    {
+      "name": "Enable 2nd Primary",
+      "code": "36058BBE 0001"
+    },
+    {
+      "name": "Enable 3rd Primary",
+      "code": "36058BBD 0001"
+    },
+    {
+      "name": "Enable 4th Primary",
+      "code": "36058BBC 0001"
+    },
+    {
+      "name": "Enable 5th Primary",
+      "code": "36058BBB 0001"
+    },
+    {
+      "name": "Enable 1st Secondary",
+      "code": "36058BC0 0001"
+    },
+    {
+      "name": "Enable 2nd Secondary",
+      "code": "36058BC1 0001"
+    },
+    {
+      "name": "Enable 3rd Secondary",
+      "code": "36058BC2 0001"
+    },
+    {
+      "name": "Enable 4th Secondary ???",
+      "code": "36058BC3 0001"
+    },
+    {
+      "name": "Infinite Ammo 1st Secondary",
+      "code": "36058BB4 0063"
+    },
+    {
+      "name": "Infinite Ammo 2nd Secondary",
+      "code": "36058BB5 0063"
+    },
+    {
+      "name": "Infinite Ammo 3rd Secondary",
+      "code": "36058BB6 0063"
+    },
+    {
+      "name": "Infinite Ammo 4th Secondary",
+      "code": "36058BB7 0063"
+    },
+    {
+      "name": "Infinite Ammo 1st Primary",
+      "code": "36058BB0 0063"
+    },
+    {
+      "name": "Infinite Ammo 2nd Primary",
+      "code": "36058BB1 0063"
+    },
+    {
+      "name": "Infinite Ammo 3rd Primary",
+      "code": "36058BB2 0063"
+    },
+    {
+      "name": "Infinite Ammo 4th Primary",
+      "code": "36058BB3 0063"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "16058B60 0005"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "serial": "MK-81040",
+  "master_code": "F6017598 C305",
+  "cheats": [
+    {
+      "name": "Infinite Sugar Crystals, Doggie Bones, Disco Balls",
+      "code": "1605C5E2 0063"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "16055366 0006"
+    },
+    {
+      "name": "Invincible (Flashes)",
+      "code": "160553F6 0041\n160553FC 004B"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "1605C5D2 0003"
+    },
+    {
+      "name": "Infinite Continues",
+      "code": "1605C5D6 0003"
+    },
+    {
+      "name": "Blue Spit Modifier",
+      "code": "1605C5C2 0001"
+    },
+    {
+      "name": "Green Spit Modifier",
+      "code": "1605C5C2 0003"
+    },
+    {
+      "name": "Red & Green Spit Modifier",
+      "code": "1605C5C2 0006"
+    }
+  ]
+}

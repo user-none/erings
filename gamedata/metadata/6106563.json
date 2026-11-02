@@ -1,0 +1,23 @@
+{
+  "serial": "6106563",
+  "title": "Thunder Force V (Demo)",
+  "native_title": "サンダー・フォースＶ",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-07-11",
+  "developer": "TechnoSoft",
+  "publisher": "Technosoft",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The first instalment in the Thunder Force series made for 32-bit consoles. As a pilot for the Thunder Force group, it's up to you to destroy an evil alien race bent on destroying the Earth and all of its inhabitants. As in its predecessors, the gameplay is fast and furious, with more powerful weapons. All weapons now have an extra powerful blast mode, triggered by holding down the fire button. Sprites have been forfeited in favor of 2D polygons made possible by the new platform. The musical score contains a lot of techno rearrangements of old Thunder Force themes."
+}

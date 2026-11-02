@@ -1,0 +1,42 @@
+{
+  "serial": "T-14402G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160B5380 0005"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "160B5386 0004"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160B53A0 0010"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160B53F8 0005"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160B53FE 0004"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160B5418 0010"
+    },
+    {
+      "name": "Unlimited Lives for Player 1",
+      "code": "160B5380 0004"
+    },
+    {
+      "name": "Unlimited Bombs for Player 2",
+      "code": "160B53FE 0006"
+    },
+    {
+      "name": "Unlimited Shot Power for Player 1",
+      "code": "160B5388 0003"
+    }
+  ]
+}

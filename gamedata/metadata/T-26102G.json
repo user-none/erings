@@ -1,0 +1,26 @@
+{
+  "serial": "T-26102G",
+  "title": "K-1 Grand Prix: Fighting Illusion Shou",
+  "native_title": "Ｋ－１ ファイティング イリュージョン 翔",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 948536 190061"
+  ],
+  "release_date": "1997-01-31",
+  "developer": "Daft",
+  "publisher": "Xing Entertainment",
+  "genres": [
+    "Fighting",
+    "Sports"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "K-1 Fighting Illusion Show is a martial arts sports game licensed by the K-1 kickboxing promotion, featuring the likenesses of 12 real-life fighters from around the world. The game includes a single-player arcade mode against the computer, a two-player versus mode, a tournament mode for up to eight players, and a 3-on-3 team battle mode. There is also an AI Fighter mode where the player selects a fighter, adjusts their stats and moves, and can pit them against another AI fighter or a human player."
+}

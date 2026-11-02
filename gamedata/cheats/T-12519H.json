@@ -1,0 +1,162 @@
+{
+  "serial": "T-12519H",
+  "master_code": "F6000914 C30B\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Ammo P1",
+      "code": "160E6F4A 03E8\n160F0B5A 03E8"
+    },
+    {
+      "name": "Infinite Specials P1",
+      "code": "160E6F4C 0005\n160F0B66 0005"
+    },
+    {
+      "name": "Infinite Health Level 1 P1",
+      "code": "160F0B5E 4000\n1026F994 4000"
+    },
+    {
+      "name": "Infinite Lives P1",
+      "code": "160E6F4E 0028\n160F0B62 0028"
+    },
+    {
+      "name": "Weapon Maxed Out P1",
+      "code": "160E6F48 7FFF\n160F0E14 7FFF"
+    },
+    {
+      "name": "Infinite Ammo P2",
+      "code": "160E6FDA 03E8\n160F0B8A 03E8"
+    },
+    {
+      "name": "Infinite Specials P2",
+      "code": "160E6FDC 0005\n160F0B96 0005"
+    },
+    {
+      "name": "Infinite Health Level 1 P2",
+      "code": "160F0B8E 4000\n1026FA1C 4000"
+    },
+    {
+      "name": "Infinite Lives P2",
+      "code": "160E6FDE 0028\n160F0B92 0028"
+    },
+    {
+      "name": "Weapon Maxed Out P2",
+      "code": "160E6FD8 7FFF\n160F0E14 7FFF"
+    },
+    {
+      "name": "Have All Keys",
+      "code": "160EF9D2 000F\n160F0B6A 000F"
+    },
+    {
+      "name": "Infinite Health Level 2 P1",
+      "code": "102711F0 4000"
+    },
+    {
+      "name": "Infinite Health Level 2 P2",
+      "code": "10271278 4000"
+    },
+    {
+      "name": "Infinite Health Level 3 P1",
+      "code": "10266000 4000"
+    },
+    {
+      "name": "Infinite Health Level 3 P2",
+      "code": "10266088 4000"
+    },
+    {
+      "name": "Infinite Health Level 4 P1",
+      "code": "10268000 4000"
+    },
+    {
+      "name": "Infinite Health Level 4 P2",
+      "code": "10268088 4000"
+    },
+    {
+      "name": "Infinite Health Level 5 P1",
+      "code": "1026DA28 4000"
+    },
+    {
+      "name": "Infinite Health Level 5 P2",
+      "code": "1026DAB0 4000"
+    },
+    {
+      "name": "Infinite Health Level 6 P1",
+      "code": "1025F7B8 4000"
+    },
+    {
+      "name": "Infinite Health Level 6 P2",
+      "code": "1025F840 4000"
+    },
+    {
+      "name": "Infinite Health Level 7 P1",
+      "code": "102677EC 4000"
+    },
+    {
+      "name": "Infinite Health Level 7 P2",
+      "code": "10267874 4000"
+    },
+    {
+      "name": "Infinite Health Level 8 P1",
+      "code": "102708BC 4000"
+    },
+    {
+      "name": "Infinite Health Level 8 P2",
+      "code": "10270944 4000"
+    },
+    {
+      "name": "Infinite Health Level 9 P1",
+      "code": "1027199C 4000"
+    },
+    {
+      "name": "Infinite Health Level 9 P2",
+      "code": "10271A24 4000"
+    },
+    {
+      "name": "Infinite Health Level 10 P1",
+      "code": "10254C5C 4000"
+    },
+    {
+      "name": "Infinite Health Level 10 P2",
+      "code": "10254CE4 4000"
+    },
+    {
+      "name": "Infinite Health Level 11 P1",
+      "code": "10265328 4000"
+    },
+    {
+      "name": "Infinite Health Level 11 P2",
+      "code": "102653B0 4000"
+    },
+    {
+      "name": "Infinite Health Level 12 P1",
+      "code": "1026AF84 4000"
+    },
+    {
+      "name": "Infinite Health Level 12 P2",
+      "code": "1026B00C 4000"
+    },
+    {
+      "name": "Infinite Health Level 13 P1",
+      "code": "10268214 4000"
+    },
+    {
+      "name": "Infinite Health Level 13 P2",
+      "code": "1026929C 4000"
+    },
+    {
+      "name": "Infinite Health Level 14 P1",
+      "code": "10266D64 4000"
+    },
+    {
+      "name": "Infinite Health Level 14 P2",
+      "code": "10266DEC 4000"
+    },
+    {
+      "name": "Infinite Health Level 15 P1",
+      "code": "1026B104 4000"
+    },
+    {
+      "name": "Infinite Health Level 15 P2",
+      "code": "1026B18C 4000"
+    }
+  ]
+}

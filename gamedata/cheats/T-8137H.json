@@ -1,0 +1,54 @@
+{
+  "serial": "T-8137H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Health",
+      "code": "160377F8 0064"
+    },
+    {
+      "name": "(Player 2) Unlimited Health",
+      "code": "160378F8 0064"
+    },
+    {
+      "name": "(Player 1) No Health",
+      "code": "160377F8 0000"
+    },
+    {
+      "name": "(Player 2) No Health",
+      "code": "160378F8 0000"
+    },
+    {
+      "name": "(Player 1) 25% Energy",
+      "code": "D60377F8 0064\n160377F8 0019"
+    },
+    {
+      "name": "(Player 1) 50% Energy",
+      "code": "D60377F8 0064\n160377F8 0032"
+    },
+    {
+      "name": "(Player 1) 75% Energy",
+      "code": "D60377F8 0064\n160377F8 004B"
+    },
+    {
+      "name": "(Player 2) 25% Energy",
+      "code": "D60378F8 0064\n160378F8 0019"
+    },
+    {
+      "name": "(Player 2) 50% Energy",
+      "code": "D60378F8 0064\n160378F8 0032"
+    },
+    {
+      "name": "(Player 2) 75% Energy",
+      "code": "D60378F8 0064\n160478F8 004B"
+    },
+    {
+      "name": "(Player 1) Dies In One Shot",
+      "code": "D60377F8 0064\n160377F8 0001"
+    },
+    {
+      "name": "(Player 2) Dies In One Shot",
+      "code": "D60378F8 0064\n160378F8 0001"
+    }
+  ]
+}

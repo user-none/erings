@@ -1,0 +1,54 @@
+{
+  "serial": "T-15006G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "16092528 0059"
+    },
+    {
+      "name": "Unlimited Submarines for Player 2",
+      "code": "1607CA9C 0003"
+    },
+    {
+      "name": "Front Maximum Large Torpedo for Player 1",
+      "code": "1607CA54 0002\n1607CA56 0003"
+    },
+    {
+      "name": "Front Maximum Large Torpedo for Player 2",
+      "code": "1607CA94 0002\n1607CA96 0003"
+    },
+    {
+      "name": "Front Maximum Non-stop Torpedo for Player 1",
+      "code": "1607CA54 0004\n1607CA56 0003"
+    },
+    {
+      "name": "Front Maximum Non-stop Torpedo for Player 2",
+      "code": "1607CA94 0004\n1607CA96 0003"
+    },
+    {
+      "name": "Front Maximum Exploding Torpedo for Player 1",
+      "code": "1607CA54 0006\n1607CA56 0003"
+    },
+    {
+      "name": "Front Maximum Exploding Torpedo for Player 2",
+      "code": "1607CA94 0006\n1607CA96 0003"
+    },
+    {
+      "name": "Top Maximum Torpedo for Player 1",
+      "code": "1607CA58 0002\n1607CA5A 0003"
+    },
+    {
+      "name": "Top Maximum Torpedo for Player 2",
+      "code": "1607CA98 0002\n1607CA9A 0003"
+    },
+    {
+      "name": "Top Maximum Buoys for Player 1",
+      "code": "1607CA58 0004\n1607CA5A 0003"
+    },
+    {
+      "name": "Top Maximum Buoys for Player 2",
+      "code": "1607CA98 0004\n1607CA9A 0003"
+    }
+  ]
+}

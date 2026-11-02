@@ -1,0 +1,10 @@
+{
+  "serial": "T-13312G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Missiles",
+      "code": "16055624 03E7\n160B5B20 03EF"
+    }
+  ]
+}

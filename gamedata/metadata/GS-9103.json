@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9103",
+  "title": "Sky Target",
+  "native_title": "スカイ・ターゲット",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091033"
+  ],
+  "release_date": "1997-04-25",
+  "developer": "Appaloosa Interactive",
+  "publisher": "Sega of America",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Sky Target is a 3rd person perspective arcade flight sim by Sega, similar to their classic After Burner in gameplay but featuring new gameplay mechanics and an entirely polygonal engine.\n\nAs in most games of it's type your objective is to clear a number of stages by shooting anything that moves, but at the end of each stage you can select where to go next thanks to branching paths a-la Darius, which coupled with 4 different planes to select give the game an increased gameplay value. No multiple lives are given, but you get a life bar (which can be replenished in-flight) to help you outlast your enemies."
+}

@@ -1,0 +1,22 @@
+{
+  "serial": "T-14418G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Gold Max",
+      "code": "160D9770 05F5\n160D9772 E0FF"
+    },
+    {
+      "name": "HP Max",
+      "code": "360D9921 0003\n360D9922 00E7\n360D9925 0003\n360D9926 00E7"
+    },
+    {
+      "name": "Power Max",
+      "code": "360D994A 0050"
+    },
+    {
+      "name": "Level Max",
+      "code": "360D994F 0063"
+    }
+  ]
+}

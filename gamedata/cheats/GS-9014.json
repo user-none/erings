@@ -1,0 +1,58 @@
+{
+  "serial": "GS-9014",
+  "master_code": "F601048A C305",
+  "cheats": [
+    {
+      "name": "Card 1",
+      "code": "302EA5AC 0001"
+    },
+    {
+      "name": "Card 2",
+      "code": "302EA5AD 0002"
+    },
+    {
+      "name": "Card 3",
+      "code": "302EA5AE 0003"
+    },
+    {
+      "name": "Card 4",
+      "code": "302EA5AF 0004"
+    },
+    {
+      "name": "Card 5",
+      "code": "302EA5B0 0005"
+    },
+    {
+      "name": "Card 6",
+      "code": "302EA5B1 0006"
+    },
+    {
+      "name": "Card 7",
+      "code": "302EA5B2 0007"
+    },
+    {
+      "name": "Card 8",
+      "code": "302EA5B3 0008"
+    },
+    {
+      "name": "Card 9",
+      "code": "302EA5B4 0009"
+    },
+    {
+      "name": "(Character 1) Max Life",
+      "code": "302EA5A0 0014\n302EA5A4 0014"
+    },
+    {
+      "name": "(Character 1) Max Strength",
+      "code": "302EA5A1 000A\n302EA5A5 000A"
+    },
+    {
+      "name": "(Character 1) Max Defense",
+      "code": "302EA5A2 000A\n302EA5A6 000A"
+    },
+    {
+      "name": "(Character 1) Max Agility",
+      "code": "302EA5A3 000A\n302EA5A7 000A"
+    }
+  ]
+}

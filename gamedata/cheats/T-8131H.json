@@ -1,0 +1,18 @@
+{
+  "serial": "T-8131H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives (Bubble Bobble)",
+      "code": "1604FDE0 0002"
+    },
+    {
+      "name": "Infinite Lives (Rainbow Islands)",
+      "code": "160442AA 0003"
+    },
+    {
+      "name": "(Rainbow Island) Unlimited Lives",
+      "code": "160442AA 0023"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "serial": "GS-9186",
+  "cheats": [
+    {
+      "name": "Max Status",
+      "code": "16068450 FFFF\n36068451 00FF\n36068372 00FF\n36068373 00FF\n36068374 00FF"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "102FC620 00FF"
+    },
+    {
+      "name": "Fast Level Ups",
+      "code": "102FCB32 FFFF\n102FCB36 FFFF"
+    },
+    {
+      "name": "Max Status",
+      "code": "102FC702 03E7\n102FC704 03E7\n102FC706 03E7\n102FC708 03E7\n102FC710 03E7\n102FC712 03E7\n102FC714 03E7\n102FC716 03E7\n102FC718 03E7\n102FC71A 03E7\n102FC71C 03E7\n102FC71E 03E7"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "102FC040 00FF"
+    },
+    {
+      "name": "Faster Level Ups",
+      "code": "102FD300 FFFF\n102FD304 FFFF"
+    },
+    {
+      "name": "Max Status",
+      "code": "102FC0AE 270F\n102FC0B0 270F\n102FC0B2 270F\n102FC0B4 270F\n102FC0B6 270F\n102FC0B8 270F"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "102FF438 00FF"
+    },
+    {
+      "name": "Fast Level Ups",
+      "code": "102F41CE FFFF"
+    },
+    {
+      "name": "Max Status",
+      "code": "102FF50E 03E7\n102FF510 03E7\n102FF512 03E7\n102FF514 03E7\n102FF518 FFFF\n302FF51B 00FF\n302FF51C 00FF\n102FF51E FFFF\n302FF521 00FF\n302FF522 00FF"
+    }
+  ]
+}

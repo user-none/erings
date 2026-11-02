@@ -1,0 +1,22 @@
+{
+  "serial": "T-6802G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Life for Player 1",
+      "code": "36055FEC 0003"
+    },
+    {
+      "name": "Unlimited Life for Player 2",
+      "code": "36055FED 0003"
+    },
+    {
+      "name": "Unlimited Credits for Player 1",
+      "code": "1603A166 0005"
+    },
+    {
+      "name": "Unlimited Credits for Player 2",
+      "code": "1603A16A 0005"
+    }
+  ]
+}

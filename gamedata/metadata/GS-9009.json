@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9009",
+  "title": "Gotha: Ismailia SenEki",
+  "native_title": "ゴータ ～イスマイリア戦役～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 090098"
+  ],
+  "release_date": "1995-01-27",
+  "developer": "Micronet",
+  "publisher": "Sega",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Taking inspirations from Yoshiki Tanaka's \"Legend of the Galactic Heroes\", the game consists of two divided human factions at war after an increasingly hostile colonization across the Milky Way. The player simply positions tactical units in airspace, configures their stats then assigns each unit specific commands. If decisions are done correctly, a successful strategy ensures a victory against all enemy units."
+}

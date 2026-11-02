@@ -1,0 +1,234 @@
+{
+  "serial": "T-5202G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "1608D7C8 0001\n1608D7CA 869F"
+    },
+    {
+      "name": "Maximum Health (Rusion)",
+      "code": "1608D86A 03E7\n1608D872 03E7"
+    },
+    {
+      "name": "Maximum Magic (Rusion)",
+      "code": "1608D876 03E7\n1608D87E 03E7"
+    },
+    {
+      "name": "Experience (Rusion)",
+      "code": "1608D8A6 FFFF"
+    },
+    {
+      "name": "Level Up (Rusion)",
+      "code": "1608D85E 0063"
+    },
+    {
+      "name": "Attack Power (Rusion)",
+      "code": "1608D882 03E7"
+    },
+    {
+      "name": "Destruction Power (Rusion)",
+      "code": "1608D88A 03E7"
+    },
+    {
+      "name": "Defense Power (Rusion)",
+      "code": "1608D892 03E7"
+    },
+    {
+      "name": "Magic Power (Rusion)",
+      "code": "1608D88E 03E7"
+    },
+    {
+      "name": "Critical (Rusion)",
+      "code": "1608D89E 03E7"
+    },
+    {
+      "name": "Evasion (Rusion)",
+      "code": "1608D896 03E7"
+    },
+    {
+      "name": "Maximum Health (Elgoat)",
+      "code": "1608D916 03E7\n1608D91E 03E7"
+    },
+    {
+      "name": "Maximum Magic (Elgoat)",
+      "code": "1608D922 03E7\n1608D92A 03E7"
+    },
+    {
+      "name": "Experience (Elgoat)",
+      "code": "1608D952 FFFF"
+    },
+    {
+      "name": "Level Up (Elgoat)",
+      "code": "1608D90A 0063"
+    },
+    {
+      "name": "Attack Power (Elgoat)",
+      "code": "1608D92E 03E7"
+    },
+    {
+      "name": "Destruction Power (Elgoat)",
+      "code": "1608D936 03E7"
+    },
+    {
+      "name": "Defense Power (Elgoat)",
+      "code": "1608D93E 03E7"
+    },
+    {
+      "name": "Magic Power (Elgoat)",
+      "code": "1608D93A 03E7"
+    },
+    {
+      "name": "Critical (Elgoat)",
+      "code": "1608D94A 03E7"
+    },
+    {
+      "name": "Evasion (Elgoat)",
+      "code": "1608D942 03E7"
+    },
+    {
+      "name": "Maximum Health (Miminaga)",
+      "code": "1608D9C2 03E7\n1608D9CA 03E7"
+    },
+    {
+      "name": "Maximum Magic (Miminaga)",
+      "code": "1608D9CE 03E7\n1608D9D6 03E7"
+    },
+    {
+      "name": "Experience (Miminaga)",
+      "code": "1608D9FE FFFF"
+    },
+    {
+      "name": "Level Up (Miminaga)",
+      "code": "1608D9B6 0063"
+    },
+    {
+      "name": "Attack Power (Miminaga)",
+      "code": "1608D9DA 03E7"
+    },
+    {
+      "name": "Destruction Power (Miminaga)",
+      "code": "1608D9E2 03E7"
+    },
+    {
+      "name": "Defense Power (Miminaga)",
+      "code": "1608D9EA 03E7"
+    },
+    {
+      "name": "Magic Power (Miminaga)",
+      "code": "1608D9E6 03E7"
+    },
+    {
+      "name": "Critical (Miminaga)",
+      "code": "1608D9F6 03E7"
+    },
+    {
+      "name": "Evasion (Miminaga)",
+      "code": "1608D9EE 03E7"
+    },
+    {
+      "name": "Maximum Health (Kaneyon)",
+      "code": "1608DA6E 03E7\n1608DA76 03E7"
+    },
+    {
+      "name": "Maximum Magic (Kaneyon)",
+      "code": "1608DA7A 03E7\n1608DA82 03E7"
+    },
+    {
+      "name": "Experience (Kaneyon)",
+      "code": "1608DAAA FFFF"
+    },
+    {
+      "name": "Level Up (Kaneyon)",
+      "code": "1608DA62 0063"
+    },
+    {
+      "name": "Attack Power (Kaneyon)",
+      "code": "1608DA86 03E7"
+    },
+    {
+      "name": "Destruction Power (Kaneyon)",
+      "code": "1608DA8E 03E7"
+    },
+    {
+      "name": "Defense Power (Kaneyon)",
+      "code": "1608DA96 03E7"
+    },
+    {
+      "name": "Magic Power (Kaneyon)",
+      "code": "1608DA92 03E7"
+    },
+    {
+      "name": "Critical (Kaneyon)",
+      "code": "1608DAA2 03E7"
+    },
+    {
+      "name": "Evasion (Kaneyon)",
+      "code": "1608DA9A 03E7"
+    },
+    {
+      "name": "Maximum Health (Beomelder)",
+      "code": "1608DB1A 03E7\n1608DB22 03E7"
+    },
+    {
+      "name": "Maximum Magic (Beomelder)",
+      "code": "1608DB26 03E7\n1608DB2E 03E7"
+    },
+    {
+      "name": "Experience (Beomelder)",
+      "code": "1608DB56 FFFF"
+    },
+    {
+      "name": "Level Up (Beomelder)",
+      "code": "1608DB0E 0063"
+    },
+    {
+      "name": "Attack Power (Beomelder)",
+      "code": "1608DB32 03E7"
+    },
+    {
+      "name": "Destruction Power (Beomelder)",
+      "code": "1608DB3A 03E7"
+    },
+    {
+      "name": "Defense Power (Beomelder)",
+      "code": "1608DB42 03E7"
+    },
+    {
+      "name": "Magic Power (Beomelder)",
+      "code": "1608DB3E 03E7"
+    },
+    {
+      "name": "Critical (Beomelder)",
+      "code": "1608DB4E 03E7"
+    },
+    {
+      "name": "Evasion (Beomelder)",
+      "code": "1608DB46 03E7"
+    },
+    {
+      "name": "Maximum Health (Golem)",
+      "code": "1608DBC6 03E7\n1608DBCE 03E7"
+    },
+    {
+      "name": "Maximum Magic (Golem)",
+      "code": "1608DBD2 03E7\n1608DBDA 03E7"
+    },
+    {
+      "name": "Attack Power (Golem)",
+      "code": "1608DBDE 03E7"
+    },
+    {
+      "name": "Destruction Power (Golem)",
+      "code": "1608DBE6 03E7"
+    },
+    {
+      "name": "Defense Power (Golem)",
+      "code": "1608DBEE 03E7"
+    },
+    {
+      "name": "Magic Power (Golem)",
+      "code": "1608DBEA 03E7"
+    }
+  ]
+}

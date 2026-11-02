@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9013",
+  "title": "Daytona USA",
+  "native_title": "デイトナＵＳＡ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 090135"
+  ],
+  "release_date": "1995-04-01",
+  "developer": "Sega AM7",
+  "publisher": "Sega of America",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Daytona USA (デイトナＵＳＡ) is a Sega Model 2 arcade racing game developed by Sega AM2. It was initially given a limited release in Japan in 1993 to gauge public reaction to the new model hardware before its full, international release the following March.\n\nIt is loosely based on the NASCAR racing event at the Daytona International Speedway, located in real life in Daytona Beach, Florida in the United States of America. Daytona USA and all of its sequels and rereleases (except Sega Racing Classic, in which case someone else already held the arcade license) have been officially sponsored by the International Speedway Corporation."
+}

@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Bulk Slash (Japan)
+gameid: T-14310G
+system: saturn
+---
+
+# Mission number 1-7, 8 during a boss fight and its clear screen, 0 in the menu.
+watch state byte 0x06022081
+
+# Menu selected mission 0-6.
+watch selected byte 0x06022513
+
+def ingame state > 0
+
+# Death flag: 0 while alive, set to 1 the frame health falls below
+# zero, cleared back to 0 by the respawn init. It sits at offset 242
+# of the player entity, and each mission's overlay places that entity
+# at its own address.
+watch deaths1 word 0x0605CAE2
+watch deaths2 word 0x0605B7A2
+watch deaths3 word 0x0605F272
+watch deaths4 word 0x0605F3A2
+watch deaths5 word 0x0605E552
+watch deaths6 word 0x06060B92
+watch deaths7 word 0x06061522
+
+on deaths1 increased to 1 while ingame and selected == 0: pulse 1.0 600ms priority 1
+on deaths2 increased to 1 while ingame and selected == 1: pulse 1.0 600ms priority 1
+on deaths3 increased to 1 while ingame and selected == 2: pulse 1.0 600ms priority 1
+on deaths4 increased to 1 while ingame and selected == 3: pulse 1.0 600ms priority 1
+on deaths5 increased to 1 while ingame and selected == 4: pulse 1.0 600ms priority 1
+on deaths6 increased to 1 while ingame and selected == 5: pulse 1.0 600ms priority 1
+on deaths7 increased to 1 while ingame and selected == 6: pulse 1.0 600ms priority 1
+
+# Player health.
+watch health word 0x060235D0
+
+on health decreased while ingame: pulse 0.85 300ms

@@ -1,0 +1,26 @@
+{
+  "serial": "T-30301G",
+  "title": "Aqua-world: Umi Monogatari",
+  "native_title": "アクアワールド ～海美物語～",
+  "category": "Applications",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4979092 05758 1"
+  ],
+  "release_date": "1996-07-12",
+  "developer": "Mizuki",
+  "publisher": "Masudaya",
+  "genres": [
+    "Education",
+    "Life Simulation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The game focuses on marine life in the sea. The player can access three different segments:\n\n• Data Fish: Shows photos, facts and 3D models of fish and sea mammals.\n• Mermaid: The player can simulate the life of a marine animal in an ocean environment or aquarium.\n• Electric Blue: There are several interactive cinematic sequences of sea creatures swimming in the ocean."
+}

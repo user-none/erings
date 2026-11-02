@@ -1,0 +1,25 @@
+{
+  "serial": "T-37601G",
+  "title": "Techno Motor",
+  "native_title": "テクノ・モーター",
+  "category": "Applications",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 537305 230017"
+  ],
+  "release_date": "1998-03-26",
+  "developer": "Denshi Media Services",
+  "publisher": "Denshi Media Services",
+  "genres": [
+    "Music"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Techno Motor is a fully featured music generator & Midi synthesizer for the Sega Saturn. Not a game, but a piece of software intended for the creation of mainly club style music such as Techno, Dance, House & Drum 'n bass."
+}

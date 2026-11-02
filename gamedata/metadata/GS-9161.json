@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9161",
+  "title": "Sega Ages: Columns Arcade Collection",
+  "native_title": "セガエイジス コラムス・アーケード・コレクション",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091613"
+  ],
+  "release_date": "1997-10-30",
+  "developer": "Ancient",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Compilation",
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Sega Ages: Columns Arcade Collection is a compilation of four arcade Columns games, and was released exclusively in Japan for the Sega Saturn as part of the Sega Ages series.\n\n• Columns\n• Columns II: The Voyage Through Time\n• Stack Columns\n• Columns '97"
+}

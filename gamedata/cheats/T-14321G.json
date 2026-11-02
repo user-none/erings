@@ -1,0 +1,114 @@
+{
+  "serial": "T-14321G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Health",
+      "code": "1605FF50 0100"
+    },
+    {
+      "name": "(Player 1) Low Health",
+      "code": "1605FF50 0001"
+    },
+    {
+      "name": "(Player 1) No Health",
+      "code": "1605FF50 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Bomb",
+      "code": "1605FF40 00FF"
+    },
+    {
+      "name": "(Player 1) No Bomb",
+      "code": "1605FF40 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Mega Bomb",
+      "code": "1605FF5C 0100"
+    },
+    {
+      "name": "(Player 1) No Mega Bomb",
+      "code": "1605FF5C 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Health",
+      "code": "16060000 0100"
+    },
+    {
+      "name": "(Player 2) Low Health",
+      "code": "16060000 0001"
+    },
+    {
+      "name": "(Player 2) No Health",
+      "code": "16060000 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Bomb",
+      "code": "1605FFF0 00FF"
+    },
+    {
+      "name": "(Player 2) No Bomb",
+      "code": "1605FFF0 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Mega Bomb",
+      "code": "1606000C 0100"
+    },
+    {
+      "name": "(Player 2) No Mega Bomb",
+      "code": "1606000C 0000"
+    },
+    {
+      "name": "(Player 3) Unlimited Health",
+      "code": "160600B0 0100"
+    },
+    {
+      "name": "(Player 3) Low Health",
+      "code": "160600B0 0001"
+    },
+    {
+      "name": "(Player 3) No Health",
+      "code": "160600B0 0000"
+    },
+    {
+      "name": "(Player 3) Unlimited Bomb",
+      "code": "160600A0 00FF"
+    },
+    {
+      "name": "(Player 3) No Bomb",
+      "code": "160600A0 0000"
+    },
+    {
+      "name": "(Player 3) Unlimited Mega Bomb",
+      "code": "160600BC 0100"
+    },
+    {
+      "name": "(Player 4) Unlimited Health",
+      "code": "16060160 0100"
+    },
+    {
+      "name": "(Player 4) Low Health",
+      "code": "16060160 0001"
+    },
+    {
+      "name": "(Player 4) No Health",
+      "code": "16060160 0000"
+    },
+    {
+      "name": "(Player 4) Unlimited Bomb",
+      "code": "16060150 00FF"
+    },
+    {
+      "name": "(Player 4) No Bomb",
+      "code": "16060150 0000"
+    },
+    {
+      "name": "(Player 4) Unlimited Mega Bomb",
+      "code": "1606016C 0100"
+    },
+    {
+      "name": "(Player 4) No Mega Bomb",
+      "code": "1606016C 0000"
+    }
+  ]
+}

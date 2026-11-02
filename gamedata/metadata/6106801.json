@@ -1,0 +1,23 @@
+{
+  "serial": "6106801",
+  "title": "Saturn Bomberman Fight!! (Demo)",
+  "native_title": "サターン・ボンバーマン・ファイト！！",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-12-11",
+  "developer": "Eleven",
+  "publisher": "Hudson Soft",
+  "genres": [
+    "Action"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "Saturn Bomberman Fight!! uses the basic formula of previous titles of the franchise like Saturn Bomberman, but strays from it in some aspects. It uses an isometric perspective in a 3D-polygon environment, where up to four characters of the Bomberman universe can fight each other in battles, either controlled by the AI or a human companion.\n\nPlayers start out with the ability to jump over obstacles and throw bombs without having to collect powerups first, and there is also a health meter, so it's possible to survive more than one bomb blast. A brown horse is the only mount available, it can move quickly, absorb damage, and swallow bombs. Aside from the core battle mode, there is a story mode (which is rather similar to the battle mode in that it consists of matches against computer players) and a survival mode which goes endlessly on until the player is defeated."
+}

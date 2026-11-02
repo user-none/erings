@@ -1,0 +1,25 @@
+{
+  "serial": "T-6009G",
+  "title": "Yuushun: Classic Road",
+  "native_title": "優駿 クラシック・ロード",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988110 020100"
+  ],
+  "release_date": "1997-03-14",
+  "developer": "Progress",
+  "publisher": "Victor Interactive Software",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Yuushun: Classic Road is a derby horse breeding and management simulation game and part of the Classic Road series. The player manages a stable of horses, breeding and training them, and entering them into races. The game offers the choice of any season from 1988 to 1996 including all the real-life horses active for each season, with the ultimate goal of winning the Classic to reach the prestigious G1 race. In addition to the campaign mode, there is also a competition mode for up to four players."
+}

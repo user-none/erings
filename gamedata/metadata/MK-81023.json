@@ -1,0 +1,26 @@
+{
+  "serial": "MK-81023",
+  "title": "Virtua Fighter Remix",
+  "native_title": "버쳐 파이터 리믹스",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Korea"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81023 3"
+  ],
+  "release_date": "1995-07-14",
+  "developer": "AM R&D Dept. #2",
+  "publisher": "Sega of America",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "Sega Saturn's revolutionary 3D graphics power brings the arcade action home! Punch-it out with eight polygon pummeling fighters: Jacky, Sarah, Akira, Lau, Pai, Wolf, Jeffry, and Kage. Includes all 700 butt-whoopin' moves from the arcade hit. Hear every punch, smack and bone crack in CD surround sound. Dynamic replay perspectives show every knockout blow!"
+}

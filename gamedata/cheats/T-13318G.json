@@ -1,0 +1,102 @@
+{
+  "serial": "T-13318G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Invincibility (level 1)",
+      "code": "16096C2E 0BB8"
+    },
+    {
+      "name": "Invincibility (level 2)",
+      "code": "1608E5FE 0BB8"
+    },
+    {
+      "name": "Invincibility (level 3)",
+      "code": "160A1EFE 0BB8"
+    },
+    {
+      "name": "Invincibility (level 4)",
+      "code": "1609F2AE 0BB8"
+    },
+    {
+      "name": "Invincibility (level 5)",
+      "code": "160A478E 0BB8"
+    },
+    {
+      "name": "Full Burnian (level 1)",
+      "code": "16096C7A 0000"
+    },
+    {
+      "name": "Full Burnian (level 2)",
+      "code": "1608E64A 0000"
+    },
+    {
+      "name": "Full Burnian (level 3)",
+      "code": "160A1F4A 0000"
+    },
+    {
+      "name": "Full Burnian (level 4)",
+      "code": "1609F2FA 0000"
+    },
+    {
+      "name": "Full Burnian (level 5)",
+      "code": "160A47DA 0000"
+    },
+    {
+      "name": "Unlimited Grenades",
+      "code": "16053CDC 0900"
+    },
+    {
+      "name": "Invincibility (level 1)",
+      "code": "160A9A9E 0BB8"
+    },
+    {
+      "name": "Invincibility (level 2)",
+      "code": "160A10AE 0D48"
+    },
+    {
+      "name": "Invincibility (level 3)",
+      "code": "160A44AE 0D48"
+    },
+    {
+      "name": "Invincibility (level 4)",
+      "code": "160A545E 0D48"
+    },
+    {
+      "name": "Invincibility (level 5)",
+      "code": "1608DE7E 0D48"
+    },
+    {
+      "name": "Full Burnian (level 1)",
+      "code": "160A9AEE 0000"
+    },
+    {
+      "name": "Full Burnian (level 2)",
+      "code": "160A10FE 0000"
+    },
+    {
+      "name": "Full Burnian (level 3)",
+      "code": "160A44FE 0000"
+    },
+    {
+      "name": "Full Burnian (level 4)",
+      "code": "160A54AE 0000"
+    },
+    {
+      "name": "Full Burnian (level 5)",
+      "code": "1608DECE 0000"
+    },
+    {
+      "name": "Non-Stop Exam (level 3)",
+      "code": "160BA182 4650"
+    },
+    {
+      "name": "Non-Stop Exam (level 5)",
+      "code": "160A4F52 4650"
+    },
+    {
+      "name": "Unlimited Grenades",
+      "code": "16056C04 0900"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "serial": "MK81049-50",
+  "title": "Virtua Fighter Kids",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [],
+  "release_date": "1996-07-26",
+  "developer": "Sega AM2",
+  "publisher": "Sega of America",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "The Virtua Fighter family enters the next generation with a bang! Meet VF Kids! They're small, fast, and hold the secret to all 2,000 Virtua Fighter moves! With hilarious animations and sound effects, and running 20% faster than VF2, this is a must for all fight fans!"
+}

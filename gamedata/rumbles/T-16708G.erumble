@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Asuka 120% Burning Fest. Limited (Japan)
+gameid: T-16708G
+system: saturn
+---
+
+# HP. Death when negative.
+watch p1_hp word 0x0608A044 signed
+watch p2_hp word 0x0608A694 signed
+
+# Current action id. SAISHUU OUGI actions are
+# 120 through 125. Every other action in the game is 103 or below.
+watch p1_act word 0x06089D42
+watch p2_act word 0x0608A392
+const ougi 120
+
+# Nonzero while a round is being fought.
+watch fighting word 0x0608885E
+
+watch p1 long 0x06088890
+watch p2 long 0x06088894
+
+def in_fight fighting != 0
+def p1_human p1 == 0
+def p2_human p2 == 0
+def p1_ougi  p1_act >= ougi
+def p2_ougi  p2_act >= ougi
+
+# KO on the losing side's pad. A double KO fires both.
+on p1_hp < 0 while in_fight and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1
+on p2_hp < 0 while in_fight and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1 player 2
+
+# A SAISHUU OUGI landing, felt by the side it hits.
+# Multi-hit supers refire per damage tick.
+on p1_hp decreased while in_fight and p1_human and p2_ougi:
+    pattern (1.0 120ms, off 40ms, 0.85 120ms, off 40ms, 0.7 200ms)
+on p2_hp decreased while in_fight and p2_human and p1_ougi:
+    pattern (1.0 120ms, off 40ms, 0.85 120ms, off 40ms, 0.7 200ms) player 2

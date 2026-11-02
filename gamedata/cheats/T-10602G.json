@@ -1,0 +1,14 @@
+{
+  "serial": "T-10602G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Health",
+      "code": "102C8770 0064"
+    },
+    {
+      "name": "Unlimited Revolver Bullets",
+      "code": "102C8772 0006"
+    }
+  ]
+}

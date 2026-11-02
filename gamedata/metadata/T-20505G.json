@@ -1,0 +1,26 @@
+{
+  "serial": "T-20505G",
+  "title": "Derby Analyst",
+  "native_title": "ダービ～・アナリスト",
+  "category": "Applications",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 997232 200055"
+  ],
+  "release_date": "1997-05-30",
+  "developer": "Media Entertainment",
+  "publisher": "Media Entertainment",
+  "genres": [
+    "Casino",
+    "Racing"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Derby Analyst (ダービー穴リスト) is a horse racing/gambling game for the Sega Saturn."
+}

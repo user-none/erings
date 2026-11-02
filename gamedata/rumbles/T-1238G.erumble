@@ -1,0 +1,52 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Marvel Super Heroes vs Street Fighter (Japan)
+gameid: T-1238G
+system: saturn
+---
+
+# Per-character health, 144 max, 0 is KO.
+watch p1_c1 byte 0x060F3A51
+watch p1_c2 byte 0x060F4251
+watch p2_c1 byte 0x060F3E51
+watch p2_c2 byte 0x060F4651
+
+# Nonzero for as long as a stage is running.
+watch stage byte 0x060F4913
+def in_stage stage != 0
+
+# Stage-internal state: 8 during the fight, 10 on KO. Not cleared when
+# the stage exits.
+watch match_state byte 0x060F4800
+def in_match in_stage and match_state == 8
+def ko in_stage and match_state == 10
+
+# Humans-in-match bitmask. bit 0 is player 1, bit 1 is player 2
+watch p1 byte 0x060F4901 mask 0x01
+watch p2 byte 0x060F4901 mask 0x02
+def p1_human p1 != 0
+def p2_human p2 != 0
+
+# Match lost: the last remaining character falls. Longer rumble.
+on (p1_c1 decreased to 0 and p1_c2 == 0) or (p1_c2 decreased to 0 and p1_c1 == 0) while ko and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1
+on (p2_c1 decreased to 0 and p2_c2 == 0) or (p2_c2 decreased to 0 and p2_c1 == 0) while ko and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1 player 2
+
+# Character KO with a partner still alive.
+on (p1_c1 decreased to 0 and p1_c2 != 0) or (p1_c2 decreased to 0 and p1_c1 != 0) while in_match and p1_human:
+    pattern (0.9 200ms, off 50ms, 1.0 300ms) priority 1 
+on (p2_c1 decreased to 0 and p2_c2 != 0) or (p2_c2 decreased to 0 and p2_c1 != 0) while in_match and p2_human:
+    pattern (0.9 200ms, off 50ms, 1.0 300ms) priority 1 player 2
+
+# Running total of Hyper Combo damage each character has dealt. Rises
+# only when that character lands hyper damage.
+watch p1_c1_hyper_dealt word 0x060F3B7A
+watch p1_c2_hyper_dealt word 0x060F437A
+watch p2_c1_hyper_dealt word 0x060F3F7A
+watch p2_c2_hyper_dealt word 0x060F477A
+
+# Taking a Hyper Combo.
+on p2_c1_hyper_dealt increased or p2_c2_hyper_dealt increased while in_match and p1_human:
+    pattern (1.0 120ms, off 40ms, 0.85 120ms, off 40ms, 0.7 200ms)
+on p1_c1_hyper_dealt increased or p1_c2_hyper_dealt increased while in_match and p2_human:
+    pattern (1.0 120ms, off 40ms, 0.85 120ms, off 40ms, 0.7 200ms) player 2

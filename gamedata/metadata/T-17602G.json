@@ -1,0 +1,23 @@
+{
+  "serial": "T-17602G",
+  "title": "AI Shougi 2",
+  "native_title": "ＡＩ将棋２",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1998-06-11",
+  "developer": "ASCII Something Good",
+  "publisher": "ASCII Something Good",
+  "genres": [
+    "Board Game"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "AI Shōgi 2 is a digital conversion of the traditional Japanese board game Shogi for one or two players, and the second game in the series to appear on consoles. It includes four computer difficulty levels, next move suggestions, the ability to save and reload games in progress, a board setup tool to practice different scenarios, and 100 Tsume Shogi puzzles."
+}

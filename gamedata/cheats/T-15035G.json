@@ -1,0 +1,10 @@
+{
+  "serial": "T-15035G",
+  "master_code": "F6000924 FFFF\nB6000B00 0000",
+  "cheats": [
+    {
+      "name": "Skip to the Ending Press L + R",
+      "code": "D6000BD4 0023\n16000BD4 FFFF"
+    }
+  ]
+}

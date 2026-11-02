@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Initial D Koudou Saisoku Densetsu (Japan)
+gameid: T-25503G
+system: saturn
+---
+
+# Race engine state. 1-4 are the countdown steps, 5 is racing, 6 is
+# through the goal.
+watch race_st long 0x0608F45C
+const st_race 5
+
+# Bit 0 is set while paused.
+watch paused long 0x0608F458 mask 0x01
+
+# Player playing. 1 in every mode the player drives, 0 in the demo.
+watch playing long 0x0608F450
+
+def racing race_st == st_race and paused == 0 and playing != 0
+
+# Player car speed magnitude.
+watch speed long 0x0606D158
+
+# Player car flags. Bit 19 is set while the handbrake is held.
+watch ebreak long 0x0606CE90 mask 0x00080000
+
+# Wall crash sound slot: 0 armed, 0xFF on the hit, then a channel id,
+# 0xFF again when the sound is stopped, back to 0 once retired.
+watch wall_hit byte 0x0606D3DE
+
+# Car contact counter: 30 on the hit, counts down to 0 each frame.
+watch car_hit byte 0x0606D3DD
+
+# Wall and scenery. Cruising speed reads about 0xC9000. Scraping is
+# the same slot re-arming and firing again.
+on wall_hit changed from 0 while racing:
+    pulse 0.9/0.8 200ms priority 1 scale speed 0x40000..0xC5000 -> 0.5..1.0
+
+# Contact with the other car.
+on car_hit changed from 0 while racing:
+    pulse 0.8/0.7 220ms cooldown 200ms
+
+# Sliding, above a walking-pace floor.
+on ebreak != 0 and speed >= 0x20000 while racing:
+    hold 0.3/0.45

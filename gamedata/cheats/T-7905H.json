@@ -1,0 +1,14 @@
+{
+  "serial": "T-7905H",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Infinite Energy",
+      "code": "16055D64 0039"
+    },
+    {
+      "name": "Can't Pause",
+      "code": "16055E40 0000"
+    }
+  ]
+}

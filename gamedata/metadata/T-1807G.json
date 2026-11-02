@@ -1,0 +1,24 @@
+{
+  "serial": "T-1807G",
+  "title": "Thunder Force Gold Pack 1",
+  "native_title": "サンダー・フォース・ゴールド・パック１",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-09-27",
+  "developer": "TechnoSoft",
+  "publisher": "Technosoft",
+  "genres": [
+    "Compilation",
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Thunder Force: Gold Pack 1 is a re-release of both Thunder Force II and Thunder Force III for the Saturn. Both chapters in the side-scrolling shooter saga have been faithfully emulated with the addition of CD music, new CG cutscenes and other bonus features."
+}

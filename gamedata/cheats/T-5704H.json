@@ -1,0 +1,14 @@
+{
+  "serial": "T-5704H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "No Timer",
+      "code": "160D20B2 0001"
+    },
+    {
+      "name": "Pause",
+      "code": "160D1812 0010\n160D2002 0055"
+    }
+  ]
+}

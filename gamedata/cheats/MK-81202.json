@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81202",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "1604BCE2 003C"
+    },
+    {
+      "name": "Quick Cash Recovery (Albatross Cliff Reef Course Only)",
+      "code": "160B03AA 0000"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "1604B8FE 003C"
+    },
+    {
+      "name": "Always 1st Place",
+      "code": "1604B916 0000"
+    }
+  ]
+}

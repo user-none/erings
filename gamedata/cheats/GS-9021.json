@@ -1,0 +1,34 @@
+{
+  "serial": "GS-9021",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "1608522E 00AC"
+    },
+    {
+      "name": "(Arthur) Unlimited Energy",
+      "code": "1609250E 0032"
+    },
+    {
+      "name": "(Musash) Unlimited Energy",
+      "code": "16092544 0032"
+    },
+    {
+      "name": "(Elize) Unlimited Energy",
+      "code": "1609257A 0028"
+    },
+    {
+      "name": "(Elize) Unlimited Magic",
+      "code": "1609257E 0046"
+    },
+    {
+      "name": "(Hector) Unlimited Energy",
+      "code": "160925B0 0032"
+    },
+    {
+      "name": "(Himaru) Unlimited Energy",
+      "code": "1609261C 003C"
+    }
+  ]
+}

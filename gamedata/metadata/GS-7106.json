@@ -1,0 +1,26 @@
+{
+  "serial": "GS-7106",
+  "title": "Dennou Senki: Virtual On: Cyber Troopers for SegaNet",
+  "native_title": "電脳戦機バーチャロン フォー セガネット",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 071066"
+  ],
+  "release_date": "1996-12-31",
+  "developer": "Sega AM3 R&D Division",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Fighting",
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "This special release of Cyber Troopers Virtual On is modified to exclusively support online play via the Sega Saturn Modem and XBand service. Unlike the \"Net Link Edition\" released internationally, this version has all single-player and local-mutiplayer options stripped out; gameplay is restricted to online play only.\n\nThe game boasts 8 fully polygonal droids, each with his own strengths and weaponry and 10 different arenas with their own layout and traps. Proceed through the entire campaign via subjecting yourself to \"virtual training\" and then facing off for the real thing against the other computer controlled droids, or go against a human opponent in multiplayer combat over Lan, modem, serial link or the same computer with split screen display."
+}

@@ -1,0 +1,24 @@
+{
+  "serial": "T-7003G",
+  "title": "BlackFire",
+  "native_title": "ブラックファイアー",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1995-12-22",
+  "developer": "Novalogic",
+  "publisher": "Sega of America",
+  "genres": [
+    "Flight Simulator",
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "In Black Fire, the player takes control of the most sophisticated helicopter on the planet taking on a very dangerous enemy. The player's helicopter is state of the art, but the enemy they are fighting has acquired alien technology and is using it to try and conquer the world and it is up to the player to use all the flying skill they have and try to stop them.\n\nBlack Fire is rendered in 3-D and has a 360 degree field to maneuver. The chopper is outfitted with missiles and machine guns and flies through 15 levels, destroying enemy targets and providing support to allied units with the story told through CGI cutscenes."
+}

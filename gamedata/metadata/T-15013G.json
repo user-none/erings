@@ -1,0 +1,23 @@
+{
+  "serial": "T-15013G",
+  "title": "3D Lemmings",
+  "native_title": "３Ｄレミングス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-08-23",
+  "developer": "Clockwork Games",
+  "publisher": "Psygnosis",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "There is no actual narrative to the game. The only introduction is a movie. It shows a completely flat (2D) lemming popping out of a computer's floppy drive, and finding a \"3D\" button to press, which makes him 3-dimensional. After that, the PC blows up and the (now 3D) lemmings inside it escape. Other movies play after completing each set of 20 levels, but are not connected by a storyline."
+}

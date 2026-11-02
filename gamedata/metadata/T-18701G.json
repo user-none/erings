@@ -1,0 +1,23 @@
+{
+  "serial": "T-18701G",
+  "title": "Battle Monsters",
+  "native_title": "バトル・モンスターズ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [],
+  "release_date": "1995-06-02",
+  "developer": "Scarab",
+  "publisher": "Acclaim Entertainment",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "Try to gain control of the underworld in Battle Monsters. You must choose from a variety of monsters, and then enter one-on-one combat. Twelve characters are available (from a human/bird hybrid to a headless creature) with each having its own set of special moves, like juggling opponents in the air, and pit monster against monster. Fight through several different places where each level's background is made up of multiple levels, allowing combatants to jump from one platform to another with two attack buttons and two jump buttons controlling the action."
+}

@@ -1,0 +1,24 @@
+{
+  "serial": "T-9501H-50",
+  "title": "Parodius",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [],
+  "release_date": "1995-05-19",
+  "developer": "Konami Computer Entertainment Tokyo",
+  "publisher": "Konami",
+  "genres": [
+    "Compilation",
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "This compilation collects the first two arcade incarnations of Konami's shoot'em'up parody series on one disc: Parodius: Non-sense Story and Fantastic Journey."
+}

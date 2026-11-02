@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9029",
+  "master_code": "F6003074 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Lives",
+      "code": "3604291D 0005"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "36042914 0005"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "serial": "MK-81015",
+  "title": "Virtua Cop",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81015 8",
+    "4 974365 810153"
+  ],
+  "release_date": "1995-11-24",
+  "developer": "AM R&D Dept. #2",
+  "publisher": "Sega of America",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "T - Teen",
+  "overview": "You're a cop. Putting your life on the line is your job. Staying alive is your challenge. Split second decision making, timing and lightning fast reflexes are what it takes in this adrenaline pumping game of cat and mouse. Dirt bags pop out of virtually every hiding place with their guns aimed, cocked and ready to shoot - you!"
+}

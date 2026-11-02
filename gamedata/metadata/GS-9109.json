@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9109",
+  "title": "Sega Ages: After Burner II",
+  "native_title": "セガエイジス アフターバーナーⅡ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 974365 091095"
+  ],
+  "release_date": "1996-09-27",
+  "developer": "Rutubo Games",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Sega Ages: After Burner II is essentially an upgraded version of its predecessor, adding throttle control which allows the players to adjust their fighter's speed during flight. There are also three new stages, bringing the total to 21 and various gameplay and music tweaks."
+}

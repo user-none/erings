@@ -1,0 +1,10 @@
+{
+  "serial": "MK-81016",
+  "master_code": "F6000914 230B",
+  "cheats": [
+    {
+      "name": "Infinite \"BONES\" Meter",
+      "code": "160252FE 000E"
+    }
+  ]
+}

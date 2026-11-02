@@ -1,0 +1,86 @@
+{
+  "serial": "MK-81109",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Balls",
+      "code": "1607ACF6 0000"
+    },
+    {
+      "name": "Unlimited Strikes",
+      "code": "1607ACF4 0000"
+    },
+    {
+      "name": "(Player 1) 1 Score",
+      "code": "160F4196 0001"
+    },
+    {
+      "name": "(Player 1) 2 Score",
+      "code": "160F4196 0002"
+    },
+    {
+      "name": "(Player 1) 3 Score",
+      "code": "160F4196 0003"
+    },
+    {
+      "name": "(Player 1) 4 Score",
+      "code": "160F4196 0004"
+    },
+    {
+      "name": "(Player 1) 5 Score",
+      "code": "160F4196 0005"
+    },
+    {
+      "name": "(Player 1) 6 Score",
+      "code": "160F4196 0006"
+    },
+    {
+      "name": "(Player 1) 7 Score",
+      "code": "160F4196 0007"
+    },
+    {
+      "name": "(Player 1) 8 Score",
+      "code": "160F4196 0008"
+    },
+    {
+      "name": "(Player 1) 9 Score",
+      "code": "160F4196 0009"
+    },
+    {
+      "name": "(Player 2) 1 Score",
+      "code": "160F4176 0001"
+    },
+    {
+      "name": "(Player 2) 2 Score",
+      "code": "160F4176 0002"
+    },
+    {
+      "name": "(Player 2) 3 Score",
+      "code": "160F4176 0003"
+    },
+    {
+      "name": "(Player 2) 4 Score",
+      "code": "160F4176 0004"
+    },
+    {
+      "name": "(Player 2) 5 Score",
+      "code": "160F4176 0005"
+    },
+    {
+      "name": "(Player 2) 6 Score",
+      "code": "160F4176 0006"
+    },
+    {
+      "name": "(Player 2) 7 Score",
+      "code": "160F4176 0007"
+    },
+    {
+      "name": "(Player 2) 8 Score",
+      "code": "160F4176 0008"
+    },
+    {
+      "name": "(Player 2) 9 Score",
+      "code": "160F4176 0009"
+    }
+  ]
+}

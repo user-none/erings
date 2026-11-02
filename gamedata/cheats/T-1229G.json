@@ -1,0 +1,22 @@
+{
+  "serial": "T-1229G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Time For Special Attack",
+      "code": "16094286 0070"
+    },
+    {
+      "name": "(Player 1) 99 Power",
+      "code": "36094219 0063"
+    },
+    {
+      "name": "(Player 1) When Using Call On Change to D Call On",
+      "code": "D6094126 0002\n160943B6 1200"
+    },
+    {
+      "name": "(Player 1) Unlimited Health",
+      "code": "16094186 0240\n16094184 0240"
+    }
+  ]
+}

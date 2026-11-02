@@ -1,0 +1,50 @@
+{
+  "serial": "T-30403H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Credits",
+      "code": "160ED9AC 0009"
+    },
+    {
+      "name": "Spread Shot P1",
+      "code": "160452EA 0003"
+    },
+    {
+      "name": "Spread Shot P2",
+      "code": "16045472 0003"
+    },
+    {
+      "name": "Infinite Health P1",
+      "code": "1603AADC 0000"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "1603AAF2 0000"
+    },
+    {
+      "name": "(Player 1) Normal Weapon Equipped",
+      "code": "160452EA 0000"
+    },
+    {
+      "name": "(Player 1) Machine Gun/Spiked Ball Equipped",
+      "code": "160452EA 0001"
+    },
+    {
+      "name": "(Player 1) Laser/Plasma Stream Equipped",
+      "code": "160452EA 0002"
+    },
+    {
+      "name": "(Player 2) Normal Weapon Equipped",
+      "code": "16045472 0000"
+    },
+    {
+      "name": "(Player 2) Machine Gun/Spiked Ball Equipped",
+      "code": "16045472 0001"
+    },
+    {
+      "name": "(Player 2) Laser/Plasma Stream Equipped",
+      "code": "16045472 0002"
+    }
+  ]
+}

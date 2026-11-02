@@ -1,0 +1,23 @@
+{
+  "serial": "T-9703H",
+  "title": "Arcade's Greatest Hits",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA"
+  ],
+  "languages": [],
+  "barcodes": [
+    "0 31719 20967 5"
+  ],
+  "release_date": "1996-12-23",
+  "developer": "Digital Eclipse Software",
+  "publisher": "Midway Home Entertainment",
+  "genres": [
+    "Compilation"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "E - Everyone",
+  "overview": "Midway Presents Arcade's Greatest Hits is a compilation that includes the following games:\n\n• Bubbles\n• Defender\n• Defender II\n• Joust\n• Robotron: 2084\n• Sinistar"
+}

@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9126",
+  "title": "Fighters Megamix",
+  "native_title": "ファイターズ・メガミックス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091262"
+  ],
+  "release_date": "1996-12-21",
+  "developer": "Sega AM2",
+  "publisher": "Sega of America",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "AM2's ultimate 3D fighting experience smashes onto the Saturn, with 32 characters from Virtua Fighter, Fighting Vipers, VF Kids, Sonic Fighters, Virtua Cop 2 and more! Secret characters, new weapons and new moves including many from VF3. The biggest and best beat-'em-up EVER!"
+}

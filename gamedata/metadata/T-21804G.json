@@ -1,0 +1,25 @@
+{
+  "serial": "T-21804G",
+  "title": "The Star Bowling",
+  "native_title": "ザ・スター・ボーリング",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 995515 971098"
+  ],
+  "release_date": "1997-11-13",
+  "developer": "GOO!",
+  "publisher": "Aroma",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The Star Bowling is a 3D bowling game where the player competes against one of five real-life voice actresses. The main story mode has the player select a girl and play against them in multiple games; winning against each opponent will unlock video clips of that girl in a bonus gallery on the second disc. Various ball and lane variations are included, and there is also a two-player versus mode."
+}

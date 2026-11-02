@@ -1,0 +1,10 @@
+{
+  "serial": "T-14304G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "160A456A FFFF"
+    }
+  ]
+}

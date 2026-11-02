@@ -1,0 +1,14 @@
+{
+  "serial": "T-1504H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "16063258 FFFF"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "1606344C FFFF"
+    }
+  ]
+}

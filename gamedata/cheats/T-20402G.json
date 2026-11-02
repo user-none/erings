@@ -1,0 +1,14 @@
+{
+  "serial": "T-20402G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Bombs",
+      "code": "16080600 5000"
+    },
+    {
+      "name": "Unlimited Life & Power",
+      "code": "160805AC 0009\n160805AE 0009"
+    }
+  ]
+}

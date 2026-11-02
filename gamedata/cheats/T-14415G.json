@@ -1,0 +1,22 @@
+{
+  "serial": "T-14415G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Main Character) Level Up Fast",
+      "code": "36053B46 0063"
+    },
+    {
+      "name": "(Main Character) RNK Up Fast",
+      "code": "36053B47 0063"
+    },
+    {
+      "name": "(Main Character) Highest AP",
+      "code": "36053B49 0032"
+    },
+    {
+      "name": "(Main Character) Highest DP",
+      "code": "36053B4B 0032"
+    }
+  ]
+}

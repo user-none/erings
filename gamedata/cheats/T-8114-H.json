@@ -1,0 +1,58 @@
+{
+  "serial": "T-8114-H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "1605089E 0078"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "1605093A 0078"
+    },
+    {
+      "name": "P1 Can't Move",
+      "code": "16050876 FFE9"
+    },
+    {
+      "name": "25% Health P1",
+      "code": "D605089E 0078\n1605089E 001E"
+    },
+    {
+      "name": "50% Health P1",
+      "code": "D605089E 0078\n1605089E 003C"
+    },
+    {
+      "name": "75% Health P1",
+      "code": "D605089E 0078\n1605089E 005A"
+    },
+    {
+      "name": "No Health P1",
+      "code": "1605089E 0000"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D605089E 0078\n1605089E 0001"
+    },
+    {
+      "name": "25% Health P2",
+      "code": "D605093A 0078\n1605093A 001E"
+    },
+    {
+      "name": "50% Health P2",
+      "code": "D605093A 0078\n1605093A 003C"
+    },
+    {
+      "name": "75% Health P2",
+      "code": "D605093A 0078\n1605093A 005A"
+    },
+    {
+      "name": "No Health P2",
+      "code": "1605093A 0000"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D605093A 0078\n1605093A 0001"
+    }
+  ]
+}

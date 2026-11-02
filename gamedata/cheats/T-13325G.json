@@ -1,0 +1,18 @@
+{
+  "serial": "T-13325G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Hungry & Emotion",
+      "code": "1604C2CA 0404"
+    },
+    {
+      "name": "Smart & Power",
+      "code": "1604C2CC 0404"
+    },
+    {
+      "name": "Discipline",
+      "code": "3604C2CE 0004"
+    }
+  ]
+}

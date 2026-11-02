@@ -1,0 +1,14 @@
+{
+  "serial": "T-1219H",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Invulnerability",
+      "code": "16054988 2020"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "1605490C 0300"
+    }
+  ]
+}

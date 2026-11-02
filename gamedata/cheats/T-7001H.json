@@ -1,0 +1,22 @@
+{
+  "serial": "T-7001H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives",
+      "code": "160694C2 0009"
+    },
+    {
+      "name": "Have 5 Stars",
+      "code": "16066FB4 001F"
+    },
+    {
+      "name": "Always Have Shield Special Weapon",
+      "code": "1606700A 0001\n16068A82 0007"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "160694C2 0004\n160694C2 0009"
+    }
+  ]
+}

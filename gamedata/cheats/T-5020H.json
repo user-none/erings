@@ -1,0 +1,138 @@
+{
+  "serial": "T-5020H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Qualify In First",
+      "code": "160B3786 0064"
+    },
+    {
+      "name": "Infinite Fuel P1",
+      "code": "160B37A6 2CDA"
+    },
+    {
+      "name": "Indestructable Tires P1",
+      "code": "160B38F6 FFFF"
+    },
+    {
+      "name": "Indestructable Tires P1",
+      "code": "160B3906 FFFF"
+    },
+    {
+      "name": "Indestructable Tires P1",
+      "code": "160B3916 FFFF"
+    },
+    {
+      "name": "Indestructable Tires P1",
+      "code": "160B3926 FFFF"
+    },
+    {
+      "name": "Infinite Fuel P2",
+      "code": "160B3C06 3D40"
+    },
+    {
+      "name": "Indestructable Tires P2",
+      "code": "160B3056 FFFF"
+    },
+    {
+      "name": "Indestructable Tires P2",
+      "code": "160B3D66 FFFF"
+    },
+    {
+      "name": "Indestructable Tires P2",
+      "code": "160B3D76 FFFF"
+    },
+    {
+      "name": "Indestructable Tires P2",
+      "code": "160B3D86 FFFF"
+    },
+    {
+      "name": "Lap Time = 0:00:000 P1",
+      "code": "160B3786 0000"
+    },
+    {
+      "name": "Time Elapsed = 00:00:00 P1",
+      "code": "160B39A4 0000"
+    },
+    {
+      "name": "Lap Time = 0:00:000 P2",
+      "code": "160B3BE6 0000"
+    },
+    {
+      "name": "Time Elapsed = 00:00:00 P2",
+      "code": "160B3BEE 0000"
+    },
+    {
+      "name": "(2) Race Laps Modifier",
+      "code": "160786A2 0002"
+    },
+    {
+      "name": "(3) Race Laps Modifier",
+      "code": "160786A2 0003"
+    },
+    {
+      "name": "(5) Race Laps Modifier",
+      "code": "160786A2 0005"
+    },
+    {
+      "name": "(7) Race Laps Modifier",
+      "code": "160786A2 0007"
+    },
+    {
+      "name": "160B3BAE 00?? (Player 1) Start On Lap 2",
+      "code": "D60B374E 0000\n160B374E 0002"
+    },
+    {
+      "name": "(Player 2) Start On Lap 2",
+      "code": "D60B3BAE 0000\n160B3BAE 0002"
+    },
+    {
+      "name": "(Player 1) Start On Lap 3",
+      "code": "D60B374E 0000\n160B374E 0003"
+    },
+    {
+      "name": "(Player 2) Start On Lap 3",
+      "code": "D60B3BAE 0000\n160B3BAE 0003"
+    },
+    {
+      "name": "(Player 1) Start On Lap 4",
+      "code": "D60B374E 0000\n160B374E 0004"
+    },
+    {
+      "name": "(Player 2) Start On Lap 4",
+      "code": "D60B3BAE 0000\n160B3BAE 0004"
+    },
+    {
+      "name": "(Player 1) Start On Lap 5",
+      "code": "D60B374E 0000\n160B374E 0005"
+    },
+    {
+      "name": "(Player 2) Start On Lap 5",
+      "code": "D60B3BAE 0000\n160B3BAE 0005"
+    },
+    {
+      "name": "(Player 1) Start On Lap 6",
+      "code": "D60B374E 0000\n160B374E 0006"
+    },
+    {
+      "name": "(Player 2) Start On Lap 6",
+      "code": "D60B3BAE 0000\n160B3BAE 0006"
+    },
+    {
+      "name": "(Player 1) Start On Lap 7",
+      "code": "D60B374E 0000\n160B374E 0007"
+    },
+    {
+      "name": "(Player 2) Start On Lap 7",
+      "code": "D60B3BAE 0000\n160B3BAE 0007"
+    },
+    {
+      "name": "(Player 1) Start On Lap 8",
+      "code": "D60B374E 0000\n160B374E 0008"
+    },
+    {
+      "name": "(Player 2) Start On Lap 8",
+      "code": "D60B3BAE 0000\n160B3BAE 0008"
+    }
+  ]
+}

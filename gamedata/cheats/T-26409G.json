@@ -1,0 +1,34 @@
+{
+  "serial": "T-26409G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Credits",
+      "code": "1607C984 0700"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "1607D184 0005"
+    },
+    {
+      "name": "(Player 1) Unlimited Special Attack",
+      "code": "1607D1B2 1000"
+    },
+    {
+      "name": "(Player 1) Invulnerabe",
+      "code": "1607D85C 0001"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "1607CA04 0005"
+    },
+    {
+      "name": "(Player 2) Unlimited Special Attack",
+      "code": "1607CA32 1000"
+    },
+    {
+      "name": "(Player 2) Invulnerabe",
+      "code": "1607D0DC 0001"
+    }
+  ]
+}

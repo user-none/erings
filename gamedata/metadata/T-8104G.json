@@ -1,0 +1,27 @@
+{
+  "serial": "T-8104G",
+  "title": "Rise 2: Resurrection",
+  "native_title": "ライズ・オブ・ザ・ロボット２",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English",
+    "French",
+    "German",
+    "Italian",
+    "Spanish"
+  ],
+  "barcodes": [],
+  "release_date": "1996-04-19",
+  "developer": "MIRAGE Technologies",
+  "publisher": "Acclaim Entertainment",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "In the sequel new troubles in ElectroCorp have begun. As we remember, this corporation made robots for civilian jobs, but one Supervisor decided to make robot-killers. Human brains were implanted on some of them. But this time, one hacker has infected the ElectroCorp's network with a virus, so Supervisor lost control over robots and they began to kill each other. You are one of them."
+}

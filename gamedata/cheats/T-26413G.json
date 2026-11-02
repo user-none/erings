@@ -1,0 +1,14 @@
+{
+  "serial": "T-26413G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Heart",
+      "code": "1604DA74 0050"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "160E7216 FFFF"
+    }
+  ]
+}

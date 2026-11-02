@@ -1,0 +1,26 @@
+{
+  "serial": "T-1230G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Rime",
+      "code": "1603E2B0 9963"
+    },
+    {
+      "name": "(Player 1) Unlimited HP",
+      "code": "1603E540 0090"
+    },
+    {
+      "name": "Can Fight On Air",
+      "code": "1603E54E 0000"
+    },
+    {
+      "name": "Max SP",
+      "code": "1603E660 0009"
+    },
+    {
+      "name": "Max Diamond",
+      "code": "1603E65A 0002\n1603E65C 0202"
+    }
+  ]
+}

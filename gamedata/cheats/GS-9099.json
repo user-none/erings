@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9099",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Vitality",
+      "code": "16032CB4 033E\n16032CB6 033E"
+    },
+    {
+      "name": "Unlimited Left-Hand Weapon Power",
+      "code": "16032CC6 0064"
+    },
+    {
+      "name": "Unlimited Right-Hand Weapon Power",
+      "code": "16032CC8 0064"
+    },
+    {
+      "name": "Unlimited Both-Hands Weapon Power",
+      "code": "16032CCA 0064"
+    },
+    {
+      "name": "Invincibility",
+      "code": "36032CB1 0001"
+    }
+  ]
+}

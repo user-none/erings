@@ -1,0 +1,23 @@
+{
+  "serial": "GS-9118",
+  "title": "LuLu: Un Conte Interactif de Romain Victor-Pujebet",
+  "native_title": "ルル",
+  "category": "Multimedia",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-11-01",
+  "developer": "System Sacom",
+  "publisher": "Sega",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The Book of Lulu is an interactive multimedia book by Romain Victor-Pujebet where player can flip the pages to read through and click on various images in the book. Certain images in the book allow for slide changes or result in a small video animation, while others open in full screen mode with ability to interact with them by clicking on a certain area. Interactive images allow changes such as changing the sky, weather, season, colors and mode, while interactive videos let you interact with objects and characters which result in a short FMV sequence."
+}

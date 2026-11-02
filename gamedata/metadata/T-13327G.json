@@ -1,0 +1,25 @@
+{
+  "serial": "T-13327G",
+  "title": "Kidou Senshi Gundam: Gihren no Yabou",
+  "native_title": "機動戦士ガンダム ギレンの野望",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4902425 59850 5"
+  ],
+  "release_date": "1998-04-09",
+  "developer": "CSK Research Institute",
+  "publisher": "Bandai",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Gihren's Greed is a turn-based strategy game set in the Gundam universe. The game follows the One Year War between Zion Dukedom and United Nations. The war lasts 150 turns for the player, where they can either try to achieve scenario victory or complete victory over the enemy. There are two story based campaign where player can play on either side of the conflict. The battlefield uses hexagonal grid where player can produce or move units, conquer cities or attack enemy forces on ground, in the air, and even in space. The battlefield is split into two maps; a world map that lets player conquer all the continents, and space map which focuses on the battle in planet's orbit. Battles take place simultaneously and player can switch between two maps at any point during the game.\n\nUnits consist of tanks, planes, spaceships, and most importantly, mobile suits which can battle both in space and on the planet. On either side the player has access to all his generals and commanders, and just as some ace pilots, they will often comment on the situation when engaging in combat. The game features a variant of fog-of-war that only obscures enemy units, but not terrain nor enemy bases. Each turn is divided in to 4 phases: Strategy Phase, Action Setting Phase, Enemy Thinking Phase, and Attack Execution Phase.\n\nStrategy Phase is where the player manages their troops and personnel, funds research, and develops new weapons of war. Action Setting Phase is the unit action phase, where the player can give orders to their extant units, deploy units stationed in bases, and produce more units. All commands are carried out immediately except for attacks. Enemy Thinking Phase is simply the combined Strategy and Action Setting phases of the computer, during which the player is not allowed to view its actions and is shown a progress bar instead. Last is Attack Execution Phase, where all attack orders in Action Setting Phase are carried out one at a time.\n\nTerrain limits movement of ground forces, making tanks move faster on the roads than through forests or over mountains. The game also implements Zone of Control mechanics: Having multiple units surrounding enemy will result in additional fire support to your troops and will deal more damage to the unit that you are attacking or is attacking you.\n\nInterestingly, the the game manual is split in two parts; first half is typical gameplay tutorial, while the second part contains an illustrated scenes and list of some key military operations in One Year War from Gundam universe."
+}

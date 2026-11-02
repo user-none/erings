@@ -1,0 +1,30 @@
+{
+  "serial": "T-5714G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "160809F2 0708"
+    },
+    {
+      "name": "No Damage",
+      "code": "1608F880 0000"
+    },
+    {
+      "name": "00:00:00 Total Time",
+      "code": "1603AF56 0000"
+    },
+    {
+      "name": "Always 1st Place",
+      "code": "36072731 0000"
+    },
+    {
+      "name": "High Speed",
+      "code": "1608F868 013A"
+    },
+    {
+      "name": "00:00:00 Total Lap Time",
+      "code": "1603AF42 0000\n1603AF44 0000\n1603AF46 0000\n1603AF48 0000\n1603AF4A 0000"
+    }
+  ]
+}

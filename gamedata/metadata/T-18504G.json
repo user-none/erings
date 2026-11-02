@@ -1,0 +1,25 @@
+{
+  "serial": "T-18504G",
+  "title": "Father Christmas",
+  "native_title": "ファーザー・クリスマス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 902333 100043"
+  ],
+  "release_date": "1995-12-08",
+  "developer": "Millennium Interactive",
+  "publisher": "GAGA Communications",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Based on the British children's picture book written and drawn by Raymond Briggs and published by Hamish Hamilton in 1973. It's a point and click adventure game that features video from the 1991 animated film adaptation."
+}

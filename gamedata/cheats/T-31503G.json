@@ -1,0 +1,82 @@
+{
+  "serial": "T-31503G",
+  "master_code": "F6000914 C30B",
+  "cheats": [
+    {
+      "name": "Unlimited Gold in Y's",
+      "code": "1023807E FFFF"
+    },
+    {
+      "name": "Kill 1 Enemy to Level up in Y's",
+      "code": "10238080 FFFF"
+    },
+    {
+      "name": "Unlimited Coins in Dragon Slayer",
+      "code": "1020091A FFFF"
+    },
+    {
+      "name": "Unlimited Potions in Dragon Slayer",
+      "code": "1020091E FFFF"
+    },
+    {
+      "name": "Unlimited Health in Dragon Slayer",
+      "code": "10200F26 FFFF"
+    },
+    {
+      "name": "Gain Lots of Strength in Dragon Slayer",
+      "code": "10200F2A FFFF"
+    },
+    {
+      "name": "Gain Lots of Exp in Dragon Slayer",
+      "code": "10200F2E FFFF"
+    },
+    {
+      "name": "Unlimited Food in Xanadu",
+      "code": "1608A166 FFFF"
+    },
+    {
+      "name": "Gain Lots of Fight Exp in Xanadu",
+      "code": "1608B5D2 FFFF"
+    },
+    {
+      "name": "Gain Lots of Magic Exp in Xanadu",
+      "code": "1608B5DA FFFF"
+    },
+    {
+      "name": "Unlimited Gold in Xanadu",
+      "code": "1608B6CA FFFF"
+    },
+    {
+      "name": "Maximum STR in Xanadu",
+      "code": "1608B69E FFFF"
+    },
+    {
+      "name": "Maximum INT in Xanadu",
+      "code": "1608B6A0 FFFF"
+    },
+    {
+      "name": "Maximum WIZ in Xanadu",
+      "code": "1608B6A2 FFFF"
+    },
+    {
+      "name": "Maximum CHR in Xanadu",
+      "code": "1608B6A4 FFFF"
+    },
+    {
+      "name": "Maximum DEX in Xanadu",
+      "code": "1608B6A6 FFFF"
+    },
+    {
+      "name": "Maximum AGL in Xanadu",
+      "code": "1608B6A8 FFFF"
+    },
+    {
+      "name": "Maximum MGR in Xanadu",
+      "code": "1608B6AA FFFF"
+    },
+    {
+      "name": "Maximum KRM in Xanadu",
+      "code": "1608B6AC FFFF"
+    }
+  ]
+}

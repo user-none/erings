@@ -1,0 +1,70 @@
+{
+  "serial": "MK-81073",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "160F106A 0B00"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "1606552C 00FA"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D606552C 00FA\n1606552C 0001"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "1606732C 00FA"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D606732C 00FA\n1606732C 0001"
+    },
+    {
+      "name": "Enable All Characters",
+      "code": "1609FAA8 FFFF\n1609FAAA FFFF"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "1606552C 0000"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "1606732C 0000"
+    },
+    {
+      "name": "(Player 1) 25% Energy",
+      "code": "D606552C 00FA\n1606552C 003E"
+    },
+    {
+      "name": "(Player 1) 50% Energy",
+      "code": "D606552C 00FA\n1606552C 007D"
+    },
+    {
+      "name": "(Player 1) 75% Energy",
+      "code": "D606552C 00FA\n1606552C 00BB"
+    },
+    {
+      "name": "(Player 2) 25% Energy",
+      "code": "D606732C 00FA\n1606732C 003E"
+    },
+    {
+      "name": "(Player 2) 50% Energy",
+      "code": "D606732C 00FA\n1606732C 007D"
+    },
+    {
+      "name": "(Player 2) 75% Energy",
+      "code": "D606732C 00FA\n1606732C 00BB"
+    },
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "160657E4 00FA\n16094CB2 00FA"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "160675E4 00FA\n16094CBA 00FA"
+    }
+  ]
+}

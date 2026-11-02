@@ -1,0 +1,70 @@
+{
+  "serial": "MK-81014",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Allow Out Of Ring Fighting",
+      "code": "160E0068 004F"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "160621B8 00A0"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "160E0032 0782"
+    },
+    {
+      "name": "Low Gravity",
+      "code": "160E007A 0024"
+    },
+    {
+      "name": "Mega Kick",
+      "code": "160E007C 0000"
+    },
+    {
+      "name": "Play Bonus Level 10",
+      "code": "160E0002 0A0A"
+    },
+    {
+      "name": "Play Underwater",
+      "code": "160E0038 0010"
+    },
+    {
+      "name": "No Gravity",
+      "code": "160E007A 0000"
+    },
+    {
+      "name": "Ultra Gravity",
+      "code": "160E007A FFFF"
+    },
+    {
+      "name": "P1 Always Pa Lau",
+      "code": "360E000E 0000"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D60621B8 00A0\n160621B8 0028"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D60621B8 00A0\n160621B8 0050"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D60621B8 00A0\n160621B8 0078"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "160621B8 0000"
+    },
+    {
+      "name": "1-Hit Death Energy P1",
+      "code": "D60621B8 00A0\n160621B8 0001"
+    },
+    {
+      "name": "Play Under Water",
+      "code": "160E0038 0010\n160E001A 0002"
+    }
+  ]
+}

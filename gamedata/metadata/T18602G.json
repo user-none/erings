@@ -1,0 +1,25 @@
+{
+  "serial": "T18602G",
+  "title": "AI Shougi",
+  "native_title": "ＡＩ将棋",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 980124 010023"
+  ],
+  "release_date": "1995-08-25",
+  "developer": "Something Good",
+  "publisher": "Softbank",
+  "genres": [
+    "Board Game"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "This game follows the traditional rules of Japanese chess with one player trying to put the opposing one in checkmate. Every move made is dictated with voice-overs."
+}

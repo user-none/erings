@@ -1,0 +1,62 @@
+{
+  "serial": "GS-9169",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "(Max Good Feeling & Believe) Sakura",
+      "code": "10200B20 0063\n10200B22 0063"
+    },
+    {
+      "name": "(Max Good Feeling & Believe) Alice",
+      "code": "10200BA0 0063\n10200BA2 0063"
+    },
+    {
+      "name": "(Max Good Feeling & Believe) Conna",
+      "code": "10200B80 0063\n10200B82 0063"
+    },
+    {
+      "name": "(Max Good Feeling & Believe) Smilei",
+      "code": "10200B40 0063\n10200B42 0063"
+    },
+    {
+      "name": "(Max Good Feeling & Believe) Chiku",
+      "code": "10200BE0 0063\n10200BE2 0063"
+    },
+    {
+      "name": "(Max Good Feeling & Believe) Reiny",
+      "code": "10200C00 0063\n10200C02 0063"
+    },
+    {
+      "name": "(Max Good Feeling & Believe) Maria",
+      "code": "10200B60 0063\n10200B62 0063"
+    },
+    {
+      "name": "(Max Good Feeling & Believe) Redrose",
+      "code": "10200BC0 0063\n10200BC2 0063"
+    },
+    {
+      "name": "(Chapter 1) Unlimited HP",
+      "code": "102F294C 03E7\n102F29C8 03E7\n102F2A44 03E7\n102F2AC0 03E7\n102F2B3C 03E7"
+    },
+    {
+      "name": "(Chapter 2) Unlimited HP - Match 1",
+      "code": "102F2110 03E7\n102F218C 03E7\n102F2208 03E7\n102F2284 03E7\n102F2300 03E7"
+    },
+    {
+      "name": "(Chapter 2) Unlimited HP - Match 2",
+      "code": "102F2D2C 03E7\n102F2DA8 03E7\n102F2E24 03E7\n102F2EA0 03E7\n102F2F1C 03E7"
+    },
+    {
+      "name": "(Chapter 3) Unlimited HP - Match 1",
+      "code": "102F2854 03E7\n102F28D0 03E7\n102F294C 03E7\n102F29C8 03E7\n102F2A44 03E7\n102F2AC0 03E7\n102F2B3C 03E7"
+    },
+    {
+      "name": "(Chapter 3) Unlimited HP - Match 2",
+      "code": "102F2110 03E7\n102F218C 03E7\n102F2208 03E7\n102F2284 03E7\n102F2300 03E7\n102F237C 03E7\n102F23F8 03E7\n102F2474 03E7\n102F24F0 03E7"
+    },
+    {
+      "name": "(Final Chapter) Unlimited HP (Part 1)",
+      "code": "102F2118 5050\n102F24F8 03E7\n102F2194 5050\n102F2574 03E7\n102F2210 5050\n102F25F0 03E7\n102F228C 5050\n102F266C 03E7\n102F2308 03E7\n102F26E8 03E7\n102F2384 03E7\n102F2764 03E7\n102F2400 03E7\n102F27E0 03E7\n102F247C 03E7\n102F285C 03E7\n102F24F8 03E7\n102F28D8 03E7"
+    }
+  ]
+}

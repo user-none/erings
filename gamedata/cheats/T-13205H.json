@@ -1,0 +1,46 @@
+{
+  "serial": "T-13205H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "All-Seeing Eye",
+      "code": "1605186E 0001"
+    },
+    {
+      "name": "All Keys",
+      "code": "1604A556 FFFF"
+    },
+    {
+      "name": "All Weapons And Artifacts",
+      "code": "1608607E FFFF"
+    },
+    {
+      "name": "Infinite Flame Thrower Ammo",
+      "code": "160860A2 00E0"
+    },
+    {
+      "name": "Infinite Health",
+      "code": "1608608A 00C8"
+    },
+    {
+      "name": "Infinite M-60 Ammo",
+      "code": "1608609A 001E"
+    },
+    {
+      "name": "Infinite Manacle Ammo",
+      "code": "160860AE 0004"
+    },
+    {
+      "name": "Infinite Pistol Ammo",
+      "code": "16086096 003C"
+    },
+    {
+      "name": "Infinite Ring Of Ra Ammo",
+      "code": "160860AA 00E0"
+    },
+    {
+      "name": "Transmitter",
+      "code": "1608607C FFFF"
+    }
+  ]
+}

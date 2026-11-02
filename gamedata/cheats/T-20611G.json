@@ -1,0 +1,38 @@
+{
+  "serial": "T-20611G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited HP",
+      "code": "160DBA92 03B6"
+    },
+    {
+      "name": "(Player 1) Unlimited Special Attack",
+      "code": "160DBA9E 0900"
+    },
+    {
+      "name": "(Player 2) Unlimited HP",
+      "code": "160DBBCE 0320"
+    },
+    {
+      "name": "(Player 2) Unlimited Special Attack",
+      "code": "160DBBDA 0900"
+    },
+    {
+      "name": "(Play As Shibata) Survival & Story Mode",
+      "code": "D60CA256 0009\n160CA23E 0012"
+    },
+    {
+      "name": "(Play As Shibata) Training Mode",
+      "code": "D60CA26A 0009\n160CA262 0012"
+    },
+    {
+      "name": "(Play As Shibata) P1 Vs Mode",
+      "code": "D60CA2B2 0009\n160CA2AA 0012"
+    },
+    {
+      "name": "(Play As Shibata) P2 Vs Mode",
+      "code": "D60CA2AE 0009\n160CA26A 0012"
+    }
+  ]
+}

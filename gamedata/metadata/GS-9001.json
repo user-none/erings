@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9001",
+  "title": "Virtua Fighter",
+  "native_title": "バーチャ・ファイター",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 974365 090012"
+  ],
+  "release_date": "1994-11-22",
+  "developer": "Sega AM2",
+  "publisher": "Sega of America",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "Virtua Fighter was the first of it's kind: A one-on-one fighting game featuring fully 3D environments and characters. The fighters and arenas are rendered in flat-shaded polygons. Unlike many fighting games, Virtua Fighter focuses on deep gameplay based on actual fighting styles, rather than outrageous special moves and story lines.\n\nThere are 8 fighters to choose from in Virtua Fighter, and an equal number of fighting backdrops in which to compete. Each fighter has a distinctive fighting style, and their own set of signature moves."
+}

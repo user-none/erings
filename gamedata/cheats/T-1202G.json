@@ -1,0 +1,182 @@
+{
+  "serial": "T-1202G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "16076CB6 0090"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "16076CB6 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Ex Supers",
+      "code": "36076E75 0009"
+    },
+    {
+      "name": "(Player 1) Is Invisible",
+      "code": "16076C70 0000"
+    },
+    {
+      "name": "(Player 1) Can Move Before Match Begins",
+      "code": "16076E80 0000"
+    },
+    {
+      "name": "(Player 1) Special Fills Up Ex Super Bar",
+      "code": "36076E8F 0000"
+    },
+    {
+      "name": "(Player 1) Standard Attacks Quickly Fill Ex Gauge",
+      "code": "36076E73 00F8"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160770BA 0090"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "160770BA 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Ex Supers",
+      "code": "36077279 0009"
+    },
+    {
+      "name": "(Player 2) Is Invisible",
+      "code": "16077074 0000"
+    },
+    {
+      "name": "(Player 2) Can Move Before Match Begins",
+      "code": "16077284 0000"
+    },
+    {
+      "name": "(Player 2) Special Fills Up Ex Super Bar",
+      "code": "36077293 0000"
+    },
+    {
+      "name": "(Player 2) Standard Attacks Quickly Fill Ex Gauge",
+      "code": "36077277 00F8"
+    },
+    {
+      "name": "(Player 1) Automatic Grab Recovery",
+      "code": "16077146 0000\n1607714A 0000"
+    },
+    {
+      "name": "(Player 2) Automatic Grab Recovery",
+      "code": "16076D42 0000\n16076D46 0000"
+    },
+    {
+      "name": "Player 1 is Demitri",
+      "code": "36077027 0001"
+    },
+    {
+      "name": "Player 1 is Gallon",
+      "code": "36077027 0002"
+    },
+    {
+      "name": "Player 1 is Victor",
+      "code": "36077027 0003"
+    },
+    {
+      "name": "Player 1 is Zabel",
+      "code": "36077027 0004"
+    },
+    {
+      "name": "Player 1 is Morrigan",
+      "code": "36077027 0005"
+    },
+    {
+      "name": "Player 1 is Anakaris",
+      "code": "36077027 0006"
+    },
+    {
+      "name": "Player 1 is Felicia",
+      "code": "36077027 0007"
+    },
+    {
+      "name": "Player 1 is Bishamon",
+      "code": "36077027 0008"
+    },
+    {
+      "name": "Player 1 is Aulbath",
+      "code": "36077027 0009"
+    },
+    {
+      "name": "Player 1 is Sasquatch",
+      "code": "36077027 000A"
+    },
+    {
+      "name": "Player 1 is Phobos",
+      "code": "36077027 000B"
+    },
+    {
+      "name": "Player 1 is Pyron",
+      "code": "36077027 000C"
+    },
+    {
+      "name": "Player 1 is Lei Lei",
+      "code": "36077027 000D"
+    },
+    {
+      "name": "Player 1 is Donovan",
+      "code": "36077027 000E"
+    },
+    {
+      "name": "Player 2 is Demitri",
+      "code": "3607742B 0001"
+    },
+    {
+      "name": "Player 2 is Gallon",
+      "code": "3607742B 0002"
+    },
+    {
+      "name": "Player 2 is Victor",
+      "code": "3607742B 0003"
+    },
+    {
+      "name": "Player 2 is Zabel",
+      "code": "3607742B 0004"
+    },
+    {
+      "name": "Player 2 is Morrigan",
+      "code": "3607742B 0005"
+    },
+    {
+      "name": "Player 2 is Anakaris",
+      "code": "3607742B 0006"
+    },
+    {
+      "name": "Player 2 is Felicia",
+      "code": "3607742B 0007"
+    },
+    {
+      "name": "Player 2 is Bishamon",
+      "code": "3607742B 0008"
+    },
+    {
+      "name": "Player 2 is Aulbath",
+      "code": "3607742B 0009"
+    },
+    {
+      "name": "Player 2 is Sasquatch",
+      "code": "3607742B 000A"
+    },
+    {
+      "name": "Player 2 is Phobos",
+      "code": "3607742B 000B"
+    },
+    {
+      "name": "Player 2 is Pyron",
+      "code": "3607742B 000C"
+    },
+    {
+      "name": "Player 2 is Lei Lei",
+      "code": "3607742B 000D"
+    },
+    {
+      "name": "Player 2 is Donovan",
+      "code": "3607742B 000E"
+    }
+  ]
+}

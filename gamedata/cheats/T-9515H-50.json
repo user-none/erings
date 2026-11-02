@@ -1,0 +1,22 @@
+{
+  "serial": "T-9515H-50",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "1606176C 0063"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "16088AC2 0026"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "16088AB4 0064"
+    },
+    {
+      "name": "Infinite Red Pennant",
+      "code": "16088AB6 0063"
+    }
+  ]
+}

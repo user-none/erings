@@ -1,0 +1,50 @@
+{
+  "serial": "T-23403G",
+  "master_code": "F6000924 C305\nF6000914 230B\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Part 1) Unlimited Bombs",
+      "code": "360435DF 0004"
+    },
+    {
+      "name": "(Part 1) Unlimited SDFs",
+      "code": "16043530 03E7"
+    },
+    {
+      "name": "(Part 1) Unlimited Missiles",
+      "code": "36041972 004F"
+    },
+    {
+      "name": "(Part 1) Unlimited Gun Always Cool",
+      "code": "16045AC4 0000"
+    },
+    {
+      "name": "(Part 1) Unlimited Undead Mode On",
+      "code": "36043AA4 0001"
+    },
+    {
+      "name": "(Part 2) Unlimited Bombs",
+      "code": "3604295C 0004"
+    },
+    {
+      "name": "(Part 2) Unlimited SDFs",
+      "code": "160428BC 03E7"
+    },
+    {
+      "name": "(Part 2) Unlimited Missiles",
+      "code": "36040D52 004F"
+    },
+    {
+      "name": "(Part 2) Unlimited Gun Always Cool",
+      "code": "16044E34 0000"
+    },
+    {
+      "name": "(Part 2) Unlimited Undead Mode On",
+      "code": "36042E14 0001"
+    },
+    {
+      "name": "(Part 1) Unlimited Shield",
+      "code": "D60E0024 0000\n360E0027 0065"
+    }
+  ]
+}

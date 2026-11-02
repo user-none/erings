@@ -1,0 +1,23 @@
+{
+  "serial": "T-15009G",
+  "title": "Shouryuu Sangoku Engi",
+  "native_title": "昇龍三國演義",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-07-19",
+  "developer": "Kid",
+  "publisher": "Imagineer",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Shouryuu Sangoku Engi is a historical simulation game set in the Three Kingdoms era of Chinese history. The player chooses from one of four scenarios and more than a dozen warlords, with the ultimate goal of unifying china under their rule. While the player can issue direct commands and decrees and attack neighboring territory, the bulk of the gameplay consists of assigning generals and officers and managing many aspects of the kingdom, from the makeup of armies to diplomatic relations with other warlords."
+}

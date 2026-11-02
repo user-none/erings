@@ -1,0 +1,22 @@
+{
+  "serial": "T-10001G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Armor P1",
+      "code": "1607D5EA 0001"
+    },
+    {
+      "name": "Infinite Armor P2",
+      "code": "1607D4EA 0001"
+    },
+    {
+      "name": "Infinite Credits",
+      "code": "1607C9A8 0009"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "160922AC 0064"
+    }
+  ]
+}

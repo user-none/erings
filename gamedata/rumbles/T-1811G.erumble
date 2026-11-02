@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Thunder Force V (Japan)
+gameid: T-1811G
+system: saturn
+---
+
+watch state word 0x060BCF08
+
+on state changed to 2 or state changed to 3:
+    pulse 1.0 1000ms

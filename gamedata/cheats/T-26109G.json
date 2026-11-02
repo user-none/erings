@@ -1,0 +1,37 @@
+{
+  "serial": "T-26109G",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Life",
+      "code": "1608DA20 0004"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "160B1622 0017"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160B15D6 0070"
+    },
+    {
+      "name": "(Player 1) Gun Power Full",
+      "code": "160B1626 0004"
+    },
+    {
+      "name": "(Player 2) Unlimited Life",
+      "code": "1608DA2C 0004"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160B1766 0017"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160B171A 0070"
+    },
+    {
+      "name": "(Player 2) Gun Power Full",
+      "code": "160B176A 0004"
+    }
+  ]
+}

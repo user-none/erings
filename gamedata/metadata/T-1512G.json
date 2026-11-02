@@ -1,0 +1,23 @@
+{
+  "serial": "T-1512G",
+  "title": "Shanghai: Great Moments",
+  "native_title": "上海 ～グレート・モーメンツ～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-11-15",
+  "developer": "Sunsoft",
+  "publisher": "Sunsoft",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Shanghai is a puzzle game using MahJongg tiles in which you slide available matching tiles off the stack to reveal more tiles. Slide all 144 tiles off the board, and you win the game.\n\nThis game includes four versions of the classic Shanghai game: The Great Wall (Shanghai meets Tetris), Beijing (slide rows to make matches), Action Shanghai (clear tiles quickly before more appear), and Classic Shanghai (either regular or face down for an extra challenge)."
+}

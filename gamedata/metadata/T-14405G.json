@@ -1,0 +1,25 @@
+{
+  "serial": "T-14405G",
+  "title": "DonPachi",
+  "native_title": "首領蜂",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 984995 800059"
+  ],
+  "release_date": "1996-04-26",
+  "developer": "Cave",
+  "publisher": "Atlus",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "DonPachi is a 1995 vertical manic shoot-'em-up originally in arcades and was the first game from the developer Cave. Settings are mainly woodland and enemies are military vehicles and robots, culminating in the final boss, a huge robotic bee. One of three weapon configurations is chosen at start and then levelled up through dropped power-ups. DonPachi was ported to the Sega Saturn and Sony Playstation in 1996."
+}

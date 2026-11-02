@@ -1,0 +1,25 @@
+{
+  "serial": "T-38202G",
+  "title": "Touryuu Densetsu Elan Doree",
+  "native_title": "闘龍伝説エラン・ドール",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 520416 175612"
+  ],
+  "release_date": "1999-01-14",
+  "developer": "Sai-Mate",
+  "publisher": "Kamata and Partners",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Touryuu Densetsu: Elan Doreé is originally a ST-V arcade from the unknown developer Sai-Mate. This game adds a lot of new aspects to traditional fighting games, just like the battles with flying dragons and the magic attacks. Each character rides a dragon which means that you're actually supposed to be flying at all times. Most of the fighting takes place on a 2D plane, but you do have complete freedom of 3D movement."
+}

@@ -1,0 +1,14 @@
+{
+  "serial": "T-15909H50",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Cash",
+      "code": "160888E2 26AC\n16084D66 26AC"
+    },
+    {
+      "name": "Unlimited Cash",
+      "code": "D6016E4A 0180\n16084D66 26AC\n160888E2 26AC"
+    }
+  ]
+}

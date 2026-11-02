@@ -1,0 +1,142 @@
+{
+  "serial": "T-8140H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160B806A 0014"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160B806E 0005"
+    },
+    {
+      "name": "(Player 1) Full Combo/Power Meter",
+      "code": "160B885C 0064"
+    },
+    {
+      "name": "(Player 1) Empty Combo/Power Meter",
+      "code": "160B885C 0000"
+    },
+    {
+      "name": "(Player 1) Always Level 3 Power",
+      "code": "160B885A 0003"
+    },
+    {
+      "name": "(Player 1) Always Level 2 Power",
+      "code": "160B885A 0002"
+    },
+    {
+      "name": "(Player 1) Always Level 1 Power",
+      "code": "160B885A 0001"
+    },
+    {
+      "name": "(Player 1) Always Level 0 Power",
+      "code": "160B885A 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Items",
+      "code": "160B80BA 0005"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160B804A 0097"
+    },
+    {
+      "name": "(Player 1) Unlimited Continues",
+      "code": "36063478 0005"
+    },
+    {
+      "name": "(Player 1) Fake Unlimited Energy",
+      "code": "160B80A4 0069"
+    },
+    {
+      "name": "(Player 1) Have No Energy",
+      "code": "160B806A 0000"
+    },
+    {
+      "name": "(Player 1) 25% Energy",
+      "code": "D60B806A 0014\n160B806A 0005"
+    },
+    {
+      "name": "(Player 1) 50% Energy",
+      "code": "D60B806A 0014\n160B806A 000A"
+    },
+    {
+      "name": "(Player 1) 75% Energy",
+      "code": "D60B806A 0014\n160B806A 000F"
+    },
+    {
+      "name": "(Player 1) Die In One Hit",
+      "code": "D60B806A 0014\n160B806A 0001"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160B8C1A 0014"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160B8C1E 0005"
+    },
+    {
+      "name": "(Player 2) Full Combo/Power Meter",
+      "code": "160B940C 0064"
+    },
+    {
+      "name": "(Player 2) Empty Combo/Power Meter",
+      "code": "160B940C 0000"
+    },
+    {
+      "name": "(Player 2) Always Level 3 Power",
+      "code": "160B940A 0003"
+    },
+    {
+      "name": "(Player 2) Always Level 2 Power",
+      "code": "160B940A 0002"
+    },
+    {
+      "name": "(Player 2) Always Level 1 Power",
+      "code": "160B940A 0001"
+    },
+    {
+      "name": "(Player 2) Always Level 0 Power",
+      "code": "160B940A 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Items",
+      "code": "160B8C6A 0005"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160B8BFA 0097"
+    },
+    {
+      "name": "(Player 2) Unlimited Continues",
+      "code": "36063479 0005"
+    },
+    {
+      "name": "(Player 2) Fake Unlimited Energy",
+      "code": "160B8C54 0069"
+    },
+    {
+      "name": "(Player 2) Have No Energy",
+      "code": "1608BC1A 0000"
+    },
+    {
+      "name": "(Player 2) 25% Energy",
+      "code": "D60B8C1A 0014\n160B8C1A 0005"
+    },
+    {
+      "name": "(Player 2) 50% Energy",
+      "code": "D60B8C1A 0014\n160B8C1A 000A"
+    },
+    {
+      "name": "(Player 2) 75% Energy",
+      "code": "D60B8C1A 0014\n160B8C1A 000F"
+    },
+    {
+      "name": "(Player 2) Die In One Hit",
+      "code": "D60B8C1A 0014\n160B8C1A 0001"
+    }
+  ]
+}

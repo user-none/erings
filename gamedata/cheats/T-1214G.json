@@ -1,0 +1,70 @@
+{
+  "serial": "T-1214G",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Invulnerability",
+      "code": "1602FFCE 0048"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "1602FFA6 0028"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "1602DA50 0200"
+    },
+    {
+      "name": "Unlimited Bolts",
+      "code": "1602DAA4 0063"
+    },
+    {
+      "name": "Unlimited Rock Ball",
+      "code": "160361AE 2800"
+    },
+    {
+      "name": "Unlimited Flash Bombs",
+      "code": "160361B2 2800"
+    },
+    {
+      "name": "Unlimited Thunder Claw",
+      "code": "160361B6 2800"
+    },
+    {
+      "name": "Unlimited Ice Wave",
+      "code": "160361BA 2800"
+    },
+    {
+      "name": "Unlimited Tornado Hold",
+      "code": "160361BE 2800"
+    },
+    {
+      "name": "Unlimited Water Balloon",
+      "code": "160361C2 2800"
+    },
+    {
+      "name": "Unlimited Flame Sword",
+      "code": "160361C6 2800"
+    },
+    {
+      "name": "Unlimited Homing Sniper",
+      "code": "160361CA 2800"
+    },
+    {
+      "name": "Unlimited Astro Crush",
+      "code": "160361CE 2800"
+    },
+    {
+      "name": "Unlimited Mega Buster Shots",
+      "code": "1602DAC4 0000"
+    },
+    {
+      "name": "Maximum Mega Buster Shots",
+      "code": "3602FFCA 00FF"
+    },
+    {
+      "name": "Jump Higher",
+      "code": "1602FFB6 2000"
+    }
+  ]
+}

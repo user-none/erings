@@ -1,0 +1,25 @@
+{
+  "serial": "GS-7113",
+  "title": "Puzzle Bobble 3 for SegaNet",
+  "native_title": "パズル・ボブル３ フォー セガネット",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 071134"
+  ],
+  "release_date": "1997-08-08",
+  "developer": "Taito",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "This special release of Puzzle Bobble 3 is modified to exclusively support online multiplayer functionality via the Sega Saturn Modem and XBand service. Released at a lower price, most of the single-player content has been removed from this version, with only a short demo of the standard puzzle mode available for offline play."
+}

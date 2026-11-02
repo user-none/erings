@@ -1,0 +1,25 @@
+{
+  "serial": "T-30305G",
+  "title": "DeJig: McKnight: Art Collection",
+  "native_title": "デジグ マックナイト ～アート・コレクション～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 979092 057826"
+  ],
+  "release_date": "1997-12-04",
+  "developer": "Masudaya",
+  "publisher": "Masudaya",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "DeJig: McKnight Art Collection is a digital jigsaw puzzle game and part of the DeJig series. The game includes 20 different puzzles featuring the works of painter Thomas McKnight, which come in 72-piece and 108-piece difficulty levels. Pieces can be rotated and will lock into place when placed correctly, and the completed image can be viewed at any time as a reference. Completing each puzzle will unlock a high-quality version of that painting for view in a gallery mode."
+}

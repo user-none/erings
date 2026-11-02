@@ -1,0 +1,54 @@
+{
+  "serial": "T-6608G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "160C9DEA FFFF"
+    },
+    {
+      "name": "Level 99",
+      "code": "160C9DEC 0063"
+    },
+    {
+      "name": "Unlimited HP",
+      "code": "160C9DEE 0063"
+    },
+    {
+      "name": "Max HP",
+      "code": "160C9DF0 0063"
+    },
+    {
+      "name": "Unlimited MP",
+      "code": "160C9DF4 0063"
+    },
+    {
+      "name": "Max MP",
+      "code": "160C9DF6 0063"
+    },
+    {
+      "name": "Max Power",
+      "code": "160C9DFA 03E7"
+    },
+    {
+      "name": "Max Skills",
+      "code": "160C9DFE 03E7"
+    },
+    {
+      "name": "Max Magic Power",
+      "code": "160C9E02 03E7"
+    },
+    {
+      "name": "Max Luck",
+      "code": "160C9E06 03E7"
+    },
+    {
+      "name": "Max Magic Attack",
+      "code": "160C9E0A 03E7\n160C9E0C 03E7"
+    },
+    {
+      "name": "Max Magic Defense",
+      "code": "160C9E10 03E7\n160C9E12 03E7"
+    }
+  ]
+}

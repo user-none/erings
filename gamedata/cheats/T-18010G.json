@@ -1,0 +1,22 @@
+{
+  "serial": "T-18010G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Strength",
+      "code": "16088244 0000"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "16088634 0000"
+    },
+    {
+      "name": "Max Money",
+      "code": "1606B2FE 370F"
+    },
+    {
+      "name": "0 Patients",
+      "code": "16088986 0000"
+    }
+  ]
+}

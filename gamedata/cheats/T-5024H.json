@@ -1,0 +1,110 @@
+{
+  "serial": "T-5024H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Home Team Scores 50",
+      "code": "1604C534 0032"
+    },
+    {
+      "name": "Home Team Scores 0",
+      "code": "1604C534 0000"
+    },
+    {
+      "name": "Away Team Scores 50",
+      "code": "1604E680 0032"
+    },
+    {
+      "name": "Away Team Scores 0",
+      "code": "1604E680 0000"
+    },
+    {
+      "name": "Infinite Time-Outs Home Team",
+      "code": "1604C536 0003"
+    },
+    {
+      "name": "No Time-Outs Home Team",
+      "code": "1604C536 0000"
+    },
+    {
+      "name": "Infinite Time-Outs Away Team",
+      "code": "1604E682 0003"
+    },
+    {
+      "name": "No Time-Outs Away Team",
+      "code": "1604E682 0000"
+    },
+    {
+      "name": "(Player 1) Have 1 Score",
+      "code": "1604C534 0001"
+    },
+    {
+      "name": "(Player 1) Have 2 Score",
+      "code": "1604C534 0002"
+    },
+    {
+      "name": "(Player 1) Have 3 Score",
+      "code": "1604C534 0003"
+    },
+    {
+      "name": "(Player 1) Have 4 Score",
+      "code": "1604C534 0004"
+    },
+    {
+      "name": "(Player 1) Have 5 Score",
+      "code": "1604C534 0005"
+    },
+    {
+      "name": "(Player 1) Have 6 Score",
+      "code": "1604C534 0006"
+    },
+    {
+      "name": "(Player 1) Have 7 Score",
+      "code": "1604C534 0007"
+    },
+    {
+      "name": "(Player 1) Have 8 Score",
+      "code": "1604C534 0008"
+    },
+    {
+      "name": "(Player 1) Have 9 Score",
+      "code": "1604C534 0009"
+    },
+    {
+      "name": "(Player 2) Have 1 Score",
+      "code": "1604E680 0001"
+    },
+    {
+      "name": "(Player 2) Have 2 Score",
+      "code": "1604E680 0002"
+    },
+    {
+      "name": "(Player 2) Have 3 Score",
+      "code": "1604E680 0003"
+    },
+    {
+      "name": "(Player 2) Have 4 Score",
+      "code": "1604E680 0004"
+    },
+    {
+      "name": "(Player 2) Have 5 Score",
+      "code": "1604E680 0005"
+    },
+    {
+      "name": "(Player 2) Have 6 Score",
+      "code": "1604E680 0006"
+    },
+    {
+      "name": "(Player 2) Have 7 Score",
+      "code": "1604E680 0007"
+    },
+    {
+      "name": "(Player 2) Have 8 Score",
+      "code": "1604E680 0008"
+    },
+    {
+      "name": "(Player 2) Have 9 Score",
+      "code": "1604E680 0009"
+    }
+  ]
+}

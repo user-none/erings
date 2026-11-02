@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9012",
+  "master_code": "F6000914 C305\nD60050BC 46A0",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "1605341E 00C8\n160573AE 00C8"
+    },
+    {
+      "name": "Invincibility",
+      "code": "1603234C 0009"
+    }
+  ]
+}

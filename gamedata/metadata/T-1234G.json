@@ -1,0 +1,25 @@
+{
+  "serial": "T-1234G",
+  "title": "Capcom Generation: Dai-3-shuu Koko ni Rekishi Hajimaru",
+  "native_title": "カプコン・ジェネレーション ～第３集 ここに歴史始まる～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 976219 357012"
+  ],
+  "release_date": "1998-10-15",
+  "developer": "Capcom",
+  "publisher": "Capcom",
+  "genres": [
+    "Compilation"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The third release in the Capcom Generation series, featuring four early but unrelated Capcom games:\n\n• Vulgus\n• Son Son\n• HiGeMaru\n• Exed Exes"
+}

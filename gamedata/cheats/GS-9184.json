@@ -1,0 +1,678 @@
+{
+  "serial": "GS-9184",
+  "master_code": "F6000924 FFFF\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Have All Weapons & Items (Including Special Weapons)",
+      "code": "160454A0 7777\n160454A2 7777\n160454A4 7777\n16045446 7777\n16045448 7777\n1604544A 7777\n1604544C 7777\n1604544E 7777\n16045450 7777\n16045452 7777\n16045450 7777\n16045454 7777\n16045456 7777\n16045458 7777\n1604545A 7777\n1604545C 7777\n1604545E 7777\n16045460 7777\n16045462 7777\n16045460 7777\n16045464 7777\n16045466 7777\n16045468 7777\n1604546A 7777\n1604546C 7777\n1604546E 7777\n16045470 7777\n16045472 7777\n16045470 7777\n16045474 7777\n16045476 7777\n16045478 7777\n1604547A 7777\n1604547C 7777\n1604547E 7777\n16045480 7777\n16045482 7777\n16045480 7777\n16045484 7777\n16045486 7777\n16045488 7777\n1604548A 7777\n1604548C 7777\n1604548E 7777\n16045490 7777\n16045492 7777\n16045490 7777\n16045494 7777\n16045496 7777\n16045498 7777\n1604549A 7777\n1604549C 7777\n1604549E 7777\n160454A0 7777\n160454A2 7777\n160454A0 7777\n160454A4 7777\n160454A6 7777\n160454A8 7777\n160454AA 7777\n160454AC 7777\n160454AE 7777\n160454B0 7777\n160454B2 7777\n160454B0 7777\n160454B4 7777\n160454B6 7777\n160454B8 7777\n160454BA 7777\n160454BC 7777\n160454BE 7777\n160454C0 7777\n160454C2 7777\n160454C0 7777\n160454C4 7777\n160454C6 7777\n160454C8 7777\n160454CA 7777\n160454CC 7777\n160454CE 7777\n160454D0 7777\n160454D2 7777\n160454D0 7777\n160454D4 7777\n160454D6 7777\n160454D8 7777\n160454DA 7777\n160454DC 7777\n160454DE 7777\n160454E0 7777\n160454E2 7777\n160454E0 7777\n160454E4 7777\n160454E6 7777\n160454E8 7777\n160454EA 7777\n160454EC 7777\n160454EE 7777\n160454F0 7777\n160454F2 7777\n160454F0 7777\n160454F4 7777\n160454F6 7777\n160454F8 7777\n160454FA 7777\n160454FC 7777\n160454FE 7777\n16045500 7777\n16045502 7777\n16045500 7777\n16045504 7777\n16045506 7777\n16045508 7777\n1604550A 7777\n1604550C 7777\n1604550E 7777\n16045510 7777\n16045512 7777\n16045510 7777\n16045514 7777\n16045516 7777\n16045518 7777\n1604551A 7777\n1604551C 7777\n1604551E 7777\n16045520 7777\n16045522 7777\n16045520 7777\n16045524 7777\n16045526 7777\n16045528 7777\n1604552A 7777\n1604552C 7777\n1604552E 7777\n16045530 7777\n16045532 7777\n16045530 7777\n16045534 7777\n16045536 7777\n16045538 7777\n1604553A 7777\n1604553C 7777\n1604553E 7777\n16045540 7777\n16045542 7777\n16045540 7777\n16045544 7777\n16045546 7777\n16045548 7777\n1604554A 7777\n1604554C 7777\n1604554E 7777\n16045550 7777\n16045552 7777\n16045550 7777\n16045554 7777\n16045556 7777\n16045558 7777\n1604555A 7777\n1604555C 7777\n1604555E 7777\n16045560 7777\n16045562 7777\n16045560 7777\n16045564 7777\n16045566 7777\n16045568 7777\n1604556A 7777\n1604556C 7777\n1604556E 7777"
+    },
+    {
+      "name": "Level 50 for main character (top-right country on map)",
+      "code": "36045B32 0032"
+    },
+    {
+      "name": "Soldier for main character (top-right country on map)",
+      "code": "36045954 000A\n36045955 000A\n36045956 000A\n36045957 000A\n36045958 000A\n36045959 000A\n3604595A 000A\n3604595B 000A\n3604595C 000A\n3604595D 000A"
+    },
+    {
+      "name": "Maximum HP for main character (top-right country on map)",
+      "code": "16045908 007F"
+    },
+    {
+      "name": "Maximum MP for main character (top-right country on map)",
+      "code": "1604590A 007F"
+    },
+    {
+      "name": "STR for main character (top-right country on map)",
+      "code": "1604590C 007F"
+    },
+    {
+      "name": "DEF for main character (top-right country on map)",
+      "code": "1604590E 007F"
+    },
+    {
+      "name": "INT for main character (top-right country on map)",
+      "code": "16045910 007F"
+    },
+    {
+      "name": "BLD for main character (top-right country on map)",
+      "code": "16045912 007F"
+    },
+    {
+      "name": "CHG for main character (top-right country on map)",
+      "code": "16045914 0064"
+    },
+    {
+      "name": "EXE for other character 1 (top-right country on map)",
+      "code": "1604603A 2F12"
+    },
+    {
+      "name": "LV50 for other character 1 (top-right country on map)",
+      "code": "36046076 0032"
+    },
+    {
+      "name": "HP for other character 1 (top-right country on map)",
+      "code": "1645704C 007F"
+    },
+    {
+      "name": "MP for other character 1 (top-right country on map)",
+      "code": "1645704E 007F"
+    },
+    {
+      "name": "STR for other character 1 (top-right country on map)",
+      "code": "16457050 007F"
+    },
+    {
+      "name": "DEF for other character 1 (top-right country on map)",
+      "code": "16457052 007F"
+    },
+    {
+      "name": "INT for other character 1 (top-right country on map)",
+      "code": "16457054 007F"
+    },
+    {
+      "name": "BLD for other character 1 (top-right country on map)",
+      "code": "16457056 007F"
+    },
+    {
+      "name": "CHG for other character 1 (top-right country on map)",
+      "code": "16457058 0064"
+    },
+    {
+      "name": "EXE for other character 2 (top-right country on map)",
+      "code": "160462A6 2F12"
+    },
+    {
+      "name": "LV50 for other character 2 (top-right country on map)",
+      "code": "360462E2 0032"
+    },
+    {
+      "name": "HP for other character 2 (top-right country on map)",
+      "code": "160462B8 007F"
+    },
+    {
+      "name": "MP for other character 2 (top-right country on map)",
+      "code": "160462BA 007F"
+    },
+    {
+      "name": "STR for other character 2 (top-right country on map)",
+      "code": "160462BC 007F"
+    },
+    {
+      "name": "DEF for other character 2 (top-right country on map)",
+      "code": "160462BE 007F"
+    },
+    {
+      "name": "INT for other character 2 (top-right country on map)",
+      "code": "160462C0 007F"
+    },
+    {
+      "name": "BLD (top-right country on map)",
+      "code": "160462C2 007F"
+    },
+    {
+      "name": "CHG for other character 2 (top-right country on map)",
+      "code": "160462C4 0064"
+    },
+    {
+      "name": "EXE for other character 3 (top-right country on map)",
+      "code": "1604641A 2F12"
+    },
+    {
+      "name": "LV50 for other character 3 (top-right country on map)",
+      "code": "36046456 0032"
+    },
+    {
+      "name": "HP for other character 3 (top-right country on map)",
+      "code": "1604642C 007F"
+    },
+    {
+      "name": "MP for other character 3 (top-right country on map)",
+      "code": "1604642E 007F"
+    },
+    {
+      "name": "STR for other character 3 (top-right country on map)",
+      "code": "16046430 007F"
+    },
+    {
+      "name": "DEF for other character 3 (top-right country on map)",
+      "code": "16046432 007F"
+    },
+    {
+      "name": "INT for other character 3 (top-right country on map)",
+      "code": "16046434 007F"
+    },
+    {
+      "name": "BLD for other character 3 (top-right country on map)",
+      "code": "16046436 007F"
+    },
+    {
+      "name": "CHG for other character 3 (top-right country on map)",
+      "code": "16046438 0064"
+    },
+    {
+      "name": "EXE for other character 4 (top-right country on map)",
+      "code": "160461AE 2F12"
+    },
+    {
+      "name": "HP for other character 4 (top-right country on map)",
+      "code": "16047710 007F"
+    },
+    {
+      "name": "MP for other character 4 (top-right country on map)",
+      "code": "16047712 007F"
+    },
+    {
+      "name": "STR for other character 4 (top-right country on map)",
+      "code": "16047714 007F"
+    },
+    {
+      "name": "DEF for other character 4 (top-right country on map)",
+      "code": "16047716 007F"
+    },
+    {
+      "name": "INT for other character 4 (top-right country on map)",
+      "code": "16047718 007F"
+    },
+    {
+      "name": "BLD for other character 4 (top-right country on map)",
+      "code": "1604771A 007F"
+    },
+    {
+      "name": "CHG for other character 4 (top-right country on map)",
+      "code": "1604771C 0064"
+    },
+    {
+      "name": "Main Character (bottom country on map (white flag))",
+      "code": "1604587A 2F12"
+    },
+    {
+      "name": "Other Character (bottom country on map (white flag))",
+      "code": "16047682 2F12\n1604777A 2F12\n160477F6 2F12\n160476FE 2F12"
+    },
+    {
+      "name": "EXE for other character 1 (bottom country on map (white flag))",
+      "code": "16047682 2F12"
+    },
+    {
+      "name": "LV50 for other character 1 (bottom country on map (white flag))",
+      "code": "360476BE 0032"
+    },
+    {
+      "name": "HP for other character 1 (bottom country on map (white flag))",
+      "code": "16457694 007F"
+    },
+    {
+      "name": "MP for other character 1 (bottom country on map (white flag))",
+      "code": "16457696 007F"
+    },
+    {
+      "name": "STR for other character 1 (bottom country on map (white flag))",
+      "code": "16457698 007F"
+    },
+    {
+      "name": "DEF for other character 1 (bottom country on map (white flag))",
+      "code": "1645769A 007F"
+    },
+    {
+      "name": "INT for other character 1 (bottom country on map (white flag))",
+      "code": "1645769C 007F"
+    },
+    {
+      "name": "BLD for other character 1 (bottom country on map (white flag))",
+      "code": "1645769E 007F"
+    },
+    {
+      "name": "CHG for other character 1 (bottom country on map (white flag))",
+      "code": "164576A0 0064"
+    },
+    {
+      "name": "EXE for other character 2 (bottom country on map (white flag))",
+      "code": "1604777A 2F12"
+    },
+    {
+      "name": "LV50 for other character 2 (bottom country on map (white flag))",
+      "code": "360477B6 0032"
+    },
+    {
+      "name": "HP for other character 2 (bottom country on map (white flag))",
+      "code": "1604778C 007F"
+    },
+    {
+      "name": "MP for other character 2 (bottom country on map (white flag))",
+      "code": "1604778E 007F"
+    },
+    {
+      "name": "STR for other character 2 (bottom country on map (white flag))",
+      "code": "16047790 007F"
+    },
+    {
+      "name": "DEF for other character 2 (bottom country on map (white flag))",
+      "code": "16047792 007F"
+    },
+    {
+      "name": "INT for other character 2 (bottom country on map (white flag))",
+      "code": "16047794 007F"
+    },
+    {
+      "name": "BLD for other character 2 (bottom country on map (white flag))",
+      "code": "16047796 007F"
+    },
+    {
+      "name": "CHG (bottom country on map (white flag))",
+      "code": "16047798 0064"
+    },
+    {
+      "name": "EXE for other character 3 (bottom country on map (white flag))",
+      "code": "160477F6 2F12"
+    },
+    {
+      "name": "LV50 for other character 3 (bottom country on map (white flag))",
+      "code": "36047832 0032"
+    },
+    {
+      "name": "HP for other character 3 (bottom country on map (white flag))",
+      "code": "16047808 007F"
+    },
+    {
+      "name": "MP for other character 3 (bottom country on map (white flag))",
+      "code": "1604780A 007F"
+    },
+    {
+      "name": "STR for other character 3 (bottom country on map (white flag))",
+      "code": "1604780C 007F"
+    },
+    {
+      "name": "DEF for other character 3 (bottom country on map (white flag))",
+      "code": "1604780E 007F"
+    },
+    {
+      "name": "INT for other character 3 (bottom country on map (white flag))",
+      "code": "16047810 007F"
+    },
+    {
+      "name": "BLD for other character 3 (bottom country on map (white flag))",
+      "code": "16047812 007F"
+    },
+    {
+      "name": "CHG (bottom country on map (white flag))",
+      "code": "16047814 0064"
+    },
+    {
+      "name": "EXE for other character 4 (bottom country on map (white flag))",
+      "code": "160476FE 2F12"
+    },
+    {
+      "name": "LV50 for other character 4 (bottom country on map (white flag))",
+      "code": "3604773A 0032"
+    },
+    {
+      "name": "Main Character (bottom-right country on map (green flag))",
+      "code": "16045972 2F12"
+    },
+    {
+      "name": "Other Character (bottom-right country on map (green flag))",
+      "code": "160472A2 2F12\n1604739C 2F12\n16047226 2F12\n1604731E 2F12"
+    },
+    {
+      "name": "EXE for other character 1 (bottom-right country on map (green flag))",
+      "code": "160472A2 2F12"
+    },
+    {
+      "name": "LV for other character 1 (bottom-right country on map (green flag))",
+      "code": "360472DE 0032"
+    },
+    {
+      "name": "HP for other character 1 (bottom-right country on map (green flag))",
+      "code": "160472B4 007F"
+    },
+    {
+      "name": "MP for other character 1 (bottom-right country on map (green flag))",
+      "code": "160472B6 007F"
+    },
+    {
+      "name": "STR for other character 1 (bottom-right country on map (green flag))",
+      "code": "160472B8 007F"
+    },
+    {
+      "name": "DEF for other character 1 (bottom-right country on map (green flag))",
+      "code": "160472BA 007F"
+    },
+    {
+      "name": "INT for other character 1 (bottom-right country on map (green flag))",
+      "code": "160472BC 007F"
+    },
+    {
+      "name": "BLD for other character 1 (bottom-right country on map (green flag))",
+      "code": "160472BE 007F"
+    },
+    {
+      "name": "CHG (bottom-right country on map (green flag))",
+      "code": "160472D0 0064"
+    },
+    {
+      "name": "EXE for other character 2 (bottom-right country on map (green flag))",
+      "code": "1604739C 2F12"
+    },
+    {
+      "name": "LV for other character 2 (bottom-right country on map (green flag))",
+      "code": "360473D8 0032"
+    },
+    {
+      "name": "HP for other character 2 (bottom-right country on map (green flag))",
+      "code": "160473AE 007F"
+    },
+    {
+      "name": "MP for other character 2 (bottom-right country on map (green flag))",
+      "code": "160473B0 007F"
+    },
+    {
+      "name": "STR for other character 2 (bottom-right country on map (green flag))",
+      "code": "160473B2 007F"
+    },
+    {
+      "name": "DEF for other character 2 (bottom-right country on map (green flag))",
+      "code": "160473B4 007F"
+    },
+    {
+      "name": "INT for other character 2 (bottom-right country on map (green flag))",
+      "code": "160473B6 007F"
+    },
+    {
+      "name": "BLD for other character 2 (bottom-right country on map (green flag))",
+      "code": "160473B8 007F"
+    },
+    {
+      "name": "CHG for other character 2 (bottom-right country on map (green flag))",
+      "code": "160473DA 0064"
+    },
+    {
+      "name": "EXE for other character 3 (bottom-right country on map (green flag))",
+      "code": "16047226 2F12"
+    },
+    {
+      "name": "LV for other character 3 (bottom-right country on map (green flag))",
+      "code": "36047262 0032"
+    },
+    {
+      "name": "HP for other character 3 (bottom-right country on map (green flag))",
+      "code": "16047238 007F"
+    },
+    {
+      "name": "MP for other character 3 (bottom-right country on map (green flag))",
+      "code": "1604723A 007F"
+    },
+    {
+      "name": "STR for other character 3 (bottom-right country on map (green flag))",
+      "code": "1604723C 007F"
+    },
+    {
+      "name": "DEF for other character 3 (bottom-right country on map (green flag))",
+      "code": "1604723E 007F"
+    },
+    {
+      "name": "INT for other character 3 (bottom-right country on map (green flag))",
+      "code": "16047240 007F"
+    },
+    {
+      "name": "BLD for other character 3 (bottom-right country on map (green flag))",
+      "code": "16047242 007F"
+    },
+    {
+      "name": "CHG for other character 3 (bottom-right country on map (green flag))",
+      "code": "16047244 0064"
+    },
+    {
+      "name": "EXE for other character 4 (bottom-right country on map (green flag))",
+      "code": "1604731E 2F12"
+    },
+    {
+      "name": "LV for other character 4 (bottom-right country on map (green flag))",
+      "code": "3604735A 0032"
+    },
+    {
+      "name": "HP for other character 4 (bottom-right country on map (green flag))",
+      "code": "16047330 007F"
+    },
+    {
+      "name": "MP for other character 4 (bottom-right country on map (green flag))",
+      "code": "16047332 007F"
+    },
+    {
+      "name": "STR for other character 4 (bottom-right country on map (green flag))",
+      "code": "16047334 007F"
+    },
+    {
+      "name": "DEF for other character 4 (bottom-right country on map (green flag))",
+      "code": "16047336 007F"
+    },
+    {
+      "name": "INT for other character 4 (bottom-right country on map (green flag))",
+      "code": "16047338 007F"
+    },
+    {
+      "name": "BLD for other character 4 (bottom-right country on map (green flag))",
+      "code": "1604733A 007F"
+    },
+    {
+      "name": "CHG for other character 4 (bottom-right country on map (green flag))",
+      "code": "1604733C 0064"
+    },
+    {
+      "name": "EXE for other character 1 (middle-right country on map (pink flag))",
+      "code": "16047606 2F12"
+    },
+    {
+      "name": "LV for other character 1 (middle-right country on map (pink flag))",
+      "code": "36047642 0032"
+    },
+    {
+      "name": "HP for other character 1 (middle-right country on map (pink flag))",
+      "code": "16047618 007F"
+    },
+    {
+      "name": "MP for other character 1 (middle-right country on map (pink flag))",
+      "code": "1604761A 007F"
+    },
+    {
+      "name": "STR for other character 1 (middle-right country on map (pink flag))",
+      "code": "1604761C 007F"
+    },
+    {
+      "name": "DEF for other character 1 (middle-right country on map (pink flag))",
+      "code": "1604761E 007F"
+    },
+    {
+      "name": "INT for other character 1 (middle-right country on map (pink flag))",
+      "code": "16047620 007F"
+    },
+    {
+      "name": "BLD for other character 1 (middle-right country on map (pink flag))",
+      "code": "16047622 007F"
+    },
+    {
+      "name": "CHG for other character 1 (middle-right country on map (pink flag))",
+      "code": "16047624 0064"
+    },
+    {
+      "name": "EXE for other character 2 (middle-right country on map (pink flag))",
+      "code": "1604750E 2F12"
+    },
+    {
+      "name": "LV for other character 2 (middle-right country on map (pink flag))",
+      "code": "3604754A 0032"
+    },
+    {
+      "name": "HP for other character 2 (middle-right country on map (pink flag))",
+      "code": "16047520 007F"
+    },
+    {
+      "name": "MP for other character 2 (middle-right country on map (pink flag))",
+      "code": "16047522 007F"
+    },
+    {
+      "name": "STR for other character 2 (middle-right country on map (pink flag))",
+      "code": "16047524 007F"
+    },
+    {
+      "name": "DEF for other character 2 (middle-right country on map (pink flag))",
+      "code": "16047526 007F"
+    },
+    {
+      "name": "INT for other character 2 (middle-right country on map (pink flag))",
+      "code": "16047528 007F"
+    },
+    {
+      "name": "BLD for other character 2 (middle-right country on map (pink flag))",
+      "code": "1604752A 007F"
+    },
+    {
+      "name": "CHG for other character 2 (middle-right country on map (pink flag))",
+      "code": "1604752C 0064"
+    },
+    {
+      "name": "EXE for other character 3 (middle-right country on map (pink flag))",
+      "code": "16047492 2F12"
+    },
+    {
+      "name": "LV for other character 3 (middle-right country on map (pink flag))",
+      "code": "360474CE 0032"
+    },
+    {
+      "name": "HP for other character 3 (middle-right country on map (pink flag))",
+      "code": "160474A4 007F"
+    },
+    {
+      "name": "MP for other character 3 (middle-right country on map (pink flag))",
+      "code": "160474A6 007F"
+    },
+    {
+      "name": "STR for other character 3 (middle-right country on map (pink flag))",
+      "code": "160474A8 007F"
+    },
+    {
+      "name": "DEF for other character 3 (middle-right country on map (pink flag))",
+      "code": "160474AA 007F"
+    },
+    {
+      "name": "INT for other character 3 (middle-right country on map (pink flag))",
+      "code": "160474AC 007F"
+    },
+    {
+      "name": "BLD for other character 3 (middle-right country on map (pink flag))",
+      "code": "160474AE 007F"
+    },
+    {
+      "name": "CHG for other character 3 (middle-right country on map (pink flag))",
+      "code": "160474B0 0064"
+    },
+    {
+      "name": "EXE for other character 4 (middle-right country on map (pink flag))",
+      "code": "1604758A 2F12"
+    },
+    {
+      "name": "LV for other character 4 (middle-right country on map (pink flag))",
+      "code": "360475C6 0032"
+    },
+    {
+      "name": "HP for other character 4 (middle-right country on map (pink flag))",
+      "code": "1604759C 007F"
+    },
+    {
+      "name": "MP for other character 4 (middle-right country on map (pink flag))",
+      "code": "1604759E 007F"
+    },
+    {
+      "name": "STR for other character 4 (middle-right country on map (pink flag))",
+      "code": "160475A0 007F"
+    },
+    {
+      "name": "DEF for other character 4 (middle-right country on map (pink flag))",
+      "code": "160475A2 007F"
+    },
+    {
+      "name": "INT for other character 4 (middle-right country on map (pink flag))",
+      "code": "160475A4 007F"
+    },
+    {
+      "name": "BLD for other character 4 (middle-right country on map (pink flag))",
+      "code": "160475A6 007F"
+    },
+    {
+      "name": "CHG for other character 4 (middle-right country on map (pink flag))",
+      "code": "160475A8 0064"
+    },
+    {
+      "name": "EXE for other character 1 (left country on map (yellow flag))",
+      "code": "160478EE 2F12"
+    },
+    {
+      "name": "LV50 for other character 1 (left country on map (yellow flag))",
+      "code": "3604792A 0032"
+    },
+    {
+      "name": "HP for other character 1 (left country on map (yellow flag))",
+      "code": "16457900 007F"
+    },
+    {
+      "name": "MP for other character 1 (left country on map (yellow flag))",
+      "code": "16457902 007F"
+    },
+    {
+      "name": "STR for other character 1 (left country on map (yellow flag))",
+      "code": "16457904 007F"
+    },
+    {
+      "name": "DEF for other character 1 (left country on map (yellow flag))",
+      "code": "16457906 007F"
+    },
+    {
+      "name": "INT for other character 1 (left country on map (yellow flag))",
+      "code": "16457908 007F"
+    },
+    {
+      "name": "BLD for other character 1 (left country on map (yellow flag))",
+      "code": "1645790A 007F"
+    },
+    {
+      "name": "CHG for other character 1 (left country on map (yellow flag))",
+      "code": "1645790C 0064"
+    },
+    {
+      "name": "EXE for other character 2 (left country on map (yellow flag))",
+      "code": "160479E6 2F12"
+    },
+    {
+      "name": "LV50 for other character 2 (left country on map (yellow flag))",
+      "code": "36047A22 0032"
+    },
+    {
+      "name": "HP for other character 2(left country on map (yellow flag))",
+      "code": "160479F8 007F"
+    },
+    {
+      "name": "MP for other character 2 (left country on map (yellow flag))",
+      "code": "160479FA 007F"
+    },
+    {
+      "name": "STR for other character 2 (left country on map (yellow flag))",
+      "code": "160479FC 007F"
+    },
+    {
+      "name": "DEF for other character 2 (left country on map (yellow flag))",
+      "code": "160479FE 007F"
+    },
+    {
+      "name": "INT for other character 2 (left country on map (yellow flag))",
+      "code": "16047A00 007F"
+    },
+    {
+      "name": "BLD for other character 2 (left country on map (yellow flag))",
+      "code": "16047A02 007F"
+    },
+    {
+      "name": "CHG for other character 2 (left country on map (yellow flag))",
+      "code": "16047A04 0064"
+    }
+  ]
+}

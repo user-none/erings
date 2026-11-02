@@ -1,0 +1,23 @@
+{
+  "serial": "61014419",
+  "title": "DoDonPachi (Demo)",
+  "native_title": "怒首領蜂",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-09-18",
+  "developer": "Cave",
+  "publisher": "Atlus",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "DoDonPachi is Cave's sequel to their 1995 arcade release DonPachi. Like its predecessor, DoDonPachi is a vertical-scrolling and military- and robot-themed manic shooter featuring a giant mecha bee for a final boss. The player's ship and the gameplay are virtually the same as in DonPachi, with one of three weapons selected at start then levelled-up by collecting dropped power-ups."
+}

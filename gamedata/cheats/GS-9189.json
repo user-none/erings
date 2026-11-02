@@ -1,0 +1,270 @@
+{
+  "serial": "GS-9189",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited HP",
+      "code": "160B60CC 03E8"
+    },
+    {
+      "name": "Unlimited Gas",
+      "code": "160B6106 03E8"
+    },
+    {
+      "name": "Unlimited Room Gas",
+      "code": "160B60C4 03E8"
+    },
+    {
+      "name": "No of Saves",
+      "code": "160B8D40 0001"
+    },
+    {
+      "name": "Have Navy Key Level 1",
+      "code": "360B8C50 0001"
+    },
+    {
+      "name": "Have Navy Key Level 2",
+      "code": "360B8C51 0001"
+    },
+    {
+      "name": "Have Sea Fox Key",
+      "code": "360B8C52 0001"
+    },
+    {
+      "name": "Have Gold Store Key",
+      "code": "360B8C53 0001"
+    },
+    {
+      "name": "Have ? Key",
+      "code": "360B8C54 0001\n360B8C59 0001"
+    },
+    {
+      "name": "Have ? Key 1",
+      "code": "360B8C55 0001"
+    },
+    {
+      "name": "Have Junk Key Level 1",
+      "code": "360B8C56 0001"
+    },
+    {
+      "name": "Have Junk Key Level 2",
+      "code": "360B8C57 0001"
+    },
+    {
+      "name": "Have DN Key",
+      "code": "360B8C58 0001"
+    },
+    {
+      "name": "Have ? Room Key",
+      "code": "360B8C5A 0001"
+    },
+    {
+      "name": "Have AS Repair IC",
+      "code": "360B8C5B 0001"
+    },
+    {
+      "name": "Have Medicine A",
+      "code": "360B8C5C 0001"
+    },
+    {
+      "name": "Have Medicine B",
+      "code": "360B8C5D 0001"
+    },
+    {
+      "name": "Have ?",
+      "code": "360B8C5E 0001\n360B8C62 0001\n360B8C66 0001\n360B8C69 0001\n360B8C6C 0001\n360B8C73 000F\n360B8C74 000F\n360B8C75 000F\n360B8C76 000F\n360B8C77 0001"
+    },
+    {
+      "name": "Have Infra-Red Part A",
+      "code": "360B8C5F 0001"
+    },
+    {
+      "name": "Have Infra-Red Part B",
+      "code": "360B8C60 0001"
+    },
+    {
+      "name": "Have Infra-Red Part C",
+      "code": "360B8C61 0001"
+    },
+    {
+      "name": "Have Cleaner",
+      "code": "360B8C63 0001"
+    },
+    {
+      "name": "Have W ?",
+      "code": "360B8C64 0001"
+    },
+    {
+      "name": "Have C4 Bomb",
+      "code": "360B8C65 0001"
+    },
+    {
+      "name": "Have VTR 1",
+      "code": "360B8C67 0001"
+    },
+    {
+      "name": "Have VTR 2",
+      "code": "360B8C68 0001"
+    },
+    {
+      "name": "Have Toxic Chemical",
+      "code": "360B8C6A 0001"
+    },
+    {
+      "name": "Have ????",
+      "code": "360B8C6B 0001"
+    },
+    {
+      "name": "Have MD",
+      "code": "360B8C6D 0001"
+    },
+    {
+      "name": "Have Data MD",
+      "code": "360B8C6E 0001"
+    },
+    {
+      "name": "Have Self Explosive Bomb",
+      "code": "360B8C6F 0001"
+    },
+    {
+      "name": "Have Small Recover (Health)",
+      "code": "360B8C70 0008"
+    },
+    {
+      "name": "Have Medium Recover (Health)",
+      "code": "360B8C71 0008"
+    },
+    {
+      "name": "Have Large Recover (Health)",
+      "code": "360B8C72 0008"
+    },
+    {
+      "name": "(Slot 1) Franch SPAS12",
+      "code": "360B8C38 0001"
+    },
+    {
+      "name": "(Slot 1) Mossber M500 ATP",
+      "code": "360B8C38 0002"
+    },
+    {
+      "name": "(Slot 1) Steyr TMP",
+      "code": "360B8C38 0003"
+    },
+    {
+      "name": "(Slot 1) Colt M1911A1",
+      "code": "360B8C38 0004"
+    },
+    {
+      "name": "(Slot 1) HandK G11",
+      "code": "360B8C38 0005"
+    },
+    {
+      "name": "(Slot 1) HandK MP5A5 BYYN",
+      "code": "360B8C38 0006"
+    },
+    {
+      "name": "(Slot 1) Rober Glock G17",
+      "code": "360B8C38 0007"
+    },
+    {
+      "name": "(Slot 1) RPG L9",
+      "code": "360B8C38 0008"
+    },
+    {
+      "name": "(Slot 2) Franch SPAS12",
+      "code": "360B8C39 0001"
+    },
+    {
+      "name": "(Slot 2) Mossber M500 ATP",
+      "code": "360B8C39 0002"
+    },
+    {
+      "name": "(Slot 2) Steyr TMP",
+      "code": "360B8C39 0003"
+    },
+    {
+      "name": "(Slot 2) Colt M1911A1",
+      "code": "360B8C39 0004"
+    },
+    {
+      "name": "(Slot 2) HandK G11",
+      "code": "360B8C39 0005"
+    },
+    {
+      "name": "(Slot 2) HandK MP5A5 BYYN",
+      "code": "360B8C39 0006"
+    },
+    {
+      "name": "(Slot 2) Rober Glock G17",
+      "code": "360B8C39 0007"
+    },
+    {
+      "name": "(Slot 2) RPG L9",
+      "code": "360B8C39 0008"
+    },
+    {
+      "name": "(Slot 3) Franch SPAS12",
+      "code": "360B8C3A 0001"
+    },
+    {
+      "name": "(Slot 3) Mossber M500 ATP",
+      "code": "360B8C3A 0002"
+    },
+    {
+      "name": "(Slot 3) Steyr TMP",
+      "code": "360B8C3A 0003"
+    },
+    {
+      "name": "(Slot 3) Colt M1911A1",
+      "code": "360B8C3A 0004"
+    },
+    {
+      "name": "(Slot 3) HandK G11",
+      "code": "360B8C3A 0005"
+    },
+    {
+      "name": "(Slot 3) HandK MP5A5 BYYN",
+      "code": "360B8C3A 0006"
+    },
+    {
+      "name": "(Slot 3) Rober Glock G17",
+      "code": "360B8C3A 0007"
+    },
+    {
+      "name": "(Slot 3) RPG L9",
+      "code": "360B8C3A 0008"
+    },
+    {
+      "name": "(Slot 4) Franch SPAS12",
+      "code": "360B8C3B 0001"
+    },
+    {
+      "name": "(Slot 4) Mossber M500 ATP",
+      "code": "360B8C3B 0002"
+    },
+    {
+      "name": "(Slot 4) Steyr TMP",
+      "code": "360B8C3B 0003"
+    },
+    {
+      "name": "(Slot 4) Colt M1911A1",
+      "code": "360B8C3B 0004"
+    },
+    {
+      "name": "(Slot 4) HandK G11",
+      "code": "360B8C3B 0005"
+    },
+    {
+      "name": "(Slot 4) HandK MP5A5 BYYN",
+      "code": "360B8C3B 0006"
+    },
+    {
+      "name": "(Slot 4) Rober Glock G17",
+      "code": "360B8C3B 0007"
+    },
+    {
+      "name": "(Slot 4) RPG L9",
+      "code": "360B8C3B 0008"
+    }
+  ]
+}

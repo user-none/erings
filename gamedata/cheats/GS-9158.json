@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9158",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Health",
+      "code": "1609C6A2 01E5\n1609C6A6 01E5"
+    },
+    {
+      "name": "(Player 2) Unlimited Health",
+      "code": "1609CB46 01E5\n1609CB4A 01E5"
+    }
+  ]
+}

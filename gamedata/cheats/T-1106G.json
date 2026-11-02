@@ -1,0 +1,30 @@
+{
+  "serial": "T-1106G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "160BD774 0000"
+    },
+    {
+      "name": "Unlimited Time To Shoot",
+      "code": "160A5A1A 0013"
+    },
+    {
+      "name": "Ceiling Doesn't Drop",
+      "code": "160A5A56 0000"
+    },
+    {
+      "name": "Always Have Pointer",
+      "code": "160BD776 0100"
+    },
+    {
+      "name": "Unlimited Credits",
+      "code": "160CC8D8 0109"
+    },
+    {
+      "name": "Unlimited Credits",
+      "code": "160CBE48 0109"
+    }
+  ]
+}

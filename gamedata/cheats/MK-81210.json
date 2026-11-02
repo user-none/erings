@@ -1,0 +1,26 @@
+{
+  "serial": "MK-81210",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Place 1st",
+      "code": "1606F3DA 0000"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "16088A7E 02CE"
+    },
+    {
+      "name": "New Superbike - Player 1 (not arcade mode)",
+      "code": "1606CE96 000B"
+    },
+    {
+      "name": "Always place 1st",
+      "code": "1606EE7A 0000"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160883A2 06D6"
+    }
+  ]
+}

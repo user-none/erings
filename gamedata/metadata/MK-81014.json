@@ -1,0 +1,28 @@
+{
+  "serial": "MK-81014",
+  "title": "Virtua Fighter 2",
+  "native_title": "버쳐 파이터２",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe",
+    "Korea"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81014 1",
+    "4 974365 810146"
+  ],
+  "release_date": "1995-12-01",
+  "developer": "Sega AM2",
+  "publisher": "Sega of America",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "In Virtua Fighter 2, the intrepid fighters return to the World Fighting Tournament. Take to the stage to see who will claim the championship title. Will it be Lau Chan, Kage-Maru, Wolf Hawkfield, Jeffry McWild, Akira Yuki, Jacky Bryant, Sarah Bryant, or Pai Chan? The answer lies within. Immerse yourself in this technically challenging game and see if you have what it takes to be the champion of the second World Fighting Tournament!"
+}

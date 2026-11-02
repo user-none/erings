@@ -1,0 +1,25 @@
+{
+  "serial": "T-31504G",
+  "title": "Falcom Classics II",
+  "native_title": "ファルコム・クラシックスⅡ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 975769 161247"
+  ],
+  "release_date": "1998-10-29",
+  "developer": "Nihon Falcom",
+  "publisher": "Victor Company of Japan",
+  "genres": [
+    "Compilation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "This is the second compilation of classic Nihon Falcom games redone for the Saturn. It contains remakes of:\n\n• Asteka II\n• Ys II\n\nAs before, all games feature newly remade graphics and music, as well as new gameplay features to counter the age of the gameplay mechanics in the games."
+}

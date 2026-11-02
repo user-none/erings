@@ -1,0 +1,22 @@
+{
+  "serial": "T-3113G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "102F1040 00FF"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "102F17C8 00FF"
+    },
+    {
+      "name": "(Player 1) Full Power Bar",
+      "code": "102F104E 0040"
+    },
+    {
+      "name": "(Player 2) Full Power Bar",
+      "code": "102F17D6 0040"
+    }
+  ]
+}

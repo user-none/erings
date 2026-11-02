@@ -1,0 +1,322 @@
+{
+  "serial": "T-1214H",
+  "master_code": "F6000924 FFFF\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "160949FC 0090"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "160A644C 0090"
+    },
+    {
+      "name": "No Energy Player 1",
+      "code": "360949FD 0000"
+    },
+    {
+      "name": "No Energy Player 2",
+      "code": "360A644D 0000"
+    },
+    {
+      "name": "Max Infinity Bar Player 1",
+      "code": "36094A01 00FF"
+    },
+    {
+      "name": "Max Infinity Bar Player 2",
+      "code": "360A6451 00FF"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "160961F8 99FF"
+    },
+    {
+      "name": "Max Score P1",
+      "code": "160949F0 E0FF\n160949F2 05F5"
+    },
+    {
+      "name": "Max Score P2",
+      "code": "16094890 E0FF\n16094892 05F5"
+    },
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "360949FD 0090"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "360A644D 0090"
+    },
+    {
+      "name": "(Player 1) Play As Spider Man",
+      "code": "3609C853 0000\n3609C853 0001"
+    },
+    {
+      "name": "(Player 1) Play As Captain America",
+      "code": "3609C853 0002\n3609C853 0003"
+    },
+    {
+      "name": "(Player 1) Play As Hulk",
+      "code": "3609C853 0004\n3609C853 0005"
+    },
+    {
+      "name": "(Player 1) Play As Iron Man",
+      "code": "3609C853 0006\n3609C853 0007"
+    },
+    {
+      "name": "(Player 1) Play As Wolverine",
+      "code": "3609C853 0008\n3609C853 0009"
+    },
+    {
+      "name": "(Player 1) Play As Psylocke",
+      "code": "3609C853 000A\n3609C853 000B"
+    },
+    {
+      "name": "(Player 1) Play As BlackHeart",
+      "code": "3609C853 000C\n3609C853 000D"
+    },
+    {
+      "name": "(Player 1) Play As Shuma Gorath",
+      "code": "3609C853 000E\n3609C853 000F"
+    },
+    {
+      "name": "(Player 1) Play As Juggernaut",
+      "code": "3609C853 0010\n3609C853 0011"
+    },
+    {
+      "name": "(Player 1) Play As Magneto",
+      "code": "3609C853 0012\n3609C853 0013"
+    },
+    {
+      "name": "(Player 1) Play As Dr Doom",
+      "code": "3609C853 0014"
+    },
+    {
+      "name": "(Player 1) Play As Dr. Doom",
+      "code": "3609C853 0015"
+    },
+    {
+      "name": "(Player 1) Play As Thanos",
+      "code": "3609C853 0016\n3609C853 0017"
+    },
+    {
+      "name": "(Player 1) Play As Anita",
+      "code": "3609C853 0018"
+    },
+    {
+      "name": "(Player 2) Play As Spider Man",
+      "code": "3609C6F3 0000\n3609C6F3 0001"
+    },
+    {
+      "name": "(Player 2) Play As Captain America",
+      "code": "3609C6F3 0002\n3609C6F3 0003"
+    },
+    {
+      "name": "(Player 2) Play As Hulk",
+      "code": "3609C6F3 0004\n3609C6F3 0005"
+    },
+    {
+      "name": "(Player 2) Play As Iron Man",
+      "code": "3609C6F3 0006\n3609C6F3 0007"
+    },
+    {
+      "name": "(Player 2) Play As Wolverine",
+      "code": "3609C6F3 0008\n3609C6F3 0009"
+    },
+    {
+      "name": "(Player 2) Play As Psylocke",
+      "code": "3609C6F3 000A\n3609C6F3 000B"
+    },
+    {
+      "name": "(Player 2) Play As BlackHeart",
+      "code": "3609C6F3 000C\n3609C6F3 000D"
+    },
+    {
+      "name": "(Player 2) Play As Shuma Gorath",
+      "code": "3609C6F3 000E\n3609C6F3 000F"
+    },
+    {
+      "name": "(Player 2) Play As Juggernaut",
+      "code": "3609C6F3 0010\n3609C6F3 0011"
+    },
+    {
+      "name": "(Player 2) Play As Magneto",
+      "code": "3609C6F3 0012\n3609C6F3 0013"
+    },
+    {
+      "name": "(Player 2) Play As Dr Doom",
+      "code": "3609C6F3 0014"
+    },
+    {
+      "name": "(Player 2) Play As Dr. Doom",
+      "code": "3609C6F3 0015"
+    },
+    {
+      "name": "(Player 2) Play As Thanos",
+      "code": "3609C6F3 0016\n3609C6F3 0017"
+    },
+    {
+      "name": "(Player 2) Play As Anita",
+      "code": "3609C6F3 0018"
+    },
+    {
+      "name": "Player 1 is Captain America",
+      "code": "3609C853 0002"
+    },
+    {
+      "name": "Player 1 is Captain America Alternative Colour",
+      "code": "3609C853 0003"
+    },
+    {
+      "name": "Player 1 is Hulk",
+      "code": "3609C853 0004"
+    },
+    {
+      "name": "Player 1 is Hulk Alternative Colour",
+      "code": "3609C853 0005"
+    },
+    {
+      "name": "Player 1 is Iron Man",
+      "code": "3609C853 0006"
+    },
+    {
+      "name": "Player 1 is Iron Man Alternative Colour",
+      "code": "3609C853 0007"
+    },
+    {
+      "name": "Player 1 is Wolverine",
+      "code": "3609C853 0008"
+    },
+    {
+      "name": "Player 1 is Wolverine Alternative Colour",
+      "code": "3609C853 0009"
+    },
+    {
+      "name": "Player 1 is Psylocke",
+      "code": "3609C853 000A"
+    },
+    {
+      "name": "Player 1 is Psylocke Alternative Colour",
+      "code": "3609C853 000B"
+    },
+    {
+      "name": "Player 1 is BlackHeart",
+      "code": "3609C853 000C"
+    },
+    {
+      "name": "Player 1 is BlackHeart Alternative Colour",
+      "code": "3609C853 000D"
+    },
+    {
+      "name": "Player 1 is Shuma Gorath",
+      "code": "3609C853 000E"
+    },
+    {
+      "name": "Player 1 is Shuma Gorath Alternative Colour",
+      "code": "3609C853 000F"
+    },
+    {
+      "name": "Player 1 is Juggernaut",
+      "code": "3609C853 0010"
+    },
+    {
+      "name": "Player 1 is Juggernaut Alternative Colour",
+      "code": "3609C853 0011"
+    },
+    {
+      "name": "Player 1 is Magneto",
+      "code": "3609C853 0012"
+    },
+    {
+      "name": "Player 1 is Magneto Alternative Colour",
+      "code": "3609C853 0013"
+    },
+    {
+      "name": "Player 1 is Thanos",
+      "code": "3609C853 0016"
+    },
+    {
+      "name": "Player 1 is Thanos Alternative Colour",
+      "code": "3609C853 0017"
+    },
+    {
+      "name": "Player 2 is Captain America",
+      "code": "3609C6F3 0002"
+    },
+    {
+      "name": "Player 2 is Captain America Alternative Colour",
+      "code": "3609C6F3 0003"
+    },
+    {
+      "name": "Player 2 is Hulk",
+      "code": "3609C6F3 0004"
+    },
+    {
+      "name": "Player 2 is Hulk Alternative Colour",
+      "code": "3609C6F3 0005"
+    },
+    {
+      "name": "Player 2 is Iron Man",
+      "code": "3609C6F3 0006"
+    },
+    {
+      "name": "Player 2 is Iron Man Alternative Colour",
+      "code": "3609C6F3 0007"
+    },
+    {
+      "name": "Player 2 is Wolverine",
+      "code": "3609C6F3 0008"
+    },
+    {
+      "name": "Player 2 is Wolverine Alternative Colour",
+      "code": "3609C6F3 0009"
+    },
+    {
+      "name": "Player 2 is Psylocke",
+      "code": "3609C6F3 000A"
+    },
+    {
+      "name": "Player 2 is Psylocke Alternative Colour",
+      "code": "3609C6F3 000B"
+    },
+    {
+      "name": "Player 2 is BlackHeart",
+      "code": "3609C6F3 000C"
+    },
+    {
+      "name": "Player 2 is BlackHeart Alternative Colour",
+      "code": "3609C6F3 000D"
+    },
+    {
+      "name": "Player 2 is Shuma Gorath",
+      "code": "3609C6F3 000E"
+    },
+    {
+      "name": "Player 2 is Shuma Gorath Alternative Colour",
+      "code": "3609C6F3 000F"
+    },
+    {
+      "name": "Player 2 is Juggernaut",
+      "code": "3609C6F3 0010"
+    },
+    {
+      "name": "Player 2 is Juggernaut Alternative Colour",
+      "code": "3609C6F3 0011"
+    },
+    {
+      "name": "Player 2 is Magneto",
+      "code": "3609C6F3 0012"
+    },
+    {
+      "name": "Player 2 is Magneto Alternative Colour",
+      "code": "3609C6F3 0013"
+    },
+    {
+      "name": "Player 2 is Thanos",
+      "code": "3609C6F3 0016"
+    },
+    {
+      "name": "Player 2 is Thanos Alternative Colour",
+      "code": "3609C6F3 0017"
+    }
+  ]
+}

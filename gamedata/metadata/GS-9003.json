@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9003",
+  "title": "Gale Racer",
+  "native_title": "ゲイル・レーサー",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English",
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 090036"
+  ],
+  "release_date": "1994-12-02",
+  "developer": "System Sacom",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Gale Racer is a 1st-person racing game where the scenarios are 2D and all of them correspond to 20 zones across the United States. The only available camera is the one inside the car, from where you can see the wheel and indicators (again, in 2D). Also, the game features weather effects, like rain, fog and night, for which you should use either the headlights or the windscreen wiper to succeed in the race.\n\nThe Saturn version is similar to the Arcade version except that your rivals are fully polygonal cars. It also adds Full Motion Video sequences, as well as a CD soundtrack."
+}

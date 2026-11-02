@@ -1,0 +1,18 @@
+{
+  "serial": "T-14306G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Life",
+      "code": "3606D230 000F"
+    },
+    {
+      "name": "Unlimited Tokens",
+      "code": "3606D190 0063"
+    },
+    {
+      "name": "Unlimited Power Keys",
+      "code": "1606D042 0009"
+    }
+  ]
+}

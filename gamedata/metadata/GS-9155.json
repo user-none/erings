@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9155",
+  "title": "Söldnerschild",
+  "native_title": "ゼルドナーシルト",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091552"
+  ],
+  "release_date": "1997-09-25",
+  "developer": "Koei",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Role-Playing",
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "In this strategy role-playing game, you and your mercenary group decide which of the six warring factions to support on your journey to unify the land. Battles take place on a traditional turn-based movement grid, transitioning to real-time skirmishes between armies or between individual commanders."
+}

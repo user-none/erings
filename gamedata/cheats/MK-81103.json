@@ -1,0 +1,98 @@
+{
+  "serial": "MK-81103",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "No Shot Clock",
+      "code": "16084A5A 02B0"
+    },
+    {
+      "name": "(Away Team) Unlimited Time Outs",
+      "code": "160EE05C 0005"
+    },
+    {
+      "name": "(Home Team) Unlimited Time Outs",
+      "code": "160EE052 0005"
+    },
+    {
+      "name": "(Home Team) 1 Score",
+      "code": "160F3840 0001"
+    },
+    {
+      "name": "(Home Team) 2 Score",
+      "code": "160F3840 0002"
+    },
+    {
+      "name": "(Home Team) 3 Score",
+      "code": "160F3840 0003"
+    },
+    {
+      "name": "(Home Team) 4 Score",
+      "code": "160F3840 0004"
+    },
+    {
+      "name": "(Home Team) 5 Score",
+      "code": "160F3840 0005"
+    },
+    {
+      "name": "(Home Team) 6 Score",
+      "code": "160F3840 0006"
+    },
+    {
+      "name": "(Home Team) 7 Score",
+      "code": "160F3840 0007"
+    },
+    {
+      "name": "(Home Team) 8 Score",
+      "code": "160F3840 0008"
+    },
+    {
+      "name": "(Home Team) 9 Score",
+      "code": "160F3840 0009"
+    },
+    {
+      "name": "(Home Team) 10 Score",
+      "code": "160F3840 000A"
+    },
+    {
+      "name": "(Away Team) 1 Score",
+      "code": "160849FA 0001"
+    },
+    {
+      "name": "(Away Team) 2 Score",
+      "code": "160849FA 0002"
+    },
+    {
+      "name": "(Away Team) 3 Score",
+      "code": "160849FA 0003"
+    },
+    {
+      "name": "(Away Team) 4 Score",
+      "code": "160849FA 0004"
+    },
+    {
+      "name": "(Away Team) 5 Score",
+      "code": "160849FA 0005"
+    },
+    {
+      "name": "(Away Team) 6 Score",
+      "code": "160849FA 0006"
+    },
+    {
+      "name": "(Away Team) 7 Score",
+      "code": "160849FA 0007"
+    },
+    {
+      "name": "(Away Team) 8 Score",
+      "code": "160849FA 0008"
+    },
+    {
+      "name": "(Away Team) 9 Score",
+      "code": "160849FA 0009"
+    },
+    {
+      "name": "(Away Team) 10 Score",
+      "code": "160849FA 000A"
+    }
+  ]
+}

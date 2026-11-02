@@ -1,0 +1,70 @@
+{
+  "serial": "T-2509G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "16055752 FFFF"
+    },
+    {
+      "name": "Other Characters Level Up",
+      "code": "3604F8EF 00FF\n3604F9D3 00FF\n3604FAB7 00FF\n3604FB9B 00FF\n3604FC7F 00FF\n3604FD63 00FF\n3604FE47 00FF\n3604FF2B 00FF\n3605000F 00FF"
+    },
+    {
+      "name": "Level Up",
+      "code": "3604F727 00FF"
+    },
+    {
+      "name": "Leading Power",
+      "code": "3604F732 0063"
+    },
+    {
+      "name": "Max Attack",
+      "code": "3604F7E5 0063"
+    },
+    {
+      "name": "Max Defense",
+      "code": "3604F7E8 0063"
+    },
+    {
+      "name": "Status Max",
+      "code": "1604F750 8888\n1604F752 8888\n1604F754 8888\n1604F756 8888"
+    },
+    {
+      "name": "Anti-Monster Ability",
+      "code": "3604F729 0063\n3604F72A 0063\n3604F72B 0063\n3604F72C 0063\n3604F72D 0063\n3604F72E 0063"
+    },
+    {
+      "name": "All Special Attack",
+      "code": "1604F73C FFFF\n1604F73E FFFF\n1604F740 FFFF\n1604F742 FFFF\n1604F744 FFFF\n1604F746 FFFF\n1604F748 FFFF\n1604F74A FFFF"
+    },
+    {
+      "name": "Level Up",
+      "code": "3604F80B 00FF"
+    },
+    {
+      "name": "Leading Power",
+      "code": "3604F816 0063"
+    },
+    {
+      "name": "Max Attack",
+      "code": "3604F8C9 0063"
+    },
+    {
+      "name": "Max Defense",
+      "code": "3604F8CC 0063"
+    },
+    {
+      "name": "Status Max",
+      "code": "1604F834 8888\n1604F836 8888\n1604F838 8888\n1604F83A 8888"
+    },
+    {
+      "name": "Anti-Monster Ability",
+      "code": "3604F80D 0063\n3604F80E 0063\n3604F80F 0063\n3604F810 0063\n3604F811 0063\n3604F812 0063"
+    },
+    {
+      "name": "All Special Attack",
+      "code": "1604F820 FFFF\n1604F822 FFFF\n1604F824 FFFF\n1604F826 FFFF\n1604F828 FFFF\n1604F82A FFFF\n1604F82C FFFF\n1604F82E FFFF"
+    }
+  ]
+}

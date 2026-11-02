@@ -1,0 +1,14 @@
+{
+  "serial": "T-17701H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives",
+      "code": "160A6800 0063"
+    },
+    {
+      "name": "Unlimited Health",
+      "code": "160A6870 0200"
+    }
+  ]
+}

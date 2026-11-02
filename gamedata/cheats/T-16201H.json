@@ -1,0 +1,22 @@
+{
+  "serial": "T-16201H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "16050D0C 0063"
+    },
+    {
+      "name": "Infinite Bullets",
+      "code": "16050D08 0063"
+    },
+    {
+      "name": "Infinite Ap Bullets",
+      "code": "16050D10 0063"
+    },
+    {
+      "name": "Infinite Datura Bullets",
+      "code": "16050D0E 0063"
+    }
+  ]
+}

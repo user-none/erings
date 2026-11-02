@@ -1,0 +1,14 @@
+{
+  "serial": "T-16603G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "16089828 0090"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "1608137A 2A30"
+    }
+  ]
+}

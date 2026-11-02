@@ -1,0 +1,27 @@
+{
+  "serial": "MK-81124",
+  "title": "NBA Action 98",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81124 7",
+    "4 974365 811242"
+  ],
+  "release_date": "1997-10-28",
+  "developer": "Visual Concepts Entertainment",
+  "publisher": "Sega of America",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 10,
+  "cooperative": true,
+  "esrb": "E - Everyone",
+  "overview": "Suit up for another season of 100% pure NBA action. Real pro teams, pro players, pro plays, pro stats, pro everything! Motion capture technology, full commentary and up to 10 players at once makes this the most complete basketball game yet!"
+}

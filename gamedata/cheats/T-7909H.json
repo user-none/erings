@@ -1,0 +1,10 @@
+{
+  "serial": "T-7909H",
+  "master_code": "F6000924 C305",
+  "cheats": [
+    {
+      "name": "Infinite Lives",
+      "code": "10288EE6 0008"
+    }
+  ]
+}

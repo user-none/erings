@@ -1,0 +1,62 @@
+{
+  "serial": "T-18007H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Hi-Explosive Cannon",
+      "code": "1606059A 0100"
+    },
+    {
+      "name": "Infinite Hi-Explosive Shells",
+      "code": "16060598 270F"
+    },
+    {
+      "name": "Mine Bay",
+      "code": "160605A6 0100"
+    },
+    {
+      "name": "Infinite Mines",
+      "code": "160605A4 270F"
+    },
+    {
+      "name": "Mortar",
+      "code": "160605A0 0100"
+    },
+    {
+      "name": "Infinite Mortar Shells",
+      "code": "1606059E 270F"
+    },
+    {
+      "name": "Torus Bombs",
+      "code": "160605AC 0100"
+    },
+    {
+      "name": "Infinite Torus Bombs",
+      "code": "160605AA 270F"
+    },
+    {
+      "name": "Flame Thrower",
+      "code": "160605B2 0100"
+    },
+    {
+      "name": "Infinite Flamer Fuel",
+      "code": "160605B0 270F"
+    },
+    {
+      "name": "Guided Missile",
+      "code": "160605B8 0100"
+    },
+    {
+      "name": "Infinite Guided Missiles",
+      "code": "160605B6 270F"
+    },
+    {
+      "name": "Infinite Armor",
+      "code": "160663EA 1770"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "1605ACD8 0007"
+    }
+  ]
+}

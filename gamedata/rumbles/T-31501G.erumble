@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Vatlva (Japan)
+gameid: T-31501G
+system: saturn
+---
+
+watch p1_hp  word 0x060789C2
+watch p1_max word 0x060789C4
+watch p2_hp  word 0x06078B1A
+watch p2_max word 0x06078B1C
+
+watch p1_state word 0x06078938
+watch p2_state word 0x06078A90
+
+watch p1_ctl byte 0x06078944
+watch p2_ctl byte 0x06078A9C
+
+watch p1_fire byte 0x060789BB mask 0x08
+watch p2_fire byte 0x06078B13 mask 0x08
+
+# Scene: 1 main menu, 2 fight, 3 character select.
+watch scene byte 0x06088314
+
+watch started byte 0x06088325
+
+def in_match scene == 2 and started == 2
+def p1_ishuman in_match and p1_ctl == 0
+def p2_ishuman in_match and p2_ctl == 0
+def p1_human p1_ishuman and p1_max == 0x8000
+def p2_human p2_ishuman and p2_max == 0x8000
+
+on p1_state changed to 11 while p1_ishuman:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1
+on p2_state changed to 11 while p2_ishuman:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1 player 2
+
+on p1_hp decreased while p1_human:
+    pulse 0.8/0.6 400ms cooldown 100ms scale 0x100..0x800 -> 0.6..1.0
+on p2_hp decreased while p2_human:
+    pulse 0.8/0.6 400ms cooldown 100ms scale 0x100..0x800 -> 0.6..1.0 player 2
+
+# Burning. Held for as long as the fighter is alight.
+on p1_fire != 0 while p1_human: hold 0/0.60
+on p2_fire != 0 while p2_human: hold 0/0.60 player 2

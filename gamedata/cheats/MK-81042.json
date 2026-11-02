@@ -1,0 +1,198 @@
+{
+  "serial": "MK-81042",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "1603A186 0000"
+    },
+    {
+      "name": "(Player 1) Never Wins",
+      "code": "1603A1BE 0000"
+    },
+    {
+      "name": "(Player 2/CPU) Never Wins",
+      "code": "1603A1B6 0000"
+    },
+    {
+      "name": "(Player 1) Need 1 Win to Win",
+      "code": "D603A1BE 0000\n1603A1BE 0001"
+    },
+    {
+      "name": "(Player 2/CPU) Need 1 Win to Win",
+      "code": "D603A1B6 0000\n1603A1B6 0001"
+    },
+    {
+      "name": "Invulnerability",
+      "code": "16032CB0 0009"
+    },
+    {
+      "name": "00:00:00 Total Time",
+      "code": "1603A1D2 0000"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "16032CF0 03E8\n16032CF8 03E8"
+    },
+    {
+      "name": "Unlimited Ammo (Center Weapon)",
+      "code": "16032D06 0064\n36032CFF 0001"
+    },
+    {
+      "name": "Unlimited Ammo (Left Weapon)",
+      "code": "16032D02 0064\n36032CFD 0001"
+    },
+    {
+      "name": "Unlimited Ammo (Right Weapon)",
+      "code": "16032D04 0064\n36032CFE 0001"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160329F4 0009"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "1603367C 0009"
+    },
+    {
+      "name": "(Player 1) Play As VR Temjin",
+      "code": "1603EB64 0000"
+    },
+    {
+      "name": "(Player 1) Play As VR Dorkas",
+      "code": "1603EB64 0001"
+    },
+    {
+      "name": "(Player 1) Play As VR Fei-Yen",
+      "code": "1603EB64 0002"
+    },
+    {
+      "name": "(Player 1) Play As VR Belgdor",
+      "code": "1603EB64 0003"
+    },
+    {
+      "name": "(Player 1) Play As VR Viper II",
+      "code": "1603EB64 0004"
+    },
+    {
+      "name": "(Player 1) Play As VR Bal-Bal-Bow",
+      "code": "1603EB64 0005"
+    },
+    {
+      "name": "(Player 1) Play As VR Apharmd",
+      "code": "1603EB64 0006"
+    },
+    {
+      "name": "(Player 1) Play As VR Raiden",
+      "code": "1603EB64 0007"
+    },
+    {
+      "name": "(Player 1) Play As VR Jaguarandi",
+      "code": "1603EB64 0008"
+    },
+    {
+      "name": "(Player 2) Play As VR Temjin",
+      "code": "1603EBC4 0000"
+    },
+    {
+      "name": "(Player 2) Play As VR Dorkas",
+      "code": "1603EBC4 0001"
+    },
+    {
+      "name": "(Player 2) Play As VR Fei-Yen",
+      "code": "1603EBC4 0002"
+    },
+    {
+      "name": "(Player 2) Play As VR Belgdor",
+      "code": "1603EBC4 0003"
+    },
+    {
+      "name": "(Player 2) Play As VR Viper II",
+      "code": "1603EBC4 0004"
+    },
+    {
+      "name": "(Player 2) Play As VR Bal-Bal-Bow",
+      "code": "1603EBC4 0005"
+    },
+    {
+      "name": "(Player 2) Play As VR Apharmd",
+      "code": "1603EBC4 0006"
+    },
+    {
+      "name": "(Player 2) Play As VR Raiden",
+      "code": "1603EBC4 0007"
+    },
+    {
+      "name": "(Player 2) Play As VR Jaguarandi",
+      "code": "1603EBC4 0008"
+    },
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "16032A34 03E8\n16032A3C 03E8"
+    },
+    {
+      "name": "(Player 1) Unlimited Ammo - Center Weapon",
+      "code": "16032A4A 0064\n36032A43 0001"
+    },
+    {
+      "name": "(Player 1) Unlimited Ammo - Left Weapon",
+      "code": "16032A46 0064\n36032A41 0001"
+    },
+    {
+      "name": "(Player 1) Unlimited Ammo - Right Weapon",
+      "code": "16032A48 0064\n36032A42 0001"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160336BC 03E8\n160336C4 03E8"
+    },
+    {
+      "name": "(Player 2) Unlimited Ammo - Center Weapon",
+      "code": "160336D2 0064\n360336CB 0001"
+    },
+    {
+      "name": "(Player 2) Unlimited Ammo - Left Weapon",
+      "code": "160336CE 0064\n360336C9 0001"
+    },
+    {
+      "name": "(Player 2) Unlimited Ammo - Right Weapon",
+      "code": "160336D0 0064\n360336CA 0001"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Temjin",
+      "code": "160433CE 0000"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Dorkas",
+      "code": "160433CE 0001"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Fei-Yen",
+      "code": "160433CE 0002"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Belgdor",
+      "code": "160433CE 0003"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Viper II",
+      "code": "160433CE 0004"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Bal-Bal-Bow",
+      "code": "160433CE 0005"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Apharmd",
+      "code": "160433CE 0006"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Raiden",
+      "code": "160433CE 0007"
+    },
+    {
+      "name": "Arcade Mode - Play as VR Jaguarandi",
+      "code": "160433CE 0008"
+    }
+  ]
+}

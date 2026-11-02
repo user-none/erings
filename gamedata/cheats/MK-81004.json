@@ -1,0 +1,57 @@
+{
+  "serial": "MK-81004",
+  "cheats": [
+    {
+      "name": "Each Gem Worth 20 Gems",
+      "code": "16025142 A004\n16025150 7B14"
+    },
+    {
+      "name": "If You Fall Into The Void You Don't Die",
+      "code": "1601855A A013"
+    },
+    {
+      "name": "Jump Higher",
+      "code": "160271D0 1080"
+    },
+    {
+      "name": "Jump Much Higher",
+      "code": "160271D0 2080"
+    },
+    {
+      "name": "Level Skip, Moonjump And Move Anywhere (ASM)",
+      "code": "160183F8 0009\n16027A88 A004"
+    },
+    {
+      "name": "Level Skip, Moonjump And Move Anywhere (RAM)",
+      "code": "16053F4A 0003"
+    },
+    {
+      "name": "STUNT Mode Always Active",
+      "code": "1601860A 0009"
+    },
+    {
+      "name": "Untouchable (ASM)",
+      "code": "16025228 A01C"
+    },
+    {
+      "name": "Untouchable (RAM)",
+      "code": "36054A3A 005A"
+    },
+    {
+      "name": "When You Die, You Don't Lose Lives",
+      "code": "16025584 0009"
+    },
+    {
+      "name": "You Can Always Spit",
+      "code": "1602741A 0009\n1602743A 0009"
+    },
+    {
+      "name": "You Don't Get Crushed By The Platforms",
+      "code": "1602530E A004"
+    },
+    {
+      "name": "ZAP Power Always Active",
+      "code": "160273E6 0009\n160272DE 0009"
+    }
+  ]
+}

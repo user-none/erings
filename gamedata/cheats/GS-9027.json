@@ -1,0 +1,10 @@
+{
+  "serial": "GS-9027",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "1607C298 3B9A\n1607C29A CA00"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "serial": "MK-81018",
+  "title": "Panzer Dragoon (Demo)",
+  "native_title": "",
+  "category": "Demos",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [],
+  "release_date": "1995-03-10",
+  "developer": "Team Andromeda",
+  "publisher": "Sega",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Thousands of years have passed since the Ancient Age; humanity struggles for survival in an unforgiving world. The player takes control of Kyle Fluge, a hunter caught up in a struggle between two dragons, and given an enormous task. Armed with an ancient gun and riding atop the Blue Dragon, you must battle against mutated wildlife, the covetous empire, and ancient sentinels, all for the sake of fulfilling the task entrusted to you by the Blue Dragon's prior rider - do not let the Black Dragon reach the Tower."
+}

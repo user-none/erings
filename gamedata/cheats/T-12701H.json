@@ -1,0 +1,14 @@
+{
+  "serial": "T-12701H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Cash",
+      "code": "1603BCB2 FFFF"
+    },
+    {
+      "name": "Build Units Anywhere",
+      "code": "D6006034 0001\n160DE6E0 0001"
+    }
+  ]
+}

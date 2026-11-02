@@ -1,0 +1,262 @@
+{
+  "serial": "T-9701H",
+  "master_code": "F6017718 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "160DB57A 0009\n160FF978 0009"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "160D19FC 00A6"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "160D20D8 00A6"
+    },
+    {
+      "name": "Infinite Run P1",
+      "code": "160FE3B8 0030"
+    },
+    {
+      "name": "P1 Can't Run",
+      "code": "160FE3B8 0000"
+    },
+    {
+      "name": "Infinite Run P2",
+      "code": "160D1A58 0030"
+    },
+    {
+      "name": "P2 Can't Run",
+      "code": "160D1A58 0000"
+    },
+    {
+      "name": "Classic Sub-Zero Kombat Kode Enabled",
+      "code": "160FE398 0001"
+    },
+    {
+      "name": "Ermac Kombat Kode Enabled",
+      "code": "160D3364 0001"
+    },
+    {
+      "name": "Mileena Kombat Kode Enabled",
+      "code": "160D3304 0001"
+    },
+    {
+      "name": "'?' Is Activated (Press 'Up' at Kombat)",
+      "code": "160D35EC 0002"
+    },
+    {
+      "name": "Free Play Is ON",
+      "code": "160FE38C 0001"
+    },
+    {
+      "name": "Fatality Time Is OFF",
+      "code": "160D33AC 0001"
+    },
+    {
+      "name": "1 Round Match Is ON",
+      "code": "160D0FC8 0001"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "160D20D8 0000"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "160D19FC 0000"
+    },
+    {
+      "name": "No Throwing Kombat Kode Enabled",
+      "code": "160D32A8 0001"
+    },
+    {
+      "name": "No Throwing Kombat Kode Disabled",
+      "code": "160D32A4 0000"
+    },
+    {
+      "name": "Infinite Run Kombat Kode Enabled",
+      "code": "160D330C 0001"
+    },
+    {
+      "name": "Infinite Run Kombat Kode Disabled",
+      "code": "160D330C 0000"
+    },
+    {
+      "name": "Play As Kano",
+      "code": "160DA8F8 0000"
+    },
+    {
+      "name": "Play As Sonya",
+      "code": "160DA8F8 0001"
+    },
+    {
+      "name": "Play As Jax",
+      "code": "160DA8F8 0002"
+    },
+    {
+      "name": "Play As Nightwolf",
+      "code": "160DA8F8 0003"
+    },
+    {
+      "name": "Play As Sub-Zero",
+      "code": "160DA8F8 0004"
+    },
+    {
+      "name": "Play As Stryker",
+      "code": "160DA8F8 0005"
+    },
+    {
+      "name": "Play As Sindel",
+      "code": "160DA8F8 0006"
+    },
+    {
+      "name": "Play As Sektor",
+      "code": "160DA8F8 0007"
+    },
+    {
+      "name": "Play As Cyrax",
+      "code": "160DA8F8 0008"
+    },
+    {
+      "name": "Play As Kung Lao",
+      "code": "160DA8F8 0009"
+    },
+    {
+      "name": "Play As Kabal",
+      "code": "160DA8F8 000A"
+    },
+    {
+      "name": "Play As Sheeva",
+      "code": "160DA8F8 000B"
+    },
+    {
+      "name": "Play As Shang Tsung",
+      "code": "160DA8F8 000C"
+    },
+    {
+      "name": "Play As Liu Kang",
+      "code": "160DA8F8 000D"
+    },
+    {
+      "name": "Play As Smoke",
+      "code": "160DA8F8 000E"
+    },
+    {
+      "name": "Play As Kitana",
+      "code": "160DA8F8 000F"
+    },
+    {
+      "name": "Play As Jade",
+      "code": "160DA8F8 0010"
+    },
+    {
+      "name": "Play As Milenna",
+      "code": "160DA8F8 0011"
+    },
+    {
+      "name": "Play As Scorpion",
+      "code": "160DA8F8 0012"
+    },
+    {
+      "name": "Play As Reptile",
+      "code": "160DA8F8 0013"
+    },
+    {
+      "name": "Play As Ermac",
+      "code": "160DA8F8 0014"
+    },
+    {
+      "name": "Play As Classic Sub-Zero",
+      "code": "160DA8F8 0015"
+    },
+    {
+      "name": "Play As Kano",
+      "code": "160DAF1C 0000"
+    },
+    {
+      "name": "Play As Sonya",
+      "code": "160DAF1C 0001"
+    },
+    {
+      "name": "Play As Jax",
+      "code": "160DAF1C 0002"
+    },
+    {
+      "name": "Play As Nightwolf",
+      "code": "160DAF1C 0003"
+    },
+    {
+      "name": "Play As Sub-Zero",
+      "code": "160DAF1C 0004"
+    },
+    {
+      "name": "Play As Stryker",
+      "code": "160DAF1C 0005"
+    },
+    {
+      "name": "Play As Sindel",
+      "code": "160DAF1C 0006"
+    },
+    {
+      "name": "Play As Sektor",
+      "code": "160DAF1C 0007"
+    },
+    {
+      "name": "Play As Cyrax",
+      "code": "160DAF1C 0008"
+    },
+    {
+      "name": "Play As Kung Lao",
+      "code": "160DAF1C 0009"
+    },
+    {
+      "name": "Play As Kabal",
+      "code": "160DAF1C 000A"
+    },
+    {
+      "name": "Play As Sheeva",
+      "code": "160DAF1C 000B"
+    },
+    {
+      "name": "Play As Shang Tsung",
+      "code": "160DAF1C 000C"
+    },
+    {
+      "name": "Play As Liu Kang",
+      "code": "160DAF1C 000D"
+    },
+    {
+      "name": "Play As Smoke",
+      "code": "160DAF1C 000E"
+    },
+    {
+      "name": "Play As Kitana",
+      "code": "160DAF1C 000F"
+    },
+    {
+      "name": "Play As Jade",
+      "code": "160DAF1C 0010"
+    },
+    {
+      "name": "Play As Milenna",
+      "code": "160DAF1C 0011"
+    },
+    {
+      "name": "Play As Scorpion",
+      "code": "160DAF1C 0012"
+    },
+    {
+      "name": "Play As Reptile",
+      "code": "160DAF1C 0013"
+    },
+    {
+      "name": "Play As Ermac",
+      "code": "160DAF1C 0014"
+    },
+    {
+      "name": "Play As Classic Sub-Zero",
+      "code": "160DAF1C 0015"
+    }
+  ]
+}

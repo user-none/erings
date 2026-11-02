@@ -1,0 +1,18 @@
+{
+  "serial": "MK-81018",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "1607CAF8 0100"
+    },
+    {
+      "name": "Play Level 1",
+      "code": "36045A55 0031\n36045A61 0031\n36045A6D 0031\n36045A79 0031"
+    },
+    {
+      "name": "Play Level 3 (???)",
+      "code": "36045A55 0033\n36045A61 0033\n36045A6D 0033\n36045A79 0033"
+    }
+  ]
+}

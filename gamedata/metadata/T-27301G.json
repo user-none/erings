@@ -1,0 +1,25 @@
+{
+  "serial": "T-27301G",
+  "title": "Virtual Casino",
+  "native_title": "バーチャル・カジノ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988699 562909"
+  ],
+  "release_date": "1996-03-15",
+  "developer": "Digital Factory",
+  "publisher": "Natsume",
+  "genres": [
+    "Casino"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Virtual Casino lets the player experience the real sights and sounds of a casino in full 3-D, complete with authentic sounds of cards being flipped, coins dropping into the slot machine trays and the ever beautiful casino girls that will try to take the players money each and every time.\n\nIt features three locations to choose from, Las Vegas, Atlantic City and Monte Carlo with a variety of games to play such as seven-card stud, baccarat, blackjack, roulette and of course the ever popular (or hated) one-armed bandit (a.k.a. slot machines)."
+}

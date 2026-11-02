@@ -1,0 +1,25 @@
+{
+  "serial": "T-25102G",
+  "title": "Taklamakan: Tonkou Denki",
+  "native_title": "タクラマカン ～敦煌傅奇～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988649 633284"
+  ],
+  "release_date": "1996-12-27",
+  "developer": "AlfaSystem",
+  "publisher": "Patra",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Long ago, a cruel demon tried to destroy a sacred spring in the caves. He was subdued for a while, but reemerged stronger than ever before. For centuries, travelers who came from far and wide in search of the healing waters of the spring had to contend with this dark force. Your task is to enter the 12 caves and attempt to solve the countless ancient puzzles that stand before you."
+}

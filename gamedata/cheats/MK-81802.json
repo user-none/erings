@@ -1,0 +1,54 @@
+{
+  "serial": "MK-81802",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Infinite Lives P1",
+      "code": "160B104A 0003"
+    },
+    {
+      "name": "Infinite Lives P2",
+      "code": "160B114A 0003"
+    },
+    {
+      "name": "Infinite Bullets P1",
+      "code": "360B109D 0006"
+    },
+    {
+      "name": "Infinite Credits",
+      "code": "160B6A42 0005"
+    },
+    {
+      "name": "Always Red Blood",
+      "code": "160BDA78 0000"
+    },
+    {
+      "name": "Always Blue Blood",
+      "code": "160BDA78 0200"
+    },
+    {
+      "name": "Always Purple Blood",
+      "code": "160BDA78 0300"
+    },
+    {
+      "name": "Debug Menu",
+      "code": "160A813A 0008"
+    },
+    {
+      "name": "Max Score P1",
+      "code": "160B1044 E0FF\n160B1046 05F5"
+    },
+    {
+      "name": "Max Score P2",
+      "code": "160B1144 E0FF\n160B1146 05F5"
+    },
+    {
+      "name": "Always Green Blood",
+      "code": "160BDA78 0100"
+    },
+    {
+      "name": "(Player 2) Unlimited Bullets",
+      "code": "360B119D 0006"
+    }
+  ]
+}

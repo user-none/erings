@@ -1,0 +1,29 @@
+{
+  "serial": "T-5021H",
+  "title": "Battle Stations",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English",
+    "French",
+    "German"
+  ],
+  "barcodes": [
+    "0 14633 07640 0",
+    "5 030935 012583"
+  ],
+  "release_date": "1997-05-21",
+  "developer": "Realtime Associates",
+  "publisher": "Electronic Arts",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Battlestations is a title where you take control of your own fleet, ranging from patrol boats and mine layers to battleships and aircraft carriers. You'll get to pick any of the ten missions right away, all of which have a different challenge to encounter, like protecting your base from troop transports, and a mission where you'll have to prevent poachers from killing whales. You'll also get to pick from five commanders to fight against, all of which have stereotypical strengths and weaknesses. Afterwards, you'll go right to the mission, where you'll be able to navigate your ship silhouettes on a 2D, radar-esque map."
+}

@@ -1,0 +1,58 @@
+{
+  "serial": "T-13309G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Grenades",
+      "code": "16056C04 0900"
+    },
+    {
+      "name": "(Stage 1) Invulnerability",
+      "code": "160A9A9E 0BB8"
+    },
+    {
+      "name": "(Stage 1) Full Burnian",
+      "code": "160A9AEE 0000"
+    },
+    {
+      "name": "(Stage 2) Invulnerability",
+      "code": "160A10AE 0D48"
+    },
+    {
+      "name": "(Stage 2) Full Burnian",
+      "code": "160A10FE 0000"
+    },
+    {
+      "name": "(Stage 3) Invulnerability",
+      "code": "160A44AE 0D48"
+    },
+    {
+      "name": "(Stage 3) Full Burnian",
+      "code": "160A44FE 0000"
+    },
+    {
+      "name": "(Stage 3) Nonstop Exam",
+      "code": "160BA182 4650"
+    },
+    {
+      "name": "(Stage 4) Invulnerability",
+      "code": "160A545E 0D48"
+    },
+    {
+      "name": "(Stage 4) Full Burnian",
+      "code": "160A54AE 0000"
+    },
+    {
+      "name": "(Stage 5) Invulnerability",
+      "code": "1608DE7E 0D48"
+    },
+    {
+      "name": "(Stage 5) Full Burnian",
+      "code": "1608DECE 0000"
+    },
+    {
+      "name": "(Stage 5) Nonstop Exam",
+      "code": "160A4F52 4650"
+    }
+  ]
+}

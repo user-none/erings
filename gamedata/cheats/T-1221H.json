@@ -1,0 +1,330 @@
+{
+  "serial": "T-1221H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Weapons In Crate At Start",
+      "code": "D02F867C 00A0\n102F877A 030F\n102F877C 040F\n102F877E 060F\n102F8780 070F\n102F8782 0A0F\n102F8778 050F\n102F8776 080F\n102F8774 090F"
+    },
+    {
+      "name": "Crate O' Goodies",
+      "code": "D02F867C 00A0\n102F8724 0BFF\n102F8726 0CFF\n102F8728 0DFF\n102F872A 0EFF\n102F872C 0FFF\n102F872E 10FF\n102F8730 11FF\n102F8732 12FF\n102F8734 46FF\n102F8736 47FF\n102F8738 48FF"
+    },
+    {
+      "name": "Health Restore With X Button",
+      "code": "D02FF846 0008\n102F51AC 008C\n102F867E 008C"
+    },
+    {
+      "name": "Eternal Life (Jill)",
+      "code": "102F51AC 005C"
+    },
+    {
+      "name": "Eternal life (Chris)",
+      "code": "102F51AC 008C"
+    },
+    {
+      "name": "Infinite Shotgun",
+      "code": "102F8784 0363"
+    },
+    {
+      "name": "Freeze Battle Mode Time",
+      "code": "102FFFA2 0000"
+    },
+    {
+      "name": "Increases Menu Item (Both)",
+      "code": "302F8785 00FF\n302F8787 00FF\n302F8789 00FF\n302F878B 00FF\n302F878D 00FF\n302F878F 00FF\n302F8791 00FF\n302F8793 00FF"
+    },
+    {
+      "name": "All Items In Chest - Set 1",
+      "code": "102F8724 3DFF\n102F8726 41FF\n102F8728 06FF\n102F872A 07FF\n102F872C 08FF\n102F872E 09FF\n102F8730 3EFF\n102F8732 13FF\n102F8734 14FF\n102F8736 15FF\n102F8738 16FF\n102F873A 17FF\n102F873C 18FF\n102F873E 19FF\n102F8740 1AFF"
+    },
+    {
+      "name": "All Items in Chest - Set 2",
+      "code": "102F8742 1BFF\n102F8744 1CFF\n102F8746 1DFF\n102F8748 1EFF\n102F874A 1FFF\n102F874C 20FF\n102F874E 21FF\n102F8750 22FF\n102F8752 23FF\n102F8754 24FF\n102F8756 25FF\n102F8758 26FF\n102F875A 27FF\n102F875C 28FF\n102F875E 29FF"
+    },
+    {
+      "name": "All Items in Chest - Set 3",
+      "code": "102F8760 2AFF\n102F8762 2BFF\n102F8764 2CFF\n102F8766 2DFF\n102F8768 2EFF\n102F876A 2FFF\n102F876C 30FF\n102F876E 31FF\n102F8770 33FF\n102F8772 34FF\n102F8774 35FF\n102F8776 36FF\n102F8778 37FF\n102F877A 38FF\n102F877C 39FF"
+    },
+    {
+      "name": "All Items in Chest - Set 4",
+      "code": "102F877E 3AFF\n102F8780 3BFF\n102F8782 3CFF"
+    },
+    {
+      "name": "Open Most Doors",
+      "code": "102F86B4 BFDF\n102F86B6 CF7E"
+    },
+    {
+      "name": "Overall Game Playing Time At End of Game Is 00'00'00",
+      "code": "102F867C 0000"
+    },
+    {
+      "name": "Play As Chris With Jill's Voice And Storyline",
+      "code": "102F8668 0000"
+    },
+    {
+      "name": "Play As Jill With Chris's Voice And Storyline",
+      "code": "102F8668 0001"
+    },
+    {
+      "name": "Turn Knife Into Rocket Launcher",
+      "code": "102F8784 0AFF"
+    },
+    {
+      "name": "Unlimited Energy (Jill)",
+      "code": "102F51AC 0060"
+    },
+    {
+      "name": "Unlimited Ink Ribbons",
+      "code": "102F8788 2F05"
+    },
+    {
+      "name": "Unlimited Bazooka",
+      "code": "102F878A 0704"
+    },
+    {
+      "name": "Chris starts with a knife",
+      "code": "102F8784 2F01"
+    },
+    {
+      "name": "Chris starts with a 9MM Gun",
+      "code": "102F8784 2F02"
+    },
+    {
+      "name": "Chris starts with a Shot Gun",
+      "code": "102F8784 2F03"
+    },
+    {
+      "name": "Chris starts with a Colt",
+      "code": "102F8784 2F04"
+    },
+    {
+      "name": "Chris starts with a Flame Thrower",
+      "code": "102F8784 2F06"
+    },
+    {
+      "name": "Chris starts with a Bazooka",
+      "code": "102F8784 2F07"
+    },
+    {
+      "name": "Chris starts with a Chemical Bottle",
+      "code": "102F8784 2F08"
+    },
+    {
+      "name": "Chris starts with a Chemical Bottle",
+      "code": "102F8784 2F09"
+    },
+    {
+      "name": "Chris starts with a Rocket Launcher",
+      "code": "102F8784 2F0A"
+    },
+    {
+      "name": "Chris starts with Shot Gun Shells",
+      "code": "102F8784 2F0C"
+    },
+    {
+      "name": "Chris starts with Ammo",
+      "code": "102F8784 2F0D"
+    },
+    {
+      "name": "Chris starts with Ammo",
+      "code": "102F8784 2F0E"
+    },
+    {
+      "name": "Chris starts with Ammo",
+      "code": "102F8784 2F0F"
+    },
+    {
+      "name": "Chris starts with Ammo",
+      "code": "102F8784 2F10"
+    },
+    {
+      "name": "Chris starts with Ammo",
+      "code": "102F8784 2F11"
+    },
+    {
+      "name": "Chris starts with 19 Chemical Bottles",
+      "code": "102F8784 2F12"
+    },
+    {
+      "name": "Chris starts with a Bad Shotgun",
+      "code": "102F8784 2F1C"
+    },
+    {
+      "name": "Chris starts with Crank 1",
+      "code": "102F8784 2F1D"
+    },
+    {
+      "name": "Chris starts with Crank 2",
+      "code": "102F8784 2F1E"
+    },
+    {
+      "name": "Chris starts with a Brown Shield",
+      "code": "102F8784 2F1F"
+    },
+    {
+      "name": "Chris starts with a Gold Shield",
+      "code": "102F8784 2F20"
+    },
+    {
+      "name": "Chris starts with the Blue Jewel",
+      "code": "102F8784 2F21"
+    },
+    {
+      "name": "Chris starts with the Red Jewel",
+      "code": "102F8784 2F22"
+    },
+    {
+      "name": "Chris starts with Music Notes",
+      "code": "102F8784 2F23"
+    },
+    {
+      "name": "Chris starts with the Wolf Medallion",
+      "code": "102F8784 2F24"
+    },
+    {
+      "name": "Chris starts with the Eagle Medallion",
+      "code": "102F8784 2F25"
+    },
+    {
+      "name": "Chris starts with Plant Poison",
+      "code": "102F8784 2F26"
+    },
+    {
+      "name": "Chris starts with a Battery",
+      "code": "102F8784 2F27"
+    },
+    {
+      "name": "Chris starts with a Mo Disc",
+      "code": "102F8784 2F28"
+    },
+    {
+      "name": "Chris starts with Medallion 1",
+      "code": "102F8784 2F29"
+    },
+    {
+      "name": "Chris starts with a Flare",
+      "code": "102F8784 2F2A"
+    },
+    {
+      "name": "Chris starts with Slides",
+      "code": "102F8784 2F2B"
+    },
+    {
+      "name": "Chris starts with Medallion 2",
+      "code": "102F8784 2F2C"
+    },
+    {
+      "name": "Chris starts with Medallion 3",
+      "code": "102F8784 2F2D"
+    },
+    {
+      "name": "Chris starts with Medallion 4",
+      "code": "102F8784 2F2E"
+    },
+    {
+      "name": "Chris starts with Ink Ribbons",
+      "code": "102F8784 2F2F"
+    },
+    {
+      "name": "Chris starts with a Lighter",
+      "code": "102F8784 2F30"
+    },
+    {
+      "name": "Chris starts with a Lock Pick",
+      "code": "102F8784 2F31"
+    },
+    {
+      "name": "Chris starts with an Oil Can",
+      "code": "102F8784 2F32"
+    },
+    {
+      "name": "Chris starts with a Gold Key",
+      "code": "102F8784 2F33"
+    },
+    {
+      "name": "Chris starts with a Silver Key",
+      "code": "102F8784 2F34"
+    },
+    {
+      "name": "Chris starts with a Red Mansion Key",
+      "code": "102F8784 2F35"
+    },
+    {
+      "name": "Chris starts with a Big Grey Key",
+      "code": "102F8784 2F36"
+    },
+    {
+      "name": "Chris starts with a Card Key",
+      "code": "102F8784 2F37"
+    },
+    {
+      "name": "Chris starts with a Secret Key",
+      "code": "102F8784 2F38"
+    },
+    {
+      "name": "Chris starts with the 002 Key",
+      "code": "102F8784 2F39"
+    },
+    {
+      "name": "Chris starts with the 003 Key",
+      "code": "102F8784 2F3A"
+    },
+    {
+      "name": "Chris starts with the Key For Sharks Door",
+      "code": "102F8784 2F3B"
+    },
+    {
+      "name": "Chris starts with the Computer Room Key",
+      "code": "102F8784 2F3C"
+    },
+    {
+      "name": "Chris starts with the Drawer Key",
+      "code": "102F8784 2F3D"
+    },
+    {
+      "name": "Chris starts with the Empty Red Book",
+      "code": "102F8784 2F3E"
+    },
+    {
+      "name": "Chris starts with the Wolf Book",
+      "code": "102F8784 2F3F"
+    },
+    {
+      "name": "Chris starts with the Eagle Book",
+      "code": "102F8784 2F40"
+    },
+    {
+      "name": "All Items In Chest",
+      "code": "102F8724 3DFF\n102F8726 41FF\n102F8728 06FF\n102F872A 07FF\n102F872C 08FF\n102F872E 09FF\n102F8730 3EFF\n102F8732 13FF\n102F8734 14FF\n102F8736 15FF\n102F8738 16FF\n102F873A 17FF\n102F873C 18FF\n102F873E 19FF\n102F8740 1AFF\n102F8742 1BFF\n102F8744 1CFF\n102F8746 1DFF\n102F8748 1EFF\n102F874A 1FFF\n102F874C 20FF\n102F874E 21FF\n102F8750 22FF\n102F8752 23FF\n102F8754 24FF\n102F8756 25FF\n102F8758 26FF\n102F875A 27FF\n102F875C 28FF\n102F875E 29FF\n102F8760 2AFF\n102F8762 2BFF\n102F8764 2CFF\n102F8766 2DFF\n102F8768 2EFF\n102F876A 2FFF\n102F876C 30FF\n102F876E 31FF\n102F8770 33FF\n102F8772 34FF\n102F8774 35FF\n102F8776 36FF\n102F8778 37FF\n102F877A 38FF\n102F877C 39FF\n102F877E 3AFF\n102F8780 3BFF\n102F8782 3CFF"
+    },
+    {
+      "name": "Have Communication Radio",
+      "code": "302F870F 0001"
+    },
+    {
+      "name": "Have All Maps",
+      "code": "102F8710 FFFF\n102F8712 FFFF\n102F8714 FFFF\n102F8716 FFFF\n102F8718 FFFF\n102F871A FFFF\n102F871C FFFF\n102F871E FFFF"
+    },
+    {
+      "name": "Have All Files",
+      "code": "102F8720 FFFF\n102F8722 FFFF"
+    },
+    {
+      "name": "Play As Barry With Chris' Voice & Storyline",
+      "code": "302F8669 0002"
+    },
+    {
+      "name": "Play As Barry With Jill's Voice & Storyline",
+      "code": "302F8669 0006"
+    },
+    {
+      "name": "Play As Rebecca With Chris's Voice & Storyline",
+      "code": "302F8669 0003"
+    },
+    {
+      "name": "Play As Rebecca With Jill's Voice & Storyline",
+      "code": "302F8669 0007"
+    }
+  ]
+}

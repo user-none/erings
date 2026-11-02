@@ -1,0 +1,25 @@
+{
+  "serial": "T-2003G",
+  "title": "Sid Meier's Civilization: Shin Sekai Shichidai Bunmei",
+  "native_title": "シヴィライゼーション ～新・世界七大文明～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988126 610029"
+  ],
+  "release_date": "1997-05-02",
+  "developer": "MicroProse",
+  "publisher": "Asmik",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Civilization has the widest scope of any strategy game of its time. You are a leader of a nation. You begin in the Stone Age, and complete the game in the XXIth century (unless your civilization gets destroyed earlier). Your eventual goal is to become the dominant civilization in the world, either by wiping out everybody else, or being the first to get a space ship to Alpha Centauri."
+}

@@ -1,0 +1,42 @@
+{
+  "serial": "T-1233G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Makaimura) Invulnerability",
+      "code": "160C00AC 00FF"
+    },
+    {
+      "name": "(Makaimura) Unlimited Lives",
+      "code": "360C0060 0009"
+    },
+    {
+      "name": "(Makaimura) Unlimited Time",
+      "code": "160C00AA 0257"
+    },
+    {
+      "name": "(Daimakaimura) Invulnerability",
+      "code": "30200931 0001"
+    },
+    {
+      "name": "(Daimakaimura) Unlimited Lives",
+      "code": "302007AD 0009"
+    },
+    {
+      "name": "(Daimakaimura) Unlimited Time",
+      "code": "102006D2 0959"
+    },
+    {
+      "name": "(Chohmakaimura) Invulnerability",
+      "code": "360D0276 0001"
+    },
+    {
+      "name": "(Chohmakaimura) Unlimited Lives",
+      "code": "360D02A4 0009"
+    },
+    {
+      "name": "(Chohmakaimura) Unlimited Time",
+      "code": "360D02AA 0030"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "serial": "MK-81078",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "160955B8 0090"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "160955DC 0090"
+    },
+    {
+      "name": "Play As Red Eye",
+      "code": "1606F088 0008"
+    },
+    {
+      "name": "No Energy Player 1",
+      "code": "160955B8 0000"
+    },
+    {
+      "name": "No Energy Player 2",
+      "code": "160955DC 0000"
+    },
+    {
+      "name": "25% Health P1",
+      "code": "D60955B8 0090\n160955B8 0024"
+    },
+    {
+      "name": "25% Health P2",
+      "code": "D60955DC 0090\n160955DC 0024"
+    },
+    {
+      "name": "50% Health P1",
+      "code": "D60955B8 0090\n160955B8 0048"
+    },
+    {
+      "name": "50% Health P2",
+      "code": "D60955DC 0090\n160955DC 0048"
+    },
+    {
+      "name": "75% Health P1",
+      "code": "D60955B8 0090\n160955B8 006C"
+    },
+    {
+      "name": "75% Health P2",
+      "code": "D60955DC 0090\n160955DC 006C"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D60955B8 0090\n160955B8 0001"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D60955DC 0090\n160955DC 0001"
+    },
+    {
+      "name": "(Player 1) Play As Yoko",
+      "code": "1606F088 0000"
+    },
+    {
+      "name": "(Player 1) Play As Joe",
+      "code": "1606F088 0001"
+    },
+    {
+      "name": "(Player 1) Play As Nagi",
+      "code": "1606F088 0002"
+    },
+    {
+      "name": "(Player 1) Play As Kurosawa",
+      "code": "1606F088 0003"
+    },
+    {
+      "name": "(Player 1) Play As Yusaku",
+      "code": "1606F088 0004"
+    },
+    {
+      "name": "(Player 1) Play As Tommy",
+      "code": "1606F088 0005"
+    },
+    {
+      "name": "(Player 1) Play As Lisa",
+      "code": "1606F088 0006"
+    },
+    {
+      "name": "(Player 1) Play As Zaimoku",
+      "code": "1606F088 0007"
+    },
+    {
+      "name": "(Player 2) Play As Yoko",
+      "code": "1606F0AC 0000"
+    },
+    {
+      "name": "(Player 2) Play As Joe",
+      "code": "1606F0AC 0001"
+    },
+    {
+      "name": "(Player 2) Play As Nagi",
+      "code": "1606F0AC 0002"
+    },
+    {
+      "name": "(Player 2) Play As Kurosawa",
+      "code": "1606F0AC 0003"
+    },
+    {
+      "name": "(Player 2) Play As Yusaku",
+      "code": "1606F0AC 0004"
+    },
+    {
+      "name": "(Player 2) Play As Tommy",
+      "code": "1606F0AC 0005"
+    },
+    {
+      "name": "(Player 2) Play As Lisa",
+      "code": "1606F0AC 0006"
+    },
+    {
+      "name": "(Player 2) Play As Zaimoku",
+      "code": "1606F0AC 0007"
+    },
+    {
+      "name": "(Player 2) Play As Red Eye",
+      "code": "1606F0AC 0008"
+    },
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "16095618 0090"
+    }
+  ]
+}

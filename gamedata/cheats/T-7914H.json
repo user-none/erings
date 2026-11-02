@@ -1,0 +1,38 @@
+{
+  "serial": "T-7914H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited IO-Storm",
+      "code": "160BE50E 0009"
+    },
+    {
+      "name": "Unlimited Disruptor",
+      "code": "160BE50A 0009"
+    },
+    {
+      "name": "Unlimited Grenades",
+      "code": "160BE506 0009"
+    },
+    {
+      "name": "Unlimited Photons",
+      "code": "160BE502 0009"
+    },
+    {
+      "name": "Unlimited Homing Missiles",
+      "code": "160BE4FE 0009"
+    },
+    {
+      "name": "Unlimited Missiles",
+      "code": "160BE4FA 0009"
+    },
+    {
+      "name": "Unlimited Flame Thrower",
+      "code": "160BE4F6 00FA"
+    },
+    {
+      "name": "Unlimited Armor",
+      "code": "160B9CB2 00FB\n160BE37E 00FB"
+    }
+  ]
+}

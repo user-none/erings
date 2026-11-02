@@ -1,0 +1,23 @@
+{
+  "serial": "T-17811G V",
+  "title": "PictFlash Don Don",
+  "native_title": "ピクトフラッシュ どんどん",
+  "category": "Educational",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-09-01",
+  "developer": "Hitachi",
+  "publisher": "Hitachi",
+  "genres": [
+    "Education"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Pict Flash Dondon (ピクトフラッシュどんどん) is an educational software for the Sega Saturn for children of ages 1 to 6 years old."
+}

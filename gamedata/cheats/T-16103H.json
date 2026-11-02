@@ -1,0 +1,38 @@
+{
+  "serial": "T-16103H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "160C0F26 000C"
+    },
+    {
+      "name": "Unlimited Bullets",
+      "code": "160C0F2A 000F\n160EEDE2 000F"
+    },
+    {
+      "name": "Unlimited Grenades",
+      "code": "160C0F2C 0002\n16092628 000A"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "160C7D1C 0009"
+    },
+    {
+      "name": "Unlimited Rockets",
+      "code": "16092628 000A"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160CD84A 4C68"
+    },
+    {
+      "name": "Unlimited Turbos",
+      "code": "1608E630 0003"
+    },
+    {
+      "name": "Unlimited Energy Die Harder",
+      "code": "16092620 0005\n160CF758 0005"
+    }
+  ]
+}

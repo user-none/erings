@@ -34,6 +34,49 @@ jobs:
       - name: Test
         run: go test ./...
 
+  rumble:
+    name: Validate rumble files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Check the rumble directory holds only rumble files
+        shell: bash
+        run: |
+          shopt -s nullglob
+          status=0
+          for f in gamedata/rumbles/*; do
+            case "$f" in
+              *.erumble) ;;
+              *) echo "not a rumble file: $f" >&2; status=1 ;;
+            esac
+          done
+          exit $status
+
+      - name: Validate
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(gamedata/rumbles/*.erumble)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "no rumble files in gamedata/rumbles" >&2
+            exit 1
+          fi
+          # The validator is the rumble module version in go.mod. The
+          # regions are the core's memory map (busTable in core/busmap.go).
+          go run github.com/user-none/eblitui/rumble/cmd/validate \
+            -strict \
+            -region wraml:0x00200000:0x100000 \
+            -region wramh:0x06000000:0x100000 \
+            "${files[@]}"
+
   test-windows:
     name: Test (Windows, DX12)
     runs-on: windows-latest

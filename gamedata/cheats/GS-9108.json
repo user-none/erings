@@ -1,0 +1,10 @@
+{
+  "serial": "GS-9108",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives in Space Harrier",
+      "code": "160EC4E0 0005"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "serial": "T-8107G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "160BDD6C 00A1\n160BDD6E 00A1"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "160BDF00 00A1\n160BDF02 00A1"
+    },
+    {
+      "name": "No Energy for Player 1",
+      "code": "160BDD6C 0000\n160BDD6E 0000"
+    },
+    {
+      "name": "No Energy for Player 2",
+      "code": "160BDF00 0000\n160BDF02 0000"
+    }
+  ]
+}

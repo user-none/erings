@@ -1,0 +1,42 @@
+{
+  "serial": "T-26106G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Credits",
+      "code": "160B4806 0003"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160B467E 0003"
+    },
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160B4674 000C"
+    },
+    {
+      "name": "(Player 1) Unlimited Magic",
+      "code": "160B4678 0003"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160B4676 0003"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160B46FA 0003"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160B46F0 000C"
+    },
+    {
+      "name": "(Player 2) Unlimited Magic",
+      "code": "160B46F4 0003"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160B46F2 0003"
+    }
+  ]
+}

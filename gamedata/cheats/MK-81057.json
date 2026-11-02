@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81057",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Credits",
+      "code": "1609FD74 FF00"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "D60CC166 0000\n160CC166 0072"
+    },
+    {
+      "name": "Infinite Rocket Launcher (On Pick-Up)",
+      "code": "160CD0A6 0009"
+    },
+    {
+      "name": "Have 99 Credits",
+      "code": "1609FE74 6300"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "serial": "T-9526G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "16061168 000B\n1606116A DE31"
+    }
+  ]
+}

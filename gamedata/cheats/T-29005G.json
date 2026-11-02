@@ -1,0 +1,26 @@
+{
+  "serial": "T-29005G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "All Stats Max",
+      "code": "1600F000 03E7\n1600F002 03E7"
+    },
+    {
+      "name": "1600F00403E7",
+      "code": "1600F006 03E7"
+    },
+    {
+      "name": "Unlimited HP",
+      "code": "D6011E70 0000\n16017F28 03E7"
+    },
+    {
+      "name": "Unlimited Special Attack",
+      "code": "D6011E70 0000\n1600F102 0007"
+    },
+    {
+      "name": "All Maximum Status",
+      "code": "1600F000 03E7\n1600F002 03E7\n1600F004 03E7\n1600F006 03E7"
+    }
+  ]
+}

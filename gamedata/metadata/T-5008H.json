@@ -1,0 +1,28 @@
+{
+  "serial": "T-5008H",
+  "title": "Road Rash",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 14633 07648 6",
+    "5 030935 176971"
+  ],
+  "release_date": "1996-06-28",
+  "developer": "Electronic Arts",
+  "publisher": "Electronic Arts",
+  "genres": [
+    "Action",
+    "Racing"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "This is a remake of the original Road Rash from the early nineties. For those who have not played the original, you are competing against thirteen other \"Road Rashers\" who will stop at nothing to win 1st, 2nd, or 3rd place. During the race, you have two options available to you: you can either do your best to cross the finish line, or use your weapon to bring the Rashers to the ground if they are giving you trouble. If you do the latter, your opponents will do the same to you during the next race that takes place."
+}

@@ -1,0 +1,22 @@
+{
+  "serial": "T-9505H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Away Team Wins",
+      "code": "1605BD78 2500\n1605BD8C 2500"
+    },
+    {
+      "name": "Home Team Wins",
+      "code": "1605BD78 0025\n1605BD8C 0025"
+    },
+    {
+      "name": "Home Team Wins",
+      "code": "3605BD79 0025\n3605BD8D 0025"
+    },
+    {
+      "name": "Away Team Wins",
+      "code": "3605BD78 0025\n3605BD8C 0025"
+    }
+  ]
+}

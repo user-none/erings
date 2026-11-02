@@ -1,0 +1,14 @@
+{
+  "serial": "T-16806G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited HP",
+      "code": "160A00CA 0118"
+    },
+    {
+      "name": "(Player 2) Unlimited HP",
+      "code": "160A022A 0118"
+    }
+  ]
+}

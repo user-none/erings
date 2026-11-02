@@ -1,0 +1,25 @@
+{
+  "serial": "T-16611G",
+  "title": "Honkaku Hanafuda",
+  "native_title": "本格花札",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 994964 115107"
+  ],
+  "release_date": "1998-10-29",
+  "developer": "Altron",
+  "publisher": "Altron",
+  "genres": [
+    "Board Game"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Honkaku Hanafuda is a digital version of three popular two-player card games played with Japanese hanafuda cards: Koi-Koi, Hana-Awase, and Oicho-Kabu. The game includes a story mode where the player meets different characters and must defeat them at the various games, and a free battle mode where the player can select any game type and play against the computer. There are eight different computer opponent characters, and a variety of game rule settings for each game type, as well as a basic tutorial that explains how each of the included games are played."
+}

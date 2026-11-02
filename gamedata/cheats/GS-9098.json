@@ -1,0 +1,22 @@
+{
+  "serial": "GS-9098",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "1604574C 00A0"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "1604684C 00A0"
+    },
+    {
+      "name": "No Energy for Player 1",
+      "code": "1604574C 0000"
+    },
+    {
+      "name": "No Energy for Player 2",
+      "code": "1604684C 0000"
+    }
+  ]
+}

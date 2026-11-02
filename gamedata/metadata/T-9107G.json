@@ -1,0 +1,23 @@
+{
+  "serial": "T-9107G",
+  "title": "Break Point",
+  "native_title": "ブレイク・ポイント",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [],
+  "release_date": "1996-06-27",
+  "developer": "Smart Dog",
+  "publisher": "Ocean Software",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Break Point is your basic tennis game. You can play on several different courts which differ in surroundings and style. There's a couple of fantasy courts as well as some real life courts. Player can choose between various motion captured players and game modes including practice, cup, tournament and so on. The speciality in this one is the fact that you can play with up to 8 players in tournament."
+}

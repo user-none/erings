@@ -1,0 +1,70 @@
+{
+  "serial": "MK-81206",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Fuel (Ferrari)",
+      "code": "16017CFC 00FF"
+    },
+    {
+      "name": "Tires Always Good (Ferrari)",
+      "code": "16017CF8 0EFF"
+    },
+    {
+      "name": "Always in 1st Place (Ferrari)",
+      "code": "36017CD8 0000"
+    },
+    {
+      "name": "Infinite Fuel (Tyrrell)",
+      "code": "16017C0C 00FF"
+    },
+    {
+      "name": "Tires Always Good (Tyrrell)",
+      "code": "16017C08 0EFF"
+    },
+    {
+      "name": "Always in 1st Place (Tyrrell)",
+      "code": "36017BE8 0000"
+    },
+    {
+      "name": "Infinite Fuel (McLaren)",
+      "code": "16017CD4 00FF"
+    },
+    {
+      "name": "Tires Always Good (McLaren)",
+      "code": "16017CD0 0EFF"
+    },
+    {
+      "name": "Always in 1st Place (McLaren)",
+      "code": "36017CB0 0000"
+    },
+    {
+      "name": "1 Lap to Finish The Race (McLaren)",
+      "code": "36017CB1 0007\n16017CB0 1700"
+    },
+    {
+      "name": "Infinite Fuel (Williams)",
+      "code": "16017C5C 00FF"
+    },
+    {
+      "name": "Tires Always Good (Williams)",
+      "code": "16017C58 0EFF"
+    },
+    {
+      "name": "Always in 1st Place (Williams)",
+      "code": "36017C38 0000"
+    },
+    {
+      "name": "Infinite Fuel (Benetton)",
+      "code": "16017BBC 00FF"
+    },
+    {
+      "name": "Tires Always Good (Benetton)",
+      "code": "16017BB8 0EFF"
+    },
+    {
+      "name": "Always in 1st Place (Benetton)",
+      "code": "36017B98 0000"
+    }
+  ]
+}

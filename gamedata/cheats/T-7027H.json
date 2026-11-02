@@ -1,0 +1,22 @@
+{
+  "serial": "T-7027H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Missiles",
+      "code": "102B9630 0064"
+    },
+    {
+      "name": "Infinite Napalm",
+      "code": "102B9634 0064"
+    },
+    {
+      "name": "Infinite Rockets",
+      "code": "102B9632 0064"
+    },
+    {
+      "name": "Infinite TAC",
+      "code": "102B9636 0064"
+    }
+  ]
+}

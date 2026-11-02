@@ -1,0 +1,14 @@
+{
+  "serial": "T-5701G",
+  "master_code": "F604C22C C305",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "16099F3C 3000"
+    },
+    {
+      "name": "No Money for Opponent",
+      "code": "16099FFA 0000"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81036",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "160590E0 0000"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "160413D8 0002"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "160414D0 0303"
+    },
+    {
+      "name": "Infinite Gears (Bosses Galore)",
+      "code": "16036AA8 0505"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "serial": "T-1515G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "160A9F4E 9A00"
+    },
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160A9596 FFE4"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "160A9596 0000"
+    },
+    {
+      "name": "(Player 1) Full Power",
+      "code": "160A95A4 0007"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160A96D6 FFE4"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "160A96D6 0000"
+    },
+    {
+      "name": "(Player 2) Full Power",
+      "code": "160A96E4 0007"
+    }
+  ]
+}

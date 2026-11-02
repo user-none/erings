@@ -1,0 +1,25 @@
+{
+  "serial": "T-18505G",
+  "title": "Tekkyuu: True Pinball",
+  "native_title": "鉄球 トゥルー・ピンボール",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 902333 100050"
+  ],
+  "release_date": "1996-04-05",
+  "developer": "Digital Illusions",
+  "publisher": "Ocean Software",
+  "genres": [
+    "Pinball"
+  ],
+  "max_players": 8,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "This is True Pinball... This is attention to detail on every level. This is ball physics: table design: 2D and 3D views: six ball multiballs: video modes and incredible music. This is an experience heightened by the excitement of accurate pinball simulation. Prepare yourself for the speed - prepare yourself for the shock - this is True Pinball.\n\nTrue Pinball is a console version of Pinball Illusions that has 4 different tables, named \"Extreme Sports\", \"Vikings - The Tales\", \"Ricochet\" and \"Babewatch\"."
+}

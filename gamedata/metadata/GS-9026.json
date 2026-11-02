@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9026",
+  "title": "Gakkou no Kaidan",
+  "native_title": "学校の怪談",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 090265"
+  ],
+  "release_date": "1995-07-14",
+  "developer": "Japan Media Programming",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Adventure",
+    "Horror"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Gakkō no Kaidan is an interactive movie with adventure elements, made to tie in with a Japanese ghost-themed film of the same name. Like some other Sega CD games with similar thematics, it features FMV sequences with interactive options. For example, escaping some of the enemies may require the player to press directional keys or the A/C buttons. The other element of the game is a point-and-click style set."
+}

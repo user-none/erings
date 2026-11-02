@@ -1,0 +1,22 @@
+{
+  "serial": "T-2502G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "16044842 FFFF\n16095774 FFFF"
+    },
+    {
+      "name": "Special Attack",
+      "code": "160371AC FFFF\n160371AE FFFF\n160371B2 FFFF\n160371B4 00FF\n160371B6 FFFF"
+    },
+    {
+      "name": "Fast Level Ups",
+      "code": "16037190 00FF\n16037248 00FF\n16037300 00FF\n160373B8 00FF\n16037470 00FF\n16037528 00FF\n160375E0 00FF"
+    },
+    {
+      "name": "Extra Experience (two main characters)",
+      "code": "16037190 00FF\n16037248 00FF"
+    }
+  ]
+}

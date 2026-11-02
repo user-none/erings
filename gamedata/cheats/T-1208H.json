@@ -1,0 +1,70 @@
+{
+  "serial": "T-1208H",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Infinite Energy P1",
+      "code": "16076C66 0090"
+    },
+    {
+      "name": "Infinite \"Special\" Bar Powered at Level 9 P1",
+      "code": "16076E24 0009"
+    },
+    {
+      "name": "No \"Special\" Bar for P2",
+      "code": "16077228 0000"
+    },
+    {
+      "name": "Infinite \"Special\" Bar Powered at Level 9 P2",
+      "code": "16077228 0009"
+    },
+    {
+      "name": "No \"Special\" Bar for P1",
+      "code": "16076E24 0000"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "1607706A 0090"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D6076C66 0090\n16076C66 0024"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D6076C66 0090\n16076C66 0048"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D6076C66 0090\n16076C66 006C"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "16076C66 0000"
+    },
+    {
+      "name": "1-Hit Death Energy P1",
+      "code": "D6076C66 0090\n16076C66 0001"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D607706A 0090\n1607706A 0024"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D607706A 0090\n1607706A 0048"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D607706A 0090\n1607706A 006C"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "1607706A 0000"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D607706A 0090\n1607706A 0001"
+    }
+  ]
+}

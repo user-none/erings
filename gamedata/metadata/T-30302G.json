@@ -1,0 +1,25 @@
+{
+  "serial": "T-30302G",
+  "title": "DeJig: Tin Toy",
+  "native_title": "デジグ ティン・トーイ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4979092 05759 8"
+  ],
+  "release_date": "1997-04-25",
+  "developer": "Masudaya",
+  "publisher": "Masudaya",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "DeJig: Tin Toy is a digital jigsaw puzzle game and part of the DeJig series. The game includes 20 different puzzles featuring photographs of various 50s-style toy models, which come in both 72-piece and 108-piece difficulty levels. Pieces can be rotated and will lock into place when placed correctly, and the completed image can be viewed at any time as a reference. Completing each puzzle will unlock a bonus video of that particular toy, and there is also a movie mode where a playlist can be created of the available videos to view in sequence."
+}

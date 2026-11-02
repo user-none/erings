@@ -1,0 +1,23 @@
+{
+  "serial": "T-29101G",
+  "title": "Gal Jan",
+  "native_title": "ギャル・ジャン",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-08-09",
+  "developer": "Warashi",
+  "publisher": "Warashi",
+  "genres": [
+    "Board Game"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Gal Jan is an arcade-style strip mahjong game. It is a standard 1-on-1 riichi mahjong game, and notably uses rotoscoped animation of real actresses for the opponents. The game features only a standard arcade mode where the player plays against each opponent in order. There are three opponents to face, who each progressively disrobe in animated sequences as the player wins matches against them. Gal Jan utilizes rotoscoping for its animation."
+}

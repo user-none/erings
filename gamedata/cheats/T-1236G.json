@@ -1,0 +1,26 @@
+{
+  "serial": "T-1236G",
+  "master_code": "F6000942 C305\nB60FE000 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited HP",
+      "code": "360302FD 0090"
+    },
+    {
+      "name": "(Player 2) Unlimited HP",
+      "code": "36030605 0090"
+    },
+    {
+      "name": "(Player 1) Mid-Air Special Attacks",
+      "code": "360303D8 0000"
+    },
+    {
+      "name": "(Player 2) Mid-Air Special Attacks",
+      "code": "360306E0 0000"
+    },
+    {
+      "name": "Extra Characters",
+      "code": "1602A11E 0101\n1602A14E 0101\n1602A17E 0101"
+    }
+  ]
+}

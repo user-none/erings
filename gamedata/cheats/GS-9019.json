@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9019",
+  "master_code": "F60B6C12 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "360DBCA8 0005"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "360DBCAA 0003"
+    }
+  ]
+}

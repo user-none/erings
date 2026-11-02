@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81800",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "99 Rings",
+      "code": "1600B3F0 0063"
+    },
+    {
+      "name": "Place 1st In Grand Prix Race",
+      "code": "1600B434 0001"
+    },
+    {
+      "name": "Always Have 5 Sonic Coins",
+      "code": "1600BD5E 0005"
+    },
+    {
+      "name": "Always Have 999 Rings",
+      "code": "1600B3F0 0FFF"
+    }
+  ]
+}

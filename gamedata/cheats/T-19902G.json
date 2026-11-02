@@ -1,0 +1,42 @@
+{
+  "serial": "T-19902G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "99 Bonus Time",
+      "code": "160B21FA 0063"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160B2396 0004"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160B2416 0004"
+    },
+    {
+      "name": "(Player 1) Full Power",
+      "code": "160B2394 2800"
+    },
+    {
+      "name": "(Player 2) Full Power",
+      "code": "160B2414 2800"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160B23AC 0005"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160B242C 0005"
+    },
+    {
+      "name": "Unlimited Lives for Player 1",
+      "code": "160B2396 0009"
+    },
+    {
+      "name": "Unlimited Lives for Player 2",
+      "code": "160B2416 0009"
+    }
+  ]
+}

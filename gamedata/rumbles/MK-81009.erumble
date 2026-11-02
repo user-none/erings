@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Panzer Dragoon (USA)
+gameid: MK-81009
+system: saturn
+---
+
+# 1 while a player controlled. 0 in title, demo,
+# cutscenes and results.
+watch playing long 0x060823A8
+
+# 1 while paused and during loads and transitions.
+watch frozen byte 0x06081D1A
+
+def ingame playing == 1 and frozen == 0
+
+# --- Dragon ---
+
+# Health. Goes negative on the killing blow.
+watch health word 0x0607FB08 signed
+
+# Death: health went negative.
+on health < 0 while ingame:
+    pattern (1.0 450ms, off 150ms, 0.8 350ms, 0.5/0.6 450ms) priority 2
+
+# Hit. 30 frame invincibility follows every hit.
+on health decreased while ingame:
+    pulse 0.85/0.75 250ms priority 1 cooldown 300ms scale 5..40 -> 0.5..1.0
+
+
+# --- Weapons ---
+
+# Lock count 0-8 inside the dragon object, found in the task pool by
+# its update function pointer at slot +0.
+watch dlocks byte 0x0604D154 stride 0x200 count 255
+    key 0 0x06007856 field 0x173
+
+# Task pool callbacks: slot +0 holds the current class function of
+# each live object. 255 slots of 0x200 bytes.
+watch pool long 0x0604D154 stride 0x200 count 255
+
+
+# --- Lock-on and volley ---
+
+# Volley: the lock count resets to 0 when the lasers launch. A
+# release with nothing locked leaves it at 0.
+on dlocks decreased while ingame:
+    pulse 0.6/0.8 400ms cooldown 400ms
+
+# One tick per established lock.
+on dlocks increased while ingame:
+    pulse 0.35/0.45 150ms
+
+
+# --- Screen shake ---
+
+# Camera shake offset, written every frame from jitter tables while
+# the screen shakes, 0 otherwise.
+watch shakex long 0x0607CF98
+
+# The offset oscillates through 0, so a change window bridges the
+# zero crossings.
+event shaking shakex changed for 100ms
+
+on shaking while ingame: hold 0.3/0.4

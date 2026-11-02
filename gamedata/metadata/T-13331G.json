@@ -1,0 +1,28 @@
+{
+  "serial": "T-13331G",
+  "title": "Digital Monster Ver. S: Digimon Tamers",
+  "native_title": "デジタル・モンスター バージョンＳ ～デジモン・テイマーズ～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4902425 70201 8"
+  ],
+  "release_date": "1998-09-28",
+  "developer": "TOSE",
+  "publisher": "Bandai",
+  "genres": [
+    "Construction and Management Simulation",
+    "Life Simulation",
+    "Role-Playing",
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "This is a continuation of the popular virtual pet raising simulation game. In this particular version, you can raise up to four different Digimon at the same time. In addition, you can battle other Digimon through an in-game Arena mode."
+}

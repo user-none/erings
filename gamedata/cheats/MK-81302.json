@@ -1,0 +1,114 @@
+{
+  "serial": "MK-81302",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "16088DA2 0FF0"
+    },
+    {
+      "name": "Infinite Magic",
+      "code": "16088DA6 0FFF"
+    },
+    {
+      "name": "Scroll of Sound",
+      "code": "16088716 0900"
+    },
+    {
+      "name": "Scroll Of Miracle Rod",
+      "code": "16088712 0900"
+    },
+    {
+      "name": "Giant Character",
+      "code": "16088D88 0200\n16088D8A 0200"
+    },
+    {
+      "name": "Levitate",
+      "code": "16088D60 0002"
+    },
+    {
+      "name": "Have All Cubes",
+      "code": "160886A8 FFFF"
+    },
+    {
+      "name": "Have All Spirits",
+      "code": "3608870E 003F"
+    },
+    {
+      "name": "Always Have Red Scroll",
+      "code": "36088713 0009"
+    },
+    {
+      "name": "Always Have Grey Scroll",
+      "code": "36088714 0009"
+    },
+    {
+      "name": "Always Have Green Scroll",
+      "code": "36088715 0009"
+    },
+    {
+      "name": "Gives You Peach Scroll",
+      "code": "36088717 0009"
+    },
+    {
+      "name": "Infinite Blue Jewels",
+      "code": "36088718 0009"
+    },
+    {
+      "name": "Infinite Red Jewels",
+      "code": "36088719 0009"
+    },
+    {
+      "name": "Infinite Blud Shade",
+      "code": "3608871A 0009"
+    },
+    {
+      "name": "Infinite Green Jewels",
+      "code": "3608871B 0009"
+    },
+    {
+      "name": "Infinite Sound Jewels",
+      "code": "3608871C 0009"
+    },
+    {
+      "name": "Infinite Tan Jewels",
+      "code": "3608871D 0009"
+    },
+    {
+      "name": "Infinite Bows",
+      "code": "3608871F 0009"
+    },
+    {
+      "name": "Infinite Daggers",
+      "code": "36088720 0009"
+    },
+    {
+      "name": "Always Have Arrows",
+      "code": "36088721 0009"
+    },
+    {
+      "name": "Infinite Wands",
+      "code": "36088722 0009"
+    },
+    {
+      "name": "Debug Mode On",
+      "code": "16088724 123B"
+    },
+    {
+      "name": "Always Have Scroll Of Miracle Rod",
+      "code": "36088712 0009"
+    },
+    {
+      "name": "Always Have Scroll of Sound",
+      "code": "36088716 0009"
+    },
+    {
+      "name": "Z = Item Select Unlimited HP",
+      "code": "16088DA2 1900\n16088DA4 1900"
+    },
+    {
+      "name": "Unlimited MP",
+      "code": "16088DA6 1900\n16088DA8 1900"
+    }
+  ]
+}

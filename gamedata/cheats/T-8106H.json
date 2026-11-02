@@ -1,0 +1,14 @@
+{
+  "serial": "T-8106H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Mirror Hints",
+      "code": "1601F842 0001"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "1601F80A 1A60"
+    }
+  ]
+}

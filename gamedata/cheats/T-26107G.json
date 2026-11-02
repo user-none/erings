@@ -1,0 +1,82 @@
+{
+  "serial": "T-26107G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160BD04C 0003\n1608D474 0002\n160B1854 0002"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160BD048 0075\n1608D470 0091\n160B3B80 00D1"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160BD04E 0003\n1608D476 0002\n160B1856 0002"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160BD04A 0075\n1608D472 0091\n160B3B82 00D1"
+    },
+    {
+      "name": "(Player 1) Unlimited Big Fire",
+      "code": "1608E3CD 00FF"
+    },
+    {
+      "name": "(Player 2) Unlimited Big Fire",
+      "code": "1608E3C2 00FF"
+    },
+    {
+      "name": "Finish Stage Immediately",
+      "code": "160AE080 0000"
+    },
+    {
+      "name": "Unlimited Lives for Player 1",
+      "code": "1608D474 0002"
+    },
+    {
+      "name": "Invincibility for Player 1",
+      "code": "1608D470 0091"
+    },
+    {
+      "name": "Unlimited Lives for Player 2",
+      "code": "1608D476 0002"
+    },
+    {
+      "name": "Invincibility for Player 2",
+      "code": "1608D472 0091"
+    },
+    {
+      "name": "Unlimited Lives for Player 1",
+      "code": "160B1854 0002"
+    },
+    {
+      "name": "Unlimited Lives for Player 2",
+      "code": "160B1856 0002"
+    },
+    {
+      "name": "Invincibility for Player 1",
+      "code": "160B3B80 00D1"
+    },
+    {
+      "name": "Invincibility for Player 2",
+      "code": "160B3B82 00D1"
+    },
+    {
+      "name": "Unlimited Lives for Player 1",
+      "code": "160BD04C 0003"
+    },
+    {
+      "name": "Invincibility for Player 1",
+      "code": "160BD048 0075"
+    },
+    {
+      "name": "Unlimited Lives for Player 2",
+      "code": "160BD04E 0003"
+    },
+    {
+      "name": "Invincibility for Player 2",
+      "code": "160BD04A 0075"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "serial": "T-12003H09",
+  "title": "Jonah Lomu Rugby",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "France"
+  ],
+  "languages": [
+    "French"
+  ],
+  "barcodes": [
+    "5 024866 250015"
+  ],
+  "release_date": "1997",
+  "developer": "Rage Games",
+  "publisher": "Codemasters",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "Based on the 1995 Rugby World Cup in South Africa and officially licenced by player of the tournament Jonah Lomu, this game plays as more of an arcade style of gameplay rather than a sports simulation. Players can compete in the full World Cup, a round-robin league, or a knock-out cup.\n\nThe 32 included teams range from the All Blacks of New Zealand and Springboks of South Africa to minnows such as Namibia and Hong Kong, neither of which qualified for the final stages."
+}

@@ -1,0 +1,108 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Sega Rally Championship (USA)
+gameid: MK-81207
+system: saturn
+---
+
+# Play mode of the player car. 2 is replay playback.
+watch pmode byte 0x060AA810
+const pm_replay 2
+
+# Top level mode.
+watch gmmode word 0x060AA860
+const gm_vs 10
+
+# Race state: 0 setting up, 4 counting down, 6 racing, 8 through the
+# goal, 10 game over.
+watch p1_race byte 0x060B00F5
+watch p2_race byte 0x060B06F5
+const rm_race 6
+
+def p1_racing p1_race == rm_race and pmode != pm_replay
+def versus    gmmode == gm_vs
+def p2_racing versus and p2_race == rm_race
+
+# Depth the car body is driven into wall geometry.
+watch p1_wall long 0x060B0100
+watch p2_wall long 0x060B0700
+const wall_touch 0x0B00
+
+# Car hit. Bit 1 is a car to car impact.
+watch p1_carhit byte 0x060B00C6 mask 0x02
+watch p2_carhit byte 0x060B06C6 mask 0x02
+
+# One bit per wheel, set while that wheel is on the ground. 0 is all
+# four wheels off the ground.
+watch p1_wheels byte 0x060B00B2
+watch p2_wheels byte 0x060B06B2
+
+# Gear. The automatic gearbox writes this too.
+watch p1_gear word 0x060B00B0
+watch p2_gear word 0x060B06B0
+
+# Vertical position of the car, in the same units as the rest of the
+# position vector at +0x18. Absolute world height, so the track's own
+# elevation moves it: only the rate of change says anything about a
+# drop.
+watch p1_y long 0x060B001C signed
+watch p2_y long 0x060B061C signed
+
+# How hard the car was falling. A window stays open for 200ms after
+# the last frame that dropped at least this fast, so a landing tests
+# the descent over the frames leading into touchdown rather than the
+# time spent off the ground.
+event p1_hard_fall p1_y decreased by at least 12000 for 200ms
+event p2_hard_fall p2_y decreased by at least 12000 for 200ms
+event p1_soft_fall p1_y decreased by at least 4000 for 200ms
+event p2_soft_fall p2_y decreased by at least 4000 for 200ms
+
+# Wall contact within the last 600ms. A landing this soon after one is
+# the car coming back down off the impact, which falls at about the
+# rate of a small jump and would otherwise take a jump band.
+event p1_wall_hit p1_wall increased for 600ms
+event p2_wall_hit p2_wall increased for 600ms
+
+
+# --- Player 1 ---
+
+# Wall or scenery.
+on p1_wall increased and p1_wall >= wall_touch while p1_racing:
+    pulse 0.9/0.8 200ms priority 1 scale 0x0A00..0xB000 -> 0.5..1.0
+
+# Contact with another car.
+on p1_carhit changed to 2 while p1_racing:
+    pulse 0.8/0.7 220ms cooldown 200ms
+
+# Landing, banded by how fast the car was dropping into it. Hardest
+# first so the deepest band that matches wins. Wheels that came off
+# the ground without a real drop, as in a crash, match neither fall
+# band and take the light landing.
+on p1_wheels changed from 0 while p1_racing and p1_hard_fall and not p1_wall_hit:
+    pulse 0.9/0.75 320ms cooldown 360ms
+on p1_wheels changed from 0 while p1_racing and p1_soft_fall and not p1_wall_hit:
+    pulse 0.75/0.65 240ms cooldown 280ms
+on p1_wheels changed from 0 while p1_racing:
+    pulse 0.55/0.5 160ms cooldown 250ms
+
+# Shift.
+on p1_gear changed while p1_racing:
+    pulse 0.40/0.45 140ms cooldown 160ms
+
+
+# --- Player 2 ---
+
+on p2_wall increased and p2_wall >= wall_touch while p2_racing:
+    pulse 0.9/0.80 200ms priority 1 scale 0x0A00..0xB000 -> 0.5..1.0 player 2
+
+on p2_carhit changed to 2 while p2_racing:
+    pulse 0.8/0.7 220ms cooldown 200ms player 2
+
+on p2_wheels changed from 0 while p2_racing and p2_hard_fall and not p2_wall_hit:
+    pulse 0.9/0.75 320ms cooldown 360ms player 2
+on p2_wheels changed from 0 while p2_racing and p2_soft_fall and not p2_wall_hit:
+    pulse 0.75/0.65 240ms cooldown 280ms player 2
+on p2_wheels changed from 0 while p2_racing:
+    pulse 0.55/0.5 160ms cooldown 250ms player 2
+
+on p2_gear changed while p2_racing:
+    pulse 0.40/0.45 140ms cooldown 160ms player 2

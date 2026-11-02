@@ -1,0 +1,25 @@
+{
+  "serial": "T-22302G",
+  "title": "ClockWerx",
+  "native_title": "クロックワークス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 515646 840089"
+  ],
+  "release_date": "1996-08-09",
+  "developer": "Axes Art Amuse",
+  "publisher": "Tokuma Shoten Publishing",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "ClockWerx is an enhanced port of a Super Famicom puzzle game of the same title, itself based on an earlier PC game. The player controls a character who rotates around pins like a clock hand and must reach the goal by moving between pins without touching any hazards. This version includes the same story and new player character as the Super Famicom version, as well as many of the same puzzles. The CD-ROM versions also add new story cutscenes featuring claymation animation, as well as a new two-player competitive mode and a stage editor."
+}

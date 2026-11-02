@@ -1,0 +1,66 @@
+{
+  "serial": "T-8123H",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Infinite Credits P1",
+      "code": "160D34CE 0003"
+    },
+    {
+      "name": "Infinite Bombs P1",
+      "code": "160D34A6 0005"
+    },
+    {
+      "name": "Infinite Credits P2",
+      "code": "160D3546 0003"
+    },
+    {
+      "name": "Infinite Bombs P2",
+      "code": "160D351E 0005"
+    },
+    {
+      "name": "Full Weapons P2",
+      "code": "160D3520 000E"
+    },
+    {
+      "name": "Full Weapons P1",
+      "code": "160D34A8 000E"
+    },
+    {
+      "name": "Infinite Lives P1",
+      "code": "160D34B4 0009"
+    },
+    {
+      "name": "Infinite Lives P2",
+      "code": "160D352C 0009"
+    },
+    {
+      "name": "Infinite Shield P1",
+      "code": "160D34AE 0003"
+    },
+    {
+      "name": "Infinite Shield P2",
+      "code": "160D3526 0003"
+    },
+    {
+      "name": "Invincibility P1",
+      "code": "160D3490 005B"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "160D34A6 0009"
+    },
+    {
+      "name": "(Player 1) Unlimited Credits",
+      "code": "160D34CE 0009"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160D351E 0009"
+    },
+    {
+      "name": "(Player 2) Unlimited Credits",
+      "code": "160D3546 0009"
+    }
+  ]
+}

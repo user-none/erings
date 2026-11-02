@@ -1,0 +1,170 @@
+{
+  "serial": "T-5014H",
+  "master_code": "F6000914 C305\nB6002800 0001",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "160DBE2C 0078"
+    },
+    {
+      "name": "Infinite Cash",
+      "code": "160DBE34 FFFF"
+    },
+    {
+      "name": "Have EMP Inhibitor",
+      "code": "160DBDAC 0100"
+    },
+    {
+      "name": "Have Grenade Launcher",
+      "code": "160DBE04 0100"
+    },
+    {
+      "name": "Have Shotgun",
+      "code": "160DBDEC 0100"
+    },
+    {
+      "name": "Have RP-32",
+      "code": "160DBDE8 0100"
+    },
+    {
+      "name": "Have Laser Rifle",
+      "code": "160DBDF4 0100"
+    },
+    {
+      "name": "Infinite Det Pacs",
+      "code": "160DBDBC 0900"
+    },
+    {
+      "name": "Infinite Grenades",
+      "code": "160DBE20 040B"
+    },
+    {
+      "name": "Limpet Mines",
+      "code": "160DBDC4 0900"
+    },
+    {
+      "name": "Infinite RP Ammo",
+      "code": "160DBE24 093C"
+    },
+    {
+      "name": "Infinite Shotgun Ammo",
+      "code": "160DBE28 040B"
+    },
+    {
+      "name": "Infinite Spider Bombs",
+      "code": "160DBDC8 0900"
+    },
+    {
+      "name": "Infinite Medi Kits",
+      "code": "160DBDCC 0A00"
+    },
+    {
+      "name": "Infinite ?????",
+      "code": "160DBDC0 0A00"
+    },
+    {
+      "name": "Infinite Landmines",
+      "code": "160DBDC4 0A00"
+    },
+    {
+      "name": "Infinite Batteries & Energy Cells",
+      "code": "160DBDC8 0A00"
+    },
+    {
+      "name": "Infinite Blast Pacs",
+      "code": "160DBDD4 0A00"
+    },
+    {
+      "name": "Infinite Magazines (RP 32 and ??)",
+      "code": "360DBE24 000A"
+    },
+    {
+      "name": "Infinite Rounds (RP 32 and ??)",
+      "code": "360DBE25 000A"
+    },
+    {
+      "name": "Infinite Magazines (SG-A1 and ?)",
+      "code": "360DBE28 000A"
+    },
+    {
+      "name": "Infinite Rounds (SG-A1 and ?)",
+      "code": "360DBE29 000A"
+    },
+    {
+      "name": "Infinite Magazines (GL-303)",
+      "code": "360DBE20 000A"
+    },
+    {
+      "name": "Infinite Rounds (GL-303)",
+      "code": "360DBE21 000A"
+    },
+    {
+      "name": "Infinite Magazines (AR-7)",
+      "code": "360DBE1C 000A"
+    },
+    {
+      "name": "Infinite Rounds (AR-7)",
+      "code": "360DBE1D 000A"
+    },
+    {
+      "name": "Infinite Magazines (??? & ????)",
+      "code": "360DBE18 000A"
+    },
+    {
+      "name": "Infinite Rounds (??? & ????)",
+      "code": "360DBE19 000A"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "160DBE2E 09C4"
+    },
+    {
+      "name": "Unlimited Detpacs",
+      "code": "160DBDBC 0A00"
+    },
+    {
+      "name": "RP 22 Gun Modifier",
+      "code": "160DBDD8 0200"
+    },
+    {
+      "name": "RP 32 Gun Modifier",
+      "code": "160DBDD8 0300"
+    },
+    {
+      "name": "SG-A1 Gun Modifier",
+      "code": "160DBDD8 0400"
+    },
+    {
+      "name": "PA-31 Gun Modifier",
+      "code": "160DBDD8 0600"
+    },
+    {
+      "name": "EM-4 Gun Modifier",
+      "code": "160DBDD8 0700"
+    },
+    {
+      "name": "PL-1 Gun Modifier",
+      "code": "160DBDD8 0800"
+    },
+    {
+      "name": "UV-9 Gun Modifier",
+      "code": "160DBDD8 0900"
+    },
+    {
+      "name": "GL-303 Gun Modifier",
+      "code": "160DBDD8 0A00"
+    },
+    {
+      "name": "AR-7 Gun Modifier",
+      "code": "160DBDD8 0B00"
+    },
+    {
+      "name": "Unlimited Magazines",
+      "code": "360DBE24 000A\n360DBE28 000A\n360DBE20 000A\n360DBE1C 000A\n360DBE18 000A"
+    },
+    {
+      "name": "Unlimited Rounds",
+      "code": "360DBE25 000A\n360DBE29 000A\n360DBE21 000A\n360DBE1D 000A\n360DBE19 000A"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "serial": "T-13304G",
+  "title": "PD Ultraman Link",
+  "native_title": "ＰＤウルトラマン・リンク",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4902425 49483 8"
+  ],
+  "release_date": "1996-02-09",
+  "developer": "SIMS",
+  "publisher": "Bandai",
+  "genres": [
+    "Action",
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "PD Ultraman Link is a falling-block puzzle game featuring the Japanese superhero Ultraman and many of his allies and foes. Blocks of various colors fall into the well in pairs; each block has two connections, and connecting three or more blocks together regardless of color will cause them to disappear. Any blocks above the ones removed will fall into the now-open space, potentially creating chain combos which will send garbage blocks that must be cleared twice to the opponent. Additionally, connecting four blocks of the same color will clear all blocks of that color from the board, while connecting four each of a different color together will clear all the garbage blocks on the screen by one stage. If the blocks stack past the line at the top of the well, that player loses the match.\n\nThe game includes a single-player story mode, as well as a free battle mode against the computer or another player. There are 10 different characters to choose from: five Ultra Heroes and five aliens."
+}

@@ -1,0 +1,54 @@
+{
+  "serial": "MK-81049",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "16045974 00A0"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "16046A74 00A0"
+    },
+    {
+      "name": "P1 25% Health",
+      "code": "D6045974 00A0\n16045974 0028"
+    },
+    {
+      "name": "P1 50% Health",
+      "code": "D6045974 00A0\n16045974 0050"
+    },
+    {
+      "name": "P1 75% Health",
+      "code": "D6045974 00A0\n16045974 0078"
+    },
+    {
+      "name": "P1 No Health",
+      "code": "16045974 0000"
+    },
+    {
+      "name": "1-Hit Death",
+      "code": "D6045974 00A0\n16045974 0001"
+    },
+    {
+      "name": "P2 25% Health",
+      "code": "D6046A74 00A0\n16046A74 0028"
+    },
+    {
+      "name": "P2 50% Health",
+      "code": "D6046A74 00A0\n16046A74 0050"
+    },
+    {
+      "name": "P2 75% Health",
+      "code": "D6046A74 00A0\n16046A74 0078"
+    },
+    {
+      "name": "P2 No Health",
+      "code": "16046A74 0000"
+    },
+    {
+      "name": "P2 1-Hit Death",
+      "code": "D6046A74 00A0\n16046A74 0001"
+    }
+  ]
+}

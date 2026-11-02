@@ -1,0 +1,22 @@
+{
+  "serial": "T-29102G",
+  "master_code": "F6000924 FFFF\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Life",
+      "code": "160BC2F2 0002"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "160BC304 0003"
+    },
+    {
+      "name": "(Player 2) Unlimited Life",
+      "code": "160BC2FE 0002"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160BC306 0003"
+    }
+  ]
+}

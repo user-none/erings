@@ -1,0 +1,94 @@
+{
+  "serial": "T-1210G",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Invulnerability",
+      "code": "160E0BF0 0001"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "360E024F 0009"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "160E0B9C 0090"
+    },
+    {
+      "name": "Unlimited Bug Hole",
+      "code": "160E0260 005C"
+    },
+    {
+      "name": "Unlimited Acid Rush",
+      "code": "160E0256 005C"
+    },
+    {
+      "name": "Unlimited Parasitic Bomb",
+      "code": "160E0258 005C"
+    },
+    {
+      "name": "Unlimited Ray Splasher",
+      "code": "160E025E 005C"
+    },
+    {
+      "name": "Unlimited Triad Thunder",
+      "code": "160E025A 005C"
+    },
+    {
+      "name": "Unlimited Frost Shield",
+      "code": "160E0262 005C"
+    },
+    {
+      "name": "Unlimited Tornado Fang",
+      "code": "160E0264 005C"
+    },
+    {
+      "name": "Unlimited Spinning Blade",
+      "code": "160E025C 005C"
+    },
+    {
+      "name": "Always Have X3 Armor and 33 Sticks Of Health",
+      "code": "160E026C FF20"
+    },
+    {
+      "name": "Unlimited Hyper Crush",
+      "code": "160E0266 005C"
+    },
+    {
+      "name": "Unlimited Mysterious W Weapon",
+      "code": "160E0268 005C"
+    },
+    {
+      "name": "Have Maximum Heart Tanks",
+      "code": "160E026E FFFE"
+    },
+    {
+      "name": "Rockman X and Zero Can Jump Continuously",
+      "code": "160E0BB4 0100"
+    },
+    {
+      "name": "Zero Is Always Available",
+      "code": "360E027C 0000"
+    },
+    {
+      "name": "Start On Stage's First Section",
+      "code": "160E0250 0000"
+    },
+    {
+      "name": "Start On Stage's Second Section",
+      "code": "160E0250 0100"
+    },
+    {
+      "name": "Start On Stage's Third Section",
+      "code": "160E0250 0200"
+    },
+    {
+      "name": "Have Max Sub-Tanks",
+      "code": "160E0252 EFFF\n160E0254 EFFF"
+    },
+    {
+      "name": "Have All Super Armour & 4 Ride Mechs",
+      "code": "160E0272 FFFF"
+    }
+  ]
+}

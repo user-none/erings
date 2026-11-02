@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81076",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Have Voice Recorder",
+      "code": "360701CB 0001"
+    },
+    {
+      "name": "Have E-Key",
+      "code": "360701D3 0001"
+    },
+    {
+      "name": "Have VPS",
+      "code": "360701CF 0001"
+    },
+    {
+      "name": "Infinite Battery",
+      "code": "16096EA6 0063"
+    }
+  ]
+}

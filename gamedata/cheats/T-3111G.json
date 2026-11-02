@@ -1,0 +1,30 @@
+{
+  "serial": "T-3111G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "16022C28 0003"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "1601C5A0 0A00"
+    },
+    {
+      "name": "(Player 1) Unlimited Ammo",
+      "code": "160234A2 00C8"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160232F8 0003"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160234A0 0A00"
+    },
+    {
+      "name": "(Player 2) Unlimited Ammo",
+      "code": "1601C5A2 00C8"
+    }
+  ]
+}

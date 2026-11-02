@@ -1,0 +1,14 @@
+{
+  "serial": "T-9509H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "160A6E24 0003"
+    },
+    {
+      "name": "Infinite Credits",
+      "code": "160A6E14 0200"
+    }
+  ]
+}

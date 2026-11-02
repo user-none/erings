@@ -1,0 +1,98 @@
+{
+  "serial": "MK-81070",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "P1 Extras",
+      "code": "360D5AD0 00FF"
+    },
+    {
+      "name": "P2 Extras",
+      "code": "360D5B4C 00FF"
+    },
+    {
+      "name": "P3 Extras",
+      "code": "360D5BC8 00FF"
+    },
+    {
+      "name": "P4 Extras",
+      "code": "360D5C44 00FF"
+    },
+    {
+      "name": "P5 Extras",
+      "code": "360D5CC0 00FF"
+    },
+    {
+      "name": "P6 Extras",
+      "code": "360D5D3C 00FF"
+    },
+    {
+      "name": "P7 Extras",
+      "code": "360D5DB8 00FF"
+    },
+    {
+      "name": "P8 Extras",
+      "code": "360D5E34 00FF"
+    },
+    {
+      "name": "P9 Extras",
+      "code": "360D5EB0 00FF"
+    },
+    {
+      "name": "P10 Extras",
+      "code": "360D5F2C 00FF"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160C0B62 5500"
+    },
+    {
+      "name": "Large Explosions for Player 1",
+      "code": "360D5AC5 0009"
+    },
+    {
+      "name": "Linkbombs + May Kick Bombs for Player 1",
+      "code": "360D5AD0 00FF\n360D5AE0 00FF"
+    },
+    {
+      "name": "Rock Cutting Bomb Type for Player 1",
+      "code": "360D5AD1 0006"
+    },
+    {
+      "name": "Detonator Bomb Type for Player 1",
+      "code": "360D5AD1 0007"
+    },
+    {
+      "name": "Power Bomb Bomb Type for Player 1",
+      "code": "360D5AD1 0008"
+    },
+    {
+      "name": "Large Bomberman for Player 1",
+      "code": "360D5AD7 00FF"
+    },
+    {
+      "name": "Unlimited Bombs for Player 2",
+      "code": "360D5B4A 000F"
+    },
+    {
+      "name": "Large Explosions for Player 2",
+      "code": "360D5B41 000F"
+    },
+    {
+      "name": "Rock Cutting Bomb Type for Player 2",
+      "code": "360D5B4D 0006"
+    },
+    {
+      "name": "Detonator Bomb Type for Player 2",
+      "code": "360D5B4D 0007"
+    },
+    {
+      "name": "Power Bomb Bomb Type for Player 2",
+      "code": "360D5B4D 0008"
+    },
+    {
+      "name": "Large Bomberman for Player 2",
+      "code": "360D5B53 00FF"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "serial": "T-9528G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 2) 00 Score",
+      "code": "1606EAB0 0000"
+    },
+    {
+      "name": "(Player 2) 01 Score",
+      "code": "1606EAB0 0001"
+    },
+    {
+      "name": "(Player 2) 02 Score",
+      "code": "1606EAB0 0002"
+    },
+    {
+      "name": "(Player 2) 03 Score",
+      "code": "1606EAB0 0003"
+    },
+    {
+      "name": "(Player 2) 04 Score",
+      "code": "1606EAB0 0004"
+    },
+    {
+      "name": "(Player 2) 05 Score",
+      "code": "1606EAB0 0005"
+    },
+    {
+      "name": "(Player 2) 06 Score",
+      "code": "1606EAB0 0006"
+    },
+    {
+      "name": "(Player 2) 07 Score",
+      "code": "1606EAB0 0007"
+    },
+    {
+      "name": "(Player 2) 08 Score",
+      "code": "1606EAB0 0008"
+    },
+    {
+      "name": "(Player 2) 09 Score",
+      "code": "1606EAB0 0009"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9097",
+  "title": "Virtua Cop 2",
+  "native_title": "バーチャコップ２",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English",
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 090975"
+  ],
+  "release_date": "1996-11-22",
+  "developer": "AM R&D Dept. #2",
+  "publisher": "Sega",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "T - Teen",
+  "overview": "Virtua Cop 2 follows the same gameplay pattern of its predecessor. You are a police officer sent after criminals, from subways and a bank to aboard helicopters. The game moves you automatically, although you can find hiding places to shoot from a safe angle. Your main task is to aim and fire your weapon so as to take out the bad guys for points. Avoid the innocents, as shooting them costs you points. The enemies have tougher firepower than in the original."
+}

@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Radiant Silvergun (Japan)
+gameid: T-32902G
+system: saturn
+---
+
+# Scene index.
+#   1 title, 2 option, 3/4 ranking, 5 opening, 6 ending roll,
+#   7 STG00 (arcade mode only), 8-12 stages 1-5 under player control,
+#   13-16 stages 1-4 replaying a recorded demo.
+watch scene byte 0x0601CDC1
+def playing scene in (7, 8, 9, 10, 11, 12)
+
+# Death count, one byte per player inside that player's record. It
+# steps up on the frame the ship starts its explosion, which is well
+# ahead of the respawn. A player who never joined never reaches it.
+watch p1_deaths byte 0x0601CE02
+watch p2_deaths byte 0x0601CEBE
+
+# Death.
+on p1_deaths increased by 1 while playing:
+    pulse 1.0 800ms
+
+on p2_deaths increased by 1 while playing:
+    pulse 1.0 800ms player 2

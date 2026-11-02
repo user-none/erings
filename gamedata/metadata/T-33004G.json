@@ -1,0 +1,26 @@
+{
+  "serial": "T-33004G",
+  "title": "Hatsukoi Monogatari",
+  "native_title": "初恋物語",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 515646 845046"
+  ],
+  "release_date": "1998-10-01",
+  "developer": "Axes Art Amuse",
+  "publisher": "Tokuma Shoten",
+  "genres": [
+    "Adventure",
+    "Life Simulation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Your father gets a job transfer and is taking the family with him. You have three months to make your feelings known to your crush.\n\nThe initial character creation determines whether this happens in primary, middle, or high school."
+}

@@ -1,0 +1,34 @@
+{
+  "serial": "T-8116H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives P1",
+      "code": "160EAC30 0003"
+    },
+    {
+      "name": "Infinite Lives P2",
+      "code": "160EAD30 0003"
+    },
+    {
+      "name": "Level 9 Weapon P1",
+      "code": "160EAC32 0800"
+    },
+    {
+      "name": "Level 9 Weapon P2",
+      "code": "160EAD32 0800"
+    },
+    {
+      "name": "Infinite Armor P1",
+      "code": "160EAC90 7F9F"
+    },
+    {
+      "name": "Infinite Armor P2",
+      "code": "160EAD90 7F9F"
+    },
+    {
+      "name": "Infinite Credits",
+      "code": "160DC70C 0004"
+    }
+  ]
+}

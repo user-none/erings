@@ -1,0 +1,22 @@
+{
+  "serial": "T-10610G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "1601BB8E 0088\n1601BB90 0088"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "1601BBD2 0088\n1601BBD4 0088"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "1601BB8E 0000\n1601BB90 0000"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "1601BBD2 0000\n1601BBD4 0000"
+    }
+  ]
+}

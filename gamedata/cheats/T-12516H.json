@@ -1,0 +1,26 @@
+{
+  "serial": "T-12516H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives",
+      "code": "160A032E 0003"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160A0326 FFFF"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160A03C8 0065"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160A0322 FFFF"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160A044C 0065"
+    }
+  ]
+}

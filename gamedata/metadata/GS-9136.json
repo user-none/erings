@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9136",
+  "title": "Sega Ages: Fantasy Zone",
+  "native_title": "セガエイジス ファンタジー・ゾーン",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091361"
+  ],
+  "release_date": "1997-02-21",
+  "developer": "Rutubo Games",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "",
+  "overview": "Take command of the spaceship Opa-Opa and blast your way through various fantastical levels as you try to take out all the enemy bases in each stage. Once you've destroyed the bases, you'll have to beat the stage boss in order to move on to the next level. By using your guns and bombs wisely, you'll be able to take down your enemies and explore each of the crazy environments in this side-scroller. You can also buy upgraded weapons for your ship by accessing the shop."
+}

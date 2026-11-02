@@ -1,0 +1,26 @@
+{
+  "serial": "T-33101G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Health for Main Hero",
+      "code": "160206E0 03EF"
+    },
+    {
+      "name": "High Stat for Main Hero",
+      "code": "160206F0 03EF"
+    },
+    {
+      "name": "Unlimited Health for Melody (Yellow And Green Healer)",
+      "code": "160207AC 03E7"
+    },
+    {
+      "name": "High Stat for Melody",
+      "code": "160207BC 03E7"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "160217B0 000F\n160217B2 423F"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "serial": "GS-9079",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "16061D50 00A0"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "16062E50 00A0"
+    },
+    {
+      "name": "No Energy for Player 1",
+      "code": "16061D50 0000"
+    },
+    {
+      "name": "No Energy for Player 2",
+      "code": "16062E50 0000"
+    },
+    {
+      "name": "Low Gravity",
+      "code": "160E007A 0024"
+    },
+    {
+      "name": "No Ring Outs",
+      "code": "160E0068 004F"
+    }
+  ]
+}

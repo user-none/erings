@@ -1,0 +1,46 @@
+{
+  "serial": "T-9705H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "10205502 0004"
+    },
+    {
+      "name": "Infinite Bullets P1",
+      "code": "102054D6 0008"
+    },
+    {
+      "name": "Infinite Grenade P1",
+      "code": "102054DA 0009"
+    },
+    {
+      "name": "Infinite Lives P1",
+      "code": "10205502 0009"
+    },
+    {
+      "name": "Infinite Credits P1",
+      "code": "10250BEC 0009"
+    },
+    {
+      "name": "Infinite Ammo P2",
+      "code": "1020557E 0009"
+    },
+    {
+      "name": "Infinite Grenade P2",
+      "code": "10205582 0009"
+    },
+    {
+      "name": "Infinite Lives P2",
+      "code": "102055AA 0009"
+    },
+    {
+      "name": "Infinite Credits P2",
+      "code": "10250BEE 0009"
+    },
+    {
+      "name": "(Player 1) Unlimited Ammo",
+      "code": "102054D6 0009"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Street Fighter Zero 3 (Japan)
+gameid: T-1246G
+system: saturn
+---
+
+# Scene, and the step. 2 is the fight scene as a whole. Step 3 is the fight itself.
+watch scene word 0x0605DA78
+watch step  word 0x0605DA7C
+def in_match scene == 2 and step == 3
+
+# Humans-in-match bitmask. bit 0 is player 1, bit 1 is player 2.
+watch p1 byte 0x0605DB65 mask 0x01
+watch p2 byte 0x0605DB65 mask 0x02
+def p1_human p1 != 0
+def p2_human p2 != 0
+
+# HP, 144 at full.
+watch p1_hp word 0x0605DC44 signed
+watch p2_hp word 0x0605E04C signed
+
+# KO: hp negative
+on p1_hp < 0 while in_match and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms)
+on p2_hp < 0 while in_match and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) player 2

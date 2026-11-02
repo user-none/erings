@@ -1,0 +1,18 @@
+{
+  "serial": "T-7102G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives",
+      "code": "1606297A 0002"
+    },
+    {
+      "name": "Unlimited Fs",
+      "code": "1606297E 0003"
+    },
+    {
+      "name": "Spaceships Always Three",
+      "code": "1607537A 0003"
+    }
+  ]
+}

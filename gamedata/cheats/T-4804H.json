@@ -1,0 +1,14 @@
+{
+  "serial": "T-4804H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Balls",
+      "code": "1603AAEC 0003"
+    },
+    {
+      "name": "Multi-Balls Lite",
+      "code": "1603AB36 0100"
+    }
+  ]
+}

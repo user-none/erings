@@ -1,0 +1,18 @@
+{
+  "serial": "T-15904H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives",
+      "code": "16070316 0099"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "16070316 0063"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "1607FE06 0005"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "serial": "T-20902G",
+  "title": "Hansha de Spark!",
+  "native_title": "反射でスパーク！",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 533798 000007"
+  ],
+  "release_date": "1997-12-23",
+  "developer": "Prism",
+  "publisher": "Sieg",
+  "genres": [
+    "Action"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "Hansha de Spark! is a 2D top-down arcade game, similar in style to Bomberman, but instead of using bombs, players can shoot energy balls that receive power by bouncing off the special walls. They can collect bonuses to gain advantage. Game features both single-player mode where the player fights against zombie-like regular enemies and bosses, and a multi-player mode where you fights against other players or bots."
+}

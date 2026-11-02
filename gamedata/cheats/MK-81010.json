@@ -1,0 +1,58 @@
+{
+  "serial": "MK-81010",
+  "master_code": "F6000914 230B\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health (Level 1)",
+      "code": "1607E1E6 6400"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "160813C0 6863"
+    },
+    {
+      "name": "Always Have Blanc ET Noir Elephant Gun",
+      "code": "16081402 0100"
+    },
+    {
+      "name": "Always Have JJ 5000 Machine Gun",
+      "code": "16081408 0100"
+    },
+    {
+      "name": "Always Have Bio-Missile Bazooka",
+      "code": "1608140E 0100"
+    },
+    {
+      "name": "Always Have Phasic Laser",
+      "code": "16081414 0100"
+    },
+    {
+      "name": "Infinite Ammo (Auto-Mag Pistol)",
+      "code": "160813FE 0063"
+    },
+    {
+      "name": "Infinite Ammo (Blanc ET Noir Elephant Gun)",
+      "code": "16081404 0063"
+    },
+    {
+      "name": "Infinite Ammo (JJ 5000 Machine Gun)",
+      "code": "1608140A 0063"
+    },
+    {
+      "name": "Infinite Ammo (Bio-Missile Bazooka)",
+      "code": "16081410 0063"
+    },
+    {
+      "name": "Infinite Ammo (Phasic Laser)",
+      "code": "16081416 0063"
+    },
+    {
+      "name": "Infinite Health (Level 2)",
+      "code": "1607C01E 6300"
+    },
+    {
+      "name": "Unlimited Ammo",
+      "code": "160813FE 0063\n16081404 0063\n1608140A 0063\n16081410 0063\n16081416 0063"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "serial": "T-7502G",
+  "title": "Zap! Snowboarding Trix",
+  "native_title": "ザップ！ スノーボーディング・トリックス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 988013 038196"
+  ],
+  "release_date": "1997-02-21",
+  "developer": "Atelier Double",
+  "publisher": "Pony Canyon",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Zap! Snowboarding Trix is a snowboarding game endorsed by pro snowboarder Masao \"Bubbles\" Misawa. The game includes three single-player modes: Race Mode is an arcade-style race against a computer opponent; Practice Mode is a single-player time trial that records best times; and Free Mode is has no goals and removes the time limit. There are three courses, three boarders with different stats, and five computer difficulty levels."
+}

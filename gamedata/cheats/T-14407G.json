@@ -1,0 +1,54 @@
+{
+  "serial": "T-14407G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "1604DDD0 0002"
+    },
+    {
+      "name": "(Player 1) No Lives",
+      "code": "1604DDD0 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "1604DDD4 0002"
+    },
+    {
+      "name": "(Player 1) No Bombs",
+      "code": "1604DDD4 0000"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "1604DDFE 0010"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "1604DE44 0002"
+    },
+    {
+      "name": "(Player 2) No Lives",
+      "code": "1604DE44 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "1604DE48 0002"
+    },
+    {
+      "name": "(Player 2) No Bombs",
+      "code": "1604DE48 0000"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "1604DE72 0010"
+    },
+    {
+      "name": "(Player 1) Max Shot",
+      "code": "1604DDD6 0003\n1604DE00 0004"
+    },
+    {
+      "name": "(Player 2) Max Shot",
+      "code": "1604DE4A 0003\n1604DE74 0004"
+    }
+  ]
+}

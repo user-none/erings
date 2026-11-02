@@ -1,0 +1,27 @@
+{
+  "serial": "MK-081066",
+  "title": "Quake",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81066 0",
+    "4 974365 810665"
+  ],
+  "release_date": "1997-12-02",
+  "developer": "Lobotomy Software",
+  "publisher": "Sega",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "An enemy with the codename ''Quake'', which is believed to come from another dimension, is using teleporter gates to invade Earth. The player takes the role of a nameless soldier who arrives at his base only to find out Quake has overrun it and killed everyone. Somewhere in the base there must be a teleporter to Quake's realm. The mission is clear: take the fight to the enemy, overcoming countless hordes of monsters, and exact revenge.\n\nid Software's followup to Doom and Doom II, Quake is a first-person shooter. Its main technological innovation is the use of a true 3D engine - the levels themselves as well as the enemies are polygonal. This not only allows for more natural level designs and character animations, but also for more realistic lighting and the inclusion of simulated physics that have an effect on gameplay: grenades can bounce off walls and around corners, for example.\n\nIn single-player mode, gameplay consists mainly of proceeding through the levels (spread over four distinct episodes) in search of an exit, killing everything that moves. Interaction with the game world is reduced to a minimum: since there is no use key, buttons are pressed by running into or shooting at them. As in id's earlier games, many secrets are waiting to be discovered, including a few hidden levels.\n\nUnlike Doom's rather straightforward design that couples futuristic environments with demonic imagery, the theme of Quake's levels, enemies and weapons is not so easily pinpointed. While each episode begins in a futuristic military base (with a technological 'slipgate' as the level exit), later levels take place in environments inspired by medieval fantasy and gothic horror (castles, dungeons and caverns) and the player passes through magical portals to advance. In a departure from Doom's colorful environments, all Quake levels are dominated by earth colors.\n\nThe enemies conform to the mishmash of designs: there are human opponents armed with shotguns and energy weapons in the early levels, while the later levels include medieval knights, ghosts, zombies, ogres (armed with grenade launchers and chainsaws) and some more unearthly beasts. The player's weapons, while relatively modern, all have a low-tech feel. Besides a (bloodstained) axe, there are shotguns, nailguns, rocket and grenade launchers and the Thunderbolt, which discharges electrical energy.\n\nQuake was one of the first games playable natively over the Internet in addition to LANs. The single-player levels can be played cooperatively, but the game is most famous for its deathmatch mode. One-on-one duels, team play and free-for-all competition are possible. The emphasis is on fast reaction and skillful maneuvering through the levels. All of the single-player maps can be used as arenas, but the game also comes with six maps especially designed for deathmatch."
+}

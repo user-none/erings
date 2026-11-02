@@ -1,0 +1,10 @@
+{
+  "serial": "T-7601H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Money",
+      "code": "160C613E 2130\n160DFA40 22B8\n1020126A 9F62"
+    }
+  ]
+}

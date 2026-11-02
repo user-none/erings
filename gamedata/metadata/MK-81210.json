@@ -1,0 +1,27 @@
+{
+  "serial": "MK-81210",
+  "title": "Manx TT SuperBike",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81210 7",
+    "4 974365 812102"
+  ],
+  "release_date": "1997-03-14",
+  "developer": "Tantalus Interactive",
+  "publisher": "Sega",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Yet another world-class arcade conversion hits the Saturn! Manx TT Superbikes recreates the top-speed twists and turns of the legendary Isle of Man TT circuits. Throw your high-powered superbike around country lanes and hurtle through villages at hair-raising speeds as one or two riders push their nerves to the absolute limit on the circuit where heroes are made!"
+}

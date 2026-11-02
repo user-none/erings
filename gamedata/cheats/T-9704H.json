@@ -1,0 +1,66 @@
+{
+  "serial": "T-9704H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "16083ED4 00A6"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "1608404C 00A6"
+    },
+    {
+      "name": "No Health P1",
+      "code": "16083ED4 0000"
+    },
+    {
+      "name": "No Health P2",
+      "code": "1608404C 0000"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D6083ED4 00A6\n16083ED4 0029"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D6083ED4 00A6\n16083ED4 0053"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D6083ED4 00A6\n16083ED4 007C"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D6083ED4 00A6\n16083ED4 0001"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D608404C 00A6\n1608404C 0029"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D608404C 00A6\n1608404C 0053"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D608404C 00A6\n1608404C 007C"
+    },
+    {
+      "name": "1-Hit Death Energy P2",
+      "code": "D608404C 00A6\n1608404C 0001"
+    },
+    {
+      "name": "FAKE Infinite Aggressor P2",
+      "code": "1607B808 0000"
+    },
+    {
+      "name": "FAKE Infinite Aggressor P1",
+      "code": "1607BA68 0000"
+    },
+    {
+      "name": "Open '?' in Options",
+      "code": "1608430A 0001"
+    }
+  ]
+}

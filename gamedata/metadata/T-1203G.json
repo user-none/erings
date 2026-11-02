@@ -1,0 +1,25 @@
+{
+  "serial": "T-1203G",
+  "title": "X-Men: Children of the Atom",
+  "native_title": "エックス・メン ～チルドレン・オブ・ジ・アトム～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 976219 154307"
+  ],
+  "release_date": "1995-11-22",
+  "developer": "Rutubo Games",
+  "publisher": "Capcom",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "X-Men: Children of the Atom is a 2D fighting game and the first Capcom title to use licensed characters from the Marvel comic universe. It has six main characters and four of their enemies that are playable. The X-Men are Colossus, Cyclops, Iceman, Psylocke, Storm and Wolverine. The villains are Omega Red, Sentinel, Silver Samurai and Spiral. The two main bosses are Juggernaut and Magneto, and Akuma is available as a secret character."
+}

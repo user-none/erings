@@ -1,0 +1,26 @@
+{
+  "serial": "T-34101G",
+  "title": "Tactics Formula",
+  "native_title": "タクティクス・フォーミュラ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 534246 000013"
+  ],
+  "release_date": "1997-10-09",
+  "developer": "AKI",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Board Game",
+    "Strategy"
+  ],
+  "max_players": 4,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Tactics Formula is an F1 racing simulation board game for up to four players. Rather than driving a course in real-time, the player instead selects the route to take for each section of track from preset points laid out on a map, keeping in mind race conditions such as the position of other vehicles, tire durability, and remaining fuel. After deciding the route for a section, the choices made play out and the player then plans the next section's route, continuing until completing the race. A real-time replay of the full race is shown once the race is complete. There are a total of 16 different tracks to race."
+}

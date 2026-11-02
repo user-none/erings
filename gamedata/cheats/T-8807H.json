@@ -1,0 +1,42 @@
+{
+  "serial": "T-8807H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time P1",
+      "code": "16065C0E 0AF0"
+    },
+    {
+      "name": "Fuel Always at Level 5 P1",
+      "code": "16065C3A 0005"
+    },
+    {
+      "name": "Fuel Always at Level 0 P1",
+      "code": "16065C3A 0000"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "16065C06 0032"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "16065C06 0000"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D6065C06 0032\n16065C06 0001"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D6065C06 0032\n16065C06 000C"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D6065C06 0032\n16065C06 0019"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D6065C06 0032\n16065C06 0025"
+    }
+  ]
+}

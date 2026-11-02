@@ -1,0 +1,133 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Panzer Dragoon Zwei (USA)
+gameid: MK-81022
+system: saturn
+---
+
+# 1 only while a player controlled episode runs. 0 in title,
+# cutscenes, loads and results.
+watch running byte 0x0607A6BB
+
+# 1 while paused.
+watch paused byte 0x0607A6B8
+
+# Episode number, 0-7.
+watch scene byte 0x06073104
+
+def ingame running == 1 and paused == 0
+
+def e1 scene == 1
+def e2 scene == 2
+def e3 scene == 3
+def e4 scene == 4
+def e5 scene == 5
+def e6 scene == 6
+def e7 scene == 7
+
+
+# --- Dragon ---
+
+# Health, 16.16. Damage subtracts whole points shifted left 16.
+# Inital health value 0x00800000. Negative after the killing blow.
+watch health long 0x060730A8 signed
+
+on health < 0 while ingame:
+    pattern (1.0 450ms, off 150ms, 0.8 350ms, 0.5/0.6 450ms) priority 1
+
+# Hit. 30 frame invincibility follows every hit.
+on health decreased while ingame:
+    pulse 0.90/0.7 250ms
+    scale 0x10000..0x280000 -> 0.5..1.0
+
+
+# --- Lock-on volley ---
+
+# Head of the lock chain inside the dragon object. 0xFF with no
+# locks, drained back to 0xFF the frame the volley launches. An
+# empty release never changes it.
+watch lockhead byte ptr 0x0607CC08 offset 0xBB
+
+on lockhead changed to 0xFF while ingame:
+    pulse 0.6/0.8 400ms cooldown 400ms
+
+
+# --- Screen shake ---
+
+# Camera shake impulse accumulators: position and angle. Fed by the
+# player damage path and boss/event code, decay a quarter per frame.
+watch shakep long 0x06073480
+watch shakea long 0x060734BC
+
+event shakingp shakep changed for 100ms
+event shakinga shakea changed for 100ms
+def shaking shakingp or shakinga
+
+on shaking while ingame: hold 0.3/0.4
+
+
+# --- Bosses ---
+
+# Heap object grid: the long at slot -16 of every object body is
+# its class main function while alive.
+watch pool long 0x060E0000 stride 0x10 count 8192
+
+# = Episode 2 = 
+
+# It appears when the ship is finished and is freed when the
+# explosion animation ends, so it spans exactly the death.
+def e2dying pool == 0x060A1AA8
+
+# Boss range, 16.16: how far the ship sits from the dragon. 0 with
+# no boss up, ~1680 at fight range, ~100 while the wreck chases the
+# dragon, opening to ~690 at the final explosion.
+watch e2dist long 0x0606DB90
+
+# Repeating figure while it tumbles: a hit, a roll, a settle. Full
+# while the wreck is on the dragon's tail, tapering as the gap opens.
+on e2dying while ingame and e2:
+    pattern (0.85 130ms, off 90ms, 0.5/0.6 180ms, off 120ms, 0.3 220ms)
+    scale e2dist 0x1CC0000..0x2B20000 -> 1.0..0.4
+    level cooldown 900ms clip priority 2
+
+# = Episode 3 =
+
+# Death starting.
+def e3dying pool == 0x0608DDBA
+
+# Boss dying effect tied to the screen shake.
+on e3dying while ingame and shaking and e3:
+    pattern (1.0 500ms, off 100ms, 0.8 400ms, off 200ms,
+    0.9 500ms, off 150ms, 0.7 600ms) level clip priority 2
+
+# = Episode 4 =
+
+# Explosion objects cover the barrage and large destruction.
+on pool in (0x0609060C, 0x06090738) while ingame and e4: hold 0.40/0.55
+
+# = Episode 5 =
+
+# The boss keeps a state word in a script record on the object grid.
+# 4 = fighting, 6-9 = phase 2, 10 = dying
+watch e5state word 0x060E0000 stride 0x10 count 8192
+    key 4 0x060BC3EC field 8
+
+# The dragon flies away from the wreck through the death sequence,
+# so the tail tapers off rather than holding.
+on e5state >= 10 while ingame and e5:
+    pattern (1.0 500ms, 1.0 400ms, 0.9 500ms, 0.8 400ms, 0.9 500ms,
+             0.7 600ms, 0.5 600ms, 0.3 700ms, 0.15 800ms) priority 2
+
+# = Episode 6 =
+
+# Phase word.
+watch e6phase word 0x0609E6D8
+
+# Phase word turns 7 the frame the boss dies.
+on e6phase changed to 7 while e6 and ingame:
+    pattern (1.0 500ms, 0.8 400ms, 0.9 500ms, 0.7 600ms) priority 2
+
+# = Episode 7 =
+
+# Fragment and part classes when the boss explodes.
+on pool in (0x060869C8, 0x0608663E) while ingame and e7:
+    pattern (1.0 500ms, 0.7 400ms, 0.9 500ms, 0.5 600ms) priority 2

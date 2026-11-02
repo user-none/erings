@@ -1,0 +1,22 @@
+{
+  "serial": "T-2507G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Langrisser 1) Unlimited Money",
+      "code": "160A426E 7777"
+    },
+    {
+      "name": "(Langrisser 2) Unlimited Money",
+      "code": "1609C9CE 7777"
+    },
+    {
+      "name": "Main Character Is Powerful",
+      "code": "1609CE02 0063\n1609CE04 6309\n1609CE06 6363\n1609CE0C 6363"
+    },
+    {
+      "name": "Magic Evil Is Powerful",
+      "code": "1609CE6A 0063\n1609CE6C 6309\n1609CE6E 6363\n1609CE74 6363"
+    }
+  ]
+}

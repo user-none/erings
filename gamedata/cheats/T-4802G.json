@@ -1,0 +1,14 @@
+{
+  "serial": "T-4802G",
+  "master_code": "F6019D3C C305",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "16058132 0D00"
+    },
+    {
+      "name": "Unlimited Off-Road Time",
+      "code": "16058136 0FFF"
+    }
+  ]
+}

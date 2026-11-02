@@ -1,0 +1,26 @@
+{
+  "serial": "T-3108G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "160F3B1C 0060"
+    },
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160F4398 0067"
+    },
+    {
+      "name": "(Player 1) Full Power Bar",
+      "code": "160F4356 4100"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160FC5A8 0067"
+    },
+    {
+      "name": "(Player 2) Full Power Bar",
+      "code": "160FC566 4100"
+    }
+  ]
+}

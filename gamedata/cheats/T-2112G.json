@@ -1,0 +1,46 @@
+{
+  "serial": "T-2112G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited HP",
+      "code": "160D0BC0 03E7"
+    },
+    {
+      "name": "Unlimited BP",
+      "code": "160CFB10 03E7"
+    },
+    {
+      "name": "Max HP",
+      "code": "160D0B70 03E7"
+    },
+    {
+      "name": "Max EXP",
+      "code": "160D47A0 FFFF"
+    },
+    {
+      "name": "Max BP",
+      "code": "160D3040 03E7"
+    },
+    {
+      "name": "Max Attack",
+      "code": "16DCFB90 03E7"
+    },
+    {
+      "name": "Max Defense",
+      "code": "160D2040 03E7"
+    },
+    {
+      "name": "Max Speed",
+      "code": "160D0000 03E7"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "160CFACC 05F5\n160CFACE E0FF"
+    },
+    {
+      "name": "Unlimited Pre-Money",
+      "code": "160D4CA0 05F5\n160D4CA2 E0FF"
+    }
+  ]
+}

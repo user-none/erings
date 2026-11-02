@@ -1,0 +1,82 @@
+{
+  "serial": "T-8102H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Player 1 Scores 9",
+      "code": "1606C002 0009"
+    },
+    {
+      "name": "Player 2 Scores 0",
+      "code": "1606C00A 0000"
+    },
+    {
+      "name": "(Player 1) 1 Score",
+      "code": "1606C002 0001"
+    },
+    {
+      "name": "(Player 1) 2 Score",
+      "code": "1606C002 0002"
+    },
+    {
+      "name": "(Player 1) 3 Score",
+      "code": "1606C002 0003"
+    },
+    {
+      "name": "(Player 1) 4 Score",
+      "code": "1606C002 0004"
+    },
+    {
+      "name": "(Player 1) 5 Score",
+      "code": "1606C002 0005"
+    },
+    {
+      "name": "(Player 1) 6 Score",
+      "code": "1606C002 0006"
+    },
+    {
+      "name": "(Player 1) 7 Score",
+      "code": "1606C002 0007"
+    },
+    {
+      "name": "(Player 1) 8 Score",
+      "code": "1606C002 0008"
+    },
+    {
+      "name": "(Player 2) 1 Score",
+      "code": "1606C00A 0001"
+    },
+    {
+      "name": "(Player 2) 2 Score",
+      "code": "1606C00A 0002"
+    },
+    {
+      "name": "(Player 2) 3 Score",
+      "code": "1606C00A 0003"
+    },
+    {
+      "name": "(Player 2) 4 Score",
+      "code": "1606C00A 0004"
+    },
+    {
+      "name": "(Player 2) 5 Score",
+      "code": "1606C00A 0005"
+    },
+    {
+      "name": "(Player 2) 6 Score",
+      "code": "1606C00A 0006"
+    },
+    {
+      "name": "(Player 2) 7 Score",
+      "code": "1606C00A 0007"
+    },
+    {
+      "name": "(Player 2) 8 Score",
+      "code": "1606C00A 0008"
+    },
+    {
+      "name": "(Player 2) 9 Score",
+      "code": "1606C00A 0009"
+    }
+  ]
+}

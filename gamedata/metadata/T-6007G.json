@@ -1,0 +1,25 @@
+{
+  "serial": "T-6007G",
+  "title": "Tournament Leader",
+  "native_title": "トーナメント・リーダー",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988002 329915"
+  ],
+  "release_date": "1996-08-23",
+  "developer": "Core Design",
+  "publisher": "Core Design",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "It's never been easier to play a round - Virtual Golf's real-time 3D courses, fly-by previews and spoken commentary offer a bird's eye view and professional advice for each hole. Virtual Golf allows a selection up to 4 male and female human and computer generated characters to play a variety of game types. However, if you want to gain that all-important Professional ranking and play the Pro courses, you'll have to finish a series of tournaments under par. With zooming and panning options that allow you to view the hole from practically any angle and 6 different TV-style cameras, it's virtually better than the real thing!"
+}

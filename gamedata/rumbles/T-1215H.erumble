@@ -1,0 +1,64 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Super Puzzle Fighter II Turbo (USA)
+gameid: T-1215H
+system: saturn
+---
+
+watch p1_cpu byte 0x0605CFA8
+watch p2_cpu byte 0x0605D254
+
+def p1_human p1_cpu == 0
+def p2_human p2_cpu == 0
+
+# State 20 is ko
+watch p1_state byte 0x0605D15E
+watch p2_state byte 0x0605D40A
+
+const ko 20
+
+# KO
+on p1_state changed to ko while p1_human:
+    pattern (1.0 260ms, off 40ms, 1.0 260ms, off 50ms, 1.0 700ms) priority 1
+on p2_state changed to ko while p2_human:
+    pattern (1.0 260ms, off 40ms, 1.0 260ms, off 50ms, 1.0 700ms) priority 1 player 2
+
+# Dropping count down blocks
+watch p1_impact word 0x0605D12A
+watch p2_impact word 0x0605D3D6
+
+watch p1_rows word 0x0605D10E
+watch p2_rows word 0x0605D3BA
+
+# Counter gems hitting the stack, banded by how much came down.
+# Rule order picks the band, so these run strongest first.
+on p1_impact changed from 0 and p1_rows >= 6 while p1_human:
+    pulse 1.0/0.85 320ms
+on p1_impact changed from 0 and p1_rows >= 4 while p1_human:
+    pulse 0.85/0.7 280ms
+on p1_impact changed from 0 and p1_rows >= 2 while p1_human:
+    pulse 0.7/0.55 240ms
+on p1_impact changed from 0 and p1_rows >= 1 while p1_human:
+    pulse 0.55/0.4 200ms
+on p1_impact changed from 0 while p1_human:
+    pulse 0.35/0.25 160ms
+
+on p2_impact changed from 0 and p2_rows >= 6 while p2_human:
+    pulse 1.0/0.85 320ms player 2
+on p2_impact changed from 0 and p2_rows >= 4 while p2_human:
+    pulse 0.85/0.7 280ms player 2
+on p2_impact changed from 0 and p2_rows >= 2 while p2_human:
+    pulse 0.7/0.55 240ms player 2
+on p2_impact changed from 0 and p2_rows >= 1 while p2_human:
+    pulse 0.55/0.4 200ms player 2
+on p2_impact changed from 0 while p2_human:
+    pulse 0.35/0.25 160ms player 2
+
+# Pending blocks staged, drained back to 0 as they drop
+watch p1_drop word 0x0605D086
+watch p2_drop word 0x0605D332
+
+# Warning, last so a landing on the same frame wins
+on p1_drop changed from 0 while p1_human:
+    pulse 0.3/0.2 140ms
+on p2_drop changed from 0 while p2_human:
+    pulse 0.3/0.2 140ms player 2

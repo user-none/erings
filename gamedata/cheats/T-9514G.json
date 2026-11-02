@@ -1,0 +1,14 @@
+{
+  "serial": "T-9514G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160B1366 0002"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160B13E6 0002"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "serial": "T-8105H",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Play As Akuma",
+      "code": "16050C9E 0707"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "16050A86 0070\n1605099A 0070\n1605099C 0070"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "16050E26 0070\n16050D3A 0070\n16050D3C 0070"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D605099C 0070\n16050A86 001C\n1605099A 001C\n1605099C 001C"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D605099C 0070\n16050A86 0038\n1605099A 0038\n1605099C 0038"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D605099C 0070\n16050A86 0054\n1605099A 0054\n1605099C 0054"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "16050A86 0000\n1605099A 0000\n1605099C 0000"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D605099C 0070\n16050A86 0001\n1605099A 0001\n1605099C 0001"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D6050D3C 0070\n16050E26 001C\n16050D3A 001C\n16050D3C 001C"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D6050D3C 0070\n16050E26 0038\n16050D3A 0038\n16050D3C 0038"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D6050D3C 0070\n16050E26 0054\n16050D3A 0054\n16050D3C 0054"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "16050E26 0000\n16050D3A 0000\n16050D3C 0000"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D6050D3C 0070\n16050E26 0001\n16050D3A 0001\n16050D3C 0001"
+    }
+  ]
+}

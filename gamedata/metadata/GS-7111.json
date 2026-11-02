@@ -1,0 +1,25 @@
+{
+  "serial": "GS-7111",
+  "title": "Puyo Puyo Sun for SegaNet",
+  "native_title": "ぷよぷよＳＵＮ ＦＯＲ ＳＥＧＡＮＥＴ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 071110"
+  ],
+  "release_date": "1997-09-04",
+  "developer": "Compile",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "This special release of Puyo Puyo Sun is modified to exclusively support online multiplayer functionality via the Sega Saturn Modem and XBand service. Released at a lower price, most of the single-player content has been removed from this version, with only the single-player endless mode available for offline play."
+}

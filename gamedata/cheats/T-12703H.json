@@ -1,0 +1,7578 @@
+{
+  "serial": "T-12703H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "16077DE4 0076"
+    },
+    {
+      "name": "Timer Stopped At 88",
+      "code": "1607A6A6 0A5C"
+    },
+    {
+      "name": "Put In Battle When Army Runs Out",
+      "code": "1607A64E 0000"
+    },
+    {
+      "name": "Even if Enemy still has their army. Unlimited Awards",
+      "code": "102084E8 0001\n102EA13E 0001"
+    },
+    {
+      "name": "Instant Victory",
+      "code": "16076E8A 0000\n16077E8A 0000\n1607A65E 0000"
+    },
+    {
+      "name": "Unlimited Troops",
+      "code": "1020824A 0999\n10208240 0999\n1020821A 0999\n10208208 0999\n10208226 0999\n10208212 0999\n10208218 0999\n10208236 0999\n10208214 0999\n10208244 0999\n10208210 0999\n1020822E 0999\n1020822C 0999\n10208248 0999\n10208228 0999\n1020820E 0999\n1020822A 0999\n1020821C 0999\n1020821E 0999\n1020820A 0999\n10208220 0999\n10208246 0999\n10208242 0999\n10208234 0999\n10208232 0999\n1020823E 0999\n10208238 0999\n10208216 0999\n1020823A 0999\n1020823C 0999\n10208222 0999\n1020820C 0999\n10208224 0999\n10208230 0999"
+    },
+    {
+      "name": "Unlimited Troops (Maryare Castle)",
+      "code": "1020824A 0999"
+    },
+    {
+      "name": "Unlimited Troops (Travan Castle)",
+      "code": "10208240 0999"
+    },
+    {
+      "name": "Unlimited Troops (Daiden Castle)",
+      "code": "1020821A 0999"
+    },
+    {
+      "name": "Unlimited Troops (Highland Castle)",
+      "code": "10208208 0999"
+    },
+    {
+      "name": "Unlimited Troops (Magicka Castle)",
+      "code": "10208226 0999"
+    },
+    {
+      "name": "Unlimited Troops (Topaz Castle)",
+      "code": "10208212 0999"
+    },
+    {
+      "name": "Unlimited Troops (Galfiel Castle)",
+      "code": "10208218 0999"
+    },
+    {
+      "name": "Unlimited Troops (Sardia Castle)",
+      "code": "10208236 0999"
+    },
+    {
+      "name": "Unlimited Troops (Bozack Castle)",
+      "code": "10208214 0999"
+    },
+    {
+      "name": "Unlimited Troops (Mikeral Castle)",
+      "code": "10208244 0999"
+    },
+    {
+      "name": "Unlimited Troops (Tradnor Castle)",
+      "code": "10208210 0999"
+    },
+    {
+      "name": "Unlimited Troops (Stalwart Castle)",
+      "code": "1020822E 0999"
+    },
+    {
+      "name": "Unlimited Troops (Danyan Castle)",
+      "code": "1020822C 0999"
+    },
+    {
+      "name": "Unlimited Troops (Ogrekeep Castle)",
+      "code": "10208248 0999"
+    },
+    {
+      "name": "Unlimited Troops (Eternal Castle)",
+      "code": "10208228 0999"
+    },
+    {
+      "name": "Unlimited Troops (Izumo Castle)",
+      "code": "1020820E 0999"
+    },
+    {
+      "name": "Unlimited Troops (Royal Castle)",
+      "code": "1020822A 0999"
+    },
+    {
+      "name": "Unlimited Troops (Stoic Castle)",
+      "code": "1020821C 0999"
+    },
+    {
+      "name": "Unlimited Troops (Bloodly Castle)",
+      "code": "1020821E 0999"
+    },
+    {
+      "name": "Unlimited Troops (Fandaria Castle)",
+      "code": "1020820A 0999"
+    },
+    {
+      "name": "Unlimited Troops (Ginan Castle)",
+      "code": "10208220 0999"
+    },
+    {
+      "name": "Unlimited Troops (Estonia Castle)",
+      "code": "10208246 0999"
+    },
+    {
+      "name": "Unlimited Troops (Nikeral Castle)",
+      "code": "10208242 0999"
+    },
+    {
+      "name": "Unlimited Troops (Royuewar Castle)",
+      "code": "10208234 0999"
+    },
+    {
+      "name": "Unlimited Troops (Gasparl Castle)",
+      "code": "10208232 0999"
+    },
+    {
+      "name": "Unlimited Troops (Starfall Castle)",
+      "code": "1020823E 0999"
+    },
+    {
+      "name": "Unlimited Troops (Blazart Castle)",
+      "code": "10208238 0999"
+    },
+    {
+      "name": "Unlimited Troops (Tristan Castle)",
+      "code": "10208216 0999"
+    },
+    {
+      "name": "Unlimited Troops (Sophnyk Castle)",
+      "code": "1020823A 0999"
+    },
+    {
+      "name": "Unlimited Troops (Crystal Castle)",
+      "code": "1020823C 0999"
+    },
+    {
+      "name": "Unlimited Troops (Orvue Castle)",
+      "code": "10208222 0999"
+    },
+    {
+      "name": "Unlimited Troops (Palemoon Castle)",
+      "code": "1020820C 0999"
+    },
+    {
+      "name": "Unlimited Troops (Claystal Castle)",
+      "code": "10208224 0999"
+    },
+    {
+      "name": "Unlimited Troops (Lightan Castle)",
+      "code": "10208230 0999"
+    },
+    {
+      "name": "Unlimited HP for Aisha",
+      "code": "1020109C 03E7"
+    },
+    {
+      "name": "Maximum HP for Aisha",
+      "code": "102011F2 03E7"
+    },
+    {
+      "name": "Unlimited MP for Aisha",
+      "code": "10201344 0063"
+    },
+    {
+      "name": "Maximum MP for Aisha",
+      "code": "1020149E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Aisha",
+      "code": "102015F4 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Aisha",
+      "code": "102019F6 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Aisha",
+      "code": "302025FC 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Aisha",
+      "code": "302025FD 0009"
+    },
+    {
+      "name": "Unlimited Mages for Aisha",
+      "code": "30202752 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Aisha",
+      "code": "30202753 0009"
+    },
+    {
+      "name": "Unlimited Archers for Aisha",
+      "code": "302028A6 0009"
+    },
+    {
+      "name": "Unlimited Monks for Aisha",
+      "code": "302028A7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Aisha",
+      "code": "302029FE 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Aisha",
+      "code": "302029FF 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Aisha",
+      "code": "30202B54 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Aisha",
+      "code": "30202B55 0009"
+    },
+    {
+      "name": "Aisha has all spells",
+      "code": "10204762 0003"
+    },
+    {
+      "name": "Unlimited HP for Ardor",
+      "code": "10201094 03E7"
+    },
+    {
+      "name": "Maximum HP for Ardor",
+      "code": "102011EA 03E7"
+    },
+    {
+      "name": "Unlimited MP for Ardor",
+      "code": "1020133C 0063"
+    },
+    {
+      "name": "Maximum MP for Ardor",
+      "code": "10201496 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Ardor",
+      "code": "102015EC 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Ardor",
+      "code": "102019EE 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Ardor",
+      "code": "302025F4 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Ardor",
+      "code": "302025F5 0009"
+    },
+    {
+      "name": "Unlimited Mages for Ardor",
+      "code": "3020274A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Ardor",
+      "code": "3020274B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ardor",
+      "code": "3020289E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Ardor",
+      "code": "3020289F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ardor",
+      "code": "302029F6 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Ardor",
+      "code": "302029F7 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Ardor",
+      "code": "30202B4C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Ardor",
+      "code": "30202B4D 0009"
+    },
+    {
+      "name": "Ardor has all spells for Ardor",
+      "code": "1020475A 0003"
+    },
+    {
+      "name": "Unlimited HP for Ayrios",
+      "code": "1020102A 03E7"
+    },
+    {
+      "name": "Maximum HP for Ayrios",
+      "code": "10201180 03E7"
+    },
+    {
+      "name": "Unlimited MP for Ayrios",
+      "code": "102012D6 0063"
+    },
+    {
+      "name": "Maximum MP for Ayrios",
+      "code": "1020142C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Ayrios",
+      "code": "10201582 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Ayrios",
+      "code": "10201984 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Ayrios",
+      "code": "3020258A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Ayrios",
+      "code": "3020258B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Ayrios",
+      "code": "302026E0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Ayrios",
+      "code": "302026E1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ayrios",
+      "code": "30202836 0009"
+    },
+    {
+      "name": "Unlimited Monks for Ayrios",
+      "code": "30202837 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ayrios",
+      "code": "3020298C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Ayrios",
+      "code": "3020298D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Ayrios",
+      "code": "30202AE2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Ayrios",
+      "code": "30202AE3 0009"
+    },
+    {
+      "name": "Ayrios has all spells",
+      "code": "102046F0 0003"
+    },
+    {
+      "name": "Unlimited HP for Baghib",
+      "code": "10201024 03E7"
+    },
+    {
+      "name": "Maximum HP for Baghib",
+      "code": "1020117A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Baghib",
+      "code": "102012D0 0063"
+    },
+    {
+      "name": "Maximum MP for Baghib",
+      "code": "10201426 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Baghib",
+      "code": "1020157C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Baghib",
+      "code": "1020197E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Baghib",
+      "code": "30202584 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Baghib",
+      "code": "30202585 0009"
+    },
+    {
+      "name": "Unlimited Mages for Baghib",
+      "code": "302026DA 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Baghib",
+      "code": "302026DB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Baghib",
+      "code": "30202830 0009"
+    },
+    {
+      "name": "Unlimited Monks for Baghib",
+      "code": "30202831 0009"
+    },
+    {
+      "name": "Unlimited Archers for Baghib",
+      "code": "30202986 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Baghib",
+      "code": "30202987 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Baghib",
+      "code": "30202ADC 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Baghib",
+      "code": "30202ADD 0009"
+    },
+    {
+      "name": "Baghib has all spells",
+      "code": "102046EA 0003"
+    },
+    {
+      "name": "Unlimited HP for Bagril",
+      "code": "1020109E 03E7"
+    },
+    {
+      "name": "Maximum HP for Bagril",
+      "code": "102011F4 03E7"
+    },
+    {
+      "name": "Unlimited MP for Bagril",
+      "code": "10201346 0063"
+    },
+    {
+      "name": "Maximum MP for Bagril",
+      "code": "102014A0 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Bagril",
+      "code": "102015F6 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Bagril",
+      "code": "102019F8 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Bagril",
+      "code": "302025FE 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Bagril",
+      "code": "302025FF 0009"
+    },
+    {
+      "name": "Unlimited Mages for Bagril",
+      "code": "30202754 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Bagril",
+      "code": "30202755 0009"
+    },
+    {
+      "name": "Unlimited Archers for Bagril",
+      "code": "302028A8 0009"
+    },
+    {
+      "name": "Unlimited Monks for Bagril",
+      "code": "302028A9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Bagril",
+      "code": "30202A00 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Bagril",
+      "code": "30202A01 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Bagril",
+      "code": "30202B56 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Bagril",
+      "code": "30202B57 0009"
+    },
+    {
+      "name": "Bagril has all spells",
+      "code": "10204764 0003"
+    },
+    {
+      "name": "Unlimited HP for Bardal",
+      "code": "10201018 03E7"
+    },
+    {
+      "name": "Maximum HP for Bardal",
+      "code": "1020116E 03E7"
+    },
+    {
+      "name": "Unlimited MP for Bardal",
+      "code": "102012C4 0063"
+    },
+    {
+      "name": "Maximum MP for Bardal",
+      "code": "1020141A 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Bardal",
+      "code": "10201570 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Bardal",
+      "code": "10201972 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Bardal",
+      "code": "30202578 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Bardal",
+      "code": "30202579 0009"
+    },
+    {
+      "name": "Unlimited Mages for Bardal",
+      "code": "302026CE 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Bardal",
+      "code": "302026CF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Bardal",
+      "code": "30202824 0009"
+    },
+    {
+      "name": "Unlimited Monks for Bardal",
+      "code": "30202825 0009"
+    },
+    {
+      "name": "Unlimited Archers for Bardal",
+      "code": "3020297A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Bardal",
+      "code": "3020297B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Bardal",
+      "code": "30202AD0 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Bardal",
+      "code": "30202AD1 0009"
+    },
+    {
+      "name": "Bardal has all spells",
+      "code": "102046DE 0003"
+    },
+    {
+      "name": "Unlimited HP for Barrat",
+      "code": "1020111C 03E7"
+    },
+    {
+      "name": "Maximum HP for Barrat",
+      "code": "10201272 03E7"
+    },
+    {
+      "name": "Unlimited MP for Barrat",
+      "code": "102013C4 0063"
+    },
+    {
+      "name": "Maximum MP for Barrat",
+      "code": "1020151E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Barrat",
+      "code": "10201674 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Barrat",
+      "code": "10201A76 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Barrat",
+      "code": "3020267C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Barrat",
+      "code": "3020267D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Barrat",
+      "code": "302027D2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Barrat",
+      "code": "302027D3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Barrat",
+      "code": "30202926 0009"
+    },
+    {
+      "name": "Unlimited Monks for Barrat",
+      "code": "30202927 0009"
+    },
+    {
+      "name": "Unlimited Archers for Barrat",
+      "code": "30202A7E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Barrat",
+      "code": "30202A7F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Barrat",
+      "code": "30202BD4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Barrat",
+      "code": "30202BD5 0009"
+    },
+    {
+      "name": "Barrat has all spells",
+      "code": "102047A2 0003"
+    },
+    {
+      "name": "Unlimited HP for Bastlion",
+      "code": "102010BA 03E7"
+    },
+    {
+      "name": "Maximum HP for Bastlion",
+      "code": "10201210 03E7"
+    },
+    {
+      "name": "Unlimited MP for Bastlion",
+      "code": "10201362 0063"
+    },
+    {
+      "name": "Maximum MP for Bastlion",
+      "code": "102014BC 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Bastlion",
+      "code": "10201612 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Bastlion",
+      "code": "10201A14 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Bastlion",
+      "code": "3020261A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Bastlion",
+      "code": "3020261B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Bastlion",
+      "code": "30202770 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Bastlion",
+      "code": "30202771 0009"
+    },
+    {
+      "name": "Unlimited Archers for Bastlion",
+      "code": "302028C4 0009"
+    },
+    {
+      "name": "Unlimited Monks for Bastlion",
+      "code": "302028C5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Bastlion",
+      "code": "30202A1C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Bastlion",
+      "code": "30202A1D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Bastlion",
+      "code": "30202B72 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Bastlion",
+      "code": "30202B73 0009"
+    },
+    {
+      "name": "Bastlion has all spells",
+      "code": "10204780 0003"
+    },
+    {
+      "name": "Unlimited HP for Beykall",
+      "code": "102010C8 03E7"
+    },
+    {
+      "name": "Maximum HP for Beykall",
+      "code": "1020121E 03E7"
+    },
+    {
+      "name": "Unlimited MP for Beykall",
+      "code": "10201370 0063"
+    },
+    {
+      "name": "Maximum MP for Beykall",
+      "code": "102014CA 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Beykall",
+      "code": "10201620 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Beykall",
+      "code": "10201A22 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Beykall",
+      "code": "30202628 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Beykall",
+      "code": "30202629 0009"
+    },
+    {
+      "name": "Unlimited Mages for Beykall",
+      "code": "3020277E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Beykall",
+      "code": "3020277F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Beykall",
+      "code": "302028D2 0009"
+    },
+    {
+      "name": "Unlimited Monks for Beykall",
+      "code": "302028D3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Beykall",
+      "code": "30202A2A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Beykall",
+      "code": "30202A2B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Beykall",
+      "code": "30202B80 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Beykall",
+      "code": "30202B81 0009"
+    },
+    {
+      "name": "Beykall has all spells",
+      "code": "1020478E 0003"
+    },
+    {
+      "name": "Unlimited HP for Cinna",
+      "code": "1020102C 03E7"
+    },
+    {
+      "name": "Maximum HP for Cinna",
+      "code": "10201182 03E7"
+    },
+    {
+      "name": "Unlimited MP for Cinna",
+      "code": "102012D8 0063"
+    },
+    {
+      "name": "Maximum MP for Cinna",
+      "code": "1020142E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Cinna",
+      "code": "10201584 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Cinna",
+      "code": "10201986 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Cinna",
+      "code": "3020258C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Cinna",
+      "code": "3020258D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Cinna",
+      "code": "302026E2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Cinna",
+      "code": "302026E3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Cinna",
+      "code": "30202838 0009"
+    },
+    {
+      "name": "Unlimited Monks for Cinna",
+      "code": "30202839 0009"
+    },
+    {
+      "name": "Unlimited Archers for Cinna",
+      "code": "3020298E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Cinna",
+      "code": "3020298F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Cinna",
+      "code": "30202AE4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Cinna",
+      "code": "30202AE5 0009"
+    },
+    {
+      "name": "Cinna has all spells",
+      "code": "102046F2 0003"
+    },
+    {
+      "name": "Unlimited HP for Crawford",
+      "code": "10201042 03E7"
+    },
+    {
+      "name": "Maximum HP for Crawford",
+      "code": "10201198 03E7"
+    },
+    {
+      "name": "Unlimited MP for Crawford",
+      "code": "102012EE 0063"
+    },
+    {
+      "name": "Maximum MP for Crawford",
+      "code": "10201444 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Crawford",
+      "code": "1020159A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Crawford",
+      "code": "1020199C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Crawford",
+      "code": "302025A2 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Crawford",
+      "code": "302025A3 0009"
+    },
+    {
+      "name": "Unlimited Mages for Crawford",
+      "code": "302026F8 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Crawford",
+      "code": "302026F9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Crawford",
+      "code": "3020284E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Crawford",
+      "code": "3020284F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Crawford",
+      "code": "302029A4 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Crawford",
+      "code": "302029A5 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Crawford",
+      "code": "30202AFA 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Crawford",
+      "code": "30202AFB 0009"
+    },
+    {
+      "name": "Crawford has all spells",
+      "code": "10204708 0003"
+    },
+    {
+      "name": "Unlimited HP for Dayn",
+      "code": "10201082 03E7"
+    },
+    {
+      "name": "Maximum HP for Dayn",
+      "code": "102011D8 03E7"
+    },
+    {
+      "name": "Unlimited MP for Dayn",
+      "code": "1020132A 0063"
+    },
+    {
+      "name": "Maximum MP for Dayn",
+      "code": "10201484 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Dayn",
+      "code": "102015DA 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Dayn",
+      "code": "102019DC 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Dayn",
+      "code": "302025E2 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Dayn",
+      "code": "302025E3 0009"
+    },
+    {
+      "name": "Unlimited Mages for Dayn",
+      "code": "30202738 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Dayn",
+      "code": "30202739 0009"
+    },
+    {
+      "name": "Unlimited Archers for Dayn",
+      "code": "3020288C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Dayn",
+      "code": "3020288D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Dayn",
+      "code": "302029E4 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Dayn",
+      "code": "302029E5 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Dayn",
+      "code": "30202B3A 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Dayn",
+      "code": "30202B3B 0009"
+    },
+    {
+      "name": "Dayn has all spells",
+      "code": "10204748 0003"
+    },
+    {
+      "name": "Unlimited HP for Dea",
+      "code": "102010FE 03E7"
+    },
+    {
+      "name": "Maximum HP for Dea",
+      "code": "10201254 03E7"
+    },
+    {
+      "name": "Unlimited MP for Dea",
+      "code": "102013A6 0063"
+    },
+    {
+      "name": "Maximum MP for Dea",
+      "code": "10201500 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Dea",
+      "code": "10201656 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Dea",
+      "code": "10201A58 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Dea",
+      "code": "3020265E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Dea",
+      "code": "3020265F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Dea",
+      "code": "302027B4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Dea",
+      "code": "302027B5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Dea",
+      "code": "30202908 0009"
+    },
+    {
+      "name": "Unlimited Monks for Dea",
+      "code": "30202909 0009"
+    },
+    {
+      "name": "Unlimited Archers for Dea",
+      "code": "30202A60 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Dea",
+      "code": "30202A61 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Dea",
+      "code": "30202BB6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Dea",
+      "code": "30202BB7 0009"
+    },
+    {
+      "name": "Dea has all spells",
+      "code": "102047C4 0003"
+    },
+    {
+      "name": "Unlimited HP for Diablo",
+      "code": "10201074 03E7"
+    },
+    {
+      "name": "Maximum HP for Diablo",
+      "code": "102011CA 03E7"
+    },
+    {
+      "name": "Unlimited MP for Diablo",
+      "code": "1020131C 0063"
+    },
+    {
+      "name": "Maximum MP for Diablo",
+      "code": "10201476 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Diablo",
+      "code": "102015CC 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Diablo",
+      "code": "102019CE 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Diablo",
+      "code": "302025D4 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Diablo",
+      "code": "302025D5 0009"
+    },
+    {
+      "name": "Unlimited Mages for Diablo",
+      "code": "3020272A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Diablo",
+      "code": "3020272B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Diablo",
+      "code": "3020287E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Diablo",
+      "code": "3020287F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Diablo",
+      "code": "302029D6 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Diablo",
+      "code": "302029D7 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Diablo",
+      "code": "30202B2C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Diablo",
+      "code": "30202B2D 0009"
+    },
+    {
+      "name": "Diablo has all spells",
+      "code": "1020473A 0003"
+    },
+    {
+      "name": "Unlimited HP for Duran",
+      "code": "10201006 03E7"
+    },
+    {
+      "name": "Maximum HP for Duran",
+      "code": "1020115C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Duran",
+      "code": "102012B2 0063"
+    },
+    {
+      "name": "Maximum MP for Duran",
+      "code": "10201408 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Duran",
+      "code": "1020155E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Duran",
+      "code": "10201960 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Duran",
+      "code": "30202566 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Duran",
+      "code": "30202567 0009"
+    },
+    {
+      "name": "Unlimited Mages for Duran",
+      "code": "302026BC 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Duran",
+      "code": "302026BD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Duran",
+      "code": "30202812 0009"
+    },
+    {
+      "name": "Unlimited Monks for Duran",
+      "code": "30202813 0009"
+    },
+    {
+      "name": "Unlimited Archers for Duran",
+      "code": "30202968 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Duran",
+      "code": "30202969 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Duran",
+      "code": "30202ABE 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Duran",
+      "code": "30202ABF 0009"
+    },
+    {
+      "name": "Duran has all spells",
+      "code": "102046CC 0003"
+    },
+    {
+      "name": "Unlimited HP for Erin",
+      "code": "102010A6 03E7"
+    },
+    {
+      "name": "Maximum HP for Erin",
+      "code": "102011FC 03E7"
+    },
+    {
+      "name": "Unlimited MP for Erin",
+      "code": "1020134E 0063"
+    },
+    {
+      "name": "Maximum MP for Erin",
+      "code": "102014A8 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Erin",
+      "code": "102015FE 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Erin",
+      "code": "10201A00 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Erin",
+      "code": "30202606 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Erin",
+      "code": "30202607 0009"
+    },
+    {
+      "name": "Unlimited Mages for Erin",
+      "code": "3020275C 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Erin",
+      "code": "3020275D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Erin",
+      "code": "302028B0 0009"
+    },
+    {
+      "name": "Unlimited Monks for Erin",
+      "code": "302028B1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Erin",
+      "code": "30202A08 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Erin",
+      "code": "30202A09 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Erin",
+      "code": "30202B5E 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Erin",
+      "code": "30202B5F 0009"
+    },
+    {
+      "name": "Erin has all spells",
+      "code": "1020476C 0003"
+    },
+    {
+      "name": "Unlimited HP for Faliel",
+      "code": "10201072 03E7"
+    },
+    {
+      "name": "Maximum HP for Faliel",
+      "code": "102011C8 03E7"
+    },
+    {
+      "name": "Unlimited MP for Faliel",
+      "code": "1020131A 0063"
+    },
+    {
+      "name": "Maximum MP for Faliel",
+      "code": "10201474 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Faliel",
+      "code": "102015CA 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Faliel",
+      "code": "102019CC 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Faliel",
+      "code": "302025D2 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Faliel",
+      "code": "302025D3 0009"
+    },
+    {
+      "name": "Unlimited Mages for Faliel",
+      "code": "30202728 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Faliel",
+      "code": "30202729 0009"
+    },
+    {
+      "name": "Unlimited Archers for Faliel",
+      "code": "3020287C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Faliel",
+      "code": "3020287D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Faliel",
+      "code": "302029D4 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Faliel",
+      "code": "302029D5 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Faliel",
+      "code": "30202B2A 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Faliel",
+      "code": "30202B2B 0009"
+    },
+    {
+      "name": "Faliel has all spells",
+      "code": "10204738 0003"
+    },
+    {
+      "name": "Unlimited HP for Farilis",
+      "code": "10201104 03E7"
+    },
+    {
+      "name": "Maximum HP for Farilis",
+      "code": "1020125A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Farilis",
+      "code": "102013AC 0063"
+    },
+    {
+      "name": "Maximum MP for Farilis",
+      "code": "10201506 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Farilis",
+      "code": "1020165C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Farilis",
+      "code": "10201A5E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Farilis",
+      "code": "30202664 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Farilis",
+      "code": "30202665 0009"
+    },
+    {
+      "name": "Unlimited Mages for Farilis",
+      "code": "302027BA 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Farilis",
+      "code": "302027BB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Farilis",
+      "code": "3020290E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Farilis",
+      "code": "3020290F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Farilis",
+      "code": "30202A66 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Farilis",
+      "code": "30202A67 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Farilis",
+      "code": "30202BBC 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Farilis",
+      "code": "30202BBD 0009"
+    },
+    {
+      "name": "Farilis has all spells",
+      "code": "102047CA 0003"
+    },
+    {
+      "name": "Unlimited HP for Fiina",
+      "code": "10201100 03E7"
+    },
+    {
+      "name": "Maximum HP for Fiina",
+      "code": "10201256 03E7"
+    },
+    {
+      "name": "Unlimited MP for Fiina",
+      "code": "102013A8 0063"
+    },
+    {
+      "name": "Maximum MP for Fiina",
+      "code": "10201502 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Fiina",
+      "code": "10201658 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Fiina",
+      "code": "10201A5A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Fiina",
+      "code": "30202660 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Fiina",
+      "code": "30202661 0009"
+    },
+    {
+      "name": "Unlimited Mages for Fiina",
+      "code": "302027B6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Fiina",
+      "code": "302027B7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Fiina",
+      "code": "3020290A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Fiina",
+      "code": "3020290B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Fiina",
+      "code": "30202A62 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Fiina",
+      "code": "30202A63 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Fiina",
+      "code": "30202BB8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Fiina",
+      "code": "30202BB9 0009"
+    },
+    {
+      "name": "Fiina has all spells",
+      "code": "102047C6 0003"
+    },
+    {
+      "name": "Unlimited HP for Fyffer",
+      "code": "10201130 03E7"
+    },
+    {
+      "name": "Maximum HP for Fyffer",
+      "code": "10201286 03E7"
+    },
+    {
+      "name": "Unlimited MP for Fyffer",
+      "code": "102013D8 0063"
+    },
+    {
+      "name": "Maximum MP for Fyffer",
+      "code": "10201532 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Fyffer",
+      "code": "10201688 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Fyffer",
+      "code": "10201A8A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Fyffer",
+      "code": "30202690 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Fyffer",
+      "code": "30202691 0009"
+    },
+    {
+      "name": "Unlimited Mages for Fyffer",
+      "code": "302027E6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Fyffer",
+      "code": "302027E7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Fyffer",
+      "code": "3020293A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Fyffer",
+      "code": "3020293B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Fyffer",
+      "code": "30202A92 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Fyffer",
+      "code": "30202A93 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Fyffer",
+      "code": "30202BE8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Fyffer",
+      "code": "30202BE9 0009"
+    },
+    {
+      "name": "Fyffer has all spells",
+      "code": "102047B6 0003"
+    },
+    {
+      "name": "Unlimited HP for Galam",
+      "code": "10200FF4 03E7"
+    },
+    {
+      "name": "Maximum HP for Galam",
+      "code": "1020114A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Galam",
+      "code": "102012A0 0063"
+    },
+    {
+      "name": "Maximum MP for Galam",
+      "code": "102013F6 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Galam",
+      "code": "1020154C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Galam",
+      "code": "1020194E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Galam",
+      "code": "30202554 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Galam",
+      "code": "30202555 0009"
+    },
+    {
+      "name": "Unlimited Mages for Galam",
+      "code": "302026AA 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Galam",
+      "code": "302026AB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Galam",
+      "code": "30202800 0009"
+    },
+    {
+      "name": "Unlimited Monks for Galam",
+      "code": "30202801 0009"
+    },
+    {
+      "name": "Unlimited Archers for Galam",
+      "code": "30202956 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Galam",
+      "code": "30202957 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Galam",
+      "code": "30202AAC 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Galam",
+      "code": "30202AAD 0009"
+    },
+    {
+      "name": "Galam has all spells",
+      "code": "102046BA 0003"
+    },
+    {
+      "name": "Unlimited HP for Garyus",
+      "code": "1020101A 03E7"
+    },
+    {
+      "name": "Maximum HP for Garyus",
+      "code": "10201170 03E7"
+    },
+    {
+      "name": "Unlimited MP for Garyus",
+      "code": "102012C6 0063"
+    },
+    {
+      "name": "Maximum MP for Garyus",
+      "code": "1020141C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Garyus",
+      "code": "10201572 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Garyus",
+      "code": "10201974 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Garyus",
+      "code": "3020257A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Garyus",
+      "code": "3020257B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Garyus",
+      "code": "302026D0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Garyus",
+      "code": "302026D1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Garyus",
+      "code": "30202826 0009"
+    },
+    {
+      "name": "Unlimited Monks for Garyus",
+      "code": "30202827 0009"
+    },
+    {
+      "name": "Unlimited Archers for Garyus",
+      "code": "3020297C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Garyus",
+      "code": "3020297D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Garyus",
+      "code": "30202AD2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Garyus",
+      "code": "30202AD3 0009"
+    },
+    {
+      "name": "Garyus has all spells",
+      "code": "102046E0 0003"
+    },
+    {
+      "name": "Unlimited HP for Gasper",
+      "code": "1020106C 03E7"
+    },
+    {
+      "name": "Maximum HP for Gasper",
+      "code": "102011C2 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gasper",
+      "code": "10201314 0063"
+    },
+    {
+      "name": "Maximum MP for Gasper",
+      "code": "1020146E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gasper",
+      "code": "102015C4 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gasper",
+      "code": "102019C6 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gasper",
+      "code": "302025CC 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gasper",
+      "code": "302025CD 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gasper",
+      "code": "30202722 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gasper",
+      "code": "30202723 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gasper",
+      "code": "30202876 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gasper",
+      "code": "30202877 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gasper",
+      "code": "302029CE 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gasper",
+      "code": "302029CF 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gasper",
+      "code": "30202B24 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gasper",
+      "code": "30202B25 0009"
+    },
+    {
+      "name": "Gasper has all spells",
+      "code": "10204732 0003"
+    },
+    {
+      "name": "Unlimited HP for Gator",
+      "code": "1020111E 03E7"
+    },
+    {
+      "name": "Maximum HP for Gator",
+      "code": "10201274 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gator",
+      "code": "102013C6 0063"
+    },
+    {
+      "name": "Maximum MP for Gator",
+      "code": "10201520 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gator",
+      "code": "10201676 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gator",
+      "code": "10201A78 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gator",
+      "code": "3020267E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gator",
+      "code": "3020267F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gator",
+      "code": "302027D4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gator",
+      "code": "302027D5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gator",
+      "code": "30202928 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gator",
+      "code": "30202929 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gator",
+      "code": "30202A80 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gator",
+      "code": "30202A81 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gator",
+      "code": "30202BD6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gator",
+      "code": "30202BD7 0009"
+    },
+    {
+      "name": "Gator has all spells",
+      "code": "102047A4 0003"
+    },
+    {
+      "name": "Unlimited HP for Gaul",
+      "code": "10200FFA 03E7"
+    },
+    {
+      "name": "Maximum HP for Gaul",
+      "code": "10201150 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gaul",
+      "code": "102012A6 0063"
+    },
+    {
+      "name": "Maximum MP for Gaul",
+      "code": "102013FC 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gaul",
+      "code": "10201552 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gaul",
+      "code": "10201954 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gaul",
+      "code": "3020255A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gaul",
+      "code": "3020255B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gaul",
+      "code": "302026B0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gaul",
+      "code": "302026B1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gaul",
+      "code": "30202806 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gaul",
+      "code": "30202807 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gaul",
+      "code": "3020295C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gaul",
+      "code": "3020295D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gaul",
+      "code": "30202AB2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gaul",
+      "code": "30202AB3 0009"
+    },
+    {
+      "name": "Gaul has all spells",
+      "code": "102046C0 0003"
+    },
+    {
+      "name": "Unlimited HP for Gekai",
+      "code": "1020110E 03E7"
+    },
+    {
+      "name": "Maximum HP for Gekai",
+      "code": "10201264 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gekai",
+      "code": "102013B6 0063"
+    },
+    {
+      "name": "Maximum MP for Gekai",
+      "code": "10201510 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gekai",
+      "code": "10201666 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gekai",
+      "code": "10201A68 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gekai",
+      "code": "3020266E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gekai",
+      "code": "3020266F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gekai",
+      "code": "302027C4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gekai",
+      "code": "302027C5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gekai",
+      "code": "30202918 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gekai",
+      "code": "30202919 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gekai",
+      "code": "30202A70 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gekai",
+      "code": "30202A71 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gekai",
+      "code": "30202BC6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gekai",
+      "code": "30202BC7 0009"
+    },
+    {
+      "name": "Gekai has all spells",
+      "code": "102047D4 0003"
+    },
+    {
+      "name": "Unlimited HP for Gigg",
+      "code": "10201096 03E7"
+    },
+    {
+      "name": "Maximum HP for Gigg",
+      "code": "102011EC 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gigg",
+      "code": "1020133E 0063"
+    },
+    {
+      "name": "Maximum MP for Gigg",
+      "code": "10201498 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gigg",
+      "code": "102015EE 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gigg",
+      "code": "102019F0 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gigg",
+      "code": "302025F6 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gigg",
+      "code": "302025F7 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gigg",
+      "code": "3020274C 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gigg",
+      "code": "3020274D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gigg",
+      "code": "302028A0 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gigg",
+      "code": "302028A1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gigg",
+      "code": "302029F8 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gigg",
+      "code": "302029F9 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gigg",
+      "code": "30202B4E 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gigg",
+      "code": "30202B4F 0009"
+    },
+    {
+      "name": "Gigg has all spells",
+      "code": "1020475C 0003"
+    },
+    {
+      "name": "Unlimited HP for Goldark",
+      "code": "10200FE4 03E7"
+    },
+    {
+      "name": "Maximum HP for Goldark",
+      "code": "1020113A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Goldark",
+      "code": "10201290 0063"
+    },
+    {
+      "name": "Maximum MP for Goldark",
+      "code": "102013E6 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Goldark",
+      "code": "1020153C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Goldark",
+      "code": "1020193E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Goldark",
+      "code": "30202544 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Goldark",
+      "code": "30202545 0009"
+    },
+    {
+      "name": "Unlimited Mages for Goldark",
+      "code": "3020269A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Goldark",
+      "code": "3020269B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Goldark",
+      "code": "302027F0 0009"
+    },
+    {
+      "name": "Unlimited Monks for Goldark",
+      "code": "302027F1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Goldark",
+      "code": "30202946 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Goldark",
+      "code": "30202947 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Goldark",
+      "code": "30202A9C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Goldark",
+      "code": "30202A9D 0009"
+    },
+    {
+      "name": "Goldark has all spells",
+      "code": "102046AA 0003"
+    },
+    {
+      "name": "Unlimited HP for Gongos",
+      "code": "10200FEE 03E7"
+    },
+    {
+      "name": "Maximum HP for Gongos",
+      "code": "10201144 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gongos",
+      "code": "1020129A 0063"
+    },
+    {
+      "name": "Maximum MP for Gongos",
+      "code": "102013F0 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gongos",
+      "code": "10201546 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gongos",
+      "code": "10201948 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gongos",
+      "code": "3020254E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gongos",
+      "code": "3020254F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gongos",
+      "code": "302026A4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gongos",
+      "code": "302026A5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gongos",
+      "code": "302027FA 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gongos",
+      "code": "302027FB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gongos",
+      "code": "30202950 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gongos",
+      "code": "30202951 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gongos",
+      "code": "30202AA6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gongos",
+      "code": "30202AA7 0009"
+    },
+    {
+      "name": "Gongos has all spells",
+      "code": "102046B4 0003"
+    },
+    {
+      "name": "Unlimited HP for Grudar",
+      "code": "102010B8 03E7"
+    },
+    {
+      "name": "Maximum HP for Grudar",
+      "code": "1020120E 03E7"
+    },
+    {
+      "name": "Unlimited MP for Grudar",
+      "code": "10201360 0063"
+    },
+    {
+      "name": "Maximum MP for Grudar",
+      "code": "102014BA 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Grudar",
+      "code": "10201610 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Grudar",
+      "code": "10201A12 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Grudar",
+      "code": "30202618 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Grudar",
+      "code": "30202619 0009"
+    },
+    {
+      "name": "Unlimited Mages for Grudar",
+      "code": "3020276E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Grudar",
+      "code": "3020276F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Grudar",
+      "code": "302028C2 0009"
+    },
+    {
+      "name": "Unlimited Monks for Grudar",
+      "code": "302028C3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Grudar",
+      "code": "30202A1A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Grudar",
+      "code": "30202A1B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Grudar",
+      "code": "30202B70 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Grudar",
+      "code": "30202B71 0009"
+    },
+    {
+      "name": "Grudar has all spells",
+      "code": "1020477E 0003"
+    },
+    {
+      "name": "Unlimited HP for Gulen",
+      "code": "10201002 03E7"
+    },
+    {
+      "name": "Maximum HP for Gulen",
+      "code": "10201158 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gulen",
+      "code": "102012AE 0063"
+    },
+    {
+      "name": "Maximum MP for Gulen",
+      "code": "10201404 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gulen",
+      "code": "1020155A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gulen",
+      "code": "1020195C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gulen",
+      "code": "30202562 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gulen",
+      "code": "30202563 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gulen",
+      "code": "302026B8 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gulen",
+      "code": "302026B9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gulen",
+      "code": "3020280E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gulen",
+      "code": "3020280F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gulen",
+      "code": "30202964 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gulen",
+      "code": "30202965 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gulen",
+      "code": "30202ABA 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gulen",
+      "code": "30202ABB 0009"
+    },
+    {
+      "name": "Gulen has all spells",
+      "code": "102046C8 0003"
+    },
+    {
+      "name": "Unlimited HP for Gunner",
+      "code": "10201068 03E7"
+    },
+    {
+      "name": "Maximum HP for Gunner",
+      "code": "102011BE 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gunner",
+      "code": "10201310 0063"
+    },
+    {
+      "name": "Maximum MP for Gunner",
+      "code": "1020146A 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gunner",
+      "code": "102015C0 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gunner",
+      "code": "102019C2 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gunner",
+      "code": "302025C8 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gunner",
+      "code": "302025C9 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gunner",
+      "code": "3020271E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gunner",
+      "code": "3020271F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gunner",
+      "code": "30202872 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gunner",
+      "code": "30202873 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gunner",
+      "code": "302029CA 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gunner",
+      "code": "302029CB 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gunner",
+      "code": "30202B20 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gunner",
+      "code": "30202B21 0009"
+    },
+    {
+      "name": "Gunner has all spells",
+      "code": "1020472E 0003"
+    },
+    {
+      "name": "Unlimited HP for Gunter",
+      "code": "102010C4 03E7"
+    },
+    {
+      "name": "Maximum HP for Gunter",
+      "code": "1020121A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gunter",
+      "code": "1020136C 0063"
+    },
+    {
+      "name": "Maximum MP for Gunter",
+      "code": "102014C6 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gunter",
+      "code": "1020161C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gunter",
+      "code": "10201A1E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gunter",
+      "code": "30202624 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gunter",
+      "code": "30202625 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gunter",
+      "code": "3020277A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gunter",
+      "code": "3020277B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gunter",
+      "code": "302028CE 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gunter",
+      "code": "302028CF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gunter",
+      "code": "30202A26 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gunter",
+      "code": "30202A27 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gunter",
+      "code": "30202B7C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gunter",
+      "code": "30202B7D 0009"
+    },
+    {
+      "name": "Gunter has all spells",
+      "code": "1020478A 0003"
+    },
+    {
+      "name": "Unlimited HP for Gustav",
+      "code": "10201064 03E7"
+    },
+    {
+      "name": "Maximum HP for Gustav",
+      "code": "102011BA 03E7"
+    },
+    {
+      "name": "Unlimited MP for Gustav",
+      "code": "1020130C 0063"
+    },
+    {
+      "name": "Maximum MP for Gustav",
+      "code": "10201466 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Gustav",
+      "code": "102015BC 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Gustav",
+      "code": "102019BE 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Gustav",
+      "code": "302025C4 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Gustav",
+      "code": "302025C5 0009"
+    },
+    {
+      "name": "Unlimited Mages for Gustav",
+      "code": "3020271A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Gustav",
+      "code": "3020271B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gustav",
+      "code": "3020286E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Gustav",
+      "code": "3020286F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Gustav",
+      "code": "302029C6 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Gustav",
+      "code": "302029C7 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Gustav",
+      "code": "30202B1C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Gustav",
+      "code": "30202B1D 0009"
+    },
+    {
+      "name": "Gustav has all spells",
+      "code": "1020472A 0003"
+    },
+    {
+      "name": "Unlimited HP for Hagane",
+      "code": "102010A4 03E7"
+    },
+    {
+      "name": "Maximum HP for Hagane",
+      "code": "102011FA 03E7"
+    },
+    {
+      "name": "Unlimited MP for Hagane",
+      "code": "1020134C 0063"
+    },
+    {
+      "name": "Maximum MP for Hagane",
+      "code": "102014A6 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Hagane",
+      "code": "102015FC 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Hagane",
+      "code": "102019FE 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Hagane",
+      "code": "30202604 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Hagane",
+      "code": "30202605 0009"
+    },
+    {
+      "name": "Unlimited Mages for Hagane",
+      "code": "3020275A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Hagane",
+      "code": "3020275B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Hagane",
+      "code": "302028AE 0009"
+    },
+    {
+      "name": "Unlimited Monks for Hagane",
+      "code": "302028AF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Hagane",
+      "code": "30202A06 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Hagane",
+      "code": "30202A07 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Hagane",
+      "code": "30202B5C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Hagane",
+      "code": "30202B5D 0009"
+    },
+    {
+      "name": "Hagane has all spells",
+      "code": "1020476A 0003"
+    },
+    {
+      "name": "Unlimited HP for Hagar",
+      "code": "1020110A 03E7"
+    },
+    {
+      "name": "Maximum HP for Hagar",
+      "code": "10201260 03E7"
+    },
+    {
+      "name": "Unlimited MP for Hagar",
+      "code": "102013B2 0063"
+    },
+    {
+      "name": "Maximum MP for Hagar",
+      "code": "1020150C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Hagar",
+      "code": "10201662 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Hagar",
+      "code": "10201A64 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Hagar",
+      "code": "3020266A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Hagar",
+      "code": "3020266B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Hagar",
+      "code": "302027C0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Hagar",
+      "code": "302027C1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Hagar",
+      "code": "30202914 0009"
+    },
+    {
+      "name": "Unlimited Monks for Hagar",
+      "code": "30202915 0009"
+    },
+    {
+      "name": "Unlimited Archers for Hagar",
+      "code": "30202A6C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Hagar",
+      "code": "30202A6D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Hagar",
+      "code": "30202BC2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Hagar",
+      "code": "30202BC3 0009"
+    },
+    {
+      "name": "Hagar has all spells",
+      "code": "102047D0 0003"
+    },
+    {
+      "name": "Unlimited HP for Helm",
+      "code": "1020106E 03E7"
+    },
+    {
+      "name": "Maximum HP for Helm",
+      "code": "102011C4 03E7"
+    },
+    {
+      "name": "Unlimited MP for Helm",
+      "code": "10201316 0063"
+    },
+    {
+      "name": "Maximum MP for Helm",
+      "code": "10201470 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Helm",
+      "code": "102015C6 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Helm",
+      "code": "102019C8 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Helm",
+      "code": "302025CE 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Helm",
+      "code": "302025CF 0009"
+    },
+    {
+      "name": "Unlimited Mages for Helm",
+      "code": "30202724 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Helm",
+      "code": "30202725 0009"
+    },
+    {
+      "name": "Unlimited Archers for Helm",
+      "code": "30202878 0009"
+    },
+    {
+      "name": "Unlimited Monks for Helm",
+      "code": "30202879 0009"
+    },
+    {
+      "name": "Unlimited Archers for Helm",
+      "code": "302029D0 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Helm",
+      "code": "302029D1 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Helm",
+      "code": "30202B26 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Helm",
+      "code": "30202B27 0009"
+    },
+    {
+      "name": "Helm has all spells",
+      "code": "10204734 0003"
+    },
+    {
+      "name": "Unlimited HP for Hikkis",
+      "code": "1020105A 03E7"
+    },
+    {
+      "name": "Maximum HP for Hikkis",
+      "code": "102011B0 03E7"
+    },
+    {
+      "name": "Unlimited MP for Hikkis",
+      "code": "10201304 0063"
+    },
+    {
+      "name": "Maximum MP for Hikkis",
+      "code": "1020145C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Hikkis",
+      "code": "102015B2 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Hikkis",
+      "code": "102019B4 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Hikkis",
+      "code": "302025BA 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Hikkis",
+      "code": "302025BB 0009"
+    },
+    {
+      "name": "Unlimited Mages for Hikkis",
+      "code": "30202710 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Hikkis",
+      "code": "30202711 0009"
+    },
+    {
+      "name": "Unlimited Archers for Hikkis",
+      "code": "30202864 0009"
+    },
+    {
+      "name": "Unlimited Monks for Hikkis",
+      "code": "30202865 0009"
+    },
+    {
+      "name": "Unlimited Archers for Hikkis",
+      "code": "302029BC 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Hikkis",
+      "code": "302029BD 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Hikkis",
+      "code": "30202B12 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Hikkis",
+      "code": "30202B13 0009"
+    },
+    {
+      "name": "Hikkis has all spells",
+      "code": "10204720 0003"
+    },
+    {
+      "name": "Unlimited HP for Jackal",
+      "code": "1020100C 03E7"
+    },
+    {
+      "name": "Maximum HP for Jackal",
+      "code": "10201162 03E7"
+    },
+    {
+      "name": "Unlimited MP for Jackal",
+      "code": "102012B8 0063"
+    },
+    {
+      "name": "Maximum MP for Jackal",
+      "code": "1020140E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Jackal",
+      "code": "10201564 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Jackal",
+      "code": "10201966 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Jackal",
+      "code": "3020256C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Jackal",
+      "code": "3020256D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Jackal",
+      "code": "302026C2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Jackal",
+      "code": "302026C3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Jackal",
+      "code": "30202818 0009"
+    },
+    {
+      "name": "Unlimited Monks for Jackal",
+      "code": "30202819 0009"
+    },
+    {
+      "name": "Unlimited Archers for Jackal",
+      "code": "3020296E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Jackal",
+      "code": "3020296F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Jackal",
+      "code": "30202AC4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Jackal",
+      "code": "30202AC5 0009"
+    },
+    {
+      "name": "Jackal has all spells",
+      "code": "102046D2 0003"
+    },
+    {
+      "name": "Unlimited HP for Junon",
+      "code": "10200FF0 03E7"
+    },
+    {
+      "name": "Maximum HP for Junon",
+      "code": "10201146 03E7"
+    },
+    {
+      "name": "Unlimited MP for Junon",
+      "code": "1020129C 0063"
+    },
+    {
+      "name": "Maximum MP for Junon",
+      "code": "102013F2 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Junon",
+      "code": "10201548 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Junon",
+      "code": "1020194A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Junon",
+      "code": "30202550 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Junon",
+      "code": "30202551 0009"
+    },
+    {
+      "name": "Unlimited Mages for Junon",
+      "code": "302026A6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Junon",
+      "code": "302026A7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Junon",
+      "code": "302027FC 0009"
+    },
+    {
+      "name": "Unlimited Monks for Junon",
+      "code": "302027FD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Junon",
+      "code": "30202952 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Junon",
+      "code": "30202953 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Junon",
+      "code": "30202AA8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Junon",
+      "code": "30202AA9 0009"
+    },
+    {
+      "name": "Junon has all spells",
+      "code": "102046B6 0003"
+    },
+    {
+      "name": "Unlimited HP for Katt",
+      "code": "10201026 03E7"
+    },
+    {
+      "name": "Maximum HP for Katt",
+      "code": "1020117C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Katt",
+      "code": "102012D2 0063"
+    },
+    {
+      "name": "Maximum MP for Katt",
+      "code": "10201428 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Katt",
+      "code": "1020157E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Katt",
+      "code": "10201980 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Katt",
+      "code": "30202586 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Katt",
+      "code": "30202587 0009"
+    },
+    {
+      "name": "Unlimited Mages for Katt",
+      "code": "302026DC 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Katt",
+      "code": "302026DD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Katt",
+      "code": "30202832 0009"
+    },
+    {
+      "name": "Unlimited Monks for Katt",
+      "code": "30202833 0009"
+    },
+    {
+      "name": "Unlimited Archers for Katt",
+      "code": "30202988 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Katt",
+      "code": "30202989 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Katt",
+      "code": "30202ADE 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Katt",
+      "code": "30202ADF 0009"
+    },
+    {
+      "name": "Katt has all spells",
+      "code": "102046EC 0003"
+    },
+    {
+      "name": "Unlimited HP for Kharhaz",
+      "code": "10200FFC 03E7"
+    },
+    {
+      "name": "Maximum HP for Kharhaz",
+      "code": "10201152 03E7"
+    },
+    {
+      "name": "Unlimited MP for Kharhaz",
+      "code": "102012A8 0063"
+    },
+    {
+      "name": "Maximum MP for Kharhaz",
+      "code": "102013FE 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Kharhaz",
+      "code": "10201554 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Kharhaz",
+      "code": "10201956 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Kharhaz",
+      "code": "3020255C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Kharhaz",
+      "code": "3020255D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Kharhaz",
+      "code": "302026B2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Kharhaz",
+      "code": "302026B3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kharhaz",
+      "code": "30202808 0009"
+    },
+    {
+      "name": "Unlimited Monks for Kharhaz",
+      "code": "30202809 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kharhaz",
+      "code": "3020295E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Kharhaz",
+      "code": "3020295F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Kharhaz",
+      "code": "30202AB4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Kharhaz",
+      "code": "30202AB5 0009"
+    },
+    {
+      "name": "Kharhaz has all spells",
+      "code": "102046C2 0003"
+    },
+    {
+      "name": "Unlimited HP for Kidd",
+      "code": "10201090 03E7"
+    },
+    {
+      "name": "Maximum HP for Kidd",
+      "code": "102011E6 03E7"
+    },
+    {
+      "name": "Unlimited MP for Kidd",
+      "code": "10201338 0063"
+    },
+    {
+      "name": "Maximum MP for Kidd",
+      "code": "10201492 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Kidd",
+      "code": "102015E8 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Kidd",
+      "code": "102019EA 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Kidd",
+      "code": "302025F0 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Kidd",
+      "code": "302025F1 0009"
+    },
+    {
+      "name": "Unlimited Mages for Kidd",
+      "code": "30202746 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Kidd",
+      "code": "30202747 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kidd",
+      "code": "3020289A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Kidd",
+      "code": "3020289B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kidd",
+      "code": "302029F2 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Kidd",
+      "code": "302029F3 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Kidd",
+      "code": "30202B48 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Kidd",
+      "code": "30202B49 0009"
+    },
+    {
+      "name": "Kidd has all spells",
+      "code": "10204756 0003"
+    },
+    {
+      "name": "Unlimited HP for Kilga",
+      "code": "1020104C 03E7"
+    },
+    {
+      "name": "Maximum HP for Kilga",
+      "code": "102011A2 03E7"
+    },
+    {
+      "name": "Unlimited MP for Kilga",
+      "code": "102012F8 0063"
+    },
+    {
+      "name": "Maximum MP for Kilga",
+      "code": "1020144E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Kilga",
+      "code": "102015A4 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Kilga",
+      "code": "102019A6 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Kilga",
+      "code": "302025AC 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Kilga",
+      "code": "302025AD 0009"
+    },
+    {
+      "name": "Unlimited Mages for Kilga",
+      "code": "30202702 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Kilga",
+      "code": "30202703 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kilga",
+      "code": "30202858 0009"
+    },
+    {
+      "name": "Unlimited Monks for Kilga",
+      "code": "30202859 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kilga",
+      "code": "302029AE 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Kilga",
+      "code": "302029AF 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Kilga",
+      "code": "30202B04 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Kilga",
+      "code": "30202B05 0009"
+    },
+    {
+      "name": "Kilga has all spells",
+      "code": "10204712 0003"
+    },
+    {
+      "name": "Unlimited HP for Kirlein",
+      "code": "10201106 03E7"
+    },
+    {
+      "name": "Maximum HP for Kirlein",
+      "code": "1020125C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Kirlein",
+      "code": "102013AE 0063"
+    },
+    {
+      "name": "Maximum MP for Kirlein",
+      "code": "10201508 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Kirlein",
+      "code": "1020165E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Kirlein",
+      "code": "10201A60 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Kirlein",
+      "code": "30202666 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Kirlein",
+      "code": "30202667 0009"
+    },
+    {
+      "name": "Unlimited Mages for Kirlein",
+      "code": "302027BC 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Kirlein",
+      "code": "302027BD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kirlein",
+      "code": "30202910 0009"
+    },
+    {
+      "name": "Unlimited Monks for Kirlein",
+      "code": "30202911 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kirlein",
+      "code": "30202A68 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Kirlein",
+      "code": "30202A69 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Kirlein",
+      "code": "30202BBE 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Kirlein",
+      "code": "30202BBF 0009"
+    },
+    {
+      "name": "Kirlein has all spells",
+      "code": "102047CC 0003"
+    },
+    {
+      "name": "Unlimited HP for Kodiak",
+      "code": "10201084 03E7"
+    },
+    {
+      "name": "Maximum HP for Kodiak",
+      "code": "102011DA 03E7"
+    },
+    {
+      "name": "Unlimited MP for Kodiak",
+      "code": "1020132C 0063"
+    },
+    {
+      "name": "Maximum MP for Kodiak",
+      "code": "10201486 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Kodiak",
+      "code": "102015DC 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Kodiak",
+      "code": "102019DE 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Kodiak",
+      "code": "302025E4 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Kodiak",
+      "code": "302025E5 0009"
+    },
+    {
+      "name": "Unlimited Mages for Kodiak",
+      "code": "3020273A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Kodiak",
+      "code": "3020273B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kodiak",
+      "code": "3020288E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Kodiak",
+      "code": "3020288F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kodiak",
+      "code": "302029E6 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Kodiak",
+      "code": "302029E7 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Kodiak",
+      "code": "30202B3C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Kodiak",
+      "code": "30202B3D 0009"
+    },
+    {
+      "name": "Kodiak has all spells",
+      "code": "1020474A 0003"
+    },
+    {
+      "name": "Unlimited HP for Kulien",
+      "code": "10201124 03E7"
+    },
+    {
+      "name": "Maximum HP for Kulien",
+      "code": "1020127A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Kulien",
+      "code": "102013CC 0063"
+    },
+    {
+      "name": "Maximum MP for Kulien",
+      "code": "10201526 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Kulien",
+      "code": "1020167C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Kulien",
+      "code": "10201A7E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Kulien",
+      "code": "30202684 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Kulien",
+      "code": "30202685 0009"
+    },
+    {
+      "name": "Unlimited Mages for Kulien",
+      "code": "302027DA 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Kulien",
+      "code": "302027DB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kulien",
+      "code": "3020292E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Kulien",
+      "code": "3020292F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kulien",
+      "code": "30202A86 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Kulien",
+      "code": "30202A87 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Kulien",
+      "code": "30202BDC 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Kulien",
+      "code": "30202BDD 0009"
+    },
+    {
+      "name": "Kulien has all spells",
+      "code": "102047AA 0003"
+    },
+    {
+      "name": "Unlimited HP for Kumonn",
+      "code": "1020107C 03E7"
+    },
+    {
+      "name": "Maximum HP for Kumonn",
+      "code": "102011D2 03E7"
+    },
+    {
+      "name": "Unlimited MP for Kumonn",
+      "code": "10201324 0063"
+    },
+    {
+      "name": "Maximum MP for Kumonn",
+      "code": "1020147E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Kumonn",
+      "code": "102015D4 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Kumonn",
+      "code": "102019D6 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Kumonn",
+      "code": "302025DC 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Kumonn",
+      "code": "302025DD 0009"
+    },
+    {
+      "name": "Unlimited Mages for Kumonn",
+      "code": "30202732 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Kumonn",
+      "code": "30202733 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kumonn",
+      "code": "30202886 0009"
+    },
+    {
+      "name": "Unlimited Monks for Kumonn",
+      "code": "30202887 0009"
+    },
+    {
+      "name": "Unlimited Archers for Kumonn",
+      "code": "302029DE 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Kumonn",
+      "code": "302029DF 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Kumonn",
+      "code": "30202B34 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Kumonn",
+      "code": "30202B35 0009"
+    },
+    {
+      "name": "Kumonn has all spells",
+      "code": "10204742 0003"
+    },
+    {
+      "name": "Unlimited HP for Laine",
+      "code": "102010AA 03E7"
+    },
+    {
+      "name": "Maximum HP for Laine",
+      "code": "10201200 03E7"
+    },
+    {
+      "name": "Unlimited MP for Laine",
+      "code": "10201352 0063"
+    },
+    {
+      "name": "Maximum MP for Laine",
+      "code": "102014AC 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Laine",
+      "code": "10201602 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Laine",
+      "code": "10201A04 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Laine",
+      "code": "3020260A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Laine",
+      "code": "3020260B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Laine",
+      "code": "30202760 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Laine",
+      "code": "30202761 0009"
+    },
+    {
+      "name": "Unlimited Archers for Laine",
+      "code": "302028B4 0009"
+    },
+    {
+      "name": "Unlimited Monks for Laine",
+      "code": "302028B5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Laine",
+      "code": "30202A0C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Laine",
+      "code": "30202A0D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Laine",
+      "code": "30202B62 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Laine",
+      "code": "30202B63 0009"
+    },
+    {
+      "name": "Laine has all spells",
+      "code": "10204770 0003"
+    },
+    {
+      "name": "Unlimited HP for Leon",
+      "code": "10200FEC 03E7"
+    },
+    {
+      "name": "Maximum HP for Leon",
+      "code": "10201142 03E7"
+    },
+    {
+      "name": "Unlimited MP for Leon",
+      "code": "10201298 0063"
+    },
+    {
+      "name": "Maximum MP for Leon",
+      "code": "102013EE 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Leon",
+      "code": "10201544 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Leon",
+      "code": "10201946 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Leon",
+      "code": "3020254C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Leon",
+      "code": "3020254D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Leon",
+      "code": "302026A2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Leon",
+      "code": "302026A3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Leon",
+      "code": "302027F8 0009"
+    },
+    {
+      "name": "Unlimited Monks for Leon",
+      "code": "302027F9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Leon",
+      "code": "3020294E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Leon",
+      "code": "3020294F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Leon",
+      "code": "30202AA4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Leon",
+      "code": "30202AA5 0009"
+    },
+    {
+      "name": "Leon has all spells",
+      "code": "102046B2 0003"
+    },
+    {
+      "name": "Unlimited HP for Link",
+      "code": "10200FF8 03E7"
+    },
+    {
+      "name": "Maximum HP for Link",
+      "code": "1020114E 03E7"
+    },
+    {
+      "name": "Unlimited MP for Link",
+      "code": "102012A4 0063"
+    },
+    {
+      "name": "Maximum MP for Link",
+      "code": "102013FA 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Link",
+      "code": "10201550 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Link",
+      "code": "10201952 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Link",
+      "code": "30202558 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Link",
+      "code": "30202559 0009"
+    },
+    {
+      "name": "Unlimited Mages for Link",
+      "code": "302026AE 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Link",
+      "code": "302026AF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Link",
+      "code": "30202804 0009"
+    },
+    {
+      "name": "Unlimited Monks for Link",
+      "code": "30202805 0009"
+    },
+    {
+      "name": "Unlimited Archers for Link",
+      "code": "3020295A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Link",
+      "code": "3020295B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Link",
+      "code": "30202AB0 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Link",
+      "code": "30202AB1 0009"
+    },
+    {
+      "name": "Link has all spells",
+      "code": "102046BE 0003"
+    },
+    {
+      "name": "Unlimited HP for Livion",
+      "code": "10201120 03E7"
+    },
+    {
+      "name": "Maximum HP for Livion",
+      "code": "10201276 03E7"
+    },
+    {
+      "name": "Unlimited MP for Livion",
+      "code": "102013C8 0063"
+    },
+    {
+      "name": "Maximum MP for Livion",
+      "code": "10201522 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Livion",
+      "code": "10201678 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Livion",
+      "code": "10201A7A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Livion",
+      "code": "30202680 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Livion",
+      "code": "30202681 0009"
+    },
+    {
+      "name": "Unlimited Mages for Livion",
+      "code": "302027D6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Livion",
+      "code": "302027D7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Livion",
+      "code": "3020292A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Livion",
+      "code": "3020292B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Livion",
+      "code": "30202A82 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Livion",
+      "code": "30202A83 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Livion",
+      "code": "30202BD8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Livion",
+      "code": "30202BD9 0009"
+    },
+    {
+      "name": "Livion has all spells",
+      "code": "102047A6 0003"
+    },
+    {
+      "name": "Unlimited HP for Lone",
+      "code": "10201050 03E7"
+    },
+    {
+      "name": "Maximum HP for Lone",
+      "code": "102011A6 03E7"
+    },
+    {
+      "name": "Unlimited MP for Lone",
+      "code": "102012FC 0063"
+    },
+    {
+      "name": "Maximum MP for Lone",
+      "code": "10201452 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Lone",
+      "code": "102015A8 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Lone",
+      "code": "102019AA 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Lone",
+      "code": "302025B0 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Lone",
+      "code": "302025B1 0009"
+    },
+    {
+      "name": "Unlimited Mages for Lone",
+      "code": "30202706 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Lone",
+      "code": "30202707 0009"
+    },
+    {
+      "name": "Unlimited Archers for Lone",
+      "code": "3020285C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Lone",
+      "code": "3020285D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Lone",
+      "code": "302029B2 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Lone",
+      "code": "302029B3 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Lone",
+      "code": "30202B08 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Lone",
+      "code": "30202B09 0009"
+    },
+    {
+      "name": "Lone has all spells",
+      "code": "10204716 0003"
+    },
+    {
+      "name": "Unlimited HP for Lyria",
+      "code": "10201000 03E7"
+    },
+    {
+      "name": "Maximum HP for Lyria",
+      "code": "10201156 03E7"
+    },
+    {
+      "name": "Unlimited MP for Lyria",
+      "code": "102012AC 0063"
+    },
+    {
+      "name": "Maximum MP for Lyria",
+      "code": "10201402 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Lyria",
+      "code": "10201558 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Lyria",
+      "code": "1020195A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Lyria",
+      "code": "30202560 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Lyria",
+      "code": "30202561 0009"
+    },
+    {
+      "name": "Unlimited Mages for Lyria",
+      "code": "302026B6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Lyria",
+      "code": "302026B7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Lyria",
+      "code": "3020280C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Lyria",
+      "code": "3020280D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Lyria",
+      "code": "30202962 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Lyria",
+      "code": "30202963 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Lyria",
+      "code": "30202AB8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Lyria",
+      "code": "30202AB9 0009"
+    },
+    {
+      "name": "Lyria has all spells",
+      "code": "102046C6 0003"
+    },
+    {
+      "name": "Unlimited HP for Manoa",
+      "code": "10201004 03E7"
+    },
+    {
+      "name": "Maximum HP for Manoa",
+      "code": "1020115A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Manoa",
+      "code": "102012B0 0063"
+    },
+    {
+      "name": "Maximum MP for Manoa",
+      "code": "10201406 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Manoa",
+      "code": "1020155C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Manoa",
+      "code": "1020195E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Manoa",
+      "code": "30202564 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Manoa",
+      "code": "30202565 0009"
+    },
+    {
+      "name": "Unlimited Mages for Manoa",
+      "code": "302026BA 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Manoa",
+      "code": "302026BB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Manoa",
+      "code": "30202810 0009"
+    },
+    {
+      "name": "Unlimited Monks for Manoa",
+      "code": "30202811 0009"
+    },
+    {
+      "name": "Unlimited Archers for Manoa",
+      "code": "30202966 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Manoa",
+      "code": "30202967 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Manoa",
+      "code": "30202ABC 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Manoa",
+      "code": "30202ABD 0009"
+    },
+    {
+      "name": "Manoa has all spells",
+      "code": "102046CA 0003"
+    },
+    {
+      "name": "Unlimited HP for Mikhail",
+      "code": "10200FE8 03E7"
+    },
+    {
+      "name": "Maximum HP for Mikhail",
+      "code": "1020113E 03E7"
+    },
+    {
+      "name": "Unlimited MP for Mikhail",
+      "code": "10201294 0063"
+    },
+    {
+      "name": "Maximum MP for Mikhail",
+      "code": "102013EA 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Mikhail",
+      "code": "10201540 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Mikhail",
+      "code": "10201942 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Mikhail",
+      "code": "30202548 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Mikhail",
+      "code": "30202549 0009"
+    },
+    {
+      "name": "Unlimited Mages for Mikhail",
+      "code": "3020269E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Mikhail",
+      "code": "3020269F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Mikhail",
+      "code": "302027F4 0009"
+    },
+    {
+      "name": "Unlimited Monks for Mikhail",
+      "code": "302027F5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Mikhail",
+      "code": "3020294A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Mikhail",
+      "code": "3020294B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Mikhail",
+      "code": "30202AA0 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Mikhail",
+      "code": "30202AA1 0009"
+    },
+    {
+      "name": "Mikhail has all spells",
+      "code": "102046AE 0003"
+    },
+    {
+      "name": "Unlimited HP for Mileen",
+      "code": "102010A8 03E7"
+    },
+    {
+      "name": "Maximum HP for Mileen",
+      "code": "102011FE 03E7"
+    },
+    {
+      "name": "Unlimited MP for Mileen",
+      "code": "10201350 0063"
+    },
+    {
+      "name": "Maximum MP for Mileen",
+      "code": "102014AA 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Mileen",
+      "code": "10201600 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Mileen",
+      "code": "10201A02 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Mileen",
+      "code": "30202608 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Mileen",
+      "code": "30202609 0009"
+    },
+    {
+      "name": "Unlimited Mages for Mileen",
+      "code": "3020275E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Mileen",
+      "code": "3020275F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Mileen",
+      "code": "302028B2 0009"
+    },
+    {
+      "name": "Unlimited Monks for Mileen",
+      "code": "302028B3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Mileen",
+      "code": "30202A0A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Mileen",
+      "code": "30202A0B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Mileen",
+      "code": "30202B60 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Mileen",
+      "code": "30202B61 0009"
+    },
+    {
+      "name": "Mileen has all spells",
+      "code": "1020476E 0003"
+    },
+    {
+      "name": "Unlimited HP for Milishea",
+      "code": "10201044 03E7"
+    },
+    {
+      "name": "Maximum HP for Milishea",
+      "code": "1020119A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Milishea",
+      "code": "102012F0 0063"
+    },
+    {
+      "name": "Maximum MP for Milishea",
+      "code": "10201446 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Milishea",
+      "code": "1020159C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Milishea",
+      "code": "1020199E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Milishea",
+      "code": "302025A4 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Milishea",
+      "code": "302025A5 0009"
+    },
+    {
+      "name": "Unlimited Mages for Milishea",
+      "code": "302026FA 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Milishea",
+      "code": "302026FB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Milishea",
+      "code": "30202850 0009"
+    },
+    {
+      "name": "Unlimited Monks for Milishea",
+      "code": "30202851 0009"
+    },
+    {
+      "name": "Unlimited Archers for Milishea",
+      "code": "302029A6 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Milishea",
+      "code": "302029A7 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Milishea",
+      "code": "30202AFC 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Milishea",
+      "code": "30202AFD 0009"
+    },
+    {
+      "name": "Milishea has all spells",
+      "code": "1020470A 0003"
+    },
+    {
+      "name": "Unlimited HP for Mistal",
+      "code": "10201010 03E7"
+    },
+    {
+      "name": "Maximum HP for Mistal",
+      "code": "10201166 03E7"
+    },
+    {
+      "name": "Unlimited MP for Mistal",
+      "code": "102012BC 0063"
+    },
+    {
+      "name": "Maximum MP for Mistal",
+      "code": "10201412 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Mistal",
+      "code": "10201568 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Mistal",
+      "code": "1020196A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Mistal",
+      "code": "30202570 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Mistal",
+      "code": "30202571 0009"
+    },
+    {
+      "name": "Unlimited Mages for Mistal",
+      "code": "302026C6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Mistal",
+      "code": "302026C7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Mistal",
+      "code": "3020281C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Mistal",
+      "code": "3020281D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Mistal",
+      "code": "30202972 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Mistal",
+      "code": "30202973 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Mistal",
+      "code": "30202AC8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Mistal",
+      "code": "30202AC9 0009"
+    },
+    {
+      "name": "Mistal has all spells",
+      "code": "102046D6 0003"
+    },
+    {
+      "name": "Unlimited HP for Myria",
+      "code": "10201086 03E7"
+    },
+    {
+      "name": "Maximum HP for Myria",
+      "code": "102011DC 03E7"
+    },
+    {
+      "name": "Unlimited MP for Myria",
+      "code": "1020132E 0063"
+    },
+    {
+      "name": "Maximum MP for Myria",
+      "code": "10201488 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Myria",
+      "code": "102015DE 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Myria",
+      "code": "102019E0 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Myria",
+      "code": "302025E6 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Myria",
+      "code": "302025E7 0009"
+    },
+    {
+      "name": "Unlimited Mages for Myria",
+      "code": "3020273C 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Myria",
+      "code": "3020273D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Myria",
+      "code": "30202890 0009"
+    },
+    {
+      "name": "Unlimited Monks for Myria",
+      "code": "30202891 0009"
+    },
+    {
+      "name": "Unlimited Archers for Myria",
+      "code": "302029E8 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Myria",
+      "code": "302029E9 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Myria",
+      "code": "30202B3E 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Myria",
+      "code": "30202B3F 0009"
+    },
+    {
+      "name": "Myria has all spells",
+      "code": "1020474C 0003"
+    },
+    {
+      "name": "Unlimited HP for Nelson",
+      "code": "102010A2 03E7"
+    },
+    {
+      "name": "Maximum HP for Nelson",
+      "code": "102011F8 03E7"
+    },
+    {
+      "name": "Unlimited MP for Nelson",
+      "code": "1020134A 0063"
+    },
+    {
+      "name": "Maximum MP for Nelson",
+      "code": "102014A4 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Nelson",
+      "code": "102015FA 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Nelson",
+      "code": "102019FC 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Nelson",
+      "code": "30202602 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Nelson",
+      "code": "30202603 0009"
+    },
+    {
+      "name": "Unlimited Mages for Nelson",
+      "code": "30202758 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Nelson",
+      "code": "30202759 0009"
+    },
+    {
+      "name": "Unlimited Archers for Nelson",
+      "code": "302028AC 0009"
+    },
+    {
+      "name": "Unlimited Monks for Nelson",
+      "code": "302028AD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Nelson",
+      "code": "30202A04 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Nelson",
+      "code": "30202A05 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Nelson",
+      "code": "30202B5A 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Nelson",
+      "code": "30202B5B 0009"
+    },
+    {
+      "name": "Nelson has all spells",
+      "code": "10204768 0003"
+    },
+    {
+      "name": "Unlimited HP for Nina",
+      "code": "10200FF6 03E7"
+    },
+    {
+      "name": "Maximum HP for Nina",
+      "code": "1020114C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Nina",
+      "code": "102012A2 0063"
+    },
+    {
+      "name": "Maximum MP for Nina",
+      "code": "102013F8 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Nina",
+      "code": "1020154E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Nina",
+      "code": "10201950 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Nina",
+      "code": "30202556 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Nina",
+      "code": "30202557 0009"
+    },
+    {
+      "name": "Unlimited Mages for Nina",
+      "code": "302026AC 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Nina",
+      "code": "302026AD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Nina",
+      "code": "30202802 0009"
+    },
+    {
+      "name": "Unlimited Monks for Nina",
+      "code": "30202803 0009"
+    },
+    {
+      "name": "Unlimited Archers for Nina",
+      "code": "30202958 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Nina",
+      "code": "30202959 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Nina",
+      "code": "30202AAE 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Nina",
+      "code": "30202AAF 0009"
+    },
+    {
+      "name": "Nina has all spells",
+      "code": "102046BC 0003"
+    },
+    {
+      "name": "Unlimited HP for Norse",
+      "code": "10201078 03E7"
+    },
+    {
+      "name": "Maximum HP for Norse",
+      "code": "102011CE 03E7"
+    },
+    {
+      "name": "Unlimited MP for Norse",
+      "code": "10201320 0063"
+    },
+    {
+      "name": "Maximum MP for Norse",
+      "code": "1020147A 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Norse",
+      "code": "102015D0 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Norse",
+      "code": "102019D2 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Norse",
+      "code": "302025D8 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Norse",
+      "code": "302025D9 0009"
+    },
+    {
+      "name": "Unlimited Mages for Norse",
+      "code": "3020272E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Norse",
+      "code": "3020272F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Norse",
+      "code": "30202882 0009"
+    },
+    {
+      "name": "Unlimited Monks for Norse",
+      "code": "30202883 0009"
+    },
+    {
+      "name": "Unlimited Archers for Norse",
+      "code": "302029DA 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Norse",
+      "code": "302029DB 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Norse",
+      "code": "30202B30 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Norse",
+      "code": "30202B31 0009"
+    },
+    {
+      "name": "Norse has all spells",
+      "code": "1020473E 0003"
+    },
+    {
+      "name": "Unlimited HP for Nyvkall",
+      "code": "102010AE 03E7"
+    },
+    {
+      "name": "Maximum HP for Nyvkall",
+      "code": "10201204 03E7"
+    },
+    {
+      "name": "Unlimited MP for Nyvkall",
+      "code": "10201356 0063"
+    },
+    {
+      "name": "Maximum MP for Nyvkall",
+      "code": "102014B0 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Nyvkall",
+      "code": "10201606 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Nyvkall",
+      "code": "10201A08 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Nyvkall",
+      "code": "3020260E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Nyvkall",
+      "code": "3020260F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Nyvkall",
+      "code": "30202764 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Nyvkall",
+      "code": "30202765 0009"
+    },
+    {
+      "name": "Unlimited Archers for Nyvkall",
+      "code": "302028B8 0009"
+    },
+    {
+      "name": "Unlimited Monks for Nyvkall",
+      "code": "302028B9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Nyvkall",
+      "code": "30202A10 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Nyvkall",
+      "code": "30202A11 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Nyvkall",
+      "code": "30202B66 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Nyvkall",
+      "code": "30202B67 0009"
+    },
+    {
+      "name": "Nyvkall has all spells",
+      "code": "10204774 0003"
+    },
+    {
+      "name": "Unlimited HP for Ogredd",
+      "code": "1020103A 03E7"
+    },
+    {
+      "name": "Maximum HP for Ogredd",
+      "code": "10201190 03E7"
+    },
+    {
+      "name": "Unlimited MP for Ogredd",
+      "code": "102012E6 0063"
+    },
+    {
+      "name": "Maximum MP for Ogredd",
+      "code": "1020143C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Ogredd",
+      "code": "10201592 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Ogredd",
+      "code": "10201994 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Ogredd",
+      "code": "3020259A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Ogredd",
+      "code": "3020259B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Ogredd",
+      "code": "302026F0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Ogredd",
+      "code": "302026F1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ogredd",
+      "code": "30202846 0009"
+    },
+    {
+      "name": "Unlimited Monks for Ogredd",
+      "code": "30202847 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ogredd",
+      "code": "3020299C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Ogredd",
+      "code": "3020299D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Ogredd",
+      "code": "30202AF2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Ogredd",
+      "code": "30202AF3 0009"
+    },
+    {
+      "name": "Ogredd has all spells",
+      "code": "10204700 0003"
+    },
+    {
+      "name": "Unlimited HP for Ortega",
+      "code": "1020102E 03E7"
+    },
+    {
+      "name": "Maximum HP for Ortega",
+      "code": "10201184 03E7"
+    },
+    {
+      "name": "Unlimited MP for Ortega",
+      "code": "102012DA 0063"
+    },
+    {
+      "name": "Maximum MP for Ortega",
+      "code": "10201430 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Ortega",
+      "code": "10201586 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Ortega",
+      "code": "10201988 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Ortega",
+      "code": "3020258E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Ortega",
+      "code": "3020258F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Ortega",
+      "code": "302026E4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Ortega",
+      "code": "302026E5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ortega",
+      "code": "3020283A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Ortega",
+      "code": "3020283B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ortega",
+      "code": "30202990 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Ortega",
+      "code": "30202991 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Ortega",
+      "code": "30202AE6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Ortega",
+      "code": "30202AE7 0009"
+    },
+    {
+      "name": "Ortega has all spells",
+      "code": "102046F4 0003"
+    },
+    {
+      "name": "Unlimited HP for Phylicia",
+      "code": "10201046 03E7"
+    },
+    {
+      "name": "Maximum HP for Phylicia",
+      "code": "1020119C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Phylicia",
+      "code": "102012F2 0063"
+    },
+    {
+      "name": "Maximum MP for Phylicia",
+      "code": "10201448 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Phylicia",
+      "code": "1020159E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Phylicia",
+      "code": "102019A0 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Phylicia",
+      "code": "302025A6 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Phylicia",
+      "code": "302025A7 0009"
+    },
+    {
+      "name": "Unlimited Mages for Phylicia",
+      "code": "302026FC 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Phylicia",
+      "code": "302026FD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Phylicia",
+      "code": "30202852 0009"
+    },
+    {
+      "name": "Unlimited Monks for Phylicia",
+      "code": "30202853 0009"
+    },
+    {
+      "name": "Unlimited Archers for Phylicia",
+      "code": "302029A8 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Phylicia",
+      "code": "302029A9 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Phylicia",
+      "code": "30202AFE 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Phylicia",
+      "code": "30202AFF 0009"
+    },
+    {
+      "name": "Phylicia has all spells",
+      "code": "1020470C 0003"
+    },
+    {
+      "name": "Unlimited HP for Phylla",
+      "code": "102010CC 03E7"
+    },
+    {
+      "name": "Maximum HP for Phylla",
+      "code": "10201222 03E7"
+    },
+    {
+      "name": "Unlimited MP for Phylla",
+      "code": "10201374 0063"
+    },
+    {
+      "name": "Maximum MP for Phylla",
+      "code": "102014CE 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Phylla",
+      "code": "10201624 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Phylla",
+      "code": "10201A26 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Phylla",
+      "code": "3020262C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Phylla",
+      "code": "3020262D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Phylla",
+      "code": "30202782 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Phylla",
+      "code": "30202783 0009"
+    },
+    {
+      "name": "Unlimited Archers for Phylla",
+      "code": "302028D6 0009"
+    },
+    {
+      "name": "Unlimited Monks for Phylla",
+      "code": "302028D7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Phylla",
+      "code": "30202A2E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Phylla",
+      "code": "30202A2F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Phylla",
+      "code": "30202B84 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Phylla",
+      "code": "30202B85 0009"
+    },
+    {
+      "name": "Phylla has all spells",
+      "code": "10204792 0003"
+    },
+    {
+      "name": "Unlimited HP for Piper",
+      "code": "102010B0 03E7"
+    },
+    {
+      "name": "Maximum HP for Piper",
+      "code": "10201206 03E7"
+    },
+    {
+      "name": "Unlimited MP for Piper",
+      "code": "10201358 0063"
+    },
+    {
+      "name": "Maximum MP for Piper",
+      "code": "102014B2 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Piper",
+      "code": "10201608 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Piper",
+      "code": "10201A0A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Piper",
+      "code": "30202610 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Piper",
+      "code": "30202611 0009"
+    },
+    {
+      "name": "Unlimited Mages for Piper",
+      "code": "30202766 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Piper",
+      "code": "30202767 0009"
+    },
+    {
+      "name": "Unlimited Archers for Piper",
+      "code": "302028BA 0009"
+    },
+    {
+      "name": "Unlimited Monks for Piper",
+      "code": "302028BB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Piper",
+      "code": "30202A12 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Piper",
+      "code": "30202A13 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Piper",
+      "code": "30202B68 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Piper",
+      "code": "30202B69 0009"
+    },
+    {
+      "name": "Piper has all spells",
+      "code": "10204776 0003"
+    },
+    {
+      "name": "Unlimited HP for Presto",
+      "code": "10201012 03E7"
+    },
+    {
+      "name": "Maximum HP for Presto",
+      "code": "10201168 03E7"
+    },
+    {
+      "name": "Unlimited MP for Presto",
+      "code": "102012BE 0063"
+    },
+    {
+      "name": "Maximum MP for Presto",
+      "code": "10201414 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Presto",
+      "code": "1020156A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Presto",
+      "code": "1020196C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Presto",
+      "code": "30202572 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Presto",
+      "code": "30202573 0009"
+    },
+    {
+      "name": "Unlimited Mages for Presto",
+      "code": "302026C8 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Presto",
+      "code": "302026C9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Presto",
+      "code": "3020281E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Presto",
+      "code": "3020281F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Presto",
+      "code": "30202974 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Presto",
+      "code": "30202975 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Presto",
+      "code": "30202ACA 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Presto",
+      "code": "30202ACB 0009"
+    },
+    {
+      "name": "Presto has all spells",
+      "code": "102046D8 0003"
+    },
+    {
+      "name": "Unlimited HP for Raitt",
+      "code": "1020110C 03E7"
+    },
+    {
+      "name": "Maximum HP for Raitt",
+      "code": "10201262 03E7"
+    },
+    {
+      "name": "Unlimited MP for Raitt",
+      "code": "102013B4 0063"
+    },
+    {
+      "name": "Maximum MP for Raitt",
+      "code": "1020150E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Raitt",
+      "code": "10201664 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Raitt",
+      "code": "10201A66 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Raitt",
+      "code": "3020266C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Raitt",
+      "code": "3020266D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Raitt",
+      "code": "302027C2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Raitt",
+      "code": "302027C3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Raitt",
+      "code": "30202916 0009"
+    },
+    {
+      "name": "Unlimited Monks for Raitt",
+      "code": "30202917 0009"
+    },
+    {
+      "name": "Unlimited Archers for Raitt",
+      "code": "30202A6E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Raitt",
+      "code": "30202A6F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Raitt",
+      "code": "30202BC4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Raitt",
+      "code": "30202BC5 0009"
+    },
+    {
+      "name": "Raitt has all spells",
+      "code": "102047D2 0003"
+    },
+    {
+      "name": "Unlimited HP for Raizak",
+      "code": "10201020 03E7"
+    },
+    {
+      "name": "Maximum HP for Raizak",
+      "code": "10201176 03E7"
+    },
+    {
+      "name": "Unlimited MP for Raizak",
+      "code": "102012CC 0063"
+    },
+    {
+      "name": "Maximum MP for Raizak",
+      "code": "10201422 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Raizak",
+      "code": "10201578 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Raizak",
+      "code": "1020197A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Raizak",
+      "code": "30202580 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Raizak",
+      "code": "30202581 0009"
+    },
+    {
+      "name": "Unlimited Mages for Raizak",
+      "code": "302026D6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Raizak",
+      "code": "302026D7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Raizak",
+      "code": "3020282C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Raizak",
+      "code": "3020282D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Raizak",
+      "code": "30202982 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Raizak",
+      "code": "30202983 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Raizak",
+      "code": "30202AD8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Raizak",
+      "code": "30202AD9 0009"
+    },
+    {
+      "name": "Raizak has all spells",
+      "code": "102046E6 0003"
+    },
+    {
+      "name": "Unlimited HP for Ramzal",
+      "code": "1020108E 03E7"
+    },
+    {
+      "name": "Maximum HP for Ramzal",
+      "code": "102011E4 03E7"
+    },
+    {
+      "name": "Unlimited MP for Ramzal",
+      "code": "10201336 0063"
+    },
+    {
+      "name": "Maximum MP for Ramzal",
+      "code": "10201490 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Ramzal",
+      "code": "102015E6 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Ramzal",
+      "code": "102019E8 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Ramzal",
+      "code": "302025EE 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Ramzal",
+      "code": "302025EF 0009"
+    },
+    {
+      "name": "Unlimited Mages for Ramzal",
+      "code": "30202744 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Ramzal",
+      "code": "30202745 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ramzal",
+      "code": "30202898 0009"
+    },
+    {
+      "name": "Unlimited Monks for Ramzal",
+      "code": "30202899 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ramzal",
+      "code": "302029F0 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Ramzal",
+      "code": "302029F1 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Ramzal",
+      "code": "30202B46 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Ramzal",
+      "code": "30202B47 0009"
+    },
+    {
+      "name": "Ramzal has all spells",
+      "code": "10204754 0003"
+    },
+    {
+      "name": "Unlimited HP for Reiner",
+      "code": "10201008 03E7"
+    },
+    {
+      "name": "Maximum HP for Reiner",
+      "code": "1020115E 03E7"
+    },
+    {
+      "name": "Unlimited MP for Reiner",
+      "code": "102012B4 0063"
+    },
+    {
+      "name": "Maximum MP for Reiner",
+      "code": "1020140A 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Reiner",
+      "code": "10201560 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Reiner",
+      "code": "10201962 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Reiner",
+      "code": "30202568 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Reiner",
+      "code": "30202569 0009"
+    },
+    {
+      "name": "Unlimited Mages for Reiner",
+      "code": "302026BE 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Reiner",
+      "code": "302026BF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Reiner",
+      "code": "30202814 0009"
+    },
+    {
+      "name": "Unlimited Monks for Reiner",
+      "code": "30202815 0009"
+    },
+    {
+      "name": "Unlimited Archers for Reiner",
+      "code": "3020296A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Reiner",
+      "code": "3020296B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Reiner",
+      "code": "30202AC0 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Reiner",
+      "code": "30202AC1 0009"
+    },
+    {
+      "name": "Reiner has all spells",
+      "code": "102046CE 0003"
+    },
+    {
+      "name": "Unlimited HP for Reinhart",
+      "code": "10200FEA 03E7"
+    },
+    {
+      "name": "Maximum HP for Reinhart",
+      "code": "10201140 03E7"
+    },
+    {
+      "name": "Unlimited MP for Reinhart",
+      "code": "10201296 0063"
+    },
+    {
+      "name": "Maximum MP for Reinhart",
+      "code": "102013EC 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Reinhart",
+      "code": "10201542 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Reinhart",
+      "code": "10201944 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Reinhart",
+      "code": "3020254A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Reinhart",
+      "code": "3020254B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Reinhart",
+      "code": "302026A0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Reinhart",
+      "code": "302026A1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Reinhart",
+      "code": "302027F6 0009"
+    },
+    {
+      "name": "Unlimited Monks for Reinhart",
+      "code": "302027F7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Reinhart",
+      "code": "3020294C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Reinhart",
+      "code": "3020294D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Reinhart",
+      "code": "30202AA2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Reinhart",
+      "code": "30202AA3 0009"
+    },
+    {
+      "name": "Reinhart has all spells",
+      "code": "102046B0 0003"
+    },
+    {
+      "name": "Unlimited HP for Rock",
+      "code": "1020104E 03E7"
+    },
+    {
+      "name": "Maximum HP for Rock",
+      "code": "102011A4 03E7"
+    },
+    {
+      "name": "Unlimited MP for Rock",
+      "code": "102012FA 0063"
+    },
+    {
+      "name": "Maximum MP for Rock",
+      "code": "10201450 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Rock",
+      "code": "102015A6 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Rock",
+      "code": "102019A8 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Rock",
+      "code": "302025AE 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Rock",
+      "code": "302025AF 0009"
+    },
+    {
+      "name": "Unlimited Mages for Rock",
+      "code": "30202704 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Rock",
+      "code": "30202705 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rock",
+      "code": "3020285A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Rock",
+      "code": "3020285B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rock",
+      "code": "302029B0 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Rock",
+      "code": "302029B1 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Rock",
+      "code": "30202B06 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Rock",
+      "code": "30202B07 0009"
+    },
+    {
+      "name": "Rock has all spells",
+      "code": "10204714 0003"
+    },
+    {
+      "name": "Unlimited HP for Rudger",
+      "code": "10200FF2 03E7"
+    },
+    {
+      "name": "Maximum HP for Rudger",
+      "code": "10201148 03E7"
+    },
+    {
+      "name": "Unlimited MP for Rudger",
+      "code": "1020129E 0063"
+    },
+    {
+      "name": "Maximum MP for Rudger",
+      "code": "102013F4 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Rudger",
+      "code": "1020154A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Rudger",
+      "code": "1020194C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Rudger",
+      "code": "30202552 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Rudger",
+      "code": "30202553 0009"
+    },
+    {
+      "name": "Unlimited Mages for Rudger",
+      "code": "302026A8 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Rudger",
+      "code": "302026A9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rudger",
+      "code": "302027FE 0009"
+    },
+    {
+      "name": "Unlimited Monks for Rudger",
+      "code": "302027FF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rudger",
+      "code": "30202954 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Rudger",
+      "code": "30202955 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Rudger",
+      "code": "30202AAA 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Rudger",
+      "code": "30202AAB 0009"
+    },
+    {
+      "name": "Rudger has all spells",
+      "code": "102046B8 0003"
+    },
+    {
+      "name": "Unlimited HP for Ruix",
+      "code": "102010D0 03E7"
+    },
+    {
+      "name": "Maximum HP for Ruix",
+      "code": "10201226 03E7"
+    },
+    {
+      "name": "Unlimited MP for Ruix",
+      "code": "10201378 0063"
+    },
+    {
+      "name": "Maximum MP for Ruix",
+      "code": "102014D2 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Ruix",
+      "code": "10201628 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Ruix",
+      "code": "10201A2A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Ruix",
+      "code": "30202630 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Ruix",
+      "code": "30202631 0009"
+    },
+    {
+      "name": "Unlimited Mages for Ruix",
+      "code": "30202786 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Ruix",
+      "code": "30202787 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ruix",
+      "code": "302028DA 0009"
+    },
+    {
+      "name": "Unlimited Monks for Ruix",
+      "code": "302028DB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Ruix",
+      "code": "30202A32 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Ruix",
+      "code": "30202A33 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Ruix",
+      "code": "30202B88 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Ruix",
+      "code": "30202B89 0009"
+    },
+    {
+      "name": "Ruix has all spells",
+      "code": "10204796 0003"
+    },
+    {
+      "name": "Unlimited HP for Rygar",
+      "code": "10201022 03E7"
+    },
+    {
+      "name": "Maximum HP for Rygar",
+      "code": "10201178 03E7"
+    },
+    {
+      "name": "Unlimited MP for Rygar",
+      "code": "102012CE 0063"
+    },
+    {
+      "name": "Maximum MP for Rygar",
+      "code": "10201424 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Rygar",
+      "code": "1020157A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Rygar",
+      "code": "1020197C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Rygar",
+      "code": "30202582 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Rygar",
+      "code": "30202583 0009"
+    },
+    {
+      "name": "Unlimited Mages for Rygar",
+      "code": "302026D8 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Rygar",
+      "code": "302026D9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rygar",
+      "code": "3020282E 0009"
+    },
+    {
+      "name": "Unlimited Monks for Rygar",
+      "code": "3020282F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rygar",
+      "code": "30202984 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Rygar",
+      "code": "30202985 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Rygar",
+      "code": "30202ADA 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Rygar",
+      "code": "30202ADB 0009"
+    },
+    {
+      "name": "Rygar has all spells",
+      "code": "102046E8 0003"
+    },
+    {
+      "name": "Unlimited HP for Rykker",
+      "code": "1020106A 03E7"
+    },
+    {
+      "name": "Maximum HP for Rykker",
+      "code": "102011C0 03E7"
+    },
+    {
+      "name": "Unlimited MP for Rykker",
+      "code": "10201312 0063"
+    },
+    {
+      "name": "Maximum MP for Rykker",
+      "code": "1020146C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Rykker",
+      "code": "102015C2 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Rykker",
+      "code": "102019C4 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Rykker",
+      "code": "302025CA 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Rykker",
+      "code": "302025CB 0009"
+    },
+    {
+      "name": "Unlimited Mages for Rykker",
+      "code": "30202720 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Rykker",
+      "code": "30202721 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rykker",
+      "code": "30202874 0009"
+    },
+    {
+      "name": "Unlimited Monks for Rykker",
+      "code": "30202875 0009"
+    },
+    {
+      "name": "Unlimited Archers for Rykker",
+      "code": "302029CC 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Rykker",
+      "code": "302029CD 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Rykker",
+      "code": "30202B22 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Rykker",
+      "code": "30202B23 0009"
+    },
+    {
+      "name": "Rykker has all spells",
+      "code": "10204730 0003"
+    },
+    {
+      "name": "Unlimited HP for Santana",
+      "code": "10201098 03E7"
+    },
+    {
+      "name": "Maximum  HP for Santana",
+      "code": "102011EE 03E7"
+    },
+    {
+      "name": "Unlimited MP for Santana",
+      "code": "10201340 0063"
+    },
+    {
+      "name": "Maximum MP for Santana",
+      "code": "1020149A 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Santana",
+      "code": "102015F0 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Santana",
+      "code": "102019F2 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Santana",
+      "code": "302025F8 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Santana",
+      "code": "302025F9 0009"
+    },
+    {
+      "name": "Unlimited Mages for Santana",
+      "code": "3020274E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Santana",
+      "code": "3020274F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Santana",
+      "code": "302028A2 0009"
+    },
+    {
+      "name": "Unlimited Monks for Santana",
+      "code": "302028A3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Santana",
+      "code": "302029FA 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Santana",
+      "code": "302029FB 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Santana",
+      "code": "30202B50 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Santana",
+      "code": "30202B51 0009"
+    },
+    {
+      "name": "Santana has all spells",
+      "code": "1020475E 0003"
+    },
+    {
+      "name": "Unlimited HP for Sayaka",
+      "code": "10201080 03E7"
+    },
+    {
+      "name": "Maximum Maximum HP for Sayaka",
+      "code": "102011D6 03E7"
+    },
+    {
+      "name": "Unlimited MP for Sayaka",
+      "code": "10201328 0063"
+    },
+    {
+      "name": "Maximum MP for Sayaka",
+      "code": "10201482 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Sayaka",
+      "code": "102015D8 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Sayaka",
+      "code": "102019DA 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Sayaka",
+      "code": "302025E0 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Sayaka",
+      "code": "302025E1 0009"
+    },
+    {
+      "name": "Unlimited Mages for Sayaka",
+      "code": "30202736 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Sayaka",
+      "code": "30202737 0009"
+    },
+    {
+      "name": "Unlimited Archers for Sayaka",
+      "code": "3020288A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Sayaka",
+      "code": "3020288B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Sayaka",
+      "code": "302029E2 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Sayaka",
+      "code": "302029E3 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Sayaka",
+      "code": "30202B38 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Sayaka",
+      "code": "30202B39 0009"
+    },
+    {
+      "name": "Sayaka has all spells",
+      "code": "10204746 0003"
+    },
+    {
+      "name": "Unlimited HP for Scar",
+      "code": "10201030 03E7"
+    },
+    {
+      "name": "Maximum HP for Scar",
+      "code": "10201186 03E7"
+    },
+    {
+      "name": "Unlimited MP for Scar",
+      "code": "102012DC 0063"
+    },
+    {
+      "name": "Maximum MP for Scar",
+      "code": "10201432 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Scar",
+      "code": "10201588 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Scar",
+      "code": "1020198A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Scar",
+      "code": "30202590 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Scar",
+      "code": "30202591 0009"
+    },
+    {
+      "name": "Unlimited Mages for Scar",
+      "code": "302026E6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Scar",
+      "code": "302026E7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Scar",
+      "code": "3020283C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Scar",
+      "code": "3020283D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Scar",
+      "code": "30202992 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Scar",
+      "code": "30202993 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Scar",
+      "code": "30202AE8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Scar",
+      "code": "30202AE9 0009"
+    },
+    {
+      "name": "Scar has all spells",
+      "code": "102046F6 0003"
+    },
+    {
+      "name": "Unlimited HP for Scythe",
+      "code": "10200FFE 03E7"
+    },
+    {
+      "name": "Maximum HP for Scythe",
+      "code": "10201154 03E7"
+    },
+    {
+      "name": "Unlimited MP for Scythe",
+      "code": "102012AA 0063"
+    },
+    {
+      "name": "Maximum MP for Scythe",
+      "code": "10201400 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Scythe",
+      "code": "10201556 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Scythe",
+      "code": "10201958 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Scythe",
+      "code": "3020255E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Scythe",
+      "code": "3020255F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Scythe",
+      "code": "302026B4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Scythe",
+      "code": "302026B5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Scythe",
+      "code": "3020280A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Scythe",
+      "code": "3020280B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Scythe",
+      "code": "30202960 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Scythe",
+      "code": "30202961 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Scythe",
+      "code": "30202AB6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Scythe",
+      "code": "30202AB7 0009"
+    },
+    {
+      "name": "Scythe has all spells",
+      "code": "102046C4 0003"
+    },
+    {
+      "name": "Unlimited HP for Shadow",
+      "code": "10201110 03E7"
+    },
+    {
+      "name": "Maximum  HP for Shadow",
+      "code": "10201266 03E7"
+    },
+    {
+      "name": "Unlimited MP for Shadow",
+      "code": "102013B8 0063"
+    },
+    {
+      "name": "Maximum MP for Shadow",
+      "code": "10201512 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Shadow",
+      "code": "10201668 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Shadow",
+      "code": "10201A6A 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Shadow",
+      "code": "30202670 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Shadow",
+      "code": "30202671 0009"
+    },
+    {
+      "name": "Unlimited Mages for Shadow",
+      "code": "302027C6 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Shadow",
+      "code": "302027C7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Shadow",
+      "code": "3020291A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Shadow",
+      "code": "3020291B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Shadow",
+      "code": "30202A72 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Shadow",
+      "code": "30202A73 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Shadow",
+      "code": "30202BC8 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Shadow",
+      "code": "30202BC9 0009"
+    },
+    {
+      "name": "Shadow has all spells",
+      "code": "102047D6 0003"
+    },
+    {
+      "name": "Unlimited HP for Shaia",
+      "code": "1020101E 03E7"
+    },
+    {
+      "name": "Maximum HP for Shaia",
+      "code": "10201174 03E7"
+    },
+    {
+      "name": "Unlimited MP for Shaia",
+      "code": "102012CA 0063"
+    },
+    {
+      "name": "Maximum MP for Shaia",
+      "code": "10201420 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Shaia",
+      "code": "10201576 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Shaia",
+      "code": "10201978 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Shaia",
+      "code": "3020257E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Shaia",
+      "code": "3020257F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Shaia",
+      "code": "302026D4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Shaia",
+      "code": "302026D5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Shaia",
+      "code": "3020282A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Shaia",
+      "code": "3020282B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Shaia",
+      "code": "30202980 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Shaia",
+      "code": "30202981 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Shaia",
+      "code": "30202AD6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Shaia",
+      "code": "30202AD7 0009"
+    },
+    {
+      "name": "Shaia has all spells",
+      "code": "102046E4 0003"
+    },
+    {
+      "name": "Unlimited HP for Shinone",
+      "code": "1020100E 03E7"
+    },
+    {
+      "name": "Maximum HP for Shinone",
+      "code": "10201164 03E7"
+    },
+    {
+      "name": "Unlimited MP for Shinone",
+      "code": "102012BA 0063"
+    },
+    {
+      "name": "Maximum MP for Shinone",
+      "code": "10201410 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Shinone",
+      "code": "10201566 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Shinone",
+      "code": "10201968 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Shinone",
+      "code": "3020256E 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Shinone",
+      "code": "3020256F 0009"
+    },
+    {
+      "name": "Unlimited Mages for Shinone",
+      "code": "302026C4 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Shinone",
+      "code": "302026C5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Shinone",
+      "code": "3020281A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Shinone",
+      "code": "3020281B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Shinone",
+      "code": "30202970 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Shinone",
+      "code": "30202971 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Shinone",
+      "code": "30202AC6 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Shinone",
+      "code": "30202AC7 0009"
+    },
+    {
+      "name": "Shinone has all spells",
+      "code": "102046D4 0003"
+    },
+    {
+      "name": "Unlimited HP for Silva",
+      "code": "10201076 03E7"
+    },
+    {
+      "name": "Maximum HP for Silva",
+      "code": "102011CC 03E7"
+    },
+    {
+      "name": "Unlimited MP for Silva",
+      "code": "1020131E 0063"
+    },
+    {
+      "name": "Maximum MP for Silva",
+      "code": "10201478 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Silva",
+      "code": "102015CE 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Silva",
+      "code": "102019D0 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Silva",
+      "code": "302025D6 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Silva",
+      "code": "302025D7 0009"
+    },
+    {
+      "name": "Unlimited Mages for Silva",
+      "code": "3020272C 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Silva",
+      "code": "3020272D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Silva",
+      "code": "30202880 0009"
+    },
+    {
+      "name": "Unlimited Monks for Silva",
+      "code": "30202881 0009"
+    },
+    {
+      "name": "Unlimited Archers for Silva",
+      "code": "302029D8 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Silva",
+      "code": "302029D9 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Silva",
+      "code": "30202B2E 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Silva",
+      "code": "30202B2F 0009"
+    },
+    {
+      "name": "Silva has all spells",
+      "code": "1020473C 0003"
+    },
+    {
+      "name": "Unlimited HP for Silver",
+      "code": "1020107E 03E7"
+    },
+    {
+      "name": "Maximum HP for Silver",
+      "code": "102011D4 03E7"
+    },
+    {
+      "name": "Unlimited MP for Silver",
+      "code": "10201326 0063"
+    },
+    {
+      "name": "Maximum MP for Silver",
+      "code": "10201480 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Silver",
+      "code": "102015D6 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Silver",
+      "code": "102019D8 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Silver",
+      "code": "302025DE 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Silver",
+      "code": "302025DF 0009"
+    },
+    {
+      "name": "Unlimited Mages for Silver",
+      "code": "30202734 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Silver",
+      "code": "30202735 0009"
+    },
+    {
+      "name": "Unlimited Archers for Silver",
+      "code": "30202888 0009"
+    },
+    {
+      "name": "Unlimited Monks for Silver",
+      "code": "30202889 0009"
+    },
+    {
+      "name": "Unlimited Archers for Silver",
+      "code": "302029E0 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Silver",
+      "code": "302029E1 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Silver",
+      "code": "30202B36 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Silver",
+      "code": "30202B37 0009"
+    },
+    {
+      "name": "Silver has all spells",
+      "code": "10204744 0003"
+    },
+    {
+      "name": "Unlimited HP for Slythis",
+      "code": "1020111A 03E7"
+    },
+    {
+      "name": "Maximum HP for Slythis",
+      "code": "10201270 03E7"
+    },
+    {
+      "name": "Unlimited MP for Slythis",
+      "code": "102013C2 0063"
+    },
+    {
+      "name": "Maximum MP for Slythis",
+      "code": "1020151C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Slythis",
+      "code": "10201672 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Slythis",
+      "code": "10201A74 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Slythis",
+      "code": "3020267A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Slythis",
+      "code": "3020267B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Slythis",
+      "code": "302027D0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Slythis",
+      "code": "302027D1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Slythis",
+      "code": "30202924 0009"
+    },
+    {
+      "name": "Unlimited Monks for Slythis",
+      "code": "30202925 0009"
+    },
+    {
+      "name": "Unlimited Archers for Slythis",
+      "code": "30202A7C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Slythis",
+      "code": "30202A7D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Slythis",
+      "code": "30202BD2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Slythis",
+      "code": "30202BD3 0009"
+    },
+    {
+      "name": "Slythis has all spells",
+      "code": "102047A0 0003"
+    },
+    {
+      "name": "Unlimited HP for Sophie",
+      "code": "10201014 03E7"
+    },
+    {
+      "name": "Maximum HP for Sophie",
+      "code": "1020116A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Sophie",
+      "code": "102012C0 0063"
+    },
+    {
+      "name": "Maximum MP for Sophie",
+      "code": "10201416 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Sophie",
+      "code": "1020156C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Sophie",
+      "code": "1020196E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Sophie",
+      "code": "30202574 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Sophie",
+      "code": "30202575 0009"
+    },
+    {
+      "name": "Unlimited Mages for Sophie",
+      "code": "302026CA 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Sophie",
+      "code": "302026CB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Sophie",
+      "code": "30202820 0009"
+    },
+    {
+      "name": "Unlimited Monks for Sophie",
+      "code": "30202821 0009"
+    },
+    {
+      "name": "Unlimited Archers for Sophie",
+      "code": "30202976 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Sophie",
+      "code": "30202977 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Sophie",
+      "code": "30202ACC 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Sophie",
+      "code": "30202ACD 0009"
+    },
+    {
+      "name": "Sophie has all spells",
+      "code": "102046DA 0003"
+    },
+    {
+      "name": "Unlimited HP for Stegalt",
+      "code": "10201122 03E7"
+    },
+    {
+      "name": "Maximum HP for Stegalt",
+      "code": "10201278 03E7"
+    },
+    {
+      "name": "Unlimited MP for Stegalt",
+      "code": "102013CA 0063"
+    },
+    {
+      "name": "Maximum MP for Stegalt",
+      "code": "10201524 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Stegalt",
+      "code": "1020167A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Stegalt",
+      "code": "10201A7C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Stegalt",
+      "code": "30202682 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Stegalt",
+      "code": "30202683 0009"
+    },
+    {
+      "name": "Unlimited Mages for Stegalt",
+      "code": "302027D8 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Stegalt",
+      "code": "302027D9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Stegalt",
+      "code": "3020292C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Stegalt",
+      "code": "3020292D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Stegalt",
+      "code": "30202A84 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Stegalt",
+      "code": "30202A85 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Stegalt",
+      "code": "30202BDA 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Stegalt",
+      "code": "30202BDB 0009"
+    },
+    {
+      "name": "Stegalt has all spells",
+      "code": "102047A8 0003"
+    },
+    {
+      "name": "Unlimited HP for Sylphia",
+      "code": "10201132 03E7"
+    },
+    {
+      "name": "Maximum HP for Sylphia",
+      "code": "10201288 03E7"
+    },
+    {
+      "name": "Unlimited MP for Sylphia",
+      "code": "102013DA 0063"
+    },
+    {
+      "name": "Maximum MP for Sylphia",
+      "code": "10201534 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Sylphia",
+      "code": "1020168A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Sylphia",
+      "code": "10201A8C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Sylphia",
+      "code": "30202692 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Sylphia",
+      "code": "30202693 0009"
+    },
+    {
+      "name": "Unlimited Mages for Sylphia",
+      "code": "302027E8 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Sylphia",
+      "code": "302027E9 0009"
+    },
+    {
+      "name": "Unlimited Archers for Sylphia",
+      "code": "3020293C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Sylphia",
+      "code": "3020293D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Sylphia",
+      "code": "30202A94 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Sylphia",
+      "code": "30202A95 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Sylphia",
+      "code": "30202BEA 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Sylphia",
+      "code": "30202BEB 0009"
+    },
+    {
+      "name": "Sylphia has all spells",
+      "code": "102047B8 0003"
+    },
+    {
+      "name": "Unlimited HP for Talon",
+      "code": "1020109A 03E7"
+    },
+    {
+      "name": "Maximum HP for Talon",
+      "code": "102011F0 03E7"
+    },
+    {
+      "name": "Unlimited MP for Talon",
+      "code": "10201342 0063"
+    },
+    {
+      "name": "Maximum MP for Talon",
+      "code": "1020149C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Talon",
+      "code": "102015F2 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Talon",
+      "code": "102019F4 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Talon",
+      "code": "302025FA 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Talon",
+      "code": "302025FB 0009"
+    },
+    {
+      "name": "Unlimited Mages for Talon",
+      "code": "30202750 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Talon",
+      "code": "30202751 0009"
+    },
+    {
+      "name": "Unlimited Archers for Talon",
+      "code": "302028A4 0009"
+    },
+    {
+      "name": "Unlimited Monks for Talon",
+      "code": "302028A5 0009"
+    },
+    {
+      "name": "Unlimited Archers for Talon",
+      "code": "302029FC 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Talon",
+      "code": "302029FD 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Talon",
+      "code": "30202B52 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Talon",
+      "code": "30202B53 0009"
+    },
+    {
+      "name": "Talon has all spells",
+      "code": "10204760 0003"
+    },
+    {
+      "name": "Unlimited HP for Taulus",
+      "code": "1020103C 03E7"
+    },
+    {
+      "name": "Maximum HP for Taulus",
+      "code": "10201192 03E7"
+    },
+    {
+      "name": "Unlimited MP for Taulus",
+      "code": "102012E8 0063"
+    },
+    {
+      "name": "Maximum MP for Taulus",
+      "code": "1020143E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Taulus",
+      "code": "10201594 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Taulus",
+      "code": "10201996 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Taulus",
+      "code": "3020259C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Taulus",
+      "code": "3020259D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Taulus",
+      "code": "302026F2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Taulus",
+      "code": "302026F3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Taulus",
+      "code": "30202848 0009"
+    },
+    {
+      "name": "Unlimited Monks for Taulus",
+      "code": "30202849 0009"
+    },
+    {
+      "name": "Unlimited Archers for Taulus",
+      "code": "3020299E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Taulus",
+      "code": "3020299F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Taulus",
+      "code": "30202AF4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Taulus",
+      "code": "30202AF5 0009"
+    },
+    {
+      "name": "Taulus has all spells",
+      "code": "10204702 0003"
+    },
+    {
+      "name": "Unlimited HP for Teiris",
+      "code": "10200FE6 03E7"
+    },
+    {
+      "name": "Maximum HP for Teiris",
+      "code": "1020113C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Teiris",
+      "code": "10201292 0063"
+    },
+    {
+      "name": "Maximum MP for Teiris",
+      "code": "102013E8 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Teiris",
+      "code": "1020153E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Teiris",
+      "code": "10201940 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Teiris",
+      "code": "30202546 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Teiris",
+      "code": "30202547 0009"
+    },
+    {
+      "name": "Unlimited Mages for Teiris",
+      "code": "3020269C 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Teiris",
+      "code": "3020269D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Teiris",
+      "code": "302027F2 0009"
+    },
+    {
+      "name": "Unlimited Monks for Teiris",
+      "code": "302027F3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Teiris",
+      "code": "30202948 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Teiris",
+      "code": "30202949 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Teiris",
+      "code": "30202A9E 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Teiris",
+      "code": "30202A9F 0009"
+    },
+    {
+      "name": "Teiris has all spells",
+      "code": "102046AC 0003"
+    },
+    {
+      "name": "Unlimited HP for Tsugal",
+      "code": "10201016 03E7"
+    },
+    {
+      "name": "Maximum HP for Tsugal",
+      "code": "1020116C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Tsugal",
+      "code": "102012C2 0063"
+    },
+    {
+      "name": "Maximum MP for Tsugal",
+      "code": "10201418 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Tsugal",
+      "code": "1020156E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Tsugal",
+      "code": "10201970 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Tsugal",
+      "code": "30202576 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Tsugal",
+      "code": "30202577 0009"
+    },
+    {
+      "name": "Unlimited Mages for Tsugal",
+      "code": "302026CC 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Tsugal",
+      "code": "302026CD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Tsugal",
+      "code": "30202822 0009"
+    },
+    {
+      "name": "Unlimited Monks for Tsugal",
+      "code": "30202823 0009"
+    },
+    {
+      "name": "Unlimited Archers for Tsugal",
+      "code": "30202978 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Tsugal",
+      "code": "30202979 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Tsugal",
+      "code": "30202ACE 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Tsugal",
+      "code": "30202ACF 0009"
+    },
+    {
+      "name": "Tsugal has all spells",
+      "code": "102046DC 0003"
+    },
+    {
+      "name": "Unlimited HP for Tzuyan",
+      "code": "10201070 03E7"
+    },
+    {
+      "name": "Maximum HP for Tzuyan",
+      "code": "102011C6 03E7"
+    },
+    {
+      "name": "Unlimited MP for Tzuyan",
+      "code": "10201318 0063"
+    },
+    {
+      "name": "Maximum MP for Tzuyan",
+      "code": "10201472 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Tzuyan",
+      "code": "102015C8 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Tzuyan",
+      "code": "102019CA 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Tzuyan",
+      "code": "302025D0 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Tzuyan",
+      "code": "302025D1 0009"
+    },
+    {
+      "name": "Unlimited Mages for Tzuyan",
+      "code": "30202726 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Tzuyan",
+      "code": "30202727 0009"
+    },
+    {
+      "name": "Unlimited Archers for Tzuyan",
+      "code": "3020287A 0009"
+    },
+    {
+      "name": "Unlimited Monks for Tzuyan",
+      "code": "3020287B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Tzuyan",
+      "code": "302029D2 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Tzuyan",
+      "code": "302029D3 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Tzuyan",
+      "code": "30202B28 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Tzuyan",
+      "code": "30202B29 0009"
+    },
+    {
+      "name": "Tzuyan has all spells",
+      "code": "10204736 0003"
+    },
+    {
+      "name": "Unlimited HP for Uryll",
+      "code": "10201092 03E7"
+    },
+    {
+      "name": "Maximum HP for Uryll",
+      "code": "102011E8 03E7"
+    },
+    {
+      "name": "Unlimited MP for Uryll",
+      "code": "1020133A 0063"
+    },
+    {
+      "name": "Maximum MP for Uryll",
+      "code": "10201494 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Uryll",
+      "code": "102015EA 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Uryll",
+      "code": "102019EC 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Uryll",
+      "code": "302025F2 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Uryll",
+      "code": "302025F3 0009"
+    },
+    {
+      "name": "Unlimited Mages for Uryll",
+      "code": "30202748 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Uryll",
+      "code": "30202749 0009"
+    },
+    {
+      "name": "Unlimited Archers for Uryll",
+      "code": "3020289C 0009"
+    },
+    {
+      "name": "Unlimited Monks for Uryll",
+      "code": "3020289D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Uryll",
+      "code": "302029F4 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Uryll",
+      "code": "302029F5 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Uryll",
+      "code": "30202B4A 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Uryll",
+      "code": "30202B4B 0009"
+    },
+    {
+      "name": "Uryll has all spells",
+      "code": "10204758 0003"
+    },
+    {
+      "name": "Unlimited HP for Varshyl",
+      "code": "102010AC 03E7"
+    },
+    {
+      "name": "Maximum HP for Varshyl",
+      "code": "10201202 03E7"
+    },
+    {
+      "name": "Unlimited MP for Varshyl",
+      "code": "10201354 0063"
+    },
+    {
+      "name": "Maximum MP for Varshyl",
+      "code": "102014AE 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Varshyl",
+      "code": "10201604 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Varshyl",
+      "code": "10201A06 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Varshyl",
+      "code": "3020260C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Varshyl",
+      "code": "3020260D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Varshyl",
+      "code": "30202762 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Varshyl",
+      "code": "30202763 0009"
+    },
+    {
+      "name": "Unlimited Archers for Varshyl",
+      "code": "302028B6 0009"
+    },
+    {
+      "name": "Unlimited Monks for Varshyl",
+      "code": "302028B7 0009"
+    },
+    {
+      "name": "Unlimited Archers for Varshyl",
+      "code": "30202A0E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Varshyl",
+      "code": "30202A0F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Varshyl",
+      "code": "30202B64 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Varshyl",
+      "code": "30202B65 0009"
+    },
+    {
+      "name": "Varshyl has all spells",
+      "code": "10204772 0003"
+    },
+    {
+      "name": "Unlimited HP for Veltarna",
+      "code": "102010B6 03E7"
+    },
+    {
+      "name": "Maximum HP for Veltarna",
+      "code": "1020120C 03E7"
+    },
+    {
+      "name": "Unlimited MP for Veltarna",
+      "code": "1020135E 0063"
+    },
+    {
+      "name": "Maximum MP for Veltarna",
+      "code": "102014B8 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Veltarna",
+      "code": "1020160E 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Veltarna",
+      "code": "10201A10 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Veltarna",
+      "code": "30202616 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Veltarna",
+      "code": "30202617 0009"
+    },
+    {
+      "name": "Unlimited Mages for Veltarna",
+      "code": "3020276C 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Veltarna",
+      "code": "3020276D 0009"
+    },
+    {
+      "name": "Unlimited Archers for Veltarna",
+      "code": "302028C0 0009"
+    },
+    {
+      "name": "Unlimited Monks for Veltarna",
+      "code": "302028C1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Veltarna",
+      "code": "30202A18 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Veltarna",
+      "code": "30202A19 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Veltarna",
+      "code": "30202B6E 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Veltarna",
+      "code": "30202B6F 0009"
+    },
+    {
+      "name": "Veltarna has all spells",
+      "code": "1020477C 0003"
+    },
+    {
+      "name": "Unlimited HP for Viper",
+      "code": "102010A0 03E7"
+    },
+    {
+      "name": "Maximum HP for Viper",
+      "code": "102011F6 03E7"
+    },
+    {
+      "name": "Unlimited MP for Viper",
+      "code": "10201348 0063"
+    },
+    {
+      "name": "Maximum MP for Viper",
+      "code": "102014A2 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Viper",
+      "code": "102015F8 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Viper",
+      "code": "102019FA 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Viper",
+      "code": "30202600 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Viper",
+      "code": "30202601 0009"
+    },
+    {
+      "name": "Unlimited Mages for Viper",
+      "code": "30202756 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Viper",
+      "code": "30202757 0009"
+    },
+    {
+      "name": "Unlimited Archers for Viper",
+      "code": "302028AA 0009"
+    },
+    {
+      "name": "Unlimited Monks for Viper",
+      "code": "302028AB 0009"
+    },
+    {
+      "name": "Unlimited Archers for Viper",
+      "code": "30202A02 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Viper",
+      "code": "30202A03 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Viper",
+      "code": "30202B58 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Viper",
+      "code": "30202B59 0009"
+    },
+    {
+      "name": "Viper has all spells",
+      "code": "10204766 0003"
+    },
+    {
+      "name": "Unlimited HP for Wein",
+      "code": "10200FE2 03E7"
+    },
+    {
+      "name": "Maximum HP for Wein",
+      "code": "10201138 03E7"
+    },
+    {
+      "name": "Unlimited MP for Wein",
+      "code": "1020128E 0063"
+    },
+    {
+      "name": "Maximum MP for Wein",
+      "code": "102013E4 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Wein",
+      "code": "1020153A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Wein",
+      "code": "1020193C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Wein",
+      "code": "30202542 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Wein",
+      "code": "30202543 0009"
+    },
+    {
+      "name": "Unlimited Mages for Wein",
+      "code": "30202698 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Wein",
+      "code": "30202699 0009"
+    },
+    {
+      "name": "Unlimited Archers for Wein",
+      "code": "302027EE 0009"
+    },
+    {
+      "name": "Unlimited Monks for Wein",
+      "code": "302027EF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Wein",
+      "code": "30202944 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Wein",
+      "code": "30202945 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Wein",
+      "code": "30202A9A 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Wein",
+      "code": "30202A9B 0009"
+    },
+    {
+      "name": "Wein has all spells",
+      "code": "102046A8 0003"
+    },
+    {
+      "name": "Unlimited HP for Wriph",
+      "code": "10201088 03E7"
+    },
+    {
+      "name": "Maximum HP for Wriph",
+      "code": "102011DE 03E7"
+    },
+    {
+      "name": "Unlimited MP for Wriph",
+      "code": "10201330 0063"
+    },
+    {
+      "name": "Maximum MP for Wriph",
+      "code": "1020148A 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Wriph",
+      "code": "102015E0 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Wriph",
+      "code": "102019E2 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Wriph",
+      "code": "302025E8 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Wriph",
+      "code": "302025E9 0009"
+    },
+    {
+      "name": "Unlimited Mages for Wriph",
+      "code": "3020273E 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Wriph",
+      "code": "3020273F 0009"
+    },
+    {
+      "name": "Unlimited Archers for Wriph",
+      "code": "30202892 0009"
+    },
+    {
+      "name": "Unlimited Monks for Wriph",
+      "code": "30202893 0009"
+    },
+    {
+      "name": "Unlimited Archers for Wriph",
+      "code": "302029EA 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Wriph",
+      "code": "302029EB 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Wriph",
+      "code": "30202B40 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Wriph",
+      "code": "30202B41 0009"
+    },
+    {
+      "name": "Wriph has all spells",
+      "code": "1020474E 0003"
+    },
+    {
+      "name": "Unlimited HP for Yanna",
+      "code": "1020101C 03E7"
+    },
+    {
+      "name": "Maximum HP for Yanna",
+      "code": "10201172 03E7"
+    },
+    {
+      "name": "Unlimited MP for Yanna",
+      "code": "102012C8 0063"
+    },
+    {
+      "name": "Maximum MP for Yanna",
+      "code": "1020141E 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Yanna",
+      "code": "10201574 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Yanna",
+      "code": "10201976 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Yanna",
+      "code": "3020257C 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Yanna",
+      "code": "3020257D 0009"
+    },
+    {
+      "name": "Unlimited Mages for Yanna",
+      "code": "302026D2 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Yanna",
+      "code": "302026D3 0009"
+    },
+    {
+      "name": "Unlimited Archers for Yanna",
+      "code": "30202828 0009"
+    },
+    {
+      "name": "Unlimited Monks for Yanna",
+      "code": "30202829 0009"
+    },
+    {
+      "name": "Unlimited Archers for Yanna",
+      "code": "3020297E 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Yanna",
+      "code": "3020297F 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Yanna",
+      "code": "30202AD4 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Yanna",
+      "code": "30202AD5 0009"
+    },
+    {
+      "name": "Yanna has all spells",
+      "code": "102046E2 0003"
+    },
+    {
+      "name": "Unlimited HP for Yuni",
+      "code": "10201028 03E7"
+    },
+    {
+      "name": "Maximum HP for Yuni",
+      "code": "1020117E 03E7"
+    },
+    {
+      "name": "Unlimited MP for Yuni",
+      "code": "102012D4 0063"
+    },
+    {
+      "name": "Maximum MP for Yuni",
+      "code": "1020142A 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Yuni",
+      "code": "10201580 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Yuni",
+      "code": "10201982 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Yuni",
+      "code": "30202588 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Yuni",
+      "code": "30202589 0009"
+    },
+    {
+      "name": "Unlimited Mages for Yuni",
+      "code": "302026DE 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Yuni",
+      "code": "302026DF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Yuni",
+      "code": "30202834 0009"
+    },
+    {
+      "name": "Unlimited Monks for Yuni",
+      "code": "30202835 0009"
+    },
+    {
+      "name": "Unlimited Archers for Yuni",
+      "code": "3020298A 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Yuni",
+      "code": "3020298B 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Yuni",
+      "code": "30202AE0 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Yuni",
+      "code": "30202AE1 0009"
+    },
+    {
+      "name": "Yuni has all spells",
+      "code": "102046EE 0003"
+    },
+    {
+      "name": "Unlimited HP for Yuri",
+      "code": "102010B4 03E7"
+    },
+    {
+      "name": "Maximum HP for Yuri",
+      "code": "1020120A 03E7"
+    },
+    {
+      "name": "Unlimited MP for Yuri",
+      "code": "1020135C 0063"
+    },
+    {
+      "name": "Maximum MP for Yuri",
+      "code": "102014B6 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Yuri",
+      "code": "1020160C 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Yuri",
+      "code": "10201A0E 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Yuri",
+      "code": "30202614 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Yuri",
+      "code": "30202615 0009"
+    },
+    {
+      "name": "Unlimited Mages for Yuri",
+      "code": "3020276A 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Yuri",
+      "code": "3020276B 0009"
+    },
+    {
+      "name": "Unlimited Archers for Yuri",
+      "code": "302028BE 0009"
+    },
+    {
+      "name": "Unlimited Monks for Yuri",
+      "code": "302028BF 0009"
+    },
+    {
+      "name": "Unlimited Archers for Yuri",
+      "code": "30202A16 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Yuri",
+      "code": "30202A17 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Yuri",
+      "code": "30202B6C 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Yuri",
+      "code": "30202B6D 0009"
+    },
+    {
+      "name": "Yuri has all spells",
+      "code": "1020477A 0003"
+    },
+    {
+      "name": "Unlimited HP for Zagat",
+      "code": "1020100A 03E7"
+    },
+    {
+      "name": "Maximum HP for Zagat",
+      "code": "10201160 03E7"
+    },
+    {
+      "name": "Unlimited MP for Zagat",
+      "code": "102012B6 0063"
+    },
+    {
+      "name": "Maximum MP for Zagat",
+      "code": "1020140C 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Zagat",
+      "code": "10201562 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Zagat",
+      "code": "10201964 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Zagat",
+      "code": "3020256A 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Zagat",
+      "code": "3020256B 0009"
+    },
+    {
+      "name": "Unlimited Mages for Zagat",
+      "code": "302026C0 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Zagat",
+      "code": "302026C1 0009"
+    },
+    {
+      "name": "Unlimited Archers for Zagat",
+      "code": "30202816 0009"
+    },
+    {
+      "name": "Unlimited Monks for Zagat",
+      "code": "30202817 0009"
+    },
+    {
+      "name": "Unlimited Archers for Zagat",
+      "code": "3020296C 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Zagat",
+      "code": "3020296D 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Zagat",
+      "code": "30202AC2 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Zagat",
+      "code": "30202AC3 0009"
+    },
+    {
+      "name": "Zagat has all spells",
+      "code": "102046D0 0003"
+    },
+    {
+      "name": "Unlimited HP for Zanon",
+      "code": "102010B2 03E7"
+    },
+    {
+      "name": "Maximum HP for Zanon",
+      "code": "10201208 03E7"
+    },
+    {
+      "name": "Unlimited MP for Zanon",
+      "code": "1020135A 0063"
+    },
+    {
+      "name": "Maximum MP for Zanon",
+      "code": "102014B4 0063"
+    },
+    {
+      "name": "Maximum STR (Status) for Zanon",
+      "code": "1020160A 0063"
+    },
+    {
+      "name": "Maximum CMD (Status) for Zanon",
+      "code": "10201A0C 0063"
+    },
+    {
+      "name": "Unlimited Soldiers for Zanon",
+      "code": "30202612 0009"
+    },
+    {
+      "name": "Unlimited Cavalry for Zanon",
+      "code": "30202613 0009"
+    },
+    {
+      "name": "Unlimited Mages for Zanon",
+      "code": "30202768 0009"
+    },
+    {
+      "name": "Unlimited Samaraixes for Zanon",
+      "code": "30202769 0009"
+    },
+    {
+      "name": "Unlimited Archers for Zanon",
+      "code": "302028BC 0009"
+    },
+    {
+      "name": "Unlimited Monks for Zanon",
+      "code": "302028BD 0009"
+    },
+    {
+      "name": "Unlimited Archers for Zanon",
+      "code": "30202A14 0009"
+    },
+    {
+      "name": "Unlimited Beasts for Zanon",
+      "code": "30202A15 0009"
+    },
+    {
+      "name": "Unlimited Dragons for Zanon",
+      "code": "30202B6A 0009"
+    },
+    {
+      "name": "Unlimited Zombies for Zanon",
+      "code": "30202B6B 0009"
+    },
+    {
+      "name": "Zanon has all spells",
+      "code": "10204778 0003"
+    }
+  ]
+}

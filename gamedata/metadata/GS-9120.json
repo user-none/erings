@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9120",
+  "title": "World Series Baseball II",
+  "native_title": "ワールド・シリーズ・ベースボールⅡ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091200"
+  ],
+  "release_date": "1996-08-24",
+  "developer": "Sega Enterprises",
+  "publisher": "Sega of America",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "FEATURES: * All 700 Players * All 28 Teams * Stat Tracking in 12 Categories * Play-By Play Announcing * 5 Modes of Play (All-Star, Playoff, Exhibition, Home Run Derby, and Pennant Race)"
+}

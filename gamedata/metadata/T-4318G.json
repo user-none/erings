@@ -1,0 +1,23 @@
+{
+  "serial": "T-4318G",
+  "title": "Sound Qube",
+  "native_title": "サウンド・キューブ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1998-04-02",
+  "developer": "Floor",
+  "publisher": "Human Entertainment",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Sound Qube is a puzzle game in which the player uses sound cues to identify and eliminate cubes from a stack. Each stage presents the player with a three-dimensional grid of cubes, which is viewed from a corner that shows two sides, and which can be freely rotated to see all sides. The player controls a cursor which can pulse a sonar into a row of blocks; blue sonars can be pulsed into the left face of the stack, while red sonars can be pulsed into the right.\n\nDifferent types of cubes respond to different types of pulses; once identified, the player can mark the color of a cube. Red, Blue, and White cubes can be eliminated by locking multiple of the same color and firing a sonar pulse, while Purple \"Core\" cubes can also be locked and eliminated solo, though attempting to eliminate a cube as the wrong color will penalize the player with a loss of energy. The goal of each stage is to find and eliminate all of the Core cubes, which will respond to both red and blue sonar pulses, before the time energy runs out."
+}

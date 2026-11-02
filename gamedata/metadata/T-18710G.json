@@ -1,0 +1,25 @@
+{
+  "serial": "T-18710G",
+  "title": "Actua Golf",
+  "native_title": "アクチャー・ゴルフ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988658 968063"
+  ],
+  "release_date": "1996-09-06",
+  "developer": "Gremlin Interactive",
+  "publisher": "Interplay",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "It's just a game like the Green Jacket is just a sports coat. Say hello to the next generation of golf. We're talking real-time 3-D Virtual Field Vision that lets you play and view any lie on the course form any perspective instantly.\n\nIt's interactive technology that doesn't just look better, it plays better. Plus, the fast course set-up between shots means there's no waiting on this course. So gauge your distance, select your club, pick your direction and park a 300-yard drive down the middle of the fairway. Play amateur and professional tours or play up to three of your friends at the same time."
+}

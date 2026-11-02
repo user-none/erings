@@ -1,0 +1,14 @@
+{
+  "serial": "T-22101G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Extra Points",
+      "code": "102FB02E 0FFF"
+    },
+    {
+      "name": "Stop timer",
+      "code": "160FE14E 00A8"
+    }
+  ]
+}

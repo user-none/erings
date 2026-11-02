@@ -1,0 +1,82 @@
+{
+  "serial": "T-8135H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Armor",
+      "code": "1608330A 0040"
+    },
+    {
+      "name": "Infinite ATA Missiles",
+      "code": "160BF4F2 03E7"
+    },
+    {
+      "name": "Infinite ATG Missiles",
+      "code": "160BF4EE 03E7"
+    },
+    {
+      "name": "Infinite Beam Lasers",
+      "code": "160BF4FA 03E7"
+    },
+    {
+      "name": "Infinite Mega-Bombs",
+      "code": "160BF4F6 03E7"
+    },
+    {
+      "name": "Infinite Mines",
+      "code": "160BF502 03E7"
+    },
+    {
+      "name": "Infinite Multi-Missiles",
+      "code": "160BF4FE 03E7"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "160BF4E6 000A"
+    },
+    {
+      "name": "Infinite ECM's",
+      "code": "160BF506 0063"
+    },
+    {
+      "name": "Thruster Upgrade",
+      "code": "160BF4DA 0063"
+    },
+    {
+      "name": "Control Upgrade",
+      "code": "160BF4DE 0011"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "16092D1A 0003"
+    },
+    {
+      "name": "Unlimited Air to Air Missiles",
+      "code": "160BF4E2 0063"
+    },
+    {
+      "name": "Unlimited Air to Ground Missiles",
+      "code": "160BF4EE 0063"
+    },
+    {
+      "name": "Unlimited Multi-Missiles",
+      "code": "160BF4FE 0063"
+    },
+    {
+      "name": "Unlimited Mega Bombs",
+      "code": "160BF4F6 0063"
+    },
+    {
+      "name": "Unlimited Beam Lasers",
+      "code": "160BF4FA 0063"
+    },
+    {
+      "name": "Unlimited Mines",
+      "code": "160BF502 0063"
+    },
+    {
+      "name": "Unlimited Armor",
+      "code": "1608330A 00E0"
+    }
+  ]
+}

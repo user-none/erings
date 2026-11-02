@@ -1,0 +1,62 @@
+{
+  "serial": "MK-81015",
+  "master_code": "F6003DEE C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "16057912 0505"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "16057952 0505"
+    },
+    {
+      "name": "Machine Gun P1",
+      "code": "1606A3AE 5DAC"
+    },
+    {
+      "name": "Machine Gun P2",
+      "code": "1606A3FE 5DAC"
+    },
+    {
+      "name": "Infinite Bullets P1",
+      "code": "1606A398 0006"
+    },
+    {
+      "name": "Infinite Bullets P2",
+      "code": "1606A3E8 0006"
+    },
+    {
+      "name": "(Player 1) Automatic Pistol Weapon",
+      "code": "1606A3AE 5D84"
+    },
+    {
+      "name": "(Player 1) Automatic Rifle",
+      "code": "1606A3AE 5EB8"
+    },
+    {
+      "name": "(Player 1) Magnum",
+      "code": "1606A3AE 604C"
+    },
+    {
+      "name": "(Player 1) Shotgun",
+      "code": "1606A3AE 6074"
+    },
+    {
+      "name": "(Player 2) Automatic Pistol Weapon",
+      "code": "1606A3FE 5D84"
+    },
+    {
+      "name": "(Player 2) Automatic Rifle",
+      "code": "1606A3FE 5EB8"
+    },
+    {
+      "name": "(Player 2) Magnum",
+      "code": "1606A3FE 604C"
+    },
+    {
+      "name": "(Player 2) Shotgun",
+      "code": "1606A3FE 6074"
+    }
+  ]
+}

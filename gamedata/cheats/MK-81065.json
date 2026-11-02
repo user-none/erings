@@ -1,0 +1,18 @@
+{
+  "serial": "MK-81065",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "1606508A 007F"
+    },
+    {
+      "name": "Full Instinct",
+      "code": "16004148 00FF"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "160652DA 007F"
+    }
+  ]
+}

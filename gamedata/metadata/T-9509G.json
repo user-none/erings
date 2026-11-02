@@ -1,0 +1,23 @@
+{
+  "serial": "T-9509G",
+  "title": "Gradius Deluxe Pack",
+  "native_title": "グラディウス ＤＥＬＵＸＥ ＰＡＣＫ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [],
+  "release_date": "1996-03-29",
+  "developer": "Konami",
+  "publisher": "Konami",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "This pack contains both the arcade classics Gradius I and II. Each of these side-scrolling shooters has over a dozen levels each, all of which are completely unique. There are no enemy types that are re-used from level to level (except for the boss who is the same in every level). You can collect powerups that provide things like extra speed, laser shots, target-seeking missiles, shields, etc.\n\nWhile there have been many small modernizing touches made to the games, there is still no ability to save."
+}

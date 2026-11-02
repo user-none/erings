@@ -1,0 +1,42 @@
+{
+  "serial": "T-32902G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Credits",
+      "code": "3601CDE0 0009"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "36076AB6 0009"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "36076AB7 0009"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "3601E631 00FF"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "3601E731 00FF"
+    },
+    {
+      "name": "(Player 1) Max Special Attack Bar",
+      "code": "3601E5F2 00FF"
+    },
+    {
+      "name": "(Player 2) Max Special Attack Bar",
+      "code": "3601E6F2 00FF"
+    },
+    {
+      "name": "(Player 1) Weapon Level Max",
+      "code": "1601CE02 0021\n1601CE04 2121"
+    },
+    {
+      "name": "(Player 2) Weapon Level Max",
+      "code": "1601CEBE 0021\n1601CEC0 2121"
+    }
+  ]
+}

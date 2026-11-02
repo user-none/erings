@@ -1,0 +1,22 @@
+{
+  "serial": "T-7028H-50",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money (GDI Missions)",
+      "code": "160E6562 06A4"
+    },
+    {
+      "name": "Unlimited Money (NOD Missions)",
+      "code": "160E6C4A 06A4"
+    },
+    {
+      "name": "Full Power (GDI Missions - see tips)",
+      "code": "160E6582 05FA"
+    },
+    {
+      "name": "Full Power (GDI Missions - see tips)",
+      "code": "160E6C6A 05FA"
+    }
+  ]
+}

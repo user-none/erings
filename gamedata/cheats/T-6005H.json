@@ -1,0 +1,14 @@
+{
+  "serial": "T-6005H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "1605C320 00A9"
+    },
+    {
+      "name": "P2 Becomes a \"Chicken\"",
+      "code": "1605BC92 0000"
+    }
+  ]
+}

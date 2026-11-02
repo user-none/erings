@@ -1,0 +1,27 @@
+{
+  "serial": "MK-81214",
+  "title": "Scorcher",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81214 5",
+    "4 974365 812140"
+  ],
+  "release_date": "1997-03-05",
+  "developer": "Zyrinx",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Negotiate the fastest, smoothest and most undulating 3D terrain ever created, in a future-race where your bike defies gravity, and your opponents show no mercy. Atmospheric light sourcing and rendered graphics intensify the experience!"
+}

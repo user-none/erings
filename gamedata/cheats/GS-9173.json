@@ -1,0 +1,46 @@
+{
+  "serial": "GS-9173",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Health for Player 1",
+      "code": "160B0FFA 0005"
+    },
+    {
+      "name": "Low Health for Player 1",
+      "code": "160B0FFA 0001"
+    },
+    {
+      "name": "No Health for Player 1",
+      "code": "160B0FFA 0000"
+    },
+    {
+      "name": "Unlimited Ammo for Player 1",
+      "code": "160B104E 0006"
+    },
+    {
+      "name": "Low Ammo for Player 1",
+      "code": "160B104E 0001"
+    },
+    {
+      "name": "No Ammo for Player 1",
+      "code": "160B104E 0000"
+    },
+    {
+      "name": "Unlimited Health for Player 2",
+      "code": "160B10FA 0005"
+    },
+    {
+      "name": "Low Health for Player 2",
+      "code": "160B10FA 0001"
+    },
+    {
+      "name": "Unlimited Life",
+      "code": "160AB676 0003"
+    },
+    {
+      "name": "No Time Limit",
+      "code": "160A9C32 1C20"
+    }
+  ]
+}

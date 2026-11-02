@@ -1,0 +1,18 @@
+{
+  "serial": "T-13004H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Never Overheat",
+      "code": "16030AC0 0000"
+    },
+    {
+      "name": "Infinite Ammo",
+      "code": "160301BA 005A\n160301D2 005A\n160301EA 005A\n16030202 005A\n1603021A 005A\n16030232 005A\n1603024A 005A\n16030262 005A\n1603027A 005A"
+    },
+    {
+      "name": "Super Code",
+      "code": "102E243A FFFF"
+    }
+  ]
+}

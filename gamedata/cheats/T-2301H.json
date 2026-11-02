@@ -1,0 +1,38 @@
+{
+  "serial": "T-2301H",
+  "master_code": "F602ADD4 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Thunder Dragons",
+      "code": "160252BE 0001"
+    },
+    {
+      "name": "Infinite Daggers",
+      "code": "160252B6 0063"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "160EA2CA 0030"
+    },
+    {
+      "name": "Infinite Health",
+      "code": "160EA2FC FFFF"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "160252B8 0009"
+    },
+    {
+      "name": "Mega Jumps",
+      "code": "160EA2CE 0000"
+    },
+    {
+      "name": "Unlimited Thunder Dragons",
+      "code": "160252BE 0009"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "160EA2CA 0030\n160252B0 0030"
+    }
+  ]
+}

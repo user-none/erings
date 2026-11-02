@@ -1,0 +1,26 @@
+{
+  "serial": "T-1214G",
+  "title": "Rockman 8: Metal Heroes",
+  "native_title": "ロックマン８ ～メタル・ヒーローズ～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 976219 154697"
+  ],
+  "release_date": "1997-01-17",
+  "developer": "Capcom",
+  "publisher": "Capcom",
+  "genres": [
+    "Platform",
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "The Blue Bomber returns! The evil Dr. Wily discovers the remains of a strange robot that evidently came from space, and discovers a source of unbelieveablely powerful energy that could allow him to control the world with an army of unstoppable Robot Masters!\n\nIt's up to Mega Man to stop Wily once again! Now joined by a new ally, Duo, Mega Man takes off on his greatest mission yet!"
+}

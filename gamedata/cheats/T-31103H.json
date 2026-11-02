@@ -1,0 +1,38 @@
+{
+  "serial": "T-31103H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "P1 Never Gets Bubbles",
+      "code": "160D0180 0000"
+    },
+    {
+      "name": "P1 Always Gets Bubbles",
+      "code": "160D0180 0006"
+    },
+    {
+      "name": "P2 Never Gets Bubbles",
+      "code": "160D0280 0000"
+    },
+    {
+      "name": "P2 Always Gets Bubbles",
+      "code": "160D0280 0006"
+    },
+    {
+      "name": "P1 Infinite Time To Shoot Bubble",
+      "code": "160D0116 0000"
+    },
+    {
+      "name": "P2 Infinite Time To Shoot Bubble",
+      "code": "160D0216 0000"
+    },
+    {
+      "name": "P1 Screen Never Fills Over Time",
+      "code": "160D0154 0000"
+    },
+    {
+      "name": "P2 Screen Never Fills Over Time",
+      "code": "160D0254 0000"
+    }
+  ]
+}

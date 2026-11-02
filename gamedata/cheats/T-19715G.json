@@ -1,0 +1,14 @@
+{
+  "serial": "T-19715G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Main Character) Never Tired",
+      "code": "1605E430 0000"
+    },
+    {
+      "name": "(Main Character) Max Status",
+      "code": "1605E432 00FF\n1605E434 00FF\n1605E436 00FF"
+    }
+  ]
+}

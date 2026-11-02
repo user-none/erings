@@ -1,0 +1,126 @@
+{
+  "serial": "T-1213G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Taunts",
+      "code": "1605D11A 0000"
+    },
+    {
+      "name": "(Player 1) Automatic Taunting",
+      "code": "1605D0F8 1111"
+    },
+    {
+      "name": "(Player 1) Always Drop 99 Blocks On Other Player",
+      "code": "1605CD2A 0063"
+    },
+    {
+      "name": "(Player 2) Unlimited Taunts",
+      "code": "1605D206 0000"
+    },
+    {
+      "name": "(Player 2) Automatic Taunting",
+      "code": "1605D1E4 1111"
+    },
+    {
+      "name": "(Player 2) Can't Drop Blocks On Player 1",
+      "code": "1605CFD6 0000"
+    },
+    {
+      "name": "(Player 2) Never Win",
+      "code": "1605CE1C 0000"
+    },
+    {
+      "name": "Have Extra Modes & Prizes",
+      "code": "1605591A 07FF\n1605591E 07FF\n16055922 07FF\n16055926 07FF\n1605592A 07FF\n1605592C 0101\n1605592E 0101\n16055930 0101\n16055932 0101"
+    },
+    {
+      "name": "(Player 1) Play As Morrigan",
+      "code": "1605D100 0000"
+    },
+    {
+      "name": "(Player 1) Play As Chun-Li",
+      "code": "1605D100 0100"
+    },
+    {
+      "name": "(Player 1) Play As Ryu",
+      "code": "1605D100 0200"
+    },
+    {
+      "name": "(Player 1) Play As Ken",
+      "code": "1605D100 0300"
+    },
+    {
+      "name": "(Player 1) Play As Lei-Lei",
+      "code": "1605D100 0400"
+    },
+    {
+      "name": "(Player 1) Play As Donovan",
+      "code": "1605D100 0500"
+    },
+    {
+      "name": "(Player 1) Play As Felicia",
+      "code": "1605D100 0600"
+    },
+    {
+      "name": "(Player 1) Play As Sakura",
+      "code": "1605D100 0700"
+    },
+    {
+      "name": "(Player 1) Play As Devilot",
+      "code": "1605D100 0800"
+    },
+    {
+      "name": "(Player 1) Play As Gouki",
+      "code": "1605D100 0900"
+    },
+    {
+      "name": "(Player 1) Play As Dani",
+      "code": "1605D100 0A00"
+    },
+    {
+      "name": "(Player 2) Play As Morrigan",
+      "code": "1605D1EC 0000"
+    },
+    {
+      "name": "(Player 2) Play As Chun-Li",
+      "code": "1605D1EC 0100"
+    },
+    {
+      "name": "(Player 2) Play As Ryu",
+      "code": "1605D1EC 0200"
+    },
+    {
+      "name": "(Player 2) Play As Ken",
+      "code": "1605D1EC 0300"
+    },
+    {
+      "name": "(Player 2) Play As Lei-Lei",
+      "code": "1605D1EC 0400"
+    },
+    {
+      "name": "(Player 2) Play As Donovan",
+      "code": "1605D1EC 0500"
+    },
+    {
+      "name": "(Player 2) Play As Felicia",
+      "code": "1605D1EC 0600"
+    },
+    {
+      "name": "(Player 2) Play As Sakura",
+      "code": "1605D1EC 0700"
+    },
+    {
+      "name": "(Player 2) Play As Devilot",
+      "code": "1605D1EC 0800"
+    },
+    {
+      "name": "(Player 2) Play As Gouki",
+      "code": "1605D1EC 0900"
+    },
+    {
+      "name": "(Player 2) Play As Dani",
+      "code": "1605D1EC 0A00"
+    }
+  ]
+}

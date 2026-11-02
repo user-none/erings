@@ -1,0 +1,25 @@
+{
+  "serial": "T-5208G",
+  "title": "Savaki",
+  "native_title": "サバキ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988608 741906"
+  ],
+  "release_date": "1998-04-16",
+  "developer": "Cynus",
+  "publisher": "Cynus",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Savaki is a 3D one-on-one fighting game for one or two players which aims to recreate various martial arts in a realistic way. There are seven fighters to choose from, each representing a particular martial art, such as boxing, muay thai, or taekwando. Three game modes are included: a single-player arcade mode, a two-player versus mode, and a practice mode. There is no story mode, and only a single arena to fight in."
+}

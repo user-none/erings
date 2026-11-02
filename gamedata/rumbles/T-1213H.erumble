@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Street Fighter Alpha 2 (USA)
+gameid: T-1213H
+system: saturn
+---
+
+# Nested sequencer steps. Scene 2 is the match as a whole, and step 2
+# is the round itself, from the round setup through the KO and the
+# round result. Step 1 is the round intro and step 3 the round result.
+watch scene word 0x0604C89A
+watch step  word 0x0604C89C
+def in_match scene == 2 and step == 2
+
+# Humans-in-match bitmask. bit 0 is player 1, bit 1 is player 2.
+watch p1 byte 0x0604C8D3 mask 0x01
+watch p2 byte 0x0604C8D3 mask 0x02
+def p1_human p1 != 0
+def p2_human p2 != 0
+
+# HP, 144 at full. Goes negative on a KO.
+watch p1_hp word 0x0604CB14 signed
+watch p2_hp word 0x0604CF14 signed
+
+# KO: hp negative
+on p1_hp < 0 while in_match and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms)
+on p2_hp < 0 while in_match and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) player 2

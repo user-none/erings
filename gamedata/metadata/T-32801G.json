@@ -1,0 +1,26 @@
+{
+  "serial": "T-32801G",
+  "title": "Saturn Music School",
+  "native_title": "サターンミュージックスクール",
+  "category": "Educational",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 516259 000174"
+  ],
+  "release_date": "1997-08-09",
+  "developer": "Success",
+  "publisher": "Waka Manufacturing",
+  "genres": [
+    "Education",
+    "Music"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Saturn Music School is an educational game that teaches the basics of playing the piano. It includes a multi-stage tutorial mode, 20 popular songs to play along with, and a composition mode where the player can write their own music. There are also several mini-games included: the first tasks the player with repeating notes as they're played; the second tasks the player with repeating a sequence of notes; and the third is a quiz that asks basic questions about music.\n\nThe package includes an adapter to connect a standard MIDI keyboard (not included), which is required to play the game."
+}

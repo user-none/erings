@@ -1,0 +1,28 @@
+{
+  "serial": "MK-81800",
+  "title": "Sonic R",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Brazil",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "7 891196 191305",
+    "4 974365 818005"
+  ],
+  "release_date": "1997-11-18",
+  "developer": "Sonic Team",
+  "publisher": "Sega of America",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Everybody's Supersonic Racing! Knuckles, Tails, Amy and Dr. Robotnik join Sonic in his speediest outing yet. Containing 5 graphically stunning tracks with many short-cuts and secrets. Sonic R will have you coming back for more. Features Grand Prix, 4 Time Attack modes and split-screen 2 player game. R U Ready?!?"
+}

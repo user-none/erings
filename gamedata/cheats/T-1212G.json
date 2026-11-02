@@ -1,0 +1,341 @@
+{
+  "serial": "T-1212G",
+  "cheats": [
+    {
+      "name": "(Player 1) Play As Ryu",
+      "code": "1604C802 0000"
+    },
+    {
+      "name": "(Player 1) Play As Ken",
+      "code": "1604C802 0100"
+    },
+    {
+      "name": "(Player 1) Play As Gouki",
+      "code": "1604C802 0200"
+    },
+    {
+      "name": "(Player 1) Play As Nash",
+      "code": "1604C802 0300"
+    },
+    {
+      "name": "(Player 1) Play As Chun Li",
+      "code": "1604C802 0400"
+    },
+    {
+      "name": "(Player 1) Play As Adon",
+      "code": "1604C802 0500"
+    },
+    {
+      "name": "(Player 1) Play As Sodom",
+      "code": "1604C802 0600"
+    },
+    {
+      "name": "(Player 1) Play As Guy",
+      "code": "1604C802 0700"
+    },
+    {
+      "name": "(Player 1) Play As Birdie",
+      "code": "1604C802 0800"
+    },
+    {
+      "name": "(Player 1) Play As Rose",
+      "code": "1604C802 0900"
+    },
+    {
+      "name": "(Player 1) Play As Vega",
+      "code": "1604C802 0A00"
+    },
+    {
+      "name": "(Player 1) Play As Sagat",
+      "code": "1604C802 0B00"
+    },
+    {
+      "name": "(Player 1) Play As Dan",
+      "code": "1604C802 0C00"
+    },
+    {
+      "name": "(Player 1) Play As Rolento",
+      "code": "1604C802 0E00"
+    },
+    {
+      "name": "(Player 1) Play As Dhalsim",
+      "code": "1604C802 0F00"
+    },
+    {
+      "name": "(Player 1) Play As Zangief",
+      "code": "1604C802 1000"
+    },
+    {
+      "name": "(Player 1) Play As Gen",
+      "code": "1604C802 1100"
+    },
+    {
+      "name": "(Player 1) Play As SF II Chun Li",
+      "code": "1604C802 1200"
+    },
+    {
+      "name": "(Player 1) Play As Evil Gouki",
+      "code": "1604C802 1400"
+    },
+    {
+      "name": "(Player 1) Play As SF II Zangief",
+      "code": "1604C802 1500"
+    },
+    {
+      "name": "(Player 1) Play As SF II Dhalsim",
+      "code": "1604C802 1600"
+    },
+    {
+      "name": "(Player 1) Play As Evil Ryu",
+      "code": "1604C802 1700"
+    },
+    {
+      "name": "(Player 2) Play As Ryu",
+      "code": "1604CC02 0000"
+    },
+    {
+      "name": "(Player 2) Play As Ken",
+      "code": "1604CC02 0100"
+    },
+    {
+      "name": "(Player 2) Play As Gouki",
+      "code": "1604CC02 0200"
+    },
+    {
+      "name": "(Player 2) Play As Nash",
+      "code": "1604CC02 0300"
+    },
+    {
+      "name": "(Player 2) Play As Chun Li",
+      "code": "1604CC02 0400"
+    },
+    {
+      "name": "(Player 2) Play As Adon",
+      "code": "1604CC02 0500"
+    },
+    {
+      "name": "(Player 2) Play As Sodom",
+      "code": "1604CC02 0600"
+    },
+    {
+      "name": "(Player 2) Play As Guy",
+      "code": "1604CC02 0700"
+    },
+    {
+      "name": "(Player 2) Play As Birdie",
+      "code": "1604CC02 0800"
+    },
+    {
+      "name": "(Player 2) Play As Rose",
+      "code": "1604CC02 0900"
+    },
+    {
+      "name": "(Player 2) Play As Vega",
+      "code": "1604CC02 0A00"
+    },
+    {
+      "name": "(Player 2) Play As Sagat",
+      "code": "1604CC02 0B00"
+    },
+    {
+      "name": "(Player 2) Play As Dan",
+      "code": "1604CC02 0C00"
+    },
+    {
+      "name": "(Player 2) Play As Rolento",
+      "code": "1604CC02 0E00"
+    },
+    {
+      "name": "(Player 2) Play As Dhalsim",
+      "code": "1604CC02 0F00"
+    },
+    {
+      "name": "(Player 2) Play As Zangief",
+      "code": "1604CC02 1000"
+    },
+    {
+      "name": "(Player 2) Play As Gen",
+      "code": "1604CC02 1100"
+    },
+    {
+      "name": "(Player 2) Play As SF II Chun Li",
+      "code": "1604CC02 1200"
+    },
+    {
+      "name": "(Player 2) Play As Evil Gouki",
+      "code": "1604CC02 1400"
+    },
+    {
+      "name": "(Player 2) Play As SF II Zangief",
+      "code": "1604CC02 1500"
+    },
+    {
+      "name": "(Player 2) Play As SF II Dhalsim",
+      "code": "1604CC02 1600"
+    },
+    {
+      "name": "(Player 2) Play As Evil Ryu",
+      "code": "1604CC02 1700"
+    },
+    {
+      "name": "Unlimited Health",
+      "code": "1604C7BC 0090"
+    },
+    {
+      "name": "Low Health",
+      "code": "1604C7BC 0001"
+    },
+    {
+      "name": "No Health",
+      "code": "1604C7BC 0000"
+    },
+    {
+      "name": "Always Level 3 Super Bar",
+      "code": "1604C81E 0090"
+    },
+    {
+      "name": "Always Level 2 Super Bar",
+      "code": "1604C81E 0060"
+    },
+    {
+      "name": "Always Level 1 Super Bar",
+      "code": "1604C81E 0030"
+    },
+    {
+      "name": "No Super Bar",
+      "code": "1604C81E 0000"
+    },
+    {
+      "name": "Air Special Moves",
+      "code": "1604C7A4 0000"
+    },
+    {
+      "name": "Automatic Tech Bonuses",
+      "code": "3604C8B3 0000"
+    },
+    {
+      "name": "Multi-Projectiles",
+      "code": "1604C998 0000"
+    },
+    {
+      "name": "No Projectiles",
+      "code": "1604C998 FFFF"
+    },
+    {
+      "name": "Unlimited Taunts",
+      "code": "1604C8CE 0001"
+    },
+    {
+      "name": "Faster Attacks & Longer Link Combos",
+      "code": "1604C7CA 0000"
+    },
+    {
+      "name": "Unlimited Original Custom Combos",
+      "code": "1604C9FA 0000"
+    },
+    {
+      "name": "No Original Custom Combos",
+      "code": "1604C7E0 0000"
+    },
+    {
+      "name": "Invisible",
+      "code": "1604C760 0000"
+    },
+    {
+      "name": "Screen Doesn't Darken After Super Move",
+      "code": "1604C8BC 0000"
+    },
+    {
+      "name": "Gouki Can Continue Hurricane Kick Longer",
+      "code": "1604C8F6 0000"
+    },
+    {
+      "name": "75% Health",
+      "code": "D604C7BC 0090\n1604C7BC 006C"
+    },
+    {
+      "name": "50% Health",
+      "code": "D604C7BC 0090\n1604C7BC 0048"
+    },
+    {
+      "name": "25% Health",
+      "code": "D604C7BC 0090\n1604C7BC 0024"
+    },
+    {
+      "name": "Unlimited Health",
+      "code": "1604CBBC 0090"
+    },
+    {
+      "name": "Low Health",
+      "code": "1604CBBC 0001"
+    },
+    {
+      "name": "No Health",
+      "code": "1604CBBC 0000"
+    },
+    {
+      "name": "Always Level 3 Super Bar",
+      "code": "1604CC1E 0090"
+    },
+    {
+      "name": "Always Level 2 Super Bar",
+      "code": "1604CC1E 0060"
+    },
+    {
+      "name": "Always Level 1 Super Bar",
+      "code": "1604CC1E 0030"
+    },
+    {
+      "name": "No Super Bar",
+      "code": "1604CC1E 0000"
+    },
+    {
+      "name": "Air Special Moves",
+      "code": "1604CBA4 0000"
+    },
+    {
+      "name": "Automatic Tech Bonuses",
+      "code": "3604CCB3 0000"
+    },
+    {
+      "name": "Multi-Projectiles",
+      "code": "1604CD98 0000"
+    },
+    {
+      "name": "No Projectiles",
+      "code": "1604CD98 FFFF"
+    },
+    {
+      "name": "Unlimited Taunts",
+      "code": "1604CCCE 0001"
+    },
+    {
+      "name": "Faster Attacks & Longer Link Combos",
+      "code": "1604CBCA 0000"
+    },
+    {
+      "name": "Unlimited Original Custom Combos",
+      "code": "1604CDFA 0000"
+    },
+    {
+      "name": "No Original Custom Combos",
+      "code": "1604CBE0 0000"
+    },
+    {
+      "name": "Invisible",
+      "code": "1604CB60 0000"
+    },
+    {
+      "name": "Screen Doesn't Darken After Super Move",
+      "code": "1604CCBC 0000"
+    },
+    {
+      "name": "75% Health",
+      "code": "D604CBBC 0090\n1604CBBC 006C"
+    },
+    {
+      "name": "50% Health",
+      "code": "D604CBBC 0090\n1604CBBC 0048"
+    }
+  ]
+}

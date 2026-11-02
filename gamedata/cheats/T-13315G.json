@@ -1,0 +1,26 @@
+{
+  "serial": "T-13315G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Always Win",
+      "code": "160C853A 0000"
+    },
+    {
+      "name": "Maximum Armour",
+      "code": "160B755A 03E7\n1604B2E0 03E7"
+    },
+    {
+      "name": "Maximum Energy",
+      "code": "160B7558 03E7\n1604E342 03E7"
+    },
+    {
+      "name": "Maximum Lock-On",
+      "code": "16046B96 0008"
+    },
+    {
+      "name": "S-Shot",
+      "code": "360BB3C4 0009"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "serial": "MK-81127",
+  "title": "World Series Baseball 98",
+  "native_title": "월드시리즈베이스볼98",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Korea"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81127 8"
+  ],
+  "release_date": "1997-06-22",
+  "developer": "Sega Enterprises",
+  "publisher": "Sega of America",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "World Series Baseball 98 features the full MLB license, including 20 teams and 700 major players with updated rosters and schedules from the 1997 season. The three standard modes of the series - Exhibition, Season, and Playoff - are included.\n\nThe game also features an updated graphics engine compared to the previous installment, giving it more realistic visuals, including animations of the major batters, pitch's wind-ups and batting stances. There are also several camera angles to choose from. Play-by-play commentary is included as well."
+}

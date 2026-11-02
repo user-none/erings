@@ -1,0 +1,18 @@
+{
+  "serial": "T-5204G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Get Money Fast",
+      "code": "160E77B0 FFFF"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "160E4F2C 000F\n160E4F2E 423F\n160E4F30 0000\n160E4F32 0000"
+    },
+    {
+      "name": "All Health Items",
+      "code": "160E51D6 0101\n160E51D8 0101\n160E51DA 0101"
+    }
+  ]
+}

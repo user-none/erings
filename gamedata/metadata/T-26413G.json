@@ -1,0 +1,26 @@
+{
+  "serial": "T-26413G",
+  "title": "Super Tempo",
+  "native_title": "スーパー・テンポ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 902931 950422"
+  ],
+  "release_date": "1998-04-29",
+  "developer": "Red Company",
+  "publisher": "MediaQuest",
+  "genres": [
+    "Action",
+    "Platform"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Super Tempo is the third and final entry in the Tempo series. You once again play as Tempo the Grasshopper using musical abilities along with some simple platforming to take out enemies and discover secrets. Tempo teams up with Major Minor and his girlfriend Katy to rescue the Prince of Music World from Planet Technotch."
+}

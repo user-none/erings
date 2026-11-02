@@ -1,0 +1,254 @@
+{
+  "serial": "T-1206H",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "16086184 0063"
+    },
+    {
+      "name": "Unlimited Health",
+      "code": "16036278 0090"
+    },
+    {
+      "name": "No Health",
+      "code": "16036278 0000"
+    },
+    {
+      "name": "(Level 1) Super Bar Power",
+      "code": "160362EA 0030"
+    },
+    {
+      "name": "(Level 2) Super Bar Power",
+      "code": "160362EA 0060"
+    },
+    {
+      "name": "(Level 3) Super Bar Power",
+      "code": "160362EA 0090"
+    },
+    {
+      "name": "Can't Charge Super Bar",
+      "code": "160362EA 0000"
+    },
+    {
+      "name": "Invisible",
+      "code": "16036224 0000"
+    },
+    {
+      "name": "Air Special Moves",
+      "code": "1603625E 0100"
+    },
+    {
+      "name": "No Special Moves",
+      "code": "16036340 0000"
+    },
+    {
+      "name": "Cannot Select Hidden Characters",
+      "code": "1603644C 0090"
+    },
+    {
+      "name": "Automatic Tech Bonuses",
+      "code": "3603634B 0000"
+    },
+    {
+      "name": "Faster Attacks & Longer Combo Links",
+      "code": "16036286 0000"
+    },
+    {
+      "name": "Screen Doesn't Darken After Super Move",
+      "code": "16036354 0000"
+    },
+    {
+      "name": "Play As Ryu",
+      "code": "160362CE 0000"
+    },
+    {
+      "name": "Play As Ken",
+      "code": "160362CE 0100"
+    },
+    {
+      "name": "Play As Akuma",
+      "code": "160362CE 0200"
+    },
+    {
+      "name": "Play As Charlie",
+      "code": "160362CE 0300"
+    },
+    {
+      "name": "Play As Chun Li",
+      "code": "160362CE 0400"
+    },
+    {
+      "name": "Play As Adon",
+      "code": "160362CE 0500"
+    },
+    {
+      "name": "Play As Sodom",
+      "code": "160362CE 0600"
+    },
+    {
+      "name": "Play As Guy",
+      "code": "160362CE 0700"
+    },
+    {
+      "name": "Play As Birdie",
+      "code": "160362CE 0800"
+    },
+    {
+      "name": "Play As Rose",
+      "code": "160362CE 0900"
+    },
+    {
+      "name": "Play As M Bison",
+      "code": "160362CE 0A00"
+    },
+    {
+      "name": "Play As Sagat",
+      "code": "160362CE 0B00"
+    },
+    {
+      "name": "Play As Dan",
+      "code": "160362CE 0C00"
+    },
+    {
+      "name": "25% Health",
+      "code": "D6036278 0090\n16036278 0024"
+    },
+    {
+      "name": "50% Health",
+      "code": "D6036278 0090\n16036278 0048"
+    },
+    {
+      "name": "75% Health",
+      "code": "D6036278 0090\n16036278 006C"
+    },
+    {
+      "name": "Die In One Hit",
+      "code": "D6036278 0090\n16036278 0001"
+    },
+    {
+      "name": "Multi-Projectiles",
+      "code": "1603633C 0000\n1603633E 0000"
+    },
+    {
+      "name": "Unlimited Health",
+      "code": "1603653C 0090"
+    },
+    {
+      "name": "No Health",
+      "code": "1603653C 0000"
+    },
+    {
+      "name": "(Level 1) Super Bar Power",
+      "code": "160365AE 0030"
+    },
+    {
+      "name": "(Level 2) Super Bar Power",
+      "code": "160365AE 0060"
+    },
+    {
+      "name": "(Level 3) Super Bar Power",
+      "code": "160365AE 0090"
+    },
+    {
+      "name": "Can't Charge Super Bar",
+      "code": "160365AE 0000"
+    },
+    {
+      "name": "Air Special Moves",
+      "code": "16036522 0100"
+    },
+    {
+      "name": "No Special Moves",
+      "code": "16036604 0000"
+    },
+    {
+      "name": "Automatic Tech Bonuses",
+      "code": "3603660F 0000"
+    },
+    {
+      "name": "Invisible",
+      "code": "160364E8 0000"
+    },
+    {
+      "name": "Faster Attacks & Longer Combo Links",
+      "code": "1603654A 0000"
+    },
+    {
+      "name": "Screen Doesn't Darken After Super Move",
+      "code": "16036618 0000"
+    },
+    {
+      "name": "Play As Ryu",
+      "code": "16036592 0000"
+    },
+    {
+      "name": "Play As Ken",
+      "code": "16036592 0100"
+    },
+    {
+      "name": "Play As Akuma",
+      "code": "16036592 0200"
+    },
+    {
+      "name": "Play As Charlie",
+      "code": "16036592 0300"
+    },
+    {
+      "name": "Play As Chun Li",
+      "code": "16036592 0400"
+    },
+    {
+      "name": "Play As Adon",
+      "code": "16036592 0500"
+    },
+    {
+      "name": "Play As Sodom",
+      "code": "16036592 0600"
+    },
+    {
+      "name": "Play As Guy",
+      "code": "16036592 0700"
+    },
+    {
+      "name": "Play As Birdie",
+      "code": "16036592 0800"
+    },
+    {
+      "name": "Play As Rose",
+      "code": "16036592 0900"
+    },
+    {
+      "name": "Play As M Bison",
+      "code": "16036592 0A00"
+    },
+    {
+      "name": "Play As Sagat",
+      "code": "16036592 0B00"
+    },
+    {
+      "name": "Play As Dan",
+      "code": "16036592 0C00"
+    },
+    {
+      "name": "25% Health",
+      "code": "D603653C 0090\n1603653C 0024"
+    },
+    {
+      "name": "50% Health",
+      "code": "D603653C 0090\n1603653C 0048"
+    },
+    {
+      "name": "75% Health",
+      "code": "D603653C 0090\n1603653C 006C"
+    },
+    {
+      "name": "Die In One Hit",
+      "code": "D603653C 0090\n1603653C 0001"
+    },
+    {
+      "name": "Multi-Projectiles",
+      "code": "16036600 0000\n16036602 0000"
+    }
+  ]
+}

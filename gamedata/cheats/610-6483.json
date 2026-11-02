@@ -1,0 +1,46 @@
+{
+  "serial": "610-6483",
+  "master_code": "F6000914 C30A\nB6030040 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "160FFB12 5FFF"
+    },
+    {
+      "name": "Infinite Blue Orbs",
+      "code": "360FFD58 0063"
+    },
+    {
+      "name": "Infinite Present Guesses",
+      "code": "160CF4D2 0038"
+    },
+    {
+      "name": "Start on Stage 1",
+      "code": "360FFB15 0000"
+    },
+    {
+      "name": "Start on Boss Level 1",
+      "code": "360FFB15 0001"
+    },
+    {
+      "name": "Start on Boss Level 2",
+      "code": "360FFB15 0003"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160FFB12 EA30"
+    },
+    {
+      "name": "Unlimited Speed Thrust",
+      "code": "160FFD56 0064"
+    },
+    {
+      "name": "Unlimited Blue Orbs",
+      "code": "160FFD58 6362"
+    },
+    {
+      "name": "Only 1 Orb Needed to Finish Level",
+      "code": "160FFEC2 0000"
+    }
+  ]
+}

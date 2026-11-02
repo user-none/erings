@@ -1,0 +1,26 @@
+{
+  "serial": "T-8104H",
+  "master_code": "F601821C C305",
+  "cheats": [
+    {
+      "name": "Infinite Fuel",
+      "code": "160CFBEA 03E7"
+    },
+    {
+      "name": "Infinite Laser",
+      "code": "160CFBFA 0014"
+    },
+    {
+      "name": "Infinite Missiles",
+      "code": "160CFC00 0005"
+    },
+    {
+      "name": "Infinite Vulcan Ammo",
+      "code": "160CFBF4 03E7"
+    },
+    {
+      "name": "Unlimited Vulcan Ammo",
+      "code": "160CFBFA 03E7"
+    }
+  ]
+}

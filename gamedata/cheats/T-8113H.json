@@ -1,0 +1,110 @@
+{
+  "serial": "T-8113H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "1606CE28 0064"
+    },
+    {
+      "name": "Acid Vest",
+      "code": "1606CE2A 0064"
+    },
+    {
+      "name": "Auto-Mapper",
+      "code": "1606CE26 0084"
+    },
+    {
+      "name": "Flamer",
+      "code": "1605AB0A 001E"
+    },
+    {
+      "name": "Flamer Fuel",
+      "code": "1606CE3A 001E"
+    },
+    {
+      "name": "Infinite Bullets",
+      "code": "1606CE2E 000F"
+    },
+    {
+      "name": "Infinite Charges",
+      "code": "1606CE40 0002"
+    },
+    {
+      "name": "Infinite Grenades",
+      "code": "1606CE38 0005"
+    },
+    {
+      "name": "Pulse Rifle",
+      "code": "1605AB02 0001"
+    },
+    {
+      "name": "Pulse Rifle Ammo",
+      "code": "1606CE34 0040"
+    },
+    {
+      "name": "Shotgun",
+      "code": "1605AAFE 003C"
+    },
+    {
+      "name": "Shotgun Ammo",
+      "code": "1606CE32 0028"
+    },
+    {
+      "name": "Smart Gun",
+      "code": "1605AB06 0064"
+    },
+    {
+      "name": "Smart Gun Ammo",
+      "code": "1606CE3C 0064"
+    },
+    {
+      "name": "Unlimited Grenades",
+      "code": "1606CE38 0009"
+    },
+    {
+      "name": "Unlimited Bullets",
+      "code": "1606CE2E 0063"
+    },
+    {
+      "name": "Unlimited Batteries",
+      "code": "1606CE42 0009"
+    },
+    {
+      "name": "Unlimited Charges",
+      "code": "1606CE40 0009"
+    },
+    {
+      "name": "Always Have Acid Vest",
+      "code": "1606CE2A 0063"
+    },
+    {
+      "name": "Unlimited Ammo (Pulse Rifle)",
+      "code": "1606CE34 0063"
+    },
+    {
+      "name": "Always Have Shotgun",
+      "code": "1605AAFE 0001"
+    },
+    {
+      "name": "Unlimited Ammo (Shotgun)",
+      "code": "1606CE32 0063"
+    },
+    {
+      "name": "Always Have Flame Gun",
+      "code": "1605AB0A 0001"
+    },
+    {
+      "name": "Unlimited Fuel (Flame Gun)",
+      "code": "1606CE3A 0063"
+    },
+    {
+      "name": "Always Have Smart Gun",
+      "code": "1605AB06 0001"
+    },
+    {
+      "name": "Unlimited Ammo (Smart Gun)",
+      "code": "1606CE3C 0063"
+    }
+  ]
+}

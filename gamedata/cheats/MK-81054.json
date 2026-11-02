@@ -1,0 +1,266 @@
+{
+  "serial": "MK-81054",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "16074FA4 4650"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "160723A2 0200"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D60723A2 0200\n160723A2 0080"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D60723A2 0200\n160723A2 0100"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D60723A2 0200\n160722A2 0180"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "160723A2 0000"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D60723A2 0200\n160723A3 0001"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "1607476E 0200"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D607476E 0200\n1607476E 0080"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D607476E 0200\n1607476E 0100"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D607476E 0200\n1607476E 0180"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "1607476E 0000"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D607476E 0200\n1607476E 0001"
+    },
+    {
+      "name": "Full Over Drive Meter P1",
+      "code": "160723A6 0168"
+    },
+    {
+      "name": "Empty Over Drive Meter P1",
+      "code": "160723A6 0000"
+    },
+    {
+      "name": "Full Over Drive Meter P2",
+      "code": "16074772 0168"
+    },
+    {
+      "name": "Empty Over Drive Meter P2",
+      "code": "16074772 0000"
+    },
+    {
+      "name": "P1 Never Wins",
+      "code": "16072300 0000"
+    },
+    {
+      "name": "P1 Needs 1 Win to Win",
+      "code": "D6072300 0000\n16072300 0001"
+    },
+    {
+      "name": "P2 Never Wins",
+      "code": "160746CC 0000"
+    },
+    {
+      "name": "P2 Needs 1 Win to Win",
+      "code": "D60746CC 0000\n160746CC 0001"
+    },
+    {
+      "name": "Timer Is Set To 60",
+      "code": "160575E8 0000"
+    },
+    {
+      "name": "Timer Is Set To 90",
+      "code": "160575E8 0001"
+    },
+    {
+      "name": "Timer Is Set To 00",
+      "code": "160575E8 0002"
+    },
+    {
+      "name": "Set Point Is Set To 1",
+      "code": "160575EA 0000"
+    },
+    {
+      "name": "Set Point Is Set To 2",
+      "code": "160575EA 0001"
+    },
+    {
+      "name": "Set Point Is Set To 3",
+      "code": "160575EA 0002"
+    },
+    {
+      "name": "P1 Guard Type Is Normal",
+      "code": "160575EE 0000"
+    },
+    {
+      "name": "P1 Guard Type Is Auto",
+      "code": "160575EE 0001"
+    },
+    {
+      "name": "P1 Guard Type Is No Guard",
+      "code": "160575EE 0002"
+    },
+    {
+      "name": "P2 Guard Type Is Normal",
+      "code": "16057602 0000"
+    },
+    {
+      "name": "P2 Guard Type Is Auto",
+      "code": "16057602 0001"
+    },
+    {
+      "name": "P2 Guard Type Is No Guard",
+      "code": "16057602 0002"
+    },
+    {
+      "name": "Extra Characters",
+      "code": "16057EE6 0010"
+    },
+    {
+      "name": "(Both Players) Hit From Anywhere",
+      "code": "16042794 A002\n16042796 0009"
+    },
+    {
+      "name": "(Player 1) Play As Eiji",
+      "code": "1607A462 0000"
+    },
+    {
+      "name": "(Player 1) Play As Sofia",
+      "code": "1607A462 0002"
+    },
+    {
+      "name": "(Player 1) Play As Rungo",
+      "code": "1607A462 0003"
+    },
+    {
+      "name": "(Player 1) Play As Fo",
+      "code": "1607A462 0004"
+    },
+    {
+      "name": "(Player 1) Play As Mondo",
+      "code": "1607A462 0005"
+    },
+    {
+      "name": "(Player 1) Play As Duke",
+      "code": "1607A462 0006"
+    },
+    {
+      "name": "(Player 1) Play As Ellis",
+      "code": "1607A462 0007"
+    },
+    {
+      "name": "(Player 1) Play As Tracy",
+      "code": "1607A462 0008"
+    },
+    {
+      "name": "(Player 1) Play As Ripper",
+      "code": "1607A462 0009"
+    },
+    {
+      "name": "(Player 1) Play As Ronron",
+      "code": "1607A462 000A"
+    },
+    {
+      "name": "(Player 1) Play As Rapu",
+      "code": "1607A462 000B"
+    },
+    {
+      "name": "(Player 1) Play As Wolf",
+      "code": "1607A462 000C"
+    },
+    {
+      "name": "(Player 1) Play As Verm",
+      "code": "1607A462 000D"
+    },
+    {
+      "name": "(Player 1) Play As Sho",
+      "code": "1607A462 000E"
+    },
+    {
+      "name": "(Player 2) Play As Eiji",
+      "code": "1607A60E 0000"
+    },
+    {
+      "name": "(Player 2) Play As Sofia",
+      "code": "1607A60E 0002"
+    },
+    {
+      "name": "(Player 2) Play As Rungo",
+      "code": "1607A60E 0003"
+    },
+    {
+      "name": "(Player 2) Play As Fo",
+      "code": "1607A60E 0004"
+    },
+    {
+      "name": "(Player 2) Play As Mondo",
+      "code": "1607A60E 0005"
+    },
+    {
+      "name": "(Player 2) Play As Duke",
+      "code": "1607A60E 0006"
+    },
+    {
+      "name": "(Player 2) Play As Ellis",
+      "code": "1607A60E 0007"
+    },
+    {
+      "name": "(Player 2) Play As Tracy",
+      "code": "1607A60E 0008"
+    },
+    {
+      "name": "(Player 2) Play As Ripper",
+      "code": "1607A60E 0009"
+    },
+    {
+      "name": "(Player 2) Play As Ronron",
+      "code": "1607A60E 000A"
+    },
+    {
+      "name": "(Player 2) Play As Rapu",
+      "code": "1607A60E 000B"
+    },
+    {
+      "name": "(Player 2) Play As Wolf",
+      "code": "1607A60E 000C"
+    },
+    {
+      "name": "(Player 2) Play As Verm",
+      "code": "1607A60E 000D"
+    },
+    {
+      "name": "(Player 2) Play As Sho",
+      "code": "1607A60E 000E"
+    },
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160723A2 01FF"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "1607476E 01FF"
+    }
+  ]
+}

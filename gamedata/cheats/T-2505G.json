@@ -1,0 +1,14 @@
+{
+  "serial": "T-2505G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "160D0854 000F\n160D0856 423F"
+    },
+    {
+      "name": "Max Status",
+      "code": "360C9ED3 0063\n360C9EDC 0063\n360C9EDE 0063\n360C9EE0 0063\n360C9EEE 000A\n360C9EF3 0063\n360C9EF4 0063"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "serial": "MK-81043",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Energy P1",
+      "code": "1604DDA2 0909"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "1604DDE6 0909"
+    },
+    {
+      "name": "Infinite Ammo P1",
+      "code": "16052C38 0600"
+    },
+    {
+      "name": "Infinite Ammo P2",
+      "code": "16052C89 0600"
+    },
+    {
+      "name": "P1 Always Has Normal Gun",
+      "code": "16052C4A 0000\n16052C4E ABF4"
+    },
+    {
+      "name": "P1 Always Has Automatic Gun",
+      "code": "16052C4A 0100\n16052C4E AC20"
+    },
+    {
+      "name": "P1 Always Has Rifle",
+      "code": "16052C4A 0200\n16052C4E AEA8"
+    },
+    {
+      "name": "P1 Always Has Machine Gun",
+      "code": "16052C4A 0300\n16052C4E ACF8"
+    },
+    {
+      "name": "P1 Always Has Shotgun",
+      "code": "16052C4A 0400\n16052C4E B0FC"
+    },
+    {
+      "name": "P1 Always Has Magnum",
+      "code": "16052C4E 0500\n16052C4E B094"
+    },
+    {
+      "name": "P2 Always Has Normal Gun",
+      "code": "16052C9A 0000\n16052C9E ABF4"
+    },
+    {
+      "name": "P2 Always Has Automatic Gun",
+      "code": "16052C9A 0100\n16052C9E AC20"
+    },
+    {
+      "name": "P2 Always Has Rifle",
+      "code": "16052C9A 0200\n16052C9E AEA8"
+    },
+    {
+      "name": "P2 Always Has Machine Gun",
+      "code": "16052C9A 0300\n16052C9E ACF8"
+    },
+    {
+      "name": "P2 Always Has Shotgun",
+      "code": "16052C9A 0400\n16052C9E B0FC"
+    },
+    {
+      "name": "P2 Always Has Magnum",
+      "code": "16052C9A 0500\n16052C9E B094"
+    },
+    {
+      "name": "Infinite Credits",
+      "code": "1604DD1C 0109"
+    },
+    {
+      "name": "Gun Select Option Always On",
+      "code": "36068639 0001"
+    },
+    {
+      "name": "Gun Select Option Always Off",
+      "code": "36068639 0000"
+    },
+    {
+      "name": "Auto Re-Load Option Always On",
+      "code": "3606863A 0001"
+    },
+    {
+      "name": "Auto Re-Load Option Always Off",
+      "code": "3606863A 0000"
+    },
+    {
+      "name": "Always Play VC1 Mode",
+      "code": "3606863B 0000"
+    },
+    {
+      "name": "Always Play VC2 Mode",
+      "code": "3606863B 0001"
+    },
+    {
+      "name": "(Player 2) Unlimited Ammo",
+      "code": "16052C88 0600"
+    }
+  ]
+}

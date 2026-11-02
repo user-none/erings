@@ -1,0 +1,26 @@
+{
+  "serial": "T-9520G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Salamander) Invulnerability",
+      "code": "D6012DA6 CB40\n16012DA8 CB40"
+    },
+    {
+      "name": "(Lifeforce) Invulnerability",
+      "code": "D60128B6 CB40\n160128B8 CB40"
+    },
+    {
+      "name": "(Salamander 2) Invulnerability",
+      "code": "D60422F2 D129\n160422F0 E000"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "360C1450 0007\n360BF300 0007\n160B3E10 0200"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "360C14A0 0007\n360BF350 0007\n160B41C4 0200"
+    }
+  ]
+}

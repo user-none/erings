@@ -1,0 +1,25 @@
+{
+  "serial": "T-10618G",
+  "title": "Shin Theme Park",
+  "native_title": "新 テーマ・パーク",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 938833 004246"
+  ],
+  "release_date": "1997-04-11",
+  "developer": "TOSE",
+  "publisher": "Electronic Arts Victor",
+  "genres": [
+    "Construction and Management Simulation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Shin Theme Park is an updated and localized remake of Theme Park specifically for the Japanese market. It plays much the same as the original game, but the visual style has been overhauled to be cuter, and there are numerous new attractions and events added specific to this version, including attractions representing specific countries."
+}

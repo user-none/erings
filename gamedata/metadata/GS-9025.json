@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9025",
+  "title": "World Advanced Daisenryaku: Koutetsu no Senpuu",
+  "native_title": "ワールド・アドバンスド 大戦略 ～鋼鉄の戦風～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091255"
+  ],
+  "release_date": "1995-09-22",
+  "developer": "SystemSoft Alpha",
+  "publisher": "Sega",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 5,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Iron Storm is a traditional turn-based strategy game. The original Japanese release was the second entry in Sega's Advanced Daisenryaku series, with gameplay very similar to that of it's 16-bit predecessor, changing some details and using 3D animations for the combat cutscenes. The game uses a hex-based map and features fog-of-war, weather, unit experience, unit upgrading, supply, and other common strategy wargame features.\n\nUnlike the previous game, three campaigns are available instead of one. Japanese, as well as United States forces can be commanded now in addition to German units. The scenarios that are played during a campaign can change depending on the battle results - a successful player may invade North America for example. There are also ten scenarios with pre-set forces separately available for selection in Standard Mode, during which the control of all involved armies can be switched to a human player."
+}

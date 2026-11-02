@@ -1,0 +1,14 @@
+{
+  "serial": "T-159028H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Away Team Scores 0",
+      "code": "1025B878 0000"
+    },
+    {
+      "name": "Home Team Scores 0",
+      "code": "1025B674 0000"
+    }
+  ]
+}

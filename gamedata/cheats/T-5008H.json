@@ -1,0 +1,14 @@
+{
+  "serial": "T-5008H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Have Stiletto Bike",
+      "code": "16074074 0709"
+    },
+    {
+      "name": "Infinite Cash",
+      "code": "1607407E FFFF"
+    }
+  ]
+}

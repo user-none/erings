@@ -1,0 +1,23 @@
+{
+  "serial": "610-6727",
+  "title": "Layer Section II (Demo)",
+  "native_title": "レイヤー・セクション２",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-10-30",
+  "developer": "TOSE",
+  "publisher": "Media Quest",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "RayStorm is a shoot'em-up game created for the arcades, later ported to the Saturn as Layer Section II. Although there is no story connection, it is often thought of as the spiritual successor to RayForce, which had similar gameplay.\n\nYou have 2 weapons at you disposal, a vulcan gun and a lock-on missile attack. You can also do 2 special attacks by using the lock-on system in a special way. The graphics are all in 3D, but the gameplay mechanics are in 2D. There are 7 stages, each ending with a giant end boss."
+}

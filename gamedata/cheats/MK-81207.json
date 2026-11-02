@@ -1,0 +1,26 @@
+{
+  "serial": "MK-81207",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time",
+      "code": "160B0536 9911"
+    },
+    {
+      "name": "Super Road Grip",
+      "code": "160B0344 0000\n160B0346 0000\n160B019A 0000\n160B01B0 0000"
+    },
+    {
+      "name": "Always In Super Car",
+      "code": "160AA80A 0201"
+    },
+    {
+      "name": "Max Speed 150 MPH",
+      "code": "160B038A 8DBC"
+    },
+    {
+      "name": "Select Lancia & Lakeside",
+      "code": "16040062 0600"
+    }
+  ]
+}

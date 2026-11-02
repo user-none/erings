@@ -1,0 +1,210 @@
+{
+  "serial": "MK-81304",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Infinite Points",
+      "code": "102FB02E FFFF"
+    },
+    {
+      "name": "Infinite HP Garian",
+      "code": "160DEFB0 03E7\n160DEFB2 03E7"
+    },
+    {
+      "name": "Infinite B-HP Garian",
+      "code": "160DEFB6 03E7"
+    },
+    {
+      "name": "Timer (in Beginning) Always at 0:00 00",
+      "code": "160FE14E 0000"
+    },
+    {
+      "name": "Garian Max HP",
+      "code": "160DEFB2 03E7"
+    },
+    {
+      "name": "Garian Max Attack",
+      "code": "102D0338 03E7"
+    },
+    {
+      "name": "Garian Max Defense",
+      "code": "102D033A 03E7"
+    },
+    {
+      "name": "Always Have Meat",
+      "code": "302FB0DC 0001"
+    },
+    {
+      "name": "Always Have Captain's Key",
+      "code": "302FB0DD 0001"
+    },
+    {
+      "name": "Always Have Chocolate",
+      "code": "302FB0DE 0001"
+    },
+    {
+      "name": "Always Have Bottle",
+      "code": "302FB0DF 0001"
+    },
+    {
+      "name": "Always Have Magazine",
+      "code": "302FB0E0 0001"
+    },
+    {
+      "name": "Always Have Bilanium",
+      "code": "302FB0E1 0001"
+    },
+    {
+      "name": "Always Have Emergency Exit Key",
+      "code": "302FB0E2 0001"
+    },
+    {
+      "name": "Always Have JLO's Key",
+      "code": "302FB0E3 0001"
+    },
+    {
+      "name": "Always Have Liquid Nitrogen",
+      "code": "302FB0E4 0001"
+    },
+    {
+      "name": "Always Have Grid Iron Door Key",
+      "code": "302FB0E5 0001"
+    },
+    {
+      "name": "Always Have Jloid Badge",
+      "code": "302FB0E6 0001"
+    },
+    {
+      "name": "Always Have Diary of Wouda",
+      "code": "302FB0E7 0001"
+    },
+    {
+      "name": "Always Have Blue Rose",
+      "code": "302FB0E8 0001"
+    },
+    {
+      "name": "Always Have Deadley",
+      "code": "302FB0E9 0001"
+    },
+    {
+      "name": "Always Have Man's Key",
+      "code": "302FB0EA 0001"
+    },
+    {
+      "name": "Always Have Key to The Ruins",
+      "code": "302FB0EB 0001"
+    },
+    {
+      "name": "Always Have Scroll of Lavian",
+      "code": "302FB0EC 0001"
+    },
+    {
+      "name": "Always Have Copper Ring",
+      "code": "302FB0ED 0001"
+    },
+    {
+      "name": "Always Have Golden Ring",
+      "code": "302FB0EE 0001"
+    },
+    {
+      "name": "Always Have Silver Ring",
+      "code": "302FB0EF 0001"
+    },
+    {
+      "name": "Always Have Warden's Diary 1",
+      "code": "302FB0F0 0001"
+    },
+    {
+      "name": "Always Have Warden's Diary 2",
+      "code": "302FB0F1 0001"
+    },
+    {
+      "name": "Always Have Doc's Diary",
+      "code": "302FB0F2 0001"
+    },
+    {
+      "name": "Always Have Alibaba's Diary 1",
+      "code": "302FB0F3 0001"
+    },
+    {
+      "name": "Always Have Alibaba's Diary 2",
+      "code": "302FB0F4 0001"
+    },
+    {
+      "name": "Always Have Silver Key",
+      "code": "302FB0F5 0001"
+    },
+    {
+      "name": "Always Have Sewer Key",
+      "code": "302FB0F6 0001"
+    },
+    {
+      "name": "Always Have Passage Way",
+      "code": "302FB0F7 0001"
+    },
+    {
+      "name": "Always Have Mural Key",
+      "code": "302FB0F8 0001"
+    },
+    {
+      "name": "Always Have Mural Key",
+      "code": "302FB0F9 0001"
+    },
+    {
+      "name": "Always Have Mural Key",
+      "code": "302FB0FA 0001"
+    },
+    {
+      "name": "Always Have Mural Key",
+      "code": "302FB0FB 0001"
+    },
+    {
+      "name": "Always Have Mural Key",
+      "code": "302FB0FC 0001"
+    },
+    {
+      "name": "Always Have Mural Key",
+      "code": "302FB0FD 0001"
+    },
+    {
+      "name": "Always Have Gold Key",
+      "code": "302FB0FE 0001"
+    },
+    {
+      "name": "Always Have Gold Key",
+      "code": "302FB0FF 0001"
+    },
+    {
+      "name": "Always Have Graveyard Key",
+      "code": "302FB100 0001"
+    },
+    {
+      "name": "Always Have Castle Key",
+      "code": "302FB102 0001"
+    },
+    {
+      "name": "Always Have Glitched Item",
+      "code": "302FB103 0001"
+    },
+    {
+      "name": "Always Have Not Carrying Item",
+      "code": "302FB104 0001"
+    },
+    {
+      "name": "Garian Unlimited HP",
+      "code": "160DEFB0 03E7"
+    },
+    {
+      "name": "Garian All Stats High",
+      "code": "102FB0C4 CCCC"
+    },
+    {
+      "name": "Always Have Mural Key",
+      "code": "302FB0F8 0001\n302FB0F9 0001\n302FB0FA 0001\n302FB0FB 0001\n302FB0FC 0001\n302FB0FD 0001"
+    },
+    {
+      "name": "Always Have Gold Key",
+      "code": "302FB0FE 0001\n302FB0FF 0001"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: The King of Fighters '97 (Japan)
+gameid: T-3121G
+system: saturn
+---
+
+# Round phase flags.
+watch phase byte 0x060F4451
+def match_end phase == 128
+
+# Players joined. bit 0 is player 1, bit 1 is player 2.
+watch p1 byte 0x060F6344 mask 0x01
+watch p2 byte 0x060F6344 mask 0x02
+def p1_human p1 != 0
+def p2_human p2 != 0
+
+# Vitality, 103 at round start.
+watch p1_hp word 0x060F49BC signed
+watch p2_hp word 0x060FDD9C signed
+
+# The death is when health goes negative
+def p1_dead p1_hp < 0
+def p2_dead p2_hp < 0
+
+# KO.
+on p1_hp changed and p1_dead while match_end and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms)
+on p2_hp changed and p2_dead while match_end and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) player 2

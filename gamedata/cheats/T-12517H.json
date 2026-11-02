@@ -1,0 +1,18 @@
+{
+  "serial": "T-12517H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Team B Scores 0",
+      "code": "1608DDDE 0000"
+    },
+    {
+      "name": "Team B 01 Score",
+      "code": "1608DDDE 0001"
+    },
+    {
+      "name": "Team B 09 Score",
+      "code": "1608DDDE 0009"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "serial": "T-15007G",
+  "title": "Virtual Open Tennis",
+  "native_title": "バーチャル・オープン・テニス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [],
+  "release_date": "1995-10-27",
+  "developer": "Arc System Works",
+  "publisher": "Acclaim Entertainment",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "One of only two tennis games released for the Saturn. Features include a 3 modes of play (tournament, exhibition and practice), 3 playing surfaces and 10 players."
+}

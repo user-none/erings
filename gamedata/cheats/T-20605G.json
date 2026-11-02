@@ -1,0 +1,26 @@
+{
+  "serial": "T-20605G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Credits",
+      "code": "160B0E84 0009"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "360B141E 0001"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "360B145E 0001"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "160B1414 0003"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160B1454 0003"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "serial": "T-16702G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "160C829E 7FFF"
+    },
+    {
+      "name": "All Items Unlimited",
+      "code": "160C830A FF06"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "serial": "T-14423G",
+  "master_code": "F6004570 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160C9F22 00FF"
+    },
+    {
+      "name": "(Player 1) Unlimited MP",
+      "code": "160C9EE4 0030"
+    },
+    {
+      "name": "(Player 1) Max Attack",
+      "code": "160C8C7E 0002"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160C9FDA 00FF"
+    },
+    {
+      "name": "(Player 2) Unlimited MP",
+      "code": "160C9F9C 0030"
+    },
+    {
+      "name": "(Player 2) Max Attack",
+      "code": "160C8C86 0002"
+    },
+    {
+      "name": "(Player 1) Unlimited HP",
+      "code": "160C9ED0 0800\n160C9ED4 0800"
+    },
+    {
+      "name": "(Player 2) Unlimited HP",
+      "code": "160C9E88 0800\n160C9F8C 0800"
+    },
+    {
+      "name": "(Player 1) All Magic",
+      "code": "160C9F2C 07FF\n160C9F30 0606\n160C9F32 0606\n160C9F34 0606\n160C9F36 0606"
+    },
+    {
+      "name": "(Player 2) All Magic",
+      "code": "160C9FE4 07FF\n160C9FE8 0606\n160C9FEA 0606\n160C9FEC 0606\n160C9FEE 0606"
+    }
+  ]
+}

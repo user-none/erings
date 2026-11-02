@@ -1,0 +1,42 @@
+{
+  "serial": "MK-81127",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Balls",
+      "code": "1608426C 0000"
+    },
+    {
+      "name": "1 Ball And You Walk",
+      "code": "D608426C 0000\n1608426C 0003"
+    },
+    {
+      "name": "2 Balls And You Walk",
+      "code": "D608426C 0000\n1608426C 0002"
+    },
+    {
+      "name": "3 Balls And You Walk",
+      "code": "D608426C 0000\n1608426C 0001"
+    },
+    {
+      "name": "Infinite Strikes",
+      "code": "16083782 0000"
+    },
+    {
+      "name": "1 Strike And You Are Out",
+      "code": "D6083782 0000\n16083782 0002"
+    },
+    {
+      "name": "2 Strikes And You Are Out",
+      "code": "D6083782 0000\n16083782 0001"
+    },
+    {
+      "name": "Infinite Outs",
+      "code": "16083A88 0000"
+    },
+    {
+      "name": "1 Out And You Are Out",
+      "code": "D6083A88 0000\n16083A88 0002"
+    }
+  ]
+}

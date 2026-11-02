@@ -1,0 +1,1150 @@
+{
+  "serial": "T-7033H-50",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Health for Player 1",
+      "code": "1604C7BC 0090"
+    },
+    {
+      "name": "75% Health for Player 1",
+      "code": "D604C7BC 0090\n1604C7BC 006C"
+    },
+    {
+      "name": "50% Health for Player 1",
+      "code": "D604C7BC 0090\n1604C7BC 0048"
+    },
+    {
+      "name": "25% Health for Player 1",
+      "code": "D604C7BC 0090\n1604C7BC 0024"
+    },
+    {
+      "name": "Low Health for Player 1",
+      "code": "1604C7BC 0001"
+    },
+    {
+      "name": "No Healt for Player 1h",
+      "code": "1604C7BC 0000"
+    },
+    {
+      "name": "Player 1 always has Level 3 Super Bar",
+      "code": "1604C81E 0090"
+    },
+    {
+      "name": "Player 1 always has Level 2 Super Bar",
+      "code": "1604C81E 0060"
+    },
+    {
+      "name": "Player 1 always has Level 1 Super Bar",
+      "code": "1604C81E 0030"
+    },
+    {
+      "name": "No Super Bar for Player 1",
+      "code": "1604C81E 0000"
+    },
+    {
+      "name": "Air Special Moves for Player 1",
+      "code": "1604C7A4 0000"
+    },
+    {
+      "name": "Automatic Tech Bonus for Player 1",
+      "code": "3604C8B3 0000"
+    },
+    {
+      "name": "Multi-Projectiles for Player 1",
+      "code": "1604C998 0000"
+    },
+    {
+      "name": "No Projectiles for Player 1",
+      "code": "1604C998 FFFF"
+    },
+    {
+      "name": "Unlimited Taunts for Player 1",
+      "code": "1604C8CE 0001"
+    },
+    {
+      "name": "Player 1 Attacks Fast And Can Do Longer Link Combos",
+      "code": "1604C7CA 0000"
+    },
+    {
+      "name": "Unlimited Original Custom Combos for Player 1",
+      "code": "1604C9FA 0000"
+    },
+    {
+      "name": "No Original Custom Combos for Player 1",
+      "code": "1604C7E0 0000"
+    },
+    {
+      "name": "Player 1 is invisible",
+      "code": "1604C760 0000"
+    },
+    {
+      "name": "Screen Does Not Darken When A Super Move Is Performed by Player 1",
+      "code": "1604C8BC 0000"
+    },
+    {
+      "name": "Gouki (Akuma) Can Keep Doing His Hurricane Kick Longer (Player 1)",
+      "code": "1604C8F6 0000"
+    },
+    {
+      "name": "Player 1 is Ryu",
+      "code": "1604C802 0000"
+    },
+    {
+      "name": "Player 1 is Ken",
+      "code": "1604C802 0100"
+    },
+    {
+      "name": "Player 1 is Gouki",
+      "code": "1604C802 0200"
+    },
+    {
+      "name": "Player 1 is Nash",
+      "code": "1604C802 0300"
+    },
+    {
+      "name": "Player 1 is Chun Li",
+      "code": "1604C802 0400"
+    },
+    {
+      "name": "Player 1 is Adon",
+      "code": "1604C802 0500"
+    },
+    {
+      "name": "Player 1 is Sodom",
+      "code": "1604C802 0600"
+    },
+    {
+      "name": "Player 1 is Guy",
+      "code": "1604C802 0700"
+    },
+    {
+      "name": "Player 1 is Birdie",
+      "code": "1604C802 0800"
+    },
+    {
+      "name": "Player 1 is Rose",
+      "code": "1604C802 0900"
+    },
+    {
+      "name": "Player 1 is Vega",
+      "code": "1604C802 0A00"
+    },
+    {
+      "name": "Player 1 is Sagat",
+      "code": "1604C802 0B00"
+    },
+    {
+      "name": "Player 1 is Dan",
+      "code": "1604C802 0C00"
+    },
+    {
+      "name": "Player 1 is Rolento",
+      "code": "1604C802 0E00"
+    },
+    {
+      "name": "Player 1 is Dhalsim",
+      "code": "1604C802 0F00"
+    },
+    {
+      "name": "Player 1 is Zangief",
+      "code": "1604C802 1000"
+    },
+    {
+      "name": "Player 1 is Gen",
+      "code": "1604C802 1100"
+    },
+    {
+      "name": "Player 1 is Street Fighter II Chun Li",
+      "code": "1604C802 1200"
+    },
+    {
+      "name": "Player 1 is Evil Gouki",
+      "code": "1604C802 1400"
+    },
+    {
+      "name": "Player 1 is Street Fighter II Zangief",
+      "code": "1604C802 1500"
+    },
+    {
+      "name": "Player 1 is Street Fighter II Dhalsim",
+      "code": "1604C802 1600"
+    },
+    {
+      "name": "Player 1 is Evil Ryu",
+      "code": "1604C802 1700"
+    },
+    {
+      "name": "Unlimited Health for Player 2",
+      "code": "1604CBBC 0090"
+    },
+    {
+      "name": "75% Health for Player 2",
+      "code": "D604CBBC 0090\n1604CBBC 006C"
+    },
+    {
+      "name": "50% Health for Player 2",
+      "code": "D604CBBC 0090\n1604CBBC 0048"
+    },
+    {
+      "name": "Low Health for Player 2",
+      "code": "1604CBBC 0001"
+    },
+    {
+      "name": "No Health for Player 2",
+      "code": "1604CBBC 0000"
+    },
+    {
+      "name": "Player 2 always has Level 3 Super Bar",
+      "code": "1604CC1E 0090"
+    },
+    {
+      "name": "Player 2 always has Level 2 Super Bar",
+      "code": "1604CC1E 0060"
+    },
+    {
+      "name": "Player 2 always has Level 1 Super Bar",
+      "code": "1604CC1E 0030"
+    },
+    {
+      "name": "No Super Bar for Player 2",
+      "code": "1604CC1E 0000"
+    },
+    {
+      "name": "Air Special Moves for Player 2",
+      "code": "1604CBA4 0000"
+    },
+    {
+      "name": "Automatic Tech Bonus for Player 2",
+      "code": "3604CCB3 0000"
+    },
+    {
+      "name": "Multi-Projectiles for Player 2",
+      "code": "1604CD98 0000"
+    },
+    {
+      "name": "No Projectiles for Player 2",
+      "code": "1604CD98 FFFF"
+    },
+    {
+      "name": "Unlimited Taunts for Player 2",
+      "code": "1604CCCE 0001"
+    },
+    {
+      "name": "Player 2 Attacks Fast And Can Do Longer Link Combos",
+      "code": "1604CBCA 0000"
+    },
+    {
+      "name": "Unlimited Original Custom Combos for Player 2",
+      "code": "1604CDFA 0000"
+    },
+    {
+      "name": "No Original Custom Combos for Player 2",
+      "code": "1604CBE0 0000"
+    },
+    {
+      "name": "Player 2 is invisible",
+      "code": "1604CB60 0000"
+    },
+    {
+      "name": "Screen Does Not Darken When A Super Move Is Performed by Player 2",
+      "code": "1604CCBC 0000"
+    },
+    {
+      "name": "Player 2 is Ryu",
+      "code": "1604CC02 0000"
+    },
+    {
+      "name": "Player 2 is Ken",
+      "code": "1604CC02 0100"
+    },
+    {
+      "name": "Player 2 is Gouki",
+      "code": "1604CC02 0200"
+    },
+    {
+      "name": "Player 2 is Nash",
+      "code": "1604CC02 0300"
+    },
+    {
+      "name": "Player 2 is Chun Li",
+      "code": "1604CC02 0400"
+    },
+    {
+      "name": "Player 2 is Adon",
+      "code": "1604CC02 0500"
+    },
+    {
+      "name": "Player 2 is Sodom",
+      "code": "1604CC02 0600"
+    },
+    {
+      "name": "Player 2 is Guy",
+      "code": "1604CC02 0700"
+    },
+    {
+      "name": "Player 2 is Birdie",
+      "code": "1604CC02 0800"
+    },
+    {
+      "name": "Player 2 is Rose",
+      "code": "1604CC02 0900"
+    },
+    {
+      "name": "Player 2 is Vega",
+      "code": "1604CC02 0A00"
+    },
+    {
+      "name": "Player 2 is Sagat",
+      "code": "1604CC02 0B00"
+    },
+    {
+      "name": "Player 2 is Dan",
+      "code": "1604CC02 0C00"
+    },
+    {
+      "name": "Player 2 is Rolento",
+      "code": "1604CC02 0E00"
+    },
+    {
+      "name": "Player 2 is Dhalsim",
+      "code": "1604CC02 0F00"
+    },
+    {
+      "name": "Player 2 is Zangief",
+      "code": "1604CC02 1000"
+    },
+    {
+      "name": "Player 2 is Gen",
+      "code": "1604CC02 1100"
+    },
+    {
+      "name": "Player 2 is Street Fighter II Chun Li",
+      "code": "1604CC02 1200"
+    },
+    {
+      "name": "Player 2 is Evil Gouki",
+      "code": "1604CC02 1400"
+    },
+    {
+      "name": "Player 2 is Street Fighter II Zangief",
+      "code": "1604CC02 1500"
+    },
+    {
+      "name": "Player 2 is Street Fighter II Dhalsim",
+      "code": "1604CC02 1600"
+    },
+    {
+      "name": "Player 2 is Evil Ryu",
+      "code": "1604CC02 1700"
+    },
+    {
+      "name": "Air Special Moves for Player 1",
+      "code": "1604F004 0000"
+    },
+    {
+      "name": "Air Special Moves for Player 2",
+      "code": "1604FBA4 0000"
+    },
+    {
+      "name": "Automatic Tech Bonuses for Player 1",
+      "code": "3604F113 0000"
+    },
+    {
+      "name": "Automatic Tech Bonuses for Player 2",
+      "code": "3604F513 0000"
+    },
+    {
+      "name": "Multi-Projectiles for Player 1",
+      "code": "1604F1F8 0000"
+    },
+    {
+      "name": "Multi-Projectiles for Player 2",
+      "code": "1604F5F8 0000"
+    },
+    {
+      "name": "Unlimited Taunts for Player 1",
+      "code": "1604F22E 0001"
+    },
+    {
+      "name": "Unlimited Taunts for Player 2",
+      "code": "1604F52E 0001"
+    },
+    {
+      "name": "Player 1 Attacks Fast & Can Do Longer Link Combos",
+      "code": "1604F02A 0000"
+    },
+    {
+      "name": "Player 2 Attacks Fast & Can Do Longer Link Combos",
+      "code": "1604F42A 0000"
+    },
+    {
+      "name": "Unlimited Original (Custom) Combos for Player 1",
+      "code": "1604F25A 0000"
+    },
+    {
+      "name": "Unlimited Original (Custom) Combos for Player 2",
+      "code": "1604F65A 0000"
+    },
+    {
+      "name": "No Original (Custom) Combos for Player 1",
+      "code": "1604F040 0000"
+    },
+    {
+      "name": "No Original (Custom) Combos for Player 2",
+      "code": "1604F440 0000"
+    },
+    {
+      "name": "Player 1 is invisible",
+      "code": "1604EFC0 0000"
+    },
+    {
+      "name": "Player 2 is invisible",
+      "code": "1604F3C0 0000"
+    },
+    {
+      "name": "Screen Doesn't Darken Win for Player 1 Performs A Super Move",
+      "code": "1604F11C 0000"
+    },
+    {
+      "name": "Screen Doesn't Darken When for Player 2 Performs A Super Move",
+      "code": "1604F51C 0000"
+    },
+    {
+      "name": "Player 1 is Super Sakura",
+      "code": "1604F062 1D00"
+    },
+    {
+      "name": "Player 1 is Chun-Li Champion Edition",
+      "code": "1604F062 1C00"
+    },
+    {
+      "name": "Player 1 is Ryu Champion Edition",
+      "code": "1604F062 1B00"
+    },
+    {
+      "name": "Player 1 is Ken Champion Edition",
+      "code": "1604F062 1A00"
+    },
+    {
+      "name": "Player 1 is Sagat Champion Edition",
+      "code": "1604F062 1900"
+    },
+    {
+      "name": "Player 1 is Vega Champion Edition",
+      "code": "1604F062 1800"
+    },
+    {
+      "name": "Player 1 is Evil Ryu",
+      "code": "1604F062 1700"
+    },
+    {
+      "name": "Player 1 is Dhalsim Champion Edition",
+      "code": "1604F062 1600"
+    },
+    {
+      "name": "Player 1 is Zangief Champion Edition",
+      "code": "1604F062 1500"
+    },
+    {
+      "name": "Player 1 is Super Akuma",
+      "code": "1604F062 1400"
+    },
+    {
+      "name": "Player 2 is Super Sakura",
+      "code": "1604F462 1D00"
+    },
+    {
+      "name": "Player 2 is Chun-Li Champion Edition",
+      "code": "1604F462 1C00"
+    },
+    {
+      "name": "Player 2 is Ryu Champion Edition",
+      "code": "1604F462 1B00"
+    },
+    {
+      "name": "Player 2 is Ken Champion Edition",
+      "code": "1604F462 1A00"
+    },
+    {
+      "name": "Player 2 is Sagat Champion Edition",
+      "code": "1604F462 1900"
+    },
+    {
+      "name": "Player 2 is Vega Champion Edition",
+      "code": "1604F462 1800"
+    },
+    {
+      "name": "Player 2 is Evil Ryu",
+      "code": "1604F462 1700"
+    },
+    {
+      "name": "Player 2 is Dhalsim Champion Edition",
+      "code": "1604F462 1600"
+    },
+    {
+      "name": "Player 2 is Zangief Champion Edition",
+      "code": "1604F462 1500"
+    },
+    {
+      "name": "Player 2 is Super Akuma",
+      "code": "1604F462 1400"
+    },
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "1604F01C 0090"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "1604F41C 0090"
+    },
+    {
+      "name": "Unlimited Super Combos for Player 1",
+      "code": "1604F07E 0090"
+    },
+    {
+      "name": "Unlimited Super Combos for Player 2",
+      "code": "1604F47E 0090"
+    },
+    {
+      "name": "Will Give Characters Sick Colours",
+      "code": "1604F08C 4FF9"
+    },
+    {
+      "name": "Fight Mid-Boss First",
+      "code": "1604F0A4 6336"
+    },
+    {
+      "name": "No Jumping",
+      "code": "1604F018 9350"
+    },
+    {
+      "name": "Crazy Throws",
+      "code": "1604F618 0995"
+    },
+    {
+      "name": "CPU Projectiles Backfire",
+      "code": "1604F424 8032"
+    },
+    {
+      "name": "CPU Fights You in Training Mode",
+      "code": "1604F484 489D"
+    },
+    {
+      "name": "Mid-Air Fighting",
+      "code": "1604F030 0090"
+    },
+    {
+      "name": "In Ground Fighting",
+      "code": "1604F030 0100"
+    },
+    {
+      "name": "Timer Stays At 99",
+      "code": "1604F3CC 0263"
+    },
+    {
+      "name": "Player 1 - Unlimited Health",
+      "code": "1604F5E0 0090"
+    },
+    {
+      "name": "Player 1 - Two Third Health",
+      "code": "1604F5E0 0060"
+    },
+    {
+      "name": "Player 1 - One Third Heath",
+      "code": "1604F5E0 0030"
+    },
+    {
+      "name": "Player 1 - Low Health",
+      "code": "1604F5E0 0001"
+    },
+    {
+      "name": "Player 1 - No Health",
+      "code": "1604F5E0 0000"
+    },
+    {
+      "name": "Player 1 - Air Special Moves",
+      "code": "1604F5C8 0000"
+    },
+    {
+      "name": "Player 1 - Automatic Tech Bonuses",
+      "code": "3604F6D5 0000"
+    },
+    {
+      "name": "Player 1 - Unlimited Taunts",
+      "code": "1604F6F2 0001"
+    },
+    {
+      "name": "Player 1 - Attacks Fast And Can Do Longer Link Combos",
+      "code": "1604F5EE 0000"
+    },
+    {
+      "name": "Player 1 - Unlimited Original Custom Combos",
+      "code": "1604F81E 0000"
+    },
+    {
+      "name": "Player 1 - No Original Custom Combos",
+      "code": "1604F604 0000"
+    },
+    {
+      "name": "Player 1 - Invisible",
+      "code": "1604F584 0000"
+    },
+    {
+      "name": "Player 1 - Screen Does Not Darken When A Super Move Is Performed",
+      "code": "1604F6E0 0000"
+    },
+    {
+      "name": "Player 1 is Ryu",
+      "code": "1604F626 0000"
+    },
+    {
+      "name": "Player 1 is Ken",
+      "code": "1604F626 0100"
+    },
+    {
+      "name": "Player 1 is Akuma",
+      "code": "1604F626 0200"
+    },
+    {
+      "name": "Player 1 is Charlie",
+      "code": "1604F626 0300"
+    },
+    {
+      "name": "Player 1 is Chun-Li",
+      "code": "1604F626 0400"
+    },
+    {
+      "name": "Player 1 is Adon",
+      "code": "1604F626 0500"
+    },
+    {
+      "name": "Player 1 is Sodom",
+      "code": "1604F626 0600"
+    },
+    {
+      "name": "Player 1 is Guy",
+      "code": "1604F626 0700"
+    },
+    {
+      "name": "Player 1 is Birdie",
+      "code": "1604F626 0800"
+    },
+    {
+      "name": "Player 1 is Rose",
+      "code": "1604F626 0900"
+    },
+    {
+      "name": "Player 1 is M.Bison",
+      "code": "1604F626 0A00"
+    },
+    {
+      "name": "Player 1 is Sagat",
+      "code": "1604F626 0B00"
+    },
+    {
+      "name": "Player 1 is Dan",
+      "code": "1604F626 0C00"
+    },
+    {
+      "name": "Player 1 is Sakura",
+      "code": "1604F626 0D00"
+    },
+    {
+      "name": "Player 1 is Rolento",
+      "code": "1604F626 0E00"
+    },
+    {
+      "name": "Player 1 is Dhalsim",
+      "code": "1604F626 0F00"
+    },
+    {
+      "name": "Player 1 is Zangief",
+      "code": "1604F626 1000"
+    },
+    {
+      "name": "Player 1 is Gen (Mantis Fighting Style)",
+      "code": "1604F626 1100"
+    },
+    {
+      "name": "Player 1 is Super Street Fighter II Turbo version of Chun-Li",
+      "code": "1604F626 1200"
+    },
+    {
+      "name": "Player 1 is Gen (Crane Fighting Style)",
+      "code": "1604F626 1300"
+    },
+    {
+      "name": "Player 1 is Shin Akuma",
+      "code": "1604F626 1400"
+    },
+    {
+      "name": "Player 1 is Street Fighter II version of Zangief",
+      "code": "1604F626 1500"
+    },
+    {
+      "name": "Player 1 is Street Fighter II version of Dhalsim",
+      "code": "1604F626 1600"
+    },
+    {
+      "name": "Player 1 is Evil Ryu",
+      "code": "1604F626 1700"
+    },
+    {
+      "name": "Player 1 is Street Fighter II version of M.Bison",
+      "code": "1604F626 1800"
+    },
+    {
+      "name": "Player 1 is Street Fighter II version of Sagat",
+      "code": "1604F626 1900"
+    },
+    {
+      "name": "Player 1 is Street Fighter II version of Ken",
+      "code": "1604F626 1A00"
+    },
+    {
+      "name": "Player 1 is Street Fighter II version of Ryu",
+      "code": "1604F626 1B00"
+    },
+    {
+      "name": "Player 1 is Street Fighter II version of Chun-Li",
+      "code": "1604F626 1C00"
+    },
+    {
+      "name": "Player 1 is Special Sakura",
+      "code": "1604F626 1D00"
+    },
+    {
+      "name": "Player 1 is Cammy",
+      "code": "1604F626 1E00"
+    },
+    {
+      "name": "Player 2 - Unlimited Health",
+      "code": "1604F9E0 0090"
+    },
+    {
+      "name": "Player 2 - Two Third Health",
+      "code": "1604F9E0 0060"
+    },
+    {
+      "name": "Player 2 - One Third Heath",
+      "code": "1604F9E0 0030"
+    },
+    {
+      "name": "Player 2 - Low Health",
+      "code": "1604F9E0 0001"
+    },
+    {
+      "name": "Player 2 - No Health",
+      "code": "1604F9E0 0000"
+    },
+    {
+      "name": "Player 2 - Air Special Moves",
+      "code": "1604F984 0000"
+    },
+    {
+      "name": "Player 2 - Multi-Projectiles",
+      "code": "1604F9BC 0000"
+    },
+    {
+      "name": "Player 2 - Unlimited Taunts",
+      "code": "1604FAF2 0001"
+    },
+    {
+      "name": "Player 2 - Attacks Fast And Can Do Longer Link Combos",
+      "code": "1604F9EE 0000"
+    },
+    {
+      "name": "Player 2 - Unlimited Original Custom Combos",
+      "code": "1604FC1E 0000"
+    },
+    {
+      "name": "Player 2 - No Original Custom Combos",
+      "code": "1604FA04 0000"
+    },
+    {
+      "name": "Player 2 - Screen Does Not Darken When A Super Move Is Performed",
+      "code": "1604FAE0 0000"
+    },
+    {
+      "name": "Player 2 is Ryu",
+      "code": "1604FA26 0000"
+    },
+    {
+      "name": "Player 2 is Ken",
+      "code": "1604FA26 0100"
+    },
+    {
+      "name": "Player 2 is Akuma",
+      "code": "1604FA26 0200"
+    },
+    {
+      "name": "Player 2 is Charlie",
+      "code": "1604FA26 0300"
+    },
+    {
+      "name": "Player 2 is Chun-Li",
+      "code": "1604FA26 0400"
+    },
+    {
+      "name": "Player 2 is Adon",
+      "code": "1604FA26 0500"
+    },
+    {
+      "name": "Player 2 is Sodom",
+      "code": "1604FA26 0600"
+    },
+    {
+      "name": "Player 2 is Guy",
+      "code": "1604FA26 0700"
+    },
+    {
+      "name": "Player 2 is Birdie",
+      "code": "1604FA26 0800"
+    },
+    {
+      "name": "Player 2 is Rose",
+      "code": "1604FA26 0900"
+    },
+    {
+      "name": "Player 2 is M.Bison",
+      "code": "1604FA26 0A00"
+    },
+    {
+      "name": "Player 2 is Sagat",
+      "code": "1604FA26 0B00"
+    },
+    {
+      "name": "Player 2 is Dan",
+      "code": "1604FA26 0C00"
+    },
+    {
+      "name": "Player 2 is Sakura",
+      "code": "1604FA26 0D00"
+    },
+    {
+      "name": "Player 2 is Rolento",
+      "code": "1604FA26 0E00"
+    },
+    {
+      "name": "Player 2 is Dhalsim",
+      "code": "1604FA26 0F00"
+    },
+    {
+      "name": "Player 2 is Zangief",
+      "code": "1604FA26 1000"
+    },
+    {
+      "name": "Player 2 is Gen (Mantis Fighting Style)",
+      "code": "1604FA26 1100"
+    },
+    {
+      "name": "Player 2 is Super Street Fighter II Turbo version of Chun-Li",
+      "code": "1604FA26 1200"
+    },
+    {
+      "name": "Player 2 is Gen (Crane Fighting Style)",
+      "code": "1604FA26 1300"
+    },
+    {
+      "name": "Player 2 is Shin Akuma",
+      "code": "1604FA26 1400"
+    },
+    {
+      "name": "Player 2 is Street Fighter II version of Zangief",
+      "code": "1604FA26 1500"
+    },
+    {
+      "name": "Player 2 is Street Fighter II version of Dhalsim",
+      "code": "1604FA26 1600"
+    },
+    {
+      "name": "Player 2 is Evil Ryu",
+      "code": "1604FA26 1700"
+    },
+    {
+      "name": "Player 2 is Street Fighter II version of M.Bison",
+      "code": "1604FA26 1800"
+    },
+    {
+      "name": "Player 2 is Street Fighter II version of Sagat",
+      "code": "1604FA26 1900"
+    },
+    {
+      "name": "Player 2 is Street Fighter II version of Ken",
+      "code": "1604FA26 1A00"
+    },
+    {
+      "name": "Player 2 is Street Fighter II version of Ryu",
+      "code": "1604FA26 1B00"
+    },
+    {
+      "name": "Player 2 is Street Fighter II version of Chun-Li",
+      "code": "1604FA26 1C00"
+    },
+    {
+      "name": "Player 2 is Special Sakura",
+      "code": "1604FA26 1D00"
+    },
+    {
+      "name": "Player 2 is Cammy",
+      "code": "1604FA26 1E00"
+    },
+    {
+      "name": "Street Fighter II - Unlimited Energy for Player 1",
+      "code": "1602A9DC 0090"
+    },
+    {
+      "name": "Street Fighter II - Unlimited Energy for Player 2",
+      "code": "1602AD48 0090"
+    },
+    {
+      "name": "Street Fighter II - One Hit Death for Player 1",
+      "code": "D602A9DC 0090\n1602A9DC 0001"
+    },
+    {
+      "name": "Street Fighter II - One Hit Death for Player 2",
+      "code": "D602AD48 0090\n1602AD48 0001"
+    },
+    {
+      "name": "Street Fighter II - Unlimited Super Combos for Player 1",
+      "code": "1602ABEC 3000"
+    },
+    {
+      "name": "Street Fighter II - Unlimited Super Combos for Player 2",
+      "code": "1602AF58 3000"
+    },
+    {
+      "name": "Street Fighter II - Air Special Moves for Player 1",
+      "code": "1602AAB4 0000"
+    },
+    {
+      "name": "Street Fighter II - Air Special Moves for Player 2",
+      "code": "1602AE20 0000"
+    },
+    {
+      "name": "Street Fighter II - Player 1 Is Invisible",
+      "code": "3602A9AD 0000"
+    },
+    {
+      "name": "Street Fighter II - Player 2 Is Invisible",
+      "code": "3602AD18 0000"
+    },
+    {
+      "name": "Street Fighter II - Player 2 Can't Grab for Player 1",
+      "code": "1602AA20 0000"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Ryu",
+      "code": "1602AC90 0000"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is E.Honda",
+      "code": "1602AC90 0001"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Blanka",
+      "code": "1602AC90 0002"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Guile",
+      "code": "1602AC90 0003"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Ken",
+      "code": "1602AC90 0004"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Chun Li",
+      "code": "1602AC90 0005"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Zangief",
+      "code": "1602AC90 0006"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Dhalsim",
+      "code": "1602AC90 0007"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Vega",
+      "code": "1602AC90 0008"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Sagat",
+      "code": "1602AC90 0009"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is M.Bison",
+      "code": "1602AC90 000A"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Balrog",
+      "code": "1602AC90 000B"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Cammy",
+      "code": "1602AC90 000C"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Thunderhawk",
+      "code": "1602AC90 000D"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Fei Long",
+      "code": "1602AC90 000E"
+    },
+    {
+      "name": "Street Fighter II - Player 1 is Dee Jay",
+      "code": "1602AC90 000F"
+    },
+    {
+      "name": "Street Fighter II - Player 2 is Ryu",
+      "code": "1602AFFC 0000"
+    },
+    {
+      "name": "Street Fighter II - Player 2 is E.Honda",
+      "code": "1602AFFC 0001"
+    },
+    {
+      "name": "Player 2 is Blanka",
+      "code": "1602AFFC 0002"
+    },
+    {
+      "name": "Player 2 is Guile",
+      "code": "1602AFFC 0003"
+    },
+    {
+      "name": "Player 2 is Ken",
+      "code": "1602AFFC 0004"
+    },
+    {
+      "name": "Player 2 is Chun Li",
+      "code": "1602AFFC 0005"
+    },
+    {
+      "name": "Player 2 is Zangief",
+      "code": "1602AFFC 0006"
+    },
+    {
+      "name": "Player 2 is Dhalsim",
+      "code": "1602AFFC 0007"
+    },
+    {
+      "name": "Player 2 is Vega",
+      "code": "1602AFFC 0008"
+    },
+    {
+      "name": "Player 2 is Sagat",
+      "code": "1602AFFC 0009"
+    },
+    {
+      "name": "Player 2 is M.Bison",
+      "code": "1602AFFC 000A"
+    },
+    {
+      "name": "Player 2 is Balrog",
+      "code": "1602AFFC 000B"
+    },
+    {
+      "name": "Player 2 is Cammy",
+      "code": "1602AFFC 000C"
+    },
+    {
+      "name": "Player 2 is Thunderhawk",
+      "code": "1602AFFC 000D"
+    },
+    {
+      "name": "Player 2 is Fei Long",
+      "code": "1602AFFC 000E"
+    },
+    {
+      "name": "Player 2 is Dee Jay",
+      "code": "1602AFFC 000F"
+    },
+    {
+      "name": "Gouki for Player 1",
+      "code": "1602ACC0 0001"
+    },
+    {
+      "name": "Gouki for Player 2",
+      "code": "1602B02C 0001"
+    },
+    {
+      "name": "Both Players CPU Controlled",
+      "code": "1602A9DC FFFF"
+    },
+    {
+      "name": "Player 1 - Unlimited Health",
+      "code": "1602AFA0 0090"
+    },
+    {
+      "name": "Player 1 - Two Third Health",
+      "code": "1602AFA0 0060"
+    },
+    {
+      "name": "Player 1 - One Third Health",
+      "code": "1602AFA0 0030"
+    },
+    {
+      "name": "Player 1 - Low Health",
+      "code": "1602AFA0 0001"
+    },
+    {
+      "name": "Player 1 - No Health",
+      "code": "1602AFA0 0000"
+    },
+    {
+      "name": "Player 1 - Level 3 Power Bar",
+      "code": "1602B1B0 3000"
+    },
+    {
+      "name": "Player 1 - Level 2 Power Bar",
+      "code": "1602B1B0 2000"
+    },
+    {
+      "name": "Player 1 - Level 1 Power Bar",
+      "code": "1602B1B0 1000"
+    },
+    {
+      "name": "Player 1 - Level 0 Power Bar",
+      "code": "1602B1B0 0000"
+    },
+    {
+      "name": "Player 2 - Unlimited Health",
+      "code": "1602B30C 0090"
+    },
+    {
+      "name": "Player 2 - Two Third Health",
+      "code": "1602B30C 0060"
+    },
+    {
+      "name": "Player 2 - One Third Health",
+      "code": "1602B30C 0030"
+    },
+    {
+      "name": "Player 2 - Low Health",
+      "code": "1602B30C 0001"
+    },
+    {
+      "name": "Player 2 - No Health",
+      "code": "1602B30C 0000"
+    },
+    {
+      "name": "Player 2 - Level 3 Power Bar",
+      "code": "1602B51C 3000"
+    },
+    {
+      "name": "Player 2 - Level 2 Power Bar",
+      "code": "1602B51C 2000"
+    },
+    {
+      "name": "Player 2 - Level 1 Power Bar",
+      "code": "1602B51C 1000"
+    },
+    {
+      "name": "Player 2 - Level 0 Power Bar",
+      "code": "1602B51C 0000"
+    }
+  ]
+}

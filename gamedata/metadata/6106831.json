@@ -1,0 +1,24 @@
+{
+  "serial": "6106831",
+  "title": "Code R (Demo)",
+  "native_title": "コード・アール",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1998-07-09",
+  "developer": "Quintet",
+  "publisher": "Quintet",
+  "genres": [
+    "Adventure",
+    "Racing"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Code R is an unique 3D racing game mixed with a manga-like visual-novel style adventure game in a story mode (but all text is in Japanese). The player is a race driver, and in story mode, he can move around the city, visit special places and talk with various people, the game has even day and night cycles.\n\nBesides the story mode, the player can race in 2 additional modes, time attack and battle mode. In time mode the player must pass all the routes as soon as possible. In battle mode, the player races against one opponent. The player can customize many car settings like transmission, suspension or breaks."
+}

@@ -1,0 +1,25 @@
+{
+  "serial": "T-30603G",
+  "title": "G Vector",
+  "native_title": "ジー・ベクター",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 519784 210025"
+  ],
+  "release_date": "1997-10-16",
+  "developer": "Soft Office",
+  "publisher": "Soft Office",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "GVector is a sci-fi chase-view rail shooter in the style of Panzer Dragoon. The player pilots a small fighter craft and must fight off an alien invasion of Earth. There are two weapons at the player's disposal: a standard forward shot, and a homing laser that can lock on to up to eight targets; the more targets locked and destroyed simultaneously, the greater the bonus points awarded. There are a total of six stages, each with an encounter with a large boss enemy at the end, and the game includes a standard story mode as well as a score attack mode where any stage previously completed can be played and practiced for high scores."
+}

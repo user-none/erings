@@ -1,0 +1,18 @@
+{
+  "serial": "MK-81128",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Extra Points",
+      "code": "16080856 0FFF"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "1607FEE6 01F0"
+    },
+    {
+      "name": "Time Always At Less Than Zero",
+      "code": "1607FEE6 0100"
+    }
+  ]
+}

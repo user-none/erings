@@ -1,0 +1,202 @@
+{
+  "serial": "T-12702H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Have Healing Herb",
+      "code": "3600611A 0001"
+    },
+    {
+      "name": "Have Mole Claw",
+      "code": "36006143 0001"
+    },
+    {
+      "name": "Have Monkey Suit",
+      "code": "36006142 0001"
+    },
+    {
+      "name": "Have Pegasus Helm",
+      "code": "36006146 0001"
+    },
+    {
+      "name": "Have Shining Sword",
+      "code": "3600613C 0001"
+    },
+    {
+      "name": "Have Slide Shoes",
+      "code": "3600613E 0001"
+    },
+    {
+      "name": "Infinite Health",
+      "code": "1600615A 003B"
+    },
+    {
+      "name": "Infinite Money",
+      "code": "16006114 2500"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "16006114 FFFF\n16006114 270F"
+    },
+    {
+      "name": "Unlimited Blue Jars",
+      "code": "3600611B 0001"
+    },
+    {
+      "name": "Unlimited Feathers",
+      "code": "3600611C 0001"
+    },
+    {
+      "name": "Unlimited Mirrors",
+      "code": "3600611D 0001"
+    },
+    {
+      "name": "Unlimited Gold Keys",
+      "code": "3600611E 0001\n36006126 0001"
+    },
+    {
+      "name": "Unlimited Silver Keys",
+      "code": "3600611F 0001\n36006127 0001"
+    },
+    {
+      "name": "Unlimited Green Books",
+      "code": "36006120 0001"
+    },
+    {
+      "name": "Unlimited Rocks/Stones",
+      "code": "36006121 0001"
+    },
+    {
+      "name": "Unlimited Empty Jugs",
+      "code": "36006122 0001"
+    },
+    {
+      "name": "Unlimited Full Green Jugs",
+      "code": "36006123 0001"
+    },
+    {
+      "name": "Unlimited Full Blue Jugs",
+      "code": "36006124 0001"
+    },
+    {
+      "name": "Unlimited Keys",
+      "code": "36006125 0001"
+    },
+    {
+      "name": "Unlimited Gold Books",
+      "code": "36006128 0001"
+    },
+    {
+      "name": "Unlimited Blue Lightning",
+      "code": "3600612A 0001"
+    },
+    {
+      "name": "Unlimited Ice",
+      "code": "3600612B 0001"
+    },
+    {
+      "name": "Unlimited Fire",
+      "code": "3600612C 0001"
+    },
+    {
+      "name": "Unlimited Wind",
+      "code": "3600612D 0001"
+    },
+    {
+      "name": "Unlimited Strength",
+      "code": "3600612E 0001"
+    },
+    {
+      "name": "Unlimited Speed",
+      "code": "3600612F 0001"
+    },
+    {
+      "name": "Unlimited Power",
+      "code": "36006130 0001"
+    },
+    {
+      "name": "Unlimited Monkey Power",
+      "code": "36006131 0001"
+    },
+    {
+      "name": "Unlimited Reverse Direction",
+      "code": "36006132 0001"
+    },
+    {
+      "name": "Unlimited Small Characters",
+      "code": "36006133 0001"
+    },
+    {
+      "name": "Unlimited Swords",
+      "code": "3600613A 0001"
+    },
+    {
+      "name": "Unlimited Large Swords",
+      "code": "3600613B 0001"
+    },
+    {
+      "name": "Unlimited Silver Boots",
+      "code": "3600613D 0001"
+    },
+    {
+      "name": "Unlimited Gold Gloves",
+      "code": "3600613F 0001"
+    },
+    {
+      "name": "Unlimited Silver Gloves",
+      "code": "36006140 0001"
+    },
+    {
+      "name": "Unlimited Boxing Gloves",
+      "code": "36006141 0001"
+    },
+    {
+      "name": "Unlimited Green Boots",
+      "code": "36006144 0001"
+    },
+    {
+      "name": "Unlimited Blue Boots",
+      "code": "36006145 0001"
+    },
+    {
+      "name": "Unlimited Judo Suits",
+      "code": "36006147 0001"
+    },
+    {
+      "name": "Unlimited Cars",
+      "code": "36006148 0001"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "1600615A 006E"
+    },
+    {
+      "name": "Max Energy",
+      "code": "1600615E 006E"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "16006114 FFFF"
+    },
+    {
+      "name": "Unlimited Gold Keys",
+      "code": "3600611E 0001"
+    },
+    {
+      "name": "Unlimited Silver Keys",
+      "code": "3600611F 0001"
+    },
+    {
+      "name": "Unlimited Gold Keys",
+      "code": "36006126 0001"
+    },
+    {
+      "name": "Unlimited Silver Keys",
+      "code": "36006127 0001"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "16006114 270F"
+    }
+  ]
+}

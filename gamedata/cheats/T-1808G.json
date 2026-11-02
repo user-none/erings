@@ -1,0 +1,18 @@
+{
+  "serial": "T-1808G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "TF (AC) Invulnerability",
+      "code": "1602A808 0010"
+    },
+    {
+      "name": "TF4 Invulnerability",
+      "code": "1602013C 0010"
+    },
+    {
+      "name": "TF4 Max T-Sword",
+      "code": "1602225C 00FF"
+    }
+  ]
+}

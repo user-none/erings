@@ -1,0 +1,26 @@
+{
+  "serial": "T-9515H-50",
+  "title": "Whizz",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 012927 010020"
+  ],
+  "release_date": "1997-08-29",
+  "developer": "Flair Software",
+  "publisher": "Konami Deutschland",
+  "genres": [
+    "Action",
+    "Platform"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Whizz is one of the few 3D platformers to use an isometric viewpoint. The controls reflect this, with moving the controller to the right actually moving the character down and right, moving it down and right moving the character down directly, and so on. Each level is played out against a time limit, and the paths through the level aren’t always clear-cut. There are four different types of doors, each of which needs a particular icon to pass (the icons represent the door type, such as ice or bricks, rather than hot water or a key, or anything you’d logically expect to clear the path). You can avoid the baddies, which may be the best option, as killing them costs you some energy –this reduces the significance of the points system."
+}

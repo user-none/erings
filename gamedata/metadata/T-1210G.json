@@ -1,0 +1,26 @@
+{
+  "serial": "T-1210G",
+  "title": "Rockman X3",
+  "native_title": "ロックマンＸ３",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 976219 154550"
+  ],
+  "release_date": "1996-04-26",
+  "developer": "Capcom",
+  "publisher": "Virgin Interactive Entertainment",
+  "genres": [
+    "Platform",
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "A Reploid scientist named Dr. Doppler begins creation of a new city for Reploids, which will bring a new era of peace to the Reploids and humans. But something goes terribly wrong, and now Mavericks have begun to appear everywhere! It's up to X and Zero to find out who is behind this Maverick revolt and bring them down for good!"
+}

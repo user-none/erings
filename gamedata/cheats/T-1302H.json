@@ -1,0 +1,10 @@
+{
+  "serial": "T-1302H",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Always Player 1's Turn",
+      "code": "160AA53E 0000"
+    }
+  ]
+}

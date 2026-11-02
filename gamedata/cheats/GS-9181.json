@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9181",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "16057370 0000"
+    },
+    {
+      "name": "Max Speed",
+      "code": "16052A08 016F"
+    }
+  ]
+}

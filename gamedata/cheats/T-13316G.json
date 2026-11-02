@@ -1,0 +1,18 @@
+{
+  "serial": "T-13316G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Invulnerability",
+      "code": "160662BE 0010"
+    },
+    {
+      "name": "Unlimited Green Gems",
+      "code": "1606629E 03E7"
+    },
+    {
+      "name": "Unlimited Life",
+      "code": "16066298 0305\n3606629A 0005"
+    }
+  ]
+}

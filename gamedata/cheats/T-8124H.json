@@ -1,0 +1,10 @@
+{
+  "serial": "T-8124H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "1606A82A 007F"
+    }
+  ]
+}

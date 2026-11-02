@@ -1,0 +1,46 @@
+{
+  "serial": "GS-9018",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited HP for Hikaru",
+      "code": "360B7EEF 0014\n360B7EF0 0014"
+    },
+    {
+      "name": "Unlimited MP for Hikaru",
+      "code": "360B7EF1 0014\n360B7EF2 0014"
+    },
+    {
+      "name": "Hikaru Learns Magic",
+      "code": "360B7EF4 0003"
+    },
+    {
+      "name": "Unlimited HP for Umi",
+      "code": "360B7EF9 0014\n360B7EFA 0014"
+    },
+    {
+      "name": "Unlimited MP for Umi",
+      "code": "360B7EFB 0014\n360B7EFC 0014"
+    },
+    {
+      "name": "Umi Learns Magic",
+      "code": "360B7EFE 0003"
+    },
+    {
+      "name": "Unlimited HP for Fuu",
+      "code": "360B7F03 0014\n360B7F04 0014"
+    },
+    {
+      "name": "Unlimited MP for Fuu",
+      "code": "360B7F05 0014\n360B7F06 0014"
+    },
+    {
+      "name": "Fuu Learns Magic",
+      "code": "360B7F08 0003"
+    },
+    {
+      "name": "Unlimited Jewels",
+      "code": "160B7F0C 03E7"
+    }
+  ]
+}

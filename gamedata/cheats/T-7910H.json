@@ -1,0 +1,142 @@
+{
+  "serial": "T-7910H",
+  "master_code": "F60073C6 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Air",
+      "code": "1609447E 0708"
+    },
+    {
+      "name": "Infinite Shotgun Shells",
+      "code": "1609452A 0030"
+    },
+    {
+      "name": "Infinite Magnum Ammo",
+      "code": "16094512 001B"
+    },
+    {
+      "name": "Infinite Uzi Ammo",
+      "code": "1609451E 0128"
+    },
+    {
+      "name": "Infinite Health (The Caves)",
+      "code": "10245F7A 03E8"
+    },
+    {
+      "name": "Infinite Health (City of Vicabama)",
+      "code": "1023A5FE 03E8"
+    },
+    {
+      "name": "Infinite Health (Lost Valley)",
+      "code": "1022DFA2 03E8"
+    },
+    {
+      "name": "Infinite Health (Tomb of Qualopec)",
+      "code": "1025DE42 03E8"
+    },
+    {
+      "name": "Infinite Health (St. Francis Folly)",
+      "code": "1023C91A 03E8"
+    },
+    {
+      "name": "Infinite Health (Colosseum)",
+      "code": "1024426A 03E8"
+    },
+    {
+      "name": "Infinite Health (Palace Midas)",
+      "code": "1022210E 03E8"
+    },
+    {
+      "name": "Infinite Large Medi Pacs",
+      "code": "160622D0 0004"
+    },
+    {
+      "name": "Infinite Health (The Cistern)",
+      "code": "1021BBC2 03E8"
+    },
+    {
+      "name": "Infinite Health (Tomb of Tihocan)",
+      "code": "10215462 03E8"
+    },
+    {
+      "name": "Infinite Health (City of Khamoon)",
+      "code": "1022D2A6 03E8"
+    },
+    {
+      "name": "Infinite Health (Obelisk of Khamoon)",
+      "code": "102262F2 03E8"
+    },
+    {
+      "name": "Infinite Health (Sanctuary of The Scion)",
+      "code": "102356DA 03E8"
+    },
+    {
+      "name": "Infinite Health (Natla Mines)",
+      "code": "10225942 03E8"
+    },
+    {
+      "name": "Infinite Health (Atlantis)",
+      "code": "1022D54A 03E8"
+    },
+    {
+      "name": "Infinite Health (The Great Pyramid)",
+      "code": "1022AB1E 03E8"
+    },
+    {
+      "name": "Start On City of Vicabama",
+      "code": "D6060CB6 0001\n16060CB6 0002"
+    },
+    {
+      "name": "Start On Lost Valley",
+      "code": "D6060CB6 0001\n16060CB6 0003"
+    },
+    {
+      "name": "Start On Tomb of Qualopec",
+      "code": "D6060CB6 0001\n16060CB6 0004"
+    },
+    {
+      "name": "Start On St. Francis Folly",
+      "code": "D6060CB6 0001\n16060CB6 0005"
+    },
+    {
+      "name": "Start On Colosseum",
+      "code": "D6060CB6 0001\n16060CB6 0006"
+    },
+    {
+      "name": "Start On Palace Midas",
+      "code": "D6060CB6 0001\n16060CB6 0007"
+    },
+    {
+      "name": "Start On The Cistern",
+      "code": "D6060CB6 0001\n16060CB6 0008"
+    },
+    {
+      "name": "Start On Tomb of Tihocan",
+      "code": "D6060CB6 0001\n16060CB6 0009"
+    },
+    {
+      "name": "Start On City of Khamoon",
+      "code": "D6060CB6 0001\n16060CB6 000A"
+    },
+    {
+      "name": "Start On Obelisk of Khamoon",
+      "code": "D6060CB6 0001\n16060CB6 000B"
+    },
+    {
+      "name": "Start On Sanctuary of the Scion",
+      "code": "D6060CB6 0001\n16060CB6 000C"
+    },
+    {
+      "name": "Start On Natla Mines",
+      "code": "D6060CB6 0001\n16060CB6 000D"
+    },
+    {
+      "name": "Start On Atlantis",
+      "code": "D6060CB6 0001\n16060CB6 000E"
+    },
+    {
+      "name": "Start On The Great Pyramid",
+      "code": "D6060CB6 0001\n16060CB6 000F"
+    }
+  ]
+}

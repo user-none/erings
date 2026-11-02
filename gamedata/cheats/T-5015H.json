@@ -1,0 +1,98 @@
+{
+  "serial": "T-5015H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Home Team Scores 0",
+      "code": "1609D076 0000"
+    },
+    {
+      "name": "Away Team Scores 0",
+      "code": "1609D176 0000"
+    },
+    {
+      "name": "Max Defensive Awareness",
+      "code": "16083726 00FF"
+    },
+    {
+      "name": "Max Defensive Rebounds",
+      "code": "160836C6 00FF"
+    },
+    {
+      "name": "Max Offensive Awareness",
+      "code": "16083706 00FF"
+    },
+    {
+      "name": "Max Offensive Rebounds",
+      "code": "160836A6 00FF"
+    },
+    {
+      "name": "Maximum 3-Pointers",
+      "code": "16083606 00FF"
+    },
+    {
+      "name": "Maximum Blocking",
+      "code": "16083686 00FF"
+    },
+    {
+      "name": "Maximum Dribbling",
+      "code": "160837A6 00FF"
+    },
+    {
+      "name": "Maximum Dunking",
+      "code": "16083646 00FF"
+    },
+    {
+      "name": "Maximum Fatigue",
+      "code": "160835C6 00FF"
+    },
+    {
+      "name": "Maximum Field Goals",
+      "code": "160835E6 00FF"
+    },
+    {
+      "name": "Maximum Free Throws",
+      "code": "16083626 00FF"
+    },
+    {
+      "name": "Maximum Jumping",
+      "code": "16083786 00FF"
+    },
+    {
+      "name": "Maximum Passing",
+      "code": "160836E6 00FF"
+    },
+    {
+      "name": "Maximum Quickness",
+      "code": "16083766 00FF"
+    },
+    {
+      "name": "Maximum Shot Range",
+      "code": "160837E6 00FF"
+    },
+    {
+      "name": "Maximum Speed",
+      "code": "16083746 00FF"
+    },
+    {
+      "name": "Maximum Stealing",
+      "code": "16083666 00FF"
+    },
+    {
+      "name": "Maximum Strength",
+      "code": "160837C6 00FF"
+    },
+    {
+      "name": "Press Cheat Device Button To Stop Clock",
+      "code": "1609E656 2A30"
+    },
+    {
+      "name": "Stop Shot Clock",
+      "code": "1609E712 05A0"
+    },
+    {
+      "name": "(Character Creation) Max Defensive Rebounds",
+      "code": "16083CC6 00FF"
+    }
+  ]
+}

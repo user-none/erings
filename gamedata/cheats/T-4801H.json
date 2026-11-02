@@ -1,0 +1,14 @@
+{
+  "serial": "T-4801H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Only One Lap",
+      "code": "16074ED4 0003"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "16074EF0 03E7"
+    }
+  ]
+}

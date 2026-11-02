@@ -1,0 +1,38 @@
+{
+  "serial": "MK-81111",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Home Team Scores 0",
+      "code": "16095A8A 0000"
+    },
+    {
+      "name": "Home Team Scores 0",
+      "code": "16095A96 0000"
+    },
+    {
+      "name": "Infinite Time to Choose Your Play",
+      "code": "16092B8E 06A0"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "16092B8A 34BC"
+    },
+    {
+      "name": "Infinite Time Outs Home Team",
+      "code": "16095A82 0004"
+    },
+    {
+      "name": "No Time Outs Home Team",
+      "code": "16095A82 0000"
+    },
+    {
+      "name": "Infinite Time Outs Away Team",
+      "code": "16096AB2 0004"
+    },
+    {
+      "name": "No Time Outs Away Team",
+      "code": "16096AB2 0000"
+    }
+  ]
+}

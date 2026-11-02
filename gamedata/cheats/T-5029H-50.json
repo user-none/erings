@@ -1,0 +1,18 @@
+{
+  "serial": "T-5029H-50",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "9 Gobbos Saved",
+      "code": "16052E46 0009"
+    },
+    {
+      "name": "Infinite Crystals",
+      "code": "16052E3E 0063"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "1605D112 000A"
+    }
+  ]
+}

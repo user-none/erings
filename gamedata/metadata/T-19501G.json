@@ -1,0 +1,25 @@
+{
+  "serial": "T-19501G",
+  "title": "Shichuu Suimei Pitagraph",
+  "native_title": "四柱推命ピタグラフ",
+  "category": "Applications",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 932688 000088"
+  ],
+  "release_date": "1996-02-23",
+  "developer": "Success",
+  "publisher": "Datam Polystar",
+  "genres": [
+    "Life Simulation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Shichuu Suimei Pitagraph is a multimedia fortune-telling game based on Chinese Four Pillars astrology, which uses the date and time of a person's birth to divine their future. One or more players enter their information and can see various predictions about their health, fortune, and love prospects. Some activities are only available for groups, such as interpersonal compatibility rankings based on questions asked of each participant."
+}

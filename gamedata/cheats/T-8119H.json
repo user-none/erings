@@ -1,0 +1,22 @@
+{
+  "serial": "T-8119H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Boost (Iron Man Level 1)",
+      "code": "16088BE6 001E"
+    },
+    {
+      "name": "Unlimited Armour (Iron Man Level 1)",
+      "code": "160738AA 001E"
+    },
+    {
+      "name": "Unlimited Boost (Iron Man Level 2)",
+      "code": "1608A45E 001E"
+    },
+    {
+      "name": "Unlimited Lives (Iron Man all levels)",
+      "code": "16087F5E 0003"
+    }
+  ]
+}

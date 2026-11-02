@@ -1,0 +1,23 @@
+{
+  "serial": "T-18702G",
+  "title": "Heiwa Pachinko Soushingeki",
+  "native_title": "平和パチンコ総進撃",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-10-04",
+  "developer": "Amtex",
+  "publisher": "Naxat Soft",
+  "genres": [
+    "Casino"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Heiwa Pachinko Sōshingeki is a pachinko simulation game featuring recreations of four real-life pachinko machines licensed from pachinko manufacturer Heiwa: CD Meiga, CD Ryujin, Daisangen, and Hayabusa. The main game mode has the player visiting various pachinko parlors to play each of the machines and attempt to win as much as possible. The game also includes two customization modes: the first lets the player adjust the arrangement of the pins on each board, while the second lets the player combine various layouts and background graphics to create a custom machine."
+}

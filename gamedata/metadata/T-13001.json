@@ -1,0 +1,25 @@
+{
+  "serial": "T-13001",
+  "title": "Shanghai: Triple-Threat",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 47875 53052 2"
+  ],
+  "release_date": "1995-02-24",
+  "developer": "Activision",
+  "publisher": "Activision",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Another version of the ancient game of Mah-Jong. The player is presented with an arrangement of tiles, lined up together and stacked, with either 2 or 4 of each of an array of patterns. These must be removed by matching pairs, but only tiles which are visible and have a space to the left or right can be removed.\n\nThis release in the Activision's Shanghai series includes three games along with the Classic Shanghai. In The Great Wall, the tiles are stacked vertically, and fall when lower tiles are removed, a lá Tetris. In Beijing, gaps are created to slide groups of tiles along. The Golden Tile sees two players attempt to clear a set layout at once. The Triple-theme continues with three game modes: Solitaire, 2-player \"Pandamonium\", and Arcade. Three themed tile sets complete the \"Triple Threat\"."
+}

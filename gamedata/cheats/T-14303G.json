@@ -1,0 +1,14 @@
+{
+  "serial": "T-14303G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Level Increase (see tip below)",
+      "code": "16085ED4 0090"
+    },
+    {
+      "name": "Extra Money",
+      "code": "16086272 FFFF"
+    }
+  ]
+}

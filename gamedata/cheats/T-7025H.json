@@ -1,0 +1,30 @@
+{
+  "serial": "T-7025H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "P1 Infinite Magic",
+      "code": "160642D8 00FF"
+    },
+    {
+      "name": "P1 No Magic",
+      "code": "160642D8 0000"
+    },
+    {
+      "name": "P2 Infinite Magic",
+      "code": "16064310 00FF"
+    },
+    {
+      "name": "P2 No Magic",
+      "code": "16064310 0000"
+    },
+    {
+      "name": "P1 Never Wins",
+      "code": "360642E7 0000"
+    },
+    {
+      "name": "P2 Never Wins",
+      "code": "3606431F 0000"
+    }
+  ]
+}

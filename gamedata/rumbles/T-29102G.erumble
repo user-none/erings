@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Shienryu (Japan)
+gameid: T-29102G
+system: saturn
+---
+
+# The disc carries two complete builds of the game that load over each
+# other at 0x06004000: sat.bin for Saturn mode and stv.bin for arcade
+# mode. Every watch below therefore exists twice.
+watch build long 0x06004098
+
+def saturn_mode build == 0x060BDDA4
+def arcade_mode build == 0x060BCA90
+
+
+# --- Saturn mode (sat.bin) ---
+
+# Nonzero for as long as a game is running. 0 in menus, and 0 from the
+# moment a build is loaded until a game starts.
+watch s_running long 0x060BC354
+
+# 0 while a human plays, 1 during the demo
+watch s_demo long 0x060BDDE4
+
+# Ship state. 0 whenever the ship is off the field: before the player
+# starts, through the respawn wait, and from the last death onward.
+watch s_p1_ship word 0x060CE924
+watch s_p2_ship word 0x060CE990
+
+# Lives.
+watch s_p1_lives word 0x060BC2FC
+watch s_p2_lives word 0x060BC2FE
+
+# Bombs, 20 max.
+watch s_p1_bomb word 0x060BC304
+watch s_p2_bomb word 0x060BC306
+
+def s_play saturn_mode and s_running != 0 and s_demo == 0
+
+# On the field, or waiting out a respawn with lives left.
+def s_p1_playing s_play and (s_p1_ship != 0 or s_p1_lives > 0)
+def s_p2_playing s_play and (s_p2_ship != 0 or s_p2_lives > 0)
+
+# Death.
+on s_p1_ship changed to 0 while s_play:
+    pulse 1.0 600ms priority 1
+on s_p2_ship changed to 0 while s_play:
+    pulse 1.0 600ms priority 1 player 2
+
+# Bomb. Either player's bomb clears the whole screen, so both pads feel it.
+on (s_p1_bomb decreased and s_p1_lives unchanged and s_p1_ship != 0)
+   or (s_p2_bomb decreased and s_p2_lives unchanged and s_p2_ship != 0)
+   while s_p1_playing:
+    pattern (0.9 130ms, off 50ms, 0.7 170ms, off 50ms, 0.5 220ms, off 50ms, 0.3 440ms, off 50ms, 0.2 550ms)
+on (s_p1_bomb decreased and s_p1_lives unchanged and s_p1_ship != 0)
+   or (s_p2_bomb decreased and s_p2_lives unchanged and s_p2_ship != 0)
+   while s_p2_playing:
+    pattern (0.9 130ms, off 50ms, 0.7 170ms, off 50ms, 0.5 220ms, off 50ms, 0.3 440ms, off 50ms, 0.2 550ms)
+
+
+# --- Arcade mode (stv.bin) ---
+# Same variables, same layout, shifted down by 0x1314.
+
+watch a_running long 0x060BB040
+watch a_demo long 0x060BCAD0
+watch a_p1_ship word 0x060CD610
+watch a_p2_ship word 0x060CD67C
+watch a_p1_lives word 0x060BAFE8
+watch a_p2_lives word 0x060BAFEA
+watch a_p1_bomb word 0x060BAFF0
+watch a_p2_bomb word 0x060BAFF2
+
+def a_play arcade_mode and a_running != 0 and a_demo == 0
+def a_p1_playing a_play and (a_p1_ship != 0 or a_p1_lives > 0)
+def a_p2_playing a_play and (a_p2_ship != 0 or a_p2_lives > 0)
+
+on a_p1_ship changed to 0 while a_play:
+    pulse 1.0 600ms priority 1
+on a_p2_ship changed to 0 while a_play:
+    pulse 1.0 600ms priority 1 player 2
+
+on (a_p1_bomb decreased and a_p1_lives unchanged and a_p1_ship != 0)
+   or (a_p2_bomb decreased and a_p2_lives unchanged and a_p2_ship != 0)
+   while a_p1_playing:
+    pattern (0.9 130ms, off 50ms, 0.7 170ms, off 50ms, 0.5 220ms, off 50ms, 0.3 440ms, off 50ms, 0.2 550ms)
+on (a_p1_bomb decreased and a_p1_lives unchanged and a_p1_ship != 0)
+   or (a_p2_bomb decreased and a_p2_lives unchanged and a_p2_ship != 0)
+   while a_p2_playing:
+    pattern (0.9 130ms, off 50ms, 0.7 170ms, off 50ms, 0.5 220ms, off 50ms, 0.3 440ms, off 50ms, 0.2 550ms)

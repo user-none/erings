@@ -1,0 +1,18 @@
+{
+  "serial": "GS-9028",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives",
+      "code": "160778D8 0032"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "1607A19A 0A82"
+    },
+    {
+      "name": "Enemy Troops Zero",
+      "code": "16076986 0000\n1607A142 0000"
+    }
+  ]
+}

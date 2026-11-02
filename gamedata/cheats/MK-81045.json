@@ -1,0 +1,54 @@
+{
+  "serial": "MK-81045",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "16078A5C 0080"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "16078B50 0080"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "16078A5C 0000"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "16078B50 0000"
+    },
+    {
+      "name": "(Player 1) 25% Energy",
+      "code": "D6078A5C 0080\n16078A5C 0020"
+    },
+    {
+      "name": "(Player 1) 50% Energy",
+      "code": "D6078A5C 0080\n16078A5C 0040"
+    },
+    {
+      "name": "(Player 1) 75% Energy",
+      "code": "D6078A5C 0080\n16078A5C 0060"
+    },
+    {
+      "name": "(Player 2) 25% Energy",
+      "code": "D6078B50 0080\n16078B50 0020"
+    },
+    {
+      "name": "(Player 2) 50% Energy",
+      "code": "D6078B50 0080\n16078B50 0040"
+    },
+    {
+      "name": "(Player 2) 75% Energy",
+      "code": "D6078B50 0080\n16078B50 0060"
+    },
+    {
+      "name": "(Player 1) Die In One Hit",
+      "code": "D6078A5C 0080\n16078A5C 0001"
+    },
+    {
+      "name": "(Player 2) Die In One Hit",
+      "code": "D6078B50 0080\n16078B50 0001"
+    }
+  ]
+}

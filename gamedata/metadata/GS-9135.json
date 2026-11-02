@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9135",
+  "title": "Sega Ages: Memorial Selection Vol. 1",
+  "native_title": "セガエイジス メモリアル・セレクションＶＯＬ．１",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091354"
+  ],
+  "release_date": "1997-02-28",
+  "developer": "Sega CS1",
+  "publisher": "Sega",
+  "genres": [
+    "Compilation"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Sega Ages: Memorial Selection Vol. 1\n\nRelive the early years of Sega with their first memorial selection. Volume 1 features Pengo, Head On, Up'n Down and Flicky."
+}

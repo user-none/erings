@@ -1,0 +1,26 @@
+{
+  "serial": "T-15908H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Nitro's",
+      "code": "3025CDF5 0014"
+    },
+    {
+      "name": "Infinite Missiles",
+      "code": "3025CDF7 0014"
+    },
+    {
+      "name": "Infinite Cash",
+      "code": "1025CDFC 0090"
+    },
+    {
+      "name": "Infinite Armor",
+      "code": "1602A898 0069"
+    },
+    {
+      "name": "Inifnite Clones/Cars",
+      "code": "3025CDFA 0033"
+    }
+  ]
+}

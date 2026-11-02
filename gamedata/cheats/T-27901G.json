@@ -1,0 +1,50 @@
+{
+  "serial": "T-27901G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "(Character 2) Unlimited MP",
+      "code": "1021F584 03E7"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "1021F7FC 0098\n1021F7FE 967F"
+    },
+    {
+      "name": "(Main Character) Level Rise",
+      "code": "1021F47E 0001\n1021F478 0098\n1021F47A 967F\n1021F47C 0000"
+    },
+    {
+      "name": "(Character 1) Level Rise",
+      "code": "1021F5FE 0001\n1021F5F8 0098\n1021F5FA 967F\n1021F5FC 0000"
+    },
+    {
+      "name": "(Character 2) Level Rise",
+      "code": "1021F5BE 0001\n1021F5B8 0098\n1021F5BA 967F\n1021F5BC 0000"
+    },
+    {
+      "name": "Give Main Character Unlimited MP",
+      "code": "1021F444 03E7\n1021F478 0098\n1021F47A 967F\n1021F47C 0000"
+    },
+    {
+      "name": "Level Increase (main character)",
+      "code": "1021F47E 0001"
+    },
+    {
+      "name": "Level Increase (sub-character 2)",
+      "code": "1021F5BE 0001"
+    },
+    {
+      "name": "Level Increase (sub-character 1)",
+      "code": "1021F5FE 0001"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "1021F7FE FFFF"
+    },
+    {
+      "name": "Level Up",
+      "code": "160F86FA FFFF"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: MEGAMAN 8
+gameid: T-1216H
+system: saturn
+---
+
+# Player object active.
+watch alive byte 0x0602FF98
+
+# Game mode: 3 = inside a stage (under the in-game main loop).
+watch mode byte 0x0602DA5A
+
+# In-stage sub-mode: 1 = gameplay, 2 = death flow, 3 = clear/exit flow.
+watch sub byte 0x0602DA5B
+
+# Pause/weapon menu open when nonzero.
+watch pause byte 0x0605E860
+
+def instage alive != 0 and mode == 3
+def ingame instage and sub == 1 and pause == 0
+
+# Player top state: 1 = teleport in, 2 = in control, 3 = death ring.
+watch pstate byte 0x0602FF99
+
+# Player action: 5 land, 7 slide, 8 knockback, 12 ball kick,
+# 21 claw swing, 22 astro crush, 23/24 ride mount/riding.
+watch action byte 0x0602FF9A
+
+# Player HP, 40 max. 0 = dead.
+watch hp byte 0x0602FFDF
+
+# Teleport
+def tele pstate == 1 and instage
+
+# Death ring, decaying with the orbs.
+on hp decreased to 0 while ingame:
+    pattern (1.0 250ms, off 100ms, 0.7 180ms, off 100ms, 0.5 150ms, off 100ms, 0.35 150ms) priority 1
+
+# Ride HP takes the damage instead of the player while on the sled
+# or jet. A drop is an obstacle hit.
+watch ridehp byte 0x0603001D
+on ridehp decreased while ingame: pulse 0.8/0.6 150ms
+
+# Knockback: the jolt rides the shove, not the hit frame.
+on action changed to 8 while ingame: pulse 0.85/0.7 200ms
+
+# High word of the vertical velocity: whole pixels per frame,
+# negative while falling. Still holds the fall speed on the frame the
+# action becomes 5.
+watch fall word 0x0602FFB0 signed
+
+# Hard landing scaled by fall speed: -6 lightest, -12 or faster full
+# strength. Slow falls stay silent.
+on action changed to 5 and fall <= -6 while ingame:
+    pulse 0.8/0.7 150ms scale fall -12..-6 -> 1.0..0.4
+
+# Mega Ball kick.
+on action changed to 12 while ingame: pulse 0.7/0.5 140ms
+
+# Thunder Claw: pop when the swing latches.
+on action changed to 21 while ingame: pulse 0.5 120ms
+
+# Thunder Claw swing tension.
+on action == 21 while ingame: hold 0.2/0.35
+
+# Astro Crush: 65-frame cast window, decaying pattern.
+on action changed to 22 while ingame:
+    pattern (0.9 250ms, 0.75 250ms, 0.6 250ms, 0.45 300ms)
+
+# Slide: scrape-in pulse, then the hold below carries the envelope.
+on action changed to 7 while ingame: pulse 0.5/0.6 100ms
+
+# Slide hold: releases the frame the slide ends or is canceled.
+on action == 7 while ingame: hold 0.3/0.5
+
+# Buster charge counter: +1 per held frame (+2 with the quick-charge
+# part), glow tier above 30, snaps to 255 at full charge.
+watch charge byte 0x06030002
+
+on charge >= 31 and charge != 255 while ingame: pulse 0.4 100ms
+on charge == 255 while ingame: pulse 0.6 130ms
+# Full-charge release: the counter leaves 255 the frame the shot fires.
+on charge changed from 255 while ingame: pulse 0.8/0.7 160ms
+
+# Submerged flag: set crossing under the water line, cleared surfacing.
+watch wet byte 0x0603000E
+on wet changed to 1 while ingame: pulse 0.3/0.5 120ms
+on wet changed to 0 while ingame: pulse 0.25/0.45 120ms
+
+# Dampen all rumble while underwater
+event submerged wet == 1 held for 5 frames
+on submerged while ingame: dampen 10%
+
+# Teleport in: HP refills from 0 the moment the beam materializes.
+on hp increased from 0 while tele:
+    pattern (0.25 120ms, 0.45 120ms, 0.7 180ms)
+
+# Teleport out / stage clear: sub-mode flips to 3 at the beam-out.
+on sub changed to 3 while instage: pulse 0.5 250ms
+
+# Room/shutter transition: section byte steps at each door. Four
+# clunks to match the shutter cadence.
+watch section byte 0x0602DABC
+on section changed while ingame:
+    pattern (0.5 90ms, off 140ms, 0.5 90ms, off 140ms, 0.5 90ms, off 140ms, 0.5 90ms)
+
+# Boss fight flag and boss HP (pool slot 0 + 0x47; bar fills +1 per
+# 2 frames to 40 during the intro).
+watch bossgate byte 0x0602DAB0
+watch bosshp byte 0x06031D27
+on bosshp increased while instage and bossgate == 1: pulse 0/0.35 40ms
+
+# Screen shake: two countdown channels, nonzero while shaking.
+watch shake1 word 0x0602FF12
+watch shake2 word 0x0602FF14
+on shake1 != 0 or shake2 != 0 while ingame: hold 0.6/0.6
+
+# Current stage id. 3 = the wind stage.
+watch stage byte 0x0602DA86
+# Player pixel position, for the wind zones.
+watch px word 0x0602FFA4
+watch py word 0x0602FFA8
+
+# Wind zones (the wind object's zone rectangles). Push is 0.5
+# px/frame in zones 2 and 3, 0.25 in zone 1.
+on px >= 2816 and px <= 5888 and py >= 6144 and py <= 6400 while ingame and stage == 3: hold 0.3/0.35
+on px >= 2304 and px <= 3840 and py >= 256 and py <= 512 while ingame and stage == 3: hold 0.2/0.25
+on px >= 256 and px <= 2304 and py >= 768 and py <= 1024 while ingame and stage == 3: hold 0.1/0.05

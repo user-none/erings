@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Batsugun (Japan)
+gameid: T-20605G
+system: saturn
+---
+
+# Player state, at the head of that player's 0x40 byte record.
+#   0x0000 not in the game
+#   0x8000 alive
+#   0x0100 dying, from the 1st frame of the explosion until respawn
+watch p1_state word 0x060B13F2
+watch p2_state word 0x060B1432
+def p1_playing p1_state != 0
+def p2_playing p2_state != 0
+
+# Bomb stock at record +0x22. Spent the instant the bomb is fired.
+watch p1_bombs word 0x060B1414
+watch p2_bombs word 0x060B1454
+
+# Death.
+on p1_state changed to 0x0100:
+    pulse 1.0 800ms priority 1
+
+on p2_state changed to 0x0100:
+    pulse 1.0 800ms priority 1 player 2
+
+# Bomb.
+on (p1_bombs decreased or p2_bombs decreased) while p1_playing:
+    pattern (1.0 600ms, 0.8 500ms, 0.7 400ms, 0.6 300ms)
+
+on (p2_bombs decreased or p1_bombs decreased) while p2_playing:
+    pattern (1.0 600ms, 0.8 500ms, 0.7 400ms, 0.6 300ms) player 2

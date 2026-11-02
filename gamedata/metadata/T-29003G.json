@@ -1,0 +1,23 @@
+{
+  "serial": "T-29003G",
+  "title": "Go III Professional: Taikyoku Igo",
+  "native_title": "ＧＯⅢ Ｐｒｏｆｅｓｓｉｏｎａｌ ～対局囲碁～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-08-01",
+  "developer": "Oxford Softworks",
+  "publisher": "Mainichi Communications",
+  "genres": [
+    "Board Game"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Go III Professional: Taikyoku Igo is a digital conversion of the ancient Chinese board game Go, part of a series of such games produced by Oxford Softworks. Like the previous release, this version offers play against 12 different CPU skill levels or a second player, options for 9x9, 13x13, and 19x19 game boards, handicap options, Chinese or Japanese rule variations, and a variety of board graphic options. New in this version is the option to set turn time limits for each player."
+}

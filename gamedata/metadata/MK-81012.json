@@ -1,0 +1,36 @@
+{
+  "serial": "MK-81012",
+  "title": "The Mansion of Hidden Souls",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe",
+    "Germany",
+    "Spain",
+    "France"
+  ],
+  "languages": [
+    "English",
+    "German",
+    "Spanish",
+    "French"
+  ],
+  "barcodes": [
+    "0 10086 81012 7",
+    "4 974365 655013",
+    "4 974365 655044",
+    "4 974365 655020",
+    "4 974365 655037"
+  ],
+  "release_date": "1994-12-02",
+  "developer": "System Sacom",
+  "publisher": "Sega",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "This Saturn-exclusive game is actually a sequel to the Sega CD game Mansion of Hidden Souls, even though the title might lead one to believe it is a remake.\n\nThis game takes place after the events of the first game. The souls of the hidden mansion have asked you to return, because they have recognized that you possess special powers that allow you to see the butterfly manifestations of the souls living there. Something terrible is afoot at the mansion, and you must investigate things and set them right. Along the way you must discover the true purpose of the mansion and it's significance in the universe.\n\nMuch like the Sega CD game, this is an FMV adventure. You move from location to location via video sequences, and solve puzzles to move on in the story."
+}

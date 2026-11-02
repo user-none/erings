@@ -1,0 +1,42 @@
+{
+  "serial": "T-5009H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Timer Counts Fast",
+      "code": "1607B48A 0300\n1607B48E 0301"
+    },
+    {
+      "name": "Timer Never Passes 00:01.0",
+      "code": "D60FF186 0160\n160FF186 0130"
+    },
+    {
+      "name": "Always Race On City Track",
+      "code": "3609920D 0000"
+    },
+    {
+      "name": "Always Race On Coastal Track",
+      "code": "3609920D 0001"
+    },
+    {
+      "name": "Always Race On Alpine Track",
+      "code": "3609920D 0002"
+    },
+    {
+      "name": "Always Race On Rusty Springs",
+      "code": "3609920D 0003"
+    },
+    {
+      "name": "Always Race On Autumn Valley",
+      "code": "3609920D 0004"
+    },
+    {
+      "name": "Always Race On Vertigo Ridge",
+      "code": "3609920D 0005"
+    },
+    {
+      "name": "Always Race On Lost Vegas",
+      "code": "3609920D 0006"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "serial": "T-8108H",
+  "master_code": "F6000914 C305\nB60C2800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Energy P1",
+      "code": "160E4190 008F"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "160E4590 008F"
+    },
+    {
+      "name": "Super Bar Always Powered At Level 3 P1",
+      "code": "160E4194 008E"
+    },
+    {
+      "name": "Super Bar Always Powered At Level 3 P2",
+      "code": "160E4594 008E"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "160E4808 960F"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D60E4190 008F\n160E4190 0023"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D60E4190 008F\n160E4190 0047"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D60E4190 008F\n160E4190 006B"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "160E4190 0000"
+    },
+    {
+      "name": "1-Hit Death Energy P1",
+      "code": "D60E4190 008F\n160E4190 0001"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D60E4590 008F\n160E4590 0023"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D60E4590 008F\n160E4590 0047"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D60E4590 008F\n160E4590 006B"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "160E4590 0000"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D60E4590 008F\n160E4590 0001"
+    },
+    {
+      "name": "Player 1 is Storm",
+      "code": "160E4900 0001"
+    },
+    {
+      "name": "Player 1 is Cyclops",
+      "code": "160E4900 0101"
+    },
+    {
+      "name": "Player 1 is Wolverine",
+      "code": "160E4900 0201"
+    },
+    {
+      "name": "Player 1 is Omega Red",
+      "code": "160E4900 0301"
+    },
+    {
+      "name": "Player 1 is Sentinel",
+      "code": "160E4900 0401"
+    },
+    {
+      "name": "Player 1 is Iceman",
+      "code": "160E4900 0501"
+    },
+    {
+      "name": "Player 1 is Colossus",
+      "code": "160E4900 0601"
+    },
+    {
+      "name": "Player 1 is Psylocke",
+      "code": "160E4900 0701"
+    },
+    {
+      "name": "Player 1 is Silver Samurai",
+      "code": "160E4900 0801"
+    },
+    {
+      "name": "Player 1 is Spiral",
+      "code": "160E4900 0901"
+    },
+    {
+      "name": "Player 1 is Juggernaut",
+      "code": "160E4900 0A01"
+    },
+    {
+      "name": "Player 1 is Magneto",
+      "code": "160E4900 0B01"
+    },
+    {
+      "name": "Player 1 is Akuma",
+      "code": "160E4900 0C01"
+    },
+    {
+      "name": "Player 2 is Storm",
+      "code": "160E4902 0001"
+    },
+    {
+      "name": "Player 2 is Cyclops",
+      "code": "160E4902 0101"
+    },
+    {
+      "name": "Player 2 is Wolverine",
+      "code": "160E4902 0201"
+    },
+    {
+      "name": "Player 2 is Omega Red",
+      "code": "160E4902 0301"
+    },
+    {
+      "name": "Player 2 is Sentinel",
+      "code": "160E4902 0401"
+    },
+    {
+      "name": "Player 2 is Iceman",
+      "code": "160E4902 0501"
+    },
+    {
+      "name": "Player 2 is Colossus",
+      "code": "160E4902 0601"
+    },
+    {
+      "name": "Player 2 is Psylocke",
+      "code": "160E4902 0701"
+    },
+    {
+      "name": "Player 2 is Silver Samurai",
+      "code": "160E4902 0801"
+    },
+    {
+      "name": "Player 2 is Spiral",
+      "code": "160E4902 0901"
+    },
+    {
+      "name": "Player 2 is Juggernaut",
+      "code": "160E4902 0A01"
+    },
+    {
+      "name": "Player 2 is Magneto",
+      "code": "160E4902 0B01"
+    },
+    {
+      "name": "Player 2 is Akuma",
+      "code": "160E4902 0C01"
+    }
+  ]
+}

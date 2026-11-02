@@ -1,0 +1,94 @@
+{
+  "serial": "T-14411G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "160D78FE 0163"
+    },
+    {
+      "name": "(Player 1) Character 1 Unlimited Energy",
+      "code": "160C8F06 00DF"
+    },
+    {
+      "name": "(Player 1) Character 2 Unlimited Energy",
+      "code": "160C9006 00DF"
+    },
+    {
+      "name": "(Player 1) Power Bar Full",
+      "code": "160D7F68 5F00"
+    },
+    {
+      "name": "(Player 2) Character 1 Unlimited Energy",
+      "code": "160C8F86 00DF"
+    },
+    {
+      "name": "(Player 2) Character 2 Unlimited Energy",
+      "code": "160C9086 00DF"
+    },
+    {
+      "name": "(Player 2) Power Bar Full",
+      "code": "160D7F6A 5F00"
+    },
+    {
+      "name": "Omake Option Enabled",
+      "code": "160CF088 0104"
+    },
+    {
+      "name": "Omake Larry Enabled",
+      "code": "360CF078 00FF"
+    },
+    {
+      "name": "Omake Chris Enabled",
+      "code": "360CF079 00FF"
+    },
+    {
+      "name": "Omake Popura Enabled",
+      "code": "360CF07A 00FF"
+    },
+    {
+      "name": "Omake Remi Enabled",
+      "code": "360CF07B 00FF"
+    },
+    {
+      "name": "Omake Solis Enabled",
+      "code": "360CF07C 00FF"
+    },
+    {
+      "name": "Omake MAD Enabled",
+      "code": "360CF07D 00FF"
+    },
+    {
+      "name": "Omake Tenjinbashi Enabled",
+      "code": "360CF07E 00FF"
+    },
+    {
+      "name": "Omake Hizumi Enabled",
+      "code": "360CF07F 00FF"
+    },
+    {
+      "name": "Omake Oume & Otane Enabled",
+      "code": "360CF080 00FF"
+    },
+    {
+      "name": "Omake Falco Enabled",
+      "code": "360CF081 00FF"
+    },
+    {
+      "name": "Omake Gartheimer Enabled",
+      "code": "360CF082 00FF"
+    },
+    {
+      "name": "Omake Damian Enabled",
+      "code": "360CF083 00FF"
+    },
+    {
+      "name": "Omake Bristol Enabled",
+      "code": "360CF084 00FF"
+    },
+    {
+      "name": "Omake Bristol-D Enabled",
+      "code": "360CF085 00FF"
+    }
+  ]
+}

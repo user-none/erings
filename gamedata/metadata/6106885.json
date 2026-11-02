@@ -1,0 +1,23 @@
+{
+  "serial": "6106885",
+  "title": "Keriotosse! (Demo)",
+  "native_title": "ケリオトッセ！",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1998-06-18",
+  "developer": "Unlimited",
+  "publisher": "Masudaya",
+  "genres": [
+    "Action"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "Keriotosse! is an overhead-view arcade action game where the goal is simple: kick everyone else out of the arena! Four combatants enter each arena, and the winner is the last one left standing on the platform. Each circular arena has different hazards such as a volcano erupting in the center, ice physics, or the entire platform tilting back and forth. There are six playable characters to pick from, with several additional unlockable characters, and there is a story mode with eight stages and a boss plus a free-battle mode for up to four players."
+}

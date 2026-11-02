@@ -1,0 +1,126 @@
+{
+  "serial": "T-1301H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Health",
+      "code": "1022A32A 0064"
+    },
+    {
+      "name": "(Version 1) Unlimited Ammo",
+      "code": "160E0A90 0014"
+    },
+    {
+      "name": "(Version 2) Unlimited Ammo",
+      "code": "160E0A92 0007"
+    },
+    {
+      "name": "Level 1 Projectiles",
+      "code": "160E0A9A 0000"
+    },
+    {
+      "name": "Level 2 Projectiles",
+      "code": "160E0A9A 0001"
+    },
+    {
+      "name": "Level 3 Projectiles",
+      "code": "160E0A9A 0002"
+    },
+    {
+      "name": "(Turret 1) Unlimited Ammo",
+      "code": "102365D6 00C8"
+    },
+    {
+      "name": "(Turret 1) Gun Always Cools",
+      "code": "102365DA 0000"
+    },
+    {
+      "name": "(Turret 1) Unlimited Energy",
+      "code": "1022A7D2 0000"
+    },
+    {
+      "name": "(Turret 1) Unlimited Missiles",
+      "code": "102365DE 0005"
+    },
+    {
+      "name": "(Turret 2) Unlimited Ammo",
+      "code": "10236612 00C8"
+    },
+    {
+      "name": "(Turret 2) Gun Always Cools",
+      "code": "10236616 0000"
+    },
+    {
+      "name": "(Turret 2) Unlimited Energy",
+      "code": "1022A7DA 0000"
+    },
+    {
+      "name": "(Turret 2) Unlimited Missiles",
+      "code": "1023661A 0005"
+    },
+    {
+      "name": "(Turret 3) Unlimited Ammo",
+      "code": "1023664E 00C8"
+    },
+    {
+      "name": "(Turret 3) Gun Always Cools",
+      "code": "10236652 0000"
+    },
+    {
+      "name": "(Turret 3) Unlimited Energy",
+      "code": "1022A7E2 0000"
+    },
+    {
+      "name": "(Turret 3) Unlimited Missiles",
+      "code": "10236656 0005"
+    },
+    {
+      "name": "(Turret 4) Unlimited Ammo",
+      "code": "1023668A 00C8"
+    },
+    {
+      "name": "(Turret 4) Gun Always Cools",
+      "code": "1023668E 0000"
+    },
+    {
+      "name": "(Turret 4) Unlimited Energy",
+      "code": "1022A7EA 0000"
+    },
+    {
+      "name": "(Turret 4) Unlimited Missiles",
+      "code": "10236692 0005"
+    },
+    {
+      "name": "(Turret 5) Unlimited Ammo",
+      "code": "102366C6 00C8"
+    },
+    {
+      "name": "(Turret 5) Gun Always Cools",
+      "code": "102366CA 0000"
+    },
+    {
+      "name": "(Turret 5) Unlimited Energy",
+      "code": "1022A7F2 0000"
+    },
+    {
+      "name": "(Turret 5) Unlimited Missiles",
+      "code": "102366CE 0005"
+    },
+    {
+      "name": "(Turret 6) Unlimited Ammo",
+      "code": "10236702 00C8"
+    },
+    {
+      "name": "(Turret 6) Gun Always Cools",
+      "code": "10236706 0000"
+    },
+    {
+      "name": "(Turret 6) Unlimited Energy",
+      "code": "1022A7FA 0000"
+    },
+    {
+      "name": "(Turret 6) Unlimited Missiles",
+      "code": "1023670A 0005"
+    }
+  ]
+}

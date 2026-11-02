@@ -1,0 +1,105 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Daytona USA Circuit Edition
+gameid: GS-9100
+system: saturn
+---
+
+# Speed.
+watch p1_speed long 0x06052270
+watch p2_speed long 0x06052448
+
+# Surface under each wheel, one long per wheel.
+# Test bit 0 for surface. 1 tarmac, 4 off course.
+# Upper bits are surface types.
+watch p1_w0 long 0x06052298 mask 0x01
+watch p1_w1 long 0x0605229C mask 0x01
+watch p1_w2 long 0x060522A0 mask 0x01
+watch p1_w3 long 0x060522A4 mask 0x01
+watch p2_w0 long 0x06052470 mask 0x01
+watch p2_w1 long 0x06052474 mask 0x01
+watch p2_w2 long 0x06052478 mask 0x01
+watch p2_w3 long 0x0605247C mask 0x01
+
+# Gear, counting from 0.
+watch p1_gear word 0x060523C6
+watch p2_gear word 0x0605259E
+
+# Contact with a wall, scenery or another car. Nonzero while in
+# contact, holding one of several codes: 4, 5, 6, and 8 all appear,
+# and 0 is the only reading with the car running clear.
+watch p1_contact word 0x060523DC
+watch p2_contact word 0x060525B4
+
+# Height above the track, 16.16, same units as the speed field. 0 on
+# the wheels, up to about 0x1CB48 with the car resting over on its
+# body, and 0x2A7BB and above once it is off the ground.
+watch p1_air long 0x06052274 signed
+watch p2_air long 0x0605244C signed
+const grounded 0x24000
+
+# Racing.
+watch phase byte 0x06054929
+const racing 4
+
+# Scene 2 the demo, and for scene 4 is a real race.
+watch scene word 0x06019A20
+const scene_race 4
+
+# Demo index.
+watch demo byte 0x0601335C
+const not_demo 0
+
+# Race is under player control.
+watch handoff byte 0x06051F92
+const player_driving 0
+
+# A real race is running.
+def in_race scene == scene_race and demo == not_demo and handoff == player_driving and phase == racing
+
+# Minimum speed to trigger rumble.
+def p1_moving in_race and p1_speed >= 0x4000
+def p2_moving in_race and p2_speed >= 0x4000
+
+# Off the racing surface.
+def p1_anyoff p1_w0 == 0 or p1_w1 == 0 or p1_w2 == 0 or p1_w3 == 0
+def p2_anyoff p2_w0 == 0 or p2_w1 == 0 or p2_w2 == 0 or p2_w3 == 0
+
+
+# --- Player 1 ---
+
+# Hitting something. 0x4000 = 27 kph. 0x2C71C = 300 kph.
+on p1_speed decreased by at least 0x2000 while in_race:
+    pulse 0.9/0.8 200ms priority 1 scale p1_speed 0x4000..0x2C71C -> 0.5..1.0
+on p1_speed decreased and p1_contact != 0 while in_race:
+    pulse 0.9/0.8 240ms priority 1 scale p1_speed 0x4000..0x2C71C -> 0.5..1.0
+
+# Ground strike. Fires the frame the car comes back down, so a tumble
+# rumbles once per bounce and nothing plays while it is in the air.
+# Scaled by how far it dropped in that frame.
+on p1_air decreased and p1_air <= grounded while in_race:
+    pulse 0.9/0.8 160ms cooldown 80ms scale p1_air 0x4000..0x22000 -> 0.5..1.0
+
+# Shift.
+on p1_gear changed while p1_moving:
+    pulse 0.40/0.45 140ms cooldown 160ms
+
+# Off the surface, scaled by speed.
+on p1_anyoff while p1_moving:
+    hold 0.55/0.7 scale p1_speed 0x4000..0x2C71C -> 0.2..1.0
+
+
+# --- Player 2 ---
+
+on p2_speed decreased by at least 0x2000 while in_race:
+    pulse 0.9/0.8 200ms priority 1 scale p2_speed 0x4000..0x2C71C -> 0.5..1.0
+on p2_speed decreased and p2_contact != 0 while in_race:
+    pulse 0.9/0.8 240ms priority 1 scale p2_speed 0x4000..0x2C71C -> 0.5..1.0
+
+on p2_air decreased and p2_air <= grounded while in_race:
+    pulse 0.9/0.8 160ms cooldown 80ms scale p2_air 0x4000..0x22000 -> 0.5..1.0 player 2
+
+on p2_gear changed while p2_moving:
+    pulse 0.40/0.45 140ms cooldown 160ms player 2
+
+on p2_anyoff while p2_moving:
+    hold 0.55/0.7 scale p2_speed 0x4000..0x2C71C -> 0.2..1.0 player 2

@@ -1,0 +1,150 @@
+{
+  "serial": "T-4502G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Gun Ammo (Kharkov)",
+      "code": "160873B0 00FF"
+    },
+    {
+      "name": "Keep Machine Gun Cool (Kharkov)",
+      "code": "160873B2 0000"
+    },
+    {
+      "name": "Unlimited AP (Kharkov)",
+      "code": "160873B4 00FF"
+    },
+    {
+      "name": "Unlimited ATM (Kharkov)",
+      "code": "160873B6 00FF"
+    },
+    {
+      "name": "Invincibility (Kharkov)",
+      "code": "16083434 05DC"
+    },
+    {
+      "name": "Invincibility (Kiev)",
+      "code": "16082264 05DC"
+    },
+    {
+      "name": "Unlimited Gun Ammo (Novosibirsk)",
+      "code": "16088F60 00FF"
+    },
+    {
+      "name": "Keep Machine Gun Cool (Novosibirsk)",
+      "code": "16088F62 0000"
+    },
+    {
+      "name": "Unlimited AP (Novosibirsk)",
+      "code": "16088F64 00FF"
+    },
+    {
+      "name": "Unlimited ATM (Novosibirsk)",
+      "code": "16088F66 00FF"
+    },
+    {
+      "name": "Invincibility (Novosibirsk)",
+      "code": "16084FE4 05DC"
+    },
+    {
+      "name": "Unlimited Gun Ammo (Uran Batol)",
+      "code": "1608AA90 00FF"
+    },
+    {
+      "name": "Keep Machine Gun Cool (Uran Batol)",
+      "code": "1608AA92 0000"
+    },
+    {
+      "name": "Unlimited AP (Uran Batol)",
+      "code": "1608AA94 00FF"
+    },
+    {
+      "name": "Unlimited ATM (Uran Batol)",
+      "code": "1608A966 00FF"
+    },
+    {
+      "name": "Invincibility (Uran Batol)",
+      "code": "16086B14 05DC"
+    },
+    {
+      "name": "Unlimited Gun Ammo (Datong)",
+      "code": "1608A658 00FF"
+    },
+    {
+      "name": "Keep Machine Gun Cool (Datong)",
+      "code": "1608A65A 0000"
+    },
+    {
+      "name": "Unlimited AP (Datong)",
+      "code": "1608A65C 00FF"
+    },
+    {
+      "name": "Unlimited ATM (Datong)",
+      "code": "1608A65E 00FF"
+    },
+    {
+      "name": "Invincibility (Datong)",
+      "code": "160866DC 05DC"
+    },
+    {
+      "name": "Unlimited Gun Ammo (Lianyungang)",
+      "code": "16088EC8 00FF"
+    },
+    {
+      "name": "Keep Machine Gun Cool (Lianyungang)",
+      "code": "16088ECA 0000"
+    },
+    {
+      "name": "Unlimited AP (Lianyungang)",
+      "code": "16088ECC 00FF"
+    },
+    {
+      "name": "Unlimited ATM (Lianyungang)",
+      "code": "16088ECE 00FF"
+    },
+    {
+      "name": "Invincibility (Lianyungang)",
+      "code": "16084F4C 05DC"
+    },
+    {
+      "name": "Unlimited Gun Ammo (Weifang)",
+      "code": "16088AC0 00FF"
+    },
+    {
+      "name": "Keep Machine Gun Cool (Weifang)",
+      "code": "16088AC2 0000"
+    },
+    {
+      "name": "Unlimited AP (Weifang)",
+      "code": "16088AC4 00FF"
+    },
+    {
+      "name": "Unlimited ATM (Weifang)",
+      "code": "16088AC6 00FF"
+    },
+    {
+      "name": "Invincibility (Weifang)",
+      "code": "16084B44 05DC"
+    },
+    {
+      "name": "Unlimited Gun Ammo (East Ural)",
+      "code": "16082C58 00FF"
+    },
+    {
+      "name": "Keep Machine Gun Cool (East Ural)",
+      "code": "16082C5A 0000"
+    },
+    {
+      "name": "Unlimited AP (East Ural)",
+      "code": "16082C5C 00FF"
+    },
+    {
+      "name": "Unlimited ATM (East Ural)",
+      "code": "16082C5E 00FF"
+    },
+    {
+      "name": "Invincibility (East Ural)",
+      "code": "1607ECDC 05DC"
+    }
+  ]
+}

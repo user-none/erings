@@ -1,0 +1,54 @@
+{
+  "serial": "T-9707H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Credits P1",
+      "code": "160864AE 0009"
+    },
+    {
+      "name": "Infinite Credits P2",
+      "code": "160864B2 0009"
+    },
+    {
+      "name": "Infinite Health P1",
+      "code": "16086222 0005"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "160862AE 0005"
+    },
+    {
+      "name": "Machine Gun P1",
+      "code": "16086272 0001"
+    },
+    {
+      "name": "Machine Gun P2",
+      "code": "160862FE 0001"
+    },
+    {
+      "name": "No Reload P1",
+      "code": "16086276 0008"
+    },
+    {
+      "name": "No Reload P2",
+      "code": "16086302 0008"
+    },
+    {
+      "name": "Shotgun P1",
+      "code": "16086272 0002"
+    },
+    {
+      "name": "Shotgun P2",
+      "code": "160862FE 0002"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "16086222 0009"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160862AE 0009"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "serial": "T-33901G",
+  "master_code": "F9000924 FFFF\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Faster Level Ups & Max EXP",
+      "code": "16098D4E FFFF"
+    },
+    {
+      "name": "Max Status",
+      "code": "16098D54 03E7\n16098D56 03E7\n16098D58 03E7\n16098D5A 03E7\n16098D5C 03E7\n16098D5E 03E7"
+    }
+  ]
+}

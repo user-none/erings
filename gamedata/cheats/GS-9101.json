@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9101",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Player 1 Unlimited Health",
+      "code": "16062CF4 00FA"
+    },
+    {
+      "name": "Player 2 Unlimited Health",
+      "code": "16064BF4 00FA"
+    },
+    {
+      "name": "Stop Ranking Timer",
+      "code": "160E006E 0019"
+    },
+    {
+      "name": "No Energy for Player 1",
+      "code": "16062CF4 0000"
+    },
+    {
+      "name": "No Energy for Player 2",
+      "code": "16064BF4 0000"
+    }
+  ]
+}

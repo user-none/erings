@@ -1,0 +1,25 @@
+{
+  "serial": "T-19904G",
+  "title": "Harukaze Sentai V-Force",
+  "native_title": "はるかぜ戦隊 Ｖフォース",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988736 070046"
+  ],
+  "release_date": "1997-06-27",
+  "developer": "Ving",
+  "publisher": "Ving",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Harukaze Sentai V-Force is an isometric strategy game similar to Front Mission or Super Robot Taisen. The game follows Natsuki, Mizuki, and Kagetsu, three sisters who are pilots in the Earth Defense Force. Each mission allows you to configure your character's weaponry, and as they fight, they will gain experience and level up. Before and after each mission, fully-animated cutscenes drive the plot forward, and sometimes they will appear at crucial points during a mission as well."
+}

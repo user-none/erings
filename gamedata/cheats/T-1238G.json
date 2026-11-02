@@ -1,0 +1,246 @@
+{
+  "serial": "T-1238G",
+  "master_code": "F6000914 C321\nB6000B00 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Power",
+      "code": "160F3A54 0300"
+    },
+    {
+      "name": "(Player 2) Unlimited Power",
+      "code": "160F3E54 0300"
+    },
+    {
+      "name": "Second Character Has Wacky Colors",
+      "code": "160F4448 0000"
+    },
+    {
+      "name": "(Player 1) Invulnerability & Unlimited HP",
+      "code": "160F3A50 0090\n160F3A5A 0090\n160F4250 0090\n160F425A 0090"
+    },
+    {
+      "name": "(Player 2) Invulnerability & Unlimited HP",
+      "code": "160F3E50 0090\n160F3E5A 0090\n160F4650 0090\n160F465A 0090"
+    },
+    {
+      "name": "Choose Repeated Characters",
+      "code": "16017AAA 0001\n16017AAE 0001"
+    },
+    {
+      "name": "Player 1 first character is Cyclops",
+      "code": "160F3852 0002"
+    },
+    {
+      "name": "Player 1 first character is Captain America",
+      "code": "160F3852 0004"
+    },
+    {
+      "name": "Player 1 first character is Hulk",
+      "code": "160F3852 0006"
+    },
+    {
+      "name": "Player 1 first character is Wolverine",
+      "code": "160F3852 0008"
+    },
+    {
+      "name": "Player 1 first character is Blackheart",
+      "code": "160F3852 0010"
+    },
+    {
+      "name": "Player 1 first character is Ryu",
+      "code": "160F3852 0012"
+    },
+    {
+      "name": "Player 1 first character is Ken",
+      "code": "160F3852 0014"
+    },
+    {
+      "name": "Player 1 first character is Chun Li",
+      "code": "160F3852 0016"
+    },
+    {
+      "name": "Player 1 first character is Dhalsim",
+      "code": "160F3852 0018"
+    },
+    {
+      "name": "Player 1 first character is Zangief",
+      "code": "160F3852 001A"
+    },
+    {
+      "name": "Player 1 first character is Sakura",
+      "code": "160F3852 0020"
+    },
+    {
+      "name": "Player 1 first character is Norimaro",
+      "code": "160F3852 0022"
+    },
+    {
+      "name": "Player 1 first character is Dan",
+      "code": "160F3852 0024"
+    },
+    {
+      "name": "Player 1 first character is Mech-Gouki",
+      "code": "160F3852 0026"
+    },
+    {
+      "name": "Player 1 first character is Mega Zangief",
+      "code": "160F3852 0028"
+    },
+    {
+      "name": "Player 1 first character is Dark Sakura",
+      "code": "160F3852 002A"
+    },
+    {
+      "name": "Player 1 first character is Mephisto",
+      "code": "160F3852 0030"
+    },
+    {
+      "name": "Player 1 first character is Silver Spiderman",
+      "code": "160F3852 0032"
+    },
+    {
+      "name": "Player 1 second character is Cyclops",
+      "code": "360F4053 0002"
+    },
+    {
+      "name": "Player 1 second character is Captain America",
+      "code": "360F4053 0004"
+    },
+    {
+      "name": "Player 1 second character is Hulk",
+      "code": "360F4053 0006"
+    },
+    {
+      "name": "Player 1 second character is Wolverine",
+      "code": "360F4053 0008"
+    },
+    {
+      "name": "Player 1 second character is Blackheart",
+      "code": "360F4053 0010"
+    },
+    {
+      "name": "Player 1 second character is Ryu",
+      "code": "360F4053 0012"
+    },
+    {
+      "name": "Player 1 second character is Ken",
+      "code": "360F4053 0014"
+    },
+    {
+      "name": "Player 1 second character is Chun Li",
+      "code": "360F4053 0016"
+    },
+    {
+      "name": "Player 1 second character is Dhalsim",
+      "code": "360F4053 0018"
+    },
+    {
+      "name": "Player 1 second character is Zangief",
+      "code": "360F4053 001A"
+    },
+    {
+      "name": "Player 1 second character is Sakura",
+      "code": "360F4053 0020"
+    },
+    {
+      "name": "Player 1 second character is Norimaro",
+      "code": "360F4053 0022"
+    },
+    {
+      "name": "Player 1 second character is Dan",
+      "code": "360F4053 0024"
+    },
+    {
+      "name": "Player 1 second character is Mech-Gouki",
+      "code": "360F4053 0026"
+    },
+    {
+      "name": "Player 1 second character is Mega Zangief",
+      "code": "360F4053 0028"
+    },
+    {
+      "name": "Player 1 second character is Dark Sakura",
+      "code": "360F4053 002A"
+    },
+    {
+      "name": "Player 1 second character is Mephisto",
+      "code": "360F4053 0030"
+    },
+    {
+      "name": "Player 1 second character is Silver Spiderman",
+      "code": "360F4053 0032"
+    },
+    {
+      "name": "Player 2 second character is Cyclops",
+      "code": "360F4453 0002"
+    },
+    {
+      "name": "Player 2 second character is Captain America",
+      "code": "360F4453 0004"
+    },
+    {
+      "name": "Player 2 second character is Hulk",
+      "code": "360F4453 0006"
+    },
+    {
+      "name": "Player 2 second character is Wolverine",
+      "code": "360F4453 0008"
+    },
+    {
+      "name": "Player 2 second character is Blackheart",
+      "code": "360F4453 0010"
+    },
+    {
+      "name": "Player 2 second character is Ryu",
+      "code": "360F4453 0012"
+    },
+    {
+      "name": "Player 2 second character is Ken",
+      "code": "360F4453 0014"
+    },
+    {
+      "name": "Player 2 second character is Chun Li",
+      "code": "360F4453 0016"
+    },
+    {
+      "name": "Player 2 second character is Dhalsim",
+      "code": "360F4453 0018"
+    },
+    {
+      "name": "Player 2 second character is Zangief",
+      "code": "360F4453 001A"
+    },
+    {
+      "name": "Player 2 second character is Sakura",
+      "code": "360F4453 0020"
+    },
+    {
+      "name": "Player 2 second character is Norimaro",
+      "code": "360F4453 0022"
+    },
+    {
+      "name": "Player 2 second character is Dan",
+      "code": "360F4453 0024"
+    },
+    {
+      "name": "Player 2 second character is Mech-Gouki",
+      "code": "360F4453 0026"
+    },
+    {
+      "name": "Player 2 second character is Mega Zangief",
+      "code": "360F4453 0028"
+    },
+    {
+      "name": "Player 2 second character is Dark Sakura",
+      "code": "360F4453 002A"
+    },
+    {
+      "name": "Player 2 second character is Mephisto",
+      "code": "360F4453 0030"
+    },
+    {
+      "name": "Player 2 second character is Silver Spiderman",
+      "code": "360F4453 0032"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "serial": "MK-81046",
+  "cheats": [
+    {
+      "name": "Level Select Enabled",
+      "code": "3600E57E 0001"
+    },
+    {
+      "name": "Invulnerability",
+      "code": "3600E571 0001"
+    },
+    {
+      "name": "Charge Enemies",
+      "code": "3600E577 0001"
+    },
+    {
+      "name": "Double Energy",
+      "code": "3600E579 0001"
+    },
+    {
+      "name": "Disable Centering on Turret",
+      "code": "3600E57B 0001"
+    },
+    {
+      "name": "Change Height",
+      "code": "3600E572 0001"
+    },
+    {
+      "name": "Unlimited Jumps",
+      "code": "3600E57A 0001"
+    },
+    {
+      "name": "See Ending",
+      "code": "3600E57F 0001"
+    },
+    {
+      "name": "Play On Kharkov Level",
+      "code": "160D570A 0000"
+    },
+    {
+      "name": "Play On Kiev Level",
+      "code": "160D570A 0101"
+    },
+    {
+      "name": "Play On Novosibirsk Level",
+      "code": "160D570A 0202"
+    },
+    {
+      "name": "Play On Ulan Bator Level",
+      "code": "160D570A 0303"
+    },
+    {
+      "name": "Play On Datong Level",
+      "code": "160D570A 0404"
+    },
+    {
+      "name": "Play On Lianyungang Level",
+      "code": "160D570A 0505"
+    },
+    {
+      "name": "Play On Weifang Level",
+      "code": "160D570A 0606"
+    },
+    {
+      "name": "Play On East Ural Level",
+      "code": "160D570A 0707"
+    },
+    {
+      "name": "Play On Training Beginner Level",
+      "code": "160D570A 0808"
+    },
+    {
+      "name": "Play On Training Expert Level",
+      "code": "160D570A 0909"
+    }
+  ]
+}

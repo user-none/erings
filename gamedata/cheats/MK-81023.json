@@ -1,0 +1,34 @@
+{
+  "serial": "MK-81023",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "16092072 00A0"
+    },
+    {
+      "name": "Play Bonus Level",
+      "code": "1609EA90 0909"
+    },
+    {
+      "name": "(Player 1) 25% Energy",
+      "code": "D6092072 00A0\n16092072 0028"
+    },
+    {
+      "name": "(Player 1) 50% Energy",
+      "code": "D6092072 00A0\n16092072 0050"
+    },
+    {
+      "name": "(Player 1) 75% Energy",
+      "code": "D6092072 00A0\n16092072 0078"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "D6092072 00A0\n16092072 0000"
+    },
+    {
+      "name": "(Player 1) Die In One Hit",
+      "code": "D6092072 00A0\n16092072 0010"
+    }
+  ]
+}

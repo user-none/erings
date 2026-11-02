@@ -1,0 +1,22 @@
+{
+  "serial": "GS-9053",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "16087D2E 05E6"
+    },
+    {
+      "name": "Unlimited Bombs",
+      "code": "160876A0 0902"
+    },
+    {
+      "name": "Unlimited Magic",
+      "code": "16087D32 0654"
+    },
+    {
+      "name": "All Monsters (see notes below)",
+      "code": "1608769E 3F00"
+    }
+  ]
+}

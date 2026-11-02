@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9060",
+  "master_code": "F6003DEE C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives for Player 1",
+      "code": "16057932 0505"
+    },
+    {
+      "name": "Unlimited Lives for Player 2",
+      "code": "16057972 0505"
+    },
+    {
+      "name": "Unlimited Bullets for Player 1",
+      "code": "1606A3B8 0006"
+    },
+    {
+      "name": "Unlimited Bullets for Player 2",
+      "code": "1606A408 0006"
+    },
+    {
+      "name": "Open Options Plus and Ranking Modes",
+      "code": "160579B8 0201"
+    }
+  ]
+}

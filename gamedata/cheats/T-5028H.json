@@ -1,0 +1,10 @@
+{
+  "serial": "T-5028H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Low Lap Time",
+      "code": "102B8556 006B"
+    }
+  ]
+}

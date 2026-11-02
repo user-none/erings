@@ -1,0 +1,30 @@
+{
+  "serial": "GS-9097",
+  "master_code": "F6003D5C C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives for Player 1",
+      "code": "1604E042 0909"
+    },
+    {
+      "name": "Unlimited Lives for Player 2",
+      "code": "1604E086 0909"
+    },
+    {
+      "name": "Unlimited Bullets for Player 1",
+      "code": "36052ED9 0006"
+    },
+    {
+      "name": "Unlimited Bullets for Player 2",
+      "code": "36052F29 0006"
+    },
+    {
+      "name": "Unlimited Credits",
+      "code": "3604DFBD 0009"
+    },
+    {
+      "name": "Open Extra Options Plus Menu",
+      "code": "160688D4 0301"
+    }
+  ]
+}

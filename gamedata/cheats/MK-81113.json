@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81113",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Home Team Wins",
+      "code": "160F419A 0032\n102F001E 0032"
+    },
+    {
+      "name": "Away Team Wins",
+      "code": "160F41BA 0032\n102F003E 0032"
+    },
+    {
+      "name": "Home Team Wins",
+      "code": "160F419A 0032"
+    },
+    {
+      "name": "Away Team Wins",
+      "code": "160F41BA 0032"
+    }
+  ]
+}

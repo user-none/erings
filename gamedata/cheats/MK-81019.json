@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81019",
+  "master_code": "F60B6C12 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "360DBD38 0005"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "360DBD39 0005"
+    },
+    {
+      "name": "Infinite Power",
+      "code": "360DBB76 00FF"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "360DBD3A 0063"
+    }
+  ]
+}

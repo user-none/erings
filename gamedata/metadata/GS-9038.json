@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9038",
+  "title": "Wing Arms: Kareinaru Gekitsuiou",
+  "native_title": "ウイング・アームズ ～華麗なる撃墜王～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 090388"
+  ],
+  "release_date": "1995-09-29",
+  "developer": "Bell",
+  "publisher": "Sega of America",
+  "genres": [
+    "Flight Simulator",
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Wing Arms is an arcade-style flight simulator/shooter starring airplanes mainly from the WW2 era. There is very little simulation here as you shoot your way through levels where usually your mission is to shoot everyone, or to bomb certain targets. Night missions add to the variety. Gameplay is similar to the Wing Commander series, and is intended to be easy to play but hard to master."
+}

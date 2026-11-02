@@ -1,0 +1,18 @@
+{
+  "serial": "T-26102G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "16052AFE 01FF\n16052B02 03FF\n16052B06 03FF"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "16052B00 01FF\n16052B04 03FF\n16052B08 03FF"
+    },
+    {
+      "name": "Unlimited EXP Points for CPU Character",
+      "code": "360FEDC0 0063"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "serial": "GS-9152",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "160921E8 0090"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "1609220C 0090"
+    },
+    {
+      "name": "Player 1 is Red Eye",
+      "code": "1606C114 0008"
+    },
+    {
+      "name": "No Energy for Player 1",
+      "code": "160921E8 0000"
+    },
+    {
+      "name": "No Energy for Player 2",
+      "code": "1609220C 0000"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "1606CBBA 06E7\n1609D9AE 06E7"
+    }
+  ]
+}

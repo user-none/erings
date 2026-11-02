@@ -1,0 +1,29 @@
+{
+  "serial": "T-7015H",
+  "title": "Hyper 3-D Pinball",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English",
+    "French",
+    "German"
+  ],
+  "barcodes": [
+    "0 52145 89002 2",
+    "5 028587 080098"
+  ],
+  "release_date": "1996-10-31",
+  "developer": "NMS Software",
+  "publisher": "Virgin Interactive Entertainment",
+  "genres": [
+    "Pinball"
+  ],
+  "max_players": 4,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "hyper 3-D Pinball is a pinball game. The 6 pinballs you can play in the 3D full screen-modus or in the classic 2D scroll-modus. The themes of the pinballs are Science Fiction (Star Quest), Horror (Monster), Racing (Road King), Underworld (Gangster), Fantasy (Myst & Majik) and Fair (Funfair). Every pinball has multi-ball gaming, animations (esp. ball-locks) during the game and intermezzos in the scoring field."
+}

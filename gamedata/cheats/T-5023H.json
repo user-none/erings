@@ -1,0 +1,30 @@
+{
+  "serial": "T-5023H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lumber (Humans)",
+      "code": "160D560A 270F"
+    },
+    {
+      "name": "Infinite Gold (Humans)",
+      "code": "160D564A 270F"
+    },
+    {
+      "name": "Infinite Oil (Humans)",
+      "code": "160D568A 270F"
+    },
+    {
+      "name": "Infinite Lumber (Orcs)",
+      "code": "160D5606 270F"
+    },
+    {
+      "name": "Infinite Gold (Orcs)",
+      "code": "160D5646 270F"
+    },
+    {
+      "name": "Infinite Oil (Orcs)",
+      "code": "160D5686 270F"
+    }
+  ]
+}

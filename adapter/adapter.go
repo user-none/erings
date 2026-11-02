@@ -52,7 +52,6 @@ type Factory struct{}
 // SystemInfo returns Saturn system metadata for the UI.
 func (f *Factory) SystemInfo() coreif.SystemInfo {
 	return coreif.SystemInfo{
-		Name:             erings.Name,
 		ConsoleName:      "Sega Saturn",
 		ScreenWidth:      704,
 		ScreenHeight:     512,
@@ -61,20 +60,10 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 		Buttons:          saturnButtons(),
 		Players:          2,
 		Disc:             true,
-		ConsoleID:        39,
 		BigEndianMemory:  true,
-		DataDirName:      "erings",
 		CoreName:         erings.Name,
 		CoreVersion:      erings.Version,
 		SerializeSize:    core.SerializeSize(),
-		MetadataVariants: []coreif.MetadataVariant{
-			{
-				Name:          "Sega Saturn",
-				RDBName:       "Sega - Saturn",
-				ThumbnailRepo: "Sega_-_Saturn",
-				RumbleRepoDir: "saturn",
-			},
-		},
 		CoreOptions: []coreif.CoreOption{
 			{
 				Key:         "fast_boot",

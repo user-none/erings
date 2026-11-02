@@ -1,0 +1,23 @@
+{
+  "serial": "T-9109G",
+  "title": "Moon Cradle",
+  "native_title": "ムーン・クレイドル",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-06-27",
+  "developer": "TOSE",
+  "publisher": "Pack-In-Soft",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Moon Cradle is a mystery adventure game which uses live-action video for cut-scenes and fixed isometric perspective during actual gameplay. The player controls the character directly while actions such as \"search\", \"talk\" or \"use\" are presented in a menu-selected manner."
+}

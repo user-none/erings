@@ -1,0 +1,18 @@
+{
+  "serial": "T-5022H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Money",
+      "code": "160E6562 07D0\n160E6C4A 07D0"
+    },
+    {
+      "name": "A Little Extra Durability",
+      "code": "1607C9BE 0000"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "16071A90 1E00"
+    }
+  ]
+}

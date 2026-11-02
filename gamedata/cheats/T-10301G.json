@@ -1,0 +1,14 @@
+{
+  "serial": "T-10301G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Life Energy",
+      "code": "1608029C 0168"
+    },
+    {
+      "name": "Unlimited Sub-Weapon Energy",
+      "code": "1607688A 0190\n16076892 0190"
+    }
+  ]
+}

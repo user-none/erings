@@ -1,0 +1,23 @@
+{
+  "serial": "T-2113G",
+  "title": "Derby Stallion",
+  "native_title": "ダービー・スタリオン",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1999-03-25",
+  "developer": "ParityBit",
+  "publisher": "ASCII",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Derby Stallion enters the 5th generation of consoles. The horse management sim returns with some new things.\n\nPlayers can now pick their jockey's clothing, the auction market changed from weekly to monthly, the number of competing horses has increased (16 for PSX, 18 for Saturn), and the weight of the horses is now taken into consideration during the race simulation.\n\nThe Saturn version also has a few minor additions which are including the Oi Racecourse during he Breeders' Cup and introducing a combination aspect to breeding. Players should attempt to create combinations of multiple lineages with the same type of inbreeding thus multiplying the inbreeding effect. Doing this is thought to breed extremely fast race horses."
+}

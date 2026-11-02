@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9010",
+  "master_code": "F600500A C305",
+  "cheats": [
+    {
+      "name": "Invulnerability",
+      "code": "160EA2FC 0050"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "160252B8 0009"
+    },
+    {
+      "name": "Unlimited Daggers",
+      "code": "160252B6 0063"
+    },
+    {
+      "name": "Unlimited Blue Power",
+      "code": "160252B2 0009"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "160EA2CA 0030\n160252B0 0030"
+    }
+  ]
+}

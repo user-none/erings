@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Astra Superstars (Japan)
+gameid: T-1521G
+system: saturn
+---
+
+# Scene index. 3 is the fight.
+watch scene word 0x0608603C
+
+# Round result. 0 while the round is being fought, 1 player 1 won,
+# 2 player 2 won, 3 double KO, 4 draw.
+watch result word 0x060856AA
+
+def fighting scene == 3
+def in_match fighting and result == 0
+
+# 0 for a human and 1 for the CPU.
+watch p1_cpu word 0x0607F558
+watch p2_cpu word 0x0607FA0C
+def p1_human p1_cpu == 0
+def p2_human p2_cpu == 0
+
+# Current action. 98, 99 and 100 are the Star Special actions.
+watch p1_act word 0x0607F5E4
+watch p2_act word 0x0607FA98
+def p1_starring p1_act in (98, 99, 100)
+def p2_starring p2_act in (98, 99, 100)
+
+# Hits that side has landed.
+watch p1_hits word 0x0607F630
+watch p2_hits word 0x0607FAE4
+
+# HP.
+watch p1_life long 0x0607F528
+watch p2_life long 0x0607F9DC
+def p1_ko p1_life == 0
+def p2_ko p2_life == 0
+
+# KO.
+on result changed from 0 and result in (2, 3) while fighting and p1_human and p1_ko:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1
+on result changed from 0 and result in (1, 3) while fighting and p2_human and p2_ko:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1 player 2
+
+# Draw
+on result changed from 0 and result == 4 while fighting and p1_human and not p1_ko and not p2_ko:
+    pattern (off 1300ms, 1.0 350ms, off 400ms, 1.0 350ms) priority 1 player 1
+on result changed from 0 and result == 4 while fighting and p2_human and not p1_ko and not p2_ko:
+    pattern (off 1300ms, 1.0 250ms, off 300ms, 1.0 250ms) priority 1 player 2
+
+# A Star Special connecting,
+on p2_hits increased while in_match and p1_human and p2_starring:
+    pattern (1.0 120ms, off 40ms, 0.85 120ms, off 40ms, 0.7 200ms)
+on p1_hits increased while in_match and p2_human and p1_starring:
+    pattern (1.0 120ms, off 40ms, 0.85 120ms, off 40ms, 0.7 200ms) player 2

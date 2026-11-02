@@ -1,0 +1,25 @@
+{
+  "serial": "T-1206G",
+  "title": "Street Fighter Zero",
+  "native_title": "ストリート・ファイターＺＥＲＯ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 976219 154475"
+  ],
+  "release_date": "1996-01-26",
+  "developer": "Capcom",
+  "publisher": "Capcom",
+  "genres": [
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "It's Street Fighter as you always remember it, with some new moves, characters and combo systems, as well as a more polished look and feel.\n\nThe new moves available for each fighter, called Super moves, allow them to fire off very powerful moves. A bar at the bottom of the screen represents the power that you have to use for the moves. You start the first round on 0, and each attack that you make adds power to the bar. Once you reach level 3, you can unleash the special attacks, that can sometimes KO the opponant.\n\nThe other major change over the Street Fighter 2 series are the Alpha counters. These can be used to counter an on-coming attack after blocking."
+}

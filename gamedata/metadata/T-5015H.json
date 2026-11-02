@@ -1,0 +1,27 @@
+{
+  "serial": "T-5015H",
+  "title": "NBA Live 97",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 14633 07729 2",
+    "5 030935 010893"
+  ],
+  "release_date": "1997-03-28",
+  "developer": "Realtime Associates",
+  "publisher": "Electronic Arts",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 10,
+  "cooperative": true,
+  "esrb": "E - Everyone",
+  "overview": "NBA Live 97 is a basketball game with an emphasis on realism. You can choose from all of the NBA teams, create a team with players you create yourself, or choose a team formed by the All-Star players of the east or West coasts. When you create a player yourself you can customize the player to a high degree. There are over 60 offensive and 10 defensive set-ups. Match options include an exhibition match, a whole season or the playoffs."
+}

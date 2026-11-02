@@ -1,0 +1,25 @@
+{
+  "serial": "T-14414G",
+  "title": "Minakata Hakudou Toujou",
+  "native_title": "南方珀堂登場",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 984995 800141"
+  ],
+  "release_date": "1997-08-07",
+  "developer": "Thinking Rabbit",
+  "publisher": "Atlus",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Minakata Hakudou Toujou is mystery adventure game with a faux claymation visual style. The player takes the role of an assistant to the titular Inspector Minakata, reviewing footage of crime scenes to look for anything suspicious. The bulk of the player's interaction involves clicking on objects, which will trigger dialogue descriptions of the object and ultimately lead to the solution of each case. The game includes two short tutorial cases and two longer main story cases."
+}

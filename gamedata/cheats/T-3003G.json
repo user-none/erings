@@ -1,0 +1,18 @@
+{
+  "serial": "T-3003G",
+  "master_code": "F6000924 FFFF\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "102FCD06 03E7"
+    },
+    {
+      "name": "Unlimited Points for Buying",
+      "code": "1023CA92 FFFF"
+    },
+    {
+      "name": "$0 For Enemy",
+      "code": "102FCD9A 0000"
+    }
+  ]
+}

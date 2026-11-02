@@ -1,0 +1,94 @@
+{
+  "serial": "T-8150H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Home Team Scores 25",
+      "code": "160AE172 1900"
+    },
+    {
+      "name": "Away Team Scores 25",
+      "code": "160AE172 0019"
+    },
+    {
+      "name": "01 Home Team Score",
+      "code": "360AE173 0001"
+    },
+    {
+      "name": "02 Home Team Score",
+      "code": "360AE173 0002"
+    },
+    {
+      "name": "03 Home Team Score",
+      "code": "360AE173 0003"
+    },
+    {
+      "name": "04 Home Team Score",
+      "code": "360AE173 0004"
+    },
+    {
+      "name": "05 Home Team Score",
+      "code": "360AE173 0005"
+    },
+    {
+      "name": "06 Home Team Score",
+      "code": "360AE173 0006"
+    },
+    {
+      "name": "07 Home Team Score",
+      "code": "360AE173 0007"
+    },
+    {
+      "name": "08 Home Team Score",
+      "code": "360AE173 0008"
+    },
+    {
+      "name": "09 Home Team Score",
+      "code": "360AE173 0009"
+    },
+    {
+      "name": "High Home Team Score",
+      "code": "360AE173 000F\n360AE173 0015"
+    },
+    {
+      "name": "01 Away Team Score",
+      "code": "360AE172 0001"
+    },
+    {
+      "name": "02 Away Team Score",
+      "code": "360AE172 0002"
+    },
+    {
+      "name": "03 Away Team Score",
+      "code": "360AE172 0003"
+    },
+    {
+      "name": "04 Away Team Score",
+      "code": "360AE172 0004"
+    },
+    {
+      "name": "05 Away Team Score",
+      "code": "360AE172 0005"
+    },
+    {
+      "name": "06 Away Team Score",
+      "code": "360AE172 0006"
+    },
+    {
+      "name": "07 Away Team Score",
+      "code": "360AE172 0007"
+    },
+    {
+      "name": "08 Away Team Score",
+      "code": "360AE172 0008"
+    },
+    {
+      "name": "09 Away Team Score",
+      "code": "360AE172 0009"
+    },
+    {
+      "name": "High Away Team Score",
+      "code": "360AE172 000F\n360AE172 0015"
+    }
+  ]
+}

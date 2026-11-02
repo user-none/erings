@@ -1,0 +1,23 @@
+{
+  "serial": "T-1107G",
+  "title": "Space Invaders",
+  "native_title": "スペース・インベーダー",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-12-13",
+  "developer": "Taito",
+  "publisher": "Taito",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The 1996 Saturn console release of the classic shoot-'em-up arcade game Space Invaders released exclusively in Japan. The game contains four variations of the original Space Invaders arcade game, each with different overlays. Also included is a two player \"battle\" mode."
+}

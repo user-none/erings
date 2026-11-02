@@ -1,0 +1,50 @@
+{
+  "serial": "T-7901H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Air Support",
+      "code": "16070748 0001"
+    },
+    {
+      "name": "Chain Gun Coolant",
+      "code": "16070752 0004"
+    },
+    {
+      "name": "Engine Upgrade",
+      "code": "1607074A 0004"
+    },
+    {
+      "name": "Infinite Cash",
+      "code": "16070756 FFFF"
+    },
+    {
+      "name": "SAM Missiles",
+      "code": "16070742 0004"
+    },
+    {
+      "name": "Targeting Computer",
+      "code": "16070750 0004"
+    },
+    {
+      "name": "Track Upgrade",
+      "code": "1607074C 0004"
+    },
+    {
+      "name": "Unlimited SAM Rockets",
+      "code": "16070742 0014"
+    },
+    {
+      "name": "Have Offensive Air Support",
+      "code": "16070748 0004"
+    },
+    {
+      "name": "Have Armor Upgrade",
+      "code": "1607073E 0032"
+    },
+    {
+      "name": "Have Reload Mechanism Upgrade",
+      "code": "1607074E 0004"
+    }
+  ]
+}

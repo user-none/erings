@@ -1,0 +1,66 @@
+{
+  "serial": "T-7028H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy Mobile Construction Yard or Nod Buggy",
+      "code": "160BF8F0 0250"
+    },
+    {
+      "name": "Unlimited Energy Gun Boat",
+      "code": "160BF82C 0300"
+    },
+    {
+      "name": "Unlimited Energy Hum-Vee",
+      "code": "160BF9B4 0096"
+    },
+    {
+      "name": "Unlimited Energy Construction Yard",
+      "code": "160D7B04 0300"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "1608BE1A FFFF\n1608BE1C FFFF"
+    },
+    {
+      "name": "(1st Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD388 0032"
+    },
+    {
+      "name": "(2nd Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD444 0032"
+    },
+    {
+      "name": "(3rd Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD500 0032"
+    },
+    {
+      "name": "(4th Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD5BC 0032"
+    },
+    {
+      "name": "(5th Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD678 0032"
+    },
+    {
+      "name": "(6thTroop) Unlimited Energy Mini Gunner",
+      "code": "160CD734 0032"
+    },
+    {
+      "name": "(7th Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD7F0 0032"
+    },
+    {
+      "name": "(8th Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD8AC 0032"
+    },
+    {
+      "name": "(9th Troop) Unlimited Energy Mini Gunner",
+      "code": "160CD968 0032"
+    },
+    {
+      "name": "(10th Troop) Unlimited Energy Mini Gunner",
+      "code": "160CDA24 0032"
+    }
+  ]
+}

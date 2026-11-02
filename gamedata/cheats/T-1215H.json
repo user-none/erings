@@ -1,0 +1,326 @@
+{
+  "serial": "T-1215H",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Time To Select Fighter",
+      "code": "1605D4A4 1326"
+    },
+    {
+      "name": "(Player 1) Always Drop 99 Blocks On Other Player",
+      "code": "1605D166 0064"
+    },
+    {
+      "name": "(Player 1) Always Drop No Blocks On Other Player",
+      "code": "1605D166 0000"
+    },
+    {
+      "name": "(Player 1) Never Win",
+      "code": "1605CFAC 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Time To Select Fighter",
+      "code": "1605D590 1326"
+    },
+    {
+      "name": "(Player 2) Always Drop 99 Blocks On Other Player",
+      "code": "1605D412 0064"
+    },
+    {
+      "name": "(Player 2) Always Drop No Blocks On Other Player",
+      "code": "1605D412 0000"
+    },
+    {
+      "name": "(Player 2) Never Win",
+      "code": "1605D258 0000"
+    },
+    {
+      "name": "(Player 1) Win Once To Win Game",
+      "code": "D605CFAC 0000\n1605CFAC 0001"
+    },
+    {
+      "name": "(Player 2) Win Once To Win Game",
+      "code": "D605D258 0000\n1605CFAC 0001"
+    },
+    {
+      "name": "Open All Prizes",
+      "code": "16055D3A FFFF\n16055D3E FFFF\n16055D42 FFFF\n16055D46 FFFF\n16055D4A FFFF\n16055D4C FFFF\n16055D4E FFFF\n16055D50 FFFF\n16055D52 FFFF"
+    },
+    {
+      "name": "(Normal) Game Speed Modifier",
+      "code": "36055CD2 0000"
+    },
+    {
+      "name": "(Medium) Game Speed Modifier",
+      "code": "36055CD2 0001"
+    },
+    {
+      "name": "(Fast) Game Speed Modifier",
+      "code": "36055CD2 0002"
+    },
+    {
+      "name": "(Fastest) Game Speed Modifier",
+      "code": "36055CD2 0003"
+    },
+    {
+      "name": "Difficulty Modifier (1)",
+      "code": "36055CD0 0000\n36055CD0 0001"
+    },
+    {
+      "name": "Difficulty Modifier (2)",
+      "code": "36055CD0 0002"
+    },
+    {
+      "name": "Difficulty Modifier (3)",
+      "code": "36055CD0 0003"
+    },
+    {
+      "name": "Difficulty Modifier (4)",
+      "code": "36055CD0 0004"
+    },
+    {
+      "name": "Difficulty Modifier (5)",
+      "code": "36055CD0 0005"
+    },
+    {
+      "name": "Difficulty Modifier (6)",
+      "code": "36055CD0 0006"
+    },
+    {
+      "name": "Difficulty Modifier (7)",
+      "code": "36055CD0 0007"
+    },
+    {
+      "name": "Damage Modifier (0)",
+      "code": "36055CD1 0000"
+    },
+    {
+      "name": "Damage Modifier (1)",
+      "code": "36055CD1 0001"
+    },
+    {
+      "name": "Damage Modifier (2)",
+      "code": "36055CD1 0002"
+    },
+    {
+      "name": "Damage Modifier (3)",
+      "code": "36055CD1 0003"
+    },
+    {
+      "name": "0 CPU Rounds",
+      "code": "36055CD3 0000"
+    },
+    {
+      "name": "1 CPU Rounds",
+      "code": "36055CD3 0001"
+    },
+    {
+      "name": "2 CPU Rounds",
+      "code": "36055CD3 0002"
+    },
+    {
+      "name": "3 CPU Rounds",
+      "code": "36055CD3 0003"
+    },
+    {
+      "name": "0 VS Rounds",
+      "code": "36055CD4 0000"
+    },
+    {
+      "name": "1 VS Rounds",
+      "code": "36055CD4 0001"
+    },
+    {
+      "name": "2 VS Rounds",
+      "code": "36055CD4 0002"
+    },
+    {
+      "name": "3 VS Rounds",
+      "code": "36055CD4 0003"
+    },
+    {
+      "name": "(Player 1) Play As Morrigan",
+      "code": "1605D53C 0000\n1605CED8 0000"
+    },
+    {
+      "name": "(Player 1) Play As Chun-Li",
+      "code": "1605D53C 0100\n1605CED8 0100"
+    },
+    {
+      "name": "(Player 1) Play As Ryu",
+      "code": "1605D53C 0200\n1605CED8 0200"
+    },
+    {
+      "name": "(Player 1) Play As Ken",
+      "code": "1605D53C 0300\n1605CED8 0300"
+    },
+    {
+      "name": "(Player 1) Play As Asien-Ko",
+      "code": "1605D53C 0400\n1605CED8 0400"
+    },
+    {
+      "name": "(Player 1) Play As Donovan",
+      "code": "1605D53C 0500\n1605CED8 0500"
+    },
+    {
+      "name": "(Player 1) Play As Felicia",
+      "code": "1605D53C 0600\n1605CED8 0600"
+    },
+    {
+      "name": "(Player 1) Play As Sakura",
+      "code": "1605D53C 0700\n1605CED8 0700"
+    },
+    {
+      "name": "(Player 1) Play As Devilot",
+      "code": "1605D53C 0800\n1605CED8 0800"
+    },
+    {
+      "name": "(Player 1) Play As Akuma",
+      "code": "1605D53C 0900\n1605CED8 0900"
+    },
+    {
+      "name": "(Player 1) Play As Dan",
+      "code": "1605D53C 0A00\n1605CED8 0A00"
+    },
+    {
+      "name": "(Player 2) Play As Morrigan",
+      "code": "1605D628 0000"
+    },
+    {
+      "name": "(Player 2) Play As Chun-Li",
+      "code": "1605D628 0100"
+    },
+    {
+      "name": "(Player 2) Play As Ryu",
+      "code": "1605D628 0200"
+    },
+    {
+      "name": "(Player 2) Play As Ken",
+      "code": "1605D628 0300"
+    },
+    {
+      "name": "(Player 2) Play As Asien-Ko",
+      "code": "1605D628 0400"
+    },
+    {
+      "name": "(Player 2) Play As Donovan",
+      "code": "1605D628 0500"
+    },
+    {
+      "name": "(Player 2) Play As Felicia",
+      "code": "1605D628 0600"
+    },
+    {
+      "name": "(Player 2) Play As Sakura",
+      "code": "1605D628 0700"
+    },
+    {
+      "name": "(Player 2) Play As Devilot",
+      "code": "1605D628 0800"
+    },
+    {
+      "name": "(Player 2) Play As Akuma",
+      "code": "1605D628 0900"
+    },
+    {
+      "name": "(Player 2) Play As Dan",
+      "code": "1605D628 0A00"
+    },
+    {
+      "name": "Game Difficulty set to 0",
+      "code": "36055CD0 0000"
+    },
+    {
+      "name": "Game Difficulty set to 1",
+      "code": "36055CD0 0001"
+    },
+    {
+      "name": "Player 1 is Morrigan",
+      "code": "1605D53C 0000"
+    },
+    {
+      "name": "Player 1 is Chun-Li",
+      "code": "1605D53C 0100"
+    },
+    {
+      "name": "Player 1 is Ryu",
+      "code": "1605D53C 0200"
+    },
+    {
+      "name": "Player 1 is Ken",
+      "code": "1605D53C 0300"
+    },
+    {
+      "name": "Player 1 is Asien-Ko",
+      "code": "1605D53C 0400"
+    },
+    {
+      "name": "Player 1 is Donovan",
+      "code": "1605D53C 0500"
+    },
+    {
+      "name": "Player 1 is Felicia",
+      "code": "1605D53C 0600"
+    },
+    {
+      "name": "Player 1 is Sakura",
+      "code": "1605D53C 0700"
+    },
+    {
+      "name": "Player 1 is Devilot",
+      "code": "1605D53C 0800"
+    },
+    {
+      "name": "Player 1 is Akuma",
+      "code": "1605D53C 0900"
+    },
+    {
+      "name": "Player 1 is Dan",
+      "code": "1605D53C 0A00"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Morrigan",
+      "code": "1605CED8 0000"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Chun-Li",
+      "code": "1605CED8 0100"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Ryu",
+      "code": "1605CED8 0200"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Ken",
+      "code": "1605CED8 0300"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Asien-Ko",
+      "code": "1605CED8 0400"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Donovan",
+      "code": "1605CED8 0500"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Felicia",
+      "code": "1605CED8 0600"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Sakura",
+      "code": "1605CED8 0700"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Devilot",
+      "code": "1605CED8 0800"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Akuma",
+      "code": "1605CED8 0900"
+    },
+    {
+      "name": "Super Puzzle Mode - Player 1 is Dan",
+      "code": "1605CED8 0A00"
+    }
+  ]
+}

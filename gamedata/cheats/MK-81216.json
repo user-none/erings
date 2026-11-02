@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81216",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Low Course Time",
+      "code": "16006664 0000\n1600666C 0000"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "1600669A 0244"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "1600669A 04B3"
+    },
+    {
+      "name": "Always Finish First",
+      "code": "16046BD6 0000"
+    }
+  ]
+}

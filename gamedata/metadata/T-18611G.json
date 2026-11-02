@@ -1,0 +1,25 @@
+{
+  "serial": "T-18611G",
+  "title": "Simulation Zoo",
+  "native_title": "シミュレーション・ズー",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 980124 010153"
+  ],
+  "release_date": "1997-02-07",
+  "developer": "Computer & Entertainment",
+  "publisher": "Softbank",
+  "genres": [
+    "Construction and Management Simulation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Simulation Zoo is, as the name suggests, a business simulation game similar to the well-known Theme Park, in which the player operates and manages a zoo. The player is a new CEO brought in to turn around a failing zoo, maintaining and expanding facilities, balancing income and expenses, and acquiring new exhibits. The game is viewed from an isometric perspective and proceeds in real-time. There are eight different scenarios to choose from, each focusing on a different biome such as river valley, jungle, or desert."
+}

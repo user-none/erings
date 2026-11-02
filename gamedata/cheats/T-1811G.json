@@ -1,0 +1,26 @@
+{
+  "serial": "T-1811G",
+  "master_code": "F6000914 C305\nB6000B00 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives",
+      "code": "160BCF12 0009"
+    },
+    {
+      "name": "Invulnerability",
+      "code": "160BCF42 0001"
+    },
+    {
+      "name": "Craw LV",
+      "code": "160BCFBA 0003"
+    },
+    {
+      "name": "Over Weapon Energy",
+      "code": "160BCFCC 3000"
+    },
+    {
+      "name": "Weapons",
+      "code": "160BCF1E 001F"
+    }
+  ]
+}

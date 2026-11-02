@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9122",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Credits",
+      "code": "3609FC54 0009"
+    },
+    {
+      "name": "(Player 1 & 2) Unlimited Energy",
+      "code": "160A092C 3800\n160A092E 3800\n160A0938 3800"
+    }
+  ]
+}

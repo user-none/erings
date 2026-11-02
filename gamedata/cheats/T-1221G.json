@@ -1,0 +1,98 @@
+{
+  "serial": "T-1221G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Lives",
+      "code": "16054580 0200"
+    },
+    {
+      "name": "Unlimited Lightning Web",
+      "code": "16054648 3030"
+    },
+    {
+      "name": "Unlimited Frost Tower",
+      "code": "3605464A 0030"
+    },
+    {
+      "name": "Unlimited Soul Body",
+      "code": "3605464B 0030"
+    },
+    {
+      "name": "Unlimited Rising Fire",
+      "code": "3605464C 0030"
+    },
+    {
+      "name": "Unlimited Ground Hunter",
+      "code": "3605464D 0030"
+    },
+    {
+      "name": "Unlimited Aiming Laser",
+      "code": "3605464E 0030"
+    },
+    {
+      "name": "Unlimited Double Cyclone",
+      "code": "3605464F 0030"
+    },
+    {
+      "name": "Unlimited Twin Slasher",
+      "code": "16054650 3030"
+    },
+    {
+      "name": "Have All Weapons",
+      "code": "36054659 00FF\n16054594 00FF"
+    },
+    {
+      "name": "Have All Armor Armor, 1st X-Buster and Full Health",
+      "code": "16054582 300F"
+    },
+    {
+      "name": "Have All Armor and Second X-Buster",
+      "code": "16054646 040F"
+    },
+    {
+      "name": "Mega Man X Is Like Zero",
+      "code": "160545A2 0101"
+    },
+    {
+      "name": "Zero Is Like Mega Man X",
+      "code": "160545A2 0001"
+    },
+    {
+      "name": "Mega Man X & Zero Have Their Special Armor",
+      "code": "36054573 0001"
+    },
+    {
+      "name": "Unlimited X-Buster Shots",
+      "code": "1605463A 0003"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "160545FE 2000\n160545FC 2020"
+    },
+    {
+      "name": "Have All Weapons (Bosses Undefeated)",
+      "code": "36054659 00FF"
+    },
+    {
+      "name": "Have All Weapons (Bosses Defeated)",
+      "code": "16054594 00FF"
+    },
+    {
+      "name": "Play as X",
+      "code": "3605457F 0000"
+    },
+    {
+      "name": "Play as Zero",
+      "code": "3605457F 0001"
+    },
+    {
+      "name": "Music On",
+      "code": "3605457E 0000"
+    },
+    {
+      "name": "Music Off",
+      "code": "3605457E 0001"
+    }
+  ]
+}

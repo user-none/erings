@@ -1,0 +1,25 @@
+{
+  "serial": "T-24201G",
+  "title": "Kururin Pa!",
+  "native_title": "くるりんＰＡ！",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 946211 000070"
+  ],
+  "release_date": "1996-02-23",
+  "developer": "Sky Think Systems",
+  "publisher": "Sky Think Systems",
+  "genres": [
+    "Puzzle"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Kururin Pa! takes an explosive take on the falling block genre. Players drop pairs of blocks containing string; linking up different blocks of string can produce long lines that cross the playfield. Sometimes, the player will be given a spark of fire instead; lighting up one of the ends of a piece of string will set the entire piece on fire, destroying many pieces at once. In addition to the string, there are a few garbage blocks: snowmen, who melt when adjacent squares are comboed; and two different kinds of bombs, which expand the players' combo abilities."
+}

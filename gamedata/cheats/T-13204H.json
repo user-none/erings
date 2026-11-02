@@ -1,0 +1,18 @@
+{
+  "serial": "T-13204H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "1607EBB6 0064"
+    },
+    {
+      "name": "Infinite Starsword",
+      "code": "1607EBCA 0064"
+    },
+    {
+      "name": "Infinite Lives",
+      "code": "1607EBBE 0064"
+    }
+  ]
+}

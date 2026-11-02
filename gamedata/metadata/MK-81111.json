@@ -1,0 +1,23 @@
+{
+  "serial": "MK-81111",
+  "title": "NFL '97",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA"
+  ],
+  "languages": [],
+  "barcodes": [
+    "0 10086 81111 7"
+  ],
+  "release_date": "1996-11-20",
+  "developer": "GameTek",
+  "publisher": "Sega of America",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 8,
+  "cooperative": true,
+  "esrb": "E - Everyone",
+  "overview": "This version of the SEGA Sports NFL franchise was released only for the SEGA Saturn. It features all fully licensed NFL teams and their respective logos along with updated rosters for the 1996 NFL season. It also has the option to create a brand new NFL team from scratch if the player chooses to and even create their own plays that can be used in games.\n\nThe standard game modes apply here such as Exhibition, Season, etc. and keep extensive track of stats in over 70 different categories and over 150 offensive and defensive plays to choose from. Eight friends can also go against each other using multi-tap."
+}

@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9174",
+  "master_code": "F6000924 FFFF\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "160D8DF8 0000\n160D8E2C 0000\n160FFEB8 0000"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160FFC12 0000"
+    },
+    {
+      "name": "Unlimited Crystals",
+      "code": "160FFE68 0063"
+    },
+    {
+      "name": "No Random Explosions",
+      "code": "160FFEB8 0000"
+    },
+    {
+      "name": "256 Crystals (Invincibility)",
+      "code": "160FFE68 0100"
+    }
+  ]
+}

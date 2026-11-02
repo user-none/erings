@@ -1,0 +1,28 @@
+{
+  "serial": "MK-81079",
+  "title": "Sonic Jam",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81079 0",
+    "4 974365 810795"
+  ],
+  "release_date": "1997-06-20",
+  "developer": "Sonic Team",
+  "publisher": "Sega of America",
+  "genres": [
+    "Compilation",
+    "Platform"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "E - Everyone",
+  "overview": "Sonic overload! Buckle-up for a jam-packed, SuperSonic spectacular! You get all four Hedgehog hits on one blistering CD! The original Sonic the Hedgehog, Sonic 2, Sonic 3, and Sonic & Knuckles, the game that transforms Sonic 1, 2 and 3 into all new adventures! If that's not enough to satisfy your need for fun, explore the completely new, fully interactive 3D Sonic Museum."
+}

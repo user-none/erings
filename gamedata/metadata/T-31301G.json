@@ -1,0 +1,23 @@
+{
+  "serial": "T-31301G",
+  "title": "SegaSaturn Internet Vol. 1",
+  "native_title": "ＳＥＧＡＳＡＴＵＲＮ インターネット Ｖｏｌ．１",
+  "category": "Applications",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 001278"
+  ],
+  "release_date": "1996",
+  "developer": "Aplix",
+  "publisher": "Aplix",
+  "genres": [],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Sega Saturn Internet Vol. 1 is internet software designed for the Sega Saturn Modem in Japan."
+}

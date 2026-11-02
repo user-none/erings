@@ -1,0 +1,30 @@
+{
+  "serial": "MK-81115",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Stamina P2",
+      "code": "16090B6E 3000"
+    },
+    {
+      "name": "Infinite Stamina P1",
+      "code": "16090C3E 3000"
+    },
+    {
+      "name": "Infinite Stamina (Arcade Version)",
+      "code": "16090C3E FFFF"
+    },
+    {
+      "name": "Infinite Stamina (Decathlon Version)",
+      "code": "160A2DBE FFBD"
+    },
+    {
+      "name": "Full Power in Discus",
+      "code": "16005DA0 000F"
+    },
+    {
+      "name": "Unlimited Stamina",
+      "code": "16090C3E FFFF\n160A2DBE FFBD"
+    }
+  ]
+}

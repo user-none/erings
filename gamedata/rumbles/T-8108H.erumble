@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: X-Men - Children of the Atom (USA)
+gameid: T-8108H
+system: saturn
+---
+
+# Per-player health, 143 max, 0 is KO.
+watch p1_hp word 0x060E4190
+watch p2_hp word 0x060E4590
+
+# Scene byte: 8 during the fight
+watch match_state byte 0x060E4885
+def in_match match_state == 8
+
+# Humans-in-match bitmask. bit 0 is player 1, bit 1 is player 2
+watch p1 byte 0x060E4881 mask 0x01
+watch p2 byte 0x060E4881 mask 0x02
+def p1_human p1 != 0
+def p2_human p2 != 0
+
+# KO: that side's health hits zero. Rumbles the KO'd player's pad.
+on p1_hp decreased to 0 while in_match and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms)
+on p2_hp decreased to 0 while in_match and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) player 2

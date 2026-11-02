@@ -1,0 +1,18 @@
+{
+  "serial": "GS-9102",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Always place 1st",
+      "code": "1606EF86 0000"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160884AE 0834"
+    },
+    {
+      "name": "Unlock All Super Bikes",
+      "code": "1601C4C2 E100\n1601CEC6 E700\n1601CF2A E100\n1601CF2C 4211"
+    }
+  ]
+}

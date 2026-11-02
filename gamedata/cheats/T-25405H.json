@@ -1,0 +1,94 @@
+{
+  "serial": "T-25405H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Invincibility",
+      "code": "16089356 0064\n1608935A 00C8\n16089362 0001"
+    },
+    {
+      "name": "Rapid Fire",
+      "code": "16089426 0001"
+    },
+    {
+      "name": "Have Chainsaw",
+      "code": "160893C6 0001"
+    },
+    {
+      "name": "Have Shotgun",
+      "code": "160893AE 0001"
+    },
+    {
+      "name": "Have Double Barrel Shotgun",
+      "code": "160893B2 0001"
+    },
+    {
+      "name": "Have Chaingun",
+      "code": "160893B6 0001"
+    },
+    {
+      "name": "Have Rocket Launcher",
+      "code": "160893BA 0001"
+    },
+    {
+      "name": "Have Plasma Rifle",
+      "code": "160893BE 0001"
+    },
+    {
+      "name": "Have BFG 9000",
+      "code": "160893C0 0001"
+    },
+    {
+      "name": "Infinite Bullets",
+      "code": "160893CA 03E7"
+    },
+    {
+      "name": "Infinite Shotgun Shells",
+      "code": "160893CE 03E7"
+    },
+    {
+      "name": "Infinite Rockets",
+      "code": "160893D6 05FF"
+    },
+    {
+      "name": "Infinite Plasma",
+      "code": "160893D2 05FF"
+    },
+    {
+      "name": "Have Red Key",
+      "code": "1608937A 0001"
+    },
+    {
+      "name": "Have Yellow Key",
+      "code": "16089380 0001"
+    },
+    {
+      "name": "Have Blue Key",
+      "code": "1608937C 0001"
+    },
+    {
+      "name": "Turn On Level Map",
+      "code": "16089372 0001"
+    },
+    {
+      "name": "Unlimited Rockets",
+      "code": "160893D6 03E7"
+    },
+    {
+      "name": "Unlimited Plasma",
+      "code": "160893D2 03E7"
+    },
+    {
+      "name": "Have BFG 9000",
+      "code": "160893C2 0001"
+    },
+    {
+      "name": "Have Blue Key",
+      "code": "1608937E 0001"
+    },
+    {
+      "name": "Have Yellow Key",
+      "code": "16089382 0001"
+    }
+  ]
+}

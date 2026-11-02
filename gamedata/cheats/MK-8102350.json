@@ -1,0 +1,34 @@
+{
+  "serial": "MK-8102350",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Energy P1",
+      "code": "16092072 00A0"
+    },
+    {
+      "name": "Play Bonus Level",
+      "code": "1609EA90 0909"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D6092072 00A0\n16092072 0028"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D6092072 00A0\n16092072 0050"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D6092072 00A0\n16092072 0078"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "D6092072 00A0\n16092072 0000"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D6092072 00A0\n16092072 0010"
+    }
+  ]
+}

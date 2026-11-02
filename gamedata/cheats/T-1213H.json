@@ -1,0 +1,98 @@
+{
+  "serial": "T-1213H",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "P1 Unlimited Health",
+      "code": "1604CB14 0090"
+    },
+    {
+      "name": "P1 Super Meter Full",
+      "code": "1604CB76 0090"
+    },
+    {
+      "name": "P1 Super Meter Not Full",
+      "code": "1604CB76 0000"
+    },
+    {
+      "name": "P1 Infinite Custom Combos",
+      "code": "1604CD52 0000"
+    },
+    {
+      "name": "P1 No Custom Combos",
+      "code": "1604CB38 0000"
+    },
+    {
+      "name": "P2 Unlimited Health",
+      "code": "1604CF14 0090"
+    },
+    {
+      "name": "P2 Super Meter Full",
+      "code": "1604CF76 0090"
+    },
+    {
+      "name": "P2 Super Meter Not Full",
+      "code": "1604CF76 0000"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D604CB14 0090\n1604CB14 0024"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D604CB14 0090\n1604CB14 0048"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D604CB14 0090\n1604CB14 006C"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D604CF14 0090\n1604CF14 0024"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D604CF14 0090\n1604CF14 0048"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D604CF14 0090\n1604CF14 006C"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D604CB14 0090\n1604CB14 0001"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "1604CB14 0000"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D604CF14 0090\n1604CF14 0001"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "1604CF14 0000"
+    },
+    {
+      "name": "Fireball Destruction P1",
+      "code": "1604CB1C 0010"
+    },
+    {
+      "name": "No Blocking P1",
+      "code": "1604CB18 0000"
+    },
+    {
+      "name": "No Blocking P2",
+      "code": "1604CF18 0000"
+    },
+    {
+      "name": "Dumb CPU P1",
+      "code": "3604CB23 00FF"
+    },
+    {
+      "name": "Dumb CPU P2",
+      "code": "3604CF23 00FF"
+    }
+  ]
+}

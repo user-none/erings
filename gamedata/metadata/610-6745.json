@@ -1,0 +1,24 @@
+{
+  "serial": "610-6745",
+  "title": "Super Robot Taisen F (Demo)",
+  "native_title": "スーパー・ロボット大戦Ｆ",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-09-25",
+  "developer": "Winky Soft",
+  "publisher": "Banpresto",
+  "genres": [
+    "Role-Playing",
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The game takes place 4 months after the events of Super Robot Wars 3.\n\nA special, but shady, secret police force, the Titans, are created in response to terrorist acts and internal trouble between the Earth and its space colonies. Meanwhile in the shadow old and new enemies menaces Earth: they are the Poseidals (aliens from outer space), the Guests (another alien race) and the now rebuilt DC army. Super Robot Wars F and Super Robot Wars F Final (also known as \"Super Robot Taisen F Kanketsuhen\") were originally thought as an unique title but due to production delays the game was split in two parts. F covers the first 34 stages of the game, F Final deals with stages from 35 to the end of the game. It's possible to import a savegame from F and continue the game from here or to start F Final from scratch with default settings and units.\n\nGameplay mechanics are the same of Super Robot Wars 4. The title is a turn based strategic game. When attacked by an enemy, the player can react in three ways: counter, evade (halves enemy % of landing an attack on the player) or defend (if hit, the player receives only half of the damage)."
+}

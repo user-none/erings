@@ -1,0 +1,14 @@
+{
+  "serial": "T-7605H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Deploy All Ships",
+      "code": "1607FEB8 0002"
+    },
+    {
+      "name": "All Ships Deployed",
+      "code": "1607FBE8 0002"
+    }
+  ]
+}

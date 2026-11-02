@@ -1,0 +1,65 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: PowerSlave (USA)
+gameid: T-13205H
+system: saturn
+---
+
+# 1 while the menu/frontend runs, 0 during gameplay.
+watch menu long 0x0604A6F0
+
+# 1 while paused.
+watch paused long 0x0604A6F4
+
+def playing menu == 0 and paused == 0
+
+# Player health, max 200 per health container. 0 or below when dead.
+watch health long 0x06086088 signed
+
+# Weapons owned, one bit per weapon: bits 8-15.
+watch weapons long 0x0608607C mask 0xFF00
+
+# Artifacts collected, bits 16-23.
+watch artifacts long 0x0608607C mask 0xFF0000
+
+# Ammo per weapon, one long each.
+# Weapon 0 (machete) uses no ammo.
+watch pistol_ammo  long 0x06086094
+watch m60_ammo     long 0x06086098
+watch bombs_ammo   long 0x0608609C
+watch flame_ammo   long 0x060860A0
+watch cobra_ammo   long 0x060860A4
+watch ring_ammo    long 0x060860A8
+watch manacle_ammo long 0x060860AC
+
+# Death.
+on health decreased and health <= 0 while playing:
+    pattern (1.0 200ms, off 60ms, 0.8 400ms) priority 1
+
+# Damage
+on health decreased while playing:
+    pulse 0.8/0.6 200ms cooldown 250ms scale 1..60 -> 0.7..1.0
+
+# Pickups
+on artifacts increased while playing: pulse 0.45/0.6 250ms
+on weapons increased while playing: pulse 0.5/0.6 200ms
+on health increased while playing: pulse 0.4/0.45 140ms
+
+on pistol_ammo increased while playing: pulse 0.4/0.45 140ms
+on m60_ammo increased while playing: pulse 0.4/0.45 140ms
+on bombs_ammo increased while playing: pulse 0.4/0.45 140ms
+on flame_ammo increased while playing: pulse 0.4/0.45 140ms
+on cobra_ammo increased while playing: pulse 0.4/0.45 140ms
+on ring_ammo increased while playing: pulse 0.4/0.45 140ms
+on manacle_ammo increased while playing: pulse 0.4/0.45 140ms
+
+# Full auto weapons
+event m60_firing m60_ammo decreased for 400ms
+event flame_firing flame_ammo decreased for 150ms
+event ring_firing ring_ammo decreased for 200ms
+
+# Fire feedback.
+on pistol_ammo decreased while playing: pulse 0.55/0.5 140ms level cooldown 100ms
+on m60_firing while playing: hold 0.6/0.7
+on flame_firing while playing: pulse 0.40/0.35 140ms level cooldown 100ms
+on ring_firing while playing: pulse 0.5/0.4 140ms level cooldown 100ms
+on manacle_ammo decreased while playing: pulse 0.9/0.8 200ms level cooldown 150ms

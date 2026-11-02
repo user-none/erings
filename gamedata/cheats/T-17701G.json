@@ -1,0 +1,18 @@
+{
+  "serial": "T-17701G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives",
+      "code": "160A6D20 0003"
+    },
+    {
+      "name": "99 Orbs Collected",
+      "code": "160A6D26 0063"
+    },
+    {
+      "name": "Unlimited Health",
+      "code": "160A6D24 0002\n160A6D90 0200"
+    }
+  ]
+}

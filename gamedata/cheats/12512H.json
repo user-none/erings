@@ -1,0 +1,22 @@
+{
+  "serial": "12512H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health",
+      "code": "160D808E FFFF"
+    },
+    {
+      "name": "Infinite Fools Gold",
+      "code": "1604D016 FFFF"
+    },
+    {
+      "name": "Infinite Iron Keys",
+      "code": "1604D00E FFFF"
+    },
+    {
+      "name": "Unlimited Brass Keys",
+      "code": "1604D012 FFFF"
+    }
+  ]
+}

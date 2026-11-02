@@ -1,0 +1,146 @@
+{
+  "serial": "T-8117H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives",
+      "code": "16073358 0003"
+    },
+    {
+      "name": "Sword Strength Maxed",
+      "code": "160733B0 00FF"
+    },
+    {
+      "name": "Armor Strength Maxed",
+      "code": "16073364 00FF"
+    },
+    {
+      "name": "Infinite Rings",
+      "code": "160733AA 03E7"
+    },
+    {
+      "name": "Infinite Energy (Pine Forest)",
+      "code": "10246B18 6400"
+    },
+    {
+      "name": "Infinite Energy (Creek)",
+      "code": "1020D798 6400"
+    },
+    {
+      "name": "Infinite Energy (Dark Forest)",
+      "code": "1020D7E4 6400"
+    },
+    {
+      "name": "Infinite Energy (Plundered Farm)",
+      "code": "10246C34 6400"
+    },
+    {
+      "name": "Infinite Energy (Viking Village)",
+      "code": "10247228 6400"
+    },
+    {
+      "name": "Infinite Energy (Spine of The Dragon Mountains)",
+      "code": "1020D808 6400"
+    },
+    {
+      "name": "Infinite Energy (Rebel Village)",
+      "code": "10246F30 6400"
+    },
+    {
+      "name": "Infinite Energy (Ruins of Camelot)",
+      "code": "1020D878 6400"
+    },
+    {
+      "name": "Infinite Energy (Crypt of Camelot)",
+      "code": "1020D8A0 6400"
+    },
+    {
+      "name": "Infinite Energy (Battleground)",
+      "code": "10247B64 6400"
+    },
+    {
+      "name": "Infinite Energy (Castle Entrance)",
+      "code": "10246B44 6400"
+    },
+    {
+      "name": "Infinite Energy (Courtyard)",
+      "code": "1020EF74 6400"
+    },
+    {
+      "name": "Infinite Energy (Arena)",
+      "code": "1020D978 6400"
+    },
+    {
+      "name": "Sword Strength Max",
+      "code": "160733B0 FF00"
+    },
+    {
+      "name": "Start On Creek",
+      "code": "1020DCFE 0002"
+    },
+    {
+      "name": "Start On Dark Forest",
+      "code": "1020DCFE 0003"
+    },
+    {
+      "name": "Start On Plundered Farm",
+      "code": "1020DCFE 0004"
+    },
+    {
+      "name": "Start On The Woods of the Dragon Mages",
+      "code": "1020DCFE 0005"
+    },
+    {
+      "name": "Start On Viking Village",
+      "code": "1020DCFE 0006"
+    },
+    {
+      "name": "Start On Mountains of the Barbarians",
+      "code": "1020DCFE 0007"
+    },
+    {
+      "name": "Start On Spine of the Dragon Mountains",
+      "code": "1020DCFE 0008"
+    },
+    {
+      "name": "Start On Rebel Village",
+      "code": "1020DCFE 0009"
+    },
+    {
+      "name": "Start On Swap",
+      "code": "1020DCFE 000A"
+    },
+    {
+      "name": "Start On Ruins of Camelot",
+      "code": "1020DCFE 000B"
+    },
+    {
+      "name": "Start On Crypt of Camelot",
+      "code": "1020DCFE 000C"
+    },
+    {
+      "name": "Start On Battleground",
+      "code": "1020DCFE 000D"
+    },
+    {
+      "name": "Start On Castle Entrance",
+      "code": "1020DCFE 000E"
+    },
+    {
+      "name": "Start On Castle Battlement",
+      "code": "1020DCFE 000F"
+    },
+    {
+      "name": "Start On Castle Tower",
+      "code": "1020DCFE 0010"
+    },
+    {
+      "name": "Start On Courtyard",
+      "code": "1020DCFE 0011"
+    },
+    {
+      "name": "Start On Arena",
+      "code": "1020DCFE 0012"
+    }
+  ]
+}

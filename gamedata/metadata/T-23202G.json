@@ -1,0 +1,25 @@
+{
+  "serial": "T-23202G",
+  "title": "Death Crimson",
+  "native_title": "デス・クリムゾン",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 512435 000020"
+  ],
+  "release_date": "1996-08-09",
+  "developer": "Ecole Software",
+  "publisher": "Ecole Software",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Death Crimson is a first-person rail shooter. Doctor and former mercenary Combat Echizen has spent the past ten years researching KOT Syndrome, a disease that has spread across Europe and transformed countless people into monstrous creatures. Eventually, he learns of a connection between the disease and the Death Crimson - a mysterious gun he found in some ruins ten years prior during his time in the Marumara Army. Echizen then resolves to wield the Death Crimson (controlled by the player via light gun) against those infected with the Syndrome and get to the heart of what's going on."
+}

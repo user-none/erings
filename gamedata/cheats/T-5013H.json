@@ -1,0 +1,14 @@
+{
+  "serial": "T-5013H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Armor",
+      "code": "16070D2A 270F"
+    },
+    {
+      "name": "Infinite Fuel",
+      "code": "16070E3A 6400"
+    }
+  ]
+}

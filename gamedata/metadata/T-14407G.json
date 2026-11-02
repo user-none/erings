@@ -1,0 +1,25 @@
+{
+  "serial": "T-14407G",
+  "title": "Strikers 1945",
+  "native_title": "ストライカーズ１９４５",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 984995 800073"
+  ],
+  "release_date": "1996-06-28",
+  "developer": "Psikyo",
+  "publisher": "Atlus",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "Strikers 1945, not to be confused with the US PSX game Strikers 1945, which is actually the sequel Strikers 1945 II, is a port of the top-down vertically-scrolling arcade shooter. Set during World War II, the player can choose from different ships and pilots to engage the enemy. At the end of the war, all sides are left powerless and defeated. A secret organization known as CANY manages to initiate a coup among each country's military forces. The last resort is a team assembled with the best fighters from the US, Japan, Germany and England, with the goal to push back CANY."
+}

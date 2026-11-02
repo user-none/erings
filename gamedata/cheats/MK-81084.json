@@ -1,0 +1,46 @@
+{
+  "serial": "MK-81084",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Health",
+      "code": "16085286 00C8"
+    },
+    {
+      "name": "All Keys",
+      "code": "1604988E 000F"
+    },
+    {
+      "name": "Extra Weapon Power",
+      "code": "1604989A 0211"
+    },
+    {
+      "name": "Unlimited M60",
+      "code": "16085296 00F0"
+    },
+    {
+      "name": "Unlimited Pistol",
+      "code": "16085292 00F0"
+    },
+    {
+      "name": "Unlimited Anum Bomb",
+      "code": "1608529A 00F0"
+    },
+    {
+      "name": "Unlimited Flame Thrower",
+      "code": "1608529E 00F0"
+    },
+    {
+      "name": "Unlimited Cobra Staff",
+      "code": "160852A2 00F0"
+    },
+    {
+      "name": "Unlimited Ring of Ra",
+      "code": "160852A6 00F0"
+    },
+    {
+      "name": "Unlimited Manacle",
+      "code": "160852AA 00F0"
+    }
+  ]
+}

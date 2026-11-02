@@ -1,0 +1,25 @@
+{
+  "serial": "T-31503G",
+  "title": "Falcom Classics",
+  "native_title": "ファルコム クラシックス",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 975769 146589"
+  ],
+  "release_date": "1997-11-06",
+  "developer": "Nihon Falcom",
+  "publisher": "Victor Company of Japan",
+  "genres": [
+    "Compilation"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Falcom Classics is a compilation of three classic games by Falcom for the Sega Saturn. Each game has been enhanced to take advantage of the superior specifications of the Saturn console, though their non-enhanced counterparts can also be played. Games included are: Dragon Slayer, Xanadu, and Ys."
+}

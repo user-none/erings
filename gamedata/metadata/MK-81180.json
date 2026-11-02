@@ -1,0 +1,30 @@
+{
+  "serial": "MK-81180",
+  "title": "UEFA Euro 96: England",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Europe"
+  ],
+  "languages": [
+    "English",
+    "French",
+    "German",
+    "Italian",
+    "Portuguese",
+    "Spanish"
+  ],
+  "barcodes": [
+    "4 974365 811808"
+  ],
+  "release_date": "1996-05-30",
+  "developer": "Gremlin Interactive",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "An official licensed game of the European Championships held in England in 1996. All 16 teams are available to choose from and the following Game Types: European Championship, Friendly Game, Practice Penalties and Practice Match (only the opposition's goalkeeper is on the pitch). \n\nA couple of options of note are variable/adjustable wind and a choice of referees each with two difficulty levels of 'vision' and 'discipline' (the latter is available for friendly games only). Long time BBC sport commentator Barry Davies provides the commentary. The game is based on Gremlin Interactive's Actua Soccer engine."
+}

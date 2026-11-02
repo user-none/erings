@@ -1,0 +1,18 @@
+{
+  "serial": "T-1225G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Chapter 1) Unlimited Health, Medicine & Weapons",
+      "code": "16042542 0064\n1604B3F6 0009\n1604B3F8 0009"
+    },
+    {
+      "name": "(Chapter 2) Unlimited Health, Medicine & Weapons",
+      "code": "160430C6 0064\n1604BF7A 0009\n1604BF7C 0009"
+    },
+    {
+      "name": "(Chapter 3) Unlimited Health, Medicine & Weapons",
+      "code": "16042EE2 0064\n1604BD96 0009\n1604BD98 0009"
+    }
+  ]
+}

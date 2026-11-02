@@ -1,0 +1,42 @@
+{
+  "serial": "T-3105G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "16004F14 00C0"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "16004F14 0000"
+    },
+    {
+      "name": "(Player 1) Full Power",
+      "code": "16004F46 3C3C"
+    },
+    {
+      "name": "(Player 1) No Power",
+      "code": "16004F46 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "16006054 00C0"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "16006054 0000"
+    },
+    {
+      "name": "(Player 2) Full Power",
+      "code": "16006086 3C3C"
+    },
+    {
+      "name": "(Player 2) No Power",
+      "code": "16006086 0000"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "16009CD2 6100\n1609D9AE 06E7"
+    }
+  ]
+}

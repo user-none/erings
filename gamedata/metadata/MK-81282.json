@@ -1,0 +1,28 @@
+{
+  "serial": "MK-81282",
+  "title": "Formula Karts: Special Edition",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Europe"
+  ],
+  "languages": [
+    "English",
+    "French",
+    "German",
+    "Spanish"
+  ],
+  "barcodes": [
+    "4 974365 812829"
+  ],
+  "release_date": "1997-05-22",
+  "developer": "Manic Media Productions",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Formula Karts is a semi-realistic racing title that attempts to capture the spirit of kart racing with it's low slung feeling of speed, and corner after corner of impressive handling (and inevitable sliding). The title supports both simulation and arcade modes, and features some effective race AI for non-player vehicles. Two player split screen is supported albeit with some slowdown."
+}

@@ -1,0 +1,22 @@
+{
+  "serial": "T-1207G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160EE276 0068"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "160EE276 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160EE366 0068"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "160EE366 0000"
+    }
+  ]
+}

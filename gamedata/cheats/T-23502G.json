@@ -1,0 +1,22 @@
+{
+  "serial": "T-23502G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "16049DC0 FFFF\n16049DC2 00FF"
+    },
+    {
+      "name": "Unlimited Cards",
+      "code": "16049DC4 FFFF\n16049DC6 00FF"
+    },
+    {
+      "name": "Unlimited Gas",
+      "code": "16049DC8 7FFF\n16049DCA 7FFF"
+    },
+    {
+      "name": "No Damage",
+      "code": "16049DCC 0000\n16049DCE 0000"
+    }
+  ]
+}

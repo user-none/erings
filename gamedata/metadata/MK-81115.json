@@ -1,0 +1,27 @@
+{
+  "serial": "MK-81115",
+  "title": "DecAthlete",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81115 5",
+    "4 974365 811150"
+  ],
+  "release_date": "1996-07-12",
+  "developer": "Sega Enterprises",
+  "publisher": "Sega of America",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Sega's own version of Decathlon, the most grueling of multi-event sports consisting of the 100-Meter Dash, Long Jump, Shot Put, High Jump, 400-Meter Race, 110-Meter Hurdles, Discus Throw, Pole Vault, Javelin Throw and the 1500-Meter Race, split over two days of competition. Featuring eight athletes with different abilities and specialties, from the agile Karl Vain and Femi Kadiena, the fast Li Huang and Ellen Reggiani, the well balanced Joe Kudou and Rick Blade to the powerhouses Aleksei Rigel and Jef Jansens, the player must achieve the best scores possible in each event to get to the World's best results table, not only in the decathlon points table but also on the individual events table.\n\nLike in the original ST-V version (which means it is in every way similar to the arcade version), two players can compete at the same time in the running event, and at the 1500M race six drones compete at the same time."
+}

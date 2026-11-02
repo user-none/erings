@@ -1,0 +1,66 @@
+{
+  "serial": "T-3603G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "1600E6F0 00A0"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "1600E748 00A0"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "1600E6F0 0000"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "1600E748 0000"
+    },
+    {
+      "name": "Raidou Enabled",
+      "code": "16013B1A 0100"
+    },
+    {
+      "name": "Extra Config Open",
+      "code": "16013BD8 FFFF"
+    },
+    {
+      "name": "Zack Extra Costumes Enabled",
+      "code": "36014136 0009"
+    },
+    {
+      "name": "Hayabusa Extra Costumes Enabled",
+      "code": "36014137 0009"
+    },
+    {
+      "name": "Bayman Extra Costumes Enabled",
+      "code": "36014138 0009"
+    },
+    {
+      "name": "Gen Fu Extra Costumes Enabled",
+      "code": "36014139 0009"
+    },
+    {
+      "name": "Lei-Fang Extra Costumes Enabled",
+      "code": "3601413A 0009"
+    },
+    {
+      "name": "Jann-Lee Extra Costumes Enabled",
+      "code": "3601413B 0009"
+    },
+    {
+      "name": "Tina Extra Costumes Enabled",
+      "code": "3601413C 0009"
+    },
+    {
+      "name": "Kasumi Extra Costumes Enabled",
+      "code": "3601413D 0009"
+    },
+    {
+      "name": "Raidou Extra Costumes Enabled",
+      "code": "1601413E 0900"
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "serial": "T-8112H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Energy P1",
+      "code": "16043F5C 0078"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "16043F64 0078"
+    },
+    {
+      "name": "Full \"COMBO\" Meter P1",
+      "code": "16043F62 0010"
+    },
+    {
+      "name": "Full \"COMBO\" Meter P2",
+      "code": "16043F6A 0010"
+    },
+    {
+      "name": "No \"COMBO\" Meter P1",
+      "code": "16043F62 0000"
+    },
+    {
+      "name": "No \"COMBO\" Meter P2",
+      "code": "16043F6A 0000"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D6043F5C 0078\n16043F5C 001E"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D6043F5C 0078\n16043F5C 003C"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D6043F5C 0078\n16043F5C 005A"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "16043F5C 0000"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D6043F5C 0078\n16043F5C 0001"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D6043F64 0078\n16043F64 001E"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D6043F64 0078\n16043F64 003C"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D6043F64 0078\n16043F64 005A"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "16043F64 0000"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D6043F64 0078\n16043F64 0001"
+    }
+  ]
+}

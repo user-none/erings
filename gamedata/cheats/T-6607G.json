@@ -1,0 +1,46 @@
+{
+  "serial": "T-6607G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Main Character) Unlimited HP",
+      "code": "1608F3C8 03E7"
+    },
+    {
+      "name": "(Main Character) Unlimited MP",
+      "code": "1608F3CE 03E7"
+    },
+    {
+      "name": "(Main Character) Max HP",
+      "code": "1608F3CA 03E7"
+    },
+    {
+      "name": "(Main Character) Max MP",
+      "code": "1608F3D0 03E7"
+    },
+    {
+      "name": "(Main Character) Max SP",
+      "code": "1608F3D4 03E7"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "1606FEDC 3B9A\n1606FEDE C9FF"
+    },
+    {
+      "name": "Lots of EXP After Battle",
+      "code": "1608F404 05F5\n1608F406 E0FF"
+    },
+    {
+      "name": "(Main Character) Max EXP",
+      "code": "1608F3D8 FFFF"
+    },
+    {
+      "name": "1608F3DA00FF (Main Character) Max Status",
+      "code": "1608F430 FFFF\n1608F434 FFFF\n1608F438 FFFF\n1608F436 FFFF\n1608F43A FFFF\n3608F410 00FF\n3608F411 00FF\n3608F412 00FF\n3608F413 00FF"
+    },
+    {
+      "name": "EXP for main character",
+      "code": "1608F3D8 FFFF\n1608F3DA 00FF"
+    }
+  ]
+}

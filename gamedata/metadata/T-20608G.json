@@ -1,0 +1,25 @@
+{
+  "serial": "T-20608G",
+  "title": "Baldy Land",
+  "native_title": "ボールディ・ランド",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4983164 73307 5"
+  ],
+  "release_date": "1998-11-26",
+  "developer": "Creative Edge Software",
+  "publisher": "Banpresto",
+  "genres": [
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The premise of Baldy Land is similar to many real-time strategy games. You start with a limited number of Baldies with which you construct buildings, increase your population, and create the necessary instruments of war. There are four classes of Baldies--builders, scientists, soldiers, and workers/breeders. Structures include small, medium, large, and huge houses as well as science labs and barracks. Each building has specific properties that assist in your destruction of the enemy.\n\nThe Saturn version was only released in Japan, however Sony PlayStation, Atari Jaguar and PC versions made it to the west as Baldies."
+}

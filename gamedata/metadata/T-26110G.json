@@ -1,0 +1,25 @@
+{
+  "serial": "T-26110G",
+  "title": "Arcade Gears Vol. 4: ImageFight & XMultiply",
+  "native_title": "ＡＧアーケード・ギアーズ イメージファイト＆エックスマルチプライ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 948536 190238"
+  ],
+  "release_date": "1998-03-19",
+  "developer": "Irem Software Engineering",
+  "publisher": "Xing Entertainment",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "A compilation of two classic Irem shooters, Image Fight and X-Multiply. Both are based on the superior arcade versions (Image Fight was ported to the NES.) Image Fight is a top-down blaster through the blackness of space, while X-Multiply is very similar in design to Irem's most known shooter, R-Type (it even features add-on components similar to the option subship.)"
+}

@@ -1,0 +1,18 @@
+{
+  "serial": "T-12522H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health Erik",
+      "code": "16073B7E 0003"
+    },
+    {
+      "name": "Infinite Health Baleog",
+      "code": "16073B9A 0003"
+    },
+    {
+      "name": "Infinite Health Olaf",
+      "code": "16073BB6 0003"
+    }
+  ]
+}

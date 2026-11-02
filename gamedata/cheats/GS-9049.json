@@ -1,0 +1,10 @@
+{
+  "serial": "GS-9049",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "160730CC 0080\n160E0636 0080\n160E0638 0080"
+    }
+  ]
+}

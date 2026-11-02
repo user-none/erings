@@ -1,0 +1,14 @@
+{
+  "serial": "T-29401H",
+  "master_code": "F6000924 C305",
+  "cheats": [
+    {
+      "name": "Infinite Revolver Shots",
+      "code": "102B800A 0009"
+    },
+    {
+      "name": "Infinite Thompson Ammo",
+      "code": "102B7FF8 0009"
+    }
+  ]
+}

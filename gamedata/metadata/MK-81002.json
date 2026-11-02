@@ -1,0 +1,25 @@
+{
+  "serial": "MK-81002",
+  "title": "NHL All-Star Hockey",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81102 5"
+  ],
+  "release_date": "1995-10-02",
+  "developer": "Gray Matter",
+  "publisher": "Sega of America",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 12,
+  "cooperative": true,
+  "esrb": "E - Everyone",
+  "overview": "NHL All-Star Hockey is the first of Sega's own line of Saturn NHL licensed titles. It includes the ability to play pre-season matches, a full season or just the playoffs, as well as multimedia content, such as a tour of the NHL Hall of Fame in Toronto, information on the trophies and real player trading cards (from the Fleer Ultra collection). It's also possible to trade players and create players and teams for use in pre-season matches.\n\nIf a player owns two of Sega's 6 player adapters, all players can be controlled by human players. Due to the large size of the league save games, the use of the external memory cartridge is advised."
+}

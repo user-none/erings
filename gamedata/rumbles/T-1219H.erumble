@@ -1,0 +1,86 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: MEGAMAN X4
+gameid: T-1219H
+system: saturn
+---
+
+# Game mode: 6 = in a level.
+watch mode byte 0x060548C8
+# Run state under mode 6: 0 = playing, 2 = pause menu, others = load/transition.
+watch run byte 0x060548C9
+
+def ingame mode == 6 and run == 0
+
+# Player HP. bit7 is a transient hit latch, value 0x80 alone means dead.
+watch hp byte 0x06054988 mask 0x7F
+
+# Death: HP reaches 0. Covers crush and spike kills too.
+on hp decreased to 0 while ingame:
+    pattern (1.0 200ms, off 60ms, 0.8 400ms) priority 1
+
+# Damage taken, scaled by the size of the hit.
+on hp decreased while ingame:
+    pulse 0.85/0.6 180ms scale 1..6 -> 0.55..1.0
+
+# Movement state: 8 = just landed, 9 = wall grab, 11 = wall slide,
+# 52 = wall slash while sliding.
+watch mstate byte 0x06054931
+
+# High word of the player's vertical velocity, a 32-bit fixed-point
+# value with 16 fraction bits. This word is whole pixels per frame,
+# negative while falling: -8 is falling 8 pixels per frame.
+watch fall_speed word 0x06054950 signed
+
+# Hard landing, scaled by fall speed: -7 is the lightest thump, -12
+# or faster is full strength. Full jumps land near -6 and never fire.
+on mstate changed to 8 and fall_speed <= -7 while ingame:
+    pulse 0.8/0.7 160ms scale fall_speed -12..-7 -> 1.0..0.5
+
+# Charge level per fire button: 1 at 25 held frames, 2 at full charge.
+# Both bytes are zeroed on release, the frame the shot comes out.
+watch chga byte 0x060549C7
+watch chgx byte 0x060549C8
+
+on chga increased to 1 or chgx increased to 1 while ingame: pulse 0.3 120ms
+on chga increased to 2 or chgx increased to 2 while ingame: pulse 0.45 180ms
+on chga decreased from 2 or chgx decreased from 2 while ingame: pulse 0.8 160ms
+on chga decreased from 1 or chgx decreased from 1 while ingame: pulse 0.5 120ms
+
+# Saber hit: 1 the frame a saber-family attack connects with an
+# enemy, cleared the next frame when it becomes the 5-frame hitstop.
+watch saberhit byte 0x060549E9
+
+on saberhit == 1 while ingame: pulse 0.3/0.45 120ms
+
+# Camera shake flags: bit 0x0010 = horizontal shake running, bit
+# 0x0001 = vertical shake running.
+watch shake word 0x06059568 mask 0x0011
+
+# Magnitude in pixels per channel, 4 to 8 seen. Stale after a shake
+# ends, so only meaningful while a flag bit is set.
+watch shakemagx byte 0x06059579
+watch shakemagy byte 0x0605957A
+
+on shake != 0 and (shakemagx >= 8 or shakemagy >= 8) while ingame: hold 0.85/0.85
+on shake != 0 and (shakemagx >= 6 or shakemagy >= 6) while ingame: hold 0.6/0.6
+on shake != 0 while ingame: hold 0.4/0.4
+
+# Wall contact: grab, slide, and Zero's wall slash.
+on mstate in (9, 11, 52) while ingame: hold 0.27/0.38
+
+# Boss HP
+watch bosshp byte ptr 0x060548E8 offset 0x5C
+
+# Effect pool. Boss explosion.
+watch boom long 0x06058734 stride 0x70 count 32 mask 0xFFFFFF00
+
+# Boss killed.
+on boom == 0x21040100 and bosshp == 0 while ingame:
+    pattern (0.7/0.55 110ms, off 70ms, 0.7/0.55 110ms, off 240ms,
+             0.35/0.45 60ms, off 40ms, 0.9/0.7 150ms, off 260ms,
+             0.4/0.5 60ms, off 30ms, 0.9/0.7 140ms, off 180ms,
+             0.8/0.6 110ms, off 60ms, 0.85/0.65 110ms, off 200ms,
+             0.45/0.55 60ms, off 30ms, 1.0/0.85 260ms,
+             0.8/0.8 1000ms,
+             0.9/0.9 1000ms,
+             1.0/1.0 1000ms) cooldown 10000ms priority 2

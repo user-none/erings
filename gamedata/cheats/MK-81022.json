@@ -1,0 +1,42 @@
+{
+  "serial": "MK-81022",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "5 Way Shot",
+      "code": "1607335C 0200"
+    },
+    {
+      "name": "3 Way Shot",
+      "code": "1607335C 0100"
+    },
+    {
+      "name": "Graviton Shot",
+      "code": "1607335C 0600"
+    },
+    {
+      "name": "Homing Shot",
+      "code": "1607335C 0500"
+    },
+    {
+      "name": "Infinite Berserk Meter",
+      "code": "160730AC 00B4"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "160730A8 0080\n160730A4 0080"
+    },
+    {
+      "name": "Auto Berserk Recharge",
+      "code": "D60730AC 0000\n160730AC 00B4"
+    },
+    {
+      "name": "100% Kills",
+      "code": "160730EC 0064\n160730EE 0064"
+    },
+    {
+      "name": "Stop Boss Timer",
+      "code": "1607E766 1194"
+    }
+  ]
+}

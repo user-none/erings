@@ -1,0 +1,74 @@
+{
+  "serial": "T-25406H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Monsters Off",
+      "code": "1608A18E 0001"
+    },
+    {
+      "name": "God Mode & No Clipping",
+      "code": "1609AFD2 0003"
+    },
+    {
+      "name": "God Mode",
+      "code": "1609AFD2 0002"
+    },
+    {
+      "name": "No Clipping Mode",
+      "code": "1609AFD2 0001"
+    },
+    {
+      "name": "Show Map",
+      "code": "16059D8C 0100"
+    },
+    {
+      "name": "Map Things Off",
+      "code": "1606DBB6 0000"
+    },
+    {
+      "name": "All Keys",
+      "code": "1609AF9A 07FF"
+    },
+    {
+      "name": "Infinite Blue Mana",
+      "code": "1609AFC2 00C8"
+    },
+    {
+      "name": "Infinite Green Mana",
+      "code": "1609AFC6 00C8"
+    },
+    {
+      "name": "Have More Weapons",
+      "code": "1609AFB6 0001\n1609AFBA 0001\n1609AFBE 0001"
+    },
+    {
+      "name": "Have Mesh Armor",
+      "code": "1609AE68 0019"
+    },
+    {
+      "name": "Have Falcon Shield",
+      "code": "1609AE6C 0014"
+    },
+    {
+      "name": "Have Platiunum Helm",
+      "code": "1609AE70 000F"
+    },
+    {
+      "name": "Have Dragonskin Bracers",
+      "code": "1609AE74 0005"
+    },
+    {
+      "name": "Monsters On",
+      "code": "1608A18E 0000"
+    },
+    {
+      "name": "Map Things On",
+      "code": "1606DBB6 0001"
+    },
+    {
+      "name": "Have Mesh Armor",
+      "code": "1609AE68 0018"
+    }
+  ]
+}

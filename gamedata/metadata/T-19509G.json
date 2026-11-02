@@ -1,0 +1,25 @@
+{
+  "serial": "T-19509G",
+  "title": "Ryouko no Oshaberi Room",
+  "native_title": "涼子のおしゃべりルーム",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 932688 000200"
+  ],
+  "release_date": "1999-04-22",
+  "developer": "Fupac",
+  "publisher": "Datam Polystar",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Ryōko Inoue no O-Shaberi Room is an installment in Datam's Roommate series. The titular heroine entertains guests, and the player is able to engage in conversations and social interaction with her. It is also possible to view photo galleries and participate in quiz games."
+}

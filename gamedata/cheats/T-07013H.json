@@ -1,0 +1,25 @@
+{
+  "serial": "T-07013H",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "102A9890 012C"
+    },
+    {
+      "name": "(Set 1) Unlimited Time",
+      "code": "102A9810 012C"
+    },
+    {
+      "name": "(Set 2) Unlimited Time",
+      "code": "102A9830 012C"
+    },
+    {
+      "name": "(Set 3) Unlimited Time",
+      "code": "102A9850 012C"
+    },
+    {
+      "name": "(Set 4) Unlimited Time",
+      "code": "102A9870 012C"
+    }
+  ]
+}

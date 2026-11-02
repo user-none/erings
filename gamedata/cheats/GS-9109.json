@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9109",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Lives in After Burner 2",
+      "code": "160E88E0 0006"
+    },
+    {
+      "name": "Unlimited Missile in After Burner 2",
+      "code": "160E8D66 004A"
+    }
+  ]
+}

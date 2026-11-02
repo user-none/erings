@@ -2,62 +2,52 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 // Command saturn-ui runs the erings Saturn core under the eblitui
-// desktop UI. With no flags it opens the full UI. Passing both -bios
-// and -disc runs the given disc directly with the given BIOS.
+// desktop UI.
 package main
 
 import (
 	_ "embed"
-	"flag"
 	"log"
-	"os"
 
 	"github.com/user-none/eblitui/desktop"
 	"github.com/user-none/erings"
 	"github.com/user-none/erings/adapter"
+	"github.com/user-none/erings/gamedata"
 )
 
 //go:embed icon.webp
 var icon []byte
 
 func main() {
-	biosPath := flag.String("bios", "", "path to BIOS file (direct run; requires -disc)")
-	discPath := flag.String("disc", "", "path to disc file (direct run; requires -bios)")
-	flag.Parse()
-
 	factory := &adapter.Factory{}
 
-	desktop.SetAppIcon(icon)
-
-	// Release builds have the update signing keys stamped in; other builds
-	// have none and the update system stays off
-	desktop.SetUpdateConfig(desktop.UpdateConfig{
-		ManifestURL:    "https://github.com/user-none/erings/releases/latest/download/manifest.json",
-		SignatureURL:   "https://github.com/user-none/erings/releases/latest/download/manifest.sig",
-		ReleasePageURL: "https://github.com/user-none/erings/releases/tag/v{version}",
-		AppName:        erings.Name,
-		Version:        erings.Version,
-		Keys:           erings.UpdateKeys(),
-	})
-
-	if *discPath != "" {
-		options := map[string]string{"fast_boot": "true"}
-		var biosMap map[string][]byte
-		if *biosPath != "" {
-			biosData, err := os.ReadFile(*biosPath)
-			if err != nil {
-				log.Fatalf("failed to read BIOS: %v", err)
-			}
-
-			biosMap = map[string][]byte{"main_bios": biosData}
-		}
-		if err := desktop.RunDirect(factory, *discPath, options, biosMap); err != nil {
-			log.Fatal(err)
-		}
-		return
+	emu := desktop.Emulator{
+		Name:                       erings.Name,
+		Version:                    erings.Version,
+		DataDirName:                "erings",
+		Icon:                       icon,
+		RetroAchievementsConsoleID: 39,
+		CheatFormat:                "saturn",
+		// Release builds have the update signing keys stamped in; other
+		// builds have none and the update system stays off
+		Update: &desktop.UpdateConfig{
+			ManifestURL:    "https://github.com/user-none/erings/releases/latest/download/manifest.json",
+			SignatureURL:   "https://github.com/user-none/erings/releases/latest/download/manifest.sig",
+			ReleasePageURL: "https://github.com/user-none/erings/releases/tag/v{version}",
+			AppName:        erings.Name,
+			Version:        erings.Version,
+			Keys:           erings.UpdateKeys(),
+		},
+		Artwork: &desktop.ArtworkConfig{
+			URL:  "https://artwork.erings.dev/",
+			Keys: erings.ArtworkKeys(),
+		},
+		Metadata: gamedata.MetadataSource{},
+		Cheats:   gamedata.CheatsSource{},
+		Rumble:   gamedata.RumbleSource{},
 	}
 
-	if err := desktop.Run(factory); err != nil {
+	if err := desktop.Run(factory, emu); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -1,0 +1,46 @@
+{
+  "serial": "T-8109H",
+  "master_code": "F60290D0 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Player 2 Scores 0",
+      "code": "1603EC54 0000"
+    },
+    {
+      "name": "(Player 2) 1 Score",
+      "code": "1603EC54 0001"
+    },
+    {
+      "name": "(Player 2) 2 Score",
+      "code": "1603EC54 0002"
+    },
+    {
+      "name": "(Player 2) 3 Score",
+      "code": "1603EC54 0003"
+    },
+    {
+      "name": "(Player 2) 4 Score",
+      "code": "1603EC54 0004"
+    },
+    {
+      "name": "(Player 2) 5 Score",
+      "code": "1603EC54 0005"
+    },
+    {
+      "name": "(Player 2) 6 Score",
+      "code": "1603EC54 0006"
+    },
+    {
+      "name": "(Player 2) 7 Score",
+      "code": "1603EC54 0007"
+    },
+    {
+      "name": "(Player 2) 8 Score",
+      "code": "1603EC54 0008"
+    },
+    {
+      "name": "(Player 2) 9 Score",
+      "code": "1603EC54 0009"
+    }
+  ]
+}

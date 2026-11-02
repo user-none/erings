@@ -1,0 +1,14 @@
+{
+  "serial": "T-1807G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "TF2 Invulnerability",
+      "code": "16028026 0100"
+    },
+    {
+      "name": "TF3 Invulnerability",
+      "code": "1602A808 0002"
+    }
+  ]
+}

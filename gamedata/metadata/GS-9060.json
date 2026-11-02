@@ -1,0 +1,26 @@
+{
+  "serial": "GS-9060",
+  "title": "Virtua Cop",
+  "native_title": "バーチャ・コップ",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 090593",
+    "4 974365 090609"
+  ],
+  "release_date": "1995-11-24",
+  "developer": "AM R&D Dept. #2",
+  "publisher": "Sega of America",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "T - Teen",
+  "overview": "You're a cop. Putting your life on the line is your job. Staying alive is your challenge. Split second decision making, timing and lightning fast reflexes are what it takes in this adrenaline pumping game of cat and mouse. Dirt bags pop out of virtually every hiding place with their guns aimed, cocked and ready to shoot - you!"
+}

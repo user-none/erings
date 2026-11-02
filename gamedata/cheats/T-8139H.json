@@ -1,0 +1,54 @@
+{
+  "serial": "T-8139H",
+  "master_code": "F6000924 C305",
+  "cheats": [
+    {
+      "name": "Fire Wall",
+      "code": "160DC18E 0101"
+    },
+    {
+      "name": "Heat Seeking Missile Launcher",
+      "code": "160DC18C 0101"
+    },
+    {
+      "name": "Infinite Fire Fuel",
+      "code": "160DC1A2 0063"
+    },
+    {
+      "name": "Infinite Heat Seekers",
+      "code": "160DC19A 0063"
+    },
+    {
+      "name": "Infinite Mines",
+      "code": "160DC19E 0063"
+    },
+    {
+      "name": "Infinite Missiles",
+      "code": "160DC196 0063"
+    },
+    {
+      "name": "Infinite Smart Bombs",
+      "code": "160DC1A6 0063"
+    },
+    {
+      "name": "Lasers Never Overheat",
+      "code": "10245712 0000"
+    },
+    {
+      "name": "Missile Launcher",
+      "code": "160DC18C 0100"
+    },
+    {
+      "name": "Quad Laser",
+      "code": "160DC1B6 6404"
+    },
+    {
+      "name": "Smart Bomb Launcher",
+      "code": "160DC190 0101"
+    },
+    {
+      "name": "Double Laser",
+      "code": "160DC1B6 6402"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "serial": "MK-81062",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives",
+      "code": "16097C2E 0009"
+    },
+    {
+      "name": "Time Always 0:00",
+      "code": "1609800E 0000"
+    },
+    {
+      "name": "Gives Sonic 999 Rings",
+      "code": "16098008 0999\n1609800C 03E7"
+    },
+    {
+      "name": "Gives Sonic 9 Medals",
+      "code": "16097C5E 0009"
+    },
+    {
+      "name": "Debug Mode On",
+      "code": "1608A626 0001"
+    },
+    {
+      "name": "Gives Sonic 999 Rings (Bonus Levels)",
+      "code": "160FFC94 03E7"
+    },
+    {
+      "name": "Invincibility (Sonic Flashes)",
+      "code": "160A44AC 0060"
+    },
+    {
+      "name": "Start On Green Grove Act 2",
+      "code": "D6097C24 0001\n16097C24 0002"
+    },
+    {
+      "name": "Start On Green Grove Act 3",
+      "code": "D6097C24 0001\n16097C24 0003"
+    },
+    {
+      "name": "Start On Gene Gadget Act 1",
+      "code": "D6097C24 0001\n16097C24 0004"
+    },
+    {
+      "name": "Start On Gene Gadget Act 2",
+      "code": "D6097C24 0001\n16097C24 0005"
+    },
+    {
+      "name": "Start On Gene Gadget Act 3",
+      "code": "D6097C24 0001\n16097C24 0006"
+    },
+    {
+      "name": "Start On Rusty Ruin Act 1",
+      "code": "D6097C24 0001\n16097C24 0007"
+    },
+    {
+      "name": "Start On Rusty Ruin Act 2",
+      "code": "D6097C24 0001\n16097C24 0008"
+    },
+    {
+      "name": "Start On Rusty Ruin Act 3",
+      "code": "D6097C24 0001\n16097C24 0009"
+    },
+    {
+      "name": "Start On Dusty Diamond Act 1",
+      "code": "D6097C24 0001\n16097C24 000A"
+    },
+    {
+      "name": "Start On Dusty Diamond Act 2",
+      "code": "D6097C24 0001\n16097C24 000B"
+    },
+    {
+      "name": "Start On Diamond Dust Act 3",
+      "code": "D6097C24 0001\n16097C24 000C"
+    },
+    {
+      "name": "Start On Volcano Valley Act 1",
+      "code": "D6097C24 0001\n16097C24 000D"
+    },
+    {
+      "name": "Start On Volcano Valley Act 2",
+      "code": "D6097C24 0001\n16097C24 000E"
+    },
+    {
+      "name": "Start On Volcano Valley Act 3",
+      "code": "D6097C24 0001\n16097C24 000F"
+    },
+    {
+      "name": "Start On Spring Stadium Act 1",
+      "code": "D6097C24 0001\n16097C24 0010"
+    },
+    {
+      "name": "Start On Spring Stadium Act 2",
+      "code": "D6097C24 0001\n16097C24 0011"
+    },
+    {
+      "name": "Start On Spring Stadium Act 3",
+      "code": "D6097C24 0001\n16097C24 0012"
+    },
+    {
+      "name": "Start On Panic Puppy Act 1",
+      "code": "D6097C24 0001\n16097C24 0013"
+    },
+    {
+      "name": "Start On Panic Puppy Act 2",
+      "code": "D6097C24 0001\n16097C24 0014"
+    },
+    {
+      "name": "Start On Panic Puppy Act 3",
+      "code": "D6097C24 0001\n16097C24 0015"
+    }
+  ]
+}

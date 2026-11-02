@@ -38,6 +38,19 @@ func UpdateKeys() []string {
 	return strings.Split(updateKeys, ",")
 }
 
+// artworkKeys holds the public keys, as algorithm:base64 entries, trusted to
+// sign the artwork index. Unlike updateKeys they are part of the source, so
+// every build, including go run, verifies artwork the same way.
+var artworkKeys = []string{
+	"ed25519:ny8kTzx/RE+DHbsX+a280g7MgC2+vhhebwPr4x32/Ck=",
+}
+
+// ArtworkKeys returns the public keys trusted to sign the artwork index.
+// Each call returns a new slice the caller owns.
+func ArtworkKeys() []string {
+	return append([]string(nil), artworkKeys...)
+}
+
 func init() {
 	// A link-time override (CI and make builds) takes precedence.
 	if Version != defaultVersion {

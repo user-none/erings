@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Waku Waku 7 (Japan)
+gameid: T-1515G
+system: saturn
+---
+
+# 0 while a round is being fought, 1 otherwise (menus, round end).
+# Set to 1 on the KO itself.
+watch round_over byte 0x0609CA15
+
+# Health starts at 106. Death at 0
+watch p1_hp word 0x0609CA1A
+watch p2_hp word 0x0609CA20
+
+# 1 while that side is human-controlled, 0 for the CPU.
+watch p1 byte 0x0609C89C
+watch p2 byte 0x0609C89D
+def p1_human p1 == 1
+def p2_human p2 == 1
+
+# 0 none, 1/2 = that player performing a HARAHARA or DOKIDOKI attack.
+watch super_owner byte 0x0609C8CF
+
+# KO. A double KO fires both.
+on round_over changed from 0 and p1_hp == 0 while p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1
+on round_over changed from 0 and p2_hp == 0 while p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) priority 1 player 2
+
+# HARAHARA or DOKIDOKI attack landing, felt by the player it hits.
+# Multi-hit supers refire per damage tick.
+on p1_hp decreased while super_owner == 2 and p1_human:
+    pulse 0.8 250ms
+on p2_hp decreased while super_owner == 1 and p2_human:
+    pulse 0.8 250ms player 2

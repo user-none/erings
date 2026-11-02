@@ -1,0 +1,27 @@
+{
+  "serial": "T-6608G",
+  "title": "Waku Waku Puyo Puyo Dungeon",
+  "native_title": "わくわくぷよぷよダンジョン",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988161 702710",
+    "4 988161 702864"
+  ],
+  "release_date": "1998-04-02",
+  "developer": "Compile",
+  "publisher": "Compile",
+  "genres": [
+    "Action",
+    "Role-Playing"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "A dungeon-crawler RPG based on the characters and setting of the Puyo Puyo series. You take your pick of either magician Arle, priest Rulue or the knight Schezo and set out to loot a series of dungeons based on the Puyo Puyo game world.\n\nThe game is a 2D action-rpg viewed from an isometric perspective with an emphasis placed on beating countless monsters and gaining better equipment. Dungeons are generated randomly each time you enter them, as are item spawning points and the enemies and spells available (but not the bosses)."
+}

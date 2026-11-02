@@ -1,0 +1,22 @@
+{
+  "serial": "T-5001H",
+  "master_code": "F6000914 C305\nB6002800 0001",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "160DF784 0FFF\n160DF786 0FFF"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "160DF7B0 0089\n160DF7B2 5440"
+    },
+    {
+      "name": "Unlimited Research",
+      "code": "1609C320 7000\n1609C322 7000\n1609C324 7000\n1609C326 7000\n1609C328 7000\n1609C32A 7000"
+    },
+    {
+      "name": "Unlimited Stocks",
+      "code": "1609B310 005A\n1609B31E 005A\n1609B32C 005A\n1609B33A 005A\n1609B348 005A\n1609B356 005A"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Vampire Savior (Japan)
+gameid: T-1229G
+system: saturn
+---
+
+# Scene state. 0x06094030 is the top level scene (2 character select,
+# 4 match) and 0x06094034 is that scene's sub-state.
+watch scene    long 0x06094030
+watch substate long 0x06094034
+def in_match scene == 4 and substate == 4
+
+# Humans-in-match bitmask. bit 0 is player 1, bit 1 is player 2
+watch p1 byte 0x060940B1 mask 0x01
+watch p2 byte 0x060940B1 mask 0x02
+def p1_human p1 != 0
+def p2_human p2 != 0
+
+# KO: bit 0 player 2 is out, bit 1 player 1 is out.
+# Both bits set on a double KO.
+watch p1_ko byte 0x060940D4 mask 0x02
+watch p2_ko byte 0x060940D4 mask 0x01
+
+# KO. 
+on p1_ko changed to 2 while in_match and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms)
+on p2_ko changed to 1 while in_match and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) player 2

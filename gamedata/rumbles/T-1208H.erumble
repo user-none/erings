@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+game: Night Warriors - Darkstalkers' Revenge (USA)
+gameid: T-1208H
+system: saturn
+---
+
+# Game flow. The outer word is 1 while a game is running and the one
+# below it is 2 for the whole of a match. The step below those,
+# 0x06080868, is 6 during the fight itself.
+watch scene word 0x06080860
+watch phase word 0x06080864
+def in_match scene == 1 and phase == 2
+
+# Humans-in-match bitmask. bit 0 is player 1, bit 1 is player 2.
+watch p1 byte 0x06080888 mask 0x01
+watch p2 byte 0x06080888 mask 0x02
+def p1_human p1 != 0
+def p2_human p2 != 0
+
+# HP, 144 at full. Goes negative on a KO.
+watch p1_hp word 0x06076C66 signed
+watch p2_hp word 0x0607706A signed
+
+# KO: hp negative
+on p1_hp < 0 while in_match and p1_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms)
+on p2_hp < 0 while in_match and p2_human:
+    pattern (1.0 250ms, off 30ms, 1.0 250ms, off 40ms, 1.0 700ms) player 2

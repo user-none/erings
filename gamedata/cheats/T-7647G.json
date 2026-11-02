@@ -1,0 +1,14 @@
+{
+  "serial": "T-7647G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Max EXP",
+      "code": "102D120C EA60"
+    },
+    {
+      "name": "Unlimited Money",
+      "code": "102CEB88 05F5\n102CEB8A E0FF"
+    }
+  ]
+}

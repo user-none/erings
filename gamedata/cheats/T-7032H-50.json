@@ -1,0 +1,14 @@
+{
+  "serial": "T-7032H-50",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "160949EC 0090"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "160A643C 0090"
+    }
+  ]
+}

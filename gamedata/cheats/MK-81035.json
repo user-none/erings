@@ -1,0 +1,342 @@
+{
+  "serial": "MK-81035",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Begin At High Level",
+      "code": "16033C74 00C0"
+    },
+    {
+      "name": "Infinite Lives P1",
+      "code": "1601DBA4 0900"
+    },
+    {
+      "name": "P1 Infinite HP",
+      "code": "16033C5E 270F\n16033C60 270F"
+    },
+    {
+      "name": "Infinite Continues",
+      "code": "3601DBA4 0063"
+    },
+    {
+      "name": "Infinite Health",
+      "code": "1605C942 270F"
+    },
+    {
+      "name": "Max Health",
+      "code": "1605C946 270F"
+    },
+    {
+      "name": "Infinite Magic",
+      "code": "1605C952 270F"
+    },
+    {
+      "name": "Max Magic",
+      "code": "1605C956 270F"
+    },
+    {
+      "name": "Infinite Hearts",
+      "code": "1605C94A 03E7"
+    },
+    {
+      "name": "Max Hearts",
+      "code": "1605C94E 03E7"
+    },
+    {
+      "name": "Max Money",
+      "code": "1605C992 967F\n1605C994 0098"
+    },
+    {
+      "name": "Max Luck",
+      "code": "1605C966 270F"
+    },
+    {
+      "name": "(Player 1) Max Strength",
+      "code": "36033C76 0020"
+    },
+    {
+      "name": "(Player 1) Max Vitality",
+      "code": "36033C77 0020"
+    },
+    {
+      "name": "(Player 1) Max Intelligence",
+      "code": "36033C78 0020"
+    },
+    {
+      "name": "(Player 1) Max Mental",
+      "code": "36033C79 0020"
+    },
+    {
+      "name": "(Player 1) Max Agility",
+      "code": "36033C7A 0020"
+    },
+    {
+      "name": "(Player 1) Max Luck",
+      "code": "36033C7B 0020"
+    },
+    {
+      "name": "(Player 2) Begin On High Level",
+      "code": "16033F74 00C0"
+    },
+    {
+      "name": "(Player 2) Max Strength",
+      "code": "36033F76 0020"
+    },
+    {
+      "name": "(Player 2) Max Vitality",
+      "code": "36033F77 0020"
+    },
+    {
+      "name": "(Player 2) Max Intelligence",
+      "code": "36033F78 0020"
+    },
+    {
+      "name": "(Player 2) Max Mental",
+      "code": "36033F79 0020"
+    },
+    {
+      "name": "(Player 2) Max Agility",
+      "code": "36033F7A 0020"
+    },
+    {
+      "name": "(Player 2) Max Luck",
+      "code": "36033F7B 0020"
+    },
+    {
+      "name": "(Player 1) Unlimited MP",
+      "code": "16033C62 270F\n16033C64 270F"
+    },
+    {
+      "name": "(Player 2) Unlimited HP",
+      "code": "16033F5E 270F\n16033F60 270F"
+    },
+    {
+      "name": "(Player 2) Unlimited MP",
+      "code": "16033F62 270F\n16033F64 270F"
+    },
+    {
+      "name": "(Story Mode) Play As Han",
+      "code": "16032B78 0000"
+    },
+    {
+      "name": "(Story Mode) Play As Randy",
+      "code": "16032B78 0001"
+    },
+    {
+      "name": "(Story Mode) Play As Ginjiron",
+      "code": "16032B78 0002"
+    },
+    {
+      "name": "(Story Mode) Play As Nicole",
+      "code": "16032B78 0003"
+    },
+    {
+      "name": "(Story Mode) Play As Sekena",
+      "code": "16032B78 0004"
+    },
+    {
+      "name": "(VS Mode) Play As Han",
+      "code": "1601DB5E 0000"
+    },
+    {
+      "name": "(VS Mode) Play As Randy",
+      "code": "1601DB5E 0001"
+    },
+    {
+      "name": "(VS Mode) Play As Nand",
+      "code": "1601DB5E 0002"
+    },
+    {
+      "name": "(VS Mode) Play As Ginjiron",
+      "code": "1601DB5E 0003"
+    },
+    {
+      "name": "(VS Mode) Play As Nicole",
+      "code": "1601DB5E 0004\n1601DB5E 002E"
+    },
+    {
+      "name": "(VS Mode) Play As Serena",
+      "code": "1601DB5E 0005"
+    },
+    {
+      "name": "(VS Mode) Play As Undead Hero",
+      "code": "1601DB5E 0006"
+    },
+    {
+      "name": "(VS Mode) Play As Sword Han",
+      "code": "1601DB5E 0007"
+    },
+    {
+      "name": "(VS Mode) Play As Kanon",
+      "code": "1601DB5E 0008"
+    },
+    {
+      "name": "(VS Mode) Play As Valgar",
+      "code": "1601DB5E 0009"
+    },
+    {
+      "name": "(VS Mode) Play As Katrina",
+      "code": "1601DB5E 000A"
+    },
+    {
+      "name": "(VS Mode) Play As Gash",
+      "code": "1601DB5E 000B"
+    },
+    {
+      "name": "(VS Mode) Play As Zur",
+      "code": "1601DB5E 000C"
+    },
+    {
+      "name": "(VS Mode) Play As Super Zur",
+      "code": "1601DB5E 000D"
+    },
+    {
+      "name": "(VS Mode) Play As P Silver",
+      "code": "1601DB5E 000E"
+    },
+    {
+      "name": "(VS Mode) Play As G Silver",
+      "code": "1601DB5E 000F"
+    },
+    {
+      "name": "(VS Mode) Play As Soldiers",
+      "code": "1601DB5E 0010"
+    },
+    {
+      "name": "(VS Mode) Play As Knight",
+      "code": "1601DB5E 0011"
+    },
+    {
+      "name": "(VS Mode) Play As Magician",
+      "code": "1601DB5E 0012"
+    },
+    {
+      "name": "(VS Mode) Play As Banisher",
+      "code": "1601DB5E 0013"
+    },
+    {
+      "name": "(VS Mode) Play As Robot",
+      "code": "1601DB5E 0014"
+    },
+    {
+      "name": "(VS Mode) Play As Village Guard",
+      "code": "1601DB5E 0015"
+    },
+    {
+      "name": "(VS Mode) Play As Skeleton",
+      "code": "1601DB5E 0016"
+    },
+    {
+      "name": "(VS Mode) Play As Zombie",
+      "code": "1601DB5E 0017"
+    },
+    {
+      "name": "(VS Mode) Play As Resistance",
+      "code": "1601DB5E 0018"
+    },
+    {
+      "name": "(VS Mode) Play As Wolf",
+      "code": "1601DB5E 0019"
+    },
+    {
+      "name": "(VS Mode) Play As Goblin",
+      "code": "1601DB5E 001A"
+    },
+    {
+      "name": "(VS Mode) Play As Hid",
+      "code": "1601DB5E 001B"
+    },
+    {
+      "name": "(VS Mode) Play As Roper",
+      "code": "1601DB5E 001C"
+    },
+    {
+      "name": "(VS Mode) Play As Gargoyle",
+      "code": "1601DB5E 001D"
+    },
+    {
+      "name": "(VS Mode) Play As Cyclops",
+      "code": "1601DB5E 001E"
+    },
+    {
+      "name": "(VS Mode) Play As Giant",
+      "code": "1601DB5E 001F"
+    },
+    {
+      "name": "(VS Mode) Play As Civilian 1",
+      "code": "1601DB5E 0020"
+    },
+    {
+      "name": "(VS Mode) Play As Civilian 2",
+      "code": "1601DB5E 0021"
+    },
+    {
+      "name": "(VS Mode) Play As Civilian 3",
+      "code": "1601DB5E 0022"
+    },
+    {
+      "name": "(VS Mode) Play As Civilian 4",
+      "code": "1601DB5E 0023"
+    },
+    {
+      "name": "(VS Mode) Play As Civilian 5",
+      "code": "1601DB5E 0024"
+    },
+    {
+      "name": "(VS Mode) Play As Macho",
+      "code": "1601DB5E 0025"
+    },
+    {
+      "name": "(VS Mode) Play As Gambo",
+      "code": "1601DB5E 0026"
+    },
+    {
+      "name": "(VS Mode) Play As Godais",
+      "code": "1601DB5E 0027"
+    },
+    {
+      "name": "(VS Mode) Play As Undead",
+      "code": "1601DB5E 0028"
+    },
+    {
+      "name": "(VS Mode) Play As Xenovia",
+      "code": "1601DB5E 0029"
+    },
+    {
+      "name": "(VS Mode) Play As GE Spirits",
+      "code": "1601DB5E 002A"
+    },
+    {
+      "name": "(VS Mode) Play As Sky Warrior",
+      "code": "1601DB5E 002B"
+    },
+    {
+      "name": "(VS Mode) Play As Sky Spirits",
+      "code": "1601DB5E 002C"
+    },
+    {
+      "name": "(VS Mode) Play As Nandu",
+      "code": "1601DB5E 002D"
+    },
+    {
+      "name": "(VS Mode) Play As Random",
+      "code": "1601DB5E 002F"
+    },
+    {
+      "name": "(VS Mode) Play As Serena (Weird Pic)",
+      "code": "1601DB5E 0030"
+    },
+    {
+      "name": "(VS Mode) Play As Randy (No Pic)",
+      "code": "1601DB5E 0031"
+    },
+    {
+      "name": "Player 1 plays as Nicole in VS Mode",
+      "code": "1601DB5E 0004"
+    },
+    {
+      "name": "Player 1 plays as Nicole in VS Mode",
+      "code": "1601DB5E 002E"
+    }
+  ]
+}

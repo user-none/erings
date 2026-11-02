@@ -1,0 +1,26 @@
+{
+  "serial": "T-1222H",
+  "title": "Street Fighter Collection",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 13388 22024 3"
+  ],
+  "release_date": "1997-09-18",
+  "developer": "Capcom",
+  "publisher": "Capcom",
+  "genres": [
+    "Compilation",
+    "Fighting"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "T - Teen",
+  "overview": "Street Fighter Collection is a bundle comprising several different games of the Street Fighter series. It includes:\n\n• Super Street Fighter II: The New Challengers\n• Super Street Fighter II Turbo\n• Street Fighter Alpha 2 Gold (updated Street Fighter Alpha 2 with balancing fixes: Evil Ryu and Cammy added as playable characters, timing of some characters changed)"
+}

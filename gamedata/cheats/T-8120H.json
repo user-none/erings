@@ -1,0 +1,418 @@
+{
+  "serial": "T-8120H",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Away Team Scores 0",
+      "code": "1602E44A 0000"
+    },
+    {
+      "name": "Infinite Turbo P1",
+      "code": "160A0B6A 00FF"
+    },
+    {
+      "name": "Infinite Turbo P2",
+      "code": "160A0C56 00FF"
+    },
+    {
+      "name": "Infinite Turbo P3",
+      "code": "160A0D42 00FF"
+    },
+    {
+      "name": "Infinite Turbo P4",
+      "code": "160A0E2E 00FF"
+    },
+    {
+      "name": "Computer Assistance is Off",
+      "code": "360FBFBA 0000"
+    },
+    {
+      "name": "Computer Assistance is On",
+      "code": "360FBFBA 0001"
+    },
+    {
+      "name": "P1 Has no Turbo",
+      "code": "160A0B6A 0000"
+    },
+    {
+      "name": "P2 Has no Turbo",
+      "code": "160A0C56 0000"
+    },
+    {
+      "name": "P3 Has no Turbo",
+      "code": "160A0D42 0000"
+    },
+    {
+      "name": "P4 Has no Turbo",
+      "code": "160A0E3E 0000"
+    },
+    {
+      "name": "Team 1 is Atlanta",
+      "code": "16034B48 0000"
+    },
+    {
+      "name": "Team 1 is Boston",
+      "code": "16034B48 0001"
+    },
+    {
+      "name": "Team 1 is Charlotte",
+      "code": "16034B48 0002"
+    },
+    {
+      "name": "Team 1 is Chicago",
+      "code": "16034B48 0003"
+    },
+    {
+      "name": "Team 1 is Cleveland",
+      "code": "16034B48 0004"
+    },
+    {
+      "name": "Team 1 is Dallas",
+      "code": "16034B48 0005"
+    },
+    {
+      "name": "Team 1 is Denver",
+      "code": "16034B48 0006"
+    },
+    {
+      "name": "Team 1 is Detroit",
+      "code": "16034B48 0007"
+    },
+    {
+      "name": "Team 1 is Golden State",
+      "code": "16034B48 0008"
+    },
+    {
+      "name": "Team 1 is Houston",
+      "code": "16034B48 0009"
+    },
+    {
+      "name": "Team 1 is Indiana",
+      "code": "16034B48 000A"
+    },
+    {
+      "name": "Team 1 is L.A. Clippers",
+      "code": "16034B48 000B"
+    },
+    {
+      "name": "Team 1 is L.A. Lakers",
+      "code": "16034B48 000C"
+    },
+    {
+      "name": "Team 1 is Miami",
+      "code": "16034B48 000D"
+    },
+    {
+      "name": "Team 1 is Milwaukee",
+      "code": "16034B48 000E"
+    },
+    {
+      "name": "Team 1 is Minnesota",
+      "code": "16034B48 000F"
+    },
+    {
+      "name": "Team 1 is New Jersey",
+      "code": "16034B48 0010"
+    },
+    {
+      "name": "Team 1 is New York",
+      "code": "16034B48 0011"
+    },
+    {
+      "name": "Team 1 is Orlando",
+      "code": "16034B48 0012"
+    },
+    {
+      "name": "Team 1 is Philadelphia",
+      "code": "16034B48 0013"
+    },
+    {
+      "name": "Team 1 is Phoenix",
+      "code": "16034B48 0014"
+    },
+    {
+      "name": "Team 1 is Portland",
+      "code": "16034B48 0015"
+    },
+    {
+      "name": "Team 1 is Sacramento",
+      "code": "16034B48 0016"
+    },
+    {
+      "name": "Team 1 is San Antonio",
+      "code": "16034B48 0017"
+    },
+    {
+      "name": "Team 1 is Seattle",
+      "code": "16034B48 0018"
+    },
+    {
+      "name": "Team 1 is Toronto",
+      "code": "16034B48 0019"
+    },
+    {
+      "name": "Team 1 is Utah",
+      "code": "16034B48 001A"
+    },
+    {
+      "name": "Team 1 is Vancouver",
+      "code": "16034B48 001B"
+    },
+    {
+      "name": "Team 1 is Washington",
+      "code": "16034B48 001C"
+    },
+    {
+      "name": "Team 1 is Sculptured Software 1",
+      "code": "16034B48 001D"
+    },
+    {
+      "name": "Team 1 is Sculptured Software 2",
+      "code": "16034B48 001E"
+    },
+    {
+      "name": "Team 1 is Xquid",
+      "code": "16034B48 001F"
+    },
+    {
+      "name": "Team 1 is Acclaim 1",
+      "code": "16034B48 0020"
+    },
+    {
+      "name": "Team 1 is Acclaim",
+      "code": "16034B48 0021"
+    },
+    {
+      "name": "Team 1 is Special Team 1",
+      "code": "16034B48 0022"
+    },
+    {
+      "name": "Team 1 is Special Team 2",
+      "code": "16034B48 0023"
+    },
+    {
+      "name": "Team 1 is Special Team 3",
+      "code": "16034B48 0024"
+    },
+    {
+      "name": "Team 1 is Special Team 4",
+      "code": "16034B48 0025"
+    },
+    {
+      "name": "Team 1 is Special Team 5",
+      "code": "16034B48 0026"
+    },
+    {
+      "name": "Team 1 is Special Team 6",
+      "code": "16034B48 0027"
+    },
+    {
+      "name": "Team 1 is Special Team 7",
+      "code": "16034B48 002C"
+    },
+    {
+      "name": "Team 1 is Special Team 8",
+      "code": "16034B48 002D"
+    },
+    {
+      "name": "Team 1 is Eastern 1",
+      "code": "16034B48 0028"
+    },
+    {
+      "name": "Team 1 is Eastern 2",
+      "code": "16034B48 0029"
+    },
+    {
+      "name": "Team 1 is Western 1",
+      "code": "16034B48 002A"
+    },
+    {
+      "name": "Team 1 is Western 2",
+      "code": "16034B48 002B"
+    },
+    {
+      "name": "Team 2 is Atlanta",
+      "code": "16034B4A 0000"
+    },
+    {
+      "name": "Team 2 is Boston",
+      "code": "16034B4A 0001"
+    },
+    {
+      "name": "Team 2 is Charlotte",
+      "code": "16034B4A 0002"
+    },
+    {
+      "name": "Team 2 is Chicago",
+      "code": "16034B4A 0003"
+    },
+    {
+      "name": "Team 2 is Cleveland",
+      "code": "16034B4A 0004"
+    },
+    {
+      "name": "Team 2 is Dallas",
+      "code": "16034B4A 0005"
+    },
+    {
+      "name": "Team 2 is Denver",
+      "code": "16034B4A 0006"
+    },
+    {
+      "name": "Team 2 is Detroit",
+      "code": "16034B4A 0007"
+    },
+    {
+      "name": "Team 2 is Golden State",
+      "code": "16034B4A 0008"
+    },
+    {
+      "name": "Team 2 is Houston",
+      "code": "16034B4A 0009"
+    },
+    {
+      "name": "Team 2 is Indiana",
+      "code": "16034B4A 000A"
+    },
+    {
+      "name": "Team 2 is L.A. Clippers",
+      "code": "16034B4A 000B"
+    },
+    {
+      "name": "Team 2 is L.A. Lakers",
+      "code": "16034B4A 000C"
+    },
+    {
+      "name": "Team 2 is Miami",
+      "code": "16034B4A 000D"
+    },
+    {
+      "name": "Team 2 is Milwaukee",
+      "code": "16034B4A 000E"
+    },
+    {
+      "name": "Team 2 is Minnesota",
+      "code": "16034B4A 000F"
+    },
+    {
+      "name": "Team 2 is New Jersey",
+      "code": "16034B4A 0010"
+    },
+    {
+      "name": "Team 2 is New York",
+      "code": "16034B4A 0011"
+    },
+    {
+      "name": "Team 2 is Orlando",
+      "code": "16034B4A 0012"
+    },
+    {
+      "name": "Team 2 is Philadelphia",
+      "code": "16034B4A 0013"
+    },
+    {
+      "name": "Team 2 is Phoenix",
+      "code": "16034B4A 0014"
+    },
+    {
+      "name": "Team 2 is Portland",
+      "code": "16034B4A 0015"
+    },
+    {
+      "name": "Team 2 is Sacramento",
+      "code": "16034B4A 0016"
+    },
+    {
+      "name": "Team 2 is San Antonio",
+      "code": "16034B4A 0017"
+    },
+    {
+      "name": "Team 2 is Seattle",
+      "code": "16034B4A 0018"
+    },
+    {
+      "name": "Team 2 is Toronto",
+      "code": "16034B4A 0019"
+    },
+    {
+      "name": "Team 2 is Utah",
+      "code": "16034B4A 001A"
+    },
+    {
+      "name": "Team 2 is Vancouver",
+      "code": "16034B4A 001B"
+    },
+    {
+      "name": "Team 2 is Washington",
+      "code": "16034B4A 001C"
+    },
+    {
+      "name": "Team 2 is Sculptured Software 1",
+      "code": "16034B4A 001D"
+    },
+    {
+      "name": "Team 2 is Sculptured Software 2",
+      "code": "16034B4A 001E"
+    },
+    {
+      "name": "Team 2 is Xquid",
+      "code": "16034B4A 001F"
+    },
+    {
+      "name": "Team 2 is Acclaim 1",
+      "code": "16034B4A 0020"
+    },
+    {
+      "name": "Team 2 is Acclaim",
+      "code": "16034B4A 0021"
+    },
+    {
+      "name": "Team 2 is Special Team 2",
+      "code": "16034B4A 0022"
+    },
+    {
+      "name": "Team 2 is Special Team 2",
+      "code": "16034B4A 0023"
+    },
+    {
+      "name": "Team 2 is Special Team 3",
+      "code": "16034B4A 0024"
+    },
+    {
+      "name": "Team 2 is Special Team 4",
+      "code": "16034B4A 0025"
+    },
+    {
+      "name": "Team 2 is Special Team 5",
+      "code": "16034B4A 0026"
+    },
+    {
+      "name": "Team 2 is Special Team 6",
+      "code": "16034B4A 0027"
+    },
+    {
+      "name": "Team 2 is Special Team 7",
+      "code": "16034B4A 002C"
+    },
+    {
+      "name": "Team 2 is Special Team 8",
+      "code": "16034B4A 002D"
+    },
+    {
+      "name": "Team 2 is Eastern 1",
+      "code": "16034B4A 0028"
+    },
+    {
+      "name": "Team 2 is Eastern 2",
+      "code": "16034B4A 0029"
+    },
+    {
+      "name": "Team 2 is Western 1",
+      "code": "16034B4A 002A"
+    },
+    {
+      "name": "Team 2 is Western 2",
+      "code": "16034B4A 002B"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "serial": "T-28902G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "160456FB 06DD"
+    },
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160423CC 00C8"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "16042A8C 00C8"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "160423CC 0000"
+    },
+    {
+      "name": "(Player 2) No Energy",
+      "code": "16042A8C 0000"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81005",
+  "master_code": "F6000914 C304",
+  "cheats": [
+    {
+      "name": "Infinite Energy P1",
+      "code": "16092072 FFFF"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "160940CE FFFF"
+    },
+    {
+      "name": "Enable Ranking Code",
+      "code": "302FF229 0001"
+    },
+    {
+      "name": "New Options (Below Exit)",
+      "code": "302FF22A 0001"
+    }
+  ]
+}

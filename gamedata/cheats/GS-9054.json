@@ -1,0 +1,30 @@
+{
+  "serial": "GS-9054",
+  "master_code": "F6000914 230B\nB6000B00 0000",
+  "cheats": [
+    {
+      "name": "Earn (100)",
+      "code": "160CAD42 0064"
+    },
+    {
+      "name": "999 MP",
+      "code": "160CAD96 03E7"
+    },
+    {
+      "name": "000 Enemy Earn",
+      "code": "160CAE4A 0000"
+    },
+    {
+      "name": "000 Enemy SP",
+      "code": "160CAEB6 0000"
+    },
+    {
+      "name": "000 Enemy MP",
+      "code": "160CAE9E 0000"
+    },
+    {
+      "name": "Main Character Action",
+      "code": "160A8E54 6363"
+    }
+  ]
+}

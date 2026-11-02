@@ -1,0 +1,26 @@
+{
+  "serial": "T-16207H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "255 Captures",
+      "code": "160481A2 00FF"
+    },
+    {
+      "name": "0 Escapes",
+      "code": "160481A4 0000"
+    },
+    {
+      "name": "1st Trap Is Armed And Ready To Go Off",
+      "code": "1605199C 0300"
+    },
+    {
+      "name": "2nd Trap Is Armed And Ready To Go Off",
+      "code": "160519A4 0300"
+    },
+    {
+      "name": "3rd Trap Is Armed And Ready To Go Off",
+      "code": "160519AC 0300"
+    }
+  ]
+}

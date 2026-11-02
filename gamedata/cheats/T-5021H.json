@@ -1,0 +1,14 @@
+{
+  "serial": "T-5021H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "16067C92 0064"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "16067FC2 0064"
+    }
+  ]
+}

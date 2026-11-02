@@ -1,0 +1,62 @@
+{
+  "serial": "T-8103H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "160BDB70 00A1"
+    },
+    {
+      "name": "Infinite Energy P1",
+      "code": "160BDB70 00A6"
+    },
+    {
+      "name": "No Energy P2",
+      "code": "160BDD04 0000"
+    },
+    {
+      "name": "Infinite Energy P2",
+      "code": "160BDD04 00A6"
+    },
+    {
+      "name": "Infinite Credits",
+      "code": "160BD9DE 0009"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "160BDB70 0000"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D60BDB70 00A6\n160BDB70 0029"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D60BDB70 00A6\n160BDB70 0053"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D60BDB70 00A6\n160BDB70 007C"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D60BDB70 00A6\n160BDB70 0001"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D60BDD04 00A6\n160BDD04 0029"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D60BDD04 00A6\n160BDD04 0053"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D60BDD04 00A6\n160BDD04 007C"
+    },
+    {
+      "name": "1-Hit Death Energy P2",
+      "code": "D60BDD04 00A6\n160BDD04 0001"
+    }
+  ]
+}

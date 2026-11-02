@@ -1,0 +1,22 @@
+{
+  "serial": "T-19905G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160EC390 9C00"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160EC390 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "160EC394 05FF"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160EC394 0505"
+    }
+  ]
+}

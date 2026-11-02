@@ -1,0 +1,46 @@
+{
+  "serial": "T-10002H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "1609D698 0090\n1609D6E8 0090"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "160A09E4 0090\n160AA7EA 0090"
+    },
+    {
+      "name": "No Health P2",
+      "code": "160A09E4 0000\n160AA7EA 0000"
+    },
+    {
+      "name": "(Player 1) 25% Energy",
+      "code": "D609D698 0090\n1609D698 0024\n1609D6E8 0024"
+    },
+    {
+      "name": "(Player 1) 50% Energy",
+      "code": "D609D698 0090\n1609D698 0048\n1609D6E8 0048"
+    },
+    {
+      "name": "(Player 1) 75% Energy",
+      "code": "D609D698 0090\n1609D698 006C\n1609D6E8 006C"
+    },
+    {
+      "name": "(Player 1) No Energy",
+      "code": "1609D698 0000\n1609D6E8 0000"
+    },
+    {
+      "name": "(Player 2) 25% Energy",
+      "code": "D60A09E4 0090\n160A09E4 0024\n160AA7EA 0024"
+    },
+    {
+      "name": "(Player 2) 50% Energy",
+      "code": "D60A09E4 0090\n160A09E4 0048\n160AA7EA 0048"
+    },
+    {
+      "name": "(Player 2) 75% Energy",
+      "code": "D60A09E4 0090\n160A09E4 006C\n160AA7EA 006C"
+    }
+  ]
+}

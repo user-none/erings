@@ -1,0 +1,10 @@
+{
+  "serial": "GS-9147",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Time",
+      "code": "160FFEEE 0000"
+    }
+  ]
+}

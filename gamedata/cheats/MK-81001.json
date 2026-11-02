@@ -1,0 +1,38 @@
+{
+  "serial": "MK-81001",
+  "master_code": "F606B124 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives",
+      "code": "160948F0 3C64"
+    },
+    {
+      "name": "Infinite Mines",
+      "code": "36094920 0006"
+    },
+    {
+      "name": "Infinite Robots",
+      "code": "36094921 0006"
+    },
+    {
+      "name": "Infinite Rockets",
+      "code": "3609491F 0008"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "160948F0 3C04"
+    },
+    {
+      "name": "Unlimited Bombs",
+      "code": "36094922 0064"
+    },
+    {
+      "name": "Unlimited Lock-On Rockets",
+      "code": "3609491E 0064"
+    },
+    {
+      "name": "Unlimited Life Support",
+      "code": "1608FC1A 9000\n160724C8 0064\n160905BA FFFF\n1609071A FFFF\n1609121A FFFF\n3609491F 0008"
+    }
+  ]
+}

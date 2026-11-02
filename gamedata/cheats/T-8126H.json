@@ -1,0 +1,26 @@
+{
+  "serial": "T-8126H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "16030DE0 0055\n16030DE2 0055"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "16030E02 0055\n16030E00 0055"
+    },
+    {
+      "name": "No Health P2",
+      "code": "16030E00 0000\n16030E02 0000"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "16015456 0009\n16015454 0009"
+    },
+    {
+      "name": "Time Counts Down Extremely Fast",
+      "code": "16015458 0000"
+    }
+  ]
+}

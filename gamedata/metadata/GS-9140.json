@@ -1,0 +1,25 @@
+{
+  "serial": "GS-9140",
+  "title": "J.League Victory Goal '97",
+  "native_title": "Ｊリーグ・ビクトリー・ゴール’９７",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 974365 091408"
+  ],
+  "release_date": "1997-03-14",
+  "developer": "SIMS",
+  "publisher": "Sega Enterprises",
+  "genres": [
+    "Sports"
+  ],
+  "max_players": 4,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "Victory Goal '97 can be considered Sega Worldwide Soccer 97 but with 17 of the teams of the Japanese Professional Football League. Just like the previous Victory Goal games it does not include any international teams, but instead the updated club teams and player names for the 1997 season.\n\nThe first in the series not developed by Team Aquila but this time adapted by SIMS, it became the last of the series dedicated exclusively to the Japanese league, and also the last of SEGA games to carry \"Victory Goal\". Further releases would use the title \"Worldwide Soccer\", also in Japan."
+}

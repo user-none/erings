@@ -1,0 +1,14 @@
+{
+  "serial": "MK-81009",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Infinite Energy",
+      "code": "1607FB08 0100"
+    },
+    {
+      "name": "Infinite Credits",
+      "code": "16084BAA 0005"
+    }
+  ]
+}

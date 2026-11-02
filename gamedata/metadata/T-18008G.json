@@ -1,0 +1,25 @@
+{
+  "serial": "T-18008G",
+  "title": "Jungle Park: Saturn Shima",
+  "native_title": "ジャングル・パーク ～サターン島～",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988017 203897"
+  ],
+  "release_date": "1998-01-15",
+  "developer": "Saru Brunei",
+  "publisher": "BMG Japan",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Jungle Park: Saturn Jima (Japanese for Saturn Island) is a point and click adventure game that invites the player to explore the titular park. More a walking simulator than a traditional adventure game, it has few goals and instead lets the player discover the park and its surroundings at their own pace."
+}

@@ -1,0 +1,22 @@
+{
+  "serial": "MK-81024",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Credits",
+      "code": "160654DC 0009"
+    },
+    {
+      "name": "Infinite Missiles",
+      "code": "16065932 0064"
+    },
+    {
+      "name": "Rapid Missile Fire",
+      "code": "16065926 0004"
+    },
+    {
+      "name": "Infinite Armor",
+      "code": "16065936 0035"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "serial": "T-5005H",
+  "title": "Shockwave Assault",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 14633 07645 5",
+    "5 030935 354973"
+  ],
+  "release_date": "1996-06-26",
+  "developer": "Paradox Development",
+  "publisher": "Electronic Arts",
+  "genres": [
+    "Flight Simulator",
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Shockwave Assault combines Shock Wave and its expansion Operation Jumpgate and makes them available for systems other than the 3DO for the first time.\n\nIn Shock Wave, the player takes the role of a rookie pilot, defending the Earth from an alien invasion. From the cockpit of the F-177 fighter, one shoots at the alien walkers and fighters with lasers and missiles, rearming and refueling at supply depots when necessary. The story is told with live-action cutscenes."
+}

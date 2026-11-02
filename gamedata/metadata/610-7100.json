@@ -1,0 +1,24 @@
+{
+  "serial": "610-7100",
+  "title": "Noël 3 (Demo)",
+  "native_title": "ノエル３",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1998-12-10",
+  "developer": "Flight-Plan",
+  "publisher": "Pioneer LDC",
+  "genres": [
+    "Adventure",
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Save the students snatched away by terrorists in adventure game Noël 3: Not Digital. In addition to mystery-solving elements, a thrilling storyline and wealth of animation deliver an enhanced gameplay."
+}

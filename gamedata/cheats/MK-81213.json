@@ -1,0 +1,238 @@
+{
+  "serial": "MK-81213",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Place 1st",
+      "code": "160511F8 0100"
+    },
+    {
+      "name": "Play As Uma",
+      "code": "102FC21C 0009"
+    },
+    {
+      "name": "Play As Uma2",
+      "code": "102FC21C 000A"
+    },
+    {
+      "name": "Stop Timer",
+      "code": "16050F6C 0046"
+    },
+    {
+      "name": "Stop Lap Timer P1",
+      "code": "16050E6E 0000"
+    },
+    {
+      "name": "Stop Lap Timer P2",
+      "code": "16050EF2 0000"
+    },
+    {
+      "name": "Always Play On Three Seven Speedway",
+      "code": "1604F8F8 0011"
+    },
+    {
+      "name": "Always Play On National Park Speedway",
+      "code": "1604F8F8 0111"
+    },
+    {
+      "name": "Always Play On Dinosaur Canyon",
+      "code": "1604F8F8 0211"
+    },
+    {
+      "name": "Always Play On Sea-Side Street Galaxy",
+      "code": "1604F8F8 0311"
+    },
+    {
+      "name": "Always Play On Desent City",
+      "code": "1604F8F8 0411"
+    },
+    {
+      "name": "(Total Lap Modifier) 2 Laps",
+      "code": "16050E64 0001"
+    },
+    {
+      "name": "(Total Lap Modifier) 3 Laps",
+      "code": "16050E64 0002"
+    },
+    {
+      "name": "(Total Lap Modifier) 4 Laps",
+      "code": "16050E64 0003"
+    },
+    {
+      "name": "(Total Lap Modifier) 5 Laps",
+      "code": "16050E64 0004"
+    },
+    {
+      "name": "(Total Lap Modifier) 6 Laps",
+      "code": "16050E64 0005"
+    },
+    {
+      "name": "(Total Lap Modifier) 7 Laps",
+      "code": "16050E64 0006"
+    },
+    {
+      "name": "(Total Lap Modifier) 8 Laps",
+      "code": "16050E64 0007"
+    },
+    {
+      "name": "(Total Lap Modifier) 9 Laps",
+      "code": "16050E64 0008"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 1",
+      "code": "D6050E64 0000\n16050E64 0000"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 2",
+      "code": "D6050E64 0000\n16050E64 0001"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 3",
+      "code": "D6050E64 0000\n16050E64 0002"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 4",
+      "code": "D6050E64 0000\n16050E64 0003"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 5",
+      "code": "D6050E64 0000\n16050E64 0004"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 6",
+      "code": "D6050E64 0000\n16050E64 0005"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 7",
+      "code": "D6050E64 0000\n16050E64 0006"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 8",
+      "code": "D6050E64 0000\n16050E64 0007"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 9",
+      "code": "D6050E64 0000\n16050E64 0008"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 10",
+      "code": "D6050E64 0000\n16050E64 0009"
+    },
+    {
+      "name": "(Player 1) Starts On Lap 11",
+      "code": "D6050E64 0000\n16050E64 000A"
+    },
+    {
+      "name": "16050EE8 00?? (Player 2) Starts On Lap 1",
+      "code": "D6050EE8 0000\n16050EE8 0000"
+    },
+    {
+      "name": "(Player 2) Starts On Lap 2",
+      "code": "D6050EE8 0000\n16050EE8 0001"
+    },
+    {
+      "name": "(Player 2) Starts On Lap 3",
+      "code": "D6050EE8 0000\n16050EE8 0002"
+    },
+    {
+      "name": "(Player 2) Starts On Lap 4",
+      "code": "D6050EE8 0000\n16050EE8 0003"
+    },
+    {
+      "name": "(Player 2) Starts On Lap 5",
+      "code": "D6050EE8 0000\n16050EE8 0004"
+    },
+    {
+      "name": "(Player 2) Starts On Lap 6",
+      "code": "D6050EE8 0000\n16050EE8 0005"
+    },
+    {
+      "name": "(Player 2) Starts On Lap 7",
+      "code": "D6050EE8 0000\n16050EE8 0006"
+    },
+    {
+      "name": "(Player 2) Starts On Lap 8",
+      "code": "D6050EE8 0000\n16050EE8 0007"
+    },
+    {
+      "name": "Player 1 races as Hornet",
+      "code": "102FC21C 0000"
+    },
+    {
+      "name": "Player 1 races as Gallop",
+      "code": "102FC21C 0001"
+    },
+    {
+      "name": "Player 1 races as Max",
+      "code": "102FC21C 0002"
+    },
+    {
+      "name": "Player 1 races as Phoenix",
+      "code": "102FC21C 0003"
+    },
+    {
+      "name": "Player 1 races as Oriole",
+      "code": "102FC21C 0004"
+    },
+    {
+      "name": "Player 1 races as Magic",
+      "code": "102FC21C 0005"
+    },
+    {
+      "name": "Player 1 races as Wolf",
+      "code": "102FC21C 0006"
+    },
+    {
+      "name": "Player 1 races as Balance",
+      "code": "102FC21C 0007"
+    },
+    {
+      "name": "Player 1 races as Classic Gallop",
+      "code": "102FC21C 0008"
+    },
+    {
+      "name": "Player 2 races as Hornet",
+      "code": "102FC21E 0000"
+    },
+    {
+      "name": "Player 2 races as Gallop",
+      "code": "102FC21E 0001"
+    },
+    {
+      "name": "Player 2 races as Max",
+      "code": "102FC21E 0002"
+    },
+    {
+      "name": "Player 2 races as Phoenix",
+      "code": "102FC21E 0003"
+    },
+    {
+      "name": "Player 2 races as Oriole",
+      "code": "102FC21E 0004"
+    },
+    {
+      "name": "Player 2 races as Magic",
+      "code": "102FC21E 0005"
+    },
+    {
+      "name": "Player 2 races as Wolf",
+      "code": "102FC21E 0006"
+    },
+    {
+      "name": "Player 2 races as Balance",
+      "code": "102FC21E 0007"
+    },
+    {
+      "name": "Player 2 races as Classic Gallop",
+      "code": "102FC21E 0008"
+    },
+    {
+      "name": "Player 2 races as Uma",
+      "code": "102FC21E 0009"
+    },
+    {
+      "name": "Player 2 races as Uma 2",
+      "code": "102FC21E 000A"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "serial": "T-10001G",
+  "title": "In the Hunt",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA",
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "7 52919 48004 5"
+  ],
+  "release_date": "1995-12-15",
+  "developer": "SIMS",
+  "publisher": "Imagineer",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "E - Everyone",
+  "overview": "A 2D side scrolling shooter in which you take control of a small attack submarine and engage in underwater combat. The Dark Anarchy Society's forces threaten to destroy the earth's most important cities and only you can get past their defenses and destroy their secret underwater lair.\n\nIn the Hunt follows the classic template for 2D shooters, with the added feature of being able to control scrolling speed. Includes seven levels of underwater action (and keep an eye out for threats from above the surface), upgradeable weapons, and two player cooperative gameplay."
+}

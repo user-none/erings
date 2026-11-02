@@ -1,0 +1,90 @@
+{
+  "serial": "T-1217G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "160D0024 0098"
+    },
+    {
+      "name": "(Player 1) Unlimited Boost",
+      "code": "160D0142 1D00"
+    },
+    {
+      "name": "(Player 1) Unlimited Weapon",
+      "code": "160DB180 3030"
+    },
+    {
+      "name": "(Player 1) Unlimited Power",
+      "code": "160D02CA 3F00"
+    },
+    {
+      "name": "(Player 1) Unlimited Armor",
+      "code": "160D0144 3000"
+    },
+    {
+      "name": "(Player 1) Play As Super 8",
+      "code": "160D02BC 0104"
+    },
+    {
+      "name": "(Player 1) Play As Gaits",
+      "code": "160D02BC 0105"
+    },
+    {
+      "name": "(Player 1) Play As Helion",
+      "code": "160D02BC 0106"
+    },
+    {
+      "name": "(Player 1) Play As Warlock",
+      "code": "160D02BC 0107"
+    },
+    {
+      "name": "(Player 1) Play As Zero Gouki",
+      "code": "160D02BC 0108"
+    },
+    {
+      "name": "(Player 1) 25% Energy",
+      "code": "D60D0024 0098\n160D0024 0026"
+    },
+    {
+      "name": "(Player 1) 50% Energy",
+      "code": "D60D0024 0098\n160D0024 004C"
+    },
+    {
+      "name": "(Player 1) 75% Energy",
+      "code": "D60D0024 0098\n160D0024 0072"
+    },
+    {
+      "name": "(Player 2) Unlimited Energy",
+      "code": "160D0318 0098"
+    },
+    {
+      "name": "(Player 2) Unlimited Boost",
+      "code": "160D0436 1D00"
+    },
+    {
+      "name": "(Player 2) Unlimited Weapon",
+      "code": "160D043A 3000"
+    },
+    {
+      "name": "(Player 2) Unlimited Power",
+      "code": "160D05BE 3F00"
+    },
+    {
+      "name": "(Player 2) Unlimited Armor",
+      "code": "160DB182 1D30"
+    },
+    {
+      "name": "(Player 2) 25% Energy",
+      "code": "D60D0318 0098\n160D0318 0026"
+    },
+    {
+      "name": "(Player 2) 50% Energy",
+      "code": "D60D0318 0098\n160D0318 004C"
+    },
+    {
+      "name": "(Player 2) 75% Energy",
+      "code": "D60D0318 0098\n160D0318 0072"
+    }
+  ]
+}

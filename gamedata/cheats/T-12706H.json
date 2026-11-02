@@ -1,0 +1,34 @@
+{
+  "serial": "T-12706H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite HP Hikaru",
+      "code": "360BFC4B 0014\n360BFC4C 0014"
+    },
+    {
+      "name": "Infinite MP Hikaru",
+      "code": "360BFC4D 0014\n360BFC4E 0014"
+    },
+    {
+      "name": "Infinite HP Umi",
+      "code": "360BFC55 0014\n360BFC56 0014"
+    },
+    {
+      "name": "Infinite MP Umi",
+      "code": "360BFC57 0014\n360BFC58 0014"
+    },
+    {
+      "name": "Infinite HP Fuu",
+      "code": "360BFC5F 0014\n360BFC60 0014"
+    },
+    {
+      "name": "Infinite MP Fuu",
+      "code": "360BFC61 0014\n360BFC62 0014"
+    },
+    {
+      "name": "Unlimited Jewels",
+      "code": "160BFC68 03E7"
+    }
+  ]
+}

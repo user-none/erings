@@ -1,0 +1,30 @@
+{
+  "serial": "T-18506G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Life for Player 1",
+      "code": "160DBB04 0009"
+    },
+    {
+      "name": "Unlimited Life for Player 1",
+      "code": "160DBB06 0009"
+    },
+    {
+      "name": "Unlimited Bombs for Player 1",
+      "code": "160DC8A0 0009"
+    },
+    {
+      "name": "Unlimited Bombs for Player 1",
+      "code": "160DC9A0 0009"
+    },
+    {
+      "name": "Maximum Power for Player 1",
+      "code": "160DC8A8 0003"
+    },
+    {
+      "name": "Maximum Power for Player 2",
+      "code": "160DC9A8 0003"
+    }
+  ]
+}

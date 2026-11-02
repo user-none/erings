@@ -1,0 +1,50 @@
+{
+  "serial": "T-19903G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Open Old Version",
+      "code": "1609FD12 0100"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "10244234 1001"
+    },
+    {
+      "name": "(Player 1) Invulnerability",
+      "code": "160B071C 0000"
+    },
+    {
+      "name": "(Player 1) Unlimited Lives",
+      "code": "3609FC54 0009"
+    },
+    {
+      "name": "(Player 1) Unlimited Bombs",
+      "code": "160B0792 0063"
+    },
+    {
+      "name": "(Player 1) Unlimited Weapons",
+      "code": "160B06B2 0063"
+    },
+    {
+      "name": "(Player 1) Unlimited Credits",
+      "code": "1609FD24 0909"
+    },
+    {
+      "name": "(Player 2) Invulnerability",
+      "code": "160B0FC4 0000"
+    },
+    {
+      "name": "(Player 2) Unlimited Lives",
+      "code": "160B0EF2 0009"
+    },
+    {
+      "name": "(Player 2) Unlimited Bombs",
+      "code": "160B103A 0063"
+    },
+    {
+      "name": "(Player 2) Unlimited Weapons",
+      "code": "160B0F5A 0063"
+    }
+  ]
+}

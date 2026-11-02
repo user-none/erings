@@ -1,0 +1,54 @@
+{
+  "serial": "T-12601H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Money",
+      "code": "1607AEE8 3B9B\n1607AEEA 0F00"
+    },
+    {
+      "name": "Infinite Population",
+      "code": "1607AF58 3B9B\n1607AF5A 0F00"
+    },
+    {
+      "name": "Light Up Rewards Option",
+      "code": "1606E0A2 0001"
+    },
+    {
+      "name": "Always Build Mayor's House",
+      "code": "1606E9DA 00FF"
+    },
+    {
+      "name": "Always Build City Hall",
+      "code": "1606EA06 00FF"
+    },
+    {
+      "name": "Always Build Statue",
+      "code": "1606EA32 00FF"
+    },
+    {
+      "name": "Always Build Space Terminal",
+      "code": "1606EA5E 00FF"
+    },
+    {
+      "name": "Activates Archeology Option",
+      "code": "1606EA8A 00FF"
+    },
+    {
+      "name": "Always Build Plymouth Archeology",
+      "code": "1606EAB6 00FF"
+    },
+    {
+      "name": "Always Build Forest Archeology",
+      "code": "1606EAE2 00FF"
+    },
+    {
+      "name": "Always Build Darco Archeology",
+      "code": "1606EB0E 00FF"
+    },
+    {
+      "name": "Always Build Launch Archeology",
+      "code": "1606EB3A 00FF"
+    }
+  ]
+}

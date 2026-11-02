@@ -1,0 +1,14 @@
+{
+  "serial": "GS-9015",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "Unlimited Energy",
+      "code": "1602BA92 2322"
+    },
+    {
+      "name": "Unlimited Credits",
+      "code": "16084846 000F"
+    }
+  ]
+}

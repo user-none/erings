@@ -1,0 +1,18 @@
+{
+  "serial": "T-14310G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Airship Unlimited Energy",
+      "code": "160686F4 1800"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160234F6 460B"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "160235D0 1000"
+    }
+  ]
+}

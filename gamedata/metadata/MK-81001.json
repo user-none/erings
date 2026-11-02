@@ -1,0 +1,25 @@
+{
+  "serial": "MK-81001",
+  "title": "Ghen War",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "USA"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "0 10086 81001 1"
+  ],
+  "release_date": "1995-11-22",
+  "developer": "Jumpin Jack Software",
+  "publisher": "Virgin Interactive Entertainment",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Ghen War is a classic first-person shooter. The solar system is being attacked by an evil force of aliens known as Ghen. The player is a Lieutenant surface engineer in a hypersuit, and it is his task to boot these aliens out of your world in twenty levels. From the cockpit of this hypersuit, the character operates lasers, grenades, mines, missiles and more while making his way across planet surfaces and city environments protecting the human race. It also has a claw that can operate elements in the environment and can send out a decoy of itself to confuse opponents.\n\nThe game is also one of the first to feature deformable terrain. Explosions make craters and firing into the environment can make it wear away."
+}

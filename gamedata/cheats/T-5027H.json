@@ -1,0 +1,94 @@
+{
+  "serial": "T-5027H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Home Team Scores 0",
+      "code": "160AF722 0000"
+    },
+    {
+      "name": "Away Team Scores 0",
+      "code": "160AF9C6 0000"
+    },
+    {
+      "name": "Home Team Scores 150",
+      "code": "160AF722 0096"
+    },
+    {
+      "name": "Away Team Scores 150",
+      "code": "160AF9C6 0096"
+    },
+    {
+      "name": "(Home Team) 1 Score",
+      "code": "160AF722 0001"
+    },
+    {
+      "name": "(Home Team) 2 Score",
+      "code": "160AF722 0002"
+    },
+    {
+      "name": "(Home Team) 3 Score",
+      "code": "160AF722 0003"
+    },
+    {
+      "name": "(Home Team) 4 Score",
+      "code": "160AF722 0004"
+    },
+    {
+      "name": "(Home Team) 5 Score",
+      "code": "160AF722 0005"
+    },
+    {
+      "name": "(Home Team) 6 Score",
+      "code": "160AF722 0006"
+    },
+    {
+      "name": "(Home Team) 7 Score",
+      "code": "160AF722 0007"
+    },
+    {
+      "name": "(Home Team) 8 Score",
+      "code": "160AF722 0008"
+    },
+    {
+      "name": "(Home Team) 9 Score",
+      "code": "160AF722 0009"
+    },
+    {
+      "name": "(Away Team) 1 Score",
+      "code": "160AF9C6 0001"
+    },
+    {
+      "name": "(Away Team) 2 Score",
+      "code": "160AF9C6 0002"
+    },
+    {
+      "name": "(Away Team) 3 Score",
+      "code": "160AF9C6 0003"
+    },
+    {
+      "name": "(Away Team) 4 Score",
+      "code": "160AF9C6 0004"
+    },
+    {
+      "name": "(Away Team) 5 Score",
+      "code": "160AF9C6 0005"
+    },
+    {
+      "name": "(Away Team) 6 Score",
+      "code": "160AF9C6 0006"
+    },
+    {
+      "name": "(Away Team) 7 Score",
+      "code": "160AF9C6 0007"
+    },
+    {
+      "name": "(Away Team) 8 Score",
+      "code": "160AF9C6 0008"
+    },
+    {
+      "name": "(Away Team) 9 Score",
+      "code": "160AF9C6 0009"
+    }
+  ]
+}

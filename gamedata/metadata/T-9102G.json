@@ -1,0 +1,25 @@
+{
+  "serial": "T-9102G",
+  "title": "Wangan Dead Heat",
+  "native_title": "湾岸デッドヒート",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [
+    "4 988110 600241"
+  ],
+  "release_date": "1995-12-15",
+  "developer": "Genki",
+  "publisher": "Natsume",
+  "genres": [
+    "Racing"
+  ],
+  "max_players": 2,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Highway 2000 is a racing game that offers five racing tracks and three cars (Mad Viper, Dark Nebula and Rapid Fire) with different statistics based on speed, acceleration, handling and grip. The game has several modes like the tournament mode in which you race against AI-controlled opponents and a time trial mode. There is also a two-player race mode in where you race another player in split-screen."
+}

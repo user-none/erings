@@ -1,0 +1,130 @@
+{
+  "serial": "MK-81079",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Sonic 1 - Have All Emeralds",
+      "code": "160FFE56 0006"
+    },
+    {
+      "name": "Sonic 1 - Infinite Lives",
+      "code": "160FFE12 0300"
+    },
+    {
+      "name": "Sonic 1 - Infinite Oxygen",
+      "code": "160FFE14 001C"
+    },
+    {
+      "name": "Sonic 1 - Infinite Rings",
+      "code": "160FFE20 00FD"
+    },
+    {
+      "name": "Sonic 1 - Infinite Shield",
+      "code": "160FFE2C 0001"
+    },
+    {
+      "name": "Sonic 1 - Infinite Time",
+      "code": "160FFE24 0006"
+    },
+    {
+      "name": "Sonic 2 - Defeat Final Stage Bosses With 1 Hit",
+      "code": "360FB461 0001"
+    },
+    {
+      "name": "Sonic 2 - Have All Emeralds",
+      "code": "160FFFB0 FF07"
+    },
+    {
+      "name": "Sonic 2 - Infinite Oxygen",
+      "code": "160FB028 1C00"
+    },
+    {
+      "name": "Sonic 2 - Infinite Shield",
+      "code": "160FB02A 0002"
+    },
+    {
+      "name": "Sonic 2 - Invincibility For Sonic (Enemies Can't Touch You/Can't collect Rings)",
+      "code": "360FB030 00FF"
+    },
+    {
+      "name": "Sonic 2 - Invincibility/Invisibility (Get Shield to see where you are)",
+      "code": "360FB031 0040"
+    },
+    {
+      "name": "Sonic 2 - Play As Super Sonic (No Powers)",
+      "code": "360FFE19 0001"
+    },
+    {
+      "name": "Sonic 3 - 1 Blue Ball To Finish Bonus Stages",
+      "code": "160FE438 0001"
+    },
+    {
+      "name": "Sonic 3 - 99 Rings",
+      "code": "160FFE20 0063"
+    },
+    {
+      "name": "Sonic 3 - Have All Emeralds",
+      "code": "160FFFB0 0007"
+    },
+    {
+      "name": "Sonic World - Have 100 Rings",
+      "code": "160FFF18 0001\n160FFF1A 0000\n160FFD26 0064"
+    },
+    {
+      "name": "Sonic World - Have All Five Blue Points Activated & Have All Seven Secret Cards Touched",
+      "code": "160FFC2C 0507"
+    },
+    {
+      "name": "Sonic World - Have All Three Balloons Popped",
+      "code": "160FFC2E 0300"
+    },
+    {
+      "name": "Sonic World - Have All Three Red Points Activated",
+      "code": "160FFC28 0003"
+    },
+    {
+      "name": "Sonic World - Have The Giant Credits Ring Activated",
+      "code": "160FFC44 0001"
+    },
+    {
+      "name": "Sonic World - Have Touched Miles",
+      "code": "160FFC2A 0001"
+    },
+    {
+      "name": "Sonic World - Infinite Time To Complete Missions",
+      "code": "160FFEEE 0001"
+    },
+    {
+      "name": "Sonic World - Unlock All Missions In The Sonic World",
+      "code": "160FFC30 00FF"
+    },
+    {
+      "name": "Universal - Enable Debug Mode",
+      "code": "360FFFFA 0001"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160FFEEE 0001\n160FFE24 0006\n160FFE24 0006\n160FFE24 0006"
+    },
+    {
+      "name": "Unlimited Shield",
+      "code": "160FFE2C 0001\n160FB02A 0002"
+    },
+    {
+      "name": "Unlimited Lives",
+      "code": "160FFE12 0300\n160FFE12 0300\n160FFE12 0300"
+    },
+    {
+      "name": "Unlimited Oxygen",
+      "code": "160FFE14 001C\n160FB028 1C00"
+    },
+    {
+      "name": "Unlimited Rings",
+      "code": "160FFE20 00FD\n160FFE20 00FD\n160FFE20 00FD"
+    },
+    {
+      "name": "Have All Emeralds",
+      "code": "160FFE56 0006\n160FFFB0 FF07\n160FFFB0 0007"
+    }
+  ]
+}

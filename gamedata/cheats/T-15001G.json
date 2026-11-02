@@ -1,0 +1,14 @@
+{
+  "serial": "T-15001G",
+  "master_code": "F60184D2 C305",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Energy",
+      "code": "16068D26 0F60"
+    },
+    {
+      "name": "Countdown Timer Stopped",
+      "code": "16068F0A 0060"
+    }
+  ]
+}

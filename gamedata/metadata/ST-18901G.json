@@ -1,0 +1,23 @@
+{
+  "serial": "ST-18901G",
+  "title": "Digital Pinball: Last Gladiators (Demo)",
+  "native_title": "デジタル・ピンボール 「ラスト・グラディエーターズ」",
+  "category": "Demos",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1995-06-23",
+  "developer": "KaZe",
+  "publisher": "Sega",
+  "genres": [
+    "Pinball"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "E - Everyone",
+  "overview": "Digital Pinball: Last Gladiators is a pinball simulator. It has four different tables (Gladiators, Knight of the Roses, Dragon Showdown and Warlock). Each table has approximately 10 rounds and a multiball mode. The manual includes a map and detailed round descriptions for each table."
+}

@@ -1,0 +1,23 @@
+{
+  "serial": "T-1809G",
+  "title": "Hyper Duel",
+  "native_title": "ハイパー・デュエル",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1996-11-22",
+  "developer": "TechnoSoft",
+  "publisher": "Technosoft",
+  "genres": [
+    "Shooter"
+  ],
+  "max_players": 2,
+  "cooperative": true,
+  "esrb": "Not Rated",
+  "overview": "In Hyper Duel the player controls one of three \"Buster Gears” pilots: Keith Spader, Lisa Rowling, or Dr. B. Lloyd, and must destroy alien forces.\nBuster Gears look like normal spaceships but have two modes - spaceship and robot - with different fire modes. The ships can also acquire additional helper units by collecting either the T or G items. The weapon can be upgraded by collecting P items."
+}

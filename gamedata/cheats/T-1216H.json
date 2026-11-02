@@ -1,0 +1,90 @@
+{
+  "serial": "T-1216H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Have Mega Ball",
+      "code": "160361E4 0100"
+    },
+    {
+      "name": "Infinite Mega Balls",
+      "code": "160361E6 2800"
+    },
+    {
+      "name": "Have Flash Bomb",
+      "code": "160361E8 0100"
+    },
+    {
+      "name": "Infinite Flash Bombs",
+      "code": "160361EA 2800"
+    },
+    {
+      "name": "Have Thunder Claw",
+      "code": "160361EC 0100"
+    },
+    {
+      "name": "Infinite Thunder Claws",
+      "code": "160361EE 2800"
+    },
+    {
+      "name": "Have Astro Crush",
+      "code": "16036204 0100"
+    },
+    {
+      "name": "Infinite Astro Crush",
+      "code": "16036206 2800"
+    },
+    {
+      "name": "Have Flame Sword",
+      "code": "160361FC 0100"
+    },
+    {
+      "name": "Have Homing Sniper",
+      "code": "16036200 0100"
+    },
+    {
+      "name": "Have Ice Wave",
+      "code": "160361F0 0100"
+    },
+    {
+      "name": "Have Tornado Hold",
+      "code": "160361F4 0100"
+    },
+    {
+      "name": "Have Water Balloon",
+      "code": "160361F8 0100"
+    },
+    {
+      "name": "Infinite Flame Sword",
+      "code": "160361FE 2800"
+    },
+    {
+      "name": "Infinite Homing Snipers",
+      "code": "16036202 2800"
+    },
+    {
+      "name": "Infinite Ice Waves",
+      "code": "160361F2 2800"
+    },
+    {
+      "name": "Infinite Tornado Hold",
+      "code": "160361F6 2800"
+    },
+    {
+      "name": "Infinite Water Balloons",
+      "code": "160361FA 2800"
+    },
+    {
+      "name": "Invincibility",
+      "code": "16030006 0053"
+    },
+    {
+      "name": "Infinite Bolts",
+      "code": "1602DADC 0063"
+    },
+    {
+      "name": "Infinite Rush Power",
+      "code": "1602DAAC 2800"
+    }
+  ]
+}

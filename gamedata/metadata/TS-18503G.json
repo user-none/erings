@@ -1,0 +1,23 @@
+{
+  "serial": "TS-18503G",
+  "title": "The Psychotron",
+  "native_title": "サイコトロン",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1995-10-27",
+  "developer": "Merit Studios",
+  "publisher": "GAGA Communications",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "The Psychotron is an adventure from the early development time of live video, set in a wild Texan environment. A sort of Mission Impossible type of game with much usage of live video.\n\nYou have been assigned by the US President and the FBI to find out a missing official science project. The video interaction is very sharp and the game also offers the player many puzzles, card and board game sequences."
+}

@@ -1,0 +1,25 @@
+{
+  "serial": "MK-81801",
+  "title": "Riven: The Sequel to Myst",
+  "native_title": "",
+  "category": "Games",
+  "regions": [
+    "Europe"
+  ],
+  "languages": [
+    "English"
+  ],
+  "barcodes": [
+    "4 974365 818012"
+  ],
+  "release_date": "1998-04-08",
+  "developer": "Cyan Productions",
+  "publisher": "Enix",
+  "genres": [
+    "Adventure"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Riven is a sequel to Myst, and is very similar to its predecessor in gameplay style, controls, and visual presentation. The game world is presented as a series of computer-generated still screens; the player explores it in a point-and-click fashion. Interaction with the environment is possible only when said environment is highlighted as a \"hot spot\", and is also performed by simple clicking. Like its predecessor, Riven is heavy on puzzles, which rarely include using inventory items, but usually involve understanding and manipulating the complex environments and machinery of the game world."
+}

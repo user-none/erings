@@ -1,0 +1,34 @@
+{
+  "serial": "T-3112G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Money",
+      "code": "160E4F44 000F\n160E4F46 423F"
+    },
+    {
+      "name": "Unlimited Power",
+      "code": "160E5A6E 0020\n160E5B12 0020\n160E5BB6 0020"
+    },
+    {
+      "name": "Quick Level up",
+      "code": "160E5A3E FFFF\n160E5AE2 FFFF\n160E5B86 FFFF"
+    },
+    {
+      "name": "Unlimited Strength",
+      "code": "160E5A42 03E7\n160E5AE6 03E7\n160E5B8A 03E7"
+    },
+    {
+      "name": "Unlimited Energy",
+      "code": "160E5A46 03E7\n160E5AEA 03E7\n160E5B8E 03E7"
+    },
+    {
+      "name": "No Random Battles",
+      "code": "160DD6EC 0000"
+    },
+    {
+      "name": "Always Be Able To Attack",
+      "code": "160E4F9C 0000\n160E4FFC 0000\n160E505C 0000"
+    }
+  ]
+}

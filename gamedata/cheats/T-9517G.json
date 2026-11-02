@@ -1,0 +1,10 @@
+{
+  "serial": "T-9517G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "(Player 1) Always Win",
+      "code": "16035290 0003"
+    }
+  ]
+}

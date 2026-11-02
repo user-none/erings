@@ -1,0 +1,54 @@
+{
+  "serial": "T-4308G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Health",
+      "code": "160676F6 FFFF\n160676F8 FFFF\n160676FA FFFF\n160676FC FFFF\n160676FE FFFF\n16067700 FFFF\n16067702 FFFF"
+    },
+    {
+      "name": "(Player 2) Unlimited Health",
+      "code": "160678AE FFFF\n160678B0 FFFF\n160678B2 FFFF\n160678B4 FFFF\n160678B6 FFFF\n160678B8 FFFF\n160678BA FFFF"
+    },
+    {
+      "name": "(Player 3) Unlimited Health",
+      "code": "16067A66 FFFF\n16067A68 FFFF\n16067A6A FFFF\n16067A6C FFFF\n16067A6E FFFF\n16067A70 FFFF\n16067A72 FFFF"
+    },
+    {
+      "name": "(Player 4) Unlimited Health",
+      "code": "16067C1E FFFF\n16067C20 FFFF\n16067C22 FFFF\n16067C24 FFFF\n16067C26 FFFF\n16067C28 FFFF\n16067C2A FFFF"
+    },
+    {
+      "name": "(Player 5) Unlimited Health",
+      "code": "16067DD6 FFFF\n16067DD8 FFFF\n16067DDA FFFF\n16067DDC FFFF\n16067DDE FFFF\n16067DE0 FFFF\n16067DE2 FFFF"
+    },
+    {
+      "name": "(Player 6) Unlimited Health",
+      "code": "16067F8E FFFF\n16067F90 FFFF\n16067F92 FFFF\n16067F94 FFFF\n16067F96 FFFF\n16067F98 FFFF\n16067F9A FFFF"
+    },
+    {
+      "name": "(Player 1) Low Health",
+      "code": "160676F6 0000\n160676F8 0000\n160676FA 0000\n160676FC 0000\n160676FE 0000\n16067700 0000\n16067702 0000"
+    },
+    {
+      "name": "(Player 2) Low Health",
+      "code": "160678AE 0000\n160678B0 0000\n160678B2 0000\n160678B4 0000\n160678B6 0000\n160678B8 0000\n160678BA 0000"
+    },
+    {
+      "name": "(Player 3) Low Health",
+      "code": "16067A66 0000\n16067A68 0000\n16067A6A 0000\n16067A6C 0000\n16067A6E 0000\n16067A70 0000\n16067A72 0000"
+    },
+    {
+      "name": "(Player 4) Low Health",
+      "code": "16067C1E 0000\n16067C20 0000\n16067C22 0000\n16067C24 0000\n16067C26 0000\n16067C28 0000\n16067C2A 0000"
+    },
+    {
+      "name": "(Player 5) Low Health",
+      "code": "16067DD6 0000\n16067DD8 0000\n16067DDA 0000\n16067DDC 0000\n16067DDE 0000\n16067DE0 0000\n16067DE2 0000"
+    },
+    {
+      "name": "(Player 6) Low Health",
+      "code": "16067F8E 0000\n16067F90 0000\n16067F92 0000\n16067F94 0000\n16067F96 0000\n16067F98 0000\n16067F9A 0000"
+    }
+  ]
+}

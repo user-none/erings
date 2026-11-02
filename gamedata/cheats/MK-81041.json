@@ -1,0 +1,142 @@
+{
+  "serial": "MK-81041",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Health P1",
+      "code": "16062828 00FA\n160945A0 00FA"
+    },
+    {
+      "name": "Infinite Health P2",
+      "code": "16064728 00FA\n160945A4 00FA"
+    },
+    {
+      "name": "No Health P2",
+      "code": "16064728 0000\n160945A4 0000"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "160E005E 0781"
+    },
+    {
+      "name": "P1 Needs 1 Match to Win",
+      "code": "D60E0008 0000\n360E0008 0001"
+    },
+    {
+      "name": "P1 Never Wins",
+      "code": "360E0008 0000"
+    },
+    {
+      "name": "P2 Needs 1 Match to Win",
+      "code": "D60E0008 0000\n360E0009 0001"
+    },
+    {
+      "name": "P2 Never Wins",
+      "code": "360E0009 0000"
+    },
+    {
+      "name": "25% Energy P1",
+      "code": "D60945A0 00FA\n16062828 003E\n160945A0 003E"
+    },
+    {
+      "name": "50% Energy P1",
+      "code": "D60945A0 00FA\n16062828 007D\n160945A0 007D"
+    },
+    {
+      "name": "75% Energy P1",
+      "code": "D60945A0 00FA\n16062828 00B7\n160945A0 00B7"
+    },
+    {
+      "name": "25% Energy P2",
+      "code": "D60945A4 00FA\n16064728 003E\n160945A4 003E"
+    },
+    {
+      "name": "50% Energy P2",
+      "code": "D60945A4 00FA\n16064728 007D\n160945A4 007D"
+    },
+    {
+      "name": "75% Energy P2",
+      "code": "D60945A4 00FA\n16064728 00B7\n160945A4 00B7"
+    },
+    {
+      "name": "P1 Can't Jump",
+      "code": "160627E4 0000"
+    },
+    {
+      "name": "P1 Has a Ground Level of 1 Character Off of The Ground",
+      "code": "160627E4 0001"
+    },
+    {
+      "name": "P1 Has a Ground Level of 2 Characters Off of The Ground",
+      "code": "160627E4 0002"
+    },
+    {
+      "name": "P2 Can't Jump",
+      "code": "160646E4 0000"
+    },
+    {
+      "name": "P2 Has a Ground Level Of 1 Character Off of The Ground",
+      "code": "160646E4 0001"
+    },
+    {
+      "name": "P2 Has a Ground Level of 2 Characters Off of The Ground",
+      "code": "160646E4 0002"
+    },
+    {
+      "name": "P2 Can't Fall Over",
+      "code": "16062E34 0000"
+    },
+    {
+      "name": "P1 Can't Fall Over",
+      "code": "16064D34 0000"
+    },
+    {
+      "name": "P2 is Super Strong And Can Only be Damaged by Throws",
+      "code": "16062E32 0000"
+    },
+    {
+      "name": "P1 is Super Strong And Can Only be Damaged by Throws",
+      "code": "16064D32 0000"
+    },
+    {
+      "name": "P1 Infinite Armor",
+      "code": "1606281E 0000\n16062822 0000"
+    },
+    {
+      "name": "P2 Infinite Armor",
+      "code": "1606471E 0000\n16064722 0000"
+    },
+    {
+      "name": "1-Hit Death P1",
+      "code": "D60945A0 00FA\n16062828 0001\n160945A0 0001"
+    },
+    {
+      "name": "1-Hit Death P2",
+      "code": "D60945A4 00FA\n16064728 0001\n160945A4 0001"
+    },
+    {
+      "name": "No Energy P1",
+      "code": "16062828 0000\n160945A0 0000"
+    },
+    {
+      "name": "P1 Weak Armor",
+      "code": "1606281E FFFF\n16062822 FFFF"
+    },
+    {
+      "name": "P2 Weak Armor",
+      "code": "1606471E FFFF\n16064722 FFFF"
+    },
+    {
+      "name": "Unlimited Health for Player 1",
+      "code": "160628B8 00EB\n160876E0 001D\n16094630 00EB"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "160E005E 0780"
+    },
+    {
+      "name": "Unlimited Game Time",
+      "code": "160E006E 0001"
+    }
+  ]
+}

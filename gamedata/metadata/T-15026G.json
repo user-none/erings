@@ -1,0 +1,24 @@
+{
+  "serial": "T-15026G",
+  "title": "Tenga Seiha",
+  "native_title": "天下制覇",
+  "category": "Games",
+  "regions": [
+    "Japan"
+  ],
+  "languages": [
+    "Japanese"
+  ],
+  "barcodes": [],
+  "release_date": "1997-08-08",
+  "developer": "Kid",
+  "publisher": "Imagineer",
+  "genres": [
+    "Adventure",
+    "Strategy"
+  ],
+  "max_players": 1,
+  "cooperative": false,
+  "esrb": "Not Rated",
+  "overview": "Tenga Seiha is a historical simulation game set in the Warring States period of Japanese history, which chronicles the life and rise to power of shogun Ieyasu Tokugawa. The game is divided into two main sections: adventure segments and battle segments. In the adventure segments, the player can speak with advisors and villagers to gather information. The battle segments play out in real-time with the player giving basic orders to units, such as to move to a specific location or to launch an attack. The game includes recreations of 26 real-life battles, and numerous story branch points where the scenario can diverge significantly from historical fact."
+}

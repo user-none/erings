@@ -1,0 +1,278 @@
+{
+  "serial": "T-1215G",
+  "master_code": "F6000924 FFFF",
+  "cheats": [
+    {
+      "name": "Unlimited Energy for Player 1",
+      "code": "1609491C 0090"
+    },
+    {
+      "name": "Unlimited Energy for Player 2",
+      "code": "160A636C 0090"
+    },
+    {
+      "name": "Special Bar Powered at Level 3 for Player 1",
+      "code": "16094922 0303"
+    },
+    {
+      "name": "Special Bar Powered at Level 3 for Player 2",
+      "code": "160A6372 0303"
+    },
+    {
+      "name": "Unlimited Time",
+      "code": "16096118 990E"
+    },
+    {
+      "name": "Player 1 Current Gem Meter Always Full After Activated",
+      "code": "160948FE 5C70"
+    },
+    {
+      "name": "Player 1 is Captain America",
+      "code": "3609C853 0002"
+    },
+    {
+      "name": "Player 1 is Captain America Alternative Colour",
+      "code": "1609C772 0003"
+    },
+    {
+      "name": "Player 1 is Hulk",
+      "code": "1609C772 0004"
+    },
+    {
+      "name": "Player 1 is Hulk Alternative Colour",
+      "code": "3609C853 0005"
+    },
+    {
+      "name": "Player 1 is Iron Man",
+      "code": "3609C853 0006"
+    },
+    {
+      "name": "Player 1 is Iron Man Alternative Colour",
+      "code": "3609C853 0007"
+    },
+    {
+      "name": "Player 1 is Wolverine",
+      "code": "3609C853 0008"
+    },
+    {
+      "name": "Player 1 is Wolverine Alternative Colour",
+      "code": "1609C772 0009"
+    },
+    {
+      "name": "Player 1 is Psylocke",
+      "code": "3609C853 000A"
+    },
+    {
+      "name": "Player 1 is Psylocke Alternative Colour",
+      "code": "3609C853 000B"
+    },
+    {
+      "name": "Player 1 is BlackHeart",
+      "code": "3609C853 000C"
+    },
+    {
+      "name": "Player 1 is BlackHeart Alternative Colour",
+      "code": "1609C772 000D"
+    },
+    {
+      "name": "Player 1 is Shuma Gorath",
+      "code": "3609C853 000E"
+    },
+    {
+      "name": "Player 1 is Shuma Gorath Alternative Colour",
+      "code": "1609C772 000F"
+    },
+    {
+      "name": "Player 1 is Juggernaut",
+      "code": "3609C853 0010"
+    },
+    {
+      "name": "Player 1 is Juggernaut Alternative Colour",
+      "code": "1609C772 0011"
+    },
+    {
+      "name": "Player 1 is Magneto",
+      "code": "1609C772 0012"
+    },
+    {
+      "name": "Player 1 is Magneto Alternative Colour",
+      "code": "3609C853 0013"
+    },
+    {
+      "name": "Player 1 is Dr. Doom",
+      "code": "3609C853 0014"
+    },
+    {
+      "name": "Player 1 is Dr. Doom Alternative Colour",
+      "code": "3609C853 0015"
+    },
+    {
+      "name": "Player 1 is Thanos",
+      "code": "1609C772 0016"
+    },
+    {
+      "name": "Player 1 is Thanos Alternative Colour",
+      "code": "3609C853 0017"
+    },
+    {
+      "name": "Player 1 is Anita",
+      "code": "1609C772 0018"
+    },
+    {
+      "name": "Player 2 is Spider Man",
+      "code": "1609C612 0001"
+    },
+    {
+      "name": "Player 2 is Captain America",
+      "code": "1609C612 0002"
+    },
+    {
+      "name": "Player 2 is Captain America Alternative Colour",
+      "code": "1609C612 0003"
+    },
+    {
+      "name": "Player 2 is Hulk",
+      "code": "1609C612 0004"
+    },
+    {
+      "name": "Player 2 is Hulk Alternative Colour",
+      "code": "1609C612 0005"
+    },
+    {
+      "name": "Player 2 is Iron Man",
+      "code": "1609C612 0006"
+    },
+    {
+      "name": "Player 2 is Wolverine",
+      "code": "1609C612 0008"
+    },
+    {
+      "name": "Player 2 is Wolverine Alternative Colour",
+      "code": "1609C612 0009"
+    },
+    {
+      "name": "Player 2 is Psylocke",
+      "code": "1609C612 000A"
+    },
+    {
+      "name": "Player 2 is Psylocke Alternative Colour",
+      "code": "1609C612 000B"
+    },
+    {
+      "name": "Player 2 is BlackHeart",
+      "code": "1609C612 000C"
+    },
+    {
+      "name": "Player 2 is BlackHeart Alternative Colour",
+      "code": "1609C612 000D"
+    },
+    {
+      "name": "Player 2 is Shuma Gorath",
+      "code": "1609C612 000E"
+    },
+    {
+      "name": "Player 2 is Shuma Gorath Alternative Colour",
+      "code": "1609C612 000F"
+    },
+    {
+      "name": "Player 2 is Juggernaut",
+      "code": "1609C612 0010"
+    },
+    {
+      "name": "Player 2 is Juggernaut Alternative Colour",
+      "code": "1609C612 0011"
+    },
+    {
+      "name": "Player 2 is Magneto",
+      "code": "1609C612 0012"
+    },
+    {
+      "name": "Player 2 is Magneto Alternative Colour",
+      "code": "1609C612 0013"
+    },
+    {
+      "name": "Player 2 is Dr. Doom",
+      "code": "1609C612 0014"
+    },
+    {
+      "name": "Player 2 is Dr. Doom Alternative Colour",
+      "code": "1609C612 0015"
+    },
+    {
+      "name": "Player 2 is Thanos",
+      "code": "1609C612 0016"
+    },
+    {
+      "name": "Player 2 is Thanos Alternative Colour",
+      "code": "1609C612 0017"
+    },
+    {
+      "name": "Player 2 is Anita",
+      "code": "1609C612 0018"
+    },
+    {
+      "name": "Power Gems for Player 1",
+      "code": "16094938 00FF"
+    },
+    {
+      "name": "Time Gems for Player 1",
+      "code": "16094938 02FF"
+    },
+    {
+      "name": "Space Gems for Player 1",
+      "code": "16094938 04FF"
+    },
+    {
+      "name": "Soul Gems for Player 1",
+      "code": "16094938 06FF"
+    },
+    {
+      "name": "Reality Gems for Player 1",
+      "code": "16094938 08FF"
+    },
+    {
+      "name": "Mind Gems for Player 1",
+      "code": "16094938 0AFF"
+    },
+    {
+      "name": "Power Gems for Player 2",
+      "code": "160A6388 00FF"
+    },
+    {
+      "name": "Time Gems for Player 2",
+      "code": "160A6388 02FF"
+    },
+    {
+      "name": "Space Gems for Player 2",
+      "code": "160A6388 04FF"
+    },
+    {
+      "name": "Soul Gems for Player 2",
+      "code": "160A6388 06FF"
+    },
+    {
+      "name": "Reality Gems for Player 2",
+      "code": "160A6388 08FF"
+    },
+    {
+      "name": "Mind Gems for Player 2",
+      "code": "160A6388 0AFF"
+    },
+    {
+      "name": "No Energy for Player 1",
+      "code": "1609491C 0000"
+    },
+    {
+      "name": "No Energy for Player 2",
+      "code": "160A636C 0000"
+    },
+    {
+      "name": "No Unlimited Power Bar for Player 1",
+      "code": "16094922 0000"
+    },
+    {
+      "name": "No Unlimited Power Bar for Player 2",
+      "code": "160A6372 0000"
+    }
+  ]
+}

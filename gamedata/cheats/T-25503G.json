@@ -1,0 +1,18 @@
+{
+  "serial": "T-25503G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Timer Frozen",
+      "code": "1606CEA2 0000"
+    },
+    {
+      "name": "CPU Can't Race",
+      "code": "1608D430 0000"
+    },
+    {
+      "name": "Go Max Speed Press Z",
+      "code": "D600D5CE FFFF\n1606D378 0060"
+    }
+  ]
+}

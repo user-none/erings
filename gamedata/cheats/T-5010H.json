@@ -1,0 +1,114 @@
+{
+  "serial": "T-5010H",
+  "master_code": "F6000924 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Time Outs Home",
+      "code": "1605B97E 0004"
+    },
+    {
+      "name": "Infinite Time Outs Away",
+      "code": "160599BE 0004"
+    },
+    {
+      "name": "Home Team Scores 0",
+      "code": "1605B97C 0000"
+    },
+    {
+      "name": "Extra Teams",
+      "code": "1605510A 006B"
+    },
+    {
+      "name": "Infinite Downs",
+      "code": "16060DA8 0001"
+    },
+    {
+      "name": "Infinite Time",
+      "code": "1605D458 012C"
+    },
+    {
+      "name": "Infinite Time To Choose A Defensive Play",
+      "code": "16052D40 3500"
+    },
+    {
+      "name": "P1 Has No Time Outs",
+      "code": "1605B97E 0000"
+    },
+    {
+      "name": "P2 Has No Time Outs",
+      "code": "160599BE 0000"
+    },
+    {
+      "name": "(Player 1) Always Score 1 Point",
+      "code": "1605B97C 0001"
+    },
+    {
+      "name": "(Player 1) Always Score 2 Points",
+      "code": "1605B97C 0002"
+    },
+    {
+      "name": "(Player 1) Always Score 3 Points",
+      "code": "1605B97C 0003"
+    },
+    {
+      "name": "(Player 1) Always Score 4 Points",
+      "code": "1605B97C 0004"
+    },
+    {
+      "name": "(Player 1) Always Score 5 Points",
+      "code": "1605B97C 0005"
+    },
+    {
+      "name": "(Player 1) Always Score 6 Points",
+      "code": "1605B97C 0006"
+    },
+    {
+      "name": "(Player 1) Always Score 7 Points",
+      "code": "1605B97C 0007"
+    },
+    {
+      "name": "(Player 1) Always Score 8 Points",
+      "code": "1605B97C 0008"
+    },
+    {
+      "name": "(Player 1) Always Score 9 Points",
+      "code": "1605B97C 0009"
+    },
+    {
+      "name": "(Player 2) Always Score 1 Point",
+      "code": "160599BC 0001"
+    },
+    {
+      "name": "(Player 2) Always Score 2 Points",
+      "code": "160599BC 0002"
+    },
+    {
+      "name": "(Player 2) Always Score 3 Points",
+      "code": "160599BC 0003"
+    },
+    {
+      "name": "(Player 2) Always Score 4 Points",
+      "code": "160599BC 0004"
+    },
+    {
+      "name": "(Player 2) Always Score 5 Points",
+      "code": "160599BC 0005"
+    },
+    {
+      "name": "(Player 2) Always Score 6 Points",
+      "code": "160599BC 0006"
+    },
+    {
+      "name": "(Player 2) Always Score 7 Points",
+      "code": "160599BC 0007"
+    },
+    {
+      "name": "(Player 2) Always Score 8 Points",
+      "code": "160599BC 0008"
+    },
+    {
+      "name": "(Player 2) Always Score 9 Points",
+      "code": "160599BC 0009"
+    }
+  ]
+}

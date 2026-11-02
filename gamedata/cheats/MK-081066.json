@@ -1,0 +1,38 @@
+{
+  "serial": "MK-081066",
+  "master_code": "F6017918 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Invincible",
+      "code": "16074A52 00FF"
+    },
+    {
+      "name": "Infinite Armor",
+      "code": "16074A5A 00FF"
+    },
+    {
+      "name": "Infinite Shotgun Ammo",
+      "code": "16074A66 00FF\n16074A4A 00FF"
+    },
+    {
+      "name": "Infinite Nailgun Ammo",
+      "code": "16074A6E 00FF\n16074A72 00FF"
+    },
+    {
+      "name": "Infinite Rocket Grenade",
+      "code": "16074A76 00FF\n16074A7A 00FF"
+    },
+    {
+      "name": "Infinite Thunderbolt",
+      "code": "16074A7E 00FF"
+    },
+    {
+      "name": "Quad Damage Always On",
+      "code": "16074C52 02F7"
+    },
+    {
+      "name": "Have All Guns",
+      "code": "16074A42 FF00"
+    }
+  ]
+}

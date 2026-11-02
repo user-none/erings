@@ -1,0 +1,14 @@
+{
+  "serial": "T-15911H",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Infinite Lives & Missiles",
+      "code": "10265374 0909"
+    },
+    {
+      "name": "Infinite Energy",
+      "code": "102652B8 0069\n10265278 0069"
+    }
+  ]
+}

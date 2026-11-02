@@ -1,0 +1,14 @@
+{
+  "serial": "T-1810G",
+  "master_code": "F6000914 C305",
+  "cheats": [
+    {
+      "name": "(Player 1) Unlimited Bomb",
+      "code": "160F6A20 0009"
+    },
+    {
+      "name": "(Player 2) Unlimited Bomb",
+      "code": "160F6A24 0009"
+    }
+  ]
+}

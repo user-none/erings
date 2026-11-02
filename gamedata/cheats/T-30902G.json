@@ -1,0 +1,54 @@
+{
+  "serial": "T-30902G",
+  "master_code": "F6000914 C305\nB6002800 0000",
+  "cheats": [
+    {
+      "name": "Unlimited Chaos",
+      "code": "160BDEB6 03E7"
+    },
+    {
+      "name": "Max Level",
+      "code": "360B9515 0063"
+    },
+    {
+      "name": "255 MP",
+      "code": "160B9516 FFFF"
+    },
+    {
+      "name": "9999 EN",
+      "code": "160B951C 270F"
+    },
+    {
+      "name": "(Current) 999 HP",
+      "code": "160B9522 3E64"
+    },
+    {
+      "name": "(Max) 999 HP",
+      "code": "160B9526 3E64"
+    },
+    {
+      "name": "Max EXP",
+      "code": "160B952A FFFF"
+    },
+    {
+      "name": "Speed & Recover",
+      "code": "160B9530 FFFF"
+    },
+    {
+      "name": "255 Knowledge",
+      "code": "360B9538 00FF"
+    },
+    {
+      "name": "999 ATP",
+      "code": "160B953E 03E7"
+    },
+    {
+      "name": "999 DFP",
+      "code": "160B9540 03E7"
+    },
+    {
+      "name": "Unlimited Chaos Magic",
+      "code": "360B9545 000F\n160B9546 FFFF"
+    }
+  ]
+}
