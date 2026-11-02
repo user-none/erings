@@ -544,7 +544,6 @@ type procs struct {
 	enumerateInstanceVersion uintptr
 	createInstance           uintptr
 
-	destroyInstance                        uintptr
 	enumeratePhysicalDevices               uintptr
 	getPhysicalDeviceProperties            uintptr
 	getPhysicalDeviceFeatures2             uintptr
@@ -603,7 +602,6 @@ func (p *procs) globalSyms() []sym {
 
 func (p *procs) instanceSyms() []sym {
 	return []sym{
-		{&p.destroyInstance, "vkDestroyInstance"},
 		{&p.enumeratePhysicalDevices, "vkEnumeratePhysicalDevices"},
 		{&p.getPhysicalDeviceProperties, "vkGetPhysicalDeviceProperties"},
 		{&p.getPhysicalDeviceFeatures2, "vkGetPhysicalDeviceFeatures2"},

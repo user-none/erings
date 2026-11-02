@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
+	"sync"
 	"unsafe"
 
 	"github.com/user-none/erings/internal/hostgpu"
@@ -69,10 +70,7 @@ type device struct {
 	semType    semaphoreTypeCreateInfo
 	waitInfo   semaphoreWaitInfo
 	signalInfo semaphoreSignalInfo
-	appInfo    applicationInfo
-	instInfo   instanceCreateInfo
-	target     uint64 // the semaphore value a Wait waits for
-	version    uint32
+	target     uint64         // the semaphore value a Wait waits for
 	n          uint32         // an enumeration's count
 	out        uint64         // a handle a create call returns
 	outPtr     uintptr        // a dispatchable handle a call returns
@@ -117,13 +115,68 @@ type buffer struct {
 	data []byte
 }
 
+// shared is the process's one instance, created once, by Warm or the
+// first Open, and kept until the process exits. Creating an instance
+// loads and initializes every installed driver, and destroying it
+// unloads them, so an instance per device would repeat that load on
+// every Open. The global and instance functions resolved for it are
+// the same for every device on it.
+var shared struct {
+	once     sync.Once
+	err      error
+	handle   uintptr
+	fns      procs
+	slots    [argSlots]uintptr
+	version  uint32
+	appInfo  applicationInfo
+	instInfo instanceCreateInfo
+}
+
+// Warm creates the shared instance (instance), so an Open that follows
+// finds it made. An Open while it is still being made waits for it.
+func Warm() error {
+	return instance()
+}
+
+// instance creates the shared instance once and returns the error its
+// creation reported, the same error for every caller.
+func instance() error {
+	shared.once.Do(func() { shared.err = createInstance() })
+	return shared.err
+}
+
+// createInstance opens the loader, checks the instance version is at
+// least 1.3, creates the shared instance, and resolves the global and
+// instance functions into the shared table.
+func createInstance() error {
+	if err := load(); err != nil {
+		return err
+	}
+	if err := resolve(getInstanceProcAddr, 0, shared.fns.globalSyms()); err != nil {
+		return unavailable("%v", err)
+	}
+	if err := vkerr(call(&shared.slots, shared.fns.enumerateInstanceVersion, uintptr(unsafe.Pointer(&shared.version))), "instance version"); err != nil {
+		return unavailable("%v", err)
+	}
+	if shared.version < apiVersion13 {
+		return unavailable("instance version 0x%x, need 1.3", shared.version)
+	}
+	shared.appInfo = applicationInfo{sType: stApplicationInfo, apiVersion: apiVersion13}
+	shared.instInfo = instanceCreateInfo{sType: stInstanceCreateInfo, pApplicationInfo: uintptr(unsafe.Pointer(&shared.appInfo))}
+	if err := vkerr(call(&shared.slots, shared.fns.createInstance, uintptr(unsafe.Pointer(&shared.instInfo)), 0, uintptr(unsafe.Pointer(&shared.handle))), "instance"); err != nil {
+		shared.handle = 0
+		return unavailable("%v", err)
+	}
+	if err := resolve(getInstanceProcAddr, shared.handle, shared.fns.instanceSyms()); err != nil {
+		return unavailable("%v", err)
+	}
+	return nil
+}
+
 // Open creates the device on the first hardware physical device
 // that meets the renderer's requirements. Every failure is an error;
 // one that means no usable device wraps ErrUnavailable.
 func Open() (hostgpu.Device, error) {
-	if err := load(); err != nil {
-		return nil, err
-	}
 	d := &device{}
 	d.enc = &commands{dev: d}
 	if err := d.open(); err != nil {
@@ -138,34 +191,20 @@ func unavailable(format string, args ...any) error {
 	return fmt.Errorf("%w: %s", hostgpu.ErrUnavailable, fmt.Sprintf(format, args...))
 }
 
-// open creates the instance, chooses the physical device, creates
-// the device with the features and the extension the shaders and the
-// encoder use, and creates the queue, the command pool, and the
-// timeline semaphore. The features enabled are the three optional
-// ones suitable checked and the ones a 1.3 device is required to
-// support: the timeline semaphore, the Vulkan memory model at device
-// scope, which the emitted modules declare, and synchronization2,
-// whose barrier and submit the encoder records.
+// open takes the shared instance (instance) and its functions,
+// chooses the physical device, creates the device with the features
+// and the extension the shaders and the encoder use, and creates the
+// queue, the command pool, and the timeline semaphore. The features
+// enabled are the three optional ones suitable checked and the ones a
+// 1.3 device is required to support: the timeline semaphore, the
+// Vulkan memory model at device scope, which the emitted modules
+// declare, and synchronization2, whose barrier and submit the encoder
+// records.
 func (d *device) open() error {
-	if err := resolve(getInstanceProcAddr, 0, d.fns.globalSyms()); err != nil {
-		return unavailable("%v", err)
+	if err := instance(); err != nil {
+		return err
 	}
-	if err := vkerr(call(&d.slots, d.fns.enumerateInstanceVersion, uintptr(unsafe.Pointer(&d.version))), "instance version"); err != nil {
-		return unavailable("%v", err)
-	}
-	if d.version < apiVersion13 {
-		return unavailable("instance version 0x%x, need 1.3", d.version)
-	}
-	d.appInfo = applicationInfo{sType: stApplicationInfo, apiVersion: apiVersion13}
-	d.instInfo = instanceCreateInfo{sType: stInstanceCreateInfo, pApplicationInfo: uintptr(unsafe.Pointer(&d.appInfo))}
-	d.outPtr = 0
-	if err := vkerr(call(&d.slots, d.fns.createInstance, uintptr(unsafe.Pointer(&d.instInfo)), 0, uintptr(unsafe.Pointer(&d.outPtr))), "instance"); err != nil {
-		return unavailable("%v", err)
-	}
-	d.instance = d.outPtr
-	if err := resolve(getInstanceProcAddr, d.instance, d.fns.instanceSyms()); err != nil {
-		return unavailable("%v", err)
-	}
+	d.fns, d.instance = shared.fns, shared.handle
 	if err := d.choose(); err != nil {
 		return err
 	}
@@ -517,7 +556,8 @@ func (b *buffer) Release() {
 
 // Close waits for the submissions in flight and releases them, the
 // slot of an encoder still open, the command pool, the pipelines, the
-// semaphore, the device, and the instance. The open slot was never
+// semaphore, and the device. The shared instance is kept for the
+// next Open (shared). The open slot was never
 // committed, so it has nothing to wait for: its command buffer is
 // destroyed with the command pool. A wait that fails other than by a
 // lost device did not wait, and the semaphore, the command pool, and
@@ -545,10 +585,6 @@ func (d *device) Close() {
 	if d.dev != 0 {
 		call(&d.slots, d.fns.destroyDevice, d.dev, 0)
 		d.dev = 0
-	}
-	if d.instance != 0 {
-		call(&d.slots, d.fns.destroyInstance, d.instance, 0)
-		d.instance = 0
 	}
 }
 

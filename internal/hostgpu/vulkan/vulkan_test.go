@@ -29,6 +29,25 @@ func openDevice(tb testing.TB) *device {
 	return dev.(*device)
 }
 
+// TestSharedInstanceOutlivesClose opens two devices after Warm, closes
+// the first, and runs devicetest.RoundTrip on the second: a device's
+// Close leaves the shared instance the other device runs on.
+func TestSharedInstanceOutlivesClose(t *testing.T) {
+	if err := Warm(); err != nil {
+		if errors.Is(err, hostgpu.ErrUnavailable) {
+			t.Skip(err)
+		}
+		t.Fatal(err)
+	}
+	first := openDevice(t)
+	second := openDevice(t)
+	if first.instance != second.instance {
+		t.Fatalf("devices on instances %#x and %#x, want one shared", first.instance, second.instance)
+	}
+	first.Close()
+	devicetest.RoundTrip(t, second)
+}
+
 // TestRoundTrip runs devicetest.RoundTrip on the device.
 func TestRoundTrip(t *testing.T) {
 	devicetest.RoundTrip(t, openDevice(t))

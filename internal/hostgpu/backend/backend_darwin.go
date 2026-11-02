@@ -20,3 +20,11 @@ func open(name string) (hostgpu.Device, error) {
 	}
 	return metal.Open()
 }
+
+// warm does Metal's one-time process setup (metal.Warm). Its error is
+// dropped: Open reports it.
+func warm(name string) {
+	if name == Metal {
+		metal.Warm()
+	}
+}

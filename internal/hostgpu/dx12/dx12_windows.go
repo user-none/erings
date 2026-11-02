@@ -164,6 +164,19 @@ type buffer struct {
 	epoch uint64
 }
 
+// Warm opens a device and closes it, so the libraries, the adapter's
+// driver, and the fill pipeline are loaded and built once before the
+// first Open the renderer makes. A failure is returned; Open reports
+// the same failure when it is made.
+func Warm() error {
+	d, err := Open(RendererShaders())
+	if err != nil {
+		return err
+	}
+	d.Close()
+	return nil
+}
+
 // Open creates the device on the first hardware adapter with the
 // compiled entry points in shaders, by name: RendererShaders for the
 // renderer, a test's own set for the conformance entries. Every

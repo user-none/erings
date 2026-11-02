@@ -158,6 +158,19 @@ type submission struct {
 	err error
 }
 
+// Warm opens the default device and closes it, so the frameworks are
+// loaded and the fill kernel compiled once before the first Open the
+// renderer makes. A failure is returned; Open reports the same
+// failure when it is made.
+func Warm() error {
+	d, err := Open()
+	if err != nil {
+		return err
+	}
+	d.Close()
+	return nil
+}
+
 // Open opens the default device. A machine without Metal, a device,
 // or a command queue is ErrUnavailable.
 func Open() (hostgpu.Device, error) {

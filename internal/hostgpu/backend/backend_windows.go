@@ -33,3 +33,14 @@ func open(name string) (hostgpu.Device, error) {
 	}
 	return nil, unknown(name)
 }
+
+// warm does the named backend's one-time process setup: dx12.Warm or
+// vulkan.Warm. Its error is dropped: Open reports it.
+func warm(name string) {
+	switch name {
+	case Direct3D12:
+		dx12.Warm()
+	case Vulkan:
+		vulkan.Warm()
+	}
+}

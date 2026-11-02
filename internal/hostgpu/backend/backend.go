@@ -41,6 +41,16 @@ func Open(name string, parent hostgpu.Source, subs ...hostgpu.Source) (*hostgpu.
 	return prog, nil
 }
 
+// Warm starts each listed backend's one-time process setup (warm) in
+// the background and returns at once, so a backend's first Open does
+// not wait for it, or waits only for what remains. A failure is not
+// reported here: the backend's Open reports it.
+func Warm() {
+	for _, name := range Names() {
+		go warm(name)
+	}
+}
+
 // unknown is the error for a backend name the platform does not list.
 func unknown(name string) error {
 	return fmt.Errorf("%w: no backend %q on this platform", hostgpu.ErrUnavailable, name)

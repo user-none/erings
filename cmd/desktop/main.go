@@ -12,6 +12,7 @@ import (
 	"github.com/user-none/eblitui/desktop"
 	"github.com/user-none/erings"
 	"github.com/user-none/erings/adapter"
+	"github.com/user-none/erings/core"
 	"github.com/user-none/erings/gamedata"
 )
 
@@ -19,6 +20,7 @@ import (
 var icon []byte
 
 func main() {
+	core.WarmGPU()
 	factory := &adapter.Factory{}
 
 	emu := desktop.Emulator{

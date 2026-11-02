@@ -14,3 +14,6 @@ func names() []string { return nil }
 func open(name string) (hostgpu.Device, error) {
 	return nil, unknown(name)
 }
+
+// warm does nothing: the platform has no backend.
+func warm(string) {}

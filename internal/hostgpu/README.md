@@ -891,7 +891,9 @@ common state and promoted to unordered access at each use,
 binds root descriptors and root constants per dispatch, and reads a
 fence whose values are the submission sequence numbers. The vulkan backend calls
 the system loader through its procedure address functions without
-cgo, opens a Vulkan 1.3 instance and the first hardware physical
+cgo, creates one Vulkan 1.3 instance per process and keeps it (see
+Startup warm-up and what each backend keeps), and opens on it the
+first hardware physical
 device with a compute queue, the push descriptor extension, and the
 shaderInt64 feature for the 64-bit integers, storageBuffer8BitAccess
 for the byte buffers, and variablePointersStorageBuffer for buffers
@@ -908,6 +910,45 @@ push block per dispatch, and signals one timeline semaphore to the
 submission's sequence number through the queue, as the DX12 backend
 does its fence. A missing loader is ErrUnavailable. Its tests skip
 without a usable device.
+
+
+## Startup warm-up and what each backend keeps
+
+The first device a process opens on a backend pays a one-time cost:
+loading the API's libraries and the GPU driver, and initializing the
+driver. Every backend has a Warm that pays that cost ahead of the
+first game. backend.Warm runs each listed backend's Warm in its own
+goroutine and returns at once, and the application calls it once at
+launch (core.WarmGPU). A Warm's failure is not reported. The
+backend's Open reports the same failure when a game opens it.
+
+What a Warm has to keep for its work to last differs by backend,
+because the APIs differ in what releasing their objects undoes.
+
+Vulkan keeps its instance for the life of the process. Creating a
+Vulkan instance is where the loader loads and initializes every
+installed driver, every GPU's driver and not only the one the device
+is opened on, together with the implicit layers those drivers
+install. Destroying the instance unloads them again. An instance per
+device would reload every driver on every Open, and a Warm that
+created an instance and destroyed it would undo its own work. So the
+backend creates one instance, by Warm or by the first Open, and never
+destroys it. Each Open creates a device on it and each Close destroys
+only that device. Device loss belongs to the device, so a lost device
+is discarded at Close and the next Open creates a new one on the same
+instance. The instance holds the physical devices the loader listed
+when it was created, so a driver or GPU change made while the process
+runs is seen at the next launch.
+
+DX12 and Metal keep nothing. Their Warm opens a device and closes it.
+The libraries and the driver that first open loads stay loaded in the
+process after the device is released, so a later Open finds them
+already there. Holding a DX12 device would gain little and costs
+recovery: Direct3D 12 hands every caller in a process the same device
+per adapter, so a held device that a driver reset removes would be
+the device every later Open receives, where a released one is
+replaced by a new device at the next Open. Metal's default device is
+likewise one object shared within the process.
 
 
 ## Conformance map

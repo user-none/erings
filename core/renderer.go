@@ -180,6 +180,12 @@ func (e *Emulator) SetDeinterlace(on bool) error {
 // (backend.Names), then Software.
 func RendererNames() []string { return append(backend.Names(), softwareBackend) }
 
+// WarmGPU starts every GPU backend's one-time process setup in the
+// background (backend.Warm) and returns at once, so the first game
+// opened on a GPU backend does not wait for it. An application calls
+// it once at startup.
+func WarmGPU() { backend.Warm() }
+
 // defaultBackend is the platform's default backend, or empty where
 // the build has none.
 func defaultBackend() string {

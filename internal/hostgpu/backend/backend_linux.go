@@ -20,3 +20,11 @@ func open(name string) (hostgpu.Device, error) {
 	}
 	return vulkan.Open()
 }
+
+// warm does Vulkan's one-time process setup (vulkan.Warm). Its error
+// is dropped: Open reports it.
+func warm(name string) {
+	if name == Vulkan {
+		vulkan.Warm()
+	}
+}
