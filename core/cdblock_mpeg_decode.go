@@ -681,6 +681,14 @@ func (cb *CDBlock) mpegIntCause(cause uint32) {
 	}
 }
 
+// Largest picture the MPEG card decodes: the PAL hi-res geometry, the
+// maximum across all scan modes (saturn_cdblock_mpeg.md, Picture
+// geometry).
+const (
+	mpegMaxPictureWidth  = 704
+	mpegMaxPictureHeight = 576
+)
+
 // mpegPSLowWater bounds the pack-stream buffer: sectors are fed from
 // the partition only while fewer unread bytes than this remain. The
 // rest stay buffered in the partition, whose 200-sector limit then
@@ -1124,13 +1132,21 @@ func (cb *CDBlock) mpegTick(c int) {
 	}
 
 	if p.pictCycles == 0 && p.video.HasHeader() {
-		if fr := p.video.Framerate(); fr > 0 {
-			p.pictCycles = int(float64(cb.sysCyclesPerSec) / fr)
+		if p.video.Width() > mpegMaxPictureWidth || p.video.Height() > mpegMaxPictureHeight {
+			// Larger than the card decodes: the stream ends with no
+			// picture decoded.
+			if vl.phase == mpegPhaseRunning || vl.phase == mpegPhaseEnding {
+				cb.mpegVideoStreamDone(vl)
+			}
+		} else {
+			if fr := p.video.Framerate(); fr > 0 {
+				p.pictCycles = int(float64(cb.sysCyclesPerSec) / fr)
+			}
+			m.picW = uint16(p.video.Width())
+			m.picH = uint16(p.video.Height())
+			m.vidState = mpegRunStreamFound
+			cb.mpegIntCause(mpegIntSequenceStart)
 		}
-		m.picW = uint16(p.video.Width())
-		m.picH = uint16(p.video.Height())
-		m.vidState = mpegRunStreamFound
-		cb.mpegIntCause(mpegIntSequenceStart)
 	}
 
 	// Video: decode paced at the stream's picture rate (VSYNC decode

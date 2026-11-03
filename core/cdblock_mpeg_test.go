@@ -944,6 +944,72 @@ func TestCDBlockMpegRawESEndsOnSequenceEndCode(t *testing.T) {
 	}
 }
 
+// TestCDBlockMpegPictureSizeLimit verifies a sequence header larger than
+// the card's 704x576 maximum ends the video stream before any picture is
+// decoded, while a picture at the maximum plays.
+func TestCDBlockMpegPictureSizeLimit(t *testing.T) {
+	cases := []struct {
+		name     string
+		size     [3]byte // 12-bit width, 12-bit height
+		w, h     uint16
+		accepted bool
+	}{
+		{"maximum", [3]byte{0x2C, 0x02, 0x40}, 704, 576, true},
+		{"width over", [3]byte{0x2C, 0x12, 0x40}, 705, 576, false},
+		{"height over", [3]byte{0x2C, 0x02, 0x41}, 704, 577, false},
+		{"field maximum", [3]byte{0xFF, 0xFF, 0xFF}, 4095, 4095, false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			cb := NewCDBlock(nil)
+			mpegInit(cb)
+			execCommandFull(cb, 0x95, 0x01, 0xFF00, 0x0000, 0x00FF)
+			mpegConnectVideoDelete(cb)
+			hdr := []byte{0x00, 0x00, 0x01, 0xB3, c.size[0], c.size[1], c.size[2], 0xC4}
+			cb.partitions[0].sectors = append(cb.partitions[0].sectors, mpegTestSector(hdr, 0))
+
+			cb.mpegTick(1000)
+			cb.mpegTick(1000)
+
+			p := cb.mpeg.play
+			vl := &p.layers[mpegLayerVideo]
+			if p.video.Width() != int(c.w) || p.video.Height() != int(c.h) {
+				t.Fatalf("decoder size = %dx%d, want %dx%d", p.video.Width(), p.video.Height(), c.w, c.h)
+			}
+			if c.accepted {
+				if vl.phase == mpegPhaseDone {
+					t.Fatal("picture at the maximum size ended the stream")
+				}
+				if cb.mpeg.picW != c.w || cb.mpeg.picH != c.h {
+					t.Errorf("picture size = %dx%d, want %dx%d", cb.mpeg.picW, cb.mpeg.picH, c.w, c.h)
+				}
+				return
+			}
+			if vl.phase != mpegPhaseDone {
+				t.Fatalf("phase = %d, want Done", vl.phase)
+			}
+			if cb.mpeg.vidState != mpegRunStopped {
+				t.Errorf("vidState = %d, want stopped", cb.mpeg.vidState)
+			}
+			if cb.mpeg.intStatus&mpegIntSequenceEnd == 0 {
+				t.Error("sequence-end cause should latch")
+			}
+			if cb.mpeg.intStatus&mpegIntSequenceStart != 0 {
+				t.Error("sequence-start cause should not latch")
+			}
+			if cb.mpeg.picW != 0 || cb.mpeg.picH != 0 || p.pictCycles != 0 {
+				t.Errorf("picture size %dx%d / pictCycles %d set for a rejected stream",
+					cb.mpeg.picW, cb.mpeg.picH, p.pictCycles)
+			}
+			for i, s := range cb.mpegFrame.slots {
+				if s.rgb != nil {
+					t.Errorf("latch slot %d allocated for a rejected stream", i)
+				}
+			}
+		})
+	}
+}
+
 // TestCDBlockMpegPackScanPositional verifies the program-end scanner
 // parses the system layer positionally: an end-code byte pattern
 // inside a packet payload is skipped as payload, while a genuine
