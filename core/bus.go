@@ -674,17 +674,23 @@ func (b *Bus) ReadCacheLine(base uint32, dst *[16]byte) {
 	b.unlockArea(area)
 }
 
+// The 16/32-bit impls align WRAM, BIOS and extRAM offsets down to the
+// access width. The SH-2 CPU raises an address error before a misaligned
+// access reaches the bus (SH7604 Table 4.6), but exception stacking with a
+// misaligned SP still drives the bus cycle with undefined data (SH7604
+// Section 4.8.3), and DMA masters reach these impls directly.
 func (b *Bus) read16Impl(addr uint32) uint16 {
 	masked := addr & 0x07FFFFFF
 	switch {
 	case masked >= 0x06000000 && masked <= 0x07FFFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramHSize - 2)
 		return uint16(b.wramH[off])<<8 | uint16(b.wramH[off+1])
 	case masked >= 0x00200000 && masked <= 0x002FFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramLSize - 2)
 		return uint16(b.wramL[off])<<8 | uint16(b.wramL[off+1])
 	case masked <= 0x0007FFFF && b.bios != nil:
-		return uint16(b.bios[masked])<<8 | uint16(b.bios[masked+1])
+		off := masked & (biosSize - 2)
+		return uint16(b.bios[off])<<8 | uint16(b.bios[off+1])
 	case masked >= 0x00100000 && masked <= 0x0017FFFF:
 		// SMPC: byte access only
 		fmt.Printf("[BUS] invalid 16-bit read from SMPC 0x%08X\n", addr)
@@ -731,7 +737,7 @@ func (b *Bus) read16Impl(addr uint32) uint16 {
 		if b.ramCartID == ramCartIDNone {
 			return 0xFFFF
 		}
-		off := masked & extRAMMask
+		off := masked & (extRAMSize - 2)
 		return uint16(b.extRAM[off])<<8 | uint16(b.extRAM[off+1])
 	case masked >= cs0Base && masked <= cs0Top:
 		// A-Bus CS0: non-extRAM area (open bus)
@@ -779,16 +785,17 @@ func (b *Bus) read32Impl(addr uint32) uint32 {
 	masked := addr & 0x07FFFFFF
 	switch {
 	case masked >= 0x06000000 && masked <= 0x07FFFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramHSize - 4)
 		return uint32(b.wramH[off])<<24 | uint32(b.wramH[off+1])<<16 |
 			uint32(b.wramH[off+2])<<8 | uint32(b.wramH[off+3])
 	case masked >= 0x00200000 && masked <= 0x002FFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramLSize - 4)
 		return uint32(b.wramL[off])<<24 | uint32(b.wramL[off+1])<<16 |
 			uint32(b.wramL[off+2])<<8 | uint32(b.wramL[off+3])
 	case masked <= 0x0007FFFF && b.bios != nil:
-		return uint32(b.bios[masked])<<24 | uint32(b.bios[masked+1])<<16 |
-			uint32(b.bios[masked+2])<<8 | uint32(b.bios[masked+3])
+		off := masked & (biosSize - 4)
+		return uint32(b.bios[off])<<24 | uint32(b.bios[off+1])<<16 |
+			uint32(b.bios[off+2])<<8 | uint32(b.bios[off+3])
 	case masked >= 0x00100000 && masked <= 0x0017FFFF:
 		// SMPC: byte access only
 		fmt.Printf("[BUS] invalid 32-bit read from SMPC 0x%08X\n", addr)
@@ -836,7 +843,7 @@ func (b *Bus) read32Impl(addr uint32) uint32 {
 		if b.ramCartID == ramCartIDNone {
 			return 0xFFFFFFFF
 		}
-		off := masked & extRAMMask
+		off := masked & (extRAMSize - 4)
 		return uint32(b.extRAM[off])<<24 | uint32(b.extRAM[off+1])<<16 |
 			uint32(b.extRAM[off+2])<<8 | uint32(b.extRAM[off+3])
 	case masked >= cs0Base && masked <= cs0Top:
@@ -908,12 +915,12 @@ func (b *Bus) write16Impl(addr uint32, val uint16) {
 		b.sinitWritten = true
 		return
 	case masked >= 0x06000000 && masked <= 0x07FFFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramHSize - 2)
 		b.wramH[off] = uint8(val >> 8)
 		b.wramH[off+1] = uint8(val)
 		return
 	case masked >= 0x00200000 && masked <= 0x002FFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramLSize - 2)
 		b.wramL[off] = uint8(val >> 8)
 		b.wramL[off+1] = uint8(val)
 		return
@@ -957,7 +964,7 @@ func (b *Bus) write16Impl(addr uint32, val uint16) {
 		b.vdp2.Write((masked-0x05F80000)&^1, val)
 		return
 	case masked >= extRAMBase && masked <= extRAMTop:
-		off := masked & extRAMMask
+		off := masked & (extRAMSize - 2)
 		b.extRAM[off] = uint8(val >> 8)
 		b.extRAM[off+1] = uint8(val)
 		return
@@ -1058,14 +1065,14 @@ func (b *Bus) write32Impl(addr uint32, val uint32) {
 		fmt.Printf("[BUS] invalid 32-bit write to SINIT region 0x%08X = 0x%08X\n", addr, val)
 		return
 	case masked >= 0x06000000 && masked <= 0x07FFFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramHSize - 4)
 		b.wramH[off] = uint8(val >> 24)
 		b.wramH[off+1] = uint8(val >> 16)
 		b.wramH[off+2] = uint8(val >> 8)
 		b.wramH[off+3] = uint8(val)
 		return
 	case masked >= 0x00200000 && masked <= 0x002FFFFF:
-		off := masked & 0x0FFFFF
+		off := masked & (wramLSize - 4)
 		b.wramL[off] = uint8(val >> 24)
 		b.wramL[off+1] = uint8(val >> 16)
 		b.wramL[off+2] = uint8(val >> 8)
@@ -1110,7 +1117,7 @@ func (b *Bus) write32Impl(addr uint32, val uint32) {
 		b.vdp2.Write(off+2, uint16(val))
 		return
 	case masked >= extRAMBase && masked <= extRAMTop:
-		off := masked & extRAMMask
+		off := masked & (extRAMSize - 4)
 		b.extRAM[off] = uint8(val >> 24)
 		b.extRAM[off+1] = uint8(val >> 16)
 		b.extRAM[off+2] = uint8(val >> 8)

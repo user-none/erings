@@ -375,6 +375,77 @@ func TestMultiByteBigEndian(t *testing.T) {
 	}
 }
 
+// TestMisalignedAccessAtRegionEnd covers 16/32-bit accesses that are not
+// aligned to their width at the last bytes of each slice-backed region.
+// They must stay inside the region and land on the aligned unit.
+func TestMisalignedAccessAtRegionEnd(t *testing.T) {
+	regions := []struct {
+		name string
+		last uint32
+	}{
+		{"WRAM-H", 0x060FFFFF},
+		{"WRAM-L", 0x002FFFFF},
+		{"extRAM", extRAMTop},
+	}
+	for _, r := range regions {
+		t.Run(r.name, func(t *testing.T) {
+			bus := newBusForTest()
+			long := r.last - 3
+			word := r.last - 1
+
+			for _, a := range []uint32{long + 1, long + 2, long + 3} {
+				bus.Write32(long, 0)
+				bus.Write32(a, 0x11223344)
+				if got := bus.Read32(long); got != 0x11223344 {
+					t.Errorf("Write32(0x%08X): Read32(0x%08X) = 0x%08X, want 0x11223344", a, long, got)
+				}
+				if got := bus.Read32(a); got != 0x11223344 {
+					t.Errorf("Read32(0x%08X) = 0x%08X, want 0x11223344", a, got)
+				}
+			}
+
+			bus.Write16(word, 0)
+			bus.Write16(r.last, 0xA5B6)
+			if got := bus.Read16(word); got != 0xA5B6 {
+				t.Errorf("Write16(0x%08X): Read16(0x%08X) = 0x%04X, want 0xA5B6", r.last, word, got)
+			}
+			if got := bus.Read16(r.last); got != 0xA5B6 {
+				t.Errorf("Read16(0x%08X) = 0x%04X, want 0xA5B6", r.last, got)
+			}
+
+			bus.DMAWrite32(r.last, 0x55667788)
+			if got := bus.Read32(long); got != 0x55667788 {
+				t.Errorf("DMAWrite32(0x%08X): Read32(0x%08X) = 0x%08X, want 0x55667788", r.last, long, got)
+			}
+			bus.DMAWrite16(r.last, 0x99AA)
+			if got := bus.Read16(word); got != 0x99AA {
+				t.Errorf("DMAWrite16(0x%08X): Read16(0x%08X) = 0x%04X, want 0x99AA", r.last, word, got)
+			}
+		})
+	}
+
+	t.Run("BIOS", func(t *testing.T) {
+		bus := newBusForTest()
+		bios := make([]byte, biosSize)
+		bios[biosSize-4] = 0xDE
+		bios[biosSize-3] = 0xAD
+		bios[biosSize-2] = 0xBE
+		bios[biosSize-1] = 0xEF
+		if err := bus.SetBIOS(bios); err != nil {
+			t.Fatal(err)
+		}
+		last := uint32(biosSize - 1)
+		for _, a := range []uint32{last - 2, last - 1, last} {
+			if got := bus.Read32(a); got != 0xDEADBEEF {
+				t.Errorf("Read32(0x%08X) = 0x%08X, want 0xDEADBEEF", a, got)
+			}
+		}
+		if got := bus.Read16(last); got != 0xBEEF {
+			t.Errorf("Read16(0x%08X) = 0x%04X, want 0xBEEF", last, got)
+		}
+	})
+}
+
 func TestNewBusDefaults(t *testing.T) {
 	bus := newBusForTest()
 
