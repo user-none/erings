@@ -23,34 +23,6 @@ var Version = defaultVersion
 // the literal placeholder.
 var archiveVersion = "$Format:%(describe:tags)$"
 
-// updateKeys holds the update signing public keys as a comma separated list
-// of algorithm:base64 entries. It is empty in the source and only set at link
-// time by the release workflow with -ldflags
-// "-X github.com/user-none/erings.updateKeys=...".
-var updateKeys string
-
-// UpdateKeys returns the update signing public keys stamped into the binary,
-// or nil when none were.
-func UpdateKeys() []string {
-	if updateKeys == "" {
-		return nil
-	}
-	return strings.Split(updateKeys, ",")
-}
-
-// artworkKeys holds the public keys, as algorithm:base64 entries, trusted to
-// sign the artwork index. Unlike updateKeys they are part of the source, so
-// every build, including go run, verifies artwork the same way.
-var artworkKeys = []string{
-	"ed25519:ny8kTzx/RE+DHbsX+a280g7MgC2+vhhebwPr4x32/Ck=",
-}
-
-// ArtworkKeys returns the public keys trusted to sign the artwork index.
-// Each call returns a new slice the caller owns.
-func ArtworkKeys() []string {
-	return append([]string(nil), artworkKeys...)
-}
-
 func init() {
 	// A link-time override (CI and make builds) takes precedence.
 	if Version != defaultVersion {

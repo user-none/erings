@@ -47,7 +47,7 @@ endif
 # characters, ':' and ',' so it needs no quoting.
 UPDATE_KEYS ?=
 ifneq ($(UPDATE_KEYS),)
-UPDATE_KEYS_LDFLAGS := -X github.com/user-none/erings.updateKeys=$(UPDATE_KEYS)
+UPDATE_KEYS_LDFLAGS := -X main.updateKeys=$(UPDATE_KEYS)
 endif
 
 # The macOS bundle's versions, stamped into its Info.plist from VERSION.

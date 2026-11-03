@@ -8,6 +8,7 @@ package main
 import (
 	_ "embed"
 	"log"
+	"strings"
 
 	"github.com/user-none/eblitui/desktop"
 	"github.com/user-none/erings"
@@ -18,6 +19,27 @@ import (
 
 //go:embed icon.webp
 var icon []byte
+
+// updateKeys holds the update signing public keys as a comma separated list
+// of algorithm:base64 entries. It is empty in the source and only set at link
+// time by the release workflow with -ldflags "-X main.updateKeys=...".
+var updateKeys string
+
+// artworkKeys holds the public keys, as algorithm:base64 entries, trusted to
+// sign the artwork index. Unlike updateKeys they are part of the source, so
+// every build, including go run, verifies artwork the same way.
+var artworkKeys = []string{
+	"ed25519:ny8kTzx/RE+DHbsX+a280g7MgC2+vhhebwPr4x32/Ck=",
+}
+
+// splitKeys returns the keys in a comma separated list, or nil when the
+// list is empty
+func splitKeys(list string) []string {
+	if list == "" {
+		return nil
+	}
+	return strings.Split(list, ",")
+}
 
 func main() {
 	core.WarmGPU()
@@ -38,11 +60,11 @@ func main() {
 			ReleasePageURL: "https://github.com/user-none/erings/releases/tag/v{version}",
 			AppName:        erings.Name,
 			Version:        erings.Version,
-			Keys:           erings.UpdateKeys(),
+			Keys:           splitKeys(updateKeys),
 		},
 		Artwork: &desktop.ArtworkConfig{
 			URL:  "https://artwork.erings.dev/",
-			Keys: erings.ArtworkKeys(),
+			Keys: artworkKeys,
 		},
 		Metadata: gamedata.MetadataSource{},
 		Cheats:   gamedata.CheatsSource{},

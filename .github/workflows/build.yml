@@ -162,7 +162,7 @@ jobs:
             macOS) bin=build/erings.app/Contents/MacOS/erings ;;
           esac
           all=$({ grep -o -a -F "$UPDATE_KEYS" "$bin" || true; } | wc -l)
-          info=$({ grep -o -a -F "github.com/user-none/erings.updateKeys=$UPDATE_KEYS" "$bin" || true; } | wc -l)
+          info=$({ grep -o -a -F "main.updateKeys=$UPDATE_KEYS" "$bin" || true; } | wc -l)
           if (( info == 0 || all <= info )); then
             echo "Update keys are not stamped into $bin" >&2
             exit 1
