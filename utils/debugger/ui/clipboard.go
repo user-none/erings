@@ -4,45 +4,51 @@
 package ui
 
 import (
+	"context"
 	"runtime"
+	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"golang.design/x/clipboard"
 )
 
-// clipboardReady tracks a successful clipboard.Init. Init can fail (no
-// cgo, or no display server); every use retries so a late-appearing
-// clipboard still starts working, and the read/write helpers below
-// never touch the package while it is uninitialized, which would
-// panic.
-var clipboardReady bool
+// clipboardTimeout bounds a clipboard call made from the UI thread. On
+// X11 a read waits on the selection owner and can otherwise block for
+// seconds.
+const clipboardTimeout = time.Second
 
-func clipboardInit() bool {
-	if !clipboardReady {
-		if err := clipboard.Init(); err == nil {
-			clipboardReady = true
-		}
-	}
-	return clipboardReady
+// clipboardAvailable reports whether clipboard.Init succeeded. Init
+// fails without a display server. It runs once and later calls return
+// the first result.
+func clipboardAvailable() bool {
+	return clipboard.Init() == nil
 }
 
 // ClipboardWriteText puts s on the system clipboard. It reports false
-// when no clipboard is available.
+// when no clipboard is available or the write fails.
 func ClipboardWriteText(s string) bool {
-	if !clipboardInit() {
+	if !clipboardAvailable() {
 		return false
 	}
-	clipboard.Write(clipboard.FmtText, []byte(s))
-	return true
+	ctx, cancel := context.WithTimeout(context.Background(), clipboardTimeout)
+	defer cancel()
+	_, err := clipboard.Write(ctx, clipboard.FmtText, []byte(s))
+	return err == nil
 }
 
 // clipboardReadText returns the clipboard text, or nil when no
 // clipboard is available or it holds no text.
 func clipboardReadText() []byte {
-	if !clipboardInit() {
+	if !clipboardAvailable() {
 		return nil
 	}
-	return clipboard.Read(clipboard.FmtText)
+	ctx, cancel := context.WithTimeout(context.Background(), clipboardTimeout)
+	defer cancel()
+	b, err := clipboard.Read(ctx, clipboard.FmtText)
+	if err != nil {
+		return nil
+	}
+	return b
 }
 
 // ModPressed reports whether the platform's clipboard modifier is held:
