@@ -109,7 +109,7 @@ jobs:
           add linux-x86_64 "erings-$version-x86_64.AppImage"
           add linux-aarch64 "erings-$version-aarch64.AppImage"
           jq -n --arg version "$version" --argjson assets "$assets" \
-            '{schema: 1, app: "erings", version: $version, assets: $assets}' > manifest.json
+            '{schema: 1, app: "erings", version: $version, generated: (now | floor), assets: $assets}' > manifest.json
           cat manifest.json
 
       - name: Sign manifest
