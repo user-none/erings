@@ -58,8 +58,6 @@ func main() {
 			ManifestURL:    "https://github.com/user-none/erings/releases/latest/download/manifest.json",
 			SignatureURL:   "https://github.com/user-none/erings/releases/latest/download/manifest.sig",
 			ReleasePageURL: "https://github.com/user-none/erings/releases/tag/v{version}",
-			AppName:        erings.Name,
-			Version:        erings.Version,
 			Keys:           splitKeys(updateKeys),
 		},
 		Artwork: &desktop.ArtworkConfig{
