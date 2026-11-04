@@ -6,7 +6,8 @@ package erings
 import "strings"
 
 const (
-	Name = "erings"
+	CoreName = "erings-core"
+	Name     = "erings"
 
 	// defaultVersion is reported when no build-time version is available.
 	defaultVersion = "0.0.0"

@@ -61,7 +61,7 @@ func (f *Factory) SystemInfo() coreif.SystemInfo {
 		Players:          2,
 		Disc:             true,
 		BigEndianMemory:  true,
-		CoreName:         erings.Name,
+		CoreName:         erings.CoreName,
 		CoreVersion:      erings.Version,
 		SerializeSize:    core.SerializeSize(),
 		CoreOptions: []coreif.CoreOption{
