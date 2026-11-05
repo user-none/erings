@@ -1,12 +1,10 @@
 {
   "serial": "MK-81014",
   "title": "Virtua Fighter 2",
-  "native_title": "버쳐 파이터２",
   "category": "Games",
   "regions": [
     "USA",
-    "Europe",
-    "Korea"
+    "Europe"
   ],
   "languages": [
     "English"

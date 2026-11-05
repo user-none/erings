@@ -1,12 +1,10 @@
 {
   "serial": "MK-81207",
   "title": "Sega Rally Championship",
-  "native_title": "세가 랠리",
   "category": "Games",
   "regions": [
     "USA",
-    "Europe",
-    "Korea"
+    "Europe"
   ],
   "languages": [
     "English"

@@ -1,12 +1,10 @@
 {
   "serial": "MK-81105",
   "title": "Worldwide Soccer: Sega International Victory Goal Edition",
-  "native_title": "월드 와이드 사커",
   "category": "Games",
   "regions": [
     "USA",
-    "Europe",
-    "Korea"
+    "Europe"
   ],
   "languages": [
     "English"

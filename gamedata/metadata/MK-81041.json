@@ -1,12 +1,10 @@
 {
   "serial": "MK-81041",
   "title": "Fighting Vipers",
-  "native_title": "파이팅바이퍼즈",
   "category": "Games",
   "regions": [
     "USA",
-    "Europe",
-    "Korea"
+    "Europe"
   ],
   "languages": [
     "English"

@@ -1,11 +1,9 @@
 {
   "serial": "MK-81023",
   "title": "Virtua Fighter Remix",
-  "native_title": "버쳐 파이터 리믹스",
   "category": "Games",
   "regions": [
-    "USA",
-    "Korea"
+    "USA"
   ],
   "languages": [
     "English"

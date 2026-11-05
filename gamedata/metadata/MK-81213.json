@@ -1,12 +1,10 @@
 {
   "serial": "MK-81213",
   "title": "Daytona USA: Championship Circuit Edition",
-  "native_title": "데이토나ＵＳＡ",
   "category": "Games",
   "regions": [
     "USA",
-    "Europe",
-    "Korea"
+    "Europe"
   ],
   "languages": [
     "English"

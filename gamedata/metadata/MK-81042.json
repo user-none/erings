@@ -1,15 +1,12 @@
 {
   "serial": "MK-81042",
   "title": "Virtual On: Cyber Troopers",
-  "native_title": "버쳐 온",
   "category": "Games",
   "regions": [
-    "USA",
-    "Korea"
+    "USA"
   ],
   "languages": [
-    "English",
-    "Korean"
+    "English"
   ],
   "barcodes": [
     "0 10086 81042 4"
