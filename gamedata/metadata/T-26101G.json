@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Gussun Oyoyo is a puzzle game developed by Irem for the Arcades in 1993. In the following three years, it saw several ports (and a sequel) for consoles. These ports were handled by different developers, and are subtly different interpretations of Irem's source. Irem themselves would eventually produce a PS1 sequel in 1996: Gussun Paradise, known in Europe as Yoyo's Puzzle Park.\n\nThe core gameplay of the series is to help Gussun and his brother Oyoyo (Vic and Vinnie respectively in Risky Challenge) escape a flooding stage by building a stairway with Tetris blocks. The goal is to reach the ceiling before the water level drowns the pair. Gussun and Oyoyo move independently based on their AI, similar to the titular rodents of Lemmings, and the player needs to anticipate their AI pathing and their habit of occasionally freaking out whenever scary things happen.\n\nIn addition, the player can often choose between Emily and George as their \"cheerleader\". Emily is a young woman who frequently changes costumes while George (originally Yousame) is a buff bodybuilder. Later ports removed George."
 }

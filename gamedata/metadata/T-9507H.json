@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "The first Contra game for the 32-bit consoles and released exactly 10 years after the first Contra.\n\nUnlike the original Contra and follow-ups, this is an overhead-view 2D shooter (with 3D graphics) that plays more like a side-scrolling Commando or Mercs.\n\nThe graphics are truly 3D; an option allows you to view them as red/blue images, and some packages of Contra: LoW come with 3D glasses to garner full enjoyment of the feature.\n\nHidden within the game – accessible on a certain level and through a secret code – are a mini-version of Gyruss and a Pac-Man-like game called Pactank."
 }

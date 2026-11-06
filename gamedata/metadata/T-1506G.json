@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Game no Tetsujin: The Shanghai is a collection of three puzzle games which each make use of mahjong tiles:\n\n• Shanghai, also called Solitaire Mahjong, in which the player must match tiles stacked in various grid patterns. Tiles can only be removed if they are fully visible (no tiles on top of them) and either the left or right edge is fully free.\n• Rong Rong, also called Shisen-Sho, in which the player must match tiles stacked in various grid patterns. Tiles can only be removed if the matching pair can be connected by a line, with no more than two bends, which does not pass through any other tile.\n• Shi-Kin-Joh, also called Forbidden City, a Sokoban-style block pushing game where the player must navigate a maze of oversized mahjong tiles to reach a goal. Pushing two matching tiles together will clear them from the board.\n\nEach game can be freely played individually, and there is also a story mode where the player must complete specific puzzles in order to progress, as well as a Tetsujin (\"iron man\") mode where puzzles are randomly selected and must be cleared in order."
 }

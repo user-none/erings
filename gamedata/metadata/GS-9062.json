@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Virtua Fighter CG Portrait Series is a series of eleven Sega Saturn discs released in Japan between October 1995 and March 1996, each containing images of one Virtua Fighter character.\n\nThis disc features Sarah Bryant. Sarah is a 20-year-old female college student from the United States. She enjoys sky diving and has blood type AB. She shares a few of her special moves with Jacky.\n\nIn earlier versions of the game, Sarah's name was spelt without the \"h\" (i.e. \"Sara\")."
 }

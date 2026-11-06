@@ -28,5 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Shinpi no Sekai: El-Hazard (神秘の世界エルハザード) is based off of an anime with the same title. The protagonist of the story is a young high-school student boy, Makoto Mizuhara, who finds himself, due to various circumstances, tossed into the fantasy world of El-Hazard. While the main character and the setting is based on the anime, this is a completely new story with certain changes and new characters. The game plays like an enhanced visual novel which is fully voice-acted and displays protagonist and other characters on the screen during dialogues. Event scenes and animations are quite common, and character poses depicting their current disposition is displayed in portrait images which are also animated. Unlike typical visual novels where the player is limited to dialogue and choices, players can explore various locations on the map and try to perform actions outside the dialogue window, such as initiating a talk to other characters, or look around the area or go someplace else."
 }

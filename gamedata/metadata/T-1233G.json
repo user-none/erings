@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The Capcom Generation 2 compilation contains 3 games from the Ghost 'N Goblins series:\n\n• Ghost 'N Goblins\n• Ghouls 'N Ghosts\n• Super Ghouls 'N Ghosts"
 }

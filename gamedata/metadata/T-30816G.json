@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Private Idol Disc Vol. 9: Nagamatsu Keiko is a multimedia photobook of gravure idol Keiko Nagamatsu. It includes a gallery of photos and video interviews, as well as a simple rock-paper-scissors minigame and a quiz minigame. Completing the minigames will unlock bonus photos."
 }

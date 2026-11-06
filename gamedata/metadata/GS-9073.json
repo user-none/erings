@@ -21,6 +21,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Virtua Fighter CG Portrait Series is a series of eleven Sega Saturn discs released in Japan between October 1995 and March 1996, each containing images of one Virtua Fighter character. The final disc, Dural, could only be obtained by mailing the spinecards of the first ten discs to Sega.\n\nThe European version of Virtua Fighter Remix contained a bonus CD with some of these images, and many were included in high-resolution (640x480) with the PC version of Virtua Fighter 2."
 }

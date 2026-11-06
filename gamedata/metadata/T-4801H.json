@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Accelerate Your Saturn Over 300 MPH. You've fondled the box. You've studied the screen shots. You've even read the captions...\n\nYou know about the 10 different tracks (seven more created just for Saturn drivers!). The new vehicles (yes, a Go-Kart). Grand Prix Mode (15 teams to face, five cars to race - better practice). Next generation cinematics (you definitely won't find this anywhere else!). Split screen mode (yeeeehawww!!!)...\n\nGuess all that's left to do is buckle up and see how Saturn's twin 32-bit RISC engines perform over 300 mph!\n\nWhite-knuckle it across 10 polygon-perfect circuits, from the Bay Bridge to PCH, Amazon Falls to the Alpines. Relive those glory days in Arcade mode, then unleash your horses against 15 teams in all-new Grand Prix mode. Five powerful racing machines to choose from Challenge a buddy with incredible two-player split-screen racing...one wild ride--that screams on the Sega Saturn!"
 }

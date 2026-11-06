@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Nihon Pro Mahjong Renmei Kounin Doujou Yaburi (日本プロ麻雀連盟公認 道場破り) is a mahjong game for the Sega Saturn."
 }

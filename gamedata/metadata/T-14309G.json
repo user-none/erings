@@ -24,6 +24,11 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Momotarou Douchuuki is a multiplayer board-game and a spinoff of Hudson's Momotarou Dentetsu series. It features many of the same characters and gameplay elements as the main series games, but with a new setting in the Edo period of Japanese history. As with other Momotetsu games, players take turns moving around the board via dice rolls, acquiring property to earn money, trying to avoid giving money to other players, and encountering a wide variety of random (and often comical) events that can grant each player various benefits or handicaps."
 }

@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Maria is the second game in the Nightruth series, following up after Yami no Tobira and this time focusing on one of the female leads, Maria Mizunagi, a fellow student of Shinya's who is skilled at fighting and possesses a supernatural healing ability.\n\nGameplay is identical to the visual novel-style adventure presentation of the previous title — voiced and illustrated story sequences which occasionally branch via player choice into multiple scenarios, each with multiple endings. This entry features stories relating to three famous historical events: Jack the Ripper, the Mary Celeste, and the Miracle of the Sun."
 }

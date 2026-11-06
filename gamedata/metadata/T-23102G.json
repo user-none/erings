@@ -27,6 +27,11 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ages ago, there were 22 guardian deities who watched over the four races: humans, dwarves, elves, and pixies. However, conflict led to war, and war led the supreme deity \"World\" to seal itself and the 21 other deities away. The people of the world however discovered the power of \"Arcana\", which allowed them to again reach the power of the deities, and when a human Arcana user tried to revive World, the power of Arcana was released all at once. Monsters were created from this energy, and the world once again entered an age of darkness. Will this land ever know peace again?\n\nTexthoth Ludo: Arcana Senki is a multiplayer board game based on tarot cards. Players use cards from their hand to move forward on the board and to perform other actions depending on the type of space occupied; cards can summon or upgrade creatures to fight for the player, or be fused together to create more powerful cards. If two players or creatures occupy the same space, they can choose to battle; a defeated summon will return to their owner's deck, while a defeated player will be sent back to the start of the board. Up to four players compete on a board, and the goal is simply to be the first player to reach the goal space with their summoner.\n\nThe game includes a story mode with 22 maps, and depending on the player's choices the story may branch and lead to several different paths toward the ending. There is also a versus mode for up to four players. A password system lets players bring their character and deck to a friend's game, even between platforms. The original Sega Saturn release included a set of 22 tarot cards as a bonus; the later PlayStation port adds a more comprehensive tutorial mode to aid new players."
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "In the deathmatch of the future, your uniform is a time bomb. Sealed in the 3D rotating Blast Chamber, you strive to cheat death as walls become floors and floors become ceilings. Time counts down while you and up to three opponents scramble madly to control the one thing that can save you - the crystal. Extend your life or shorten your opponents' to avoid a fiery death. Want to play?"
 }

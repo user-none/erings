@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The game focuses on marine life in the sea. The player can access three different segments:\n\n• Data Fish: Shows photos, facts and 3D models of fish and sea mammals.\n• Mermaid: The player can simulate the life of a marine animal in an ocean environment or aquarium.\n• Electric Blue: There are several interactive cinematic sequences of sea creatures swimming in the ocean."
 }

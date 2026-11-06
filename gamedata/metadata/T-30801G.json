@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Private Idol Disc Vol. 1: Kinoshita Yuu is a multimedia photobook of gravure idol Yuu Kinoshita. It includes a gallery of photos and video clips of the idol, as well as a simple rock-paper-scissors minigame. Winning three rounds of the minigame will unlock a bonus video."
 }

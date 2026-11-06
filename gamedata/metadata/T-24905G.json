@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Mario Mushano no Chou Shougi Juku is a shogi training game featuring the endorsement and likeness of professional shogi player Katsumi \"Mario\" Mushano. It includes over 200 shogi problems arranged to teach various techniques, a skill tracker mode that measures various aspects of a player's shogi skills and advises on ways to improve, and a ranking test that allows players to see if they have the skill to obtain shodan ranking, the first official ranking for shogi."
 }

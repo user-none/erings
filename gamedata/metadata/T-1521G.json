@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "A one-on-one 2D fighting game, Astra Superstars pits all the champions of the magical kingdom against each other in a series of 3-round fights to earn the right to challenge the evil Satan Volte and try to put an end to his reign of terror.\n\nSeeing as how all the fighters have magical abilities, the fights take place in mid-air, allowing you and your opponent to fly all over the arena while you try to defeat each other using your basic attacks, special moves (triggered by specific controller motions) and super attacks (which deplete your energy bar but cause tremendous damage).\n\nGraphics-wise the games uses 2D sprites, with colorful doll-ish designs. Gameplay modes include 1P arcade, 2P Vs mode, an art gallery featuring conceptual artwork and a story mode with selectable dialogue options that influence match difficulty."
 }

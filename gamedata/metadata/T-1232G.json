@@ -25,6 +25,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The first of Capcom's classic collections for PlayStation and Saturn includes the 194X shooter series with the following games:\n\n• 1942\n• 1943\n• 1943 Kai"
 }

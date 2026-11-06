@@ -23,6 +23,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Immerse yourself in an unparalleled 3D flying experience. NiGHTS truly delivers an amazing virtual world of dreams - filled with unbelievable real-time effects, fantastic creatures and nightmarish monsters.\n\n• A masterful showcase of Sega Saturn's raging processing power.\n• Face your worst nightmares in a stunning world of 3D gameplay.\n• Dozens of camera angles, never-seen-before effects and 3D positional sound.\n• Developed exclusively for Sega Saturn by the creators of \"Sonic the Hedgehog.\""
 }

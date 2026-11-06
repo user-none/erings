@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Winning Post 3: Program '98 is an updated version of Winning Post 3, featuring updated race information for the 1998 series. The main new feature in this update is the addition of a rival stable owner, along with a variety of related new events."
 }

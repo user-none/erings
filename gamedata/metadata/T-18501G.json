@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Dark Seed is an adventure game which capitalizes on the drawings of famous horror designer H. R. Giger as a source of background artwork and inspiration.\n\nYou play Mike Dawson, an ad company manager who, in pursuit of his goal in life to become a writer, purchases a solitary mansion in a small town called Woodland Hills. Although the low cost and hush-hush transactions when purchasing the house do raise your suspicion, the solitary environment and sheer beauty of the house crush common sense and you decide to buy the house. That's when trouble begin. Upon reaching the house, you suddenly feel tired. You find a bed and fall asleep...\n\n... and wake up from a terrible dream, only to find out that your life has just become a worse nightmare: an unknown source has implanted a seed of darkness in your mind, and you only have three days to find a way to stop it."
 }

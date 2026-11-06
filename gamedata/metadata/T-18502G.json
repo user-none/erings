@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Quantum Gate is an adventure game set on a distant planet, in which you are sent out to fight in a war with an alien race. Most of the game is played in a first person perspective, as you travel around your base and talk to other people. There are also fighting segments, done in FPS mode, in which you and your computer allies must battle alien soldiers."
 }

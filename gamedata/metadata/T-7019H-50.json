@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Earthworm Jim returns in a madcap chase across the galaxy saving cows and thwarting lawyers all the way. Whip, run, jump and Snot swing your way through 10 of the most outrageous and untraditional levels anywhere. Returning favorite characters include; Princess What's-Her-Name, Psy-Crow, Peter Puppy, Bob the Goldfish, and several new villains as well!"
 }

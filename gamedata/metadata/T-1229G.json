@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Darkstalkers 3, titled in Japan as Vampire Savior: The Lord of Vampire is the second sequel in the Darkstalkers series of fighting games by Capcom, originally released in arcades in 1997. The game retains the character roster of Darkstalkers: The Night Warriors, omitting Donovan, Huitzil and Pyron from the lineup. Taking their place were four new characters: Jedah, Lilith, Q-Bee and B. B. Hood. It also features a secret character/mode, Shadow, where the player assumes the identity of the defeated character for the next fight (e.g. if Morrigan is defeated, the next fight the player will play as Morrigan).\n\nVampire Savior eschews the traditional round-based system in favor of what is dubbed the \"Damage Gauge System\", where battles take place during a period of one round, with each fighter having two \"life markers\" (equivalent to two life bars) by default, which diminish after one character runs out of vitality. The player can also regain a portion of their life during battle if they manage to avoid taking further hits. The game also introduces the \"Dark Force System\" which allows players to perform special abilities unique to each character for a limited period."
 }

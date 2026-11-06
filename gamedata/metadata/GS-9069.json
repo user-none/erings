@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Virtua Fighter CG Portrait Series is a series of eleven Sega Saturn discs released in Japan between October 1995 and March 1996, each containing images of one Virtua Fighter character.\n\nThis disc features Lau Chan. A leading Chinese chef, a master of the legendary wushu style Tiger Swallow Fist and the father of Pai Chan although the two share a strained relationship. He is from Shandong Province, Northern China. Lau was the winner of the first World Fighting Tournament."
 }

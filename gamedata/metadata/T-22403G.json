@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Irem Arcade Classics is a compilation featuring direct conversions of three early Irem arcade games:\n\n• 10-Yard Fight\n• Zippy Race (AKA MotoRace USA)\n• Spartan X (AKA Kung-Fu Master)\n\nEach game includes a variety of configuration options, and a choice between original and arranged music. A superplay video of Spartan X is also included as a bonus."
 }

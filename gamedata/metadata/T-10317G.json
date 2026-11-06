@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The Sega Saturn conversion of the arcade train-driving simulation Densha de Go! is based on the EX edition, which includes two more routes to travel on, as well as the possibility to drive through the snow.\n\nThe goal is to transport passengers along several Japanese railway lines by arriving at stations in time and stopping exactly at the marked positions, while obeying all speed limits and signals."
 }

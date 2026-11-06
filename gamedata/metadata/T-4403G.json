@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Stellar Assault SS is the sequel to the Sega 32X game, Stellar Assault (Shadow Squadron in the US). It was released exclusively for the Sega Saturn in 1998, only in Japan.\n\nLike its prequel, Stellar Assault SS is a first-person (or third person) perspective shooter set in outer space. While the core gameplay remains much the same, Stellar Assault SS is more story-driven, with support characters and voice acting. Ships and environments are also texture-mapped, while some levels take place on planets."
 }

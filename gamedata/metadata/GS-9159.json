@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Shinseiki Evangelion: Digital Card Library is a fan disc and minigame collection based on the 1995 anime series. The game contains many dozens of \"digital trading cards\" to collect and browse, which mostly contain various short video clips of the show; some also contain episode previews, merchandise photos, original mini-comics, or additional minigames. Completing the games will unlock additional cards and games to play.\n\nThere are a total of nine different minigames, including an Evangelion trivia quiz, a Simon-says type game where the player must remember the direction of light flashes on Gendo's glasses, and a maze game where Shinji must get beer for Misato from vending machines."
 }

@@ -23,6 +23,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Oh-chan no Oekaki Logic is a digital conversion, with anime mascots, of the classic Japanese newspaper puzzle nonograms. A nonogram is a puzzle on a square or rectangular grid the object of which is to reveal a hidden picture. Along each row and column there is a number or series of numbers which indicate how many squares will be colored in that row or grid. Example; \"5 9 4\" would mean there would be sets of five, nine, and four colored squares in the grid, in that order, with at least one blank in between. \n\nOh-chan no Oekaki Logic adds a story mode where starring the titular character, Hebereke's friend who first appeared in Ufouria: The Saga. Oh-Chan, representing the player, competes with other blobby anime characters in finding hidden images in the nonogram grids."
 }

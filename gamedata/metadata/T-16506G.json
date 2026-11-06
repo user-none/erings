@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "X"
+    }
+  ],
   "overview": "Super Real Mahjong Graffiti is a compilation of all the Super Real Mahjong arcade games up to the Saturn era (besides the first) that were never ported to the SEGA Saturn individually. This means it includes Super Real Mahjong PII, Super Real Mahjong PIII, and Super Real Mahjong PIV. They are not straight ports, however, as there have been some changes, such as improved graphics to the earlier games. There are six girls to challenge to strip mahjong. Strip sequences are animated."
 }

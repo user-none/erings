@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "The fifth Can Can Bunny game is also the first direct sequel within the series. The story is very similar to the one of the previous game: once again, the hero is lonely and is anxious to get a girlfriend, or, to be more precise, to have sex with different girls. And once again, the benevolent and gorgeous goddess Swatty is here to provide assistance, together with her side-kicks, the Seven Lucky Gods from the Japanese mythology.\n\nEven though the story is pretty much the same as in the previous game, the gameplay underwent significant enhancements. The interface is still traditional Japanese-style menu commands, but there are many more locations now, many of which can be freely accessed by clicking on them while on the main map. Once the player has reached the point where he can begin the physical seduction of the girl, the interface switches to point-and-click, with context-sensitive cursor for touching, kissing, etc. It is necessary to try different actions more than once to understand what the girl considers pleasant and what not, otherwise the girl might get angry and the game will be over. There are many more girls to seduce here than in the previous game, ranging from a school girl to a Catholic nun (seriously). There are also various extras (as the title implies), including an extensive album that arranges various pictures of the girls so that they tell her story, and an additional collection of stories, in which the hero can learn more about the girls he had met in the main game, and even interact with them again."
 }

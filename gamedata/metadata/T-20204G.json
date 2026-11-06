@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Shinya Izayoi is not your average high-school student. He's knowledgeable in black magic, wears a ring that summons a magical sword, and is part of a group of students that investigates paranormal activity. Strange events such as spontaneous combustion have been happening recently, so Shinya and his (mostly cute and female) friends are drawn in to get to the truth of what's happening.\n\nNightruth is a visual novel-style adventure game following the adventures of a team of high school students who use their supernatural abilities to to investigate paranormal events. The game plays out as standard for this type of game, consisting of voiced and illustrated story scenes with occasional player choices; these choices branch off via player choice into one of three different storylines, each of which has multiple possible endings.\n\nA music CD containing the game's theme song is also included in the package."
 }

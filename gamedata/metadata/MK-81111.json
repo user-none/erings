@@ -23,6 +23,11 @@
   ],
   "max_players": 8,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "This version of the SEGA Sports NFL franchise was released only for the SEGA Saturn. It features all fully licensed NFL teams and their respective logos along with updated rosters for the 1996 NFL season. It also has the option to create a brand new NFL team from scratch if the player chooses to and even create their own plays that can be used in games.\n\nThe standard game modes apply here such as Exhibition, Season, etc. and keep extensive track of stats in over 70 different categories and over 150 offensive and defensive plays to choose from. Eight friends can also go against each other using multi-tap."
 }

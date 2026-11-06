@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Hinako, Kana, and Wakaba are three high school girls and the best of friends. One day they're goofing around at a shrine taking photos, and accidentally break a seal and release 108 spirits that had been sealed there. These spirits are terribly mischievous, and even turn one of the girls' classmates -- who was with them taking the photos -- into a strange mystical gem! The old man who watches over the shrine confronts the girls, telling them that it's their fault that the spirits escaped. They are each granted a secret transformation power that allows them to fight the sprits, and now it's their responsibility to capture the spirits and seal them back up again.\n\nOmakase! Savers is a comedy adventure game featuring live-action scenes. The player takes the role of the girls' classmate, who appears as a small ghost, and must guide the girls in their quest to seal the spirits again and restore their classmate to his human form. This primarily takes the form of exploring the town on foot, talking to the townsfolk and investigating to find the whereabouts of the spirits causing trouble. Occasional combat takes a semi-real-time format, with the player moving around freely but pausing to perform attacks.\n\nThe game is divided into four chapters, each focusing on a specific spirit that must be defeated and captured. The characters in the game are represented both by anime-style sprites and digitized photo portraits of real actors, while numerous live-action cutscenes drive the story."
 }

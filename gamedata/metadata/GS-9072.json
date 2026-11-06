@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Virtua Fighter CG Portrait Series is a series of eleven Sega Saturn discs released in Japan between October 1995 and March 1996, each containing images of one Virtua Fighter character.\n\nThis disc features Jeffry McWild (born February 20, 1957). He is a fisherman who mastered Pankration on his own. Jeffry will stop at nothing to defeat his rival of many years, the dreaded Satan Shark. He is of Australian Aboriginal descent."
 }

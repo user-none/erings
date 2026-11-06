@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sekai no Shasou kara I Swiss-hen: Alps Tozantetsudou no Tabi is a digital gallery for the Sega Saturn."
 }

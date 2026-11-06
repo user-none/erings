@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Mahjong Kyō Jidai Sexy Idol Hen is one of several games in Micronet's series of strip mahjong games featuring video footage of real-life models. This particular entry features video clips of three fashionable young idols, who progressively undress down to either their underwear or a swimsuit -- though no further -- as the player wins matches. The unlocked videos of each girl can be freely rewatched from the menu."
 }

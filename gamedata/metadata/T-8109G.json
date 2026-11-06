@@ -23,6 +23,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Inspired by the Oz Books by L. Frank Baum, Yellow Brick Road concerns the player's attempt to thwart an invasion of the Emerald City by the Gnome King. Along the way s/he teams up with the tin man, lion, and eventually the scarecrow. Besides these, other recognizable figures from the books include Jack Pumpkinhead, the little Wizard of Oz, and Glinda, who, in the game, is queen of Oz.\n\nThe game's structure is reminiscent of first-person adventures: the player interacts with the environment and manipulates inventory items to proceed. The puzzles, however, are kept to a minimum, since combat occupies a significant portion of the game, effectively turning it into a hybrid of adventure and small-scale real-time strategy.\n\nBattles usually occur as dictated by the plot. The player does not fight directly, but instead acts as a general to his/her companions. Each character has a quick but weak base attack or can use one of the items found throughout the game. Many of the items act differently depending on who uses them. For instance, the flute calls field mice into battle for the Tin Woodman, while it calls crows into battle for the Scarecrow. The more powerful the item, the longer the downtime for the character who has used it before he can fight again. The enemies progress toward the companions' side of the battlefield at a constant pace. If they reach them, the battle is lost, and the player must try again. If instead the player manages to push them back off the far side of the field, the battle is won and the game progresses. Different enemies are more greatly affected by different weapon/character combinations, and immune against some."
 }

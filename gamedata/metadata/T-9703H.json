@@ -23,6 +23,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Midway Presents Arcade's Greatest Hits is a compilation that includes the following games:\n\n• Bubbles\n• Defender\n• Defender II\n• Joust\n• Robotron: 2084\n• Sinistar"
 }

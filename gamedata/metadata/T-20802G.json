@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Tetris S is the second of two Tetris games released for the Sega Saturn in 1996. Unlike the arcade port Tetris Plus which was released a few months earlier, it was specifically made for the console. This version includes a single player mode as well as multiplayer against an AI or between two human players.\n\nThe single player mode works like traditional Tetris and uses the same rotation rules as Sega's earlier arcade game conversions. Like always the player guides blocks down a well with the aim of creating lines at the bottom. These lines are then removed and the player earns points. The game ends when the blocks reach the top of the well, but in this version there is a continue option allowing the player to keep playing at the current level. The multiplayer works the same way but with one difference: if more than one line is removed the opponent's next few blocks will fall at a greater pace. The number of lines removed affects how many blocks will be sped up. A multiplayer game is played over a set number of matches and the aim is simply to stay alive longer than the opponent."
 }

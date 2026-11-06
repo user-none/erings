@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Sequel to Doukyuusei.\n\nTwo years has passed Since Doukyuusei, The setting is a new Town and a new Protagonist.\n\nThe goal is the same, romance a girl or girls of your choice with their own stories and quirky personalities.\n\n\nIf you're lucky during your pursuits you might run into a familiar face."
 }

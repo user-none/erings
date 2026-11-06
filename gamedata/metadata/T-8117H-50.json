@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "11+"
+    }
+  ],
   "overview": "Dragonheart: Fire and Steel was released to the public in 1996, and is a 2D side scrolling beat 'em up based off of the movie of the same name. Players take on the role of a retired knight who must return to action and remain true to the oaths he took long ago. An evil prince's tyranny threatens the land, and the knight (who was a former dragonslayer) can only defeat this scheming noble with the help of a friend who just happens to be the last surviving dragon on Earth.\n\nDragonHeart puts you in the sweaty medieval shoes of dragon hunter Bowen, as he faces the last dragons still surviving, and then ends up befriending one, Draco. With his help, he goes after King Einon, a former pupil of the dragon hunter, who has turned to evil.\n\nDragonheart's gameplay is quite similar to the Golden Axe series. Hack'n'slash your way through the nine levels of the game, killing dragons, befriending Draco and then going after Einon with Draco's help (who will toast everything in the way with his flame breath)."
 }

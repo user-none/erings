@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Yuukyuu Gensoukyoku ensemble 2 is a fan disc for Yuukyuu Gensoukyoku 2nd Album, and like the previous one features a new side story, several minigames, and an art gallery."
 }

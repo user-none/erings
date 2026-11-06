@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Following Murder Club, this is another detective story about the fearless private investigator J.B. Harold. This time, an unknown woman in a red dress was murdered in Chicago. A female detective who began investigating the murder was killed as well, and this time the killer made it look like a suicide. J.B. Harold arrives at Chicago and has now to work together with the local police and to solve the mystery.\n\nJ.B. Harold: Blue Chicago Blues is an interactive movie. Most of the player's time is spent watching movie footage (with real actors and scenery). At certain points, the movie freezes, and the player is presented with a screen with two or more choices. Each choice advances the clock, so it is necessary to plan well in order not to run out of time and to successfully solve the case."
 }

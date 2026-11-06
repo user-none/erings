@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sakura Taisen: Teigeki Graph is a multimedia fan disc for the Sakura Wars series, containing an original side-story and a collection of five mini-games such as a piano rhythm game and a jigsaw puzzle. Also included are a Sakura Taisen encyclopedia, illustration and video galleries, and a selection of cast interviews."
 }

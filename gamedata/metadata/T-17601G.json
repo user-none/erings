@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "AI Igo (ＡＩ囲碁) is an implementation of the popular Japanese board game Go, for the Sega Saturn. It was released exclusively in Japan."
 }

@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The story of Langrisser V is closely connected to the one told in Langrisser IV - the two games form a kind of a sub-series within the Langrisser universe. \n\nThe game's plot revolves around Sigma, an artificial human created by the great warlock and scientist Gizarov. One say, Sigma is awakened from his sleep inside a storage crystal in one of Gizarov's labs by Lambda, a girl who was also created by the scientist. Apparently, a powerful lord named Rainforce has invaded Gizarov's laboratory with the intention of destroying it. Meanwhile, a powerful artificial human called Omega, another \"child\" of Gizarov, distracts Rainforce. The two heroes flee to Regenburg, a country under Gizarov's rule, only to find out that they will soon have to stop a greater evil endangering the world - a new leader of darkness, who is after the powerful evil sword Alhazard...\n\nLangrisser V features classical Langrisser-style gameplay: you prepare your units before a battle, buy items etc., and in battle control various types of army units (archers, pikemen, etc.), together with the generals. The \"Judgment System\" from the previous game is back: your units can perform several moves per turn depending on their \"judgment level\". Like in Langrisser III, there is an element of \"love simulation\" in the game - at certain points you'll have to choose between various answers that will determine the further development of your relationship with the female party members."
 }

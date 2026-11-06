@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Based on the British children's picture book written and drawn by Raymond Briggs and published by Hamish Hamilton in 1973. It's a point and click adventure game that features video from the 1991 animated film adaptation."
 }

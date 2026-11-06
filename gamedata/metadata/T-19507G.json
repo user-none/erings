@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The final game in the Roommate series centering around Ryouko Inoue lead female character. She has just returned from her stay in United Stated and is now a third year high-school student. It is February, and high-school graduation is approaching soon. As her new roommate, you will be spending what little time there is left until the graduation, and maybe even fall in love along the way.\n\nThe game uses top-down view of a house where you can move from one room to another, which effectively enters a slightly richer visual-novel adventure mode where you can perform a predefined set of actions such as look at the calendar or water the flower or talk to other characters in the room, depending on the location you are at."
 }

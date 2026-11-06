@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "War between the Lafalue Kingdom and the Balt Empire has raged for centuries, with no signs of an end to the conflict. During a brief truce, prince Ray Brightforce of Lafalue and princess Fiona Fogerty of Balt have a chance meeting and fall in love. The two of them are determined to finally bring an end to the war, and they join forces with a resistance group called Valhollian.\n\nZanma Chou Ougi: Valhollian is a turn-based strategy RPG in the vein of Shining Force. In each turn, the player is able to act with each of their party members to move, attack, or use items or special techniques; after all characters have acted, the computer then takes a turn to do the same, repeating until one side is defeated. The game is broken into a total of 16 chapters, and has a specific focus on the bonds between characters. Characters can team up for combination attacks, which pools their strength together and can result in additional combat effects and even special story events involving those characters."
 }

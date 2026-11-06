@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Center Ring Boxing is an 3-D polygon boxing game where the player can choose from 30 different male or female boxers and compete in six different weight divisions. They may also create their own boxer and use them to rise through the ranks to become champion choosing from one of five distinct styles of boxing.\n\nThere is also a trainer by the name of Snake that will help train the player as they progress thorough the game as well as become a selectable character along with a hidden character in two-player versus mode once the player becomes heavyweight champion. A practice mode also is present that will allow the player to get accustomed to the game's controls and features 12 different camera angles and a replay mode that will the player to view their previous fight in it's entirety."
 }

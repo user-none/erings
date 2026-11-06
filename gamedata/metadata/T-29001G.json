@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Taikyoku Shougi: Kiwame II is a digital conversion of the traditional Japanese board game shogi for one or two players, and part of the Kiwame series of computer shogi games. This version is similar to the previous release, including all of the same features including multiple skill levels, 2-player play, recording and playback of games, and board setup features, but includes a further-refined play algorithm with updated play data. The tsumeshogi mode has also been expanded with 300 tsumeshogi problems, 300 next move problems, and an additional 150 \"appreciation\" problems."
 }

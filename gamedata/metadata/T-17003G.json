@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Game-Ware Vol.2 is a multimedia \"digital magazine\", and the second release in the quarterly series of the same title. This volume includes several playable game demos and original minigames:\n\n• Aoi Mizu no Naka, a suspense-horror adventure game with live-action video and photographs.\n• Pipit Boy no Daibōken 2, a sequel to the puzzle game in the first volume in which the player must guide a boy to collect all the bones on each stage; the boy follows whatever path he walks along, and the player rotates tiles to direct him around the map.\n• Telecom Town II, a simple side-scrolling shooter where the player shoots telephone cards as their projectile, and a sequel to the Nihon Telecom-sponsored game in the previous volume.\n• Cinderella Cruising, a top-down driving game sponsored by Mitsubishi in which the player, just married and on the way home from their wedding, must drive their wife home in their brand new Mitsubishi Challenger SUV within a time limit.\n• A playable demo of Layer Section.\n\nAlso included is a variety of multimedia content such as creator interviews, game previews, and an art gallery. This edition also includes the first chapter of the Virtua Fighter digital comic, \"Legend of Sara\"."
 }

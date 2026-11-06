@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This baseball game features real MLBPA players from the 1994 baseball season. The teams they actually played for are only represented by the cities the actual teams are from. The game has an Exhibition mode, a Regular Season mode, and a Championship Game mode. The Regular Season mode lets the player choose to play either a 13, 26, 52, or 162 game season, while the Championship Game mode lets the player play either a 3, 5, or 7 game championship game series against an opposing team.\n\nThe game also allows baseball players to be traded to other teams, and it also allows the player to select to play in 1 of 7 different MLB ballparks, plus one extra ballpark designed by Jaleco. Gameplay options include turning automatic fielding on or off.\n\nWhen on the field, batting makes use of a behind the batter view, while pitching makes use of a behind the pitcher view. Pitching is kept simple by the player being only able to control where the pitch goes, while batting only involves timing the swing to make contact with the pitched ball."
 }

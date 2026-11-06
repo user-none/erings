@@ -33,6 +33,15 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Dominating the exciting world of Theme Park ownership is your goal in this strategy game from Bullfrog. The first task is to set up your rides within the available land, structuring convenient paths and queues and ideally leaving some space for bigger rides once they become available, and include some lakes and trees to increase the park's allure. Rides range from Teacups and Haunted Houses to the biggest most elaborate roller-coaster you can design, and water rides that loop around other rides.\n\nYou are competing against other Theme Parks, so don't let them get an advantage over you - monitor your success in attracting customers and financial viability closely using the supplied statistics pages. More important, ensure that research is adequately funded to produce new rides.\n\nIt can be played in three modes - Sandbox level lets you concentrate on the park design elements, while Sim and Full add more strategic features."
 }

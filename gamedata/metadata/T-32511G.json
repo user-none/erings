@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Eight years have passed since the great war between humans and magical people. Brian, one of the war's great heroes, died peacefully, leaving behind the girl Kalin, of whom he had been taking care all the years following the war. Kalin leaves her country and goes on a ship to look for a job as a mercenary. On her way she meets Al, a boy who wanders around aimlessly, suffering from amnesia. Together, they reach a town where they receive jobs in the local guild. One of their assignments involves busting a pirate ship, and that is where their great adventure begins...\n\nToki no Michishirube is a direct sequel to the first Farland Saga game. It is an anime-style strategy RPG which consists mainly of large strategic battles, taking place on isometric battle fields. The player moves the characters over the battle field, attacking physically or casting spells. After a battle, characters gain experience points, which the player can freely distribute among the party members."
 }

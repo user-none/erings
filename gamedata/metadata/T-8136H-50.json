@@ -26,6 +26,11 @@
   ],
   "max_players": 12,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "NFL Quarterback Club 97 utilizes many of the same gameplay elements seen in Madden NFL 97 - including the kicking T-meter, the three-quarter overhead primary camera angle, and the button assignments and controls. Player animations are fluid and realistic, and the player sprites have clearly visible jersey numbers and names.\n\nThe game also boasts a historic simulation mode. Players can choose among 50 different classic NFL game situations and try to rewrite history. Imagine...it's December 23, 1973. The Dallas Cowboys are down 28-13 to the 49ers. With under a minute remaining, the Boys score a touchdown and recover an onside kick. Can you complete one of the greatest comebacks in NFL history?"
 }

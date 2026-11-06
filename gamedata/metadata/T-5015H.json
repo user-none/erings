@@ -29,6 +29,15 @@
   ],
   "max_players": 10,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "NBA Live 97 is a basketball game with an emphasis on realism. You can choose from all of the NBA teams, create a team with players you create yourself, or choose a team formed by the All-Star players of the east or West coasts. When you create a player yourself you can customize the player to a high degree. There are over 60 offensive and 10 defensive set-ups. Match options include an exhibition match, a whole season or the playoffs."
 }

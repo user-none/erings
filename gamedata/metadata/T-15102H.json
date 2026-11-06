@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "11+"
+    }
+  ],
   "overview": "The year is 2071, the aggressive Kesh Rhan aliens have already destroyed the human colonies on Mars and Pluto, and now plan to wipe out all humans from Earth as well. You play as Jessica Darkhill, lieutenant and most skilled pilot of the Orbital Defence Forces. The counter-attack you are about to launch is the last hope to save the Earth of chaos.\n\nChaos Control is a fast-paced shoot'em up featuring 3d pre-rendered environments, which means you cannot actually control the spaceship you are flying in, but are merely in charge of aiming at the various enemies appearing on screen."
 }

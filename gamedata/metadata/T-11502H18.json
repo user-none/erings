@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Da Wardenz, an anti-terrorist tank force, is called in whenever there is trouble somewhere in the world. You are a rookie hired by the tank force and must prove yourself in 25 increasingly difficult missions.\n\n'The Pen' is Da Wardenz' headquarters. It has all sorts of locations including the main hangar, basketball court, simulation room, workshop area, briefing room and various lockers (used for loading and saving missions). Before a mission, you can explore the headquarters and interact with each member of the team; you may learn something.\n\nWhen you start a mission, the action is viewed from a first-person perspective. It has you controlling the M-13 Predator, a highly sophisticated and upgradable tank. The game is arcade-oriented and has much more in common with 'Quarantine' and 'Doom' than serious counterparts like 'M1 Tank Platoon'. Your tank has unlimited bullets, can sustain heavy damage and can destroy enemies but also trees and buildings.\n\nWhen a mission is successfully completed you earn cash which you can spend on repairing your tank and extra upgrades."
 }

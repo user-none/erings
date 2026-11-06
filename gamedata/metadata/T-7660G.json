@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Winning Post 3 is the third entry in the Winning Post series. The objective of the game is breeding horses with good bloodlines. Compared to its direct predecessor Winning Post 2, the 30-year time limitation is removed, making players able to breed horses at their pleasure."
 }

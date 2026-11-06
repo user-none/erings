@@ -34,6 +34,15 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "You're a cop. Putting your life on the line is your job. Staying alive is your challenge. Split second decision making, timing and lightning fast reflexes are what it takes in this adrenaline pumping game of cat and mouse. Dirt bags pop out of virtually every hiding place with their guns aimed, cocked and ready to shoot - you!"
 }

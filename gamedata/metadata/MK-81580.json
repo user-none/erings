@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "SimCity 2000 is a strategy/simulation game developed and published by Maxis as a sequel to SimCity. It is the only SimCity game to be released on a Sega console.\n\nThe Saturn version of SimCity 2000 retains most of the content from the PC version, though it's missing some of the disaster scenarios for unknown reasons (conversely it adds a new intro video, suggesting it was not a disc space issue, and the PlayStation version retains them). It is also a slower game, with the fastest speed setting of the PC version omitted and game suffers from longer loading times. It does, however, include a CD soundtrack and higher quality sound effects.\n\nCities take up a large amount of the Saturn's internal memory, meaning only one can be saved without a Backup Memory cartridge.\n\nSome buildings are exclusive to the Saturn game, such as a statue of Sonic the Hedgehog that is made available under certain circumstances."
 }

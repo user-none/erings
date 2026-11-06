@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Yuukyuu Gensoukyoku ensemble is a fan disc for Yuukyuu Gensoukyoku, featuring new stories involving the characters, several minigames, and an art gallery."
 }

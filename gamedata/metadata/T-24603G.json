@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In the Kingdom of Dilma, dignitaries from many other nations have gathered for the coronation of the new king. However, before the ceremony takes place, a treasure of the kingdom, a priceless jewel integral to the ceremony, has been stolen from the prince's bedroom. The suspect fled into the castle's dungeon, and the prince went after them but has not returned. There are five suspects who do not have an alibi: five beautiful princesses from other countries. The young knight Willow has been summoned to investigate, find the thief, and recover the stolen jewel.\n\nPrincess Quest is a first-person dungeon-crawler RPG with love adventure elements. The player controls Willow to investigate the theft, and Willow is also able to magically transform into a female form called Will. Willow and Will have different combat abilities, with Willow adept at physical attacks while Will excels at magic, and during the investigation some characters will only be willing to speak openly to one form or the other. The player can return to Willow's room in the castle to switch forms.\n\nThe player can explore the castle and surrounding town from a top-down perspective to speak with other characters and obtain clues and information. The dungeons are explored in first-person with up to two of the princesses accompanying the player. Only Willow/Will participates directly in the turn-based combat, while the other two characters provide special abilities to help the player.\n\nThe first-print limited edition of the game includes a set of three trading cards but is otherwise identical."
 }

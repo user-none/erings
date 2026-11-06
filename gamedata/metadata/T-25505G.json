@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ultraman Zukan 3 (ウルトラマン図鑑３) is a sequel to Ultraman Zukan 2. It is a database of Ultraman Leo, Ultraman 80 and other Ultra Series."
 }

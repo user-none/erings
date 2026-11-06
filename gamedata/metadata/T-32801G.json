@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Saturn Music School is an educational game that teaches the basics of playing the piano. It includes a multi-stage tutorial mode, 20 popular songs to play along with, and a composition mode where the player can write their own music. There are also several mini-games included: the first tasks the player with repeating notes as they're played; the second tasks the player with repeating a sequence of notes; and the third is a quiz that asks basic questions about music.\n\nThe package includes an adapter to connect a standard MIDI keyboard (not included), which is required to play the game."
 }

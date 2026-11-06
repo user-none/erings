@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Aspiring novelist Masato met the voluptuous Chihiro on a beach one summer. They developed a relationship, but waned when they had to split up for work in the spring. Here Masato was tempted to take other relationships...but Chihiro wasn't giving this one up.\n\nKiss yori... is a dating simulator with static graphics. The way to advance in the game is by choosing an option among a list of several ones. There the player will take the role of an adolescent guy and should try to seduce as many attractive girls as possible."
 }

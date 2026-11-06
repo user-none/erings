@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Saturn Music School 2 is a follow-up to Saturn Music School which includes 30 new songs to play piano along with. It also includes the same selection of tutorial modes and composition tool as the first game. The package includes an adapter to connect a standard MIDI keyboard (not included), which is required to play the game."
 }

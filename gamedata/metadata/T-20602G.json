@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In the near future, an epidemic of crime and gun violence has swept across Japan. To counteract this threat, the secret police force JSWAT — Japanese Special Weapons and Tactics — has been formed. They are called in for the most dangerous missions, from gang warfare to hostage situations, and you are the newest recruit.\n\nTokuso Kidoutai J-SWAT is a police-themed, first-person shooter with live-action cutscenes and digitized graphics. For each mission, the player must select a weapon loadout and attempt to neutralize all threats. While lethal force is available as an option, subduing and arresting criminals is the preferred approach, and is reflected as such in mission rankings. The player must also be careful not to harm hostages and civilians, and pay attention to instructions received over radio during each mission."
 }

@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Virtual Mahjong II: My Fair Lady is a 4-way strip mahjong game and the follow-up to Virtual Mahjong from the year before. The game once again features full-3D reward visuals as the player wins games against the computer, though this time there is only a single girl, Aya, to play against who appears in a wide variety of different cosplay outfits. In addition to changing the camera angle in the reward scenes, the player can also have Aya strike different poses.\n\nThe Saturn release censors the topless reward scenes and includes the first game in full as a bonus."
 }

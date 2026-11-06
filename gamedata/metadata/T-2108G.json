@@ -24,6 +24,5 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
   "overview": "Sound Novel Tkool 2 is a game creation toolkit that allows the user to create their own sound novel adventure games. It is part of ASCII's Tkool series of such software packages, and a follow-up to the prior Super Famicom edition. It allows the player to write the text of their story, choose background and character graphics, then add music, sound effects, and visual effects from a large variety of premade assets.\n\nThis updated edition contains a broader selection of assets for the player to use in their games, and now includes photograph and illustrated character sprite options in addition to the silhouettes of the previous release. There are also four sample games in different genres included. The later Sega Saturn version of the game contains additional assets, adds keyboard input support for text, and replaces one of the sample games with a new one."
 }

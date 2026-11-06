@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "Robotica was the first, first-person shooter for the platform and a first generation game for the console. It is somewhat similar to Space Hulk, only that the player takes the role of a machine that rebels against the robots to save mankind. The weapons include a punch, Vulcan gun, Missiles, and Lasers. The main environment is made up of various hallways. The player runs through the various stages collecting keys, using computers, and triggering lights. The enemies are relatively basic but are dangerous in numbers."
 }

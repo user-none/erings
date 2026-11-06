@@ -26,6 +26,11 @@
   ],
   "max_players": 6,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "An early competitor to the EA Sports NHL series, NHL Powerplay '96 features motion-captured players, an NHL Player’s Association license, a variety of managerial options, and the ability to play seasons and tournaments.\n\nIt is the first NHL game to include a World Tournament mode in which the NHL players can compete against each other on their respective national teams.\n\nIn a time where developers tried to get the most from 32-bit consoles, leading to the \"unlimited camera angles\" blurb on many games, NHL Powerplay stuck with the one most people used, the overhead \"behind the goal\" view, popularized by EA's NHL series - and it was one of first full 3D sports games on the market."
 }

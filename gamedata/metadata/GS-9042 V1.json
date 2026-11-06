@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sega Ages Vol. 1: Sega Ages: Shukudai ga Tant-R is the first in a long line of video game re-releases using the \"Sega Ages\" brand by Sega. This one is a compilation which includes a port of Puzzle & Action: Tant-R and Quiz Shukudai o Wasuremashita and was released for the Sega Saturn exclusively in Japan in 1996."
 }

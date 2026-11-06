@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Dark Hunter: Ge Youma no Mori is a supernatural horror adventure game designed to help native Japanese-speakers learn and practice conversational English, part of Koei's English Dream series. It directly continues and concludes the story from the first part, released two months prior.\n\nAs with the first part, the game mostly progresses as linear animated cutscenes, but occasionally is interrupted for short reaction minigames or dialogue choices. The player is given the choice of three characters — Mariko, Ran, and Cher — and all three scenarios must be completed to unlock the final chapter. As a language teaching tool, the game offers full English and Japanese for both voiced dialogue and subtitles, as well as a dictionary function and the ability to replay any previously-viewed scene."
 }

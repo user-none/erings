@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "ClockWerx is an enhanced port of a Super Famicom puzzle game of the same title, itself based on an earlier PC game. The player controls a character who rotates around pins like a clock hand and must reach the goal by moving between pins without touching any hazards. This version includes the same story and new player character as the Super Famicom version, as well as many of the same puzzles. The CD-ROM versions also add new story cutscenes featuring claymation animation, as well as a new two-player competitive mode and a stage editor."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Angel Graffiti is a visual novel romance simulation game for PlayStation, ported a year later to Sega Saturn under the name Angel Graffiti S. The player character is a high-school sophomore student, whose name, nickname, birth date and blood type is decided by the player at the beginning of the game. One day, while walking through the park, you notice a beautiful girl, but don't really manage to make a good impression on her and she soon goes away. The next day, your homeroom teacher announces you have a new student joining your class ... her name is Misuzu Amano ... the girl you met a day ago in the park. Your luck didn't completely run out as now you will have plenty of time to try and make an impression on her and possibly make her fall in love with you. But she is not the only girl in school that caught your eyes, so you will have to decide who is your person of interest and who you will try to woo. Luckily for you, you are not alone on your quest, you will have a help from heaven itself, an angel by the name Eve, who will often give you advice on girls' feelings.\n\nThe basic gameplay is similar to visual novel style with dialogues and occasional selectable answers, but while you're in your room you'll be able to perform some other actions such as study, work part-time to earn some income, ask Eve for advice, set events on your calendar, join the school clubs and similar options. While dialogues use typical anime character style to represent characters, each of the main heroines also has a small figure-like character that represents her. They come in five different degrees of emotions between love and hate, the middle one being neutral, neither loving nor hating you. The game features animations for certain memorable events, while the dialogues mostly use static images with different postures. Voice-acting is included but is not complete, meaning even the heroines that talk during dialogues do not talk throughout all of their dialogues bust only some of them."
 }

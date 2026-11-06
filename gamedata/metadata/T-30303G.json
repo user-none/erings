@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "DeJig: Aqua World is a digital jigsaw puzzle game and part of the DeJig series. The game includes 20 different puzzles featuring photographs of various tropical fish, which come in both 72-piece and 108-piece difficulty levels. Pieces can be rotated and will lock into place when placed correctly, and the completed image can be viewed at any time as a reference. Completing each puzzle will unlock a bonus video of that specific fish, and there is also a movie mode where a playlist can be created of the available videos to view in sequence."
 }

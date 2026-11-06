@@ -27,6 +27,11 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Super Casino Special is a game for up to four players via multitap comprising Baccarat, Roulette, Let It Be, Black Jack, Video Poker, Keno and Slot Machines.\n\nIt can be played in two modes, Ranking play or Free Play.\nIn Ranking mode the player enters a target amount to be reached and then plays against their opponents to see who can reach that amount. If a single player plays in this mode the game provides three opponents but the game caters for up to ten players with the game providing the additional AI opponents. Roulette,Video Poker, and Slot Machines in this game mode are played within a split screen.\n\nIn Free mode there are no computer opponents and the games are the same as the games played in Ranking mode though there are minor differences, such as selecting which slot machine to play, because in this mode the split screen mode is not used at all.\n\nThere are three kinds of slot machine which can be played for different stakes. Keno is the odd game here because it does not appear on the game menu, instead during any game other than Video Poker a casino hostess pops up in her own little window inviting the player to a game of Keno. If the player accepts they are shown a Keno card on which they mark their numbers after which their current game of Baccarat, Roulette or whatever resumes. A short while later the hostess window opens up again and the hostess gives the good, or more usually bad, news on how good their selections were."
 }

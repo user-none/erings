@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Set against a medieval fantasy backdrop, Sol Divide is a 2D side-scrolling shooter that pits one or two players against a horde of flying enemies. There are three different characters that can be played as, each with their own weapon and fighting style. Various magic scrolls can be found by defeating enemies which allow the player to cast several different types of spells including lightning and fire.\n\nThe story itself concerns an evil being who sets out looking for a Power Stone and cuts down all in his path with his sword, the Sol Divide. It is up to you to stop him, battling your way through several stages in both Arcade and Original Mode (which contain different areas and require different tactics to beat, the Original Mode being designed as a more difficult experience for players who want to progress on to a higher challenge).\n\nDefeating enemies rewards the player with different items to help them on their journey, including the aforementioned magic scrolls, healing potions, magic bottles (only when playing Arcade Mode) and protection accessories (if playing Original Mode)."
 }

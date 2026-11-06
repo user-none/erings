@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This is a Japanese-style adventure game based on the popular TV anime series Neon Genesis Evangelion. A girl named Mana Kirishima arrives at Tokyo-3 and studies in the same class with Shinji Ikari, the series' main hero. About the same time, a giant robot attacks the city. Is there a connection between the new student and the sudden assault?\n\nUnlike the two previous Neon Genesis Evangelion games, Kōtetsu no Girlfriend is not an interactive movie. The player controls Shinji by selecting locations to travel to, looking at people, and talking to them. The locations are graphically represented as anime-style still screens."
 }

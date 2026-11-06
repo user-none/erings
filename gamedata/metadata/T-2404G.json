@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Jissen! Pachi-Slot Hisshōhō! Iron Hook is a pachi-slot (Japanese slot machine) simulation game and part of Sammy's long-running series of gambling sims. It features a faithful recreation of the Iron Hook slot machine made by Sammy, a pirate-themed machine which was brand new at the time of release. There are two modes: Simulation Mode lets the player choose a particular machine setup and freely play to practice, including detailed progression and stat tracking; Game Mode gives the player a set of pre-configured situations each with a strict time limit and must clear the requirements of each in order.\n\nThe game was not sold in stores, but rather was only available as a prize either from certain pachinko halls, or from contests held by publisher Sammy. It comes in an oversize package made to look like an old book with a treasure map inside, matching the pirate theme of the game. Additionally, players could enter a further contest to win pirate-themed prizes like a hand hook or a bottle of rum."
 }

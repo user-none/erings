@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Message Navi Vol. 2 (メッセージ・ナビ ＶＯＬ．２) is a game for the Sega Saturn."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This title acts as an activity center based on the titular Lupin the 3rd. Contained in the CD are theme songs, character profiles with clips and information, maps of crime scenes, theme songs from the Lupin III movies, Story Digests providing Lupin III lore, and Drawings containing sketches of the anime in the works."
 }

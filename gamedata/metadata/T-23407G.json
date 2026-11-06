@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Koi no Summer Fantasy: in Miyazaki Seagaia is a dating simulation made to promote the Seagaia Ocean Dome. In it, players take idol Megumi Okina on a date through the eponymous water park, experiencing various attractions and making dialogue choices at pre-determined points in the story."
 }

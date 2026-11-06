@@ -27,6 +27,11 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Culdcept is a multiplayer card-battle board game, comparable to a cross between Monopoly and Magic: The Gathering. Each player controls a so-called Cepter, who is capable of using cards to summon monsters and cast spells. Players take turns moving around the game board, and can summon monsters to capture and defend spaces. When another player lands on that space, they can either pay a toll or choose to attack the monster guarding it, potentially claiming it for their own. Lands can be upgraded, and controlling multiple lands of the same color also increases their value. Players can build a deck of up to 50 cards, with additional cards and maps unlocked through the game's campaign.\n\nSeveral different versions of the game were released, which only have minor content differences. The original 1997 Sega Saturn version contains 10 maps and 360 cards."
 }

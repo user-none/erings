@@ -28,6 +28,11 @@
   ],
   "max_players": 5,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sugoventure revolves around the four main heroines from the Dragon Master Silk series, Aka, Ao, Ki and Ruli, with the addition of a fifth heroine-- a hapless ordinary high school girl, Mitsuki Shirafuji, who is summoned into their world and joins them on their adventure.\n\nThe gameplay revolves around a board game setting; in accordance with the number of heroines, up to 5 players can take part (the Saturn's 6 Player Adaptor peripheral is required for this). When each player is controlling their character, they have the option of selecting dialogue choices before their turn, to influence how the character may feel about them."
 }

@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Hey! You're not afraid of a challenge, are you? Of course not! You laugh in the face of fear... all three of them. Use your ghostly skills to solve complex puzzles, find secret passageways, hidden clues, and locate the lost pieces of the dismantled Lazarus Machine. Based on the hit movie, including some of the same great 3D animation, hilarious gags and original character voices, CASPER is a challenging adventure for you, your family and your friends! Just remember to choose your friends carefully!"
 }

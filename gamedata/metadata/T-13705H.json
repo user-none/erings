@@ -26,6 +26,11 @@
   ],
   "max_players": 6,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "In this bowling game, you must choose from one of eight very different characters. Choose power and accuracy from a meter that is very similar to the Links golf games. Let go and watch the action.\n\nThe game consists of single game, league and tournament (amateur and pro) modes. The selected player may be edited by changing their shirt, hair, pants and skin color and is distinguished by four factors: power, release, spin and hand usage. Each strike consists of choosing the lane arrow, setting the bowler position and operating the bowling meter. Operating the bowling meter involves specifying spin velocity, power of the bowl and release point. The game shows the release animation, ball path and the moment of impact with the pins. After two strikes, the next player takes his position. The results are presented in the table after every completed round."
 }

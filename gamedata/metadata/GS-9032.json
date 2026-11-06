@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Hang-On GP features three tracks: Albatross Cliff Reef, Great Crimson Wall, and New Dwells. Each track contains an additional route that becomes available after a high placing. This makes a total of six possible races.\n\nPlayers can choose from among ten motorcycles to use during a race as well as an automatic or manual transmission for each. Players can also decide how the bike should control, highside or power slide.\n\nPlacing in the top three on any of the first three tracks will release the additional routes. When players place in the top three on the additional routes an endurance mode will be available. In endurance mode players attempt to complete as many laps as they can in 10 minutes."
 }

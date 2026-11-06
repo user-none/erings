@@ -35,6 +35,15 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "11+"
+    }
+  ],
   "overview": "Darklight Conflict is a space combat simulator video game developed by Rage Software and published by Electronic Arts in 1997 for PCs running MS-DOS or versions of Microsoft Windows before Windows 2000, and the Sega Saturn and Sony PlayStation game consoles. In this game, you play the part of a contemporary human fighter pilot abducted by the alien Repton species during your aerial battle, and biologically modified to become a starfighter pilot for them in their war against the Evil Ovon race.\n\nIn the game itself, you would usually pilot one of three different starfighters, each with different strengths and weaknesses, along with occasionally piloting a captured enemy ship, or controlling a gun turret on your Mothership (The \"War Drum\"). The missions are quite varied, ranging from simple combat missions to missions where you need to defend your mothership, destroy an enemy Ovon mothership, clear an asteroid field, or retrieve an object with a tractor beam. Your ship moves between mission areas via \"hyperspace portals\", passing through a hyper-space environment, resembling that seen in 2001: A Space Odyssey. Often during hyperspace transit, varying streams of energy are encountered - yellow energy replenishing the energy which fuels the ship, while blue energy drains it, reducing the ship's effectiveness.\n\nAfter you complete the four campaigns and destroy the Ovon home-world for the Reptons, they reward you by sending their best pilots to kill you in an honorable way (after all, they don't need a human in their society and war history). You manage to escape and jump to Earth, where centuries have passed since you were gone. Your ship is greeted by the Earth Defense Fleet, which destroys all Repton ships in hot pursuit."
 }

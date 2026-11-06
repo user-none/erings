@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Legend of K-1 Grand Prix '96 (レジェンド・オブ Ｋ－１ グランプリ’９６) is an interactive gallery for the Sega Saturn."
 }

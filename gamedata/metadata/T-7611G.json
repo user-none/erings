@@ -24,6 +24,11 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Air Management '96 is a sequel/remake to the other games in the Air Management series. Like previous titles, the game is an airline management simulation however graphics and interface have been updated to 3D. Players take control of an airline as it's CEO, and must first select the name, tail logo and home airport of their airline. The game is turn-based between each airline. Each airline has four \"board members\" who can be assigned to perform various tasks, which take varying length to accomplish. These tasks include buying aircraft, bidding for slots at an airport, buying facilities at an airport and marketing a PR campaign in a region. Once the player has purchased aircraft, they must further make planning of the route between two airports with available slots. Once a route is setup, the player is able to manage how many planes fly the route daily and the number of passengers they carry, as well as ticket price.\n\nThe game is played over one of two scenarios, each representing a different era. The game is over when any airline reaches the target money amount."
 }

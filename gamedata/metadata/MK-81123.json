@@ -36,6 +36,15 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Worldwide Soccer 98 picks up where its predecessor stopped, adding two new stadiums, new animations, faster gameplay, and the most important, club teams from England, Spain and France for a total of 60 teams adding to the 48 of the International mode. While the game still lacks a license (except the English league, that has real player and team names), the name editor is still present. In the commentary box, Gary Bloom is joined by former England international and 1966 World Cup winner Jack Charlton.\n\nThere are seven games modes: Friendly match, Club exhibition, Worldwide Cup, Club League, Cup Tournament and Penalty shootout."
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Jurio is a young boy who must travel to five sacred shrines as part of his warrior initiation rite. The lovely magician Chris accompanies him on his journey. But soon the two young people discover that they must face dangers far beyond those they have imagined. The prophecy of the mysterious White Witch is about to be fulfilled: a great wave will destroy the entire world of Tirasweel if nobody stops the man behind it...\n\nThe third entry in Legend of Heroes series (and also the first without the reference to Dragon Slayer universe in its title) introduces a new battle system: the battles in the game occur in pre-set locations, and evolve automatically. The player's task is to program the actions of the heroes (up to four in the party) before the battle. There are eight total \"programs\", with five moves each (for example, \"attack\", \"attack\", \"cast healing magic\", \"attack\", \"cast offensive magic\", etc.), and the player can switch between them during the battle.\n\nOther game elements in Shiroki Majo are fairly typical for a Japanese-style RPG, including reliance on plot events, linear progression through the story, automatic leveling, etc."
 }

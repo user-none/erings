@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The sequel to Blazing Heroes, originally known as Riglord Saga. You play the role of Mieu, the princess of Dragoon Kingdom. One day the castle is attacked by two men from a mysterious organization called the Seven Wisemen. The princess and her best friend have no choice but to escape, but it seems that they are the ones their enemies are looking for!\n\nThe game utilizes the same gameplay system as the predecessor. You form a large party with which you participate in long, strategic turn-based battles. You move your characters on the battle field, attacking enemies or casting magical spells. The strength of your attacks depend on the amount of movements you have made before."
 }

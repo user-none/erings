@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "X"
+    }
+  ],
   "overview": "Haunted Casino is an adult-themed horror adventure gambling game. The player enters the titular \"Haunted Casino\", where a demon queen and her followers -- all of them attractive women -- lure in and trap unsuspecting men as their playthings. The player must explore the mansion-like casino in first person, avoiding traps and looking for helpful items, and eventually find each of the demons to challenge them to various gambling games such as roulette and blackjack. As the player wins coins, the demons will gradually remove their clothing until they are completely nude, at which point they can be sealed within a playing card. If the player loses, then their soul is lost for eternity to the demon queen.\n\nThere are seven demons throughout the casino to find, each of whom has a particular game they like best. After sealing a particular demon, the player can visit a viewing room and spend coins to view various nude scenes of that girl. The game is divided into three floors, and after sealing all the demons on a floor, the player will receive a key that leads to the next one. The ultimate goal is to seal the demon queen on the third floor."
 }

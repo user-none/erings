@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Chaos Control Remix is, as the name suggests, a modified and updated version of Chaos Control featuring numerous changes and new features compared to the original Japanese release, some but not all of which were present in the European Saturn release:\n\n• 2-player simultaneous play has been added\n• Virtua Gun light gun support has been added\n• Area 2 of the original game (Virtual) has been removed, leaving only the Manhattan and Space areas\n• Improved video quality and load times\n• Game has generally been rebalanced to be more difficult"
 }

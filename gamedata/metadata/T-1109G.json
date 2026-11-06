@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Link 3 or more colored bubbles by shooting an identical colored bubble. When they are joined together, they pop.\n\nThis game completely abandons the idea of previous titles that the playfield is being pushed down by some sort of mechanical device and instead attaches groups of bubbles to nodes that move downwards. When a node is no longer connected to any bubbles it will disappear and when all nodes in a level have vanished the level is complete. One result of this change that may appear strange to players of previous versions is that shooting a bubble to the top of the visible playfield without striking any bubbles causes it to bounce and start travelling back downwards. The player is not penalised if such bubbles again leave the playing field without attaching to anything (except for adding to the number of moves until the field is pushed down by one empty line)."
 }

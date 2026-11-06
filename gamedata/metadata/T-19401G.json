@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Cubic Gallery is a first-person adventure edutainment game about art history. The detective Edy and his assistant Disy are visiting an art museum when suddenly they hear the Mona Lisa calling out for help, and find themselves pulled into the world of the painting. She explains that her tears have been lost and scattered among the paintings in the museum, and it's up to our heroes to find and recover them.\n\nThe player is given text hints as to which paintings might contain a tear, and must find them amongst the more than 50 famous paintings featured. Each painting also includes detailed history and information the player can to read to learn more. The game is packaged with two coupons for a discount on entry to the Hakone Open-Air Museum in Hakone, Kanagawa, Japan."
 }

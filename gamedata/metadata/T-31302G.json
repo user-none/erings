@@ -13,5 +13,11 @@
     "4 974365 001544"
   ],
   "release_date": "1997",
-  "cooperative": false
+  "cooperative": false,
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ]
 }

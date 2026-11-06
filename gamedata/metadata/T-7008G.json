@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In 3195, Hokuto Higara, Shario Vissen, and their comrades join together in a fight against Huge Boss who has plans to render the human race extinct. To do this, the heroes will need to travel through various time periods in the past chasing down Huge Boss, whose disrupting human history.\n\nGekirindan is a vertical scrolling shoot-em-up. Players can choose from three different ship types (biplane, helicopter, and space fighter) to pilot, each equipped with their own unique firepower.. The game consists of 5 stages where the heroes travel through time from 3195 to 1942, 1999, 2373 and finally to 4580.\n\nSome of the development team who helped create the game came from the recently defunct at the time Toaplan, hence the game sharing similarities to that companies previous shoot-'em-up efforts."
 }

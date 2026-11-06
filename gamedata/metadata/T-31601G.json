@@ -27,5 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The third game of the Zero Divide series has been released exclusively in Japan on Sega Saturn. The hackers behind the XTAL Tower database have been cleared of all charges. However, the maverick XTAL AI remains a threat. The players who were part of the offensive program have been called upon to rid the world of this cyber menace for good.\n\nThe game can be played in Single Player Mode, Versus Mode against a second player or CPU, Training Mode for practice, Time Attack for matches under pressure, or Story Mode. The game has 10 playable characters, and 3 unlockable secret characters. Like the previous games, the game incorporates the armor breaking mechanic, so if a limb of an opponent is damaged enough, it becomes inoperable."
 }

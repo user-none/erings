@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Kanzen Chūkei Pro Yakyū Greatest Nine (\"Complete Broadcast Pro Baseball Greatest Nine\") is a baseball game featuring featuring an NPB (Nippon Professional Baseball) license and all twelve teams and all players from the Central and Pacific Leagues of Japanese baseball for the 1995 season. It is the first game in Sega's flagship Greatest Nine series of Sega Saturn baseball games.\n\nIt is presented in a realistic visual style, including digitized photographs of all players. Several game modes are available, including Open Game (Exhibition), Pennant Race, and Tournament modes, as well as All-Star Game and Home Run Contest modes. The game also features a full Team Edit mode and a player information database.\n\nA modified version featuring American MLB teams and players was released worldwide as World Series Baseball."
 }

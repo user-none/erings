@@ -23,6 +23,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Honkaku Pro Mahjong: Tetsuman Special is a 4-way riichi mahjong game featuring the endorsement of the Japan Professional Mahjong League and the likenesses of 14 professional mahjong players (15 in the Saturn version). It is the third title in Naxat Soft's Tetsuman mahjong game series.\n\nThere are two main play modes: Title Conquest mode tasks the player with winning against the pros to increase their rank and earn a total of 48 different professional titles; Free Game lets the player set up a more relaxed exhibition game against any set of opponents. The game also keeps detailed records on the player's performance which can be reviewed at any time."
 }

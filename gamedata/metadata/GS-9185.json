@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pro Yakyū Greatest Nine '98 is a baseball game featuring featuring an NPB (Nippon Professional Baseball) license and all 12 teams and all players from the Central and Pacific Leagues of Japanese baseball for the 1998 season, and the fourth main game in Sega's Greatest Nine series of Sega Saturn baseball games.\n\nThe game is very similar to the previous year's entry, featuring the same visual style and all of the same game modes: Open Game (Exhibition), Pennant Race, Home Run Contest, and Team Edit. New in this entry is the so-called Narikiri Mode, a variant of Pennant Race where instead of controlling a full team, the player picks a single player from one team to control."
 }

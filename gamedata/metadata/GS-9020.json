@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ayrton Senna Personal Talk: Message for the future (アイルトン・セナ パーソナルトーク ～Message for the future～) is an unusual entry in the Sega Saturn's software library. Released by Sega in 1995, it appears to be nothing but an audio-only interview with Formula 1 racer Ayrton Senna, who previously sponsored the sequel to Sega's Super Monaco GP, with some visuals overlaid. Though the interview is done entirely in English, this \"multimedia disc\" only appears to have been released in Japan."
 }

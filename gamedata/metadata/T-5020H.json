@@ -37,6 +37,15 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "For the first time ever in an arcade racer, take control of either NASCAR or Indy cars and cruise around 16 detailed tracks. There are 3 views available to drive from. As well as individual races, you can play a full career. Derek Daly and Bob Jenkins provide a running commentary. Outside factors such as pit-crew mistakes and mechanical failures can affect your races."
 }

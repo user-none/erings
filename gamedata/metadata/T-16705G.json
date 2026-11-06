@@ -21,5 +21,11 @@
       ]
     }
   ],
-  "cooperative": false
+  "cooperative": false,
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "X"
+    }
+  ]
 }

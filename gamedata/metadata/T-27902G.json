@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This prequel to Lunar: The Silver Star begins in the same town of Burg hundreds of years earlier. Two teenage girls, Elie and Lena, set out to join the Magic School of Ien. There they meet new friends and go on lighthearted adventures around the world.\n\nLunar is a traditional Japanese RPG, featuring random battles and turn-based combat. Compared to the original Game Gear version, this remake features battles more in tune with the other Lunar games along with an expanded plot, CD audio soundtrack, and animated cutscenes."
 }

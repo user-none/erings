@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Lifescape: Seimei 40-okunen Harukana Tabi (\"Life: The Long Journey of 4 Billion Years\") is an interactive multimedia game based on a television documentary series of the same title produced by NHK in 1994. The player explores a fictional amusement park where each exhibit represents a moment in the history of life on earth. Each exhibit consists of a set of short clips from the documentary, some background information as text and graphics, and a mini-game related to that exhibit. For example, the exhibit on DNA allows the player to combine different types of DNA sequences and see what different creatures appear, while the exhibit on pre-human primates casts the player as a monkey who must collect bananas in order to evolve.\n\nThe game is divided into two discs, each containing four exhibits for a total of eight. The first disc \"Aquasphere\" represents early ocean life, while the second disc \"Landsphere\" represents life once it emerged from the oceans onto land."
 }

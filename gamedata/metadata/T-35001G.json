@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Umanari 1 Furlong Gekijou is a cartoon-style race horse breeding & management simulation game based on a manga by Miho Yoshida, one of several produced by Micro Vision. The player can breed horses and hire jockeys, determine training schedules, and enter their horses into races; races are computer-controlled but can be watched by the player with a running commentary. The game features a cartoony visual style, and a particularly unique feature is the ability to directly speak with the horses; as cartoon characters, they are able to talk, which lets the player ask them directly about their condition."
 }

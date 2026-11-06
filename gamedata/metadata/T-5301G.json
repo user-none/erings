@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Graduation is a Japanese anime \"life-sim\" game. You take the role of a homeroom teacher who is given the responsibility of teaching five girls in their last year of high school. You determine their class schedules, do guidance counseling, interfere with their weekend plans, and occasionally take to the streets to make sure they're not getting into trouble. Each of the girls have their own individual personality and problems, and the choices you make will determine whether they graduate from high school, what they do with their lives afterwards, and whether or not they wind up hating your guts. Get them all into top colleges and your boss will praise your genius. If they all flunk or wind up wanting to marry you, you'll obviously be fired.\n\nDespite what common sense and knowledge of the Japanese psyche might lead you to believe, this is not an adult (or hentai) game and there's no nudity and only an average amount of anime sexploitation."
 }

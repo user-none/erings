@@ -23,6 +23,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "Sega Screams Volume 1 is a demo disc for the Sega Saturn, released exclusively in North America with console bundles. Bizarrely Sega of America released this game twice - initially as Sega Saturn Bootleg II (as a \"sequel\" to Bootleg Sampler). The product in its Bootleg II form is far less common, though aside from a changed title screen (on some discs), the two discs are identical.\n\nUnlike Bootleg Sampler, Sega Screams Volume 1 opts for the \"standard\" Saturn demo disc menus often seen in the European Sega Flash series.\n\nSega Screams Volume 1 was followed by Sega Screams Volume 2.\n\nPlayable demos:\n• Three Dirty Dwarves (1996-09-20 demo)\n• Bug Too! (1996 demo)\n• Daytona USA: Champion Circuit Edition (1996-10-18 demo)\n• Cyber Troopers Virtual-On (1996-10-04 demo)\n• Baku Baku Animal (1996-04-15 demo)\n\nVideos:\n• Mr. Bones\n• Fighting Vipers\n• Virtua Cop 2\n• Dark Savior\n• Sega Worldwide Soccer 97"
 }

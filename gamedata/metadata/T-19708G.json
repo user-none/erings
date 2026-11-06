@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "In Pia Carrot e Youkoso!! the player controls Yusuke Kinoshita, a 18-year-old male Japanese high-school student. He intends to have a cool summer vacation, but realizes he has no money. Having no choice, he takes a job in his father's restaurant, \"Pia Carrot\". Thus begins an adventure much more exciting than the summer vacation he has dreamed about: he gets to know many beautiful girls in the restaurant, and has to decide which one is the love of his life...\n\nThe game is a true dating simulation, with the gameplay focusing on making schedules and choosing activities for the protagonist. In the beginning of each day, the player typically choose an action before it's time to go to work. These actions range from giving a call to any of the girls the hero meets during the game, going to different locations, simply resting, etc. While at work, the player should make a schedule for Yusuke, sending him to work in different places (kitchen, basement, counter, etc.). After work, it's time to choose which girl to talk to. There are also many events that prompt the player to choose an action or a conversation option.\n\nAll these actions influence Yusuke's statistics, ultimately making him more (or less) attractive to the various girls he meets on his path. Depending on the way the player shapes and schedules the activities of the main character, he will follow one of the many different narratives, meet different people, and eventually - if the player is persistent enough - win the heart of the girl he loves."
 }

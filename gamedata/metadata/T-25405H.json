@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "M - Mature",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "M"
+    }
+  ],
   "overview": "This release of DOOM is based on The Ultimate DOOM and DOOM II: Hell on Earth and contains most of the levels and enemies from both games as well as about half dozen exclusive maps.\n\nThe Doom maps are based off the Jaguar version and hence feature the same simplifications as that release. The PC Ultimate Doom and Doom II maps were converted especially for this release and also feature some simplifications, though not to the degree of the Doom maps. Some Doom II enemies have been added to the Doom and Ultimate Doom maps.\n\nThe engine has been upgraded to a 32 bit renderer allowing for smoother distance shading. This version of Doom features also entirely new sounds and music."
 }

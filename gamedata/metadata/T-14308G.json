@@ -21,6 +21,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ginga Ojousama Densetsu Yuna Mika Akitaka Illust Works (銀河お嬢様伝説 ユナ あきたか みか イラストワークス) is an art gallery for the Sega Saturn.\n\nIt was followed by Ginga Ojousama Densetsu Yuna Mika Akitaka Illust Works 2."
 }

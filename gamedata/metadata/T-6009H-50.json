@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "No more fish tales, it's time to wind in that dream catch in the comfort of your own home. Follow the instructor's expert advice and choose from an extensive range of tackle developed by the fishing experts at Daiwa.\n\nFrom Barracuda to Tuna, watch the bite close up in beautifully rendered 3D graphics, as the perspective zooms in on the underwater action. With a choice of Tournament and Free Fishing modes you can learn how to be a better fisherman and even fry up your catch in the lodge keeper's kitchen, so there will be no more talk about the one that got away."
 }

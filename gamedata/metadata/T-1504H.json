@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "As the millennium nears in the far future, a being of ultimate power named Felden will make his appearance in the galaxy. It is unknown whether he comes to destroy all living beings or use his powers for good, but whatever the reason a group of skilled fighters from all corners of the universe have decided to beat each other up in order to face off against him and claim his power.\n\nEnter Galaxy Fight, a one-on-one 2D fighter set in the far future and featuring sci-fi characters and settings. In the game itself, you have to select from 8 fighters, each with his unique moveset and stats, and then attempt to defeat the other character in 2 out of 3 matches using your special moves and attacks while avoiding your opponent's strikes.\n\nFeatures single player and 2-player Vs. game modes, secret bosses and bonus rounds."
 }

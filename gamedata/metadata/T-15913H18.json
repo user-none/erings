@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "A video game based on the television series was created for the Sega Saturn and PlayStation consoles. In a twist on the legend of King Arthur, the player controls Flicker, who lives in Camelhot castle and is in love with Princess Flame, but is not eligible to ask for her hand in marriage because he is not a knight. However, the King has announced a dragon tournament, where the winner will not only win the princess but also become the new king.\n \nAs a young Flicker, the player must collect various objects and interact with an eccentric cast of dragon and human characters in order to solve puzzles. The player's overall quest is to become a dragon knight to compete in the grand tournament and win the heart of Princess Flame. However, the player discovers an evil human plot to take over the kingdom by kidnapping the princess.\n \nAs is the case with many other graphic adventure games, the player can never die in the game or reach a point in the game where a puzzle cannot be solved. The humour in the game is heavily influenced by the British comedy of Monty Python (the game starring former Monty Python actor Terry Jones) and thus includes plenty of mild sexual innuendos, and other shenanigans.\n \nWhile the video game leaves open the possibility for a sequel, no sequel for the game was planned."
 }

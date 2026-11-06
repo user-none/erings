@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Monster Slider is a falling-block puzzle game similar to Columns or Puyo Puyo. Colored blocks fall in pairs from the top of the screen and must be arranged to match 3 or more of the same color together. Uniquely the entire playfield is at a tilt, causing blocks to slide to one side to fill gaps when they are placed or after clearing other blocks; the player can reverse the tilt at any time, causing blocks to slide in the opposite direction. Combos will launch garbage blocks at the opposing player, and if the blocks reach the top of the well that player loses the round. Each character also has a unique special ability.\n\nThe main single-player story mode casts the player as a young woman named Nina whose sister has been kidnapped by Count Dracula; she must defeat each of Dracula's minions and eventually Dracula himself in order to rescue her. There is also a two-player versus mode and a single-player endless mode."
 }

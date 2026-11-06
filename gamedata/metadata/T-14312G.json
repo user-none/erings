@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Koden Koureijutsu: Hyaku Monogatari: Honto ni Atta Kowai Hanashi is a sound novel horror game based on stories from the Honto ni Atta Kowai Hanashi (\"True Scary Stories\") ghost story magazine published by Asahi Sonorama. It is hosted by famed ghost story presenter Junji Inagawa and is a sequel to the first Hyaku Monogatari game. Very similar to the first game, it presents the player with 100 candles, which each represents an individual ghost story for the player to experience.\n\nMost of the stories are short and non-interactive sound novel sequences; several are presented as video sequences, while a handful include interactive elements where the player explores a location in first-person to move the story forward. The stories are presented in a fixed order, regardless of which candle the player selects, with a few recurring character between them. There are also certain special events that will only occur at particular times of day, usually late at night."
 }

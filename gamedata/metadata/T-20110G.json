@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Mahou Shoujo Pretty Samy: Osorubeshi Shintaisokutei! Kakubakuhatsu 5 Byou Mae!! is a visual novel style adventure game based on the Magical Girl Pretty Sammy anime series. A mysterious woman named Shizuka has appeared as the new nurse at Sasami's school, and when a new Love-Love Monster appears during the school's annual student health exam, it's up to Pretty Sammy to stop it and save the day. The bulk of the gameplay consists of voiced story sequences over still images; the player is occasionally given a choice of which action to take in a scene, which will affect how the rest of the scene plays out but not the overall story as a whole.\n\nAlso included in the package is an audio mini-CD containing three music tracks."
 }

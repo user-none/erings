@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Winning Post 2 is a horse-racing breeding and management simulation game, and the second game in the long-running Winning Post series. As with the previous game, the player starts with an existing stable of horses, and has 30 in-game years to raise award-winning horses. This involves hiring breeders, jockeys, and trainers, deciding on training schedules and which horses to breed, and entering races. As before, the player does not participate directly in races; they are computer-controlled, with the player merely betting on outcomes and then watching as a spectator.\n\nCompared to the first game, the main update is that there are many more races available, including the addition of local races as well as a wider variety of international races such as the Epsom Derby, Arlington Million Stakes, and Breeders' Cup."
 }

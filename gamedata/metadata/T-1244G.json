@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Street Fighter Zero 2' or Street Fighter Zero 2 Dash is an updated version of Street Fighter Alpha 2. Originally released as part of Street Fighter Collection, the game was re-released separately in Japan under the Satakore label in 1998. In the West, this game is usually known as Street Fighter Alpha 2 Gold.\n\nThe game is a one-on-one fighting game and mostly identical to Street Fighter Zero 2. It includes a new secret character, Cammy (as she appeared in X-Men vs. Street Fighter), selectable only in the Versus and Training modes. In addition to the EX characters from the base game, EX versions of Ryu, Ken, Chun-Li, Sagat, and Vega are present (and all EX characters have been made easier to select). A Gouki Mode has been added where the player faces Shin Gouki without needing to unlock him. However, the Saturn-exclusive Illustrations feature has been removed. Some characters have new moves and Super Combos. Original Combos are now executed by pressing a punch and kick button of the same strength simultaneously, and Zero Counters now cost one and a half levels of the Super Combo gauge. The soundtrack has been revised, and there are minor visual changes such as changing the color of lost life in the vitality gauges from red to blue."
 }

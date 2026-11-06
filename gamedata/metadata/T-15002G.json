@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Jissen Mahjong is a 4-player riichi mahjong game that offers both 2D and full-3D visuals of the mahjong table. The game includes three modes: Challenge Mode tasks the player with defeating various opponents to increase their rank; while Free Battle Mode and Party Mode let the player choose any three of the 10 available opponents and play a regular match with various options. There are also a wide range of configuration options for adjusting the game rules."
 }

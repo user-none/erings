@@ -26,6 +26,11 @@
   ],
   "max_players": 8,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Prepare to be romanced!\n\nIt's the Second Han Dynasty and China is on the verge of collapse. Infighting among the court families and the emergence of powerful warlords dominates the landscape. The struggle for power has brought an era know as the Three Kingdoms, complete with constant warfare among China's most courageous and skillful heroes.\n\nAs a ruler during these difficult times, it's up to you to unify a country torn apart by rebellion. Expand your kingdom by building a strong military or try outsmarting your rivals during negotiations. With exciting new weapons including automatic firing crossbows and catapults, you can engage your opponents out in the open or from behind castle walls. But don't forget, a ruler's strength is also measured by the economic power of his kingdom and the happiness of its people!\n\nRomance of the Three Kingdoms IV: Wall of Fire (Sangokushi IV in Japan) is the fourth game in Koei's Romance of the Three Kingdoms series. Wall of Fire was the first game for the Playstation & Saturn consoles and the last in the series to be released on PC in the U.S. until Romance of the Three Kingdoms XI."
 }

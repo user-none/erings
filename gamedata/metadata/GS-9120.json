@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "FEATURES: * All 700 Players * All 28 Teams * Stat Tracking in 12 Categories * Play-By Play Announcing * 5 Modes of Play (All-Star, Playoff, Exhibition, Home Run Derby, and Pennant Race)"
 }

@@ -30,6 +30,15 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "15+"
+    }
+  ],
   "overview": "Shockwave Assault combines Shock Wave and its expansion Operation Jumpgate and makes them available for systems other than the 3DO for the first time.\n\nIn Shock Wave, the player takes the role of a rookie pilot, defending the Earth from an alien invasion. From the cockpit of the F-177 fighter, one shoots at the alien walkers and fighters with lasers and missiles, rearming and refueling at supply depots when necessary. The story is told with live-action cutscenes."
 }

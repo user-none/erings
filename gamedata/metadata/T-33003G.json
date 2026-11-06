@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Digital Ange: Dennou Tenshi SS is a remake of Dennou Tenshi: Digital Ange. The story and gameplay are almost identical to the original release, with some minor story additions and higher-quality redrawn artwork. The most significant changes are that the characters have all been redesigned by a different illustrator in a new art style, and all the voice acting has been re-recorded with a different cast."
 }

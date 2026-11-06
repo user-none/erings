@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Sakura Tsuushin is a romantic visual novel adventure which follows the story of Touma Inaba, the protagonist, who is trying to get into Keio University. On the day the exam scores are posted, he meets Mieko Yotsuba, a redhead he falls in love to at first sight. After he finds out she got in, but didn't, he decides to lie and say he passed the exam and got into in order to impress her. He lives with Urara Kasuga who has an unrequited love for him, which is the only reason why she doesn't tell anyone that he is not really a college student and helps him in his love pursuit.\n\nThe game features anime style video clips as well as dialogues with slightly animated characters on static backdrops which forwards the story, branching it based on players actions and answers during conversation with other characters. Save game options is only available at key points in the story and cannot be done anywhere during gameplay as is case with most of visual novels. Bottom screen is used for text and does not have opacity, with graphical content appearing only in the upper area, whether static images or video clips. Certain key animations are done in full screen."
 }

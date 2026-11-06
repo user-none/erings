@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "X"
+    }
+  ],
   "overview": "Tokimeki Mahjong Paradise: Koi no Tenpai Beat is a Mahjong tile-based game with two game modes. The Date Mode has the player competing against five girls to win their hearts. Each time they lose a match, the girls strip of some of their clothing in a cutscene, but whenever the player loses, they refuse any further favors. The Free Play allows the player to practice the game without any rewards for winning or consequences for losing."
 }

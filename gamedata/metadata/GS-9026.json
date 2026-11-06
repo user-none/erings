@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Gakkō no Kaidan is an interactive movie with adventure elements, made to tie in with a Japanese ghost-themed film of the same name. Like some other Sega CD games with similar thematics, it features FMV sequences with interactive options. For example, escaping some of the enemies may require the player to press directional keys or the A/C buttons. The other element of the game is a point-and-click style set."
 }

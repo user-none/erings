@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In Transport Tycoon, the player is in charge of a transport company starting in 1930 in the midst of The Great Depression, and the aim is to build up an empire of trains, ships, lorries, planes and helicopters, with technological evolution gradually taking place and allowing for better vehicles to be used. The game can be played alone, or with a number of computer-controlled rivals.\n\nAt the beginning of the game, a large terrain is generated. It is shown in isometric projection and includes hills, rivers, lakes, bridges, industrial facilities and a lot of small towns. It is up to the player to decide how to start building a transport empire.\n\nAll transport connections involve linking towns and/or factories, constructing vehicle depots and purchasing vehicles. For example, a common starting move includes connecting two towns with a road, building a vehicle depot somewhere next to the road, and setting up bus stops in both towns. Then, a bus needs to be purchased, its schedule set, and ordered to start. As it goes between both bus stops, taking passengers and unloading them, it earns its owner money. Train networks are built similarly, but require individual locomotives and appropriate wagon types to be assigned to each train. Most businesses offer certain types of cargo and are ready to pay for transporting other cargo to them; for example, a steel mill has a lot of steel to fill entire wagons, and will gladly accept iron ore any is available."
 }

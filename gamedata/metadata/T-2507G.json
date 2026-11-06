@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This is a remake of two games: Langrisser (known as Warsong in USA) and its sequel, Langrisser II – or, better to say, the enhanced version of this sequel, known as Der Langrisser. \n\nThe remake features the Ultima-style character creation (you choose between various answers to morally provoking questions) introduced in Der Langrisser, and also offers branching storyline (you can be good or side with the evil forces, if you wish).\n\nThe Sega Saturn port titled Langrisser: Dramatic Edition adds 2 new story lines to the Langrisser II part. One is \"true brilliant\" route which is the best ending that allows most characters to stay alive at the ending. The other one, \"downfall\" route, is a totally tragic ending as the name suggests."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Zap! Snowboarding Trix '98 is the sequel to Zap! Snow Boarding Trix and was released for the Sega Saturn exclusively in Japan. It was also released on the PlayStation, localized as Phat Air Extreme Snowboarding. The game comes with four game modes: championship, time competition, freestyle and head-to-head.\n\nIn championship mode you can choose between five boarders who all have different skills. During the championship you earn points, which can be used to improve the skills of your boarder in between races. There are 8 races in total, which cover all the disciplines. Disciplines include half pipes, downhill, straight jumps, freestyle jumps and slalom.\n\nIn freestyle mode you pick a course and try to score as much points as possible through finishing fast and/or making tricks. Time Competition is only about finishing first.\n\nYou can play the game in two player vertical split-screen mode."
 }

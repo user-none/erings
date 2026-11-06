@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ultraman Zukan 2 (ウルトラマン図鑑２) is a Sega Saturn sequel to Ultraman Zukan. It is a database of Ultraman Jack, Ultraman Ace and Ultraman Taro."
 }

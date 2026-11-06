@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Shutokou Battle '97: Tsuchiya Keiichi & Bandou Masaaki is a racing game for the PlayStation and Sega Saturn. The Saturn version was only released in Japan; the PlayStation version was released as Tokyo Highway Battle overseas.\n\nOne of the earliest in the Shutokou Battle series, where the player takes control of 12 different cars and 60 different parts and upgrades available to choose from.\n\nThere are a variety of tracks to choose from, all recreated to resemble actual Tokyo roads and highways and featured the \"Drift\" button that allowed the player to take a turn faster. Players can also earn points through this action as well as from winning races to upgrade their car and go head-to-head against the computer or against three CPU opponents.\n\nKeiichi Tsuchiya, a racing champion from Tokyo and Masaaki Bando, a top automotive expert from Japan both lent their expertise to the game to ensure authentic handling and physics for each vehicle that was rendered in the game."
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Game-Ware Vol.5 is a multimedia \"digital magazine\", and the fifth and final release in the quarterly series of the same title. As usual, this volume includes several playable game demos and original minigames, with many ongoing series reaching their conclusion:\n\n• Pipit Boy no Daibōken 5, the conclusion of the Pipit Boy series. This final edition takes the form of a simple action game where the player must target and reel in creatures and powerups while avoiding attacks, with the goal of reaching a quota before the other player.\n• Ejihon, a \"spot the different\" style game in which the player is shown an image filled with many kanji characters and must locate the one that does not match; as usual, this version includes numerous new picture puzzles.\n• The final chapter of Onii-san, a simple point-and-click comedy adventure game.\n• Barbara Konomi's Sūsenjutsu, a numerology fortunetelling game.\n• Toru Toru Marble, a puzzle game where the player must collect all objects on the field by only moving on the spaces where the items are contained, moving either one or two spaces forward at a time.\n• Otanoshimi Blackjack, a basic blackjack game where the player can bet coins earned from viewing other contents on the disc; earning enough coins will give the player a password to enter a contest to win real-life prizes.\n• Sekai Seifuku Kabushiki Gaisha (\"World Conquest Corporation\"), a simple strategy simulation game where the player must manage an army of monsters in order to conquer the world within the time limit.\n• A playable demo of Quovadis 2: Wakusei Kyōshū Ovan Rei.\n\nAlso included is a variety of multimedia content such as creator interviews, game previews, and an art gallery."
 }

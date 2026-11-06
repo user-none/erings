@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "GEX's mouth gets him in trouble, but it's his thrashing tail and suction cup paws that get him out. GEX has been sucked into the Media Dimension, the place where cheesy 70's movies go to retire. To escape he's gotta kill TVs in each world. Over 450 frames of smooth 3D animation and hand-rendered backgrounds! GEX jumps and sticks to everything while thrashin' secret levels in search of elusive remote controls."
 }

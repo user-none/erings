@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Your father gets a job transfer and is taking the family with him. You have three months to make your feelings known to your crush.\n\nThe initial character creation determines whether this happens in primary, middle, or high school."
 }

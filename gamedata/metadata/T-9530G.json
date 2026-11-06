@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This collection of Konami MSX games bundles the three previous PlayStation releases in the series. The full list of 30 games includes:\n\n• Athletic Land\n• Antarctic Adventure\n• Comic Bakery\n• Gofer no yabō: Episode II\n• Gradius\n• Gradius 2\n• Hyper Sports II\n• Hyper Sports III\n• Knightmare\n• King's Valley\n• Konami's Boxing\n• Konami's Golf\n• Konami Rally\n• Konami's Soccer\n• Konami's Tennis\n• Magical Tree\n• Mopiranger\n• Parodius\n• Penguin Adventure\n• Ping-Pong\n• Pippols\n• Road Fighter\n• Salamander\n• Sky Jaguar\n• Super Cobra\n• Time Pilot\n• Twin Bee\n• Yie Ar Kung-Fu\n• Yie Ar Kung-Fu 2: The Emperor Yie-Gah"
 }

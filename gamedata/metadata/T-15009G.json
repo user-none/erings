@@ -23,6 +23,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Shouryuu Sangoku Engi is a historical simulation game set in the Three Kingdoms era of Chinese history. The player chooses from one of four scenarios and more than a dozen warlords, with the ultimate goal of unifying china under their rule. While the player can issue direct commands and decrees and attack neighboring territory, the bulk of the gameplay consists of assigning generals and officers and managing many aspects of the kingdom, from the makeup of armies to diplomatic relations with other warlords."
 }

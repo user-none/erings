@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Yumimi Mix Remix is a Sega Saturn re-release of Yumimi Mix.\n\nA seemingly ordinary Japanese high school student named Yumimi Yoshizawa sees a strange dream about a unicorn couple in a magical land. When one of the unicorns suddenly falls through a hole in the ground, Yumimi wakes up, realizing she has fallen out of the bed as well. The following day brings more strange occurrences, such as mysterious hopping blobs and a strange girl who professes her love to Yumimi. Eventually Yumimi and her friends realize that all these events are connected and that it lies in their power to protect our world from monsters.\n\nThough not based on a manga or anime, Yumimi Mix Remix has characteristic anime-style plot and visuals, and is built like an interactive cartoon movie with animation and voice-overs. The player is sometimes prompted to select an action or a response from a pop-up menu out of two or more available ones. These choices lead to different scenes, though the overall story remains the same. There is no possibility of a Game Over in the game.\n\nEarlier versions of the game also feature a quiz that can be accessed from the main menu. Saturn and Windows versions also add a Shanghai-like tile-removing puzzle mini-game."
 }

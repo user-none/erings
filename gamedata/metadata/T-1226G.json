@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "X-Men vs. Street Fighter is the first in which characters from the Marvel Comics universe (in this case, the X-Men) compete against Capcom's own creations, the heroes of the Street Fighter series.\n\nThe X-Men characters are mostly the same as in X-Men: Children of the Atom and Marvel Super Heroes; three new characters are Rogue, Gambit and Sabretooth. The Street Fighter cast is based on that of Street Fighter Alpha 2; however, the appearance and combat styles of some of them have been altered, to match the abilities of the X-Men heroes.\n\nThe gameplay system is similar to that of the aforementioned games, adding a tag-team gameplay feature. The player controls one character at a time, while the other awaits off-screen. The starting character can tag the waiting one in at any time by hitting specific buttons; the tag partner will jump in with an attack and taunt the enemy. Resting character gradually recuperate their health. The two partners can execute the so-called \"variable attacks\", which depend on the combination of buttons pressed.\n\nSome differences between the Saturn and PlayStation version exist. The Saturn version turbo speed can go to 8 while the PlayStation version can only go to 4, even when the games are on the same speed setting the Saturn version is faster. The PlayStation versions combo meter fills about twice as fast as the Saturn version's combo meter."
 }

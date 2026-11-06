@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The third release in the Capcom Generation series, featuring four early but unrelated Capcom games:\n\n• Vulgus\n• Son Son\n• HiGeMaru\n• Exed Exes"
 }

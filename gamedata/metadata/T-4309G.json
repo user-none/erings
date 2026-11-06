@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Standby Say You! is a simulation game where the player takes the role of an up-and-coming voice director. The player character is the apprentice of real-life voice actor and director Shigeru Chiba, and is suddenly thrust into their first leading job as the voice director of a new anime series called \"Interrupt Girl\" after the original director suddenly leaves the project.\n\nIn-game, the player interacts with the actors in simple adventure-style sequences, watches clips of tryouts, and gives feedback to each of the actors. The console versions also add several mini-games such as matching voice clips with the correct actor."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "A game based on a Choose-Your-Own-Adventure book by Yamaguchi Masaya. You wake up dizzy and confused in a private detective's office and discover the corpse of the detective next to you. After searching the office for clues, you are confronted by two police officers. In hiding, you decide to discover the truth and catch the mysterious murderer called Cat the Ripper."
 }

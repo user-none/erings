@@ -27,6 +27,5 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
   "overview": "The object of this head-to-head puzzle game is to clear your grid of falling patterns called puyos by forming chains of four or more same-colored puyos in a straight line or one of several geometric patterns. What makes this a challenging two-player contest is the fact that when you clear a chain of puyos from your grid, it drops a random piece of filler onto your opponent's grid. The more puyos you clear, the more you fill your opponent's grid, and if you can clutter up his grid enough to fill it to the top, you've won the game."
 }

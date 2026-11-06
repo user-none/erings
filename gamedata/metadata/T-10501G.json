@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Kekkon is a Japanese adventure game in dating simulation style. You meet up to five girls, or guys if you start the game as a female, and go on several dating activities, following a schedule. As time passes your relationship with them might evolve, from girlfriend/boyfriend to fiancé, and finally spouse.\n\nThe game's title is tautological, since \"kekkon\" is the Japanese word for marriage."
 }

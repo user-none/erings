@@ -23,6 +23,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Battlesport simulates the sport of the future. Choose your vehicle and enter the arena to face your computer opponents to see who scores the most goals before the clock runs out.\n\nScoring isn't easy. The ball constantly bounces over the arena, retrieved by a player constantly bombarded by opponents. A variety of weapons are available to shoot your competitor, and anyone that takes a hit while carrying the ball loses possession, sending the ball bouncing across the arena. Taking too many shots results in a temporary inability to take part in the action while your opponent happily scores goals.\n\nWinning matches increases standing in the rankings and the acquisition of cash to purchase a better vehicle and enhanced offensive or defensive items."
 }

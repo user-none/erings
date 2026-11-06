@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In Chase H.Q., the player controls the police detective Tony Gibson and his partner Raymond Broady, members of the \"Chase Special Investigation Department,\" as they drive a black sports car resembling a Porsche 928 in high-speed pursuits of dangerous criminals. At the start of each stage, the player receives a transmission from Nancy from Chase H.Q. describing the criminal and the vehicle to pursue. The first part of each stage is racing to reach the criminal, avoiding traffic along the way, before time runs out. Once the criminal has been reached, the detectives must use their car to ram the enemy vehicle enough to disable it and apprehend the criminal. Every stage has a fork where players must choose between two paths. The shorter path is indicated by an arrow, but the longer path awards more points (since points are awarded for distance traveled).\n\nSpecial Criminal Investigation is the sequel to Chase H.Q. It plays similarly to the first game, but now Detective Broady drives the car (a red car resembling a Nissan 300ZX and having removable roof panels) and Gibson stands out of the car firing a gun. Karen from Chase H.Q. appears before each stage to give information about the criminal to be apprehended and other tips. Cars in traffic can be shot to disable them so they no longer slow down the detective's car on collision, and the fugitive's car can be shot to damage it. During the fights at the end of each stage, a helicopter flies overhead and drops off special ammunition, which, if caught by the detectives, replaces Gibson's gun with a rocket launcher for a limited number of shots. The third and fourth stages retain the branching paths of the original game."
 }

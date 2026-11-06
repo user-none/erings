@@ -27,6 +27,11 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "World Cup '98 France: Road to Win, not to be confused with FIFA Road to World Cup 98 is a football game released for the Sega Saturn.\n\nWorld Cup '98 France recycles its core engine and much of its content from earlier Sega-published football games, particularly Sega Worldwide Soccer 98. The primary difference is that this one is a licensed product, being endorsed by both the Japan Football Association and FIFA, therefore allowing real teams and players.\n\nThis is the last Saturn football game whose lineage can be traced back to 1995's Victory Goal. The next game in the series, Sega Worldwide Soccer 2000 was built from the ground-up by Silicon Dreams for the Dreamcast."
 }

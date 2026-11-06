@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "X"
+    }
+  ],
   "overview": "Playboy Karaoke Collection Volume 1 (プレイボーイカラオケVol.1) is a 1996 compilation of karaoke music videos with Playboy models in the background released by VIC Tokai for the Sega Saturn exclusively in Japan. A second volume was also made."
 }

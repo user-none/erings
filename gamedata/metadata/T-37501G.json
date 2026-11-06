@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pachinko Hall: Shinsou Daikaiten is a business simulation game where the player runs a chain of pachinko parlors. The protagonist takes over the business from their father after his retirement, and starting from a single location, the goal is to grow the business enough within 20 years to take the company public and list it on the stock exchange. Using a menu-based system, the game includes detailed simulation of all aspects of operating a pachinko hall franchise, from obvious elements such as hiring employees and determining prizes and payouts, to more esoteric elements such as negotiating loans and obtaining the proper government permits to open new locations."
 }

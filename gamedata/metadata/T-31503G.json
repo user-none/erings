@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Falcom Classics is a compilation of three classic games by Falcom for the Sega Saturn. Each game has been enhanced to take advantage of the superior specifications of the Saturn console, though their non-enhanced counterparts can also be played. Games included are: Dragon Slayer, Xanadu, and Ys."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Another game in Infogrames' line of H. P. Lovecraft inspired games started by Alone In the Dark, Prisoner of Ice puts you in the role of Lt. Ryan, an American agent stationed aboard the submarine H.M.S. Victoria on a rescue mission to the Antarctic. The Victoria picks up two mysterious crates during the course of the rescue. Before you know it the Captain is eaten alive by the cargo, a horrific monster with whom you are trapped aboard the submarine. And that's just the start of your problems.\n\nPrisoner of Ice features a very simplified version of the classic adventure game interface, where you can left click with the cursor to operate an object or right click to look at it. The program won't let you do anything with these objects, other than the few appropriate actions needed to advance the game."
 }

@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "M - Mature",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "M"
+    }
+  ],
   "overview": "Maximum Force is the follow up to Area 51, however, this time around instead of shooting up aliens, the player goes up against a terrorist organization.\n\nThe gameplay is similar to other first-person shooter gun games where the player can use a light gun or a controller to shoot at bad guys popping up from behind objects or coming off from the side of the screen. If a player gets shot by a bad guy, they will loose a bar of health or can also loose health by accidentally shooting innocent bystanders.\n\nThere are also power-ups scattered throughout the stage that can restore health, upgrade their weapons power among many others. There are three levels in all and 35 secret rooms scattered throughout the stages. It also supports a second player simultaneously."
 }

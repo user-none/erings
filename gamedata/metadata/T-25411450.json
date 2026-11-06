@@ -30,6 +30,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Trash It is an arcade action game where player(s) have to destroy buildings with a gigantic hammers. As a player, you take a role of construction worker who has only one mission: To smash everything to bits. Pieces are flying and houses falling as players hack their way through levels and earning points as they go."
 }

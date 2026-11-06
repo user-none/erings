@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The Legend of Heroes I & II: Eiyuu Densetsu is a bundle released for the Sega Saturn by GMF in Japan in 1998. It contains two RPGs from Falcom, Dragon Slayer: Eiyuu Densetsu and Dragon Slayer: Eiyuu Densetsu II. Though the music has been rearranged, graphics appear to try to recreate their originals on 1980s Japanese home computers (to the point that they do not have smooth scrolling).\n\nDragon Slayer: Eiyuu Densetsu is a traditional medieval-themed Japanese RPG with turn-based combat viewed from first-person perspective (like in Dragon Warrior games). The enemies are semi-random: they do appear out of nowhere and attack suddenly, but they are visible on the screen, and if you flee from a battle they will still be there to pursue you.\n\nDragon Slayer: Eiyuu Densetsu II is very similar to the first game, graphically and gameplay-wise. The only major difference is the fact that the enemies are now completely visible on screen before battles, so that the player can avoid fighting them if they want to."
 }

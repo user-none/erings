@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Kouryuu Sangoku Engi is a historical simulation game set in the Three Kingdoms era of Chinese history, and a sequel to Shōryū Sangokushi. It plays much like its predecessor, allowing the the player to select a warlord and attempt to unify China under their rule through deft political and war maneuvering. New in this release are refined visuals and mechanics, a new \"high risk\" difficulty option, and an additional new scenario. There is also a new mode where the goal is not to defeat all challengers but rather to lead their chosen warlord to the same fate they met in real life history."
 }

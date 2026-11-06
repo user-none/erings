@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "11+"
+    }
+  ],
   "overview": "Arcade Greatest Hits: The Atari Collection 1 is a compilation of six games from the golden age of Atari: Asteroids, Centipede, Super Breakout, Battlezone, Missile Command, and Tempest."
 }

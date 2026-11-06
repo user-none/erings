@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In Brain Dead 13, the player takes on the role of a young computer expert who one day is called to fix a computer at some scary castle and in no time flat, finds himself in trouble.\n\nIt is up to the player to use the complex moves of an interactive movie to escape from the castle. This animated adventure is basically based on the player's judgment on which direction you think the character might go, and if the player guesses wrong, death."
 }

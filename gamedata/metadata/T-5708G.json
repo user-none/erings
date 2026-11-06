@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The game consists of two main modes, Classic Mode and Puzzle Mode. Classic Mode functions like the original Tetris game for the Game Boy except with different music and visuals. However, because the cartridge has battery-powered SRAM, it also has the ability to remember your high-scores, unlike the original Game Boy game. Puzzle Mode is a twist on the classic gameplay that provides a new scenario. Also included is an editor for making Puzzle levels, and Link capability for going head-to-head with another player in either game mode. The console versions also have a two player Versus Mode which is essentially puzzle mode with two players racing for the finish line."
 }

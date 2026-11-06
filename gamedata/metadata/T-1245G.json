@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Dungeons & Dragons Collection is a two-disc compilation of Tower of Doom and Shadow over Mystara. It was released only in Japan on March 4, 1999, exclusively for the Sega Saturn. The ports have minor differences in gameplay, and there is a maximum of two players instead of the original four. Capcom originally planned to release Tower of Doom as a standalone title for the Sega Saturn and Sony PlayStation, but cancelled the plan early on. It was initially announced that the collection would be released for both the Saturn and PlayStation, with the PlayStation version due for a U.S. release, but the PlayStation version was never completed.\n\nIn 1999, James Mielke of GameSpot criticized the loading times as \"horrendous\", with mid-level battles occasionally pausing to let data stream in, and \"as a very basic scrolling hacker\", he called it simply \"OK\" and average. In 2005, IGN picked the Dungeons & Dragons Collection as one of the top ten co-op games. Retro Gamer included it on their list of ten essential Saturn imports, praising its \"stunning animation thanks to using the 4MB ram pack\" and opining that while it suffers from lengthy loading times, they called it the best scrolling fighter game on the system, and felt to be superior to Taito's PuLiRuLa and Capcom's own Dynasty Warriors (the Retro Gamer team were confusing Dynasty Warriors with Dynasty Wars). In 2023, Time Extension included the collection on their top 25 \"Best Beat 'Em Ups of All Time\" list."
 }

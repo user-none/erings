@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This bundle includes three pieces of software for exclusive use with the Sega Saturn Modem, collected onto one disc:\n\n• Habitat II (online virtual world game, previously only sold bundled with a keyboard accessory)\n• Pad Nifty 1.1 (message board browser software, previously only sold bundled with the Modem accessory)\n• An internet browser application"
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Fist is a 3D 1-on-1 fighting game in the tradition of Street Fighter II and a follow-up to Seifuku Densetsu: Pretty Fighter X, featuring several of the same characters. It uses a simple three-button fighting system — punch, kick, and guard — and includes story and 2-player versus modes, plus an arcade mode in the PlayStation version, with eight total characters to play as. Unusual for a game of its time, there is also a character bio mode which lets the player rotate and view the in-game character models from any angle.\n\nBoth releases of the game include a bonus disc with an audio drama and two music tracks."
 }

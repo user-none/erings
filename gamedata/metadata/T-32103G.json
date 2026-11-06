@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Sankyo Fever S Vol.2 is pachinko simulation game, and part of the Fever series. It contains digital recreations of three real-life pachinko machines made by Sankyo: CR Fever Pistol Daimyo SR, Fever Pistol Daimyo GP, and Fever Hanafuda GP; each can be freely played with various pin configurations. There is also a story mode where the player can pursue a relationship with one of two cute girls in between pachinko sessions."
 }

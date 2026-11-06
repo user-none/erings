@@ -34,6 +34,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "M - Mature",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "M"
+    }
+  ],
   "overview": "Aliens have landed in futuristic Los Angeles and it's up to the Duke to bring the pain and show them the door. After the initial entries of side-scrolling platform games, Duke Nukem 3D introduces a first-person perspective to the series and turns the game into a full-fledged shooter with 2.5D graphics.\n\nDuke's arsenal includes pistols, pipe bombs, laser trip mines, Nordenfelt guns, a chain gun and various rocket launchers, but also his mighty foot to kick enemies. The game sports a high level of interactivity. Many objects in the environment can be broken or interacted with, such as pool tables, arcade machines, glass, light switches and security cameras. The protagonist is also able to hand strippers dollars to have them remove their top.\n\nThe main character regularly delivers commentary on the events through one-liners. There are twenty-eight levels, divided over three episodes, set in locations such as streets, a church, a space station, a Japanese villa, a football field and many modern environments. Enemies mainly include aliens, mutated humans and members of the police force that have been turned into Pig Cops. Next to weapons, Duke also has access to medikits, steroids to enhance his speed, night vision, protective boots, a hologram known as the \"holoduke\", and a jetpack to reach higher areas. Most of the gameplay is action-oriented, but there is also an amount of puzzles needed to progress or access secret areas.\n\nThe game includes network play through the IPX protocol, for deathmatch and cooperative games."
 }

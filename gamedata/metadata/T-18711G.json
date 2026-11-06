@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Planet Joker is a vertically-scrolling shoot-em-up with a strong story presentation. A mysterious army has invaded Tokyo, and it's up to a special crack team of JSDF mech pilots to defeat the invaders. The player chooses from one of seven different mech suits, each of which has different stats and a different set of attack abilities. In addition to regular shots and bombs, there is also a charged shot, and three different weapon types which can be swapped and upgraded by collecting items throughout each of the seven stages. There are also two competition modes: a time-attack mode to reach a set score as quickly as possible, and a caravan-style score attack mode with a time limit."
 }

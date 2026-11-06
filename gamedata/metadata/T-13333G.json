@@ -27,5 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Kidou Senshi Gundam: Giren no Yabou - Kouryaku Shireisho is an update to Kidou Senshi Gundam: Giren no Yabou. It is an \"append disc\", thus relies on a copy of Giren no Yabou to function."
 }

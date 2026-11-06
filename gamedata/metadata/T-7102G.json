@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This 3D sequel to Terra Cresta takes a simple, cut-down approach to shooting. Players blast off into space to take out waves of enemy spacecraft through several different levels. Most of the game is presented from an overhead view with a slightly tilted camera, giving the player a slightly longer view of the stage. A few stages switch the camera up to a chase camera, which is set behind the player's craft as they shoot at enemies as they fly towards the camera instead. There are three different craft, but unlike in most shooters players don't choose one at the beginning; instead, players can switch forms at any time to respond to the current situation. Unlike in most arcade-style shooters, there's no score whatsoever: the player's goal is simply to survive to the end of the game, not to reach any kind of high score."
 }

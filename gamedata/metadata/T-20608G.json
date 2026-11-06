@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The premise of Baldy Land is similar to many real-time strategy games. You start with a limited number of Baldies with which you construct buildings, increase your population, and create the necessary instruments of war. There are four classes of Baldies--builders, scientists, soldiers, and workers/breeders. Structures include small, medium, large, and huge houses as well as science labs and barracks. Each building has specific properties that assist in your destruction of the enemy.\n\nThe Saturn version was only released in Japan, however Sony PlayStation, Atari Jaguar and PC versions made it to the west as Baldies."
 }

@@ -24,5 +24,11 @@
   ],
   "max_players": 8,
   "cooperative": false,
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sangokushi IV with Power-Up Kit (三國志Ⅳ ｗｉｔｈ パワーアップキット) is a re-released version of Sangokushi IV for the Sega Saturn, adding the contents of the game's expansion pack (or \"power-up kit\" as it is known in this context)."
 }

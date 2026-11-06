@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Become the owner of a convenience store franchise, and experience the fun of arranging products and customizing your store to meet land features and seasons!\n\nCan you bring in lots of customers? Can you succeed in opening up ten stores?\nCan you serve a million customers? ...A store owner faces so many challenges!\n\nExperience the first installment of the hit convenience store management simulation!"
 }

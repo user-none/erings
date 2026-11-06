@@ -36,6 +36,15 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Assume the role of Mr. Bones, a dead blues musician resurrected from his grave who finds himself part of DaGoulian's evil army of darkness. Battle this army of darkness before it succeeds in spreading evil throughout the world! Drop-dead, never-before-seen animation. Original music by blues' guitarist Ronnie Montrose. Revolutionary real-time shadows and story telling. Over 20 marrow-tingling levels of unique gameplay."
 }

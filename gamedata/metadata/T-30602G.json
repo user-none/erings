@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pastel Muses is a puzzle game where you shoot colored balls down a slope to match them up with the pile of balls at the bottom. The premise is similar to such games as Puzzle Bobble, but with a difference. Here you not only control the aim, but also how hard you shoot the ball, making it go in an arc across the playing field and down the slope. Also, when you make balls disappear the remaining balls fall further down the slope using somewhat good physics.\n\nYou can play the game in the usual Story Mode, vs Mode and Endless Mode varieties usually found in this kind of puzzler."
 }

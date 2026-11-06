@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "X"
+    }
+  ],
   "overview": "Gokuraku CD-ROM for Sega Saturn is a fan disk for Tenchi Muyou franchise which contains various making-of bonus materials and trivia quiz game. This Sega Saturn console port from originated on PC and as such has adult rating, but the port underwent some content changes and does not include any adult scenes. Overall it contains character info, CG artwork, sketches and illustrations, voice-acting, opening and ending movies, and more."
 }

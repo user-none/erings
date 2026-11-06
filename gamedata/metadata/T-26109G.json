@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Gun Frontier is the prequel to Metal Black, another largely unknown shooter, this time a Darius-like horizontal blaster, which was also released on Saturn by another company called Ving - nothing to do with the publishers of this game though.\n\nGun Frontier was ported to the Sega Saturn in 1997 (as volume 2 of the Arcade Gears series)"
 }

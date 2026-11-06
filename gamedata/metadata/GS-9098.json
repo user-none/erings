@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The Virtua Fighter family enters the next generation with a bang! Meet VF Kids! They're small, fast, and hold the secret to all 2,000 Virtua Fighter moves! With hilarious animations and sound effects, and running 20% faster than VF2, this is a must for all fight fans!"
 }

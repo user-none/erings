@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "A traveler named Fred has lost his memory. The only thing that gives him a clue to his past is a mysterious tattoo on his forehead that leads him to a strange place called City of Mists. Wandering through the bizarre locations of the town, Fred has to reveal the secret that leads to his past and to stop the evil plans of the maniacal Lord Gordon.\n\nLunacy is a first-person adventure of the Myst school, with a simple interface and many complex puzzles."
 }

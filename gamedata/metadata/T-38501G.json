@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pro Mahjong Tsuwamono is a mahjong game featuring the likenesses of 16 professional players. There is a free battle mode against any selection of pro players, a tournament mode with three different titles to earn, a parlor mode with six different specific situations, and a mahjong guidance mode that advises players on how to improve their mahjong gameplay.\n\nWhile each version of the game varies in audiovisual presentation and title, all versions include the same selection of game modes and feature the same 16 professional players."
 }

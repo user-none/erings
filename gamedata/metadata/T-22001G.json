@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Rather than science, swords and sorcery flourish in this world. Our story takes place at the school of \"Skill & Wisdom,\" founded for youngsters who long for adventure.\n\nThe hero of our story, \"Rufus Craoun\" (you), is an active young man who participates in club activities at the Wizard Academy. But this Wizard Academy is suffering from a major problem...\n\nThe former head master carried out a number of misdeeds, and you're the only member of faculty. You've got to hire more faculty members to keep the academy going, but also make sure to pass the exams presented three times a year! Study and go on adventures with faculty members on the weekdays! Even enjoy school life with a charming member of staff from time to time! Think you can keep the academy up and running? Give it your best shot!"
 }

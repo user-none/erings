@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Minton Keibu no Sousa File: Doukeshi Satsujin Jiken is a murder mystery adventure game, and a full remake of Thinking Rabbit's 1985 release Doukeshi Satsujin Jiken. The game is set in Brighton, England in 1932 at a traveling circus; the protagonist, Detective Frank C. Minton, is sent from London to investigate after a clown is found dead. The player, as Detective Minton, must explore the circus and nearby town searching for evidence and questioning suspects. Of particular note is that the player can change the tone of questioning with suspects, choosing to be gentle, firm, or harsh depending on the circumstance.\n\nCompared with the original game, there are numerous changes and upgrades. Notably, the text parser interface has been replaced with a simplified command menu. All environments are pre-rendered in full 3D, while characters are presented as 2D illustrations with full voice acting."
 }

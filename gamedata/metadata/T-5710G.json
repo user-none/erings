@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "One day at a book shop, a young boy finds an old-looking picture book by the name of \"Fantastep\" that catches his eye. He buys the book and takes it home, but upon trying to read it finds that the stories and pictures are all mixed up. Also in the book are the words \"Whoever has the courage to save the world in this book, sign here...\", and as soon as the boy writes his name in the book, a ball of light envelops him and he awakens inside the world of the picture book. Now it's up to the boy to explore this jumbled-up fairy tale land, save the people within and solve their problems, and ultimately return back to his own world.\n\nFantastep is a point-and-click adventure game with 3D exploration; the player moves around in standard third-person action game style, but at any time can bring up a list of actions (such as examine, take, or talk to) and point at objects or characters to interact with them. The game world consists of small areas connected via a hand-drawn map of each region. Depending on the player's choices and actions, the story may branch to one of several different endings."
 }

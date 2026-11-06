@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Winning Post 2: Final '97 is the second updated version of Winning Post 2, featuring updated race information for the 1997 series. It is notable as the first game in the series to include the likenesses of real-life jockeys, which became a standard for the series going forward. There are also some minor changes to the game systems, such as the addition of sending horses out for grazing."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Death Crimson is a first-person rail shooter. Doctor and former mercenary Combat Echizen has spent the past ten years researching KOT Syndrome, a disease that has spread across Europe and transformed countless people into monstrous creatures. Eventually, he learns of a connection between the disease and the Death Crimson - a mysterious gun he found in some ruins ten years prior during his time in the Marumara Army. Echizen then resolves to wield the Death Crimson (controlled by the player via light gun) against those infected with the Syndrome and get to the heart of what's going on."
 }

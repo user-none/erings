@@ -23,6 +23,5 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
   "overview": "Tokimeki Memorial: Taisen Puzzle Dama is a Puyo Puyo style puzzle game based on the dating game Tokimeki Memorial. The player chooses between the different girls from Tokimeki Memorial to compete in falling block battles. Colored blocks fall in pairs that the player rotates and places in the game matrix as they fall. There are two different types of blocks. When three or more regular blocks of the same color touch, they get cleared. Smaller blocks don't disappear like the regular blocks do when they are aligned, but grow into regular blocks when adjacent ones get cleared. This can be used to perform combos.\n\nThe goal of the game is to defeat another player or COM opponent by clearing series of blocks and making combos, which makes batches of small blocks fall into the opponent's matrix, until the opponent fails at clearing enough blocks and his matrix is full."
 }

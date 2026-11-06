@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "E"
+    }
+  ],
   "overview": "Daytona USA is a Sega Model 2 arcade racing game developed by Sega AM2. It was initially given a limited release in Japan in 1993 to gauge public reaction to the new model hardware before its full, international release the following March.\n\nIt is loosely based on the NASCAR racing event at the Daytona International Speedway, located in real life in Daytona Beach, Florida in the United States of America. Daytona USA and all of its sequels and re-releases (except Sega Racing Classic, in which case someone else already held the arcade license) have been officially sponsored by the International Speedway Corporation.\n\nDaytona USA: Championship Circuit NetLink Edition is the rarest and most valuable of all Sega Saturn titles as it was only available through Sega's online store for a limited time. It is indistinguishable from the Daytona USA: Championship Circuit Edition with only two exceptions: a black-and-white NetLink booklet and NetLink being included within the title on the CD."
 }

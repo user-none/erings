@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In the Selecion Empire, the Grand Duchy of Mais is led by Alexis I. One day, his young son Alexis II visits an ancient temple, and is fascinated by a beautiful stone statue within. This statue is said to be of the goddess that protects Mais, but no records of her exist and she doesn't even have a name; the young Alexis II decides to give her a name himself. Not long after, the monster nation of Beaufon advances eastward toward Mais, and in the battle Alexis I loses his life. However, as Zaitan, one of the the Demon Generals of Beaufon, approaches the capital and all seems lost, a mysterious beautiful woman appears and defeats him with an inhuman strength. However, she has no memory of her past; she joins Alexis and Mais to fight against Beaufon and to find the meaning of her own existence, and so begins a fight for the fate of the world.\n\nTerra Phantastica is a turn-based tactical strategy RPG in the vein of Tactics Ogre. The main game consists of battle sequences in which the player and the opposing forces commands numerous units around a grid-based map, moving and attacking enemies. Each unit consists of a leader and multiple soldiers, which can be arranged in various formations; soldiers can be lost as a unit is attacked, reducing its effectiveness and eventually eliminating that unit from the battle. Combat engagements between units can take multiple turns, with attacks, retreats, formation changes and other commands available on each turn turns. Between battles the player can consult with various other characters as well as arrange, equip, and train their units. Multiple endings are possible depending on the player's actions and the main character's relationship with Alexis II."
 }

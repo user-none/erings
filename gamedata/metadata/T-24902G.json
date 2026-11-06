@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "You're a regular everyday employee at a regular unremarkable company, but you've got a secret: you love mahjong, and you're incredibly good at it! One day your boss asks you to join him and a few other managers that night for a friendly game of mahjong, and you spot an opportunity to boost your career. Upon seeing your skills, your boss sees in you an opportunity for the company as well: you're now tasked with helping to entertain clients, customers, and partners at mahjong parlors! But remember, entertaining business partners isn't just about winning; you'll need to know when to let them win, and how to do so without them realizing it.\n\nShusse Mahjong Daisettai is a 4-way mahjong game with a twist: the win conditions aren't always to simply win the match. Of course, sometimes you must dominate your opponents, but sometimes you must let them win the game in order to win their favor. The story mode follows the nameless employee as he attempts to progress his career through mahjong games with bosses and business partners. There is also a free game mode where the goal is simply to win."
 }

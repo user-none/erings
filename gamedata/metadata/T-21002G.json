@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Hiyake no Omoide (日灼けの思い出) is a jigsaw puzzle game for one or two players featuring photo stills and live videos. The puzzle pieces portray stills and videos featuring five different girls, namely Ayumi (桜井 亜弓), Mami (長谷川 真美), Kyoko (藤本 恭子), Miwako (工藤 美和子), and Chiyoko (山室 千代子).\n\nThe game feature three gameplay modes. Movie Puzzle mode features countdown mode where player races against time to assemble the animated jigsaw puzzle. Animated thumbnail video can be scrolled over to get the better preview. Upon completing the puzzle, the player is rewarded with fullscreen video of the girl in question, and the next jigsaw puzzle video gets unlocked. VP Puzzle mode lets you play against other player or CPU where photo is displayed only for a brief moment before the game starts. During the battle, puzzles set in place by each of the player are marked with the player's color on the grid map. But the battle isn't just about who can put the right piece at the right place faster, instead, there are several different traps and weapons of a sort that one player can use against the other player such as having a character hunt down the puzzle piece the player is carrying and take it off, or mess up the player controls to make everything reverse. The last mode is called Himekuri and is a single-player mode for assembling the jigsaw puzzle of a still image.\n\nOptions, which are accessible via main menu, feature movie and photo viewers which let you watch all the videos and photo still you have unlocked during your gameplay. Unlike the majority of Sega Saturn jewel case packages, the game comes in a sleeve which contains jewel case sized cardboard digipak with CD slot and manuals which are made as part of the digipak."
 }

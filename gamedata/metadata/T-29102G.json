@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Caravans are colony ships that venture into deep space in search of Earth-like planets. Eventually, Caravan 7861 discovered a a suitable planet in another star system. Nearly a hundred years later, the new mother planet became overrun by aliens under the command of the mysterious Shienryu. Fortresses were built with the goal of preventing any human development. Eventually, a special team called Burn Dragoon was established, comprising the best pilots who had to use all their skills against the alien threat.\n\nShienryu is a vertically scrolling shoot-em-up. The player-controlled ship starts with the default vulcan gun, which can be later switches to laser beam or missiles. Power-ups include weapon upgrades, speed enhancement (up to three times), bombs that can be used alongside the main weapons (up to twenty), temporary invulnerability, firepower and speed boost, and various items that increase the player's points."
 }

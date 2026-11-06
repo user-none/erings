@@ -23,6 +23,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "Sega Screams Volume 2 is a demo disc for the Sega Saturn, released exclusively in North America with console bundles. It is a \"sequel\" to Sega Screams Volume 1. It is less common than its predecessor.\n\nPlayable demos:\n• Die Hard Arcade (1996-11-12 demo)\n• Saturn Bomberman (1997-02-24 demo)\n• AMOK (1996 demo)\n• Scorcher (1996 demo)\n\nVideos:\n• Shining the Holy Ark\n• The Lost World: Jurassic Park\n• Fighters Megamix\n• Duke Nukem 3D\n• Sky Target\n• Manx TT SuperBike"
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Mahjong Taikai II Special is an enhanced remake of Mahjong Taikai II. The game plays much the same as the original version, allowing you to play mahjong against 23 famous historical and fictional figures, including Toyotomi Hideyoshi, Abraham Lincoln, Joan of Arc, and Sherlock Holmes. This remake includes full 3D graphics and voice clips for each character."
 }

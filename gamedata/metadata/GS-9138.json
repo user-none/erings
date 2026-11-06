@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Hanagumi Taisen Columns is a Sakura Wars spinoff that crosses the series over with SEGA's classic puzzle game Columns. The core gameplay follows the classic Columns rules: players control falling columns of three blocks of assorted colours with the goal of creating horizontal, vertical, or diagonal sets of 3 pieces of the same colour. Unlike the original Columns, this game introduces a new Puyo Puyo-style competitive mechanic. As players perform combos, a super gauge fills, with longer combos rewarding progressively larger amounts of super meter. Each time the meter fills to a full level, players are given the option to keep charging or to perform an offensive or defensive special technique. Offensive attacks send garbage blocks to the opponent's side; these pieces have the same colours as normal pieces, but can't be used in a combo until a certain number of turns passes. Defensive techniques remove lines of blocks from the player's side. The longer the player charges up their super meter, the more powerful techniques become.\n\nA visual novel story mode gives the player a traditional Sakura Wars-style story, complete with branching story paths using the series's trademark LIPS option-selection system. However, instead of mech battles, characters settle their differences with matches of Columns. The story follows the troupe's production of Cinderella, with each character vying for the best parts in the show."
 }

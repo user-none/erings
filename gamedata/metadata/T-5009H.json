@@ -30,6 +30,15 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Drive some of your favourite sports cars through wild and fast tracks, including the Dodge Viper, Lamborghini, Ferrari, Porshe, Corvette, Mazda RX7, Toyota Supra Turbo, and Acura NSX. Some of the tracks are open road, meaning you simply fly down a huge highway, with cops following in hot pursuit. One of the options in the game allows you to pick which time of the day to race in."
 }

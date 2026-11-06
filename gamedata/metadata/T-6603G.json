@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Puyo Puyo Sun is the third entry in the main Puyo Puyo series of real-time puzzle games, its title being a pun involving the Japanese word for \"three\". The evil Dark Prince has caused the sun to augment its size and power to dangerous levels, and thus the Puyo Puyo world is on the verge of being scorched unless you prevent it.\n\nThe game features three distinct story campaigns, each pitting you against a different set of enemies which you must battle in classic Puyo Puyo fashion: In each stage you face off against an opponent in two different play areas, one for you and one for your opponent. As the blob-like \"puyos\" start falling in your play area, you must align them and create groups of the same color in order to clear the screen before you get flooded with puyos. Chaining puyos of different colors allows you to send several \"garbage\" puyos to the opposing player's play area in hopes of either flooding it, or slowing his advance, and whoever defeats the opposing player moves on to the next challenger.\n\nNew for Puyo Puyo Sun are the Sun Puyos, which can be added to combos for extra damage. Also includes 2P vs gameplay, challenge modes and galleries and other bonus features."
 }

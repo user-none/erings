@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "As a dimension built on the power of dreams crumbles toward extinction, three innocent girls are plucked from the top of Tokyo Tower and transported to the fantastic world of Cefiro, where they must become the warriors of myth and prophecy. Take control of a trio of righteous babes-huffy, headstrong Hikaru; spoiled, smarmy Umi; and bashful, brainy Fuu-as they embark on a fantastic quest that leads them from the tedium of a junior-high field trip to the terror of a journey into the unknown. Marvel as the girls awaken the magical powers lying dormant within themselves and use them to battle a motiay collection of foul creatures. Watch as the teenage threesome learn lessons about friendship, humility, and love. And enjoy the rewards of Action/RPG gameplay, spoken in-game dialogue, and nearly 20 minutes of hand-drawn animation as the newborn Magic Knights slowly uncover the shocking secret behind Cefiro's collapse into chaos... and blast their way toward destiny!"
 }

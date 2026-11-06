@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sotsugyou Album is a fan disc for the Sotsugyou series. The disc features artwork, video clips from the voice actors etc."
 }

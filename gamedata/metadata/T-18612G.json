@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "M - Mature",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "V"
+    }
+  ],
   "overview": "While you were battling the evil forces of D'Sparil, the other Serpent Riders were busy sowing the seeds of destruction in other dimensions. One such dimension is the decaying world where Hexen takes place. A world littered with the mangled corpses of nonbelievers. Only three humans - a warrior, a mage and a cleric - have escaped the leader's vicious spell. Now these three brave souls have sworn to crush the evil regime that threatens to destroy the world forever."
 }

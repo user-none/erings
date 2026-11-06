@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Seifuku Densetsu: Pretty Fighter X is the sequel to Seifuku Densetsu: Pretty Fighter. The game features four new characters: Sorami Shizaki, Shizuka Minakami, Tokiko Tsuchiya and Maria Christel (the final boss), for a total of twelve characters. The visuals have been completely revamped, with the sprites having a more digitized hand drawn look. Also, taking advantage of the CD-ROM format, the game includes FMV for the introduction and ending sequences of each character. Game modes available are Story Mode, Versus mode and Team Play mode."
 }

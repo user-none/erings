@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pyon Pyon Kyaruru no Mahjong Hiyori is a family-friendly 1-on-1 style mahjong game featuring a cast of cutesy cartoon characters. Gameplay is a straightforward translation of Japanese-style reach mahjong with no notable additional features, and includes both a story mode with five playable (plus one unlockable) characters and a free match mode, along with a gallery featuring unlockable artwork of the characters."
 }

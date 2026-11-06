@@ -34,6 +34,15 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Negotiate the fastest, smoothest and most undulating 3D terrain ever created, in a future-race where your bike defies gravity, and your opponents show no mercy. Atmospheric light sourcing and rendered graphics intensify the experience!"
 }

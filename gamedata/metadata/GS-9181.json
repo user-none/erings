@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ever wanted to race dune buggies at high speed on a variety of tracks? Power Drift is an arcade racer that gives you the chance to do just that.\n\nThere are 5 tracks to choose from, each with 5 stages. The stages range from cities, to deserts to tracks over water. There are also 12 drivers to pick from, from businessmen to skinheads and mohicans. \n\nYour buggy has 2 gears, high and low. Once the light goes green, just keep the pedal to the metal. You’ll need to place third or higher to continue to the next stage. Be careful not to bump into other buggies or objects next to the road. While you’re buggy can take a pounding, crashing will slow you down. \n\nFinish all 5 stages in a level and you’ll be presented with a bonus level."
 }

@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In this game you are the Japanese national soccer team coach, who manages, trains, trades, and does whatever a coach does and much more. You also develop team strategy and travel to other countries to discover hidden great players. For each stadium game, it features TV coverage and your team technical progress."
 }

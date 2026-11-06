@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Jung Rhythm is a rhythm action game, whose gameplay is most closely reminiscent of PaRappa the Rapper or Space Channel 5. The player takes the role of Vanilla Essence, a young girl who dreams of being a star, and the story follows her quest from eating breakfast through to a duet with her favourite superstar, the puzzlingly named Mr. Chorking!\n\nThe gameplay itself takes the form of call-and-response dance and song duets with various characters, where the other character will sing a line and you’re asked to repeat it. Lyrics appear in a shaded box at the top of the screen, while input prompts appear in the first of a pair of bars along the bottom of the screen as they sing, and the player then repeats it on the second bar. Ad-libbed inputs are also permitted, and there are specific ad-lib segments.\n\nVanilla Essence’s performance is then graded in five categories and given an overall score. A score above 70 is a passing grade, and allows continuing to the next story segment. Between story segments there is a short full-motion video cutscene connecting the dots.\n\nThe game additionally includes a practice mode, as well as a 2-player battle mode, where two players can compare their skills."
 }

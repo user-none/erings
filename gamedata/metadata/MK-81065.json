@@ -34,6 +34,15 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "11+"
+    }
+  ],
   "overview": "The game features a side-scroller perspective. There are 5 characters in all throughout the course of the game, each with their own special abilities and attributes: Compsognathus, Human Hunter, Velociraptor, Tyrannosaurus rex, and Sarah Harding, who is also known as the \"Human Prey\". During gameplay, the character must complete all levels sequentially to gain access to the next character. For each character, there are \"DNA bonuses\" in each level that can be collected for access to storyboard art for that particular character. Actor Jeff Goldblum briefly reprised his role as Ian Malcolm for a secret ending that the player can access if every DNA bonus is collected.\n\nThe playable dinosaurs' chapters consist of traversing various parts of the island, defending against other predators as well as InGen hunters. The \"Human Hunter\" chapters are largely based in more urban environments, including an underground complex, a geothermal center and an InGen lab. Although objectives are never elaborated on, the Hunter's goal is to eliminate any dinosaur threat. The final chapters involve Harding escaping the island on a cargo ship."
 }

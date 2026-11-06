@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sega Ages: Memorial Selection Vol. 2 is a compilation of six 1980s arcade games and released for the Sega Saturn in 1997 only in Japan.\n\n• Doki Doki Penguin Land\n• Samurai\n• Sindbad Mystery\n• Star Jacker\n• Monaco GP\n• Ninja Princess"
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 5,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Daisenryaku: Strong Style is a hex-based war strategy game and part of the long-running Daisenryaku series. As usual for the franchise, the game includes ground, air, and naval units, and up to five armies can fight on a given map. There is both a campaign mode where the player selects from two different missions for each stage, as well as a single map mode with 16 different scenarios. In addition, the game includes a map editor, numerous assist options meant to ease in strategy game beginners, and even a unit model viewer."
 }

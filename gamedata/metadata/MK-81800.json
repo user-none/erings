@@ -41,6 +41,15 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Everybody's Supersonic Racing! Knuckles, Tails, Amy and Dr. Robotnik join Sonic in his speediest outing yet. Containing 5 graphically stunning tracks with many short-cuts and secrets. Sonic R will have you coming back for more. Features Grand Prix, 4 Time Attack modes and split-screen 2 player game. R U Ready?!?"
 }

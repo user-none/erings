@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ultraman: Hikari no Kyojin Densetsu is a 1-on-1 fighting game based on the Ultraman series of TV shows. The game features pre-rendered character graphics in fully-3D environments, though it plays strictly on a 2D plane. There are a total of 15 characters available — 5 Ultra Heroes and 10 kaiju monsters — and two main game modes: Ultra Mode is the main story mode where the player selects one of the heroes and attempts to defeat all of the monsters, while the VS modes let one or two players freely battle using any of the characters. Unlike some previous Ultraman games, the player does not need to defeat monsters with the same special move as in the original TV show, though doing so will grant bonus points."
 }

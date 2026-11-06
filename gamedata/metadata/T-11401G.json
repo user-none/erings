@@ -24,6 +24,11 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Masters: Haruka Naru Augusta 3 is a sequel to Masters: Haruka Naru Augusta 2 golf game and in that relation very similar to its predecessor. This game also features the Augusta National golf course and is licensed by Augusta National Golf Club. The game plays from the third-person perspective, showing your golfer sideways with a mini-map of the current hole on the right side of the screen. Several modes are accessible from the main menu, including Masters, Tournament, Stroke Play, Match, and Training.\n\nMuch like its predecessors, the game uses live-action golfers and caddies over 3D golf course terrain. During the rotation of the terrain, the game removes the texture details to moves more smoothly. Camera rotation lets you gain altitude on your current position, check the area around the hole immediately, or use your cart car to drive across the terrain and examine it in more detail before starting.\n\nWhen playing a game you can select among four different golfers and four different caddies. Each golfer has its own advantages and disadvantages when playing such as the swinging gauge may be harder or easier to accurately select depending on the type of terrain of the golf club your golfer uses. The terrain level can be checked in more detail even while you're not on the green near the hole, and though it gives little help to use at those places it's still available. The course supports both members and masters tee plays and also includes a detailed guide for every hole. Various records for every hole are saved and can be checked along with other statistics."
 }

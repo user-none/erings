@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This special release of Puyo Puyo Sun is modified to exclusively support online multiplayer functionality via the Sega Saturn Modem and XBand service. Released at a lower price, most of the single-player content has been removed from this version, with only the single-player endless mode available for offline play."
 }

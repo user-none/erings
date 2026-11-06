@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Cyber Speedway is a hover sled racing game set in the distant future. The civilizations of many planets have decided to end all wars. Instead, they will settle their differences in the Cyber Race. You are the best hope to protect and expand the Earth's power.\n\nCyber Speedway's main game is the story mode. The story follows your character as he qualifies as Earth's driver, and makes his way through a series of planetary races to become the champion. In each of the races, you must place first to continue.\n\nEach race consists of 5 laps around a high-speed track. You have missiles you can use to slow down your opponents and take the lead."
 }

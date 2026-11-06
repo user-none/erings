@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "X"
+    }
+  ],
   "overview": "The third installment in the Suchie-Pai series of mahjong games. More beautiful girls are ready to be your opponent in a game of strip mahjong.\n\nA girl named Shiho Katagiri has been kidnapped, and it's up to Suchie-Pai to save her. Suchie-Pai will need to beat several opponents in mahjong in order to progress. The strip scenes are animated this time. You are also joined by some of your opponents, who can transform into heroes themselves."
 }

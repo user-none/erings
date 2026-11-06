@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "With You: Mitsumeteitai is an adventure game with static graphics, in which the game advances as the player chooses what to do from a list of possible actions. Long time ago, a man and a woman made a promise, stating that although they were destined to be lonely souls, they should always remain together. But by a cruel joke of fate, they were separated and sealed into two jewels that were hidden for generations. Manami, who left the country six years before, has found one of the jewels while traveling. He will return to Japan to meet with their friends from childhood. This will entail a meeting of the two jewels again, for the second jewel seems to be owned by his father."
 }

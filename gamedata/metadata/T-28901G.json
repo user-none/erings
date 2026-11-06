@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Mujintou Monogatari R: Futari no Love Love Island is a survival simulation with love adventure elements, and part of the Mujintō Monogatari series. The protagonist is on a Hawaii vacation, but winds up stranded on a deserted island with five other vacationers: four female and one male from a total of 10 possible, with the specific companions selected by the player's choices in the introduction. The player must guide their group to work together to survive, and ultimately figure out a way off the island within three months, while also pursuing a romantic relationship with one of their companions.\n\nThe player's group is divided into three pairs, and the player can give each group instructions for both the morning and afternoon of each day, including to explore or investigate locations looking for resources, prepare food, or to rest. The protagonist can also use a turn to spend personal time with their partner, increasing their affection and eventually allowing them to be asked on a date. It is even possible to pursue a relationship with the other male companion, though he will pursue one of the other girls on his own if left alone. Each character has seven stats — health, trust, strength, focus, mood, cooking, and affection — which determine their effectiveness at particular tasks and their relationship with the protagonist, and which will change depending on what they're asked to do."
 }

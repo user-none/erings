@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Dezaemon 2 is a game creation kit that allows the player to construct their own custom scrolling shooter. While fundamentally quite similar to the previous release in the series, this Saturn edition includes several notable new features and improvements. The major new feature is the ability to create horizontal shooting games in addition to vertical, and games can now include as many as 10 stages. All the prior tools including the stage, graphic, and music editors are present with improvements, and a new tool allows the user to easily create sprites by manipulating 3D models rather than drawing graphics pixel-by-pixel.\n\nIncluded in the package are a total of five sample games, two of which are hidden behind secret codes: Biometal Gust and Vexsarsion Miyabi demonstrate the horizontal game construction capabilities, while Ramsie, Daioh P!, and Elfin are vertical shooter samples."
 }

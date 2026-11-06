@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Brain Battle Q is a quiz game which offers real-life prizes. The main game has the player enter the \"Sega Saturn Invitational\" quiz contest, playing through several rounds of a multiple-choice quiz contest against computer opponents. Upon completing the finals, the player is ranked based on their accuracy and speed, and given a password to send on a postcard included with the game to register their score with the publisher. The top five players each month through April 1997 received a prize.\n\nIn addition to the main contest mode, there is also a free quiz battle mode for one or two players. The player can select which types of quiz questions they want to see, as well as the difficulty level. There is also an in-game catalog for Japanese department store Seibu, which the game was produced in collaboration with, and which displays many of their real-life products for 1996."
 }

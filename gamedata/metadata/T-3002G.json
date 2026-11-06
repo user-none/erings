@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Dream Square is a multimedia fan disc featuring singer and actress Akiko Hinagata. It includes photo and video galleries of the idol and her music, interview clips, and various other bits of information, all presented as the player getting a personal tour of her house. There is also a puzzle mode where the player must unscramble photographs within a time limit. The package also includes a 1997–2001 calendar."
 }

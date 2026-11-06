@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "GT24 is an arcade-style racing game and a modified port of the 1996 arcade game Super GT 24h. It features one new track for a total of three in both regular and reverse configurations, two new vehicles for a total of six, and five different pit crews. Three game modes are included: Time Trial, Grand Prix, and a 24-hour Endurance race mode (which can be configured as 12, 24, or 48 minutes real time) that includes a full day/night cycle that changes as the race progresses."
 }

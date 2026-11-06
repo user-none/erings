@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In Virtua Fighter 2, the intrepid fighters return to the World Fighting Tournament. Take to the stage to see who will claim the championship title. Will it be Lau Chan, Kage-Maru, Wolf Hawkfield, Jeffry McWild, Akira Yuki, Jacky Bryant, Sarah Bryant, or Pai Chan? The answer lies within. Immerse yourself in this technically challenging game and see if you have what it takes to be the champion of the second World Fighting Tournament!"
 }

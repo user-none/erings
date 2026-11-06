@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ginga Eiyū Densetsu is a strategy simulation game, and part of a long-running series based on Yoshiki Tanaka's Legend of the Galactic Heroes science fiction novels. This console version is most similar to Ginga Eiyū Densetsu III, with the player taking the role of a top general in either the Galactic Empire or the Free Planets Alliance, commanding an entire fleet of ships. The game is divided into two main sections. In the strategy sections, the player is shown a full-scale map of the conflict, showing planets and the locations of ships; here the player may direct ships to move or engage with enemies, as well as converse with their officers. When battle starts, the player controls their fleet from a top-down perspective in semi real-time; each vessel can be given orders which they will carry out as instructed, but the action can also be paused at any point to issue new orders."
 }

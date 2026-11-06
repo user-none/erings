@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "A Japan-only release of a Neon Genesis Evangelion episode in the form of a video game. Following the story of the popular animé series, the game presents an episode of its own. The player controls Shinji Ikari, the main character of the series. A new Angel appears and attacks Unit-01. As a result, Shinji loses his memory. His friends decide he should fight Asuka in Unit-02, hoping his memory will be restored as a result of the battles.\n\nThe game contains many cut-scenes made by Gainax, the creators of the TV series. Many scenes are taken directly from original Neon Genesis Evangelion episodes. The player gains control when they have to make decisions for Shinji (choose correct answers, etc.), and when fighting Angels. The player should figure out which attack the Angel is using, and press corresponding buttons to defend and to counterattack it."
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Private Idol Disc: Tokubetsu-Hen Kogyaru Daijyakka 100 is a Miscellaneous game, developed and published by Genki, which was released in Japan in 1997."
 }

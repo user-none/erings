@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Logic Puzzle Rainbow Town is a digital version of the classic nonogram style puzzles, in which the player must use numerical clues to deduce the arrangement of squares on a grid and create a picture. The game features three types of puzzles: Monochrome puzzles use only a single color, Color puzzles use multiple colors, and Rainbow puzzles use three single-color layers -- red, blue, and yellow -- which overlay to form a full color image. Puzzle sizes range from 5x5 all the way up to 30x30.\n\nThe game map is made up of numerous locations, each of which represents a building in the titular Rainbow Town and contains a set of puzzles. Each building, such a concert hall, insect museum, or game development studio, contains puzzles in multiple sizes themed to that location; the concert hall for instance has puzzles that look like musical instruments, while the game studio has puzzles representing other Human-developed games. As the player completes more puzzles in a location, that building develops and gets larger and more extravagant; the goal is to clear all the puzzles and bring each building to maximum development. There is also an edit mode where custom puzzles can be made and saved."
 }

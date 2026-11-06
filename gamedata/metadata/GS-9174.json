@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sonic Team brings you the fire fighting heroes of the future... The Burning Rangers. In the life of a Burning Ranger, danger lurks around every corner, and you'll find there are many. Hazardous missions await you, the prime objective being to save the lives of helpless survivors. You will be assisted by an advanced voice navigation system, but the rest is up to you. You must think fast and act quickly if you are to save the day. Scorching graphics, intense gameplay, thrills without the kills... go for it!"
 }

@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "THE WORLD IS INFECTED WITH A DEADLY, MAN-MADE VIRUS. GUESS WHO'S THE CURE?\n\nIn the near future, an experiment in Nano technology has gone horribly wrong and a bio-engineered virus threatens to take over the world! You are selected to pilot through 15 levels of twisted, putrefied mutants in an effort to cleanse the planet of the rapidly reproducing virus. Oh, and by the way, you have a bomb strapped to your body that has a short fuse. It's a desperate race against time as you deploy flame throwers, disruptors and homing missiles to wipe out the virus before the world is mutated forever.\n\nFeatures:\n\n- Fully SGI rendered 3-D virtual landscapes with 360 degree mapping terrain!\n- Take on warped armies of dog-bats, giant spiders, grinning zombie clowns and dozens of terrifying mutations!\n- 15 adrenaline-pumping missions!\n- Gear up with chain guns, photons, io-storms and enough firepower to toast the mutant horde!"
 }

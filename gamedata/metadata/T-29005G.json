@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Fourth-grader Sakie Shinjō has just transferred to a new elementary school at the start of the semester, but any hopes she may have had for a normal school life have been quickly dashed. She's run into a strange woman in the hall cosplaying as a nurse, gotten involved in a battle on the playground with Baron Dandy of the Adonis Empire, and finally been recruited by Space Detective Shatner, the leader of the transforming justice squad Metamor V, as the second-generation Metamor Red.\n\nHimitsu Sentai Metamor V is a visual novel-style adventure game starring a cast of transforming magical girls. The game is divided into chapters and follows the five members of the Metamor V squad, all of them elementary school students and classmates of Sakie's. Much of the game consists of conversation sequences with other characters; the player's reactions and choices will affect Sakie's trust level with her squadmates, and through conversations the player will also learn different key words. Both of these are important during the battle sequences, in which the player must combine words in order to create the most effective special attacks. There is no lose condition, but the player is graded on how quickly they defeat opponents, which affects trust levels and ultimately the game's ending.\n\nThe later PlayStation \"Deluxe\" version includes an extra bonus side scenario and additional voice acting, but is otherwise the same game."
 }

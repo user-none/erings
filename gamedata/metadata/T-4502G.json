@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pilot an enormous walking mech to complete missions set all over the world in late 21st century warfare fighting other mechs, trucks and helicopters. The missions, set in different weathers and at different times of day, usually have specific objectives, be they search and destroy, protecting allies or killing everything. Four weapons are available: the main cannon; a weak machine gun that overheats with prolonged use; clusters of grenades and limited supplies of homing missiles. Damage repair and extra ammo is available from supply helicopters, but these are vulnerable to attack. Ally mechs can be useful, but it is the player who has to do most of the work by far, battling mechs that are sometimes faster and more agile, therefore a certain amount of strategy and planning is required."
 }

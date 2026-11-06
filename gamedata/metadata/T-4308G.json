@@ -25,6 +25,11 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Fire Pro Wrestling S: 6Men Scramble is a pro wrestling game and part of the long-running Fire Pro Wrestling series. The arcade-style format is largely unchanged from previous entries; as the name suggests, the key new feature in this entry is 6-player simultaneous matches in both tag-team and battle royal formats.\n\nNumerous game modes are available: Victory Road is the single-player campaign mode where the player must defeat a series of opponents to win the title belt; One Night Match is a standard exhibition match mode; Open League and One Night Tournament are tournament modes; and Elimination Match, Battle Royal, Death Match, and Gruesome Fighting are all special exhibition match types with specific rules or ring setups. The series' famously robust create-a-wrestler mode also makes an appearance, allowing the player to create completely custom wrestlers in both appearance and move set, which can then be used in any of the other game modes."
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 8,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Virtual Volleyball is an indoor volleyball game for one or two players based on official JVA (Japan Volleyball Association) rules. The game is presented in full 3D and viewed from a side-view perspective.\n\nThere are three modes to choose from: World League mode is a single-player campaign mode to become world champion, Free Play lets the player set up a match between any two teams and any combination of human or computer players, and Tournament mode lets the player set up a tournament bracket for up to eight players. There are eight teams, each representing a different country, and with different strengths and weaknesses. There is also an information section detailing the official JVA rules, a glossary of volleyball terminology, and a manual for how the game is controlled."
 }

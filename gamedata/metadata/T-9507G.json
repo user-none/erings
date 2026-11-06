@@ -24,6 +24,5 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
   "overview": "Chibi Maruko-chan no Taisen Puzzle Dama is a falling-block puzzle game based on the children's manga and anime Chibi Maruko-chan. The game plays very similarly to Puyo Puyo: colored balls fall from the top of the well in pairs, and must be arranged and stacked by the player. If three or more of the same color touch, they will disappear from the board, causing any stacked on top to fall down into their place and potentially creating a combo. Clearing many balls at once will launch garbage balls at the opposing player, and each character has a different pattern for how garbage appears and what colors it consists of. Garbage balls will turn into regular balls after a ball in a neighboring space is cleared. If either player's stack reaches the top of their well, that player loses the round.\n\nThe game includes a single-player arcade mode against a series of computer opponents, as well as a two-player versus mode."
 }

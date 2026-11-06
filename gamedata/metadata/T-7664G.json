@@ -24,6 +24,11 @@
   ],
   "max_players": 8,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Nobunaga no Yabou: Shouseiroku is a turn-based tactical strategy game set in 16th century feudal Japan. It is the seventh title in the Nobunaga's Ambition series."
 }

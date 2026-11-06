@@ -26,6 +26,11 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Play two-on-two basketball using NBA teams that consist of six players each. The game play is three-dimensional instead of using the common 2D format. Game commentary is provided by Marv Albert.\n\nDue to contractual obligations from acting in the 1996 movie Space Jam, a few players were not allowed to be featured in NBA Jam Extreme. Chief among those barred from appearing in NBA Jam Extreme were Michael Jordan and Charles Barkley. Shaquille O'Neal was unable to be featured in the game because of his contractual obligations to the movies Kazaam, Good Burger and the video game Shaq-Fu."
 }

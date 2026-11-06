@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Virtua Fighter CG Portrait Series is a series of eleven Sega Saturn discs released in Japan between October 1995 and March 1996, each containing images of one Virtua Fighter character.\n\nThis disc features Kage-Maru, born June 6, 1971; Japan. He is a tenth-generation Hagakure Ninja in Virtua Fighter. His fighting style, taught to him by his father, the ninth-generation, Hagakure-ryū Jū-Jutsu, a fictional martial arts that's based on Jujutsu."
 }

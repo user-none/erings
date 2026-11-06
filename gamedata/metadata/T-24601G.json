@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Set in the year of 4998, after the war with an alien race, the battle is no longer waged with devastating weapons but through a contest of physical strength between representatives of each race. In Battle Athletes, Akari Kanzaki (神崎 あかり), the protagonist of the story, but not the player, is a daughter of a former Cosmic Beauty who promised her mother on her deathbed to follow in her steps. Akari enrolls in a training school and strives to shape her body and become the next Cosmic Beauty. The story progresses one day at the time, leaving you to go through a half-year long training with Akari. The player can go to various areas in the school, talk to other characters, and perform daily training routines such as running, swimming, aerobics, and more. As Akari trains more, her physical characteristics improve, such as stamina, endurance, strength, and other. To check Akari's current stats, you can visit the school nurse to give you a rundown on her current condition. The game mostly plays as visual novel and features anime style videos and voice-acting. Characters during conversation are not animated in any way, but character portrait icons appear in various expressions to emphasize their posture during dialogues."
 }

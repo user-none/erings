@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sotsugyou III: Wedding Bell is the third main entry in the Graduation series. The player takes the role of a high school teacher who must help a group of students with their studies by coordinating their schedules, to help them reach graduation. The twist in this entry is that the player character is married to one of their students — selected from the five girls at the start of the game — and has to keep this a secret until the end of the school year.\n\nAs in previous titles, the player must give assignments and advice to each of the students according to their strengths and weaknesses, in order to best help them raise their status to reach graduation. The player also takes their wife out on dates on the weekend, but must be careful not to run into the other students while they are out together so as not to arouse suspicion. Information on the other students' activities can be gathered to help the player know which locations will be safe for dates on any given weekend."
 }

@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Sega Rally was a major success in the arcades, bringing rally-style racing to the masses before the Colin McRae games. Four detailed tracks have been created, with a succession of stomach-churning bends and jumps, and you can choose from 3 different cars. As well as the main championship, there is a time-trial mode featuring a ghost car to beat, so you always know how your run compares with your best-ever. Two machines can be linked for multi-player action. The handling of the cars is unrealistic, to put the focus on action and instant playability."
 }

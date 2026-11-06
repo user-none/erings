@@ -21,6 +21,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Nightruth Voice Selection: Radio Drama Hen (ナイトゥルース ヴォイスセレクション ラジオドラマ編) is a multimedia disc for the Sega Saturn. It contains a making movie of voice drama, and trailer to Nightruth#03."
 }

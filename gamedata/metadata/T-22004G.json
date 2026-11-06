@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Rather than science, swords and sorcery flourish in this world. Our story takes place at the school of “Skill & Wisdom”, founded for youngsters who long for adventure.\n\nIn this game, you will play as an energetic young man who participates in club activities at the “Wizard’s Academy”. But all of a sudden all the other members quitted because of a big mistake made by you in an experiment! The student council, which has never been fond of the club, takes this chance and plans to abolish the club unless you can complete the tasks listed out by them. Now it is up to you to recruit more members to keep the academy going, and at the same time make sure to pass the exam that comes three times a year! Can you save the club and hold it up this time?"
 }

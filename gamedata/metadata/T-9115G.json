@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Murakoshi Seikai no Bakuchou Nihon Rettou is a fishing game featuring professional fisherman and author Seikai Murakoshi. The game includes a total of 11 locations from all across Japan to fish at, and each location has a specific target fish and quota to meet. Completing a stage will move on to the next, with the final stage being a 1-on-1 challenge against Murakoshi himself. Between stages, the player can use points earned from catching fish to obtain new rods and lures. There are also advice videos featuring Murakoshi giving beginner and intermediate fishing advice for the player."
 }

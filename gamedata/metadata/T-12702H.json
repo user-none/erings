@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Several years after the events described in Shining Force II, an orphan named Mars begins his work as a guard in the Odegon castle. One night, a strange fog descends upon the land, and Mars witnesses a mysterious elf entering the Ancient Shrine. Through a series of events and lies on his part, Mars becomes the elite guard of the princess, and soon has to redeem himself by stopping the dark elf Pazort from destroying the world.\n\nShining Wisdom is the fourth game in the Shining series, but is completely different from the others. Neither a turn-based dungeon crawl like Shining in the Darkness, or a tactical RPG like Shining Force, the game plays very similarly to Zelda with its overhead exploration, action combat and occasional puzzle-solving. RPG elements are very light; the protagonist's health can be increased by finding HP bubbles, but there is no experience system of any kind. The game proceeds by collecting various items found in dungeons and then combining them with magical orbs to create different spell effects that can be used to tackle enemies and solve the riddles that must be bested to beat each labyrinth."
 }

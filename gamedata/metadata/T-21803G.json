@@ -23,6 +23,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Kurubushi Kyōdai Gekijō Dai-ikkan: Mahjong-hen (\"Ankle Brothers Theater Volume 1: Mahjong Edition\") is a 4-player reach mahjong game featuring a cast of bizarre cartoon characters. The main story mode has the player complete a series of matches against randomly-selected opponents; each of the playable characters has their own story campaign with several chapters, all of which are suitably strange and told via still illustrations. There is also a free battle mode where the player can set up a match with any of the eight characters and customize the game rules."
 }

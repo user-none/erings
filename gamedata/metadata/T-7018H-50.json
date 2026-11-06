@@ -31,6 +31,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "As Prince Lightstar, players must defeat the Skeleton Warriors and Baron Dark in order to gain control of the Lightstar Crystal and bring balance back to the world. Gamers will explore the environments of 20 different levels as they face hundreds of enemies while riding on their skybike. The game features an original soundtrack composed by Tommy Tallarico.\n\nThe game is a 2D sidescrolling platform game with 3D pre-rendered graphics, with about 100 types of enemies for you to slay with the weapons you possess. You need to complete 21 levels filled with demonic evil creatures before you can fight the Baron Dark himself, with 3D rendered cutscenes inbetween some levels."
 }

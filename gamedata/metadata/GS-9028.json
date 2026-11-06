@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The world of Legendra was ruled by benevolent goddesses, but the last of them, Astea, was challenged by a dark god named Madruk. In order to defeat Madruk, Astea created a powerful dragon, who eventually emerged victorious and was able to seal Madruk away.\n\nYears have passed. Legendra is now divided into eight kingdoms. One of them, Fandaria, is ruled by a monarch named Goldark. The other kings have heard rumors that Goldark is planning to take over Legendra by conquering all the other kingdoms. Everyone is preparing for the war, without realizing that the ancient evil is about to raise its head once again...\n\nDragon Force is a real-time strategy game (RTS). The player can choose one of the six monarchs (plus two additional ones that become available once the game is completed) with their unique scenarios. The gameplay is divided into three modes: management, overworld movement, and battle. Management mode allows the player to assign generals, decide the fate of prisoners, prepare the army for battles, etc. Navigation on the map is done in real time; once two warring armies have reached the same spot, the player is taken to a separate battle screen. The battles also evolve in real time, the goal usually being killing or capturing enemy general. If all the soldiers are killed, the two generals can opt for a duel that will decide the outcome of the battle.\n\nEach kingdom has unique \"strong\" fighter types, which the player should use to target the weaknesses of the opposing armies. Each fighter type also has his own special techniques and abilities."
 }

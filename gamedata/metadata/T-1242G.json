@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Shichisei Toushin Guyferd: Crown Kaimetsu Sakusen is a first-person adventure game based on the 1996 tokusatsu TV show Seven-Star Fighting God Guyferd. The player controls Kōichi Hayami, a journalist who has been abducted by the Crown crime syndicate and turned into a cyborg warrior by their experiments. Hayami must team up with the Guyferd, Gō Kazama, to escape the underground facility and take down Crown.\n\nThe game primarily consists of exploring the maze-like facility in first person. Computer terminals and other objects can be investigated to acquire information and keys to unlock new areas, as well as chips to upgrade the player's combat abilities. Hayami will occasionally encounter enemies which are fought in a simple turn-based combat system; defeating enemies will unlock their cards for use in a separate two-player battle mode. There is also a gallery of production artwork from the TV show."
 }

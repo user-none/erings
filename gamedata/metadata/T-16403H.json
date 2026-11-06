@@ -34,6 +34,15 @@
   ],
   "max_players": 16,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Worms is a turn-based strategy game. It features up to 4 teams of 4 worms, aiming to destroy the others on a generated terrain. Each worm has 100 hit points, and dies when his hit points fall to 0. Upon death, a worm explodes, causing damage to everyone around.\n\nGameplay is turn-based. Each turn, the player can control one specific worm from his team. The worm can crawl left and right or jump. However, there is a time limit to make a move; also, if the worm falls from a great height, it loses health and the turn ends immediately; and if a worm falls into water or offscreen, it dies. Each turn, a worm can also make a single attack: the player can aim up and down, choose a weapon and then fire it. After attacking, the turn ends."
 }

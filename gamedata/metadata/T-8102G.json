@@ -24,6 +24,11 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "NBA Jam Tournament Edition is the second game in Midway’s basketball arcade series, featuring two-on-two fast paced matches with NBA players from the 1993-94 season (1994-95 on consoles). In total, the game features over 120 NBA athletes and over 40 hidden characters. Improvements include additional power-ups, more detailed player attributes, player substitutions after each quarter, and a new soundtrack. The namesake \"Tournament Mode\" turns off all cheats and power-ups, and rewards players with expanded rosters for nearly all teams if the player beats all 27 teams."
 }

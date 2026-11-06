@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This game is a linear beat 'em up Final Fight type game with the choice to play as one of two comic book heroes: Iron Man or X-O Manowar. The game follows the pattern of sidescrolling action in each level with a comic book boss at the end of each."
 }

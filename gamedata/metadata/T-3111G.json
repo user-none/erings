@@ -25,6 +25,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Metal Slug, originally released on the Neo Geo, is a side-scrolling shoot'em'up.\nThe player(s) takes the role of a soldier (or two) and fights a gigantic army. Every level consists of running forward blasting anything that moves, while collecting power-ups along the way (there's also a wide selection of weaponry in the game). In the end of each level the player goes up against one gigantic boss."
 }

@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Willy Wombat is an isometric action platformer. The camera is fixed from a top-down angle, but can be rotated using the shoulder buttons. Each stage features a series of intricate puzzles that stand in way of the exit at the end. Cutscenes are featured throughout, with fully voiced English dialogue.\n\nThe game takes place in an ideal society named Prison, where it's residents are able to essentially live forever without sickness through regeneration, however, this society is heavily regulated by their elite managers. One of Prison's managers, Willy Wombat, opts to escape this society in search of freedom in the land of Eden. To get there, he must search for six miracle gems, scattered across Prison. However, these gems attract deadly ghosts, who Willy must deal with using his set of attacks, including his boomerang. The other managers of Prison are also on Willy's tail, seeking to eliminate him. Essential items are scattered throughout these areas, like crystals, keys, and force powerups, that will aid Willy in his quest to find Eden."
 }

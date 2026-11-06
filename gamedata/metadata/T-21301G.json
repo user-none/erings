@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "3x3 Eyes: Kyuusei Koushu S is an enhanced version of 3x3 Eyes: Kyuusei Koushu. It includes new animated sequences, new voice recording, graphical enhancements and an extra \"Making Of\" CD."
 }

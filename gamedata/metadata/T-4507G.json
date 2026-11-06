@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The ancient Angelou civilization has ceased to exist centuries ago, and technology in the world develops rapidly. General Baal, the head of the militaristic Garlyle Forces, organizes an excavation of ancient ruins, apparently for philanthropic reasons. Meanwhile, Justin, a young boy from the nearby town of Parm, decides to investigate the ruins in search of the Spirit Stone, an artifact that once belonged to his missing father. A mysterious holographic image tells him that he should travel to faraway lands to discover the stone's true power, and he embarks on the most dangerous adventure of his life without hesitation.\n\nGrandia is a Japanese-style role-playing game. The characters are represented by 2D sprites which are moved around over 3D backgrounds in towns and dungeons. The game makes use of anime-style cutscenes to advance the story. Combat is initiated by coming into contact with enemies on the screen, rather than through random battles. Battles occur in pseudo-real-time, using an 'IP Gauge' to determine when a character takes action. Striking at the right time or with the right ability can even delay or cancel an enemy's turn.\n\nThe characters in the game gradually advance in level as they gain experience points for killing monsters. Characters also gain experience based on the weapon (e.g. sword, mace, whip, etc.) or magic (e.g. fire, water, etc.) that they use, powering up their spells and learning new ones from continuous usage. There are a large number of spells, weapons, and other items to use throughout the game."
 }

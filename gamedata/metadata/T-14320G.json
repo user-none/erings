@@ -25,6 +25,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Bomberman Wars is an isometric tactical RPG, as opposed to the traditional top-down action/maze games in the franchise.\n\nThere's a story mode, where the main character, King Bomber, rules over the kingdom, but has to fight off Bagular and his soldiers, in order to conquer all land. Gameplay-wise, the player controls the King and his knights, moving the characters around in a grid, with limited moves each turn, as is usual in tactical RPGs.\n\nThis game is one of the first in the series to shift its main focus from multi-player to single player gaming. However, a versus mode is also available in addition to the story mode."
 }

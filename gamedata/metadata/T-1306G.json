@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "This compilation contains reworked versions of two games:\n\n• Wizardry: Bane of the Cosmic Forge\n• Wizardry: Crusaders of the Dark Savant\n\nThe player can opt to start any of the two games from the main menu, using a common custom-made party or creating every character from scratch. The difficulty level has been drastically reduced for both games. On the other hand, the amount of random enemy encounters is noticeably higher. Several gameplay elements have been simplified: for example, simply passing near a secret button prompts a text message; the absence of text input makes many puzzles much easier, merely requiring the player to choose the correct answer among several available ones, possibly through guesswork; there are no topics to discuss with the NPCs; mechanics such as traps and chest opening are simplified, etc.\n\nBoth games have polygonal 3D graphics, as opposed to the pseudo-3D locations of the original releases. Despite the new visuals, the layouts of the areas remain largely identical. Unlike the PlayStation version of Crusaders of the Dark Savant, this release retains the hand-drawn 2D portraits for enemies and NPCs for both titles. There is also a full soundtrack for Bane of the Cosmic Forge, which was not present in the earlier version."
 }

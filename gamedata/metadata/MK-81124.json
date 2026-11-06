@@ -34,6 +34,15 @@
   ],
   "max_players": 10,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Suit up for another season of 100% pure NBA action. Real pro teams, pro players, pro plays, pro stats, pro everything! Motion capture technology, full commentary and up to 10 players at once makes this the most complete basketball game yet!"
 }

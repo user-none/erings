@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ginga Eiyuu Densetsu Plus is a revised and expanded edition of the previous Sega Saturn entry in the long-running franchise, featuring several changes and new additions:\n\n• A new scenario mode featuring four campaigns, smaller in scope than the main game\n• Additional story event scenes featuring the voice cast from the anime\n• Various tweaks to the game mechanics such as a more restricted ability to resupply ships, resulting in a generally more difficult game"
 }

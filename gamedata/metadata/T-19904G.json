@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Harukaze Sentai V-Force is an isometric strategy game similar to Front Mission or Super Robot Taisen. The game follows Natsuki, Mizuki, and Kagetsu, three sisters who are pilots in the Earth Defense Force. Each mission allows you to configure your character's weaponry, and as they fight, they will gain experience and level up. Before and after each mission, fully-animated cutscenes drive the plot forward, and sometimes they will appear at crucial points during a mission as well."
 }

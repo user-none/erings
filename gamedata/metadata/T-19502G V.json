@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "A young student lives alone in apartment, leading a generally uneventful life. One day, he learns that a friend of a friend — another young student named Ryōko — is looking for a place to stay for a few months. The young man has a spare room in his apartment, and Ryōko ends up moving in with him. The two of them will have plenty of time to get to know each other, but will they eventually become more than just roommates?\n\nRoommate: Inoue Ryōko is a love-simulation adventure game and the first title in the Roommate series. The player can freely move about the apartment, and the game mostly consists of voiced dialogue sequences where the player interacts with Ryōko and can respond to her via multiple-choice answers. Unlike many such games, the two weeks of the in-game story progress in real time using the Saturn's internal clock (or the PocketStation in the PlayStation version), and the time and frequency of the player's visits will affect the events that occur and the protagonist's relationship with Ryōko, leading to several different endings."
 }

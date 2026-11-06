@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "A young traveler finds himself working in a shop in the town of Enfield after being rescued by the shop's owner. One day, he's arrested on suspicion of stealing a work of art, and though he does not remember doing such a thing, several people claim to have seen him fleeing the scene of the crime. The shop's owner takes a loan to pay his bail, but if she is unable to pay the loan back within one year, she will lose the shop. A peculiar law in the town says that if he can gain the favor of the town, he can request a retrial, and so the young man and several of his friends in the town start taking odd jobs in order to gain the trust of the townsfolk.\n\nYuukyuu Gensoukyoku (Eternal Fantasy) is a traditional-style Japanese adventure game. You must interact with your companions and other people about the town, as well as plan jobs and leisure time for your group in order to build the trust of the town and pay back your debt."
 }

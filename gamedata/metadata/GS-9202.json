@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pro Yakyū Greatest Nine '98: Summer Action is an updated release of baseball game Pro Yakyū Greatest Nine '98. This version updates the player rosters to the most current data as of the end of the 1998 season, adds additional original teams and additional management features to the Narikiri Mode introduced in the previous release. It is the last entry in the series to appear on the Sega Saturn."
 }

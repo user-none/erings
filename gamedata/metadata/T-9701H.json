@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "M - Mature",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "M"
+    }
+  ],
   "overview": "Ultimate Mortal Kombat 3 combines the best of all the Mortal Kombats into a single disc. 23 playable characters are immediately available, such as Reptile, Cyrax, Scorpion, Sub-Zero, Jax, Katana, Sonya, and more. There are two bosses that are unlockable, as well as additional characters.\n\nThere is a variety of new levels, some of which are interactive. Characters can uppercut someone, causing them to hit the ground hard and crash through to the bottom floor, or they can knocked someone off a bridge, landing in a pit of spikes.\n\nPlayers can go against the computer one-on-one, two-on-two, or take part in the 8-fighter tournament."
 }

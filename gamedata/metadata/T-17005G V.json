@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Game-Ware Vol.4 is a multimedia \"digital magazine\", and the fourth release in the quarterly series of the same title. This edition is the first to come on two discs rather than just one, and includes significantly more content than previous volumes. As usual, this volume includes several playable game demos and original minigames:\n\n• Pipit Boy no Daibōken 4, a continuation of the puzzle game series found in the previous volumes. This edition lets the player player Pipit Boy directly for the first time, as the game is now an auto-scrolling, top-down action game similar to Bump 'N' Jump, in which the player must collect small creatures to use as ammo while avoiding enemies and obstacles.\n• Ejihon, a \"spot the difference\"-style game for one or two players in which the player is shown an image filled with many kanji characters and must locate the one that does not match; this version continues the story and contains new picture puzzles.\n• Barbara Konomi's Sūsenjutsu, a numerology fortunetelling game.\n• Gondola-kun, a competitive window-washing game for one or two players where each player must avoid constant obstacles and be the first to wash all the windows on their building.\n• Otanoshimi Slot, a slot machine where the player can bet coins earned from viewing other contents on the disc; earning enough coins will give the player a password to enter a contest to win real-life prizes.\n• Yuppii no Puzzle Land, a competitive puzzle game in which two players try to match objects on the screen based on various criteria such as name or color.\n• Onii-san, a simple point-and-click comedy adventure game which returns for a second part to continue the story.\n• A playable demo of Digital Pinball: Necronomicon.\n\nAlso included is a variety of multimedia content such as game previews, and an art gallery, though the focus on these elements has been reduced in favor of interactive game content. This edition also includes the third and final chapter of the Virtua Fighter digital comic, \"Legend of Sara\"."
 }

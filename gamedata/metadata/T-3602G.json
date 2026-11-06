@@ -27,6 +27,11 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "J.League Go Go Goal! is a soccer game licensed by the Japanese J.League organization and featuring all 17 clubs and full stats for the 1997 season. It includes standard league and exhibition modes and supports up to four simultaneous players. A notable feature of the game is the ability to create custom player formations, and the option to switch between multiple different play strategies on the fly during a match."
 }

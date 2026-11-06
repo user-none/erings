@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Yuukyuu no Kobako is one of several Yuukyuu Gensoukyoku fan discs. This one features a variety of high-quality videos and illustrations from the first game, as well as a many illustrations and information as a preview of the then-upcoming Yuukyuu Gensoukyoku: 2nd Album. Also included is a quiz mode where you can test your knowledge of the characters and the world of the games."
 }

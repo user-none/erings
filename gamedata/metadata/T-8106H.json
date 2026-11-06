@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "D is a dark adventure game that explores the twisted designs of a madman and involves the supernatural, D is set at the L.A. National Hospital. Players take on the role of the daughter of a doctor who went mad and embarked on a murderous rampage, and it's up to them to find out why. Inside the hospital all is dark, and fear surrounds the player at every turn, because there's no way to know what's lurking in the shadows. The girl must face this waking nightmare in the hopes of ending the madness, but the forces arrayed against her are powerful, and might not just claim her life, but her soul as well.\n\nPlayers walk through the hospital, which is fully rendered with 3D graphics, and must search for the clues that explain the cause behind the horrific events that have taken place. Puzzles and conundrums can be found aplenty, and solving them is not only important to completing the game, it's also a matter of life and death for their character. Gruesome scenes can be found in abundance, as can violent and scary encounters, so be forwarned that D is not for the faint of heart."
 }

@@ -37,6 +37,15 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "With top-of-the-line racing simulation NASCAR 98 allows you to race with 24 drivers including legend Dale Earnhardt and 10 official tracks and extra 6 fantasy tracks. This NASCAR game allows you to hear all screeching burnouts, oiled skids, and emergency vehicles, or listen to provided music. This includes the modes season, Arcade, and new custom racing(control opponents,laps,gas gauge, and just about anything.)."
 }

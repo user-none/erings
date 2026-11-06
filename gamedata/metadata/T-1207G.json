@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Tenchi o Kurau II: Sekiheki no Tatakai is a 2D side-scrolling beat 'em-up and sequel to Tenchi o Kurau, taking place in ancient China. Akkila-orkhan the dark lord of Shang-Lo has decided to conquer the neighboring countries. The wise Kuan-Ti has summoned the five greatest warriors of the lands to stop this from happening.\n\nAs you make progress you encounter numerous different enemies including spearman, archers, mace wielding soldiers, hand to hand fighters and bosses. Various weapons dropped by enemies can be picked up and used. Along the way health can be replenished by consuming food as well as mounting a horse. The game can be played solo or with up to two friends in the arcade version. The Saturn and PlayStation version allow two players to play.\n\nBoth games are based on the Tenchi o Kurau manga series which ran for a brief period between 1983 and 1984."
 }

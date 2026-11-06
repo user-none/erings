@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sega Ages: Columns Arcade Collection is a compilation of four arcade Columns games, and was released exclusively in Japan for the Sega Saturn as part of the Sega Ages series.\n\n• Columns\n• Columns II: The Voyage Through Time\n• Stack Columns\n• Columns '97"
 }

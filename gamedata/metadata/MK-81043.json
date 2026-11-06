@@ -34,6 +34,15 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "15+"
+    }
+  ],
   "overview": "Virtua Cop 2 follows the same gameplay pattern of its predecessor. You are a police officer sent after criminals, from subways and a bank to aboard helicopters. The game moves you automatically, although you can find hiding places to shoot from a safe angle. Your main task is to aim and fire your weapon so as to take out the bad guys for points. Avoid the innocents, as shooting them costs you points. The enemies have tougher firepower than in the original."
 }

@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "Grand Slam Baseball was an innovative, albeit relatively low-key release from Virgin Interactive Entertainment in 1997.\n\nNot known for sports games, VIE released Grand Slam for Windows, Sony Playstation and Sega Saturn as the second title in its attempt to establish a mainstream sports line. The first title in the short-lived line was Power Play Hockey in 1996. The sports line would last only one more title after Grand Slam's release, that being the sequel to the hockey game, also released in 1997.\n\nGrand Slam was one of the early adopters of 3D accelerator card technology and also offered full 3D play in software alone. The Playstation and Saturn versions were 3D by default.\n\nGrand Slam introduced a few play mechanics to video game baseball that would later prove to be fixtures in the genre. The most notable in this area was the introduction of a meter for pitching, used to control the velocity and accuracy of pitches, similar to the familiar swing meter in popular golf games. This meter was later borrowed and made popular by titles such as EA's MVP Baseball. On the batting side of things, a similar metered approach was used. This was inspired by older arcade baseball games that allowed the player to load up a swing's power with a control stick before releasing it as the pitch came in.\n\nOther highlights amongst Grand Slam's feature set included:\n\n• A trade AI engine that would examine the needs of a team and decide if a proposed trade was in its best interest.\n\n• Catcher AI and pitch signals, helping a player learn how to pitch to each batter's strengths and weaknesses.\n\n• Attention to details and baseball flavor, such as players that would blow bubble gum bubbles during an at bat, light- hearted commentary, an All Star Break during season play (complete with a working voting ballot), and an in-game JumboTron scoreboard that would show animations after home runs."
 }

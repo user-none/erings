@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Pachi-Slot Kanzen Kouryaku Uni-Colle '97: Universal Collection is a pachi-slot (Japanese slot machine) simulation game featuring digital recreations of eight real-life pachi-slot machines made by Universal and its subsidiaries: Baby Angel 2, Getter Mouse, Frozen Nights, Taco Slot, CC Angel, Dunk Shoot 2, Super Mog Mog 2, and Cranky Condor. Each machine is faithfully recreated, and the player can choose from six different manufacturer's settings to practice various configurations. The game includes detailed stat tracking for each machine."
 }

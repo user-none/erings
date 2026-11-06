@@ -21,6 +21,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The Making of Nightruth (ザ・メイキング・オブ・ナイトゥルース) is a multimedia disc for the Sega Saturn. It is the FanDisc of Nightruth: Yami no Tobira."
 }

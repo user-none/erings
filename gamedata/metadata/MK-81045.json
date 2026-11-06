@@ -34,6 +34,15 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "11+"
+    }
+  ],
   "overview": "Many years have passed since the last war with Death Adder. But, as memories of those dark times begin to fade, another war is beginning. Out of the mists of time, a magical axe is discovered. The legend of the axe is well known throughout the land, for it is told that this axe is the very one which Gillius Thunderhead used to slay Death Adder.\n\nOver time, the powers of the axe have grown. It is said that the artifact can grant its owner anything his or her heart desires. Young and old, good and evil, many are drawn towards the power of the weapon. Thus begins the war of the Golden Axe."
 }

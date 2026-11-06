@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "Creature Shock is a first-person rail shooter with Full Motion Video and arcade-like elements. Aliens of all sizes and types will try to destroy the team, but each one has a weak point that can be exploited. The fighting takes place on the surface of asteroids and within mazes of passageways underground."
 }

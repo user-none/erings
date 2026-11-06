@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Action/RPG's don't get more real than this! Discover the ultimate fantasy world in this compelling epic adventure! An enchanted realm known as the Dream World has been captured an army of supernatural warriors, zombies, vampires and more infest the once peaceful land, awaiting new battles and conquests.\n\nYou are a hero, born to the sword. Your mission is to free Dream World from the grip of the undead maravders by using your wits, your sword, and few magic items you uncover in your travels."
 }

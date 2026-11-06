@@ -26,6 +26,11 @@
   ],
   "max_players": 8,
   "cooperative": true,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "NHL 98 features much faster and refined gameplay (now using four action keys instead of two, removing the need to double-tap to perform some actions), along other new features such as \"in-the-fly\" tactics developed by Marc Crawford, then manager of the Colorado Avalanche and new commentary lines from Jim Hughson and Darryl Reaugh and a re-worked interface. Graphics are improved from the previous version with the players being less angular, and thanks to 3Dfx support, with less pixels showing in the textures. The in-game presentation follows a TV-style script, zooming in players while displaying stats during clock stoppages.\n\nAs far as game modes go, in the year of the first Olympic Tournament with professional players, NHL 98 introduced the first real international competition, with 18 International teams to choose from. Other game modes include Season (option to pick between 25 or 82 games) and Playoff (best of 1, 3, 5 or 7 matches) and a Penalty Shootout mode."
 }

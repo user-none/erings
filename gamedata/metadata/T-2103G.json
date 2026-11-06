@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Jikuu Tantei DD is a detective noir adventure game with a futuristic setting. The game is one big cinematic drama which plays as an interactive movie (think Cyberia). The story takes place aboard a zeppelin ship Lorelei. In 2238 human race got the freedom to use the ability to travel back in time, which eventually led to the emergence of crime. You are a Raizou Narukami, a detective who runs an agency that specializes in space-time crimes. Womanizer at first glance, you are very skilled at what you do, namely in power of observation, reasoning and deduction. You are known as DD (short for Dracula Detective) because your are a direct descendant of legendary Dracula. Due to your genes, you also exert some superhuman powers and abilities."
 }

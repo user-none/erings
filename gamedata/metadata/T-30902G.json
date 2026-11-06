@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Delve into the depths of vast underground labyrinths, seeking aid from the spirit world in bringing life back to a dying planet! Chaos Seed is a role-playing game with elements of action and strategy blended in. Players will have to make smart use of their resources and use feng shui to their advantage to proceed."
 }

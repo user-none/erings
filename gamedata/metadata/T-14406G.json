@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Shin Megami Tensei Devil Summoner: Akuma Zensho is a companion disc for the game that includes new artwork and expanded information on all creatures and locations in the game."
 }

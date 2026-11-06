@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Cleopatra Fortune is a falling-block puzzle game featuring a cutesy anime Egyptian theme. Groups of stones and gems of different shapes fall from the top of a well. Gems can be cleared by enclosing them within a group of stones, and stones can be cleared by making complete rows from them. Blocks will fall when those under them are cleared, which can create chains for more points.\n\nThe game includes three different play modes. First is a standard endless mode where play continues until the player is overwhelmed by the blocks. Second is a versus mode for two players. Last is a puzzle mode where the player is given a set field, a set sequence of drops, and a specific goal such as clearing all the gems or achieving a chain of a certain length. The puzzle mode has the player rescuing Cleopatra's friends who have been trapped in a pyramid by the evil Sphinx."
 }

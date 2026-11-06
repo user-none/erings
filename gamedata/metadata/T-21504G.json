@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Tsūkai!! Slot Shooting is an action puzzle game that is a cross between a falling-block match game and a shooting game.\n\nBlocks of various colors fall randomly into the screen, and the player can move freely around the playfield and shoot upward. Shooting a block as it falls will destroy it and move it into the a slot display at the top of the screen; if three blocks of the same color fill the slot display, then color-changing special blocks will begin to drop, and when shot these special blocks will destroy all blocks on the playfield of the same color. Blocks above the destroyed ones will fall to take their place, and only in this situation will they disappear when lined up 3 or more in a row.\n\nEach stage has a set goal score which must be met to clear the stage; if the player is crushed or the blocks reach the top of the playfield, the game ends."
 }

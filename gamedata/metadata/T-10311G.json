@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "One day, a mysterious old woman presents a young boy with a deck of Tarot cards. Examining them transports the boy to a fantasy realm where adventure awaits.\n\nArcana Strikes is a role-playing game with a strong focus on collecting cards to battle various opponents."
 }

@@ -26,6 +26,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ],
   "overview": "In 1995 the increased power of the new wave of systems made 3D football games a possibility several companies investigated. Most of the features people later took for granted in football games were pioneered, or at least fairly fresh, when they appeared in the first of the Actua Sports titles.\n\nMultiple camera angles were available to view the full-3D action, with 3 Sheffield Wednesday FC players providing motion capture. 44 international squads of 22 players, each with 8 individual skill attributes, were featured. BBC commentator Barry Davies provided a full flowing commentary over the top. A full range of customised tournaments were available, as well as multi-player options allowing for both same-system and networked play."
 }

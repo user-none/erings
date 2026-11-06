@@ -20,5 +20,11 @@
       ]
     }
   ],
-  "cooperative": false
+  "cooperative": false,
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    }
+  ]
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Aquazone: Desktop Life Option Disc Series 4: Clown Loach is a Sega Saturn simulation game released exclusively in Japan. It is not technically a game, but rather a tropical fish simulator."
 }

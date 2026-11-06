@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Kidou Senshi Z Gundam (Mobile Suit Zeta Gundam) is an episodic side-scrolling action game based on the 1985 animated TV show of the same title. It is a direct adaptation of the TV series, including numerous clips from the show at key points in the story. This second part picks up directly after the events of the previous game, adapting the latter half of the series starting from the aftermath of the Gryps Conflict.\n\nThe game is very similar to the first Gundam title for the Saturn, and includes two main modes of play: ground-based run-and-gun shooting, and space-flight shooting where the player can move freely around the screen. Waves of enemies appear on each stage, sometimes from the foreground or background, and the player earns experience for destroying them; pilot level affects both available combat abilities as well as certain story and character events, and can be carried over from the previous game."
 }

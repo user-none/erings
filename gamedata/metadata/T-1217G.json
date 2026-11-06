@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "A sci-fi one-on-one fighting game in which several characters converge in the wastes of the far future and must fight each other for their own personal reasons aboard giant battle mechs.\n\nAs in One Must Fall, you select your pilot (who provides the storyline) and the mech (who provides the moves and stats) separately, and can also replace a few limbs and accessories to enhance your mech's capabilities.\n\nThe game uses 2D sprites for the graphics and controls and plays as most 2D fighting games, with both characters facing each other in a side-scrolling stage and with your attacks and moves being triggered by different combinations of controller motions and button presses. Features either a single player story-based tournament, or a 2-player Vs mode."
 }

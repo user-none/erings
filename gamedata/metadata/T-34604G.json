@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Find Love 2: The Prologue (ファインドラブ２ ザ・プロローグ) is a 1998 multimedia disc released in Japan for the Sega Saturn by Daiki. It serves as a promotional disc for Find Love 2: Rhapsody, released later."
 }

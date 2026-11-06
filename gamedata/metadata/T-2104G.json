@@ -27,6 +27,5 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
   "overview": "Kakinoki Shougi is a shougi game that was developed by and named for shougi AI programmer Yoshikazu Kakinoki. The game is designed to present shogi experts with a challenging level of AI shogi playing, with less emphasis on graphics and presentation. The game also gives players the option to customize the board's pieces for famous match recreations and handicaps."
 }

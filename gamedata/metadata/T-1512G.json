@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Shanghai is a puzzle game using MahJongg tiles in which you slide available matching tiles off the stack to reveal more tiles. Slide all 144 tiles off the board, and you win the game.\n\nThis game includes four versions of the classic Shanghai game: The Great Wall (Shanghai meets Tetris), Beijing (slide rows to make matches), Action Shanghai (clear tiles quickly before more appear), and Classic Shanghai (either regular or face down for an extra challenge)."
 }

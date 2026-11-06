@@ -24,6 +24,11 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Hattrick Hero S reminds us of the side-scrolling arcade soccer games in 2D that were popular in the coin-ops of the 90's, especially of the Super Sidekicks series. In this game we can choose among a large list of national teams (42 in total) from all the continents, and we can compete in either a friendly match, a championship, a world league or a penalty shoot out session. Each team counts with an \"Ace\" player (you can guess who he is by seeing \"Ace\" above his head during a match), or in other words, the man with the best skills in the team. The game also counts with a system that lets you execute special actions during a match, but these have to be \"exchanged\" for something called units (you start every match with 20 of them), so for example, if you want to execute an Hyper Shoot (the most effective shoot in the game) you will have 6 units less. These actions must be executed by your \"Ace\", and he can be as far as the area as he wants, because in all cases the shoot will still be almost unstoppable."
 }

@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Sakura Taisen Hanagumi Tsuushin (サクラ大戦 花組通信) is a Sega Saturn interactive newsletter on events concerning the Sakura Taisen franchise."
 }

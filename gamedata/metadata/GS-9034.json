@@ -28,6 +28,11 @@
   ],
   "max_players": 8,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "J.League Pro Soccer Club o Tsukurou! is a football (soccer) management simulation game and the first game in Sega's long-running management sim series. The player takes the role of the owner of a new Japanese football club and must build it from the ground up into a competitive team, with the ultimate goal of the club being admitted to the top league in the country, the prestigious J.League. With only a limited amount of funds available per year, the player must hire staff and scout players, manage sponsorships and publicity, schedule matches and training, and even chose the team's hometown and uniform colors."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "Elf o Karu Monotachi II is a video-based visual novel-style adventure game based on the anime series known internationally as Those Who Hunt Elves. It is a direct follow-up to the first game, retelling the entirety of the show's second season. The player watches as the story proceeds in animated sequences taken directly from the TV show, and can occasionally make a choice between two options for which action the characters should take; this includes alternate sequences not found in the show. There are also occasional battle sequences which take the form of a slot-machine mini game.\n\nThe game also includes a bonus disc which contains interview clips with the voice cast, bonus voice clips, and a gallery of production artwork."
 }

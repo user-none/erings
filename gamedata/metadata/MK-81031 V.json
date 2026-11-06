@@ -33,6 +33,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "Bootleg Sampler, despite its name, is an official Sega Saturn demo disc packaged with new consoles for a period in both North America and Europe. Like later demo discs, it features a number of playable demos and movie clips.\n\nPlayable demos:\n• Bug! (Only playable in the second and third versions. The first US version contains a Bug! FMV rather than said demo).\n• Clockwork Knight 2 (1995 demo)\n• Sega Rally Championship (1995-10-02 demo)\n• World Series Baseball (Saturn) (1995-09-29 demo)\n\nVideos:\n• Bug! (Only in the first US version. The second and third versions contain a playable demo of Bug!, instead of the video).\n• Daytona USA\n• NHL All-Star Hockey\n• Mystaria - The Realms of Lore\n• Panzer Dragoon\n• Virtua Cop\n• Virtua Fighter 2\n• Wing Arms\n• A compilation video, containing clips from Ghen War, Cyber Speedway, Virtua Fighter Remix, Black Fire, Astal, Mr. Bones, Congo the Movie: The Lost City of Zinj and The Mansion of Hidden Souls."
 }

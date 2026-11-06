@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Waku Waku Monster is a competitive falling-block puzzle game similar to Puyo Puyo, with the addition of light monster-raising elements. The player drops individual colored creatures into a well, and if three of the same color touch, they will be cleared and vanish; creatures above will fall to take their place, and chain combos will launch garbage block attacks at the other player. Clearing blocks also fills a meter, which can be used to cancel out incoming attacks. Clear capsule blocks also occasionally appear; these will capture whichever creature they land on, feeding it to the player's monster, which will upgrade the player's monster after the match and lead to various evolutionary forms which result in various garbage drop patterns.\n\nThe game includes a single-player story mode, as well as a two-player versus mode; only the story mode includes the monster-raising elements."
 }

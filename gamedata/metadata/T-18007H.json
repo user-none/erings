@@ -26,6 +26,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    }
+  ],
   "overview": "Mass Destruction puts players behind the controls of a one-man tank. The environments range from arctic to desert to urban. The player can blow up trees, buildings, walls - whatever you don't like the look. Enemies will come at you in tanks, planes, helicopters, and on foot. Each of the different weapons available to the player works best on a specific enemy. The player can use guided missiles for the helicopters and run over infantry men with the tank"
 }

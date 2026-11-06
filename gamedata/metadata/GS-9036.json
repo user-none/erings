@@ -27,6 +27,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Ninku: Tsuyoki na Yatsura no Daigekitotsu! is a one-on-one fighting game based on the manga and anime series Ninku. It features cel-animated characters on 3D backgrounds and includes eight playable characters from the series. The game is a versus fighter in the vein of Street Fighter II, and each character has a variety of unique moves, as well as special moves that can only be executed when their special power bar has enough charge. There is a single-player arcade mode and a two-player versus mode."
 }

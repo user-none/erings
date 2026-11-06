@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Part of the Shining game universe, Shining the Holy Ark is a pure console-style RPG (unlike Shining Force games, that were strategy/RPG hybrids). You play the role of a young swordsman Arthur, who decided to work as a mercenary for various people needing his services. On his first mission, the King of Enrich sends him to a mine, in order to find and punish a renegade ninja who has escaped from him. However, an accident occurs that makes Arthur realize that he'll have to do much more than his usual mercenary assignment, and that there is a true evil in the world that must be defeated at all costs.\n\nThe game features 3D graphics and utilizes first-person perspective for dungeons and battles. The turn-based battles are of a traditional Japanese RPG kind, except the addition of \"Pixie System\". In various places in the game you can find pixies who can later be used as allies in battles."
 }

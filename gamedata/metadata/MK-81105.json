@@ -29,6 +29,15 @@
   ],
   "max_players": 4,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "K-A"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "3+"
+    }
+  ],
   "overview": "Focused on national teams (12, including Italy, Spain, Denmark, Netherlands, England, Argentina, France, USA, Germany, Romania, Belgium and Brazil), the game offers a 2.5D environment (polygonal stadium and sprites for players) and three camera angles (back, isometric and side) with four zooming levels. Modes include Exhibition, World League (either single or double, with 44 matches and a grand final to crown the Grand Champion), S-League (just one round, 11 matches), cup knockout and penalty shootout, the game keeping track of statistical information of each competition. Gameplay is regular arcade, with simplicity being privileged over tactical knowledge or complex controls, with the game offering the possibility to choose between three types of controls. Other options include the ability to choose one of four difficulty levels, length of each half (3, 6 or 15 minutes) and weather conditions (fine, rain or random)."
 }

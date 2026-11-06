@@ -24,6 +24,11 @@
   ],
   "max_players": 4,
   "cooperative": true,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "One of only two tennis games released for the Saturn. Features include a 3 modes of play (tournament, exhibition and practice), 3 playing surfaces and 10 players."
 }

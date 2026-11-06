@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Mizuki Shigeru no Youkai Zukan: Soushuu-hen is a Japanese-style adventure game plus a multimedia database of youkai (spirits and ghosts of Japanese folklore) featuring illustrations and commentary by youkai scholar and GeGeGe no Kitarou creator Shigeru Mizuki. The database portion collects together the contents of three prior PC releases with information on a total of over 950 different youkai.\n\nIn the game section, the player has come to Mizuki-sensei's home to become his disciple, but he has gone missing. The player visits various locations to search for the missing professor, and encounters many different youkai in combat along the way. Combat is non-traditional; rather than attacking them directly, the player must use their knowledge of the various spirits to select the correct action or response to safely ward them off."
 }

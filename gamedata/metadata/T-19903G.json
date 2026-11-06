@@ -28,6 +28,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Elevator Action 2 -Returns- is Taito's sequel to their 1983 game. At the start of the game, you choose one of three characters, Kart Bradfield, Edie Burrett, and Jad the Taff. Each of them has their strengths and weaknesses, as well as different primary and secondary weapons. Your mission is to obtain the computer data that are hidden behind specially marked doors (colored red) in six buildings. Entering blue-colored doors during the game will trigger a spinning wheel that contains various items, and when you hit the fire button, what it stops on is what you get. These include point items, health items, machine guns, and rocket launchers. As with the original game, you can use elevators to travel between floors.\n\nYou can shoot various objects to destroy them, including barrels and drums, which can help defeat various enemies that include lackeys, zombie soldiers, karate agents, trench-coat goons, guard dogs, and more. Avoid being shot by these enemies. There are cameras scattered throughout each building, which can be destroyed. If you are sighted by one of these cameras, a brief siren goes off. You have limited time to clear each building. When time runs out, the building blows up and you lose a life."
 }

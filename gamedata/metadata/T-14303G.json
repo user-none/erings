@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "The game is based on the anime Gulliver Boy, created by Teruhisa Hiroi. Gulliver is a young boy who studies magic in a school in a small town in Italy, but is bored with the studies and craves adventure. After he gets his magical diploma, he goes to Venice to hook up with his best friends - the girl Misty, who has healing powers, and the genius inventor Edison. Together, they must stop the plot of the Spanish crown to dominate the world.\n\nKūsō Kagaku Sekai Gulliver Boy differs greatly from the Super Famicom interpretation of the anime. Unlike that action role-playing game, it is a traditional Japanese-style turn-based RPG. It utilizes traditional battle system with a four-heroes party, physical attacks and magic, etc. Stand-out features include a money system that is based on trading rather than obtaining gold from defeated foes, and the fact that the enemies are visible on the field and the combat initiates once Gulliver comes into contact with them, rather than appearing randomly.\n\nMuch of the exploration in the game is done by navigating a ship across the Mediterranean sea. Though story progression is linear, several areas of the game's fairly vast world can be explored in a non-linear fashion. The setting is loosely based on real world locations, with deliberately stereotypical, comical and anachronistic elements, involving science fiction and supernatural themes."
 }

@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "18"
+    }
+  ],
   "overview": "The goddess Swatty and the Seven Lucky Gods she commands are at it again, and they have bestowed upon you, the protagonist, a Star of Guidance to aid in your lack of fortuity in romantic affairs with the opposite sex. With six possible heroines to romance, where could things possibly go from here...?\n\nCan Can Bunny Premier 2 is the sequel to Can Can Bunny Premier, and the fifth Can Can Bunny title. The gameplay is quite similar to its predecessor, and continues in the vein of Cocktail Soft dating sim titles from this era."
 }

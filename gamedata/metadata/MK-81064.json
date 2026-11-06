@@ -39,6 +39,15 @@
   ],
   "max_players": 2,
   "cooperative": true,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "15+"
+    }
+  ],
   "overview": "The object of this arcade-type game is to meet a series of objectives, and to do so in such a way that each side will blame the other. The game has a linear structure, based on levels that present tasks of increasing difficulty, and all sorts of hazards and targets are encountered. These include military bases, power generators, land mines, infantry, tanks, submarines -- even sharks and huge, aggressive birds. Infantry elements are poorly armored, so they can be killed by being run over. In one mission, the only way that the player will be able to get enough time to escape is to open with a surprise attack, slowing pursuit by destroying a parking facility full of unattended troop transport vehicles. Power-ups are scattered throughout the levels. The Slambird carries a variety of explosive devices and line-of-sight weapons. Some of the explosive weapons can bounce in a parabolic trajectory, and in addition there are two laser cannons that can fire rapidly an unlimited number of times. These cannons are useful in case no other weapons remain, and they can be used to create complex ripple fire, which can be used to cover an area that is surprisingly wide. When underwater, propellers are used, while torpedoes are automatically used instead of missiles."
 }

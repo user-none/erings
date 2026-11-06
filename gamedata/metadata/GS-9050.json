@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Godzilla: Rettō Shinkan is an isometric-view real-time strategy game based on the famous kaiju monster movie series created by Toho. The player controls the JSDF forces and must attempt to repel Godzilla and other monsters, protecting Japan from destruction.\n\nEach mission contains a different map, scenario, and set of monsters to fight off. The player can select to various military vehicles and issue various commands to each, such as to move to a specific location or attack a particular target. Multiple monsters often appear on the same map, and may even fight against each other — not necessarily a good thing as they may cause immense collateral damage. To clear a stage, the player must defeat all monsters on the stage before either their forces are depleted or the city sustains too much damage.\n\nThe game includes a story scenario with 10 missions, as well as a free mission mode with an additional 10 missions."
 }

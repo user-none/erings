@@ -25,6 +25,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "MeltyLancer: Ginga Shōjo Keisatsu 2086 is a life simulation game and an expanded port of the PC game The Melting Pot Police: MeltyLancer. The game plays generally the same: the player determines the weekly schedules of six young Lancers; when they patrol and which days they have off, and what kinds of training they do to sharpen their skills. Battles can occur during patrols or special missions but are largely automated, with the player only having limited control such as ordering a Lancer to retreat.\n\nThe console versions of the game contain significantly revised simulation mechanics and story compared with the original PC version, with additional story events and full voice acting as well as completely revamped graphics and sound. The later Sega Saturn version additionally includes even more new scenario events, though is otherwise the same game as the PlayStation version."
 }

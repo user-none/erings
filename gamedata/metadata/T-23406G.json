@@ -28,6 +28,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "You are the genetically engineered Clan Mechwarrior. The Clans are invading the Inner Sphere. Join either the Wolf Clan or the Jade Falcon Clan as they pursue their own agenda against the Inner Sphere and other Clans. Take your advanced Omnimechs into battle against all comers. Win high warrior ratings (by using less mechs or smaller mechs than needed, completing secondary objectives, etc.) and you'll get chance at a promotion trial where you face superior odds in an arena. If you win, you advance in rank. If you are very successfully, you can make it all the way up to Khan, leader of the Clan!\n\nMechwarrior II was developed in-house by Activision as the successor to their original Mechwarrior. While this time there are no dynamic campaign and mercenary actions, the Clan culture is integrated into the two campaigns. Different clans have different mechs and different rules, even different weapons. You can customize your mechs in order to use less than the \"par\" force in order to get a higher rating. The full 3D environment wasn't pretty as this was before the 3D accelerators made their debut, but it's still better than anything that came before. Let addition of NetMech allowed users to fight each other online. When 3D cards came along, special versions were created to take advantage of 3D texturing. While not QUITE as replayable as Mechwarrior, it's nonetheless a classic."
 }

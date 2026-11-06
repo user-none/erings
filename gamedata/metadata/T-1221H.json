@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "M - Mature",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "M"
+    }
+  ],
   "overview": "Raccoon City has been completely overrun by mutant beasts and bloodthirsty zombies. You are a member of S.T.A.R.S.--a rescue squad sent into the community to investigate the ominous mansion at the core of the disaster. Take the role of operative Jill Valentine or Chris Redfield and uncover the secrets behind a radical, genetic research facility. With an array of weapons to master and horrors around every corner, the ultimate test may be just to make it out alive.\n\nExclusive to the SEGA Saturn version is a Battle Mode bonus mode, where, with limited ammo and under the threat of limited time, the player must survive a series of rooms filled with monsters."
 }

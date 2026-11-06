@@ -24,6 +24,11 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "E - Everyone",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "3D Baseball is a 3-D polygon baseball game with over 700 actual Major League players and their previous years stats to choose from. There are over 50 real-life batter stances that were motion-captured through the actual players themselves with five different dynamic camera angles to choose.\n\nThe standard modes apply such as Exhibition and Pennant along with a General Managers Mode where players can trade and even alter the stats of their players to create the ultimate team. It feature realistic animation and the voice talents of Van Earl Wright with over 1,000 different commentary phrases.\n\nThough it did feature the MLBPA (Major League Baseball Players Association) license, it did not however feature the actual MLB (Major League Baseball) team names and logos."
 }

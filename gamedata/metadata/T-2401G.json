@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Jissen Pachi-Slot Hisshōhō! 3 is a pachi-slot (Japanese slot machine) simulation game and part of Sammy's long-running series of gambling sims. It features a faithful recreation of five different real-life slot machines from various manufacturers: Aladdin Master by Sammy, Divers XX by Yamasa, Flipper 3 by Universal, Play Girl Queen 2 by Olympia, and Any 7 A by Takasago.\n\nThe main game mode is the \"Real Battle\" mode, in which the player selects one of five characters who each have different income and hours they are able to play, and must conquer a series of gambling halls by successfully earning enough winnings within a certain time limit. There is also the \"Strategy\" mode which lets the player select any configuration of any of the five featured machines, and practice without any time or money limits. Both modes include detailed progression and stat tracking."
 }

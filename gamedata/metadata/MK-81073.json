@@ -34,6 +34,15 @@
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "T - Teen",
+  "age_ratings": [
+    {
+      "system": "ESRB",
+      "rating": "T"
+    },
+    {
+      "system": "ELSPA",
+      "rating": "15+"
+    }
+  ],
   "overview": "AM2's ultimate 3D fighting experience smashes onto the Saturn, with 32 characters from Virtua Fighter, Fighting Vipers, VF Kids, Sonic Fighters, Virtua Cop 2 and more! Secret characters, new weapons and new moves including many from VF3. The biggest and best beat-'em-up EVER!"
 }

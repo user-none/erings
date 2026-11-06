@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Moon Cradle is a mystery adventure game which uses live-action video for cut-scenes and fixed isometric perspective during actual gameplay. The player controls the character directly while actions such as \"search\", \"talk\" or \"use\" are presented in a menu-selected manner."
 }

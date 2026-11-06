@@ -27,6 +27,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Game-Ware Vol.3 is a multimedia \"digital magazine\", and the third release in the quarterly series of the same title. As usual, this volume includes several playable game demos and original minigames:\n\n• Ejihon, a \"spot the different\" style game for one or two players which returns from the first volume with new puzzle pictures, where the player is shown an image filled with many kanji characters and must locate the one that does not match.\n• Onii-san, a simple point-and-click comedy adventure game.\n• Pipit Boy no Daibōken 3, a continuation of the puzzle games found in the previous releases; the goal is still to guide the boy to collect all the objects on the screen, but it is now a falling-block puzzle game where two players compete to build a path for the boy.\n• Protector Man: The King of Space, a simple Breakout-style game sponsored by razor company Schick.\n\nAlso included is a variety of multimedia content such as creator interviews, game previews, and an art gallery. This edition also includes the second chapter of the Virtua Fighter digital comic, \"Legend of Sara\"."
 }

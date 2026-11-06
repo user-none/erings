@@ -28,6 +28,11 @@
   ],
   "max_players": 6,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "Vatlva was only released in Japan, but most of the menus are in English. In the game, six players (also supports 1-6 human players via 6Player multitap) in vehicles move around on a 2D plane trying to kill each other. Players have a wide arsenal of weapons. The soundtrack is by Yuzo Koshiro."
 }

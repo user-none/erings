@@ -24,6 +24,11 @@
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "Not Rated",
+  "age_ratings": [
+    {
+      "system": "Sega",
+      "rating": "All"
+    }
+  ],
   "overview": "In the year 2099, an excavation somewhere in China inadvertently releases an ancient evil dragon that had been sealed within the Earth, which starts causing disaster all over the world. A man named Ken has come to China hoping to learn more about the dragons, and along with his companions, must seek the aid of the eight legendary dragons of China in order to once again seal the evil dragon and stop the destruction of the Earth.\n\nRyuuteki Gosennen: Dragons of China is a Japanese-style adventure game broken into chapters. The player can visit various locations to talk with different characters and obtain information, with the story generally proceeding automatically once the proper actions have been selected. There are also simple battle sequences which can occur at certain points; interaction in these battles is limited to selecting which of the three characters in the party should attempt and attack."
 }
