@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.1894
+        }
+      ]
+    }
+  ],
   "overview": "3x3 Eyes: Kyuusei Koushu S is an enhanced version of 3x3 Eyes: Kyuusei Koushu. It includes new animated sequences, new voice recording, graphical enhancements and an extra \"Making Of\" CD."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5754
+        }
+      ]
+    }
+  ],
   "overview": "The Super Dimension Fortress Macross: Do You Remember Love is a fast-paced sci-fi side-scrolling 2D shooter which very closely follows the storyline of the anime movie of the same title, allowing you to play through every battle sequence from the movie. You play the game as the main protagonist Hikaru Ichijyo and your craft can transform into Fighter, Gerwalk and Battroid modes any time during battle. Unlike the movie however, the game begins off the coast of South Ataria Island, with Skull Squadron preparing to battle the invading Zentradi fleet and there is newly animated cut-scene segments created just for the beginning of the game as well. Seconds after Skull Squadron takes off, the aircraft carrier Prometheus is sliced in half by a Zentradi attack fired from Earth's orbit. After you finish the first stage, all surviving Skull Squadron units fly toward the Macross, which executes a space fold, escaping. The actual beginning of the film starts at the second stage of the game."
 }

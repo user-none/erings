@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.6571
+        }
+      ]
+    }
+  ],
   "overview": "Japan Super Bass Classic '96 is a bass fishing game endorsed by pro bass fisher Katsutaka Imae. The player is tasked with winning various tournaments on order to win professional titles; winnings can be used to buy and upgrade equipment, with the player's rod, reel, line and lure all being customizable. The game also includes a practice mode to try out equipment before participating in a tournament."
 }

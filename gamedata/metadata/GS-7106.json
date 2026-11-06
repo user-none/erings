@@ -34,5 +34,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.2622
+        }
+      ]
+    }
+  ],
   "overview": "This special release of Cyber Troopers Virtual On is modified to exclusively support online play via the Sega Saturn Modem and XBand service. Unlike the \"Net Link Edition\" released internationally, this version has all single-player and local-mutiplayer options stripped out; gameplay is restricted to online play only.\n\nThe game boasts 8 fully polygonal droids, each with his own strengths and weaponry and 10 different arenas with their own layout and traps. Proceed through the entire campaign via subjecting yourself to \"virtual training\" and then facing off for the real thing against the other computer controlled droids, or go against a human opponent in multiplayer combat over Lan, modem, serial link or the same computer with split screen display."
 }

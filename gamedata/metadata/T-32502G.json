@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 3
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.3636
+        }
+      ]
+    }
+  ],
   "overview": "Steam Heart's is a 2D sci-fi vertically scrolling shoot-em-up with erotic content. The game takes place in the far future, on an alien planet dominated by seven elf-like or catgirl princesses that have fallen under the spell of a unique virus that has driven them mad and threatens to destroy the planet if all the rulers declare all-out war.\n\nOnly Blondia Varady (nicknamed \"Blow\") and his sister Fallandia have been spared from the disease and must pilot their fighter ships in order to penetrate deep into the domain of each princess, destroy their war machines, and administer the antidote. Fortunately for Blow, the antidote has been synthesized into his reproductive organ, so that means there is only one way to inoculate the girls....\n\nThe player controls the fighter ship through vertically scrolling stages, trying to destroy every ship that crosses its path and reach the end boss. The ship has a primary weapon that can be constantly upgraded by collecting power-ups, and a secondary slot for all sorts of collectible weapons that can be picked up in mid-air. The game features 2P-cooperative gameplay and cutscenes made of still images that explain the plot and depict the protagonist's encounters with each princess."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7408
+        }
+      ]
+    }
+  ],
   "overview": "Five young goddesses have been summoned on the orders of God: there's a shortage of guardians on Earth, and to decide who among them is fit to protect the people of Earth, these goddesses must prove their abilities through a test of leadership and compassion.\n\nPup-Breeder is a simulation game where the player takes the role of one of the goddesses, who is tasked with raising angelic creatures called \"pups\". These pups come in many different forms, which each have their own abilities and personalities — some may be good at fighting, some may have strong defense, some might have high agility or other unique skills — and the player starts out by selecting a team of five. Each of the pups functions like a virtual pet-style creature, tracking not only its health but also its trust and affection with the player.\n\nThe player character does not appear directly in the world or control the pups directly, but rather can issue commands to each of the pups such as to move or stop, use an item, attack a target, or activate a special ability. There are a variety of different missions which each have a different goal, such as causing the sun to rise, collecting shards of shooting stars, or defeating an evil familiar."
 }

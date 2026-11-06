@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.3148
+        }
+      ]
+    }
+  ],
   "overview": "Mechanical Violator Hakaider: Last Judgement is a light-gun rail shooter with light adventure elements based on the 1995 tokusatsu film Mechanical Violator Hakaider. Set 10 years after the events of the film, the player controls the titular anti-hero android Hakaider as he returns to Jesus Town in order to defeat Professor Gil and recover the arm that he lost in a battle against Waruda.\n\nEach mission consists of one or more first-person shooting gallery-style segments against either waves of enemies or a boss character, in which the player must shoot down targets and projectiles without taking too much damage. The player has several different weapons to choose from, which have different effectiveness and ammo limits. Certain segments also take the form of a simplified first-person adventure, where the player can explore environments and talk to characters, and there are occasional choices for the player to make which may affect the following action sequence."
 }

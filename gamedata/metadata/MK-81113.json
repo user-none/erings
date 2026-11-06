@@ -44,5 +44,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 87
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    }
+  ],
   "overview": "FEATURES: * All 700 Players * All 28 Teams * Stat Tracking in 12 Categories * Play-By Play Announcing * 5 Modes of Play (All-Star, Playoff, Exhibition, Home Run Derby, and Pennant Race)"
 }

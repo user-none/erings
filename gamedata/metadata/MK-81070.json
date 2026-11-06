@@ -44,5 +44,69 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 9.5
+        },
+        {
+          "score": 9.5
+        },
+        {
+          "score": 9
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 90
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 87
+        }
+      ]
+    }
+  ],
   "overview": "It was just another seemingly routine day for Bomberman. While flying on patrol, looking for threats to the sanctity of peace that the world so enjoyed, Bomberman stumbled upon something that could potentially throw it all into shambles. Deep in the tangled underbrush of the rainforest, a glint caught Bomberman's keen eye. Rising from the green depths, the Crystal Tower loomed. But the crystals which held the horrible monster Crator inside the tower were missing, and so was Crator.\n\nThen a radio message crackled into the cockpit: \"Bomberman, Mr. Meanie has unleashed Crator and is using his powers to conquer the world! You must get the crystals back before it's too late! The MeanieLand Amusement Park is their secret base. Please hurry!\"\n\nIt is up to Bomberman to regain control of the crystals and restore order to a crumbling planet, crushing the evil Mr. Meanie along the way. With that, a new chapter in the fight between good and bad begins...\""
 }

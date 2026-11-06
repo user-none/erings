@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.25
+        }
+      ]
+    }
+  ],
   "overview": "Private Idol Disc Vol. 6: Yoshida Satomi is a multimedia photobook of gravure idol Satomi Yoshida. It includes a gallery of photos and video interviews, as well as a simple rock-paper-scissors minigame and a quiz minigame. Completing the minigames will unlock bonus photos."
 }

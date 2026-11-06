@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5991
+        }
+      ]
+    }
+  ],
   "overview": "Daytona USA Championship Circuit Edition drives home the excitement of speedway racing more than ever before! Slick new full-screen graphics and two brand new extra circuits await as you select any one of eight turbo-charged cars to race in. Split-screen 2-player mode and a host of options including ghost car ensure that Daytona USA Championship Circuit Edition will set the pace in the race to the finish line."
 }

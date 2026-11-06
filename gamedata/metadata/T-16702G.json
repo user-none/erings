@@ -30,5 +30,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.535
+        }
+      ]
+    }
+  ],
   "overview": "Idol Mahjong: Final Romance 2 is the second game in the Final Romance series and the first to feature anime-style girls instead of digitized photos of real models. It is also the first to be ported to home systems. Like the first, you play strip mahjong against various girls. You can use your score to purchase various cheating methods."
 }

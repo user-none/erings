@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 3
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.7701
+        }
+      ]
+    }
+  ],
   "overview": "Quick to jump into the 32-bit bandwagon, Masaya developed their next Cho Aniki game for the PSOne and Saturn. The game is a 2d shooter which plays like a sequel to the first game, as you once again take control of either Idaten or Benten (the heroes of the original game) with the semi-nude bodybuilders Adon and Samsom returning to their role of option characters that hover around the player. The game plays almost exactly like the original TurboCD games, except the graphics have been completely revamped to make full use of digitized photographs.\n\n\"Chou Aniki: Kyuukyoku... Otoko no Gyakushuu\" on the Saturn is largely the same as the Playstation version which is entitled \"Cho Aniki: Kyuukyoku Muteki Ginga Saikyou Otoko\", except the Saturn version has increased difficulty."
 }

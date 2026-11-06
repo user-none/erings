@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 10
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4365
+        }
+      ]
+    }
+  ],
   "overview": "Victory Goal '96, the direct sequel to Victory Goal (not to be mistaken for International Victory Goal, which unlike the game in question was distributed for all regions), is the game that set the bases further development of Sega Worldwide Soccer 97 and the sequels.\n\nFrom the previous games of the series this soccer game just kept the title, because the game engine, music, video scenes and almost everything else, all had the same ingredients that in the West could be seen for first time with the later Worldwide Soccer 97. Also, just as its prequel, this game includes all the teams of the Japanese J.League (of which it had an official license), but on the other hand, it does not include any international teams. The game features commentary tracks by two of Japan's most famous commentators."
 }

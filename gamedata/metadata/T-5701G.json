@@ -27,5 +27,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.38
+        }
+      ]
+    }
+  ],
   "overview": "Idol Janshi Suchie-Pai Special is an arcade follow-up to the Super Famicom game Bishōjo Janshi Suchie-Pai that was later ported to several home systems. Like the original, it features Misaki Kyoko's alter ego, the superheroine Suchie-Pai, as she plays mahjong against various young, attractive female opponents. However, this game contains stripping."
 }

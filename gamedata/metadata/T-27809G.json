@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2727
+        }
+      ]
+    }
+  ],
   "overview": "Yuukyuu Gensoukyoku ensemble 2 is a fan disc for Yuukyuu Gensoukyoku 2nd Album, and like the previous one features a new side story, several minigames, and an art gallery."
 }

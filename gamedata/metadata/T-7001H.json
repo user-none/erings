@@ -33,5 +33,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 2
+        },
+        {
+          "category": "FunFactor",
+          "score": 3.5
+        }
+      ]
+    }
+  ],
   "overview": "The central character in this game is Spot, the little red guy from the 7-Up TV commercials. Spot has somehow become trapped in a movie projector. As he jumps from film to film, he encounters many classic film genres that make up all the different levels of the game. The main levels are a pirate movie, an adventure movie, and a horror movie, but there are many other bonus films to unlock.\n\nThe game is played from an isometric perspective. As you control spot, you have to collect 5 Hollywood stars per level to unlock hidden areas and ultimately complete the game 100%"
 }

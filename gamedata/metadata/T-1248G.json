@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "The Mad Gear gang is on the loose again! Take control of a total of 10 fighters (all from the original Final Fight) and foil them, making Metro City safe from crime once again.\n\nKnown as the last game released on the Saturn in Japan, Final Fight Revenge is a conversion of the arcade game (the only other Final Fight game released on that platform). As they battle 1-on-1 in a series of 3-D environments, one or two players control 10 characters from the original - the original three of Guy, Cody, and Haggar, plus enemy characters El Gado, Poison and Andore and four boss characters - Damnd, Sodom, Edi E. and Rolento.\n\nIn the single-player mode, the player fights through 6 opponents (followed by a final boss battle with a zombie version of the original Final Fight final boss Belger), armed with two punch buttons, two kick buttons and a special move button, which can used either to side-step (by holding while pressing up or down) or to pick up weapons and recovery items. Weapons that can be used against opponents include flamethrowers, lead pipes and machine guns. (Players can equip up to three at a time or toss one to their opponent.)\n\nIn addition, each player has a set of grappling moves, and three Super Moves that are available when they fill the corresponding Super Move gauge."
 }

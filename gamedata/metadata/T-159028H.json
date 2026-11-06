@@ -26,5 +26,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "Get ready to take it to the hole with Magic Johnson and Kareem Abdul Jabbar in Slam 'N Jam '96 featuring Magic & Kareem! Featuring fully rendered 3D arenas, players can execute the ever-famous sky-hook, pull off no-look passes, view instant replays for spectacular plays, and set up all kinds of offensive and defensive strategies. Additionally, Van Earl Wright returns as the play-by-play commentator!"
 }

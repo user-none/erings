@@ -34,5 +34,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1836
+        }
+      ]
+    }
+  ],
   "overview": "My Best Friends: St. Andrew Jogakuen-hen is a anime-style jigsaw puzzle game with mild erotic content. The player meets up with various pretty young ladies at their school, attempting to woo them with jigsaw puzzle prowess. Each of the eight girls has multiple snapshots that appear as a puzzle, and completing the puzzle will reward the player with an animated scene of that girl; if the player can complete the puzzle quickly enough, the animated scene will show the girl topless, and the player will also get that girl's phone number to view the scene again. After gathering all eight phone numbers, an additional topless puzzle image is unlocked for each of the girls."
 }

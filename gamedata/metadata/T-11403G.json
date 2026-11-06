@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.3
+        }
+      ]
+    }
+  ],
   "overview": "Jun Classic C.C. & Rope Club is a continuation of the T&E SOFT New 3D Golf Simulation series. It is played at the Jun Classic Country Club and the Rope Club in Tochigi Prefecture. Unlike most other games in this series, this one offers two golf courses each of which have three different routes of varying difficulty. The game itself is visually similar to other T&E SOFT golf games released around the same time as it runs on what is largely the same engine. Compared to the fixed viewpoint camera of the predecessors, this game features a cinematic camera, along with optional free roaming \"golf cart\" mode that can be activated from the menu."
 }

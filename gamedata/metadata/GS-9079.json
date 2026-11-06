@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 10
+        },
+        {
+          "score": 10
+        },
+        {
+          "score": 10
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.2349
+        }
+      ]
+    }
+  ],
   "overview": "In Virtua Fighter 2, the intrepid fighters return to the World Fighting Tournament. Take to the stage to see who will claim the championship title. Will it be Lau Chan, Kage-Maru, Wolf Hawkfield, Jeffry McWild, Akira Yuki, Jacky Bryant, Sarah Bryant, or Pai Chan? The answer lies within. Immerse yourself in this technically challenging game and see if you have what it takes to be the champion of the second World Fighting Tournament!"
 }

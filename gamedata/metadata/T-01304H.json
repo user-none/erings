@@ -32,5 +32,30 @@
       "rating": "T"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 3
+        }
+      ]
+    }
+  ],
   "overview": "Creature Shock is a first-person rail shooter with Full Motion Video and arcade-like elements. Aliens of all sizes and types will try to destroy the team, but each one has a weak point that can be exploited. The fighting takes place on the surface of asteroids and within mazes of passageways underground."
 }

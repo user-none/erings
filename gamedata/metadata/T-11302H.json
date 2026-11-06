@@ -36,5 +36,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 72
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 79
+        }
+      ]
+    }
+  ],
   "overview": "This adventure game puts the player in the shoes of Rincewind, a wizard whose sole purpose in life is to stay alive. He appears to be very good at it as well, because apparently the universe has decided to continuously challenge him. The game takes place in the humorous fantasy world created by Terry Pratchett. The world is called the Discworld, as it is actually a flat disc carried on the backs of four gigantic elephants, which themselves stand on the back of an even larger turtle.\n\nThe story is loosely based on the novel \"Guards! Guards!\"."
 }

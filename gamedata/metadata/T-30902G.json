@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.4424
+        }
+      ]
+    }
+  ],
   "overview": "Delve into the depths of vast underground labyrinths, seeking aid from the spirit world in bringing life back to a dying planet! Chaos Seed is a role-playing game with elements of action and strategy blended in. Players will have to make smart use of their resources and use feng shui to their advantage to proceed."
 }

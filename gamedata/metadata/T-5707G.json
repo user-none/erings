@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.1481
+        }
+      ]
+    }
+  ],
   "overview": "TurfWind '96 is a racing horse management simulation game endorsed by the famous Japanese jockey Yutaka Take. Similar to the popular Derby Stallion series, the player takes the role of a stable owner, breeding and raising race horses and entering them into races. The player has no direct control during races, with the jockeys and the race outcome being controlled by the computer according to each horse's stats.\n\nThe game includes full jockey and horse stats for the 1996 racing season, including a separate mode to peruse official stats, and Take himself appears in video clips to give the player advice. There are also several bonus videos of the 1995 G1 race series."
 }

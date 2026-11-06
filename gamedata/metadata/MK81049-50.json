@@ -29,5 +29,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 91
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 88
+        }
+      ]
+    }
+  ],
   "overview": "The Virtua Fighter family enters the next generation with a bang! Meet VF Kids! They're small, fast, and hold the secret to all 2,000 Virtua Fighter moves! With hilarious animations and sound effects, and running 20% faster than VF2, this is a must for all fight fans!"
 }

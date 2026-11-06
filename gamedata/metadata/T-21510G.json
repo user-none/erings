@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8
+        }
+      ]
+    }
+  ],
   "overview": "A boy named Kerun lives a rather boring life. One night, he spots a shooting star in the sky and makes a wish, but winds up getting more than he bargained for! The star hears him and appears before him to grant his wish, and he's whisked away through a portal to the land of Paneltia, where he must take up a sword and become the hero of this fantastic realm.\n\nPaneltia Story is a Japanese-style RPG with a twist: the world the player explores isn't fixed, but rather is constructed by the player as it is being explored. The player collects various \"panels\" representing different locations and types of terrain from enemies, item boxes, and shops; these can be placed on the map to create new areas to explore and find yet more panels. The game is divided up into stages, with the goal of each stage generally being to build up enough experience and strength to defeat a boss hidden somewhere in the map. Battles are turn-based affairs in the style of Dragon Quest, with the player controlling only the lone protagonist."
 }

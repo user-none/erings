@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.4444
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Gakuensai is a strip-mahjong game featuring a high school festival theme. The player is cast as the president of the school photography club, who wants to get some photos of his female classmates for upcoming school festival. The player can move around the school and nearby area to meet up with various characters; either female students who may offer to pose for a photo when defeated, or male students who will offer a salacious photo of one of the girls when defeated. The game is standard one-on-one riichi mahjong, though a notable feature is the \"Mecha-Moe\" system, whereby winning with higher-ranking hands will increase a gauge, which determines which of several photos the player will see upon defeating a girl at mahjong.\n\nThe Sega Saturn port censors the nudity, and adds an additional free battle mode as well as game rule option settings."
 }

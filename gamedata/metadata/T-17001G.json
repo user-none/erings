@@ -27,5 +27,36 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.15
+        }
+      ]
+    }
+  ],
   "overview": "Heisei Tensai Bakabon: Susume! Bakabons is a competitive falling-block puzzle game based on the 1990 animated series Heisei Tensai Bakabon. Pairs of blocks in four colors drop from the top of the screen, and the goal is to line up two or more blocks of the same color, with another pair of a different matching color at either end. Any blocks on top of the ones cleared will fall into the open space, potentially comboing together into chains. Clearing multiple sets of blocks in a combo or chain will send garbage blocks to the opponent's playfield, and also charge up a super move that triggers automatically at a certain threshold which can clear a large number of blocks from the playfield.\n\nThe game has a single-player story mode in which Bakabon's dad, refusing to wake up in the morning, gets sucked up by his wife's vacuum cleaner and sent to a strange puzzle world where he must defeat the other characters from the show in puzzle battles. There is also a two-player versus mode with nine playable characters."
 }

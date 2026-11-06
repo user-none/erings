@@ -40,5 +40,59 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 5
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4117
+        }
+      ]
+    }
+  ],
   "overview": "When a villain known only as Mr. Dark appears, trouble brews in Rayman's world. Mr. Dark captures the Toons - source of light and Rayman's friends. With no more light, evil creatures begin to roam, making the world unsafe for everyone. It’s up to you, as Rayman, to free your friends and put an end to Mr. Dark's dastardly schemes!\n\nRayman is a side-scrolling platformer starring the titular Rayman, a big-nosed chap with no arms or legs. Rayman can jump and use his hair to hover for a short period of time. He can also attack by throwing his fists, or winding up his fists for a more powerful punch. He can occasionally find special power ups that grant him unlimited flying power, giving him the ability to navigate through tricky mazes."
 }

@@ -24,5 +24,17 @@
   ],
   "max_players": 2,
   "cooperative": true,
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4458
+        }
+      ]
+    }
+  ],
   "overview": "Prepare to enter the bizarre side of Konami's creative mind with their Twinbee series! Take control of the fighter ships, Twinbee, Winbee, and Gwinbee, as you and a friend save some strange and bizarre worlds from even more bizarre enemies and freaks! This pack contains the arcade games Detana!! TwinBee (released in a home version for the PC Engine) and Twinbee Yahoo! (never released separately for home), in all their arcade glory!"
 }

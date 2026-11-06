@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.7291
+        }
+      ]
+    }
+  ],
   "overview": "One winter, the robotic blue cat from the future, Doraemon, takes Nobita and his friends on a trip into outer space. However, while they're flying across the galaxy, they wind up making an emergency landing on a strange planet after a collision... and are attacked by strange robots as soon as they land! Now, Nobita and his friends must figure out what's happened on this strange planet, and find a way to repair their ship and get home!\n\nDoraemon: Nobita to Fukkatsu no Hoshi (\"Doraemon: Nobita and the Planet of Revival\") is a side-scrolling action platformer, and one of the many titles based on the long-running children's cartoon. The game is divided into short platform stages, each with a specific objective or goal that must be completed to move on. Between stages, there are voiced visual novel-style sequences which move the story forward. There are sometimes choices available in these sections, which can affect which stage the player reaches next."
 }

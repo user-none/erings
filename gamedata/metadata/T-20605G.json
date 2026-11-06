@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4829
+        }
+      ]
+    }
+  ],
   "overview": "Batsugun was the last release from the arcade game development studio Toaplan and one of the earliest if not the earliest manic or \"bullet hell\" shoot-'em-ups. A large part of the team later went on to work at CAVE Co., Ltd. where the genre would be refined.\n\nBatsugun for the Saturn integrates the two revisions of the original 1993 arcade game, where the second one, Batsugun Special Version, was completed but never released because the company was bankrupt. Both versions were used to create the Saturn version by the Toaplan offshoot Gazelle. It is a military-themed vertical shooter with a choice of three weapons for the player's plane at start, with leveling-up of weapons determined by experience points, given when enemies are destroyed, rather than dropped power-ups."
 }

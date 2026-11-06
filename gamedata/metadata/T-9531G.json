@@ -24,5 +24,26 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "Yoshimura Shōgi is a digital conversion of the traditional Japanese board game Shogi for one or two players, and a spinoff of Konami's Eisei Meijin series of Shogi games. It takes its name from Nobuhiro Yoshimura, the Konami programmer who developed the game's CPU play algorithm.\n\nIt includes all of the features of the previous release — play against the computer or a second player, recording and playback of matches, playable records of historical matches, and a Tsume Shogi solver tool — packaged in a more streamlined interface with new graphics that simplifies the process of setting up a match."
 }

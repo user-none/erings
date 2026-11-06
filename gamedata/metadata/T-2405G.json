@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1282
+        }
+      ]
+    }
+  ],
   "overview": "The main game takes place on an Oahu Hawaiian island where player travels from Japan and solves animated jigsaw puzzles within the allotted time in order to unlock the next level. Aside from starting point in Japan, there are 15 move levels scattered across Oahu island. Levels are made in a way to tell the traveling story of Kimika and feature live-action animation that looks in the background of the jigsaw puzzle. Jigsaw puzzles aren't the typical in look and size but are mostly square in overall shape with a bit of embellishments inside which helps determine the shape and minimizes the number of places where it can fit. Player takes puzzle piece from the right side (two are visible on screen, but player can look through all remaining pieces and place them in any wanted order) and put them on top of the big portion of left part of the screen where the jigsaw puzzle with animated video in the background is placed. Kimika will tell you in her own voice if the placed piece of puzzle fits or not. Any reached levels can be selected and replayed from the travel map."
 }

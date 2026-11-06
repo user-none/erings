@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.9166
+        }
+      ]
+    }
+  ],
   "overview": "World Cup Golf takes the player to Puerto Rico's own Hyatt Dorado Beach Golf Course as they can choose from a bevy of fictional golfers or create their own in 18 rounds of golf. There are 15 types of tournaments to choose from including skins, medal and stableford to name a few. Players can also practice their swing on the driving range.\n\nPlayers can also customize weather conditions as well as choose from a plethora of camera shots including the \"Ball Cam\" that follows the ball to its location. Like many golf games, a meter is used to determine the accuracy and the power of the players swing and also features in-game commentary."
 }

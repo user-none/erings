@@ -32,5 +32,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
   "overview": "World Series Baseball 98 features the full MLB license, including 20 teams and 700 major players with updated rosters and schedules from the 1997 season. The three standard modes of the series - Exhibition, Season, and Playoff - are included.\n\nThe game also features an updated graphics engine compared to the previous installment, giving it more realistic visuals, including animations of the major batters, pitch's wind-ups and batting stances. There are also several camera angles to choose from. Play-by-play commentary is included as well."
 }

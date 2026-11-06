@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.6428
+        }
+      ]
+    }
+  ],
   "overview": "Moon Cradle is a mystery adventure game which uses live-action video for cut-scenes and fixed isometric perspective during actual gameplay. The player controls the character directly while actions such as \"search\", \"talk\" or \"use\" are presented in a menu-selected manner."
 }

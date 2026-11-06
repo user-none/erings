@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.0821
+        }
+      ]
+    }
+  ],
   "overview": "This is the second compilation of classic Nihon Falcom games redone for the Saturn. It contains remakes of:\n\n• Asteka II\n• Ys II\n\nAs before, all games feature newly remade graphics and music, as well as new gameplay features to counter the age of the gameplay mechanics in the games."
 }

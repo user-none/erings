@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 3
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "Pu-Li-Ru-La is a psychedelic side-scrolling arcade beat 'em up set in the magical land of Radishland. As the story goes, some evil magical entity has stolen the keys of time for the towns in Radishland, freezing time and turning every animal and creature into evil magical contraptions. Only Zac and Mel, empowered with their \"invented magic sticks\" are able to escape the curse and must thread through Radishland turning all the monsters back into their original form and recovering the keys of time.\n\nGameplay-wise the game is a side-scrolling beat 'em up in which you control your character in a 2.5D isometric plane as he clears each stage by beating the many wacky enemies with his stick and a few magic spells that are randomly selected whenever you start the game. At the end of each stage there is a harder \"boss\" creature you must defeat and upon doing so you proceed to the next stage.\n\nThe game is notable for its surreal graphic design, featuring digitized graphics merged with hand-drawn sprites and featuring mostly colorful nonsensical graphics. Features single player or co-op two-player gameplay modes."
 }

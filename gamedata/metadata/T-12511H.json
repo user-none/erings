@@ -32,5 +32,27 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 74
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 43
+        }
+      ]
+    }
+  ],
   "overview": "This interactive movie puts a new twist on the Frankenstein tale: you are the monster! You have been falsely accused of murder and executed. However, the scientist Dr. Frankenstein (played by Tim Curry) has found a way to bring you back to life. You wake up in his laboratory, and your goal is to find out what exactly happened to you and what role Frankenstein played in your resurrection. Will you be able to return back to your former self?\n\nThe game plays entirely from first-person perspective. You wander around the huge laboratory, looking for clues and solving puzzles. Sometimes events will happen in the game, triggered by careful research of Frankenstein's notes and other clues. The game features live actors filmed over pre-rendered backgrounds."
 }

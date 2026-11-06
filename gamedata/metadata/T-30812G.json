@@ -34,5 +34,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.5263
+        }
+      ]
+    }
+  ],
   "overview": "Shutsudou! Miniskirt Police is a mini-game collection and multimedia fan disc based on the TV variety program of the same title that ran on TV Tokyo between 1996 and 2005. There are five simple games in the package: a low-rider hydraulics competition, a top-down driving game where the player must avoid obstacles, a Breakout-style brick-breaker game, a vertical shooting game, and a card-matching memory game. All five games are themed around catching a glimpse of the titular characters' underwear. There are also two quiz games, a photo gallery, and numerous video clips of the actresses both in and out of uniform."
 }

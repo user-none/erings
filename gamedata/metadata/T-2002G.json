@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "World Evolution Soccer is a soccer game featuring 32 national teams with no official league license. Three modes are included: a World Cup season mode, a single-match Exhibition mode, and a Party Mode for a four-team mini-tournament. A notable feature is the high level of team formation and strategy customization, allowing the player to tweak how the CPU controls their team's players; this can be adjusted not just before a game but also during breaks in a match."
 }

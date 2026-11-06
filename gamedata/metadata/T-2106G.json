@@ -25,5 +25,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.9714
+        }
+      ]
+    }
+  ],
   "overview": "Simulation RPG Tkool is, much akin to its brethren in the RPG Maker line of games, a construction kit and editor to make RPGs. In this case, it's \"simulation\" RPGs or, as they're more commonly known, tactical/strategy RPGs in the vein of Fire Emblem and Shining Force.\n\nThe construction kit gives the player a menu based interface where it's possible to change almost every detail of the game being made, down to the character sprites, background music and individual statistics for each character."
 }

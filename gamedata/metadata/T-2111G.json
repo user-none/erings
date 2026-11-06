@@ -19,5 +19,17 @@
     }
   ],
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7936
+        }
+      ]
+    }
+  ],
   "overview": "Game Basic for SegaSaturn lets you develop pieces of software on your Saturn. This is an updated Basic language with specific and powerful functions for the Saturn. You can develop some demos, games, tools, music and anything else you can think of! You can make 2D and 3D views with rotation and moves. You can make programs that will be compatible with any peripherals: control pad, mouse, virtua gun, multi-tap, 3D control pad, RAM cartridge,... You can import images and sounds directly.\n\nWith the serial cable provided, you can connect the Saturn to your PC (it works from Win95 to Win XP without any problems). With the help of the Basterm program, you can develop on your PC (which is really more comfortable), and then transfer your work to the Saturn directly. Saving your work is also easier on your PC than using the Floppy Disc Drive. One great feature is that you can use your PC keyboard to control Game Basic directly on the Saturn. The only drawback is that you must have a serial port on your motherboard, a DB25-DB9 converter, and the max speed you can get is only 19200 bps!\n\nGame Basic for SegaSaturn is a powerful tool if you want to do some basic programs on your Saturn for fun, but keep in mind that your work will only work with the Game Basic program, and not a stand alone."
 }

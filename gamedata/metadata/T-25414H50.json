@@ -26,5 +26,17 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 88
+        }
+      ]
+    }
+  ],
   "overview": "All the characters from the first three Mortal Kombat games return for the ultimate battle. You can play as Kano, Reptile, Mileena, Kung Lao, Shang Tsung, Sindel, Sketor, Stryker, Nightwolf, Sheeva, Kitana, Scorpion, Sonya, Smoke (Cyber Ninja), Rain, Jade, Baraka, Johnny Cage, Ermac, Noob Saibot, Sub-Zero (Unmasked), Sub-Zero (Classic), Jax, Rayden, Cyrax, Liu Kang, Smoke (Human), Kabal, Goro, Kintaro, Motaro, or Shao Kahn.\n\nThis game is one-on-one martial arts fighting. The player can choose from over thirty different characters, all with their own fighting style and their own special moves. Trilogy differs from the other games in that you can play combinations of people that otherwise isn't possible, such as old Liu Kang vs. new Liu Kang, etc."
 }

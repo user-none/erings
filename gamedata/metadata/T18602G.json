@@ -27,5 +27,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.7037
+        }
+      ]
+    }
+  ],
   "overview": "This game follows the traditional rules of Japanese chess with one player trying to put the opposing one in checkmate. Every move made is dictated with voice-overs."
 }

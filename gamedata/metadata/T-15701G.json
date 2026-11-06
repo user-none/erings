@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.8979
+        }
+      ]
+    }
+  ],
   "overview": "Bishoujo Senshi Sailor Moon SuperS: Various Emotion is 2D (with pseudo-3D graphic) fighting game, based on Sailor Moon (Super S) anime series, with story given through anime cut-scenes. The player controls one of six different characters in story mode: Sailor Moon, Sailor Chibi Moon, Sailor Venus, Sailor Mars, Sailor Mercury and Sailor Jupiter. Versus mode features additional playable characters such as Sailor Pluto, Sailor Saturn, Sailor Uranus and Sailor Neptune. Each character has own set of unique fighting moves. Bishoujo Senshi Sailor Moon SuperS: Various Emotion is a typical fighting game - the players choose character and fights in series of matches, using punches, kicks and magic attacks."
 }

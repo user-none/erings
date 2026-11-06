@@ -29,5 +29,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 2.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 2.5
+        }
+      ]
+    }
+  ],
   "overview": "You'll need tough studs and big bolts... Get bent over six radical terrains. White-knuckle driving and extreme weather conditions. Rampage your rig with actual four wheel independent suspension and real vehicle motion. Gut-wrenching multiple views with hard-rocking, adrenaline-pumping music. Max out your truck, crunch the fenders and kiss your competition, but don't drive it into the ground."
 }

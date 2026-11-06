@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.1739
+        }
+      ]
+    }
+  ],
   "overview": "FEATURES: * All 700 Players * All 28 Teams * Stat Tracking in 12 Categories * Play-By Play Announcing * 5 Modes of Play (All-Star, Playoff, Exhibition, Home Run Derby, and Pennant Race)"
 }

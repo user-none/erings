@@ -32,5 +32,27 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 65
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 45
+        }
+      ]
+    }
+  ],
   "overview": "Travel in time and step into the world of Atlantis, a civilization rich in wonder and sophistication. Reigning over this island of peace and plenty is Queen Rhea who has mysteriously disappeared. Find the truth by entering the life of a young hero named Seth and solve the mysteries of this fascinating universe. Atlantis will immerse you with its award winning 3D graphics, puzzling gameplay and engaging story."
 }

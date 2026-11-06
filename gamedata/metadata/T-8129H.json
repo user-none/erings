@@ -32,5 +32,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 2.5
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 3.5
+        }
+      ]
+    }
+  ],
   "overview": "One of only two tennis games released for the Saturn. Features include a 3 modes of play (tournament, exhibition and practice), 3 playing surfaces and 10 players."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 3
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "A platypus family accidentally loses their eggs so the father must go out and retrieve them from the river. Turns out it won't be that easy since a duck picks up the eggs so they have to fight over who owns the eggs. After defeating the duck the eggs keep rolling off to another animal over and over again. Will they ever return home? \n\nMotteke Tamago with Ganbare! Kamonohashi is a top-down Bomberman-style multiplayer arcade action game, and an enhanced port of the PC Engine game Motteke Tamago. This version includes the same arcade mode as the original release, and also adds a single-player story mode with multiple stages and new creatures to play as other than ducks, such as frogs and platypus.\n\nPlaying as one of a cast of cute characters the player will move around a arena collecting eggs and dash attacking into opponents. The dash attack will cause the opponent to drop all their eggs. After picking them up the eggs will hatch after a short time which will then require the player to get them back to the nest which will give the player points. Whoever has the most points after 3 rounds will be declared the winner."
 }

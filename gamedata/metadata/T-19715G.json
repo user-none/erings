@@ -34,5 +34,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.8695
+        }
+      ]
+    }
+  ],
   "overview": "Highschool Terra Story is a visual novel-style love adventure game. The protagonist is a second-year high school student at Satsuki Academy, who has learned that he'll be moving in three months and decides to pursue romance with his classmates before then. The game is a simulation-style game in the vein of Tokimeki Memorial, with the player's actions affecting three different stats — intelligence, athletics, and creativity — which in turn determine which of the six romantic interests will show interest in the main character.\n\nThe original PC version of the game includes explicit sexual content; the later Saturn port is still suggestive but censors the explicit content. The Saturn version also adds the option to view each girl's daily schedule, and includes some minor scenario additions."
 }

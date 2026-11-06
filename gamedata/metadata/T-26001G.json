@@ -34,5 +34,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.125
+        }
+      ]
+    }
+  ],
   "overview": "Okudera Yasuhiko no Sekai wo Mezase! Soccer Kids: Nyuumon Hen (奥寺康彦の世界を目指せ！ サッカーキッズ 入門編) is an educational game developed by JAMP and published by Fujitsu Parex for the Sega Saturn. It it is aimed at teaching children about football (soccer), and features former Japanese footballer Yasuhiko Okudera, who was manager of JEF United Ichihara Chiba when the game was released."
 }

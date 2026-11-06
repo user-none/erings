@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.6739
+        }
+      ]
+    }
+  ],
   "overview": "A Reploid scientist named Dr. Doppler begins creation of a new city for Reploids, which will bring a new era of peace to the Reploids and humans. But something goes terribly wrong, and now Mavericks have begun to appear everywhere! It's up to X and Zero to find out who is behind this Maverick revolt and bring them down for good!"
 }

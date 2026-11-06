@@ -35,5 +35,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.0588
+        }
+      ]
+    }
+  ],
   "overview": "Tōya Kumono and his friends Seishirō and Kasumi are fairly average high school students living a normal life, until one day they are suddenly attacked by strange men, and a young woman named Riko appears to assist them. Riko was an assistant to Kasumi's father, a scientist researching technology to harness supernatural abilities called Augments and Opuses. Tōya and his companions receive Augments of their own and must now try to stop the mysterious group using these powers for evil.\n\nDevicereign is a Japanese-style adventure game with tactical RPG-style battles. The bulk of the story proceeds in a visual-novel style, with the player visiting various locations to trigger events and interact with different characters; the story will branch and lead to different situations depending on the player's location and dialogue choices.\n\nOccasionally, battle sequences reminiscent of Tactics Ogre will occur, with the player controlling Tōya and his companions in turn-based isometric combat. Each character has an action gauge, and each action such as moving, attacking, or using special skills will raise the gauge. This gauge will continually replenish when no actions are being taken, and the player can pause to issue commands at any time so long as that character has enough time available for the selected action. Each character has a unique Augment, and can equip various Opuses to unlock different kinds of abilities. If all characters in the player's party are defeated, the game is over and must be restarted from the last save."
 }

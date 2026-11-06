@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6027
+        }
+      ]
+    }
+  ],
   "overview": "Another entry in the Power Instinct series. Groove on Fight changes the entire atmosphere of the game and introduces several gameplay changes to the original formula.\n\nThe game is set once again around the fighting tournament organized to decide the fate of the Gouketsuji clan, but the action takes place decades after the last tournament in a dark retro-futuristic world. Additionally, the bloodlines of the Gouketsuji clan have grown thin and now the tournament has been opened to foreign families, thus resulting in a new cast of characters that all but replaces the original fighters.\n\nGameplay-wise Groove on Fight plays as a team-based 2-on-2 2D fighting game, with each player selecting two fighters and being able to tag freely between them at any point in the fights a la X-Men vs. Street Fighter. Your objective is to defeat all the challenger teams and then face of against your teammate to decide who gets to be the new head of the clan. Also a new dodge and knockout attack has been added to the basic controls, and the game features four player simultaneous play in Vs mode."
 }

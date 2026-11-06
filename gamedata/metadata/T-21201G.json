@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.9062
+        }
+      ]
+    }
+  ],
   "overview": "Mainichi Kawaru Quiz Bangumi: Quiz 365 (roughly, \"The Quiz Show that Changes Every Day: Quiz 365\") is a quiz game themed like a daily television variety show. It features different sets of themed questions depending on the date when playing, including trivia questions specific to the current date or day of the week, and includes various themed sections imitating TV show segments as the player progresses. The game includes numerous types of questions, including regular multiple-choice questions, questions based on illustrations of photographs, and even logic deduction challenges based on various situations. There are also several minigames that can appear throughout the game.\n\nThe original arcade release is for one or two players, while the Sega Saturn version adds an additional multiplayer mode for up to six players. The Saturn version also adds a handful of additional quiz question types."
 }

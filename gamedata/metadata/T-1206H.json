@@ -32,5 +32,30 @@
       "rating": "T"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4.5
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 4.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
   "overview": "It's Street Fighter as you always remember it, with some new moves, characters and combo systems, as well as a more polished look and feel.\n\nThe new moves available for each fighter, called Super moves, allow them to fire off very powerful moves. A bar at the bottom of the screen represents the power that you have to use for the moves. You start the first round on 0, and each attack that you make adds power to the bar. Once you reach level 3, you can unleash the special attacks, that can sometimes KO the opponant.\n\nThe other major change over the Street Fighter 2 series are the Alpha counters. These can be used to counter an on-coming attack after blocking."
 }

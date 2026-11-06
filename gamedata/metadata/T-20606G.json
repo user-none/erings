@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.6
+        }
+      ]
+    }
+  ],
   "overview": "Gekka no Kishi: Ōryūsen is a digital conversion of the traditional Japanese board game shogi for one or two players, based on the manga series Gekka no Kishi by Junichi Nojo. The main story mode follows protagonist Shosuke Himuro as he battles through a shogi tournament against each of the other opponents. There are also practice and jōseki modes, as well as a free battle mode for one or two players where any of the characters can be selected. The practice and free battle modes include a range of rule configuration options."
 }

@@ -30,5 +30,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "This release of Teitoku no Ketsudan III includes the game along with the Power Up Kit expansion pack, which adds numerous features and new content to the base game:\n\n• Seven additional campaign scenarios depicting fictional what-if situations.\n• Seven additional short scenarios based on specific WW2 battles.\n• Removed restrictions on upgrading unit performance.\n• New weapon types added.\n• Various game system adjustments and improvements."
 }

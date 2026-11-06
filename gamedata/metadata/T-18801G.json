@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7037
+        }
+      ]
+    }
+  ],
   "overview": "This title acts as an activity center based on the titular Lupin the 3rd. Contained in the CD are theme songs, character profiles with clips and information, maps of crime scenes, theme songs from the Lupin III movies, Story Digests providing Lupin III lore, and Drawings containing sketches of the anime in the works."
 }

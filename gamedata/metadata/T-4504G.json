@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4311
+        }
+      ]
+    }
+  ],
   "overview": "Gambler Jiko Chuushinha: Tokyo Mahjongland is a riichi mahjong game based on the manga by Masayuki Katayama, and a sequel to Katayama Masayuki no Mahjong Dōjō. The game includes three different modes: the main Story Mahjong mode lets the player select either Hideyuki or Dorao and follows their visit to a strange mahjong-themed amusement park; Date Mahjong Anniversary mode lets the player pick from one of nine male characters and attempt to win the heart of one of 18 female characters by playing mahjong; and Free Battle mode is a standard match play mode where any of the 51 characters can be freely selected for a regular match.\n\nSaturn version features completely redone graphics and sound, and includes an additional 5 characters in the free battle mode, but is otherwise the same game."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.9678
+        }
+      ]
+    }
+  ],
   "overview": "A traveler named Fred has lost his memory. The only thing that gives him a clue to his past is a mysterious tattoo on his forehead that leads him to a strange place called City of Mists. Wandering through the bizarre locations of the town, Fred has to reveal the secret that leads to his past and to stop the evil plans of the maniacal Lord Gordon.\n\nLunacy is a first-person adventure of the Myst school, with a simple interface and many complex puzzles."
 }

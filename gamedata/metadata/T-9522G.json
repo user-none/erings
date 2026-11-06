@@ -26,5 +26,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.8947
+        }
+      ]
+    }
+  ],
   "overview": "Nijiiro no Seisyun (虹色の青春) is the first story in the Tokimeki Memorial Drama Series trilogy which takes place within the same years of school life depicted in the original Tokimeki Memorial: Forever with You, but focuses on a shorter time period. Each of the three games features different protagonist who are all childhood friends of Shiori Fujisaki, the main heroine from the Tokimeki Memorial series. Player can enter the name of the protagonist at the beginning of the game, or accept the default one.\n\nIn this, first story, the protagonist is a high-school sophomore who is member of a soccer club. As substitute player he doesn't get much chance to play, but is secretly practicing in order to gain skill level and show his teammates and the coach why he should play. Luckily for him, he's not alone, as the manager on the team, Saki Nijino, is supporting him in his training. Unlike visual novel gameplay style, which is also present, you can often move mouse cursor around the screen to interact with objects (i.e. look, take, throw, etc.) and characters (.e. look, talk, call to, etc.), and while talking to characters there will be various topics and sub-topics you can talk about. Beside adventure style gameplay, the game also features soccer mini-games which requires you to kick the ball at the designated target to score a point. That gameplay elements is most similar to golf games, where you adjust the point where you want to kick the ball and use a power-bar to select the intensity of your kick."
 }

@@ -30,5 +30,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4722
+        }
+      ]
+    }
+  ],
   "overview": "Tokimeki Mahjong Graffiti: Toshishita no Tenshi Tachi is a strip mahjong game and the follow-up to Tokimeki Mahjong Paradise. While nominally a sequel, it features a completely different cast of new characters. It is a standard 2-player riichi mahjong game with a variety of rules options. The main mode is \"Date Mode\", in which the player must earn enough points by winning at mahjong to cause each girl to remove their clothing in fully-animated scenes. There is also a free battle mode and a \"Memories\" mode where completed reward scenes can be reviewed."
 }

@@ -32,5 +32,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "Part of the NBA Jam series of basketball games, College Slam allows you to choose from over 40 real college teams and take part in head-to-head games, tournament games, and season-long play. The gameplay is arcade-style two-on-two fast action featuring backboard shattering wild dunks, power-ups and other crazy moves. The game also features fight songs from all the available teams."
 }

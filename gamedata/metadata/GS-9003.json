@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.3789
+        }
+      ]
+    }
+  ],
   "overview": "Gale Racer is a 1st-person racing game where the scenarios are 2D and all of them correspond to 20 zones across the United States. The only available camera is the one inside the car, from where you can see the wheel and indicators (again, in 2D). Also, the game features weather effects, like rain, fog and night, for which you should use either the headlights or the windscreen wiper to succeed in the race.\n\nThe Saturn version is similar to the Arcade version except that your rivals are fully polygonal cars. It also adds Full Motion Video sequences, as well as a CD soundtrack."
 }

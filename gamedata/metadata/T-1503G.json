@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.6956
+        }
+      ]
+    }
+  ],
   "overview": "Hissatsu Pachinko Collection is a pachinko simulation game featuring recreations of six real-life pachinko machines licensed from pachinko manufacturers Daiichi and Fuji: Dance Dance 2, Arejin, CR Big Slotter 2, Sunrise, Excite, and Arrange Man.\n\nThe main game mode is a simulation mode where the player visits various pachinko parlors which each have their own operating hours and sets of machines. In addition to playing various machines with the goal of winning as much as possible, the player can also return home to rest or play a round of mahjong against the computer. In addition, there is also a free play mode where the player can practice on any specific machine with a variety of options, as well as an online competition mode where the player enters a password from a (now-discontinued) online service to compete with other players."
 }

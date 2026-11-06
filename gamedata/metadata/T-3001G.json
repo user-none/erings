@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2608
+        }
+      ]
+    }
+  ],
   "overview": "Honkaku 4-nin Uchi Geinōjin Taikyoku Mahjong: The Wareme de Pon is a 4-way riichi mahjong game based on a series of television specials which aired between 1995 and 2008 on Fuji TV. The show featured many actors, athletes, and other celebrities playing mahjong, with commentary provided by professional mahjong players. This game version includes a tournament story mode, a free battle mode, and a watch mode, along with detailed player records and rule setting options.\n\nThe game features the likenesses of 10 contemporary celebrities to play against: music producer Yasushi Akimoto, actress Miyoko Asada, manga author Yoshikazu Ebisu, actor Morio Kazama, actor Shinobu Sakagami, comedian Akira Shimizu, baseball player Masayuki Dobashi, singer Akira Nishikino, actor Daijiro Harada, and actress Shigeru Muroi."
 }

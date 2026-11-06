@@ -31,5 +31,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "Game Nihonshi: Kakumeiji Oda Nobunaga is a historical simulation game with an emphasis on the \"historical\"; while similar to military strategy games such as Advance Wars, it is intended to teach real Japanese history through both the story and strategy gameplay. The game recreates 10 historical events of the life of Oda Nobunaga, from the battle of Iwakura Castle in 1558 through to his death in the Honnō-ji Incident in 1582, as turn-based strategy sequences in which the player controls Nobunaga and his troops, and must meet certain criteria to complete each mission. Animated sequences between each mission dramatize the events of the real historical figure's life."
 }

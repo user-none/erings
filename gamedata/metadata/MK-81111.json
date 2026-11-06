@@ -29,5 +29,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 2
+        },
+        {
+          "category": "Sound",
+          "score": 1
+        },
+        {
+          "category": "Control",
+          "score": 2.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 2.5
+        }
+      ]
+    }
+  ],
   "overview": "This version of the SEGA Sports NFL franchise was released only for the SEGA Saturn. It features all fully licensed NFL teams and their respective logos along with updated rosters for the 1996 NFL season. It also has the option to create a brand new NFL team from scratch if the player chooses to and even create their own plays that can be used in games.\n\nThe standard game modes apply here such as Exhibition, Season, etc. and keep extensive track of stats in over 70 different categories and over 150 offensive and defensive plays to choose from. Eight friends can also go against each other using multi-tap."
 }

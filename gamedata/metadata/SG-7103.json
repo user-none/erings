@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 10
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6479
+        }
+      ]
+    }
+  ],
   "overview": "Sega Saturn's revolutionary 3D graphics power brings the arcade action home! Punch-it out with eight polygon pummeling fighters: Jacky, Sarah, Akira, Lau, Pai, Wolf, Jeffry, and Kage. Includes all 700 butt-whoopin' moves from the arcade hit. Hear every punch, smack and bone crack in CD surround sound. Dynamic replay perspectives show every knockout blow!"
 }

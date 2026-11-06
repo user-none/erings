@@ -30,5 +30,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.053
+        }
+      ]
+    }
+  ],
   "overview": "Tenchi and the many beautiful ladies who live with him are going on vacation! On Ryoko's insistence, the group is off to a hot springs resort... but not just any hot springs, they're traveling to an entire hot springs planet! However, once they get there, it turns out Ryoko doesn't actually know where the resort is. Add in a mysterious young girl named Mimiri, and it's going to be an adventure for Tenchi and his friends just trying to have a relaxing vacation.\n\nTenchi Muyou! Mimiri Onsen: Yukemuri no Tabi is a Japanese-style adventure game based on the Tenchi Muyou anime series. The game is fully-voiced, not including even a dialogue display or subtitles, and progresses as is standard for Japanese adventure games. In each scene, the player can inspect various parts of the scene, move between locations, and talk to each of Tenchi's companions, with the story generally progressing after all relevant options have been exhausted. There are ten different endings depending on the player's choices and who they decide to talk to."
 }

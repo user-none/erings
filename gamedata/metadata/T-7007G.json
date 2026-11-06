@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.3333
+        }
+      ]
+    }
+  ],
   "overview": "hyper 3-D Pinball is a pinball game. The 6 pinballs you can play in the 3D full screen-modus or in the classic 2D scroll-modus. The themes of the pinballs are Science Fiction (Star Quest), Horror (Monster), Racing (Road King), Underworld (Gangster), Fantasy (Myst & Majik) and Fair (Funfair). Every pinball has multi-ball gaming, animations (esp. ball-locks) during the game and intermezzos in the scoring field."
 }

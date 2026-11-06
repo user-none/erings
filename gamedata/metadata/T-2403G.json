@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.75
+        }
+      ]
+    }
+  ],
   "overview": "Angel Paradise Vol.1: Sakaki Yūko: Koi no Yokan in Hollywood is a puzzle game featuring live-action video clips of gravure model Yuko Sakaki. There are two types of puzzles: jigsaw puzzles where the player must pick up and place pieces in the correct place to fill in portions of the video, and sliding-tile puzzles where a certain portion of the video must be correctly arranged. The main story mode is presented as the four days of a travelogue visiting Hollywood, California; each day includes two video puzzles of each type, plus a \"bonus stage\" which consists of an extra video of photo of Sakaki. There is also a data room mode where one can read various personal facts about her, and the options menu also lets the player peruse any completed videos and photos."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.8857
+        }
+      ]
+    }
+  ],
   "overview": "The Star Bowling Vol. 2 directly expands on the first game's concept, providing five more real-life actresses to bowl with. As before, winning against each girl will unlock video clips of them, and there are multiple ball and lane types to choose from. New in this edition is a trial mode where the player must clear a sequence of pin setups with a limited number of balls, and the multiplayer mode now supports up to four players."
 }

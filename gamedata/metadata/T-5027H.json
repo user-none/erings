@@ -39,5 +39,46 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5.5
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 70
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 81
+        }
+      ]
+    }
+  ],
   "overview": "NBA Live 98 offers the player all teams, players and stadiums of the 1998 NBA season. More than 350 faces got scanned to improve realism. Also some new moves like crossover or fade-aways are implemented. You can play single games, whole seasons, the playoffs or new things like manager career or 3-point-shootout in the style of an all-star-game."
 }

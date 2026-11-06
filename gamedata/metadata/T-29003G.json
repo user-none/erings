@@ -30,5 +30,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "Go III Professional: Taikyoku Igo is a digital conversion of the ancient Chinese board game Go, part of a series of such games produced by Oxford Softworks. Like the previous release, this version offers play against 12 different CPU skill levels or a second player, options for 9x9, 13x13, and 19x19 game boards, handicap options, Chinese or Japanese rule variations, and a variety of board graphic options. New in this version is the option to set turn time limits for each player."
 }

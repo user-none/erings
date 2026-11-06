@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.1538
+        }
+      ]
+    }
+  ],
   "overview": "Fishing Kōshien is a fishing game based on a TV show produced by TV Osaka. \"Kōshien\" refers to an annual high school baseball tournament held in Japan, and the show (and this game) adapts that format to fishing; eight high schools each send a team of three to enter a fishing tournament, and each round tasks the contestants with a different type of fishing. The game consists of four rounds: a black bass morning tournament, Kenzaki boat fishing, Japanese carp fishing, and Saipan big game fishing. Each round eliminates two teams from competition, and the goal is to be the winning team at the end of the competition."
 }

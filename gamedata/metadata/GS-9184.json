@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.3052
+        }
+      ]
+    }
+  ],
   "overview": "Dragon Force II: Kamisarishi Daichi ni is a real-time strategy and role-playing and the follow-up to Dragon Force. It is set 500 years after the events of the first game. The player follows a group of monarchs that come together to face a new threat looming over Legendra. The story also delves into what happened to the original Dragon Force after Madruk's defeat.\n\nCompared to the first game it adds a laboratory system which lets the player research new skills. It also introduces the capacity to have two separate types of soldiers in the same army, thus allowing ground troops to be aided by air troops, for instance."
 }

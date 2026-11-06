@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5492
+        }
+      ]
+    }
+  ],
   "overview": "RayStorm is a shoot'em-up game created for the arcades, later ported to the Saturn as Layer Section II. Although there is no story connection, it is often thought of as the spiritual successor to RayForce, which had similar gameplay.\n\nYou have 2 weapons at you disposal, a vulcan gun and a lock-on missile attack. You can also do 2 special attacks by using the lock-on system in a special way. The graphics are all in 3D, but the gameplay mechanics are in 2D. There are 7 stages, each ending with a giant end boss."
 }

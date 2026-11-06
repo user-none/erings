@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "Big Ichigeki! Pachi-Slot Daikōryaku: Universal Museum is a pachi-slot (Japanese slot machine) gambling simulation game. It includes faithful recreations of a total of 12 different slot machines from manufacturer Universal, both then-contemporary machines and also older ones from the company's long history of gambling machines. There is no campaign mode, but each machine offers multiple machine setups and there is detailed stat and progression tracking."
 }

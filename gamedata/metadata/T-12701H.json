@@ -32,5 +32,49 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 8
+        }
+      ]
+    }
+  ],
   "overview": "Iron Storm is a traditional turn-based strategy game. The original Japanese release was the second entry in Sega's Advanced Daisenryaku series, with gameplay very similar to that of it's 16-bit predecessor, changing some details and using 3D animations for the combat cutscenes. The game uses a hex-based map and features fog-of-war, weather, unit experience, unit upgrading, supply, and other common strategy wargame features.\n\nUnlike the previous game, three campaigns are available instead of one. Japanese, as well as United States forces can be commanded now in addition to German units. The scenarios that are played during a campaign can change depending on the battle results - a successful player may invade North America for example. There are also ten scenarios with pre-set forces separately available for selection in Standard Mode, during which the control of all involved armies can be switched to a human player."
 }

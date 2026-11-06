@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.867
+        }
+      ]
+    }
+  ],
   "overview": "Sega Ages: After Burner II is essentially an upgraded version of its predecessor, adding throttle control which allows the players to adjust their fighter's speed during flight. There are also three new stages, bringing the total to 21 and various gameplay and music tweaks."
 }

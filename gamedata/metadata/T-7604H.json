@@ -33,5 +33,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "Target or be targeted!\n\n1941 and the Two opponents. Two strategies. The year is scene is the Pacific. Japanese Zeros appear on the horizon, marking the beginning of World War II. From Pearl Harbor to unconditional surrender, this is your battlefield. PTO II delivers the power to control this infamous war. With new technology, faster and better war machines are at your disposal.\n\nCommand the guns of the mighty Missouri, launch devastating Japanese fighter attacks, or storm the beaches of Okinawa. India, Australia, and the east coast of the United States mark new regions for enemy domination. Three campaigns await the most ambitious of generals while single-ship engagements prepare you for more!\n\n• Play one of three major campaigns or ten short scenarios\n• Set your own victory conditions\n• Select from 120 warships, 60 fighters & bombers, 20 submarines & 10 categories of tanks\n• Command forces from 70 strategic bases around the globe\n• Intercept & decipher enemy messages using technologically advanced weaponry\n• Access biographies on WWII's most legendary heroes\n• One or two player excitement"
 }

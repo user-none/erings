@@ -25,5 +25,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7938
+        }
+      ]
+    }
+  ],
   "overview": "Vandal Hearts is a turn-based strategy RPG. It follows a fixed plot-line with set battles, focusing more on strategic elements than adventure elements.\n\nThe combat takes place in a series of 3D grid based maps and each character in the party has a certain amount of movements they can perform each turn. As the game progresses, other characters join and leave the party and as they increase in level they can progress along different paths of development. Between each battle there is a cut scene that develops the plot using the same 3D engine as the combat (and often the same areas).\n\nIn between battles you have the opportunity to talk to people in cities as well as purchase different equipment for the up coming battles."
 }

@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.6597
+        }
+      ]
+    }
+  ],
   "overview": "Kekkon Zenya is a multimedia disc for the Sega Saturn. It was followed by Kekkon: Marriage."
 }

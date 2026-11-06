@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.9
+        }
+      ]
+    }
+  ],
   "overview": "Heiwa Pachinko Sōshingeki is a pachinko simulation game featuring recreations of four real-life pachinko machines licensed from pachinko manufacturer Heiwa: CD Meiga, CD Ryujin, Daisangen, and Hayabusa. The main game mode has the player visiting various pachinko parlors to play each of the machines and attempt to win as much as possible. The game also includes two customization modes: the first lets the player adjust the arrangement of the pins on each board, while the second lets the player combine various layouts and background graphics to create a custom machine."
 }

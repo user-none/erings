@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6488
+        }
+      ]
+    }
+  ],
   "overview": "Clockwork Knight: Pepperouchau no Fukubukuro is a limited-edition compilation of Clockwork Knight and its sequel on a single disc, which includes a number of updates and bonus features:\n\n• Movie On Parade mode, which allows the player to watch any cutscene from either game.\n• Boss On Parade mode, which lets the player fight a boss rush of all boss encounters from each game.\n• In-game cutscenes are presented in higher video quality.\n\nAlso included in the package is a 1996 \"3D calendar\" featuring artwork from the game.\n\nPresumably, this limited period was the Christmas 1995/New 1996 period due to it's Mid-December 1995 release date, the 1996 Calendars included and the name \"Fukubukuro\", itself is a reference to a New Year sales custom in Japan of the same name with large discounts for bundled items, which matches up with the reduced price of this release over buying each game individually."
 }

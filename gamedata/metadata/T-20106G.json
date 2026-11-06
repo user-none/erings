@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.2022
+        }
+      ]
+    }
+  ],
   "overview": "The protagonist of the game is a Japanese high school student, who was frequently transferred from school to school in various cities of Japan. During the summer holidays, he receives an anonymous letter, containing only one sentence: \"I want to meet you\". He decides to travel to all the cities where he attended high school, and resume the contact with the girls who could have sent him this letter. But which one did send it, and which one is going to be his true love?..\n\nSentimental Graffiti is what is usually referred to as dating simulation. Instead of following a story, like in adventure games, the player makes choices that influence his relationships with the game's female characters, thus shaping his own story.\n\nThere are twelve cities to travel to, and twelve girls to have a relationship with. Compared to some other dating simulations (such as Tokimeki Memorial games), the gameplay system in Sentimental Graffiti is rather simple, focusing on freedom of movement and choice rather than statistics.\n\nThe player can choose between various means of transportation (different kinds of train, plane, boat, etc.), and different locations within each city. The backgrounds are digitized photos of real locations in Japan, while the characters are hand-drawn anime style pictures."
 }

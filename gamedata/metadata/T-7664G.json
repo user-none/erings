@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.3235
+        }
+      ]
+    }
+  ],
   "overview": "Nobunaga no Yabou: Shouseiroku is a turn-based tactical strategy game set in 16th century feudal Japan. It is the seventh title in the Nobunaga's Ambition series."
 }

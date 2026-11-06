@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.9274
+        }
+      ]
+    }
+  ],
   "overview": "Following the events of the first Angelique game, Angelique Limoges has become the queen of Cosmos, and her former rival Rosalie - her aid. Now a whole new Cosmos has appeared, and it's time to choose a new queen for it. The candidates this time are Angelique Collet (the protagonist of the game) and Rachel Hart.\n\nNew in this sequel is the ability to work with three different instructors, developing mind, sense, or dignity of the heroine, which will influence the way she interacts with other characters and also affect the behavior of the Guardians."
 }

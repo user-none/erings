@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "A compilation of two classic Irem shooters, Image Fight and X-Multiply. Both are based on the superior arcade versions (Image Fight was ported to the NES.) Image Fight is a top-down blaster through the blackness of space, while X-Multiply is very similar in design to Irem's most known shooter, R-Type (it even features add-on components similar to the option subship.)"
 }

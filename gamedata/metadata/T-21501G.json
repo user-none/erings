@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 3
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.2631
+        }
+      ]
+    }
+  ],
   "overview": "In the award-winning tradition of Tetris, comes BreakThru! This time, your goal is to make as many bricks disappear as you can before time runs out. Click on a group of same-colored bricks to remove bricks and make the wall come tumbling down."
 }

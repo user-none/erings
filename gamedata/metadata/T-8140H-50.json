@@ -32,5 +32,27 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 63
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 37
+        }
+      ]
+    }
+  ],
   "overview": "It's a fight to the finish as Batman and Robin take on the dark side of Gotham City's underworld! Power-Up with devastating special moves and gadgets, then master the unique combo system which allows up to 400 hits! Batman Forever the Arcade Game - 100% computer-rendered street brawling arcade action!"
 }

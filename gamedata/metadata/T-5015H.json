@@ -39,5 +39,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 67
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 75
+        }
+      ]
+    }
+  ],
   "overview": "NBA Live 97 is a basketball game with an emphasis on realism. You can choose from all of the NBA teams, create a team with players you create yourself, or choose a team formed by the All-Star players of the east or West coasts. When you create a player yourself you can customize the player to a high degree. There are over 60 offensive and 10 defensive set-ups. Match options include an exhibition match, a whole season or the playoffs."
 }

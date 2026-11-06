@@ -34,5 +34,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 76
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 53
+        }
+      ]
+    }
+  ],
   "overview": "You'll need tough studs and big bolts... Get bent over six radical terrains. White-knuckle driving and extreme weather conditions. Rampage your rig with actual four wheel independent suspension and real vehicle motion. Gut-wrenching multiple views with hard-rocking, adrenaline-pumping music. Max out your truck, crunch the fenders and kiss your competition, but don't drive it into the ground."
 }

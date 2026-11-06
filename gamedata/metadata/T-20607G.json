@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5454
+        }
+      ]
+    }
+  ],
   "overview": "Bokan to Ippatsu! Doronboo Kanpekiban is a vertically-scrolling shoot-em-up based on the Time Bokan anime franchise produced by Tatsunoko Production and best known for the Yatterman series. The player controls the villainous Doronjo and her two henchmen, fighting against the heroes of the various Time Bokan shows while piloting various mechanical contraptions. There are initially six vehicles to pilot, with three more unlocked as the game progresses; each has a different set of weapon abilities, and can temporarily transform into a huge and highly-destructive super form after collecting enough powerups.\n\nSaturn port adds an additional stage with a new boss to fight, a new animated opening movie, and additional voice acting for all characters."
 }

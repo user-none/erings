@@ -30,5 +30,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1666
+        }
+      ]
+    }
+  ],
   "overview": "Virtua Photo Studio is a live-action photo shoot game similar to the earlier Virtual Cameraman series from the same developers. The player chooses from one of three models and does a photo shoot with them; this takes the form of taking pictures as a video plays, which are saved for later viewing. After each shoot, the model will change into increasingly revealing outfits — from cosplay to lingerie to a \"bonus\" nude shoot."
 }

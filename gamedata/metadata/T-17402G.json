@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7478
+        }
+      ]
+    }
+  ],
   "overview": "Ten years ago, the elite officer Ovan was assigned to the president's security detail at his inauguration. Following a barely-averted assassination attempt, he attempts to track down the group responsible, but his plane is shot down and he's soon branded a traitor, wrongly accused of masterminding the attack. Forced to flee his home planet, Ovan becomes a mercenary and eventually finds and joins the group responsible for the assassination attempt, hoping to exact his revenge.\n\nQuoVadis 2: Wakusei Kyoushuu Ovan Rei (\"The Ovan Rei Planet Assault\") is a sci-fi real-time strategy game. It is the sequel to QuoVadis, though the gameplay is completely different and the story is largely unrelated despite taking place in the same universe. The player commands a squad of various primary and support units, with the primary interaction being simply to direct units around the map as they will attack automatically when within range of enemies. Each mission has specific objectives such as taking control of a location or protecting certain units from attack as they travel across the map, and between missions the player can configure the loadout and characteristics of each unit in detail according to the next mission's requirement."
 }

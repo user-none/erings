@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.1153
+        }
+      ]
+    }
+  ],
   "overview": "In Strahl, the story takes place in a world where magic and monsters roam the land, terrorizing innocent villagers. The player takes control of a young warrior who sets out to root out the source of evil and bring peace and tranquility back to the land.\n\nThe gameplay is the same as Space Ace, Dragon's Lair and Time Gal where the player presses buttons at a certain time to either avoid obstacles or fight enemies in order to advance to the next screen. As the game progresses, the changes in the world are shown throughout the game depending on the actions of the player.\n\nIn 1994 the game was ported by Sega to the Mega LD platform in both Japan and North America, being the only Mega LD game to be published by Sega. The publishing rights were later picked up by Media Entertainment who released Sega Saturn and 3DO ports as Strahl: Himerareshi Nanatsu no Hikari (シュトラール 秘められし七つの光). The Saturn release was not released outside of Japan, though the 3DO version of the game was localized for a US audience simply as Strahl."
 }

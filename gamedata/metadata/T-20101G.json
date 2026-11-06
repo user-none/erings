@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8837
+        }
+      ]
+    }
+  ],
   "overview": "Tanjou S: Debut puts the player into the role of a music company agent, who has to work with three potential stars of entertainment: three young girls named Aki, Kumi, and Saori. In the beginning of the game, the player views the statistics of each girl and her personality description. Afterwards, the training begins. Most of the game is spent planning schedules for the girls. Practicing music skills, working, having a vacation - everything has an influence on the girls' statistics. It is important to keep the girls happy and reduce their stress; at the same time, having vacations without practicing will diminish their professional skill. Keeping the right balance is the key here.\n\nAfter a period of training, the player chooses which specific branch he/she wants the girls to compete in: commercial photos (model), staging a musical, performing a pop concert, making a movie, etc. Depending on the player's preparations and previous training, the girls will get higher or lower ratings. The player-controlled group competes against other agencies in a league, and results are shown after each major event."
 }

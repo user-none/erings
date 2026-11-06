@@ -46,5 +46,69 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.5
+        },
+        {
+          "score": 5.5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 94
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 82
+        }
+      ]
+    }
+  ],
   "overview": "Worldwide Soccer 98 picks up where its predecessor stopped, adding two new stadiums, new animations, faster gameplay, and the most important, club teams from England, Spain and France for a total of 60 teams adding to the 48 of the International mode. While the game still lacks a license (except the English league, that has real player and team names), the name editor is still present. In the commentary box, Gary Bloom is joined by former England international and 1966 World Cup winner Jack Charlton.\n\nThere are seven games modes: Friendly match, Club exhibition, Worldwide Cup, Club League, Cup Tournament and Penalty shootout."
 }

@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "Sankyo Fever S Vol.3 is pachinko simulation game, and part of the Fever series. It contains digital recreations of five real-life pachinko machines made by Sankyo: CR Fever Super Nine JX, Fever Magical Mumu-chan, Fever Powerful III, Fever Queen II, and Fever Big Chime. There is no campaign or story mode, but each machine has various configuration and stat tracking options and can be freely played."
 }

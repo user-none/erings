@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.5789
+        }
+      ]
+    }
+  ],
   "overview": "Saturn Bomberman Fight!! uses the basic formula of previous titles of the franchise like Saturn Bomberman, but strays from it in some aspects. It uses an isometric perspective in a 3D-polygon environment, where up to four characters of the Bomberman universe can fight each other in battles, either controlled by the AI or a human companion.\n\nPlayers start out with the ability to jump over obstacles and throw bombs without having to collect powerups first, and there is also a health meter, so it's possible to survive more than one bomb blast. A brown horse is the only mount available, it can move quickly, absorb damage, and swallow bombs. Aside from the core battle mode, there is a story mode (which is rather similar to the battle mode in that it consists of matches against computer players) and a survival mode which goes endlessly on until the player is defeated."
 }

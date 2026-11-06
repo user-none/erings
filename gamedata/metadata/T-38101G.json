@@ -31,5 +31,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.9714
+        }
+      ]
+    }
+  ],
   "overview": "Ojousama o Nerae!! is a visual novel-style love adventure game. The protagonist, Kenji Yamamura, is a high school senior who should be studying for his college entrance exams, but has instead decided to confess his love to the girl he's infatuated with — Mitsuki Saitōin — in hopes of spending the summer with her instead. But she seems completely out of his league, and so it won't be as simple as just writing her a single letter.\n\nThe game progresses in basic visual-novel style, with the player selecting dialogue options at certain points during conversations and occasionally selecting which location to go to next from a list. There are a total of 7 different possible romantic interests to pursue, including Mitsuki herself. The original PC version of the game includes explicit sexual content, which is censored to only the minimum degree necessary for the Sega Saturn release."
 }

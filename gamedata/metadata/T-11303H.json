@@ -32,5 +32,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 68
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 70
+        }
+      ]
+    }
+  ],
   "overview": "You probably feel like a crash test dummy when you're playing this game - it's not only a racing game, but you get points for wrecking your enemies! The amount of points you get depends on how you hit them ... e.g. you get more points for getting them do a 360 other than driving into theirs sides at high speed. The game has more to offer: a head to head mode with only two cars or the legendary destruction derby itself - a huge arena, every car starts at the edge of it, and then - have a nice crash!"
 }

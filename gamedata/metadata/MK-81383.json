@@ -45,5 +45,69 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 8.5
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 9
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 93
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 82
+        }
+      ]
+    }
+  ],
   "overview": "Shining Force 3, set in an ancient civilization where battles between Good and Evil were commonplace. You and your party face many battles along the way, you'll need both brawn and brain in equal measures if you wish to succeed in this quest. A truly Epic game featuring sensational battle scenes. Traverse across vast lands with full 360 degrees movement, enter lush towns where you'll be able to upgrade your arsenal of weaponry and meet potential party members. You'll also meet a host of interesting characters along the way, some friendly others not so. With over 50 + hours of gameplay Shining Force 3 is one of the biggest Saturn RPG's to date."
 }

@@ -44,5 +44,69 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.5
+        },
+        {
+          "score": 3.5
+        },
+        {
+          "score": 4.5
+        },
+        {
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 80
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 82
+        }
+      ]
+    }
+  ],
   "overview": "Be prepared to meet your maker! Anything goes in this 360-degree tournament fighter - upgraded for Sega Saturn. You've got to pulverize all 9 opponents - including the never-before-seen Kupeed - with a vast array of special combo moves and expert weapons skills! Losing means paying the ultimate price - your life! Includes a never-before-seen new character and tons of deadly new moves! If you are successful, even greater challenges await you as hidden challengers emerge to take you on!"
 }

@@ -44,5 +44,59 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6.5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    }
+  ],
   "overview": "Many years have passed since the last war with Death Adder. But, as memories of those dark times begin to fade, another war is beginning. Out of the mists of time, a magical axe is discovered. The legend of the axe is well known throughout the land, for it is told that this axe is the very one which Gillius Thunderhead used to slay Death Adder.\n\nOver time, the powers of the axe have grown. It is said that the artifact can grant its owner anything his or her heart desires. Young and old, good and evil, many are drawn towards the power of the weapon. Thus begins the war of the Golden Axe."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7538
+        }
+      ]
+    }
+  ],
   "overview": "It was Team Aquila's first creation as a sub-department of Sega CS1, and the first in the Victory Goal series. Being released in 1995, it also stands as one of the first 3D football games, though the players are represented as 2D sprites.\nVictory Goal was announced alongside the Saturn in early 1994, under the working title of Virtua Soccer. However, it is only assumed Virtua Soccer became Victory Goal - in this early incarnation, only simple demo footage was shown (as was the case for Clockwork Knight, Daytona USA and Panzer Dragoon - only Virtua Fighter was partially playable), with no specific details on the team listings.\nContrary to popular belief, Victory Goal was a Japanese exclusive, featuring teams from the Japanese J. League. Its engine would be adapted and J. League teams replaced with international teams in Sega International Victory Goal. Victory Goal is hence sometimes referred to as J. League Victory Goal to make the distinction."
 }

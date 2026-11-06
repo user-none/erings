@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.421
+        }
+      ]
+    }
+  ],
   "overview": "Honkaku Shougi Shinan: Wakamatsu Shougi Juku is a shogi game featuring the endorsement of professional shogi player Masakazu Wakamatsu. In addition to a standard play mode for one or two players, it includes a variety of features and modes designed to help beginner shogi players improve their skills. There is a \"cram school\" mode where the player's skills are first measured, and then the game provides advice and challenges meant to help the player practice their weakest points. There is also a \"tsumeshogi\" shogi puzzle mode with three levels of difficulty, a \"3-on-1\" mode where the player must defeat three different opponents under specific restrictions, and even a \"blind shogi\" mode the player is only shown moves as they are made, and must remember the layout of the board."
 }

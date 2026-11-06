@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.3017
+        }
+      ]
+    }
+  ],
   "overview": "What happens when you take several signature Capcom fighters, squish them down into chibi (small or SD) versions of themselves, and give them a whole collection of wacky moves and over-the-top costumes? You get Pocket Fighter! Take on one of several pint-sized Capcom characters in this wacky, colorful fighting game."
 }

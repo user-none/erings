@@ -35,5 +35,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.6875
+        }
+      ]
+    }
+  ],
   "overview": "Lode Runner Extra is a stand-alone expansion for Lode Runner: The Legend Returns, featuring 110 new levels for advanced players and an integrated level editor. The gameplay remains the same in this action-platformer, where the objective is to collect all the gold nuggets and bars scattered around each stage to activate a portal to the next level. Red monks chase the main character around the many platforms and ledges, killing the adventurer when finally reaching him. New tools and other helpful pieces of equipment are slowly introduced with cutscenes showing their usage."
 }

@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.1304
+        }
+      ]
+    }
+  ],
   "overview": "Farland Story: Habou no Mai is an independent side-story to the Farland Story series. The game is set in the same time line as the second and the third \"mainstream\" Farland Story games, 20 years after Arc has become a king. Peace has returned to the world, but on the continent of Ionia, an emperor is plotting an evil scheme. His son Riad refuses to accept the methods of his father, especially when he wants to use Serena, a girl he loves, for his plans of war and conquest. During a quarrel, Riad attacks the emperor's minister, and is forced to flee the castle together with Serena. The adventure of the runaway prince begins...\n\nGraphically and gameplay-wise, the game is similar to other Farland Story games, although its setting is generally more dark. The game consists of large strategic battles, during which you move your party over the battle location, attacking enemies physically when they are in range of your weapons, and casting healing and offensive magic. Like in other Farland Story games, the death of the main character (Riad in this case) means instant Game Over."
 }

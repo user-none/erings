@@ -23,5 +23,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.2857
+        }
+      ]
+    }
+  ],
   "overview": "Voice Idol Maniacs: Pool Bar Story is a top-down billiards game similar to Data East's own Side Pocket, where the eight opponents are all popular voice actresses. There are three game modes: Date mode allows the player to select any opponent and game type and play rounds, unlocking video clips of that girl as games are won; Tournament mode has the player compete against each opponent in order in a specific game type; and Trick mode tasks the player with sinking all the balls in 16 different trick shot setups."
 }

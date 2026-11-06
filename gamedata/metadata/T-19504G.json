@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5441
+        }
+      ]
+    }
+  ],
   "overview": "Roommate: Ryōko in Summer Vacation is the second game in the trilogy centering around Ryouko Inoue, your roommate for the time of the story. Ryouko just came from abroad and decided to use her summer vacation to return to Japan. Arriving hot and sweaty from the airport, she rings your door bell and after taking a quick shower tells you all about her trip abroad. For the time being, she'll be staying with you and be your roommate.\n\nThe game plays as a visual novel where you read dialogues and occasionally select answers when the choices present themselves. Also, you can freely move around the house which is presented in a top-down view. By entering certain places you will instigate a dialogue or be able to perform other actions, depending on the place and situation at hand.\n\nShokai Genteiban (First Print Limited Edition) of the game also includes 3 trading cards featuring artwork from the game."
 }

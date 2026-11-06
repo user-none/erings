@@ -31,5 +31,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 5
+        },
+        {
+          "category": "Sound",
+          "score": 5
+        },
+        {
+          "category": "Control",
+          "score": 4.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
   "overview": "You have just stumbled upon a most intriguing book, a book titled Myst. You have no idea where it came from, who wrote it, or how old it is. Reading through its pages provides you with only a description of an island world. But it's just a book, isn't it? As you reach the end of the book, you lay your hand on a page. Suddenly your own world dissolves into blackness, replaced with the island world the pages described. Now you're here, wherever here is, with no option but to explore.\n\nMyst is a first-person point-and-click adventure where the player controls a character known as The Stranger. Magically transported into the world described in the book, he needs to explore Myst Island and solve its mysteries. The game is presented as a series of static scenes where the player acts with the environment by clicking and manipulating objects. There are no enemies and it is not possible to die. Through Myst Island, the game is further divided into mini-worlds set in different ages accessed through different books.\n\nThe game's interface is reduced to a single cursor for navigation and interaction. Rather than collecting items and using them to solve puzzles, the player must gather subtly placed clues and manipulate complex mechanical devices in order to advance in the game. The world of Myst is mostly uninhabited, and the game has very few live-action scenes with characters and dialogue."
 }

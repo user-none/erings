@@ -31,5 +31,27 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 60
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 53
+        }
+      ]
+    }
+  ],
   "overview": "Highway 2000 is a racing game that offers five racing tracks and three cars (Mad Viper, Dark Nebula and Rapid Fire) with different statistics based on speed, acceleration, handling and grip. The game has several modes like the tournament mode in which you race against AI-controlled opponents and a time trial mode. There is also a two-player race mode in where you race another player in split-screen."
 }

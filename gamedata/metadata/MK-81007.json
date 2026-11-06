@@ -44,5 +44,59 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4.5
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6.5
+        },
+        {
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 83
+        }
+      ]
+    }
+  ],
   "overview": "Sir Tongara de Pepperouchau III (\"Pepper\" for short) is a toy soldier. He is in love with the Clockwork Fairy Princess, Chelsea, whose voice wakes up the toys of the house every night at midnight. But he is clumsy and something of a laughingstock, especially when compared to his friendly rival Ginger who is also after Chelsea's heart.\n \nOne night Chelsea is stolen away by an unknown force, which also hypnotizes some of the lesser toys to become fierce minions and stand in the way of anyone who would try to rescue her. If there's no voice to wake them up anymore then the toys will never live again, so Pepper and Ginger head off to find Chelsea before it's too late."
 }

@@ -37,5 +37,27 @@
       "rating": "15+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 54
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 70
+        }
+      ]
+    }
+  ],
   "overview": "The original game's horror theme has been significantly de-emphasized in the sequel. While there are some supernatural goings-on (Voodoo black magic), the main villains are gangsters and pirates. While the enemies are revealed to be possessed by evil spirits, and are green and zombie-like in appearance, they are far from the shambling walking corpses of the first game, and walk, talk, and behave much like ordinary people, arming themselves with Tommy Guns and shouting at the player. The game world is larger than that of the original, encompassing not only the mansion, but also the surrounding gardens as well as a pirate ship hidden in caverns beneath the house.\n \nAlthough much of the game is spent playing as Carnby, the player will occasionally take control of Grace Saunders. Grace, a child, cannot fight and is instantly captured if the gangsters spot her, so instead she must sneak around and defeat the gangsters by turning common household objects into booby traps."
 }

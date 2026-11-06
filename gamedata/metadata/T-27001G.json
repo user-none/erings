@@ -33,5 +33,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.6296
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Tenshi Angel Lips is an arcade-style strip mahjong game featuring characters designed by noted illustrator Satoshi Urushihara. It is a standard 2-player riichi-style mahjong game; winning matches against the opponent will earn points, and enough points will earn the player an animated scene where said opponent removes an article of clothing until they are eventually topless. There are three girls to play against, and the only game mode is a standard arcade mode where each girl is played in order."
 }

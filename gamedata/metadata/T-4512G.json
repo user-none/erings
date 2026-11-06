@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.3974
+        }
+      ]
+    }
+  ],
   "overview": "Grandia: Digital Museum is a fan disc containing production materials and bonus content for the game Grandia. It is presented as a museum which the characters are visiting, and there is a dungeon which the player can explore to fight monsters and unlock additional materials for viewing in the museum portion. In addition to a gallery of production artwork, there is also a radio drama with a new scenario not in the main game, a bestiary, and a selection of save files which can be used in the main game to replay the game's most famous moments."
 }

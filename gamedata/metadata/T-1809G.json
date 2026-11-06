@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5272
+        }
+      ]
+    }
+  ],
   "overview": "In Hyper Duel the player controls one of three \"Buster Gears” pilots: Keith Spader, Lisa Rowling, or Dr. B. Lloyd, and must destroy alien forces.\nBuster Gears look like normal spaceships but have two modes - spaceship and robot - with different fire modes. The ships can also acquire additional helper units by collecting either the T or G items. The weapon can be upgraded by collecting P items."
 }

@@ -32,5 +32,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1666
+        }
+      ]
+    }
+  ],
   "overview": "Koudou Saisoku Densetsu: Initial D is a downhill drift racing game based on the Initial D manga and anime franchise. The main scenario mode recreates a series of races from the original manga; defeating a rival in this mode will unlock their car for use in other modes. There is also a battle mode where the player can choose any of the four courses, plus a car and a rival, and race against the computer. There is also a time attack mode which lets the player save ghost replays of their best times, and a specialized drift practice mode."
 }

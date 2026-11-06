@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "Game de Seishun is a multiplayer party board game in the mold of The Game of Life, which follows each player's avatar through five stage of youth, from kindergarten through to graduating high school and starting a career. The focus is on building friendship and relationships with various characters, and living a full and satisfying youth, with the winners being decided by so-called \"seishun points\" which are accrued by deepening interpersonal relationships, earning money from jobs, exercising and studying to improve oneself, and going on dates.\n\nEach player moves through the board by selecting from one of several numbers to determine the number of spaces to move. Various spaces have different effects: some cause good or bad events to occur, some cause random events to happen, and some allow the player to pick a specific activity for the day such as studying or going to work which will increase various stats that in turn affect future events. Once all players have reached the goal, points are tallied based on the game type selected and a winner is decided."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6111
+        }
+      ]
+    }
+  ],
   "overview": "Étude Prologue: Yureugoku Kokoro no Katachi is a visual novel-style romantic adventure game. The player can choose one of two characters: Hitomi Saeki or Tatsuya Gunji, who are high-school seniors nearing graduation. Hitomi and Tatsuya used to be a couple; they both have lingering regrets over their relationship and little in the way of plans for their future, and each of their scenarios gives a different perspective on the same story.\n\nGameplay generally consists of visiting locations around the school and the town each day, speaking with the other characters to trigger story events, playing short mini-games, and going to their part-time jobs, all of which will affect their character growth, their future ambitions and love prospects, and ultimately the game's ending."
 }

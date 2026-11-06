@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7804
+        }
+      ]
+    }
+  ],
   "overview": "OutRun is a racing game that allows the player to race across varied terrain in a readily available Ferrari, complete with a female passenger, over a series of short tracks.\n\nGameplay is viewed from just above and behind the car. The roads are full of sharp bends and hazards, contact with which can cause the car to roll and lose the player's time. On each section of track there is a fork in the road, allowing the player to choose which direction he or she wishes to go in. The player has to to complete five track sections in total, out of the fifteen in the game.\n\nThis Sega Ages version of the game is much the same as the arcade original, however features extra options for difficulty, traffic, whether to use manual or automatic transmission, and a means of swapping between the Japanese and overseas layouts. It also has an arranged CD audio soundtrack in addition to the 1986 score."
 }

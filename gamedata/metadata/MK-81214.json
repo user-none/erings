@@ -44,5 +44,69 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 2.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 2.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 70
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 59
+        }
+      ]
+    }
+  ],
   "overview": "Negotiate the fastest, smoothest and most undulating 3D terrain ever created, in a future-race where your bike defies gravity, and your opponents show no mercy. Atmospheric light sourcing and rendered graphics intensify the experience!"
 }

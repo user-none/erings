@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4302
+        }
+      ]
+    }
+  ],
   "overview": "Virtua Fighter CG Portrait Series is a series of eleven Sega Saturn discs released in Japan between October 1995 and March 1996, each containing images of one Virtua Fighter character.\n\nThis disc features Lion Rafale, born December 24, 1979; Bordeaux, France. He was one of two new characters, along with Shun Di added in Virtua Fighter 2. Lion's personality is displayed as cocky, spoiled, a little bratty and arrogant. He is born into the Rafale family, one of the wealthiest families in France. They are involved in illegal arms contracts with terrorists. Lion has been practicing Northern Praying Mantis under an instructor as part of management education since he was five. Lion is participating in the tournament competition to become free from his father."
 }

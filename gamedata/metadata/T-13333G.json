@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4918
+        }
+      ]
+    }
+  ],
   "overview": "Kidou Senshi Gundam: Giren no Yabou - Kouryaku Shireisho is an update to Kidou Senshi Gundam: Giren no Yabou. It is an \"append disc\", thus relies on a copy of Giren no Yabou to function."
 }

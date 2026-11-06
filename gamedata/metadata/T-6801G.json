@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.7142
+        }
+      ]
+    }
+  ],
   "overview": "\"Sento Monogatari\" Sono I is a compilation of three multimedia fortunetelling titles: Heisei Kaiunreki (Heisei Good Luck Reading), Tarot Uranai (Tarot Fortunetelling), and Seimei Handan (Name Judgement). The included titles were previously available as individual releases for the 3DO, but this compilation is the first and only release for both the Saturn and PlayStation. Each of these releases also includes a newly-created bonus mode: the Saturn version includes Yume Uranai (Dream Fortunetelling), while the PlayStation version includes Sem Libra no Heya (Sem Libra's Room), a daily lucky item reading."
 }

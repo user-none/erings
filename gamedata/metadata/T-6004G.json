@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7483
+        }
+      ]
+    }
+  ],
   "overview": "America Oudan Ultra Quiz is based on the Japanese TV show of the game name. Like the original show, the game focuses on trivia questions solely related to the United States of America. Areas of knowledge include history, geography, culture, literature, sports, language, and others. The main quiz show takes place in New York and involves questions in random categories. A special travel mode allows the player to visit various locations in the USA, including notable airports, beaches, sports stadiums, and other popular travel destinations."
 }

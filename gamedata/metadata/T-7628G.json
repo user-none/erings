@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5794
+        }
+      ]
+    }
+  ],
   "overview": "Imagine a time when mighty navies controlled the seven seas, ruthless pirates searched for hidden treasures and scholars argued that the Earth was round. Now, picture yourself as a young explorer on a mission that will carry you to the four corners of the globe.\nPlay the son of a Portuguese Duke out to discover the legendary land of Atlantis, a Spanish female navy lieutenant turned pirate, a British privateer commissioned by Henry VIII to destroy the Spanish fleet, an Italian adventurer in debt from his father or a Turkish orphan starting his own trading business.\nYour adventure will take you to over 130 exotic destinations. Along the way, you will discover exotic monuments, long sought treasures and valuable merchandise to trade. As captain of your fleet, keep a careful eye on the horizon for pirates eager to steal your valued cargo or an enemy navy at war with the flag your ship flies. Once in port, remember to recruit mates, purchase new ships and gunnery, gather useful information and settle disputes with your enemied by challenging them to a duel.\nGet ready for the adventure of a lifetime!"
 }

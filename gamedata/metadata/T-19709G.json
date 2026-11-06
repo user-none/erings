@@ -32,5 +32,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "Sakamoto Ryouma: Ishin Kaikoku is a historical simulation game set in the Bakumatsu period of Japanese history. It centers around real-life political figure Ryoma Sakamoto, who was instrumental in ending a 250-year period of Japanese isolationism and restoring the Emperor of Japan to power over the shogunate. The player selects one of over 500 possible characters, from the famous Sakamoto himself, down to simple traders and scholars. The ultimate goal of the game is to unify the ideology of the Japanese people and bring about the Meiji Restoration.\n\nThe game primarily consists of meeting with people in the many villages in order to convince them to join your cause, looking for those who may be sympathetic. This is accomplished through a menu-based conversation mini-game where the player must choose their words and approach in order to align the other character's feelings with their own. Once the player's influence has sufficiently grown, they can hold faction meetings and delegate various tasks to their followers, including recruiting more people or attempting to assassinate threats. The player's faction can also be attacked, and so care must be taken not to arouse too much attention from the shogunate. The game includes over 150 real-life historical events that can occur."
 }

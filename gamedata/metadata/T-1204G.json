@@ -29,5 +29,36 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.5909
+        }
+      ]
+    }
+  ],
   "overview": "This tie-in product to the 1994 anime Street Fighter II: The Animated Movie consists of two gameplay modes. The player takes control of one of M. Bison's cyborgs seen in the anime, fighting a holographic Ryu in gameplay most similar to Super Street Fighter II Turbo, while the considerably larger portion of the game has the player watch an adapted version of the anime itself and analyzing the characters and their fighting techniques as they appear in order to \"teach\" the cyborg new moves for the fighting mode. The game includes some exclusive scenes absent from the anime (such as Akuma's cameo leading to a hadoken). The two-player mode in the fighting gameplay has both players control cyborgs."
 }

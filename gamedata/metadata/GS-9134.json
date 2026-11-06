@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8899
+        }
+      ]
+    }
+  ],
   "overview": "Sakura Taisen Hanagumi Tsuushin (サクラ大戦 花組通信) is a Sega Saturn interactive newsletter on events concerning the Sakura Taisen franchise."
 }

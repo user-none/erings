@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8823
+        }
+      ]
+    }
+  ],
   "overview": "Girl Doll Toy is a love adventure game centered around a female android. The protagonist is a young college student working part-time at a laboratory that develops humanoid androids. Following a failed experiment, he takes home an android slated for disposal, fixes and upgrades her back into working order, and gives her the name Erika. While at first Erika is only able to directly obey commands, with the player's help she will gradually learn independent thought, emotion, and eventually even love.\n\nThe game plays in standard Japanese-style adventure format, with voiced dialogue and limited interaction through simple commands like talk and move. In addition to Erika, there are also several other romantic interests to pursue. The original PC version of the game includes explicit sexual content; the later Sega Saturn version censors the adult content and includes redrawn illustrations. The PC \"Premium Version\" has higher-quality illustration graphics based on the Saturn version but is otherwise the same."
 }

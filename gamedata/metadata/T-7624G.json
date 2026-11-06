@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.75
+        }
+      ]
+    }
+  ],
   "overview": "In the 12th century, the Emperor Hui Zhong is faced with an internal rebellion led by Imperial Minister Gao Qiu. The Song Dynasty comes to an end, and Gao Qiu became the new ruler. You take the role of an exiled ruler, and you must build your stats up to be able to challenge- and destroy- Gao Qiu and restore Hui Zhong to the throne.\n\nThe game is a military strategy game, like most of Koei's games, but instead of conquering a country, the goal is to depose the despotic ruler of China. You start out lowly, and have to work your way up by conquering smaller prefectures, forming alliances, and fighting small battles. You have to earn the right to attack Gao Qiu's home prefecture, though- he is off limits until you are powerful."
 }

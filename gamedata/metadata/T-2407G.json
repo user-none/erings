@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "Jissen Pachinko Hisshōhō! Twin is a pachinko simulation game in Sammy's long-running series of gambling sims. This particular release features faithful recreations of two contemporary real-life pachinko machines made by Sammy:\n\n• CR Gao Gao Kids 4, a dinosaur-themed machine\n• CR Kudamonobatake, a fruit-themed machine\n\nThe game includes two play modes. The \"Real Battle Simulation\" mode lets the player set up custom pachinko parlors and must play the machines as they are laid out, starting with a certain amount of money and attempting to increase their winnings. This mode includes detailed tracking of the player's progress and performance. The \"Complete Strategy\" mode lets the player view detailed information about either machine and play it freely to practice without any money or time restrictions."
 }

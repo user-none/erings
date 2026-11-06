@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.0833
+        }
+      ]
+    }
+  ],
   "overview": "Fantastic Pinball plays very similar to the Alien Crush/Devil's Crush series of pinball games. This game also offers living bumpers, wandering enemies, and bonus rounds that take place outside of the main table. \n\nThe character art and background designs are of an anime style.\n\nYou can select from three different characters before the plunger is pulled. They each have their own attributes that affect how the game is played. The pinball can also be powered up, allowing it to hit enemies and obstacles for greater damage."
 }

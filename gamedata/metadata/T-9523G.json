@@ -24,5 +24,36 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0802
+        }
+      ]
+    }
+  ],
   "overview": "Jikkyou Powerful Pro Yakyuu S is a baseball simulation game and part of the long-running Powerful Pro Yakyuu series. It is the second and final game in the series to appear on the Saturn. It features a full NPB license and thus all teams and players from the Japanese Pacific and Central leagues, with rosters up-to-date as of the end of the 1997 pre-season.\n\nNew in this entry are the addition of Success mode and League mode, which were both introduced in Jikkyou Powerful Pro Yakyuu 3. Success mode is an in-depth training and story mode where the player creates a new recruit and has three years to make it to the starting lineup; Success mode players can be saved with passwords compatible with several other titles in the franchise, allowing a player to be moved between games. League mode is a tournament mode for up to six players/teams. Other returning modes include the Battle (Exhibition) mode, Pennant mode, and Practice mode. There is also a team editor called Arrange mode."
 }

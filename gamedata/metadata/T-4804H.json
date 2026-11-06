@@ -32,5 +32,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 3.5
+        }
+      ]
+    }
+  ],
   "overview": "Digital Pinball: Last Gladiators is a pinball simulator. It has four different tables (Gladiators, Knight of the Roses, Dragon Showdown and Warlock). Each table has approximately 10 rounds and a multiball mode. The manual includes a map and detailed round descriptions for each table."
 }

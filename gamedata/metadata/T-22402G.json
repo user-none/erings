@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.0625
+        }
+      ]
+    }
+  ],
   "overview": "Bakuretsu Hunter is a Japanese-style adventure game based on the anime & manga series of the same title (known as Sorcerer Hunters outside Japan). The game follows roughly the same story as the TV show, expanded with new content and animated sequences: the main character Carrot Glacé, along with his brother Marron, and the sisters Tira and Chocola, are so-called \"Sorcerer Hunters\" who serve the church to track down and exact punishment on Sorcerers who use their magic to commit evil acts against other humans.\n\nThe game proceeds mostly in a visual novel style, with voiced story sequences occasionally broken up with dialogue choices. There are also two mini-games which represent battles: a flag-raising minigame where the player must raise or lower the correct flag within the time limit, and a slot-machine battle where the results of the slot machine determine which actions each combatant takes. Both mini-games can also be freely played from the menu.\n\nThe game was only released as a \"limited edition\" version, which includes a poster and a bonus disc that contains voice actor interviews and an illustration gallery."
 }

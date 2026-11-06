@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.5
+        }
+      ]
+    }
+  ],
   "overview": "Idol Mahjong: Final Romance 4 is the fourth game in the Final Romance series. You play strip mahjong against various female opponents. If you win, you get animated strip scenes. Between girls, you can use your points to buy cheating devices to increase your chances of a winning hand or look at your opponent's tiles."
 }

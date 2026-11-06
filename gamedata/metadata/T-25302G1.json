@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1203
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Doukyuusei Special is a follow-up to Mahjong Doukyuusei, once again a strip mahjong game based on the Doukyuusei series of adult adventure games. This edition is again a 2-player riichi mahjong game, but features improved cel animation and a new cast of ladies to disrobe. There are six opponents in total, two of whom return from the previous edition: Hiromi Machida, Satomi Kurokawa, Mako Saito, Natsuko Masaki, Yoshiko Serizawa, and the main heroine Mai Sakuragi. As in the original version, there are no game options, only a straightforward arcade story mode where each opponent is played in order."
 }

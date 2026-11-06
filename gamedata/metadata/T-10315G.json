@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.5625
+        }
+      ]
+    }
+  ],
   "overview": "Eberouge Special: Koi to Mahō no Gakuen Seikatsu is a school life & love simulation game in the vein of Tokimeki Memorial, and an expanded and reworked version of Eberouge. This version of the game is significantly streamlined with the player starting as a new high school transfer student, removing the middle-school portion entirely and reducing the time limit to one year and nine months. Numerous new events have also been added, along with a new character, resulting in a much faster game with more events."
 }

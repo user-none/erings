@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7076
+        }
+      ]
+    }
+  ],
   "overview": "Thunder Force: Gold Pack 1 is a re-release of both Thunder Force II and Thunder Force III for the Saturn. Both chapters in the side-scrolling shooter saga have been faithfully emulated with the addition of CD music, new CG cutscenes and other bonus features."
 }

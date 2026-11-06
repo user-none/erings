@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.8611
+        }
+      ]
+    }
+  ],
   "overview": "The 1996 Saturn console release of the classic shoot-'em-up arcade game Space Invaders released exclusively in Japan. The game contains four variations of the original Space Invaders arcade game, each with different overlays. Also included is a two player \"battle\" mode."
 }

@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.6923
+        }
+      ]
+    }
+  ],
   "overview": "Private Idol Disc: Data-Hen Race Queen F is a Miscellaneous game, developed and published by Sada Soft, which was released in Japan in 1996."
 }

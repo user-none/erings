@@ -30,5 +30,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "Nobunaga no Yabou: Tenshouki with Power-Up Kit is a re-released version of the same game for the Sega Saturn, adding the contents of the game's expansion pack (or \"power-up kit\" as it is known in this context)."
 }

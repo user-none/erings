@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.4864
+        }
+      ]
+    }
+  ],
   "overview": "Game no Tatsujin 2 is a collection of digital conversions of seven board games popular in Japan: Shōgi, Igo, Renju, Mahjong, Chess, Reversi (called \"Place\" in this compilation), and Backgammon. Each game is a straightforward conversion of the real-world game, and includes a variety of configuration and difficulty options. All games other than Mahjong also include a two-player mode. In addition to the standard free mode, there is also a \"Tatsujinsen\" (\"Master Battle\") mode where the player can challenge masters of each game at the highest level of difficulty with a fixed set of rules."
 }

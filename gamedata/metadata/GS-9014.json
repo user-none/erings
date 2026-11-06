@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4455
+        }
+      ]
+    }
+  ],
   "overview": "Long time ago, at the dawn of Japanese legendary history, the godly princess Kushinada defeated the Aragami, monsters who drew their power from an energy source called the Blue Seed. But in every epoch, the Aragami return to bring death and destruction to Japan. \n\nEnter Momiji Fujimiya, a regular Japanese teenage girl... until she discovers that she carries the power of the princess Kushinada within her. She joins a secret government organization that specializes in fighting Aragami, receiving missions from her boss, Daitetsu Kunikida.\n\nThe structure of the game is mission-based: upon receiving a mission, Momiji and the other agents (mostly young women) explore various locations in Japan, talking to people and locating the supernatural source of danger. \n\nThe game has dungeon navigation, turn-based combat, and party management, but in other aspects it differs from typical Japanese RPGs. There are no random enemies, and generally not many battles. There are also no levels or experience points of any kinds. The battles utilize a card system. Depending on the character's agility (which can be increased with items), she/he can execute a number of offensive, supporting, or defensive moves by choosing a card from the available deck. Battles are won by planning and learning the enemy's strategy rather than by leveling up.\n\nEach character also has special abilities that must be used to solve puzzles. For example, one of the characters can use dynamite to blow up walls and discover hidden passages."
 }

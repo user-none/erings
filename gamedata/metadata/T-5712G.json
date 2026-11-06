@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.2267
+        }
+      ]
+    }
+  ],
   "overview": "Game Tengoku is a conversion of the coin-op game of the same name. The game is a vertical scrolling comical shooter similar to Konami's Parodius series and Hudson's Star Parodier.\n\nThe game is playable in normal or time attack mode.\n\nThe playable characters are:\n\n• Jeynus Starmine, pilot of the Fighter-EX from Exerion\n• Seria, pilot of the ship from Plus Alpha\n• Z-DYNE MK II, the successor to the mech from Formation Z\n• Pig, from Okkotoshi Puzzle Tonjan!?\n• Momoko, from Momoko 120%\n• Miki and Misato, two young girls piloting the radar ship Genesis 3 from Field Combat"
 }

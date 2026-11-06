@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8543
+        }
+      ]
+    }
+  ],
   "overview": "Feda Remake updates the original Super Famicom version of FEDA: The Emblem of Justice with a fresh coat of paint and some gameplay tweaks. Aside from its enhanced graphics and sound, this remake now also features fully animated and voiced cutscenes for key points in the story. While the gameplay is largely the same as the original, there are several noteworthy tweaks: the alignment system has been updated to make it more challenging to reach the absolute good or absolute evil alignments; some characters feature additional special abilities; and two new characters have been added, one for each alignment."
 }

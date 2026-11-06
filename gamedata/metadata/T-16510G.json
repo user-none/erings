@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7936
+        }
+      ]
+    }
+  ],
   "overview": "Super Real Mahjong P7 (スーパーリアル麻雀Ｐ７) is a 1997 arcade mahjong game in Seta's Super Real Mahjong series ported to the Sega Saturn the following year. The port appears to have been significantly toned down from previous ports, earning an \"18 and up\" rating from Sega of Japan's classification system instead of the usual \"X\" rating (or it may be that Sega became more lenient; what happened is unknown).\n\nMore animated strip mahjong awaits in the seventh arcade game in the Super Real Mahjong series. Challenge three more lovely girls, Yurina Asahina, Natsuki Asahina, and Serika Randoh, and they'll take their clothes off for you. And if you win at least one match with a baiman hand or higher, the fun won't end with just the three of them..."
 }

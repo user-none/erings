@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.794
+        }
+      ]
+    }
+  ],
   "overview": "Sengoku Blade (called Tengai overseas) is a 1996 arcade shoot-'em-up by Psikyo brought to the Sega Saturn in Japan the same year. It is a sequel to the 1993 game, Sengoku Ace, also known as Samurai Aces.\n\nArt of the game is done by Japanese underground artist, Jun Tsukasa who has also worked on other Psikyo games such as Sol Divide, Sengoku Cannon and Taisen Hot Gimmick series.\n\nThe port comes with a second disc containing an art gallery."
 }

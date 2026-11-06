@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4405
+        }
+      ]
+    }
+  ],
   "overview": "Mystaria: The Realms of Lore, originally released as Riglordsaga in Japan, is a strategy game developed by Sega and Microcabin for the Sega Saturn. Two versions of the game were released in the US: one titled Mystaria: The Realms of Lore and the other as Blazing Heroes.\n\nMystaria, once a land of peace and serenity, is now embroiled in turmoil. The evil Lord Bane and his ruthless band of marauders have overtaken the four kingdoms that rule this land. Now you must rely on the special powers of a Prince, a Ninja, a Lion man and others to reclaim your kingdoms and regain control of this beautiful land you once called your own! Breathtaking 3D graphics plus changing views and perspectives pull you into the action. Characters learn special attacks with each battle - over 250 attacks in all! Use a vast array of spells in your quest to conquer the evil Lord Bane and over 50 monsters and enemies.\n\nYou are Aragon, the prince of Mystaria. Long time ago, your father was one of the twelve mighty warriors who opposed Sith, the evil being that once tried to open the sacred portals of Mystaria. In the ultimate battle, your father was slain by Sith, but his eleven companion captured the villain and banished him, depriving him of his forces. Sith spend many years in a remote prison, until he grew powerful again. Now he came back to Mystaria and took over the kingdom. It is now up to Aragon to find eleven companions in order to be able to defeat evil again.\n\nThis is a strategy RPG along the lines of Shining Force series. Your party contains twelve characters, six of which can be used in battles. The turn-based battles are long and strategic - you move your characters on the battlefield, and the force of your attack depends on the amount of previous movement made by you. You can also use a variety of magic spells to hurt many enemies at the same time."
 }

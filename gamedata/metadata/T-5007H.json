@@ -40,5 +40,27 @@
       "rating": "15+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 90
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 71
+        }
+      ]
+    }
+  ],
   "overview": "It's the 41st Millennium. For 20,000 years mankind has expanded forth throughout the galaxy aided by a phenomenal invention known as the Warp Drive, which allows huge spatial distances to be traversed in a matter of hours. Under the auspices of the Emperor; a psychic so powerful he is essentially immortal, a pan-galactic Imperium has been established in which mankind has spread and prospered. The defenders of the Imperium are the Adeptus Astartes, or Space Marines, bio-genetically engineered warriors of superhuman prowess, ever vigilant to destroy the many threats that face mankind across the cosmos.\n\nThe player is one such Space Marine, belonging to one of the oldest and most honorable Chapters known as the Blood Angels, whose battle honors date back as long as the Imperium has existed. He finds him/herself assigned to the Terminator company. Among the thousand warriors that compose a Space Marine Chapter, only the hundred most valorous and gifted brothers are deemed worthy enough of this honor. Terminators are the Chapter's ultimate warriors. They are protected by suits that make them all but impervious to conventional weaponry, and armed with the most devastating weaponry available."
 }

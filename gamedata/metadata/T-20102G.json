@@ -33,5 +33,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6493
+        }
+      ]
+    }
+  ],
   "overview": "In Dōkyūsei, the player takes the role of a high-school student (default name Takurou) in a Japanese town; his parents have just moved into a large mansion in a good district. The boy has to go to the new school, but his mind is preoccupied with one subject only: pretty girls. Instead of studying hard, Takurou decides to explore the city and to find out more about its female inhabitants.\n\nDōkyūsei is more interactive than most other Japanese adventures, utilizing point-and-click interface (with context-sensitive icons for talking, touching, etc.) and featuring free top-down navigation through the town and the school building. The hero can enter restaurants, shops, cafe houses, etc. It is also possible to take a train to another district and explore it. The game has an internal clock; a visit to any location (including separate rooms of a building, etc.) \"costs\" twenty minutes of the game time.\n\nThe purpose of the game is to learn where and when the fourteen \"datable\" girls usually are. Many of the conversations with the girls feature multiple answers; the success in many cases depends on the player's choices.\n\nThe game has scenes with nudity and explicit sexual situations."
 }

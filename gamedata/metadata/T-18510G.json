@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.4736
+        }
+      ]
+    }
+  ],
   "overview": "It is the year 2296, and the protagonist has just transferred into Union Academy, a prestigious military flight academy. Plenty of cute young ladies are attending this academy along with you, but will you be able to make it along with these rookies, or perhaps even find a girlfriend...?\n\nDaisuki (lit. \"I Love You\") is a simulation game with romantic elements. The player is tasked with monitoring their character's stats by performing various activities, and the opportunity to form a relationship with one of the game's numerous heroines will present itself as well. During conversational scenes, the player will often be prompted to make branching choices in dialogue. There is also an assortment of mini-games."
 }

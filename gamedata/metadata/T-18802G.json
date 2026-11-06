@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.9393
+        }
+      ]
+    }
+  ],
   "overview": "Isto é Zico: Zico no Kangaeru Soccer (イスト・エ・ジーコ ジーコの 考えるサッカー) is an interactive movie for the Sega Saturn endorsed by Brazillian football player Arthur Antunes Coimbra, otherwise known as Zico."
 }

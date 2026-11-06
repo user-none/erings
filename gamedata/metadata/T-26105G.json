@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.8
+        }
+      ]
+    }
+  ],
   "overview": "Wolf Fang SS Kuuga 2001 is the sequel to Vapor Trail. In 2001, two years after the events from Vapor Trail, the technology allows for the building of mechs rather than jets. The DAGGER organization returns and targets the mech factories in Australia and New Zealand.\n\nWolf Fang SS Kuuga 2001 is a side-scrolling shooter, in which the player controls a mech using different types of armament in order to defeat the foes in its path. The player can initially select one of four premade mechs, or construct their own. The primary weapon, secondary shoulder weapon and the mech's legs can be customized with four different parts for each type.\n\nThe game features different branches, and choosing the harder branches will lead to the good endings. Different countries may be freed, but only one per play through."
 }

@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.2197
+        }
+      ]
+    }
+  ],
   "overview": "Blood is thicker than water.\n\nNot in this family. Twin Brothers Sho and Kazuma give sibling rivalry a bad name. While Sho does all the nice things that would make his Shinobi ancestors proud, Kazuma has them turning in the family plot. Kazuma's band of merciless mercenaries is intent on reducing the family membership by one. Meanwhile, Kazuma abducts his own sister, Aya, just to make sure Sho has soemthing to think about before storming in on his brother. Sometimes kids just don't turn out the way you want them to.\n\nNine stages of explosive action. Digitized characters. Vertical and horizontal scrolling. Beautifully detailed multi-layered backgrounds. Movie quality cinematics."
 }

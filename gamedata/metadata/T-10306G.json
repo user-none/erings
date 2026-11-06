@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4434
+        }
+      ]
+    }
+  ],
   "overview": "DX Nippon Tokkyū Ryokō Game is a virtual board game in which the player travels by train around Japan visiting famous locations and tourist destinations. Each player is assigned a random \"tour plan\" which lists six locations around the country, and the goal is to visit as many of those locations as quickly as possible to see the sights. Each in-game day is divided into several turns: morning, day, afternoon, and evening; the player spins a roulette to determine how far they can move that that turn. Each station the player passes costs money, while reaching a destination will earn the player points and a money bonus; completing a full tour plan and returning to Tokyo will grant a large bonus. Various random events can also occur, such as finding a lost kitten or helping a pregnant woman reach a hospital, that may grant or lose points or money or give additional tasks for the player to do.\n\nGame length can be configured anywhere from 7 to 30 days, starting money can be set to any amount, and anywhere from 2–5 players (in any combination of human and CPU-controlled characters) can participate in a game. In-progress games can also be saved to resume later."
 }

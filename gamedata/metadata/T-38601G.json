@@ -32,5 +32,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.3287
+        }
+      ]
+    }
+  ],
   "overview": "Wizardry: Llylgamyn Saga is a remake of the first three Wizardry games: Proving Grounds of the Mad Overlord, Knight of Diamonds, and Legacy of Llylgamyn. As in the original games, the player can create characters choosing from five races and eight classes, and level them up by exploring the maze and fighting monsters, finding and buying items in process.\n\nMonster graphics have been updated, and dungeons have been given textures, but the player can also opt for original graphics with wireframe dungeons. An auto-mapping feature has been added. The player can also transfer characters between the three scenarios."
 }

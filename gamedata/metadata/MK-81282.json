@@ -35,5 +35,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 80
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 47
+        }
+      ]
+    }
+  ],
   "overview": "Formula Karts is a semi-realistic racing title that attempts to capture the spirit of kart racing with it's low slung feeling of speed, and corner after corner of impressive handling (and inevitable sliding). The title supports both simulation and arcade modes, and features some effective race AI for non-player vehicles. Two player split screen is supported albeit with some slowdown."
 }

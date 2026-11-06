@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.9705
+        }
+      ]
+    }
+  ],
   "overview": "Album Club: Mune Kyun Saint Paulia Jogakuin is a game set in Japan that tells the story of a young schoolgirl and her robot through several mini-games such as Janken as she progresses through her daily activities, while the robot takes pictures of students for the school album. Cut-scenes take the form of anime and live-action."
 }

@@ -45,5 +45,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 80
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 62
+        }
+      ]
+    }
+  ],
   "overview": "F1 Challenge was the only Formula One title released on the SEGA Saturn, giving the player the opportunity to control five authentic Formula One cars and their drivers (Michael Schumacher, Damon Hill, Jean Alesi, Ukyo Katayama and Mika Häkkinen), with the ability to tweak their car before races, ranging from tire pressure, tire type, wing angle, etc.\n\nThere are six tracks to choose from: Hockenheim, Monte Carlo, Suzuka and three different configurations for a fictional track, Neo City, each with their own hairpin turns and fast straightaways. The player can choose from two behind the car views (no cockpit view is available) along with a pop-up screen that acts as a rear view mirror. Features a FOCA (Formula One Constructors Association) license which allows the use of thirteen teams with twenty-six drivers from the 1995 season from which the above mentioned five are the only ones playable."
 }

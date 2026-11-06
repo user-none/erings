@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 3
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.8818
+        }
+      ]
+    }
+  ],
   "overview": "Far in the future, humanity has spread across the galaxy, and following a long period of war, peace finally came after a treaty between the 10 great powers of the galaxy. It has been 99 years since then, and peace has prospered. On the 100th anniversary of the treaty, a new peacekeeping fleet not controlled by any one power is being established to strengthen galactic peace. But some of the nations are planning a rebellion, and the students joining this new fleet are about to be swept up in something much greater than they could have ever imagined.\n\nQuoVadis is a turn-based isometric sci-fi war strategy game. The player controls a fleet of up to eight space warships that gradually increases in size and capability, eventually expanding to multiple fleets with different capabilities. In each mission, the player must issue commands to each ship, with the goal of defeating all enemy ships."
 }

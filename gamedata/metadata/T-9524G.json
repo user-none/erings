@@ -24,5 +24,36 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7325
+        }
+      ]
+    }
+  ],
   "overview": "Tokimeki Memorial: Taisen Tokkaedama is a competitive puzzle game which combines the gameplay of Taisen Tokkaedama with the characters from Tokimeki Memorial. Each player controls a floating cursor in a well full of colored pieces; the cursor carries one piece and can swap it with any other on the board, and lining up three pieces of the same color will clear them from the board. Some pieces are trapped in a container, which can be moved but not directly cleared and will be released when a neighboring piece is cleared, allowing for elaborate combo chains which will launch attacks at the opposing player. If a player's well completely fills with pieces, they lose the round.\n\nThe game includes three single-player modes: Tokimeki Mode (Story Mode), Kirameki Mode (Normal Mode), and Hirameki Mode (Quiz Mode). There is also two-player versus play with three game types.\n\nThere are some differences between the PS1 and Saturn versions. the two versions have completely different sets of levels for Hirameki (Puzzle) Mode, secondly, the Saturn version, taking advantage of the system's internal clock/calendar, lets you enter both your birthday and Shiori's (just like in the actual Tokimemo game). \n\nTaking advantage of the internal calendar, the Saturn version will \noccasionally have character sketches on the \"now loading\" chalkboard. However, the Saturn version doesn't seem to have any attract mode demo battles though it does have some the music as CD tracks on the game disc. Most of the other differences between these two versions of the game are fairly minor."
 }

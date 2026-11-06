@@ -30,5 +30,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.8709
+        }
+      ]
+    }
+  ],
   "overview": "Quantum Gate is an adventure game set on a distant planet, in which you are sent out to fight in a war with an alien race. Most of the game is played in a first person perspective, as you travel around your base and talk to other people. There are also fighting segments, done in FPS mode, in which you and your computer allies must battle alien soldiers."
 }

@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.0408
+        }
+      ]
+    }
+  ],
   "overview": "Take command of the spaceship Opa-Opa and blast your way through various fantastical levels as you try to take out all the enemy bases in each stage. Once you've destroyed the bases, you'll have to beat the stage boss in order to move on to the next level. By using your guns and bombs wisely, you'll be able to take down your enemies and explore each of the crazy environments in this side-scroller. You can also buy upgraded weapons for your ship by accessing the shop."
 }

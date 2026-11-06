@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.4632
+        }
+      ]
+    }
+  ],
   "overview": "Japan, 1920's. After having defeated the ultimate evil, the charming ladies of the Hanagumi Squad and their young commander Ichiro Ogami believe that Japan is safe forever. But their archenemy is resurrected by a mysterious hand. And even though the heroes defeat him once again, they realize that sooner or later they'll have to confront the masked demon who has brought their foe back to life, find out who or what is pulling the strings behind the scene, and revive once again the tragic past.\n\nBeing a direct continuation to the first Sakura Taisen, the second installment is very similar to it graphically and gameplay-wise. The game is divided into adventure and battle modes. In adventure mode, the player controls Ichiro Ogami, moving around the theater (into which the base is disguised), trying to initiate conversations with the girls and choosing timed responses, which influence the hero's relationship with the girl and also slightly affect her parameters in combat. Battles are pre-set and take place on large isometric fields, on which the player navigates mech-piloting girls and Ichiro himself, fighting enemy forces in turn-based combat. There are two new characters in the game, and several refinements to the timed answer system."
 }

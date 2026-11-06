@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.9166
+        }
+      ]
+    }
+  ],
   "overview": "DeJig: Tin Toy is a digital jigsaw puzzle game and part of the DeJig series. The game includes 20 different puzzles featuring photographs of various 50s-style toy models, which come in both 72-piece and 108-piece difficulty levels. Pieces can be rotated and will lock into place when placed correctly, and the completed image can be viewed at any time as a reference. Completing each puzzle will unlock a bonus video of that particular toy, and there is also a movie mode where a playlist can be created of the available videos to view in sequence."
 }

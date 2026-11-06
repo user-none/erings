@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6789
+        }
+      ]
+    }
+  ],
   "overview": "Virtua Cop 2 follows the same gameplay pattern of its predecessor. You are a police officer sent after criminals, from subways and a bank to aboard helicopters. The game moves you automatically, although you can find hiding places to shoot from a safe angle. Your main task is to aim and fire your weapon so as to take out the bad guys for points. Avoid the innocents, as shooting them costs you points. The enemies have tougher firepower than in the original."
 }

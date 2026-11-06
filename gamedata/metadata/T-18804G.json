@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5277
+        }
+      ]
+    }
+  ],
   "overview": "Lupin the 3rd Chronicles is a database fan disc featuring a library of video clips, character information, and music from the Lupin the 3rd anime franchise. Included in the game is a so-called \"Lupin Maniac Quiz\", which contains numerous questions about the Lupin anime series. If the player can correctly answer 10 questions in a row, they'll be rewarded with a bonus video clip. Three different packages were released with different cover illustrations, but the contents are identical between all three."
 }

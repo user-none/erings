@@ -30,5 +30,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "Top Anglers: Super Fishing Big Fight 2 is a fishing game and a sequel to Super Fishing Big Fight. The main mode is a series of four tournaments, each of which takes place in a different environment and has a specific type of target fish. There is also a free fishing mode where the player can select from each of the locations and choose a target fish, rod type, season, and time of day to freely fish that area."
 }

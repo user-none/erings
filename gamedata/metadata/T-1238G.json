@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.316
+        }
+      ]
+    }
+  ],
   "overview": "Marvel Super Heroes Vs. Street Fighter is a 2D fighting game and the first to combine characters from Capcom's Street Fighter series with those of the Marvel comic universe. It is also the first in Capcom's games to introduce a tag team style of combat where the player can call for another character during a fight.\n\nMatches consists of two-on-two battles where the player can only control one character at a time. The other character can be called in regularly or while doing an attack. The off-screen one also regains some health while waiting. Both opposing characters need to be defeated to win the match, and when one dies the other is called in automatically. The tag team options introduces Variable Attack, Variable Counter and Variable Combination where the two characters team up to attack, counter of perform a special move.\n\nMost of the X-Men characters were already present in X-Men: Children of the Atom and Marvel Super Heroes: Cyclops, Storm, Juggernaut, Magneto and Wolverine, with the addition of Rogue, Gambit and Sabretooth. The Street Fighter characters are gathered from Street Fighter Alpha 2: Ryu, Ken, Cammy/Chun-Li, Charlie, Zangief, Dhalsim, M. Bison and Akuma. The final boss of the game is Apocalypse.\n\nThe PlayStation version does not include the tag team feature and relies on the more traditional best-two-of-three round setup."
 }

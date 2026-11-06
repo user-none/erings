@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2666
+        }
+      ]
+    }
+  ],
   "overview": "Tactics Formula is an F1 racing simulation board game for up to four players. Rather than driving a course in real-time, the player instead selects the route to take for each section of track from preset points laid out on a map, keeping in mind race conditions such as the position of other vehicles, tire durability, and remaining fuel. After deciding the route for a section, the choices made play out and the player then plans the next section's route, continuing until completing the race. A real-time replay of the full race is shown once the race is complete. There are a total of 16 different tracks to race."
 }

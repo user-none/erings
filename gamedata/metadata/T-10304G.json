@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0434
+        }
+      ]
+    }
+  ],
   "overview": "Earthworm Jim returns in a madcap chase across the galaxy saving cows and thwarting lawyers all the way. Whip, run, jump and Snot swing your way through 10 of the most outrageous and untraditional levels anywhere. Returning favorite characters include; Princess What's-Her-Name, Psy-Crow, Peter Puppy, Bob the Goldfish, and several new villains as well!"
 }

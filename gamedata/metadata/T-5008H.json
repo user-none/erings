@@ -40,5 +40,50 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 78
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 71
+        }
+      ]
+    }
+  ],
   "overview": "This is a remake of the original Road Rash from the early nineties. For those who have not played the original, you are competing against thirteen other \"Road Rashers\" who will stop at nothing to win 1st, 2nd, or 3rd place. During the race, you have two options available to you: you can either do your best to cross the finish line, or use your weapon to bring the Rashers to the ground if they are giving you trouble. If you do the latter, your opponents will do the same to you during the next race that takes place."
 }

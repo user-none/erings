@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6305
+        }
+      ]
+    }
+  ],
   "overview": "Metal Black is an arcade 2D side-scrolling shoot'em up, made as continuation of Final Gun Frontier\" and Darius. Aliens (called Nemesis) invaded Earth, won the war, and took most of the raw materials and the player, piloting a spaceship, fights against those aliens. His vehicle is the CF-345 Black Fly, and he must \"fly right, and shoot enemies\". He has only 1 weapon, and collects special pickups to increase firepower (and activate power-beam). The game has 6 levels & 2 bonus levels, each with their own song."
 }

@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.1333
+        }
+      ]
+    }
+  ],
   "overview": "Mouri Motonari: Chikai no Sanshi is a tactical RPG in the vein of Shining Force. It is a historical drama based on the life of 16th-century daimyo Mouri Motonari, and the third entry in Koei's Eiketsuden series of historical RPGs. The story opens in 1517 with Motonari forced to take the reins of his clan following the deaths of both his father and elder brother.\n\nThe game is split into 27 chapters which each opens with a story event, then allows the player to speak with advisors and villagers as well as to prepare for the next battle. Villagers may have various requests, which when completed will reward the player with equipment or new recruits for battle. Additionally, equipment can be upgraded and soldiers can be trained at this time. Battles take the form of a top-down turn-based tactical format, with individual units engaging 1-on-1. Each battle has specific win conditions, and the story is linear with no branches."
 }

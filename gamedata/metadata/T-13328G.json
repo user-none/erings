@@ -35,5 +35,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6198
+        }
+      ]
+    }
+  ],
   "overview": "In a country named Herb Land, several princes are preparing to the great competition, in the end of which one of them will become a king! But you, the young hero of the game (who also happens to be a prince), should know one important thing: if a prince doesn't have success with girls, he won't win the competition! And so, your quest for the crown and for the attention of the fairer sex begins...\n\nNext King: Koi no Sennen Ōkoku is a mixture of a board game, dating simulation, and role-playing. It can also be described as a table RPG. You compete against three other princes, and must have more success with the game's several main female characters in order to become a king. Your actions in the game are determined by the roll of dice. It will tell you at what time of the week you'll be able to begin your turn, how many steps you take on the world map, how much damage you do in battles, and so on. When you visit a town, you should go to see the girls and take quests from them. Those can include the elimination of an evil monster or a simple fetch task. You will also fight against the other princes in tournament mode."
 }

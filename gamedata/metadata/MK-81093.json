@@ -36,5 +36,27 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 82
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    }
+  ],
   "overview": "Discworld II: Missing Presumed...!? (Discworld II: Mortality Bytes! in North America) is the second point-and-click adventure game based on Terry Pratchett's series of fantasy novels set on the mythical Discworld. The game was developed and produced in 1996 by Perfect Entertainment for the PC, and ported in 1997 for the PlayStation and Sega Saturn. It was published by Psygnosis for the PC and PlayStation, and by Sega for the Saturn (only in Europe).\n\nMortality Bytes casts players again in the role of Rincewind, from the first game.\n\nDeath, the grim reaper, who normally ushers the Discworld inhabitants into the afterlife, is on an extended vacation. This means that those whose \"time is up\" are faltering around in limbo. Now it's up to Rincewind to bring him back or suffer the fate of immortality.\n\nGameplay is divided into 4 Acts. There are many locations to explore and a multitude of obstacles in Rincewind's path to overcome. Conversations with characters and interaction with inventory objects is necessary to move ahead.\n\nThe game features unique humour similar to the previous game."
 }

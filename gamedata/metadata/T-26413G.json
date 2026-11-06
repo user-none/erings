@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.8913
+        }
+      ]
+    }
+  ],
   "overview": "Super Tempo is the third and final entry in the Tempo series. You once again play as Tempo the Grasshopper using musical abilities along with some simple platforming to take out enemies and discover secrets. Tempo teams up with Major Minor and his girlfriend Katy to rescue the Prince of Music World from Planet Technotch."
 }

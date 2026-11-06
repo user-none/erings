@@ -26,5 +26,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.9709
+        }
+      ]
+    }
+  ],
   "overview": "Irodori no Love Song is the second game in the Tokimeki Memorial Drama Series which centers around another heroine from the Tokimeki Memorial franchise, namely Ayako Katagiri. The game takes place during the season of autumn in the same high-school during the culture festival. The protagonist is an amateur yet popular guitarist in the school who wrote an original song for festival competition. He forgot his encounter in the past with Ayako, but the more fate brings them back together, the more he will start to remember, and his feelings will turn into a love song.\n\nThe game mostly plays as a visual novel with adventure elements such as selecting actions to perform (i.e. see, talk, etc.), but also includes several action mini-games such as guitar game, comic dialogue game, knitting game, and swimming game. While game supports both gamepad controller and mouse, some of the mini-games (namely guitar game and knitting game) do not support mouse controller."
 }

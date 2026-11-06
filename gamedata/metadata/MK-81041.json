@@ -44,5 +44,69 @@
       "rating": "15+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.5
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 94
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 87
+        }
+      ]
+    }
+  ],
   "overview": "Electric fences. Barb wire cages. No-mercy skate punks. Axe-wielding rockers. Rollerbladers who take the term seriously... Fighting Vipers is street fighting in its rawest form. Furious, wall-to-wall combat brought to life with a visual intensity and relentless game play so superior, so brutal beyond comparison, nothing can prepare you for what you've got coming. NOTHING!"
 }

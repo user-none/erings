@@ -37,5 +37,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 94
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 62
+        }
+      ]
+    }
+  ],
   "overview": "An official licensed game of the European Championships held in England in 1996. All 16 teams are available to choose from and the following Game Types: European Championship, Friendly Game, Practice Penalties and Practice Match (only the opposition's goalkeeper is on the pitch). \n\nA couple of options of note are variable/adjustable wind and a choice of referees each with two difficulty levels of 'vision' and 'discipline' (the latter is available for friendly games only). Long time BBC sport commentator Barry Davies provides the commentary. The game is based on Gremlin Interactive's Actua Soccer engine."
 }

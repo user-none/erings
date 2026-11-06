@@ -33,5 +33,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.0952
+        }
+      ]
+    }
+  ],
   "overview": "In DeathMask, which is set in the futuristic NeoCity of the year 3032, the player takes the role of Jack Hard, a cop whose life goal is to hunt the criminal Angel Devoid. After an accident during a car chase he awakens in an hospital - only to find out that his face was operated to look like his eternal enemy. Now he is a wanted man...\n\nThe controls of the game are similar to The 7th Guest: in a first-perspective view the player clicks on interactive items and a video clip shows the result. The game is designed to give an expression of the time pressure the protagonist is under - he has to react fast or he dies. This is also true when meeting other characters; in many situations Jack needs to use his gun to avoid being killed. Often he runs into conversations with people and robots instead of shooting them directly; then the player doesn't choose the exact answer but only the mood (aggressive, passive or normal) Jack answers in. The wrong approach may result in death.\n\nThe protagonist can't walk freely through the city; the game consists of several single screens which have to be left by clicking on an exit, followed by a walking animation. There are quite a few places to visit, e.g. bars or a museum, but choosing the wrong path or hot spot generally leads to an instant death. There are also a few basic inventory-based puzzles to solve."
 }

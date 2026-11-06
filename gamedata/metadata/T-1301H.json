@@ -43,5 +43,78 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.5
+        },
+        {
+          "score": 6.5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.523
+        }
+      ]
+    }
+  ],
   "overview": "In Defcon 5, space aliens attack colony MRP-6F and turn a once peaceful evening of engineering into a battle for survival.\n\nIn the far future, conflict is at an all-time low and outdated defence bases are being vacated and replaced with automated software. You play as an cyberneer engineer sent to update one such base. Just after uploading the automating code, the base is suddenly invaded by unknown assailants from the air and ground. You must rely on your wits and the defence software to fend them off.\n\nThe main game takes place in a first-person view inside the complex. Trams connect the maze-like living areas to a handful of manned turrets outside. You must shuttle between shooting down waves of fighters in the turrets, and scouring the base levels for card keys during the down time."
 }

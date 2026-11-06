@@ -38,5 +38,69 @@
       "rating": "15+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4.5
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.5
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 80
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 70
+        }
+      ]
+    }
+  ],
   "overview": "Die Hard Arcade is the licensed North American, European and Australian version of the Japanese videogame Dynamite Deka. The game is a beat 'em up with loose ties to the Die Hard movie series of the same name.\n\nHowever, other than the title, the building and the fact that the hero (named Bruno Delinger in the Japanese version) resembled John McClane, the game and the movie have little to do with each other (in fact, the license was purchased when the game was essentially complete for the North American, European and Australian releases). It is a 1 or 2 player game in which the male and/or female characters fight through action-packed levels to save the President's daughter from a band of terrorists."
 }

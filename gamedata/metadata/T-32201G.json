@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7625
+        }
+      ]
+    }
+  ],
   "overview": "Sekai no Shasou kara I Swiss-hen: Alps Tozantetsudou no Tabi is a digital gallery for the Sega Saturn."
 }

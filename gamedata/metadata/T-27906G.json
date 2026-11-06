@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.8093
+        }
+      ]
+    }
+  ],
   "overview": "Lunar 2: Eternal Blue is a remake of the SEGA CD game Lunar: Eternal Blue.\n\nSimilarly to the remake of the first game in the series, this version features reworked, 32-bit graphics. The anime-style cutscenes of the original have turned into similarly styled movies. Some cutscenes have been removed from the remade version; however, many of the remaining scenes have been expanded.\n\nA few dungeons are absent in the remake, while a few others were added. Dungeon design have been somewhat simplified compared to the original version. Some monsters (in particular a number of bosses) have a different visual design.\n\nThe most notable gameplay-related change in the remake is the absence of random battles. Enemies are now visibly walking on the screen and can be avoided. Enemy encounters on the world map have been eliminated completely."
 }

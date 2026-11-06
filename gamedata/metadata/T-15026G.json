@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.9545
+        }
+      ]
+    }
+  ],
   "overview": "Tenga Seiha is a historical simulation game set in the Warring States period of Japanese history, which chronicles the life and rise to power of shogun Ieyasu Tokugawa. The game is divided into two main sections: adventure segments and battle segments. In the adventure segments, the player can speak with advisors and villagers to gather information. The battle segments play out in real-time with the player giving basic orders to units, such as to move to a specific location or to launch an attack. The game includes recreations of 26 real-life battles, and numerous story branch points where the scenario can diverge significantly from historical fact."
 }

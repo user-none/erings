@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6393
+        }
+      ]
+    }
+  ],
   "overview": "Winning Post 3 is the third entry in the Winning Post series. The objective of the game is breeding horses with good bloodlines. Compared to its direct predecessor Winning Post 2, the 30-year time limitation is removed, making players able to breed horses at their pleasure."
 }

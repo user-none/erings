@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.7692
+        }
+      ]
+    }
+  ],
   "overview": "Private Idol Disc Vol. 2: Uchiyama Miki is a multimedia photobook of gravure idol Miki Uchiyama. It includes a gallery of photos and video clips of the idol, as well as a simple rock-paper-scissors minigame. Winning three rounds of the minigame will unlock a bonus video."
 }

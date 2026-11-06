@@ -30,5 +30,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4.5
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "The original guitar hero with the Elvis attitude and purple hair pompadour, Johnny Bazookatone, has been imprisoned in the year 2050 in Sin Sin Prison by El Diablo, the Lord of the Underworld, who is jealous of his talent and kidnaps other musical legends as well in this 3D side-scrolling platformer. Johnny's guitar Anita has been taken from him and he sets out to escape and vanquish foes on his way to be reunited with Anita.\n\nHe can perform moves such as 360-degree spin jumps, and hover jumps among others, while using his bazooka guitar as a weapon. When powered up, it can emit a special sonic blast that fries anything within hearing range. As you make your way through the demonic levels such as Hotel Demonique, Hell's Kitchen, and Mr. Diablo's fiery Penthouse, you can acquire more weapons, power-ups and find secret passages that lead to bonus levels. The game's soundtrack includes the title track contributed by Bon Jovi guitarist Richie Sambora and Tico Torres."
 }

@@ -33,5 +33,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.8965
+        }
+      ]
+    }
+  ],
   "overview": "In Ousama Game the player challenges various young women to simple games, and if the girl loses they must do whatever the player asks. There are three different mini-games, selected at random by a roulette: a rock-paper-scissors-style game where the losing player must react quickly to block an attack; a flags-style game where the player must push buttons according to an announcer's instructions; and a simple action game where the player must climb a bamboo shoot while avoiding falling objects. Upon winning a game, the player can select from a list of actions they can force the girl to do, such as \"go for a swim\" or \"take a shower\", and watch a video clip of them doing as ordered. There are eight girls to challenge, each of whom has numerous different situations and video clips to see."
 }

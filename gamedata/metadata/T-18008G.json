@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.5
+        }
+      ]
+    }
+  ],
   "overview": "Jungle Park: Saturn Jima (Japanese for Saturn Island) is a point and click adventure game that invites the player to explore the titular park. More a walking simulator than a traditional adventure game, it has few goals and instead lets the player discover the park and its surroundings at their own pace."
 }

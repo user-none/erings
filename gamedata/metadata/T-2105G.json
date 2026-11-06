@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.1666
+        }
+      ]
+    }
+  ],
   "overview": "The year is 20XX, and the world has long been in a state of relative peace since the end of World War II. But with the sudden arrival of mysterious UFOs all over the world, that peace has been shattered. The invaders indiscriminately attack the armies of the world, forcing them to either submit or face destruction. A warship called the Ragoh, developed by the Japanese Navy during World War II using alien technology but never put into action before the war ended, is the world's only hope for salvation.\n\nShin Kaitei Gunkan: Koutetsu no Kodoku is a sci-fi turn-based war strategy game based on the 1995 anime OVA series known internationally as Super Atragon. It is a hex-based game in the style of Daisenryaku, including land, air, and sea units but with a focus on naval combat as the player's main unit is a Navy warship. The player commands the Ragoh and its supporting units, assisting international UN forces around the world against the Atlantean invaders. The game is divided into a linear series of missions, and before each mission the player gets advisement from their crew and can adjust their units' stats and loadouts."
 }

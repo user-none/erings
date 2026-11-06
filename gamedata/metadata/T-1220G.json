@@ -35,5 +35,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.0868
+        }
+      ]
+    }
+  ],
   "overview": "One night in Nijiiro Town, you look up and see eight meteors falling from the sky. One lands near you, and it turns out to be a small fairy. She tells you that the other seven meteors are a crystal that seals away a demon king in her world, split apart into pieces. These crystals have been found by seven girls throughout the town, and if you aren't able to collect their power within six months, the demon king will be revived. So to restore the crystal's power and prevent the world's destruction, you must befriend these seven cute girls and earn their trust... by answering trivia questions!\n\nQuiz Nanairo Dreams: Nijiiro-chou no Kiseki is a cross between a quiz game, a board game, and a dating simulation. Each space on the board represents a day, and the player spins a roulette to determine how many spaces to move. Each space contains various events, recovery items, or one of the girls. Meet with a girl and she'll ask you a series of trivia questions; get enough of them right and her story will continue. At the end of each month you'll face a boss battle against the demon king's minion Linz, and at the end of the game you must face the demon king himself, again as a battle of trivia questions.\n\nThe console versions of the game add proper endings for both Linz and the fairy, and also changes the names of all the characters to avoid trademark issues; it is otherwise the same game."
 }

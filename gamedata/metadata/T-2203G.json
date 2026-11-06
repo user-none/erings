@@ -30,5 +30,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.3428
+        }
+      ]
+    }
+  ],
   "overview": "The player challenges three young socialites to a game of Mahjong. Beating the opponents in the game rewards the player with live-action clips of the ladies stripping and posing nude for amusement."
 }

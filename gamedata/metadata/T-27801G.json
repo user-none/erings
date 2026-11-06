@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.3106
+        }
+      ]
+    }
+  ],
   "overview": "This is a remake of the PC Engine (TurboGrafx) CD role-playing game Seiya Monogatari.\n\nThe differences between this release and the original version are:\n\n• The graphics are higher resolution and are generally brighter and crisper. Anime-style portraits during conversations have been re-drawn completely and have a different style.\n• There is voice acting for all important conversations, not just for some of them, as in the original version.\n• There are new story-related sequences that were not present in the Turbo CD release.\n• Battle animations are somewhat smoother.\n• Location of certain items has been altered. More items have been added.\n• The anime-style cut scenes of the original version are gone. They are replaced by cut scenes done with in-game graphics."
 }

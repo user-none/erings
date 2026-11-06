@@ -45,5 +45,69 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4.5
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.5
+        },
+        {
+          "score": 8.5
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 68
+        }
+      ]
+    }
+  ],
   "overview": "Bug Too! is the sequel to Bug!. It is a third-person action platformer with console-style play mechanics. You play as Bug and his two sidekicks, SuperFly and Maggot Dog. You go through several 3D worlds, all of which are parodies of movies. You must defeat the themed villains through all of the environments to make your homeland safe again."
 }

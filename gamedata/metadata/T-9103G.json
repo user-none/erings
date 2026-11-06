@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.7619
+        }
+      ]
+    }
+  ],
   "overview": "Wangan Dead Heat + Real Arrange is an updated release of Wangan Dead Heat. This version features a new cast of companion models to impress with your racing skills; five real-life race models appear in video form. There is no new content such as tracks or cars, but the gameplay has been tweaked and adjusted, and there is a second disc included which contains video clips of each of the models."
 }

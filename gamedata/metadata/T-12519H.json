@@ -33,5 +33,49 @@
       "rating": "M"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4.5
+        },
+        {
+          "score": 6.5
+        },
+        {
+          "score": 6.5
+        }
+      ]
+    }
+  ],
   "overview": "Take on the psychotic persona of one of six chronically pissed off homicidal mutants and blast out of the brutal planet RAULF so you can slash and splatter your way across a lawless and unforgiving 3-D morphing galaxy.\n\n• Radical terrain morphing effects turn the laws of physics upside down. Blister the ground beneath your feet, create huge explosions, send shock waves of death, and more.\n\n•Create awesome explosions with Sonic Blasts, Frog Missles, Neutron Spheres and other unique and devastating weaponry.\n\n• Overhead view with zoom in and out capability gets you into the action.\n\n• Multiple power-ups, special moves, and skill bonuses.\n\n• 1 or 2 players.\n\n• Hardcore Soundtrack includes tracks by Pop Will Eat Itself."
 }

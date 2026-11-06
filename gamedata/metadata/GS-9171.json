@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2638
+        }
+      ]
+    }
+  ],
   "overview": "Pro Yakyū Greatest Nine '97: Make Miracle is an updated release of baseball game Pro Yakyū Greatest Nine '97. This version adds a \"1997 Pennant\" mode that recreates the actual events of the 1997 season, updates the player rosters, and allows for changing the camera viewpoint during play. It is otherwise nearly identical to the original version of the game."
 }

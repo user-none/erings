@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.2
+        }
+      ]
+    }
+  ],
   "overview": "2Tax Gold is a quiz game with a comedy theme. Unlike many quiz games, each question only has two choices, and the goal is to answer each question as quickly as possible. In the main story mode, wrong answers will penalize the player with a time loss by showing strange animations, and losing too much time will result in a game over. There is also an endless mode with two difficulty levels where the goal is to answer as many questions correctly in a row as possible."
 }

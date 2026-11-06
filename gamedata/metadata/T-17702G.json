@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.2
+        }
+      ]
+    }
+  ],
   "overview": "Street Racer is a kart racing game similar to Super Mario Kart.\n\nUp to four players can play by split-screen. If there are no human opponents, the player can drive against seven computer opponents in three leagues. If the player wins the first league, they can play the second and so on. The game has eight different vehicles with different skills in speed, haste or resistance. There are also some power-ups on the tracks such as bombs, nitro fuel, and health packs."
 }

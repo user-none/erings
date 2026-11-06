@@ -34,5 +34,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.65
+        }
+      ]
+    }
+  ],
   "overview": "Idol Janshi Suchie-Pai Secret Album, as the title might suggest, is an album of sorts, in more ways than one. There are two discs, the second disc is an audio CD, also known as an album. The first disc, however, is more of a traditional album. It is a digital scrapbook of the Suchie-Pai series so far, compiled in the form of an internet browser-like interface (known as Suchie-Explorer 4.7). From here you can access a video interview with character designer Kenichi Sonoda, galleries of art from previous games in the series, galleries of various other promotional art, figures, flyers, posters, and cards, the Suchie Dictionary, and the Waku Waku chat. There are also a couple mini-games. First there is the Lilim quiz, a harder version of the quiz game from Suchie-Pai Adventure: Doki Doki Nightmare. There is also \"Milk no Usagi-chan Panic,\" a shooter where you try to prevent hordes of rabbits from making off with the carrots at the bottom of the screen."
 }

@@ -29,5 +29,49 @@
       "rating": "T"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5
+        },
+        {
+          "score": 8.5
+        },
+        {
+          "score": 8.5
+        },
+        {
+          "score": 8.5
+        }
+      ]
+    }
+  ],
   "overview": "You take charge of either the humans and elves or the orcish hordes for control of the lands of Azeroth. Eventually you work through the dark portal and into the orcs homeland. You take charge of either side as you work through more than 20 missions per side in the fight for survival.\n\nNew features for the console release include an auto-build option, where you can set a queue of units to be produced and the ability to select sixteen units at a time instead of the PC's nine."
 }

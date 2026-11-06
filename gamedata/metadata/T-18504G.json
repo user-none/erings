@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.8235
+        }
+      ]
+    }
+  ],
   "overview": "Based on the British children's picture book written and drawn by Raymond Briggs and published by Hamish Hamilton in 1973. It's a point and click adventure game that features video from the 1991 animated film adaptation."
 }

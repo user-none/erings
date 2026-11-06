@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "Sega Ages: I Love Mickey Mouse: Fushigi no Oshiro Daibouken & I Love Donald Duck: Gurujia Ou no Hihou is a video game compilation for the Sega Saturn. Its extraordinarily long name comes from the fact it contains two games, both originally released as separate Sega Mega Drive games."
 }

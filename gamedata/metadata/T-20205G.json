@@ -27,5 +27,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.7142
+        }
+      ]
+    }
+  ],
   "overview": "Nightruth: Explanation of the Paranormal: Making of Nightruth II: Voice Selection is a multimedia disc for the Sega Saturn. It contains a trailer to Nightruth#01 and #02."
 }

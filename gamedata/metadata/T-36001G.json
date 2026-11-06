@@ -33,5 +33,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.6571
+        }
+      ]
+    }
+  ],
   "overview": "A writer named Adrienne Delaney has just moved into an old mansion with her photographer husband Donald. Shortly after moving in, Adrienne begins to experience horrifying nightmares and have odd encounters inside the creepy old abode. Furthermore, the house is having a severe effect on her husband, changing him for the worse. Adrienne must discover the secret of the house before the unknown force consumes her husband, and unravel the terrible events that have happened in the past.\n\nPhantasmagoria is an adventure game that places heavy emphasis on full motion video for exposition and cutscenes at various junctures to advance the storyline. Adrienne is represented as a digitized character roaming around pre-rendered settings in the house. She inspects various rooms, finds items, adds them to her inventory, finds places to use the items, and triggers advancements in the plot.\n\nPuzzle-solving element is present, though reduced compared to most other adventure games made by Sierra. There are seven chapters in the game, as well as a status screen that tracks the player's progress within the chapter. If the player happens to get stuck in the game, a talking skull icon who identifies himself as the hintkeeper can supply the player with hints on request. It is possible to start playing the game from any chapter.\n\nPhantasm is notable for shipping on 8 Saturn discs (one more than the PC version) - more than any other game in the console's library."
 }

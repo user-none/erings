@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.5454
+        }
+      ]
+    }
+  ],
   "overview": "Mahoutsukai ni Naru Houhou is a Simulation/Action Role-playing game taking place on an island. Players take the role of a wizard's apprentice who's aspiring to become a mage and players are given 3 girls to choose from (Lime, Berry or Nut). To become a mage, players must study how they can make scrolls and collect the ingredients necessary to make them. The game features a first person perspective while players are at home and switches to a top-down 2D view when they go outside (The Saturn and Playstation releases render areas in 3D). There are 102 days in a year in this game and 5 seasons during which different materials can be found on the island. The game has 70 kinds of scrolls and around 150 kinds of materials to collect."
 }

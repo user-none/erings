@@ -32,5 +32,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 68
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 66
+        }
+      ]
+    }
+  ],
   "overview": "Hebereke's Popoitto is a Tetris variant. The goal in each level is to remove the blocks already on the playfield, representing characters from the franchise. Other blocks fall down from the top of the screen and have to be steered to the right place before touching the ground or another block. When four or more of the same blocks are together, they vanish. The catch of this variant is that the blocks which have to be removed move over the playfield. The player takes the role of the penguin Hebereke who wants to win a tournament against his friends."
 }

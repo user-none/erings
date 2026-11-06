@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.1646
+        }
+      ]
+    }
+  ],
   "overview": "Taking inspirations from Yoshiki Tanaka's \"Legend of the Galactic Heroes\", the game consists of two divided human factions at war after an increasingly hostile colonization across the Milky Way. The player simply positions tactical units in airspace, configures their stats then assigns each unit specific commands. If decisions are done correctly, a successful strategy ensures a victory against all enemy units."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7689
+        }
+      ]
+    }
+  ],
   "overview": "Nanatsu Kaze no Shima Monogatari, roughly translated by the developer as “The Seven Blasts of Wind in Island Story” (but better translated as “The Tale of Seven Winds Island”), is a commonly neglected masterpiece released by Enix exclusively for the Saturn in 1997: one that didn’t obtain the same accolades as other RPG and Adventure titles released for this system. As a two CD set, the game was accompanied by a Premium disk that featured some of the most beautiful matte art ever conceived for a video game, along with singular item and character designs. Essentially, Nanatsu Kaze no Shima Monogatari is an interactive storybook whose illustrated chapters reflect the game’s very own narrative, with a new chapter being added every time the player successfully completes a group of tasks."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7378
+        }
+      ]
+    }
+  ],
   "overview": "EVE: The Lost One is a sequel to Eve burst error. The events of the game take place three years after those of the first game. The player is able to control two characters - the female detective Kyoko and the mysterious Snake, as they try to solve a complex mystery full of betrayals and political intrigues. In order to complete the game successfully, the player will have to to experience it from the perspectives of both heroes, helping each other to gather clues and to unlock events.\n\nThe game uses a menu interface typical for Japanese adventures. The player interacts with the game world by selecting menu choices, which mainly include looking, talking, or going to a different location. The game is done in anime style with characters appearing on still pre-rendered backgrounds."
 }

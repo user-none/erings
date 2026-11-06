@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.975
+        }
+      ]
+    }
+  ],
   "overview": "Yoshiyuki Sadamoto Illustrations is a piece of software for the Sega Saturn. It is not strictly a \"game\", but rather, a digital gallery containing artwork created by Yoshiyuki Sadamoto."
 }

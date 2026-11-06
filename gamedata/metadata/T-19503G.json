@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7626
+        }
+      ]
+    }
+  ],
   "overview": "The plot of this semi-comical RPG is rather simple: an angelic creature named Silk must defeat the Prince of Darkness, who rules his own dungeon full of claustrophobic corridors and monsters. Aided by her lovely companions Ao, Aka, and Ki (which means blue, red, and yellow in Japanese), Silk must deal with the evil Prince and his minions.\n\nDragon Master Silk is a dungeon crawler with Japanese-style turn-based combat. The entire game is viewed from first person perspective. The largest bulk of the game is navigating 3D dungeons, fighting regular enemies and bosses. The game maintains a distinct comical style, evident in graphics and character design."
 }

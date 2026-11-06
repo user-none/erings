@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.75
+        }
+      ]
+    }
+  ],
   "overview": "Take Money Puzzle Exchanger, sprinkle on some Puyo Puyo, and what do you get? Hey presto, it's Moujya! Players control falling pairs of yen coins, in assorted denominations from 1 through 500. Making change by combining coins into the amount of a higher denominations combines the set of coins into one coin of the larger size, and combining two 500 yen coins makes them disappear. Efficient coin placement can lead to making large combos by letting transformed coins fall into place to make change for a higher denomination.\n\nThis rendition of Moujya gives the original game a bright and colourful makeover and replaces the cast with cute cats."
 }

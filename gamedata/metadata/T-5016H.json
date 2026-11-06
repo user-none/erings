@@ -43,5 +43,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 84
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 87
+        }
+      ]
+    }
+  ],
   "overview": "1997 edition of EA's NHL sport simulation series. Improvements in this edition come mostly in the graphical arena, with a refined version of the \"virtual stadium\" system that adds new camera angles (including the classical top-down one strangely missing from NHL 96), and polygonal players instead of the bitmap-based ones with motion-captured animations.\n\nOther extras include multiplayer support for up to 8 players through network or Gravis's GrIP system, the option to create new players and trade them around, and the usual amount of EA sports licensed multimedia flair, including an interesting \"Goalie Mask Viewer\" which lets you observe the elaboratedly decorated helmets of 30 goalies."
 }

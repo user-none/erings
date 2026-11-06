@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 3
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.8191
+        }
+      ]
+    }
+  ],
   "overview": "Hissatsu! is an action game set in Japan during the Edo period, inspired by the popular Hissatsu historical drama series.\n\nThe game has a similar gameplay to the Shinobi series. At the start of each level, players are given a choice of playing as 2 characters out of the available 4 (Including Nakamura Mondo from the aforementioned series) and the game features 5 levels in total. The story is told through cutscenes and a gory cutscene depicting how the protagonist dealt the finishing blow to the enemy is shown after defeating each boss. Each protagonist has their own weapons which can be short range or long range, as well as a special attack that deals extra damage to their foes. Both players and the enemies can block each other's attacks. Players may also swap their characters at any time to allow one of the protagonists to regain their special attack gauge."
 }

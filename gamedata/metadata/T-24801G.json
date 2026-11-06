@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0408
+        }
+      ]
+    }
+  ],
   "overview": "Matsukata Hiroki no World Fishing is a fishing game featuring the endorsement and likeness of Japanese actor Hiroki Matsukata. The game uses digitized photos of Matsukata to represent the player, and includes many live-action video clips of him as various events play out in-game. It includes two types of fishing: billfish trawling (ocean fishing) and black bass fishing (lake fishing), which despite the title are both set in Australia. Each type of fishing includes introduction and basics videos for beginners, a free fishing practice mode, and a tournament mode."
 }

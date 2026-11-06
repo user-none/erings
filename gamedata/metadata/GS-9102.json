@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.347
+        }
+      ]
+    }
+  ],
   "overview": "Yet another world-class arcade conversion hits the Saturn! Manx TT Superbikes recreates the top-speed twists and turns of the legendary Isle of Man TT circuits. Throw your high-powered superbike around country lanes and hurtle through villages at hair-raising speeds as one or two riders push their nerves to the absolute limit on the circuit where heroes are made!"
 }

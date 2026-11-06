@@ -32,5 +32,17 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    }
+  ],
   "overview": "Z is a real-time strategy game in which you fight for control of the sectors, some of which contains manufactories that can gain you additional units. Touch the \"flag\" in the sector and it's yours. Capture the sector before the new unit comes out of the manufactory and the new unit is yours. With six different robots (different armaments, armor, and speed), multiple vehicles (from jeeps to tanks) the robots can utilize, your ultimate objective is to destroy the opponent's base, and prevent him from doing the same to you.\n\nThe game differs from many other RTSs by emphasizing territorial control (and the manufactories) instead of getting kills and gathering a big army. You have to finely balance defense and offense. If you wait too long, the enemy will grab all the manufactories first. If you go too fast, you'll get hammered for stretching yourself too thin. You can hijack enemy vehicles by shooting the driver off. If you send a group of soldiers toward an objective and they find a vehicle, one of them will split off to grab the vehicle; you don't really need to micromanage each soldier."
 }

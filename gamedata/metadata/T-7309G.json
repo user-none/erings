@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.6153
+        }
+      ]
+    }
+  ],
   "overview": "Formula Grand Prix: Team Unei Simulation is a Formula One racing management simulation game. The player controls all the business aspects of running an F1 team, from hiring drivers and training the pit crew, negotiating with sponsors, and choosing parts and equipment for the team's car. The player manages their team through an annual series of 16-race seasons, with each race consisting of both a qualifier and a main race. Races are automated and not player-controlled but can be watched in real-time. Between races, the player can run tests to tune their equipment, train their pit crew to work faster, and use sponsor money toward developing better parts for their vehicle.\n\nThe PlayStation version of the game includes an official FOCA license and real names for many drivers and sponsors. The Saturn port lacks an official F1 license but adds the ability to customize the names. Both versions are otherwise nearly identical."
 }

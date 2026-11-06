@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.0384
+        }
+      ]
+    }
+  ],
   "overview": "Shinouken is a classic one-on-one fighting game. The fighters are eight divine beings, gods struggling against one another to acquire power over the heaven. \n\nControls make use of all of the four buttons of the original Neo Geo arcade stick. Available moves, combat moves and combat actions are explained in a section preliminary to the game and are: punch, kick, dash and quick dash, jump, jump attack, throw, super throw, cushion throw (a throw that does nothing but invert the position of the fighters on the fighting field), counterattack, meter build up (the fighter can not move while charging the power meter: once that is done, a Super God move of gargantuan power can be released). It is possible to dash forward, and perform fight moves while on air for a time longer than normal, on account of the preterhuman nature of the battlers (the game is defined as «aerial battle action game» in the spine of Neo Geo version package). Each divinity wields a personal weapon of medieval fashion, like for instance an imposing sword, a bow, a dreadful halberd. Victory goes to who prevails in 2 out of 3 rounds (the duration of each of which is 60 seconds), and a bonus score related with time and energy left is given to them.\n\nSlight gameplay alterations distinguish the Saturn game version."
 }

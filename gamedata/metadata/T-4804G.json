@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2328
+        }
+      ]
+    }
+  ],
   "overview": "Psychic ninja Taroumaru and his partner Enkai set off to vanquish the supernatural forces that threaten the Japanese countryside. You must battle through several stages of side-scrolling action set in feudal Japan, dealing with all sorts of undead horrors and saving villages from rampaging demons.\n\nYour weapons are your psychic powers, which allow you to lock onto enemies and channel energy bolts to destroy them. You can power-up your basic attack with collectible power-ups and you can also take psychic control of several weaker enemies to watch your back while you fight, grapple, jump and climb through the stages.\n\nGraphics are 2D with polygonal elements used for some background elements. Supports up to two player cooperative gameplay."
 }

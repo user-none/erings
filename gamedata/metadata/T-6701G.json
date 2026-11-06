@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.3508
+        }
+      ]
+    }
+  ],
   "overview": "Gekitotsu Koushien is a super deep high school baseball tournament simulator. Like the Little League World Series, in Japan Koshien is a huge tournament. With over 4000 teams involved (and all of that data put into this game!) it is a great place for scouts to find professional players, and the game is a great and totally unique baseball experience."
 }

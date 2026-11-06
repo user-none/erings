@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.1878
+        }
+      ]
+    }
+  ],
   "overview": "Gunbird is a vertically scrolling shoot 'em up developed by Psikyo. It hit the Japanese arcade in 1994 and was followed by a Japanese release to the Saturn and the Playstation in the following year.\n\nThe game is set in a fantasy setting with steampunk elements. Lush forests and medieval castles meet steam trains and mech robots. Instead of piloting the genre-traditional space ships, Gunbird lets the player chose between five different characters (Ash, Marion, Valnus, Yuan Nang and Tetsu) who traverse the game world on broomstick, jet packs and pedal-powered helicopters on a quest to find the pieces of a magic mirror across seven stages."
 }

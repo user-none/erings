@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8421
+        }
+      ]
+    }
+  ],
   "overview": "Tennis Arena is a comedic, arcade take on tennis. Featuring a total of 10 selectable characters (five male and five female), the game allows for both singles and doubles matches, as well as tournament play and a world tour mode.\n\nSome players have unconventional outfits, such as overweight William Lee Chan, who plays barechested with baggy pants and a large gold necklace. The game also features wacky sound effects and special shots, which can be deployed after racking up six straight returns.\n\nAvailable court options include a New York City park, a traditional professional stadium, the Sahara Desert, the Roman Coliseum, and an ocean cruise liner."
 }

@@ -28,5 +28,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.9814
+        }
+      ]
+    }
+  ],
   "overview": "Tokimeki Memorial Drama Series: Vol.3: Tabidachi no Uta is the third and final game in the Tokimeki Memorial Drama Series trilogy of visual novel side stories to Konami's dating simulation series. This edition focuses on the heroine Shiori Fujisaki; the protagonist has fallen for her, but is unsure of how she might feel about him in return, and so he decides to pour all his passion and energy in the weeks before their high school graduation into preparing for an upcoming marathon.\n\nThe game is a linear Japanese-style adventure game, with limited commands available such as look, talk, and move. There are also several mini-games throughout, such as a guitar mini-game which returns from the previous entry, and an arcade-style shooting game. There are also bonus scenarios included for players with completed save files for the previous Drama Series entries, which are short stories centered around those games' heroines — Saki Nijino and Ayako Katagiri — as they graduate from high school."
 }

@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.4237
+        }
+      ]
+    }
+  ],
   "overview": "m: Kimi wo Tsutaete is a love/dating simulation game. The game immediately starts by asking you a series of questions to determine your personality, after which the heroine is determined based on your personality. Similar to other simulation games, player has a set of skills that may be upgraded by performing various tasks. Things like sleeping, working, shopping and such. The game story takes time during the 85 days where you exchange the diary with others, reaching good ending if you connect with someone by the time the time runs out."
 }

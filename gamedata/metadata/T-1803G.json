@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.25
+        }
+      ]
+    }
+  ],
   "overview": "Eight warriors seek \"Sentien\", to obtain the ultimate power of creation and the title of \"Reverthion\". Reverthion is a third-person arena-based action game that pits two mechanized creatures against one another. It plays very similarly to Sega's contemporary hit Virtual On, and includes eight playable characters each with their own unique move set and abilities. There is a single-player campaign with unique endings for each character, as well as a 2-player split screen versus mode; the Saturn version, Hyper Reverthion, adds system link support for two-player matches between two consoles."
 }

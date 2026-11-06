@@ -33,5 +33,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4558
+        }
+      ]
+    }
+  ],
   "overview": "In this game, the player assumes the role of an ordinary Japanese young man who works in a restaurant. One day he comes home and finds seven strange creatures sitting at his table and discussing something you have no clue about. But before you decide to throw the uninvited guests out of your apartment, a beautiful green-haired woman appears. This is the goddess Swatty, and she has power over the Seven Lucky Gods, which the mysterious seven creatures turn out to be. Swatty feels pity for the lonely hero, and decides to help him to find a girlfriend.\n\nCan Can Bunny Premier is the fourth installment in the Can Can Bunny series. Compared to its predecessors, it is the most pure Japanese-style adventure, without the strategy parts of the previous game. The player chooses menu commands (\"Look\", \"Talk\", etc., as well as context-sensitive commands and dialogue choices) in order to advance the game. At several points it is possible to branch the story line, which mostly influences the amount of success the hero has had with a girl."
 }

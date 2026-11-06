@@ -27,5 +27,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.3125
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Ganryuujima is a 4-player riichi mahjong game that offers two different modes with different sets of opponents to play against. The Kengo Mahjong mode features 16 famous swordsmen of the Edo era of Japanese history such as Kojiro Sasaki and Jubei Yagyu, with the goal being to work through their ranks and ultimately defeat Musashi Miyamoto. The Modern Mahjong mode features a mostly-fictional cast along with several real-life players including manga artist Fujio Akatsuki and jazz singer Martha Miyake.\n\nOther than a practice option in Kengo Mahjong that lets the player pick specific opponents, all match opponents are fixed and there are no game configuration options."
 }

@@ -29,5 +29,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.2238
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Yonshimai: Wakakusa Monogatari is an arcade-style strip mahjong game featuring four sisters as the opponents. It is a standard 2-player riichi-style mahjong game; winning matches against the opponent will earn points, and enough points will earn the player an animated scene where said opponent removes an article of clothing until they are eventually topless. The only game mode is a standard arcade mode where each opponent is played in order, from the youngest (Hikaru) to the eldest (Haruka). At certain points in the game, there is also a slot-machine mini-game in which the player can win a bonus advantage for the next round."
 }

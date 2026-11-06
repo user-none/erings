@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.253
+        }
+      ]
+    }
+  ],
   "overview": "Elf o Karu Monotachi is an adventure game for Sega Saturn console based on anime with the same title. While the anime has been localized to Those Who Hunt Elves title in English-speaking countries, the game itself is Japan-exclusive release.\n\nThe story follows Junpei, Airi, and Ritsuko, who have been magically transported to fantasy new world. In order to return home, they have to find five spell fragments that have been placed on the skin of certain elves, which means in order to check which elf has the fragment they'll have to strip him or her naked. The story plays as a typical Japanese adventure game which feels like a visual novel with static backgrounds and characters, but also with a list of verb commands the player can click on each location (i.e. look, talk, move). The map shows each of the character and their locations and as the story progresses new locations become available.\n\nThe game has full voice-acting and subtitle of spoken text can be turned off, otherwise they appear in a window with a name of currently talking character."
 }

@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.5014
+        }
+      ]
+    }
+  ],
   "overview": "Eve burst error is set in modern-day Japan. The player controls two characters: a young, seemingly careless private investigator Kojiroh, and the special agent Marina. Kojiroh has been struggling to make a living as a lone PI, but now luck seems to smile to him: the director of the Eldian International School, Mr. Ko, asks him to find a missing painting, supposedly of great value. At the same time, Marina is hired by the ambassador of the fictional Middle East republic Eldia to protect his daughter Mayako from terrorists. Switching between Kojiroh and Marina, the player gradually finds out the connection between the two cases and plunges deeper into a mystery that involves political struggle, scientific discoveries, and horrifying murders.\n\nThe game is a traditional Japanese adventure: the player interacts with the world by choosing appropriate commands from the menu (which is different for every location). There are no puzzles to solve, and the player makes progress in the game by examining the environments and talking to the characters. At certain points, it is necessary to switch between the two characters and make them cooperate.\n\nThe original version was a full-fledged hentai game with explicit sex scenes. Subsequent releases removed those, but still contained a lot of sexual innuendo in the dialogues and images of half-naked girls."
 }

@@ -32,5 +32,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.3636
+        }
+      ]
+    }
+  ],
   "overview": "Elf o Karu Monotachi: Hanafuda-hen is a hanafuda card game based on the anime series known internationally as Those Who Hunt Elves. It includes three different popular game types played with Japanese hanafuda cards: Koi-Koi, Hana-Awase, and Oicho-Kabu. The main story mode follows the cast as they challenge various elves to strip hanafuda in order to find the spell fragments they need that may be hidden on the elves' skin. There is also a free play mode, as well as a tutorial mode that teaches the basics of each game type to beginners.\n\nThe Saturn version features more revealing artwork for the female characters."
 }

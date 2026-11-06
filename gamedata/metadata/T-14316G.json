@@ -24,5 +24,26 @@
   ],
   "max_players": 7,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 3
+        }
+      ]
+    }
+  ],
   "overview": "Denpa Shounen Teki Game is a multiplayer party game based on the Nippon TV variety program Susume! Denpa Shōnen. It includes 10 different mini-games such as a tree-climbing game and a whack-a-mole game, and up to seven players can participate simultaneously. The main game mode includes a so-called \"batsu game\" (punishment game) feature where the losing player must do something embarrassing, such as answer a personal question or kiss the person next to them. There is also a single-player practice mode where the player can choose any of the mini-games to freely play."
 }

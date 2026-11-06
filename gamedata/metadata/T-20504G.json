@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.6551
+        }
+      ]
+    }
+  ],
   "overview": "Free Talk Studio is an adventure-style game where the player takes the part of a radio talk show host interviewing various celebrities live on the air. Each week, the player has a choice of several guests such as an artist, a comedian, and a singer, and is presented with a short biography to review. At various points throughout the broadcast, the player must choose questions and responses from a list, which will affect the flow of the conversation and lead to different topics being discussed. The goal is to ask questions that will lead to the most interesting and engaging interview, and the player is graded at the end of each interview on the station's ratings for their show.\n\nThe Sega Saturn version of the game comes in two variants: the Red edition includes a behind-the-scenes booklet, while the Blue edition includes three trading cards featuring photos of the voice actresses."
 }

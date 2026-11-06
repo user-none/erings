@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4342
+        }
+      ]
+    }
+  ],
   "overview": "In this game you are the Japanese national soccer team coach, who manages, trains, trades, and does whatever a coach does and much more. You also develop team strategy and travel to other countries to discover hidden great players. For each stadium game, it features TV coverage and your team technical progress."
 }

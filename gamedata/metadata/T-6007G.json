@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8333
+        }
+      ]
+    }
+  ],
   "overview": "It's never been easier to play a round - Virtual Golf's real-time 3D courses, fly-by previews and spoken commentary offer a bird's eye view and professional advice for each hole. Virtual Golf allows a selection up to 4 male and female human and computer generated characters to play a variety of game types. However, if you want to gain that all-important Professional ranking and play the Pro courses, you'll have to finish a series of tournaments under par. With zooming and panning options that allow you to view the hole from practically any angle and 6 different TV-style cameras, it's virtually better than the real thing!"
 }

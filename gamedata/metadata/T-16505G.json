@@ -27,5 +27,36 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.48
+        }
+      ]
+    }
+  ],
   "overview": "Kanazawa Shōgi is a digital conversion of the traditional Japanese board game Shogi for one or two players, featuring the endorsement of the Japan Shogi Association (JSA), which has been the main organizing body for professional Shogi in Japan since 1924. It uses a play algorithm originally created by programmer Shinichiro Kanazawa for the Kiwame series, which was the top-ranked computer Shogi program in Japan for three consecutive years.\n\nThe game offers six selectable skill levels, including a beginner's mode for new players and a so-called \"Dragon Climbing\" mode which offers the highest possible skill level. The player can select from a variety of starting positions, match replays can be saved and played back, and there is also a two-player mode. The later Sega Saturn version of the game adds a 10-Second Shogi mode, where each player is only given 10 seconds per turn to complete a move."
 }

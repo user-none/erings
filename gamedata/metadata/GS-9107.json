@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.6756
+        }
+      ]
+    }
+  ],
   "overview": "The quest to defeat the mysterious Baron of Battlers, the mysterious K, is on. In order to get to this grotesque gladiator, however, you need to fight your way through 11 matches with the most skilled, most deadly of all combatants in the world of physical contact. Use your powers of pulverization, psychic energy blasts, and ridiculous strength to become the explosive fighting god in Fighter's History Dynamite!"
 }

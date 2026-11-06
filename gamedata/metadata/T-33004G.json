@@ -34,5 +34,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.923
+        }
+      ]
+    }
+  ],
   "overview": "Your father gets a job transfer and is taking the family with him. You have three months to make your feelings known to your crush.\n\nThe initial character creation determines whether this happens in primary, middle, or high school."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.7674
+        }
+      ]
+    }
+  ],
   "overview": "Nao Katsuragi is a popular idol, but scandal breaks out after a photo surfaces of a late-night meeting between her and Shinya Tatsumi, the son of the president of her talent agency. The ensuing media frenzy leads to both Shinya, and Nao's manager Yui Tachibana, committing suicide, and Nao herself disappears shortly thereafter. The whole scandal however was a setup meant to frame Nao and destroy her reputation.\n\nKindaichi Shounen no Jikenbo: Hoshimitou Kanashimi no Fukushuuki is a crime adventure game based on the Kindaichi Case Files manga and anime franchise. Unlike other games based on the property, the player does not control Kindaichi; rather, each of the two scenarios tasks the player with committing a \"perfect crime\" without being caught by Kindaichi. The first scenario casts the player as Nao Katsuragi, who wants revenge on whoever framed her and left two innocent people dead; the second casts the player as Takuya Asagiri, who was engaged to Yui and wants revenge on those who took his fiancee from him.\n\nThe game consists primarily of visual novel-style adventure sequences, with the player regularly given choice prompts for how to respond or proceed in the given situation. There are also occasional action stealth sequences where the player must avoid detection. The slightest inconsistency or suspicious action will likely lead Kindaichi to discover your plot, leading to a game over. Getting arrested, killed, or even just failing to commit the crime at all will also result in a game over."
 }

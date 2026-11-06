@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "In an alternate modern-day world where being a ninja is recognized as a legitimate profession, our heroine and main protagonist, Kaede Hagakure, transfers into Himeyuri Gakuen, a girls' training school for kunoichi (female ninjas). During her time at the school, she is bound to encounter numerous friends, comrades and potential rivals, as well as a few very grave situations here and there...\n\nAyakashi Ninden Kunoichiban is a yuri-themed visual novel and dating sim revolving around female ninjas. The bulk of the gameplay involves around stat-raising in a school environment, as well as choosing which of the main heroines the protagonist will spend their time with, potentially leading in the direction of a romantic ending with any of them. Players will also occasionally be thrown into battle sequences, and their time spent raising stats will greatly affect how these battles can progress."
 }

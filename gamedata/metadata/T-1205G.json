@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.6578
+        }
+      ]
+    }
+  ],
   "overview": "Gakkō no Kowai Uwasa: Hanako-San ga Kita!! is based on the anime series of the same name. A group of curious children explore their school in the dead of night to check out the rumors of ghosts lurking about. They are rescued from certain dangers by the ghost girl Hanako. The game has the player move around in a 3D environment, navigating rooms and areas, solving puzzles, obtaining items and playing mini-games."
 }

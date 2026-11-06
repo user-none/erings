@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.947
+        }
+      ]
+    }
+  ],
   "overview": "Lina, Gourry, and Naga are barely together for a day before finding themselves yet again as the only thing standing in the way of world-wide cataclysm. It's up to them, as well as many returning friends, to save to world, or what will be left of it anyways.\n\nGameplay in Slayers Royal takes place in a mixture of 2D town screens and 3D turn based battle arenas. In towns you can move between multiple areas as well as look at objects and people to examine or talk to them. Lina will often get into (occasionally voiced) conversations with her companions, and in most conversations choices can come up that determine if the party receives stat upgrades or money. In battle each character in the party can be controlled either manually, or left up to an automated AI. Most characters can use magic, but each spell has a wait time that prevents a character from casting more magic until enough turns have passed. Characters do not gain strength or money from battle, instead strength is determined by how rested and full the stomachs of the characters are before combat."
 }

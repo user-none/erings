@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "Fishing Kōshien II is a fishing game based on a TV show produced by TV Osaka, and a follow-up to Fishing Kōshien. It features an identical format to the previous game: eight teams of three enter a fishing tournament, and each round challenges the player to a different kind of fishing. The four rounds consist of a black bass tournament, offshore boat fishing in Kenzaki, a carp relay race, and a big game survival match. Compared to the first game, the visuals have been revamped to use full-3D fish models rather than the 2D sprites of the original."
 }

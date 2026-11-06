@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.0089
+        }
+      ]
+    }
+  ],
   "overview": "Middle-aged housewife Saeko Hibino has a secret: she's actually a Nobel laureate theoretical physicist who devised a completely new type of antimatter fusion reactor at only 17 years old. But when a band of no-good bad guys calling themselves the Haraguro-dan find out, they figure she's perfect to help them complete their ultimate secret doomsday weapon and kidnap her. Her family aren't going to take this lying down, though, and immediately take up arms, setting out to free her by whatever means necessary!\n\nNekketsu Oyako (\"Hot-Blooded Family\") is a side-scrolling beat-'em-up in the tradition of Final Fight with a particular focus on finding and picking up weapons in each stage. There are three characters to choose from: Saeko's husband, former pro-wrestler Rando, their fighting prodigy daughter Rio, and Saeko's freeloading research assistant, Torataro Minowa. Each character has their own stats and special abilities, and two players can also play simultaneously."
 }

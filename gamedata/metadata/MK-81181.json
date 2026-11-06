@@ -32,5 +32,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 94
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 67
+        }
+      ]
+    }
+  ],
   "overview": "In World League Soccer '98 the player is able to move, kick, chip, volley and perform advanced passing techniques, including one-twos, chip returns and swerved long-balls. Players can also chest and head the ball with total control. Also, it is possible to alter pitch type, weather conditions, and stadium design.\n\nThere are eight major European leagues plus the US and Japanese leagues, with 145 teams available to choose from, as well as international competitions which can be custom-designed. Live commentary is provided by Peter Brackley and Ray Wilkins, and motion capture by Les Ferdinand."
 }

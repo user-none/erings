@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2222
+        }
+      ]
+    }
+  ],
   "overview": "Stakes Winner 2: Saikyouba Densetsu is an enhanced home port of Stakes Winner 2. It contains a direct conversion of the original arcade game, including both the Japanese and international releases which contain different races, as well as a new \"Original Mode\". Original Mode adds simulation and raising elements to the game, with the player using cash winnings to breed and train their very own horse, rather than simply selecting from available horses as in the original game. This version also includes more than 40 additional real-life races."
 }

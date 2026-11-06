@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.3548
+        }
+      ]
+    }
+  ],
   "overview": "Alien Trilogy is a first-person shooter based on the first three Alien movies. You control Lt. Ripley in three sections, each based on one film: The colony complex on LV426 (from Aliens), the prison planet (from Alien³) and the derelict spaceship (from Alien). Each section consists of about 10 missions. In every mission, certain goals must be accomplished to continue. These include killing a certain number of enemies, finding items or activating switches.\n\nEnemies include everything the alien life cycle provides: facehuggers, chestbursters, warrior aliens, dog aliens (from Alien³) and alien queens, one of which waits in the final mission of every section. In addition to the Aliens, you also have to fight employees of the Company, who have either been infected by the aliens and are beyond saving or who actively want to obstruct your mission.\n\nWeapons to be used include pistol, shotgun, pulse rifle, flame thrower and smart gun. Ammunition, health upgrades and other useful items are scattered throughout the levels. Hidden areas may be uncovered by using explosives like grenades and seismic charges. An auto mapping system helps in not getting lost, night goggles and shoulder lamps (running on battery power) allow you to see in the dark and the motion tracker tells you where your enemies are - but only if they are moving."
 }

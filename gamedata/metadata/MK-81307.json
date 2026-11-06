@@ -44,5 +44,69 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4.5
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.5
+        },
+        {
+          "score": 9.5
+        },
+        {
+          "score": 9.5
+        },
+        {
+          "score": 10
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 96
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 80
+        }
+      ]
+    }
+  ],
   "overview": "Enter the world of Panzer Dragoon Saga and experience a game like no other: a fusion of classic Panzer action with the most technologically advanced RPG to come to Saturn. Board your morphing dragon and behold as the mysteries of the Panzer world unfurl across four massive CDs. The new \"rail free\" 3D engine lets you soar deeper into role-playing adventure than you ever before imagined. Your destiny awaits."
 }

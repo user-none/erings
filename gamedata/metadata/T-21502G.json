@@ -32,5 +32,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.27
+        }
+      ]
+    }
+  ],
   "overview": "A radical graphical remake of Zork: The Great Underground Empire made some 19 years after the series debut on a PDP-10 mainframe at MIT, this version boasts the incorporation of modern gameplay amenities undreamed of the first time around, such as automapping and, er, graphics.\n\nGiven ample time to drift wildly, the story and premise appear to have remained remarkably close to the source material -- the locations, layout and denizens of this fantastical subterranean treasure-hunt familiar to anyone with even a passing acquaintance with the original game. Where the biggest change lies, of course, is in the transition from the text parser to an interface controllable by a console's joystick. Adapting some sentence-construction conventions from the graphical adventure game genre (and the interfaces of Lucasfilm's and Legend's early entries in particular), menus selectable with a joystick pointer fill in for common \"action\" verbs while icons represent the inventory items the verbs influence; an expanded compass rose permits precise navigation of the Flatheadian ruins. (Alas! No secret joystick-button combination for \"xyzzy\"!)\n\nIn short: as faithful a reproduction of the original experience as you're going to find without employing a keyboard or voice-recognition software, plus \"modern\" graphics, sound and music!"
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2916
+        }
+      ]
+    }
+  ],
   "overview": "Civilization has the widest scope of any strategy game of its time. You are a leader of a nation. You begin in the Stone Age, and complete the game in the XXIth century (unless your civilization gets destroyed earlier). Your eventual goal is to become the dominant civilization in the world, either by wiping out everybody else, or being the first to get a space ship to Alpha Centauri."
 }

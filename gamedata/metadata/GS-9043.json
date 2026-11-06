@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1216
+        }
+      ]
+    }
+  ],
   "overview": "Sega Ages Rouka ni Ichidant-R is a compilation released under the \"Sega Ages\" line for the Sega Saturn. It includes a port of Puzzle & Action: Ichidant-R and Quiz Rouka ni Tattenasai! and was released exclusively in Japan in 1996."
 }

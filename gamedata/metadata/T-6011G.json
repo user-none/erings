@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4
+        }
+      ]
+    }
+  ],
   "overview": "SeaBass Fishing 2 is a bass fishing game endorsed by and featuring the likeness of professional Japanese professional fisherman and author Seikai Murakoshi. It is a follow-up to Sea Bass Fishing, including the same selection of modes: Tournament Mode is the main campaign where the player competes in a series of fishing tournaments with specific restrictions and increasing difficulty; Free Fishing mode lets the player set the time, equipment, and environment conditions and freely fish at any of the four locations. There is also an Instruction mode with video clips of Mr. Murakoshi explaining the basics of bass fishing, and a Cooking mode which describes various real-life meal recipes for preparing fresh bass."
 }

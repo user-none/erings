@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.125
+        }
+      ]
+    }
+  ],
   "overview": "Volume four of the Capcom Generation series, which includes three top-down shooter games ported from the arcade originals:\n\n• Commando (Senjō no Ōkami)\n• Gun.Smoke\n• Mercs (Senjō no Ōkami II)"
 }

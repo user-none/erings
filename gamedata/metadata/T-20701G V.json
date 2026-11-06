@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.5096
+        }
+      ]
+    }
+  ],
   "overview": "Airs Adventure takes place in an environment reminiscent of 17th century Europe. The game follows the story of an aspiring knight (default name Henry), who is framed for a crime and is about to be executed. However, the beautiful princess of the country feels mercy and stops the execution at the last moment. As the hero tries to uncover the truth about his conviction, fate brings the two together, and they begin a journey to discover distant lands in search for adventure, and perhaps even develop feelings for each other..."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1923
+        }
+      ]
+    }
+  ],
   "overview": "Joshikousei no Houkago... Pukunpa is a falling-block puzzle game featuring a cast of cute anime girls who each represent a different school club.\n\nThe game plays very similarly to the popular Puyo Puyo series, with colored blobs falling in pairs which must be rotated and arranged by the player. Matching three or more blobs of the same color will cause them to vanish, allowing any stacked above them to fall down and potentially trigger a chain that will send garbage blocks to the opponent. The unique feature here is that some blobs actually contain two different colors; these pieces cannot be cleared on their own, but when a neighboring piece is cleared the double piece expands, releasing the two colored blobs from inside, and allowing for further chain attack potential. If the pieces stack all the way to the top of the well, then that player loses the round.\n\nThe game includes two game modes: a versus mode against the computer or a second player, and an endless mode for one or two players. The game also includes an alternate \"Funny Mode\" which replaces the anime-style girls with crudely-drawn fantasy characters."
 }

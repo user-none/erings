@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.5664
+        }
+      ]
+    }
+  ],
   "overview": "One day, a mysterious old woman presents a young boy with a deck of Tarot cards. Examining them transports the boy to a fantasy realm where adventure awaits.\n\nArcana Strikes is a role-playing game with a strong focus on collecting cards to battle various opponents."
 }

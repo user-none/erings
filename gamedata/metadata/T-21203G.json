@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4053
+        }
+      ]
+    }
+  ],
   "overview": "The Literary Fragment is the first game in Abogado's mystery/horror/adult Detective Suzusaki series. The story focuses on Satoshi Suzusaki, a private investigator with a tragic past, which has left a permanent scar on his life and mental abilities. The case that opens the game's story is a horrifying death of an entire family in their house, at the dining table; circumstances lead to an assumption of either a ritual suicide or murder. Suzusaki, his lovely secretary Asuka, and his young friend, psychologist extraordinaire Kusanagi, have to do everything in their powers to solve the case, while the hero's mysterious past continuous to haunt him...\n\nThough Suzusaki is the main hero of the game, the player sometimes controls and sees the events from Kusanagi's point of view. The gameplay is point-and-click adventure without puzzles. To interact with the object, the player is required simply to click on it. Sometimes, different ways of interactions open up, such as verb commands, dialogue choices, and decision-making.\n\nThe game features scenes with horror content as well as explicit sexual situations; the Sega Saturn version censors all explicit sexual content."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.771
+        }
+      ]
+    }
+  ],
   "overview": "Thousands of years have passed since the Ancient Age; humanity struggles for survival in an unforgiving world. The player takes control of Kyle Fluge, a hunter caught up in a struggle between two dragons, and given an enormous task. Armed with an ancient gun and riding atop the Blue Dragon, you must battle against mutated wildlife, the covetous empire, and ancient sentinels, all for the sake of fulfilling the task entrusted to you by the Blue Dragon's prior rider - do not let the Black Dragon reach the Tower."
 }

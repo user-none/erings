@@ -30,5 +30,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "The world of Navan has many islands, and four of them are reigned by the powerful Druid brothers: Lawson, Curak, Havnar, and Astor. They worship different deities and try to maintain the harmony of nature on their islands. But one day, Lawson mysteriously disappears. Unable to solve the mystery, the brothers seek out you, a grandson of a once powerful Druid, to search for Lawson in the entire world of Navan.\n\nThe gameplay of Druid is somewhat similar to that of Ultima VIII: Pagan. It is an action RPG with simple point-and-click interface and action-oriented combat. You can execute two different types of physical attacks (high and low) and cast a variety of spells. You don't have a party in the game."
 }

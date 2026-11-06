@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6363
+        }
+      ]
+    }
+  ],
   "overview": "The true sequel to Cotton, Cotton 2 introduces Cotton's rival Appli for 2-player support for the first time and the story this time deals with the disappearance of the magic \"Bluewater Willow\" from the Kingdom's treasury. Cotton and Appli must now search the lands for the magic willow battling all the enemies they encounter in the way before its too late.\n\nThe game follows in the 2D-side scrolling shooter roots of the original with new spells, different elemental weapons that can be upgraded with experience crystals and a new energy bar that allows you to take a few hits before going down.\n\nThere are also new \"command\" shots that are triggered by specific controller moves as well as a hit-combo system that allows you to earn more power-ups and items. The Saturn version also has a \"Saturn\" mode which changes the enemy arrangement and makes some changes to the game balance."
 }

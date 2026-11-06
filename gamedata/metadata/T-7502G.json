@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0526
+        }
+      ]
+    }
+  ],
   "overview": "Zap! Snowboarding Trix is a snowboarding game endorsed by pro snowboarder Masao \"Bubbles\" Misawa. The game includes three single-player modes: Race Mode is an arcade-style race against a computer opponent; Practice Mode is a single-player time trial that records best times; and Free Mode is has no goals and removes the time limit. There are three courses, three boarders with different stats, and five computer difficulty levels."
 }

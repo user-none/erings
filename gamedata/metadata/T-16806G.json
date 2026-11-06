@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.3529
+        }
+      ]
+    }
+  ],
   "overview": "Crows: The Battle Action is a beat-'em-'up game based on Hiroshi Takahashi's delinquent manga series. Players can take control of one out 2 available characters, with 2 extra characters being unlockable as players clear the game.\n\nApart from the standard punches and kicks, the game offers special attacks which drain a bit of health when successfully used and a dash option as well. Weapons and objects can also be picked up and used against enemies. The game is linear, opting to put players through a lot of short stages which last for a few minutes before switching to a new one."
 }

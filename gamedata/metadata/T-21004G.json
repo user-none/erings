@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.9459
+        }
+      ]
+    }
+  ],
   "overview": "Cube Battler: Debugger Shouhen is a competitive puzzle game with a strong emphasis on story and anime cutscenes, in which two players race to rotate and arrange cubes on a grid to match a video playing in the background. Each player can pick up cubes from the tray at the bottom, then rotate and place them into a 3x4 playfield; each player can also attack or defend at any time. Whichever player completes their puzzle first, or reduces their opponent's health to zero, wins the match.\n\nThis release is the first chapter of the story; it follows Debugger Shou, a game tester who enters the Cube Battle tournament looking to expose the wrongdoings of the game's developer."
 }

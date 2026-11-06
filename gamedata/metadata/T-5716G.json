@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.746
+        }
+      ]
+    }
+  ],
   "overview": "A nudity-free compilation from the Suchie-Pai series, this four-disc set includes the following:\n\n• Disc 1: A non-nude version of Idol Janshi Suchie-Pai Special.\n• Disc 2: A non-nude version of Idol Janshi Suchie-Pai II.\n• Disc 3: A new Adventure game, similar to Suchie-Pai Adventure: Doki Doki Nightmare, in which the Pai team sets out to find a ghost in the school. Also contains extras, such as a replica of Jaleco's then-current site's voice actress page.\n• Disc 4: A mini audio CD."
 }

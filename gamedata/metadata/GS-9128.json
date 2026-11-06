@@ -34,5 +34,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.9444
+        }
+      ]
+    }
+  ],
   "overview": "Bug Too! is the sequel to Bug!. It is a third-person action platformer with console-style play mechanics. You play as Bug and his two sidekicks, SuperFly and Maggot Dog. You go through several 3D worlds, all of which are parodies of movies. You must defeat the themed villains through all of the environments to make your homeland safe again."
 }

@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.173
+        }
+      ]
+    }
+  ],
   "overview": "Sega Ages: Memorial Selection Vol. 1\n\nRelive the early years of Sega with their first memorial selection. Volume 1 features Pengo, Head On, Up'n Down and Flicky."
 }

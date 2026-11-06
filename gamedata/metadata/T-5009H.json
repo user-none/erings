@@ -40,5 +40,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 75
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 59
+        }
+      ]
+    }
+  ],
   "overview": "Drive some of your favourite sports cars through wild and fast tracks, including the Dodge Viper, Lamborghini, Ferrari, Porshe, Corvette, Mazda RX7, Toyota Supra Turbo, and Acura NSX. Some of the tracks are open road, meaning you simply fly down a huge highway, with cops following in hot pursuit. One of the options in the game allows you to pick which time of the day to race in."
 }

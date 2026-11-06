@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 9
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.3728
+        }
+      ]
+    }
+  ],
   "overview": "The first in the Dead or Alive series, and features many of the same features that has made the DoA series so popular today; somewhat realistic combat, good character design, and scantily clad women whose breasts bounce a lot.\n\nThe game doesn't mess too much with a background story- it's a 3D one on one fighter that takes place within an arena of limited space. Each character has their own unique way of fighting, their own abilities, and even their own hobbies and likes. (For example, Ryu Hayabusa- yes, he of Ninja Gaiden fame- likes sushi, mountain climbing, and fishing.)"
 }

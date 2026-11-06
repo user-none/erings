@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.619
+        }
+      ]
+    }
+  ],
   "overview": "Ishin no Arashi is set during Bakumatsu period (around 1850 until the Meiji Restoration of 1867), the final stretch of the Japanese Edo period, which was a turbulent time, a time of great struggle between the supporters of the feudal shoguns, the rulers of the country, and the adherents of the Emperor, which eventually won and carried through the Meiji Restoration, turning Japan into a modern, powerful state. In Ishin no Arashi the player can choose one of the three major battles of Bakumastu period, and decide which leader will eventually propel Japan towards the Meiji era.\n\nThis strategy game is somewhat similar to the better-known Romance of the Three Kingdoms series and other historical simulation games by the same company, but also differs from them by having much less complex diplomacy options and focusing the gameplay on navigation and individual encounters. Before beginning, the player chooses a general and customizes his parameters (stamina, attack power, charisma, knowledge). The player then controls the general with soldiers of his choice, navigating him on grids representing towns and countryside of Japan in turn-based fashion. The grids can be occupied by shops, schools (to train the general), friendly and hostile characters and groups. Battles, as well as negotiations and diplomatic procedures, are carried out automatically, and their outcome depends on the characters' statistics."
 }

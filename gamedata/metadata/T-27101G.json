@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.4666
+        }
+      ]
+    }
+  ],
   "overview": "While searching for food for his village, the pig Lucas climbed a huge tree in hopes of stealing the eggs from a giant bird's nest. However, when he reached the nest, the mother bird saw him and chased him away. Upon returning to his village in defeat, Lucas finds all the homes ransacked and everyone gone but one young piglet, who is snatched away by a bird right before his eyes. Lucas sets out to rescue the piglets, and his journey will take him all across the island.\n\nMinami no Shima ni Buta ga Ita: Lucas no Daibouken (\"There was a Pig on the South Island: Lucas' Great Adventure\") is a puzzle game featuring an assortment of logic puzzles. The game is divided into six themed worlds, and each world is divided into six levels in two types. Even-numbered stages are simple platform action sequences where Lucas can jump and use a whip to attack, avoiding enemies and looking for piglets to rescue. Odd-numbered stages take the form of various logic puzzles similar to those one might find in a puzzle magazine, such as arranging numbers to have them all add up to a certain sum, or rolling dice around so that they all show the same image on their face. These puzzles can be skipped, but clearing them will rescue a larger number of piglets."
 }

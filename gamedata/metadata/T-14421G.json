@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7209
+        }
+      ]
+    }
+  ],
   "overview": "Devil Summoner Soul Hackers: Akuma Zensho Dainishuu is a monster database and sound gallery fan disc for Devil Summoner: Soul Hackers. It also includes a short sound-novel style prologue scenario not found in the main game, which is a linear visual novel that takes around an hour to complete."
 }

@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "Night Striker is a third-person shooter reminiscent of Space Harrier. Laser optics expert Dr. Lindvery Maska and his daughter have been kidnapped by a terrorist group, and Dick Dagras, head of the Special Service Agency, is mobilizing a group of elite soldiers experienced in the use of special armored flying cars, in order to rescue Dr. Maska and destroy this terrorist group.\n\nThe player flies through each stage, controlling their armored car and shooting down waves of enemies. A boss appears at the end of each stage, and after this the player must choose what path to take in the next stage, as in Darius. Instead of lives, the player has a shield that takes damage from each hit, but is recharged at the end of each stage.\n\nThe Saturn version features a set of exclusive bonus levels."
 }

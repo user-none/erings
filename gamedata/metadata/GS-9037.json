@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.3755
+        }
+      ]
+    }
+  ],
   "overview": "It is the Taishou Era in Japan, and the Western world has begun to make its way through traditional Japan. Technology is evolving, and the use of steam has made for great breakthroughs in transportation in weaponry. But the world faces a deadly threat: a dark cult wishes to destroy Japan and the very world itself. To combat any possible threats, the Imperial government of Japan brings together 6 young ladies from around the world to form the Hanagumi (Flower Bridage) division of the Teikoku Kagekidan (Imperial Floral Assault Group). Clad in their proud spiritual armor, the Kobou, these young women are the frontline of defense against the demon worshippers, but they haven't a leader to guide them into battle.\n\nAnd, with a single letter, young Navy ensign Ichiro Ogami's life is about to take a very interesting turn as the chosen leader of the Hanagumi! Ichiro now has to gain the trust of the members of the Hanagumi if he expects to keep things under control.\n\nThe gameplay of Sakura Taisen is a combination of Japanese-style adventure with dating mechanics and tactical turn-based combat. Most of the game is spent exploring the theater, which serves as a disguise for the military base. Depending on the player's decisions - where to go, which girl to look for, how to answer the questions (there is a time limit for responses) - the protagonist will develop different relationships with the girls, which will influence not only further dialogues and the ending, but also slightly affect their parameters in battles. During combat, the player navigates Ichiro and the girls over an isometric battlefield and attack the enemies physically, or charge for powerful special attacks. Each turn it is possible to perform two different actions per character; walking distance and attack range are limited and unique to each character. There is no experience points system and also no equipment in the game."
 }

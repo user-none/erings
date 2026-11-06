@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5909
+        }
+      ]
+    }
+  ],
   "overview": "Command & Conquer develops ideas from Westwood's previous game Dune 2, forming a real-time strategy (RTS) game. The control system involves selecting units with the mouse and then directing them, while the opponents make their moves without waiting for a \"turn\" to end.\n\nThe game focuses on a war between two organizations, The Brotherhood of Nod and the Global Defense Initiative. The player can take control of either side for more than 15 missions. Both have different units and structures, including artillery, tanks and light infantry.\n\nIn most missions, a base needs to be built first in order to build new units and structures. Most important are the harvesters, which collect Tiberium and deliver it to a refinery, where it's converted into money, thus funding the construction of a base and an army.\n\nThe game also features FMV mission briefings and victory cutscenes."
 }

@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2361
+        }
+      ]
+    }
+  ],
   "overview": "The Unsolved is an adventure game in style of The X Files that uses real-actors and real photo backdrops. The player assumes a role of a police detective who is trying to solve the series of murders in downtown Los Angeles, where all the victims are women. All the victims seem to be missing organs and depleted of their blood, and modus operandi of the perpetrator is unknown. Police is tapping in the dark, and the closer you get to the truth, the story mixes science fiction and supernatural, much like The X Files.\n\nWhile actors use English, this game is not released outside of Japan, and subtitles as well as any other in-game text are in Japanese."
 }

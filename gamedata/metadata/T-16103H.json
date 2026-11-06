@@ -45,5 +45,40 @@
       "rating": "18+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 91
+        }
+      ]
+    }
+  ],
   "overview": "Die Hard is a third-person shooter. The player battles terrorists and rescues hostages in the Nakatomi Plaza, which is the setting of the first film in the series.\n\nDie Hard 2: Die Harder is presented as an on rails-shooter, where the player must stop terrorists who have taken over Dulles Airport from the second film.\n\nPlayers control the crosshair with a gamepad, light gun, or, on PC and Saturn, a mouse. Die Hard Trilogy was one of the few light gun games available for the PlayStation that was not compatible with Namco's GunCon/G-Con 45 controller or GunCon 2. However, it was compatible with Sega's stunner light gun for the Saturn version.\n\nIn Die Hard with a Vengeance, the player goes on a joyride driving a taxicab, sports car, and dump truck throughout all of New York City and is tasked with finding and defusing several explosives before they can go off."
 }

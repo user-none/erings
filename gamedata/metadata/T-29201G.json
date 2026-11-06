@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.0555
+        }
+      ]
+    }
+  ],
   "overview": "Daitoride is a puzzle game that can described as a combination of Mahjong and Shanghai (Solitaire Mahjong), and a sequel to Toride. Like in Shanghai, the player is tasked with clearing a stack of mahjong tiles arranged in a grid. However, rather than matching the tiles in pairs, the player picks individual tiles and puts them in their hand, with the goal of creating sets — either three of the same tile, or three sequential tiles from the same suit — which are discarded from the hand once matched. Only exposed tiles can be picked up, and the player's hand cannot exceed eight tiles. There is a strict time limit, as well as several kinds of help tiles that can appear: \"Time\" tiles refill the time limit, \"Help\" tiles can match and complete any set, and \"Star\" tiles can be collected for an extra life. Running out of time or overflowing the hand by picking up too many unmatched tiles will result in a game over.\n\nIn addition to the single-player mode, there is also a versus mode where two players compete to empty their hand first. Both players pull from the same stack of tiles, and hands can be completed using tiles from both hands simultaneously. If both hands are emptied with the same match, the player with more time left on their meter is the winner."
 }

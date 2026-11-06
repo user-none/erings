@@ -32,5 +32,49 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4.5
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7.5
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "A Tetris-like puzzle game featuring popular characters from many Capcom games.\n\nColored gems fall from the top of the screen in pairs, but this time lining up those of the same color is not enough. To break the gems and punish your opponent with counter gems you have to place a crash gem of the same color next to the gems. If you make a block of gems of the same color they'll fuse, forming a power gem. Breaking a power gem sends more counter gems to your opponent than breaking the same amount of gems in some other configuration. But the ultimate attack is breaking power gems in chain."
 }

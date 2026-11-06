@@ -30,5 +30,27 @@
       "rating": "15+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 82
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 58
+        }
+      ]
+    }
+  ],
   "overview": "They're dead - they just don't know it yet! Your job: play teacher using strategically placed rounds of hot lead. The arcade monster hit has risen on Sega Saturn. Load your trusty 12 gauge and dissect every rotting zombie, beefed-up cadaver and killer monkey experiment that stumbles your way. Just don't miss - these maggot-ridden mummies haven't had a good meal in years!\n\nThe House of the Dead is a rail shooter. Go through the four chapters with branching paths and kill all the zombies, avoid killing the humans, and rescue the girl. Shooting various special targets along the way or in a certain time period give the player temporary health and weapon upgrades.\n\nThe Saturn version of the game contains two extra modes called Saturn Mode and Boss Mode. Saturn mode plays like the arcade game, but offers the player different characters to choose from. Character selection matters since they each have varying attributes such as their reload time and how much damage they can take before dying. The Boss Mode allows the player to fight one boss of their choosing or all of the game's four boss monsters consecutively."
 }

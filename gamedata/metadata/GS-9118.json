@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.1351
+        }
+      ]
+    }
+  ],
   "overview": "The Book of Lulu is an interactive multimedia book by Romain Victor-Pujebet where player can flip the pages to read through and click on various images in the book. Certain images in the book allow for slide changes or result in a small video animation, while others open in full screen mode with ability to interact with them by clicking on a certain area. Interactive images allow changes such as changing the sky, weather, season, colors and mode, while interactive videos let you interact with objects and characters which result in a short FMV sequence."
 }

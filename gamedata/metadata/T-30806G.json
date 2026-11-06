@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.42
+        }
+      ]
+    }
+  ],
   "overview": "Private Idol Disc: Data Hen Race Queen G is a Miscellaneous game, developed and published by Sada Soft, which was released in Japan in 1997."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.3333
+        }
+      ]
+    }
+  ],
   "overview": "AI Shōgi 2 is a digital conversion of the traditional Japanese board game Shogi for one or two players, and the second game in the series to appear on consoles. It includes four computer difficulty levels, next move suggestions, the ability to save and reload games in progress, a board setup tool to practice different scenarios, and 100 Tsume Shogi puzzles."
 }

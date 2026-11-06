@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.125
+        }
+      ]
+    }
+  ],
   "overview": "Mahou Shoujo Pretty Samy: Heart no Kimochi is a visual novel style adventure game based on the Magical Girl Pretty Sammy anime series. It includes two new original story episodes: the first involves a mysterious group creating a new kind of super-weapon, while the second revolves around the cast preparing chocolates for Valentine's Day. Gameplay is identical to the previous title: voiced dialogue sequences over still images drive the story, and the player is occasionally given a choice of which action to take in a scene; these choices will affect how the rest of the scene plays out but not the overall story progression."
 }

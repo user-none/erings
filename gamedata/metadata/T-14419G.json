@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 9
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.9766
+        }
+      ]
+    }
+  ],
   "overview": "DoDonPachi is Cave's sequel to their 1995 arcade release DonPachi. Like its predecessor, DoDonPachi is a vertical-scrolling and military- and robot-themed manic shooter featuring a giant mecha bee for a final boss. The player's ship and the gameplay are virtually the same as in DonPachi, with one of three weapons selected at start then levelled-up by collecting dropped power-ups."
 }

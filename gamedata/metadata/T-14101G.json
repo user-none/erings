@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4761
+        }
+      ]
+    }
+  ],
   "overview": "Kamen Rider: Sakusen File 1 is a digital gallery for the Sega Saturn based on the Kamen Rider franchise."
 }

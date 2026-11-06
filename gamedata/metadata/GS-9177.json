@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.771
+        }
+      ]
+    }
+  ],
   "overview": "Winter Heat is the home conversion of the DecAthlete (also known as Athlete Kings) sequel, replacing decathlon by Winter sports. Competition (in Arcade, Saturn or Practice modes) includes 11 events featuring eight athletes of different nationalities - Li Huang, Karl Vain, Joe Kudou, Ellen Reggiani, Aleksei Rigel and Rick Blade are joined by B.B. (replacing Jef Jansens, who appears as a secret athlete) and Johann Stensen (instead of Femi Kadiena). \n\nThe game is a typical Winter-sports game, in the line of those released by Epyx but with a more arcade feel. The events include:\n\n• Speed Skiing: A simple dashing event where the goal is to descend the hill as fast as possible (in speeds over 200 km/h). Action is reduced to mash the button to gain speed.\n\n• Ski Jumping: Composed by four parts: The run up (mash the button to gain speed), the jump (selecting the angle), the flight (mash the button to gain extra length) and the landing (pressing the action button too early will lose valuable meters, too late will cost the jump).\n\n• Downhill: A simplified version of the real downhill event. It's impossible to miss the gates, and the challenge is to get a strong start-up, keep a straight path not losing speed hitting the fences and hitting the action button to jump hills perfectly.\n\n• Short Track Speed Skating: A straightforward event where the directional pad controls the direction of the athlete along the speed button to control the pace. As the event runs for over 40 seconds, it's possible to hold second position, making the opponent cut air resistance which allows the player to reach fastest speeds with less button presses.\n\n• Skeleton: The first event in the ice tunnels, it requires a fast run-up followed by a strong entrance in the tunnels. By pressing the action button it's possible to slow down the sled and make more controlled turns, or the athlete can fall from it, which not only loses time but also requires a small run-up.\n\n• Slalom: Just like the Downhill, it's impossible to miss a gate in the Slalom. After an initial sprint the player has to press the action button to approach each flag in the best way possible. Hitting the button too early or too late will make the athlete hit the flag, losing valuable time.\n\n• Aerial: An event similar to the Ski Jump. Instead of offering a \"click-along\" version, the player starts by setting the difficulty of the jump, and then three parts follow: in the run-up, the player sets the speed by mashing the speed button, followed by the jump which sets the strength (by pressing the action button) and when the athlete leaves the launch ramp, the player must mash the speed button once again to complete the jump. To complete a jump, the player must fill each section of the jump bar by making enough button presses.\n\n• Bobsleigh: In all similar to the Skeleton, except there's no option to slow down.\n\n• Speed Skating: Another simple button-mashing event but with a twist: speed must be controlled on the turns, or the athlete will slip out losing a few seconds in the process. The speed can be controlled by a color graph above the power bar.\n\n• Snowboard: A mix between the Slalom and Downhill. There are several gates to be passed, plus two jumps. Unlike the other two events, it's possible to miss a gate, which carries a one second penalty for each missed.\n\n• Cross Country: The stamina-influenced event. There's a long track with some hills that can be taken for advantage, as during downhill slopes it's possible to gain a lot of speed without losing stamina."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.65
+        }
+      ]
+    }
+  ],
   "overview": "Solar Eclipse is a 3D shooter that takes place on and near the many moons of Saturn. You are a hot-shot pilot with a troubled past. You've been re-assigned to a new squadron aboard a Tomlinson-class carrier. There's trouble on a mining colony on the moon Janus. Your squadron is sent in to investigate, and uncover a lot more than they went looking for.\n\nThe story in this game is told through a series of full-motion video clips. In addition to between-level scenes, FMV messages from your squad mates appear from time to time while you play the game."
 }

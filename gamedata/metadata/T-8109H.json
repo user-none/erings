@@ -32,5 +32,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 3
+        }
+      ]
+    }
+  ],
   "overview": "Another game in NFL Quarterback series. Every team from the 1996 NFL season is shown here, with real player numbers and stats. 32 offensive plays and 16 defensive plays are available as you play. Options include setting quarter lengths, from one to 15 minutes, and selecting your mode of play: Preseason, Playoffs, or a full Season, in which you play 18 games towards the goal of the Super Bowl."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.7302
+        }
+      ]
+    }
+  ],
   "overview": "Become the owner of a convenience store franchise, and experience the fun of arranging products and customizing your store to meet land features and seasons!\n\nCan you bring in lots of customers? Can you succeed in opening up ten stores?\nCan you serve a million customers? ...A store owner faces so many challenges!\n\nExperience the first installment of the hit convenience store management simulation!"
 }

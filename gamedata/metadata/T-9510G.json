@@ -25,5 +25,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.3107
+        }
+      ]
+    }
+  ],
   "overview": "In the year 2010 mankind has built its first space colony, Beyond Coast. Three years later the founders of the colony felt it needed to be protected, and chose five best policemen from Earth to do that: Gates Becker from Scotland Yard, the Japanese Sadaoki Tokugawa, Salvatore Toscanini from New York, and two policemen from Los Angeles: Jonathan Ingram and his best friend Ed Brown. During a routine patrol on Beyond Coast, something happened to Jonathan's space suit. He was sucked into space and presumed dead. Twenty-five years later, he is miraculously discovered in his life pod, alive. He still looks like a young man, but in reality he is fifty-five years old.\n\nTrying to forget his past, Jonathan opens an investigation agency on Earth. One day, his ex-wife unexpectedly pays him a visit. She has re-married during Jonathan's prolonged absence, and asks him to find her missing husband. When she leaves the office, her car explodes, and she dies. Determined to fulfill her final request, Jonathan prepares to re-visit Beyond Coast.\n\nPolicenauts is a Japanese-style adventure with action elements, similar in many ways to Snatcher. The player interacts with the environment in a point-and-click fashion: positioning a cursor over an object allows the player character to examine it or perform other context-dependent actions. There are a few puzzles in the game, but most of the time the story is advanced by visiting various locations, examining objects, and talking to characters. Conversations usually include a selection of topics.\n\nAction sequences are similar to those of Snatcher, but are more numerous and varied. The player must rapidly shoot enemies moving within a one-screen area viewed from a first-person perspective, reloading the gun manually and trying to eliminate the enemy before Jonathan's health bar is depleted.\n\nPolicenauts Saturn version has differences with its PlayStation counterpart:\n\n• The game's glossary from policenauts.net can be accessed in game by pressing Z or Start buttons.\n• Shooting mode that supports Virtua Gun/Stunner peripheral. You must first clear the scenes ins story mode to access them.\n• More scenes.\n• Dialog is altered in some scenes.\n• Additional character close-ups.\n• When touching girls breasts they bounce longer... the PS1 version has censored bouncing.\n• Bonus videos after completing the game.\n• Anime cut-scenes run at 24FPS vs 15 FPS on PS1, but quality is lower."
 }

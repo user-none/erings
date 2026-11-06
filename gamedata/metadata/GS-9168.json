@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.4285
+        }
+      ]
+    }
+  ],
   "overview": "J.League Pro Soccer Club o Tsukurou! 2 is a football (soccer) management simulation game and the sequel to the first game in Sega's long-running series. The player takes the part of the owner of an upcoming club that is just about to join the prestigious J.League soccer league. As in the previous game, the player manages staff hiring and player scouting, sponsorships and publicity, match and training scheduling, and of course choose the team's hometown and uniforms. New in this entry are the ability to create up to three custom players for the team, additional options for post-match publicity and commentary, and a completely revamped in-game match display system that lets the player watch each match in a much more realistic style."
 }

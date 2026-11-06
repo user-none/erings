@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.4285
+        }
+      ]
+    }
+  ],
   "overview": "Street Fighter Zero 3 discards the \"Manual\" and \"Auto\" modes from the previous Zero games and instead offers three different playing styles known as \"isms\" for players to choose from. The standard playing style, A-ism (or Z-ism in Japan), is based on the previous Zero games, in which the player has a three-level Super Combo gauge with access to several Super Combo moves. X-ism is a simple style based on Super Street Fighter II Turbo, in which the player has a single-level Super Combo gauge and access to a single but powerful Super Combo move. The third style, V-ism (or \"variable\" style), is a unique style that allows the player to perform custom combos similar to the ones in Street Fighter Zero 2, but cannot use Super Combos. In X-ism, players cannot air-block nor perform Alpha Counters, and can only use 1 Super Combo move in its powerful Level 3 version. Zero 3 also introduces a \"Guard Power Gauge\" which depletes each time the player blocks – if the gauge is completely depleted, then the player will remain vulnerable to an attack. The I-ism style is customizable when selecting which character and super gauge to be used, which is only exclusive to Dreamcast version's Saikyo Dojo Mode, or PSP version's MAX update on World Tour or/and Entry Modes."
 }

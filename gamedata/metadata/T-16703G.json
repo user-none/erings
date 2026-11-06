@@ -33,5 +33,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.2654
+        }
+      ]
+    }
+  ],
   "overview": "This limited-edition release of Idol-Mahjong Final Romance R includes the game along with two bonus items:\n\n• A \"dress-up\" game disc which lets the player dress each up each of the girls in various outfits, including new voice lines.\n• A booklet of concept and production artwork.\n\nThe dress-up disc was also given out as a separate promotional item, but the art book is unique to this release."
 }

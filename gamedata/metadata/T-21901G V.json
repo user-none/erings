@@ -27,5 +27,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 9
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.1311
+        }
+      ]
+    }
+  ],
   "overview": "The Yakyuuken Special is an updated port of a 3DO striptease game of the same name. As before, the player visits various models who challenge the player to a game of janken (rock-paper-scissors), doing a dance before making their move. Each time the player wins, the opponent removes an article of clothing, leaving her fully nude after five rounds. This version includes a total of twelve young ladies to challenge: the same eight from the original 3DO release, plus four new girls exclusive to this Saturn version."
 }

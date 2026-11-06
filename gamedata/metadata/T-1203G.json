@@ -27,5 +27,36 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0958
+        }
+      ]
+    }
+  ],
   "overview": "X-Men: Children of the Atom is a 2D fighting game and the first Capcom title to use licensed characters from the Marvel comic universe. It has six main characters and four of their enemies that are playable. The X-Men are Colossus, Cyclops, Iceman, Psylocke, Storm and Wolverine. The villains are Omega Red, Sentinel, Silver Samurai and Spiral. The two main bosses are Juggernaut and Magneto, and Akuma is available as a secret character."
 }

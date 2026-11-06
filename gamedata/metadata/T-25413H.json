@@ -32,5 +32,27 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 80
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 49
+        }
+      ]
+    }
+  ],
   "overview": "Arcade Greatest Hits: The Atari Collection 1 is a compilation of six games from the golden age of Atari: Asteroids, Centipede, Super Breakout, Battlezone, Missile Command, and Tempest."
 }

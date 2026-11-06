@@ -44,5 +44,69 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5.5
+        },
+        {
+          "score": 3.5
+        },
+        {
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 81
+        }
+      ]
+    }
+  ],
   "overview": "NHL All-Star Hockey 98 is a hockey game where the player can control a team of his choice to bring it to victory and glory. The game modes are the typical genre choices: Either a whole NHL season, the NHL playoffs or a league with 15 national teams. The team logos and player names are official licensed and uses the data from 1996/1997.\n\nThe gameplay itself is more action oriented than a simulation and uses several shooting and pass variations which are activated with more or less complicated key combinations. Six camera angles and a instant replay feature complement the TV atmosphere.\n\nThe game also features several tactical possibilities. For eight game situations the player can choose between three behaviors, e.g. how the players set up shots in the offensive zone. During the season there is a option to trade players with other teams. Extensive mid-season statistics, which can be shown for every team in the league, help planning transfers and tactics."
 }

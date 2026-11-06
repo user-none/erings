@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "Dejig: Lassen Art Collection (デジグ ラッセン ～アートコレクション～) is a jigsaw game for the Sega Saturn released as part of the Dejig series. Complete digital jigsaw puzzles based on the art of Christian Riese Lassen."
 }

@@ -34,5 +34,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "Billy is a young boy who lives in a village on the island of Tilk. He and his friends have a secret hideout, and they have grand make-believe adventures as a group. But one day, a mysterious young girl named Silky appears on the island, and it seems that Billy and his friends may be embarking on an adventure for real now.\n\nTilk: Aoi Umi kara Kita Shoujo is an adventure game in chapters with tactical-style battle sequences. Each chapter consists of a sequence of side-view dialogue sequences in which the characters interact and converse automatically. Player interaction is limited to occasional dialogue choices which will affect the story's progression. Each chapter may also contain one or more battle sequences in which the group of kids fight against other kids or against monsters. These are turn-based top-down tactical battles in the vein of Shining Force where the player controls each member of the party individually."
 }

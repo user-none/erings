@@ -47,5 +47,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 4.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 83
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 86
+        }
+      ]
+    }
+  ],
   "overview": "For the first time ever in an arcade racer, take control of either NASCAR or Indy cars and cruise around 16 detailed tracks. There are 3 views available to drive from. As well as individual races, you can play a full career. Derek Daly and Bob Jenkins provide a running commentary. Outside factors such as pit-crew mistakes and mechanical failures can affect your races."
 }

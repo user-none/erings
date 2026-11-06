@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.2142
+        }
+      ]
+    }
+  ],
   "overview": "Sankyo Fever S is pachinko simulation game, and the first in the Fever series to be released on the Saturn. It contains digital recreations of six real-life pachinko machines made by Sankyo:\n\n• CR Fever Beach\n• Fever Nin Nin Emaki SP\n• CR Fever Big Powerful FX\n• Carrot Boy\n• Missile 7-7-6D\n• Akudaman SP\n\nThere is no campaign or story mode, but each machine has various configuration and stat tracking options and can be freely played.\n\nThe limited-edition release includes six trading cards featuring photos of the included pachinko machines, but is otherwise identical."
 }

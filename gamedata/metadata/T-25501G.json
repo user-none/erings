@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.2105
+        }
+      ]
+    }
+  ],
   "overview": "Ultraman Zukan (ウルトラマン図鑑) is a Sega Saturn title released in 1996. It not a \"game\" per se, but rather software explaining the details of Ultraman and Ultra Seven.\n\nIt was followed by Ultraman Zukan 2 and Ultraman Zukan 3."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.4583
+        }
+      ]
+    }
+  ],
   "overview": "Tadaima Wakusei Kaitakuchū! (\"Planet Currently Under Development!\") is a competitive building strategy game where the goal is to construct the most buildings on a planet within a set time limit. Each player controls a team of three robots – one that collects resources, one that builds structures, and one that disrupts the opponent's actions – and must work towards a specific set goal on each stage, such as to build the most houses or the most structures on islands. The player does not directly control the robots, but rather gives them commands using a point-and-click interface. Items can also be found that will give an advantage to one player, and various events such as tornadoes and earthquakes can also occur. Whichever team has the most structures that count toward the goal at the end of the time limit wins the round.\n\nThe game includes a single-player story mode against the computer, as well as a split-screen two-player mode."
 }

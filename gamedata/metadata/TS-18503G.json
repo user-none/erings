@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.5789
+        }
+      ]
+    }
+  ],
   "overview": "The Psychotron is an adventure from the early development time of live video, set in a wild Texan environment. A sort of Mission Impossible type of game with much usage of live video.\n\nYou have been assigned by the US President and the FBI to find out a missing official science project. The video interaction is very sharp and the game also offers the player many puzzles, card and board game sequences."
 }

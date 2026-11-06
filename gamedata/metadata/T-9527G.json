@@ -27,5 +27,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5902
+        }
+      ]
+    }
+  ],
   "overview": "Akumajo Dracula X: Gekka no Yasokyoku is an entry in the Castlevania series released for the Sega Saturn exclusively in Japan in 1998. Western gamers know this game as Castlevania: Symphony of the Night - the name the PlayStation 1 version of the game and all successive re-releases. It is a direct sequel to Akumajo Dracula X: Chi no Rondo for the TurboGrafx-CD and the second and final Castlevania game to be released on a Sega system, following Castlevania: Bloodlines."
 }

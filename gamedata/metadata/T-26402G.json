@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.2441
+        }
+      ]
+    }
+  ],
   "overview": "A secret organization called Fata Morgana is developing a weapon that is capable of killing or wounding two-thirds of the world's population. A super-national group of combat experts from all over the world called Project Blue has been established to counteract Fata Morgana's evil doings. \n\nSonic Wings Special is an enhanced and expanded port of Aero Fighters Special (Sonic Wings Limited in Japan), a coin-op shoot-'em-up with vertical scrolling. The original coin-op game uses altered levels, graphics and many features from Aero Fighters, Aero Fighters 2 and Aero Fighters 3. \n\nThe home console version adds new characters and endings, new bosses, updated graphics and unlockable planes. There are also Time Attack and 2-player modes. The game uses a branching stage system, so it is impossible to see all levels in one sitting. There is a total of 14 playable characters and many different endings (some of which are reused from previous games in the series). Overall the game has a comic feel."
 }

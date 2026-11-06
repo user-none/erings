@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.1008
+        }
+      ]
+    }
+  ],
   "overview": "Sega Ages: Phantasy Star Collection is a compilation of four Phantasy Star games and was released for the Sega Saturn exclusively in Japan in 1998 as part of the Sega Ages series.\n\n• Phantasy Star\n• Phantasy Star II: Kaerazaru Toki no Owari ni\n• Phantasy Star III: Toki no Keishousha\n• Phantasy Star: Sennenki no Owari ni"
 }

@@ -32,5 +32,49 @@
       "rating": "T"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 2
+        },
+        {
+          "category": "Sound",
+          "score": 3
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 2.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4.5
+        },
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "This game is loosely based off of the movie of the same name. The player is put in the role of a mercenary for the TraviCom Corporation who is sent in to find the Lost City of Zinj in an attempt to find the infamous diamond mine. The story is told through FMV with original scenes made for the game and spliced footage from the movie into it.\n\nThe gameplay is a standard first-person shooter, roaming through four different environments and shooting at various enemies such as giant spiders, mutant dragonflies, monstrous lizards and of course the dangerous gray apes. The starts out with a hand gun and can pick up more powerful weapons as well as medical packs to restore their health."
 }

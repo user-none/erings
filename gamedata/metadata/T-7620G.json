@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5212
+        }
+      ]
+    }
+  ],
   "overview": "Winning Post 2: Program '96 is an updated version of Winning Post 2, featuring updated race information for the 1996 series. New in this version is the Paper Owner Game mode, a \"fantasy sports\" style game mode for multiple players where each player selects their choice of horses for a given year, and winners are determined by the performance of each player's selected horses."
 }

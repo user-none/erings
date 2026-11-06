@@ -49,5 +49,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 76
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 77
+        }
+      ]
+    }
+  ],
   "overview": "FIFA Soccer 97 is the fourth game in the FIFA Series and the second to use the Virtual Stadium engine. Unlike the first game to use the engine, FIFA Soccer 97 features polygonal players as opposed to the 2D sprites used in FIFA Soccer 96. The engine however received complaints for being sluggish in the PC and PlayStation versions.\n\nDavid Ginola (then a Newcastle United player) graced the cover of the game in the European market. He also was used for motion capture for the polygonal models in the game. Bebeto (the Brazilian striker) was featured on the cover for the Americas and Asia-Pacific markets."
 }

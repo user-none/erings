@@ -33,5 +33,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.5789
+        }
+      ]
+    }
+  ],
   "overview": "Amagi Shien is a murder-mystery adventure game featuring live actors. The player takes the role of an assistant to the famous detective-novelist-turned-real-detective Fumi Kindaichi, who has come to the remote Amagisō hot springs resort as it celebrates its 60th anniversary. Tensions are high with all of the resort's shareholders present, and it's not long before a body is found. It's up to the player to explore the grounds and solve the mystery, hopefully before anyone else winds up dead. The game's story is presented via live-action photos and video clips, with the player's actions and choices determining how the story proceeds, leading to one of over 30 different endings."
 }

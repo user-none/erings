@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1167
+        }
+      ]
+    }
+  ],
   "overview": "Try to gain control of the underworld in Battle Monsters. You must choose from a variety of monsters, and then enter one-on-one combat. Twelve characters are available (from a human/bird hybrid to a headless creature) with each having its own set of special moves, like juggling opponents in the air, and pit monster against monster. Fight through several different places where each level's background is made up of multiple levels, allowing combatants to jump from one platform to another with two attack buttons and two jump buttons controlling the action."
 }

@@ -33,5 +33,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0765
+        }
+      ]
+    }
+  ],
   "overview": "The sixth arcade game in the Super Real Mahjong series. In a manner extremely similar to previous entries in the series, you play strip mahjong with three lovely females, this time around with Tamami Kayama, Yukari Kinomiya, and Mari Kurihara. This game, however, has a new feature: an \"emotion system.\" Each girl has a heart meter, and if you manage to fill them all, you can play against the secret fourth opponent."
 }

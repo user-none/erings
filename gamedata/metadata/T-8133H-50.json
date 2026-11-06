@@ -36,5 +36,27 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 75
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 69
+        }
+      ]
+    }
+  ],
   "overview": "1996's edition of the Striker football series from Rage Software.\n\nGraphics combine a 3D pitch with 2D player sprites. The game includes multiple camera angles as well as different weather effects. You can modify any team's roster, select basic formations, time limits, difficulty, etc.\n\nSelect from 41 international teams and take part in either friendly games, league, or cup tournaments. Also included is a 6 on 6 indoor mode, and multiplayer support up to 4 players.\n\nThe game includes commentary by Scottish commentator Andy Gray."
 }

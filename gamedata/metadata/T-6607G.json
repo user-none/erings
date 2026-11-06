@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.0759
+        }
+      ]
+    }
+  ],
   "overview": "Madou Monogatari is an RPG featuring the characters and settings from the Puyo Puyo series. You start the game as young magician Arle, who sets out to explore the land in order to uncover the mystery of a new breed of plants that have appeared that seem to be affecting the magic realm. As you are joined with other Puyo Puyo characters (friendly ones of course) you explore the land and fight baddies as well as several classic Puyo Puyo baddies.\n\nThe game is played from an isometric world-map in which you explore the land and its dungeons, you can chat with NPCs and barter via screen overlays, and when in combat the game switches to a turn-based sideview in which you select your orders for each character and watch as they are executed against your enemies."
 }

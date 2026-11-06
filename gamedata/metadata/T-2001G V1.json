@@ -34,5 +34,17 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0279
+        }
+      ]
+    }
+  ],
   "overview": "Once upon a month, a door behind the full moon opens. This door is between the human world and magical world. Now it just so happens that on one such night, Lime and Bass are in hot pursuit of a demon who had stolen six power gems from the magical world. The demon escapes to the human world through the open door, and the two follow.\n\nThis collection contains:\n\n• Houma Hunter Lime: Special Collection Vol. 1\n• Houma Hunter Lime: Special Collection Vol. 2\n\nThe player can only access the first episode directly from the main menu, and must complete each episode before being able to play the next one."
 }

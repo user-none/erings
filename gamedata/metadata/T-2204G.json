@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.4545
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Kyō Jidai: Cebu Island '96 is one of several games in Micronet's series of strip mahjong games featuring video footage of real-life models. This particular entry features video clips of three young ladies shot on the beaches of the Philippine island of Cebu. Winning mahjong matches against the girls will unlock videos of each girl in various swimsuits, which can be freely rewatched from the menu."
 }

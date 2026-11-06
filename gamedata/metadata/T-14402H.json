@@ -32,5 +32,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3
+        },
+        {
+          "category": "Sound",
+          "score": 2.5
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 3
+        }
+      ]
+    }
+  ],
   "overview": "Known in Japan as Touge King: The Spirits (often mistakenly translated as Touge: King of the Spirits), High Velocity is a fast-paced racer from Atlus. Choose your dream ride and blast off to see how fast you can race up the mountain. Customize your car, change its color, choose the engine, turbo charger, then tune it for perfection by setting up the suspension and tires. High Velocity: Mountain Racing Challenge features three different tracks based on real-life Alpine roads. You can also challenge a friend in a two-player split-screen mode"
 }

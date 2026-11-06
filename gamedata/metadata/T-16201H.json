@@ -32,5 +32,49 @@
       "rating": "M"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 2.5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "Corpse Killer is a game released for the Sega-CD, Sega-CD 32X, 3DO, Sega Saturn, Windows 95 and Macintosh computers that features live action full motion video in a format similar to other games developed by Digital Pictures. The quality of the full motion video on the Sega-CD version is less than that of the others. Also, after the release of the Sega-CD version, Digital Pictures created an option to have English subtitles during the full motion video as critics had complained that it was difficult to understand what the driver was saying in the Sega-CD and Sega 32X versions.\n\nFootage from the game was later recycled for the 2003 film Game Over."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4285
+        }
+      ]
+    }
+  ],
   "overview": "Sega Saturn de Hakken!!: Tamagotchi Park is a tamagotchi game for the Sega Saturn. It came with a Saturn Backup Memory cartridge.\n\nSeveral Sega characters cameo in this game as Tamagotchi creatures the player can raise, namely Sonictchi, Pengo, Opa-Opa, Alex Kidd and Flicky. These Tamagotchi versions only appeared in this game.\n\nThe game serves as a complimentary entry for another Saturn game based on a popular Bandai franchise (also originated from a virtual pet toy), this being Digital Monster Ver. S Digimon Tamers."
 }

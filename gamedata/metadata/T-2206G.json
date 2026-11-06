@@ -34,5 +34,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.8461
+        }
+      ]
+    }
+  ],
   "overview": "Virtual Mahjong is 4-way strip mahjong game where the player competes against attractive young women who progressively remove their clothing as games are won. Unique for the time, Virtual Mahjong does not use live models or 2D illustrations, but rather renders the reward visuals of each girl in realtime 3D, allowing the player to change the camera angle of each lightly-animated scene. There are two difficulty levels and three girls to play against, each with multiple scenes to view."
 }

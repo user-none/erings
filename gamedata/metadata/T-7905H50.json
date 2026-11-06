@@ -36,5 +36,17 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 15
+        }
+      ]
+    }
+  ],
   "overview": "True to the comic books, the Hulk relies on no other weapons than his massive muscles to punch, kick and crush his enemies. When he has accumulated enough gamma energy, he may use powerful special moves like a Vortex Spin or the Floor Hammer. Rare bonus items also allow the Hulk to summon one of the four Pantheon team members Atalanta, Ulysses, Ajax and Hector to assist in the thick of battle.\n\nMost levels include at least one arch-enemy, such as Piecemeal, Trauma & Lazarus or the U-Foes. Luckily, the Hulk’s regenerative powers allow him to regain health slowly. Little seems to be left of the Hulk’s legendary leaping capacity, however, so the green meat ball is forced to hop from platform to platform every now and then."
 }

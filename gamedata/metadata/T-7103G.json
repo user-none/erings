@@ -34,5 +34,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.5384
+        }
+      ]
+    }
+  ],
   "overview": "Cross Romance: Koi to Mahjong to Hanafuda to is mahjong and hanafuda game with love adventure elements. The player is cast as a high school student who joins a mahjong tournament, and it just so happens that all the other participants are cute girls from his school. The tournament runs for 6 days, with matches in the morning and afternoon; during free time, the player can visit various locations around the town in hopes of meeting up with the girls. Various events can occur, and depending on the player's actions each girl's affection toward the player will increase. The ultimate goal is of course to win both the tournament and the heart of the girl you like.\n\nAside from the main story mode which only includes mahjong, there are a free battle mode and a tournament mode which include both mahjong and hanafuda and allow the player to freely challenge any of the 13 girls."
 }

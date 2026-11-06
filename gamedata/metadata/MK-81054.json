@@ -44,5 +44,59 @@
       "rating": "15+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 1.5
+        },
+        {
+          "category": "Sound",
+          "score": 2
+        },
+        {
+          "category": "Control",
+          "score": 3
+        },
+        {
+          "category": "FunFactor",
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "source": "EGM",
+      "region": "USA",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 4.5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 60
+        }
+      ]
+    }
+  ],
   "overview": "The Toshinden Tournament is over. Through the battles some of the fighters have uncovered much about the shadowy events surrounding their lives. But the others now head home with little more than a few bruises and unfulfilled dreams. None of them, however, are aware that a new battle is about to begin.\n\nThroughout the world, martial arts experts are disappearing. Police from various nations are cooperating in an international manhunt to find the criminal responsible for the murders. Yet no motive has been established, and there is little evidence available. A wave of terror has struck the world, and now even the strongest and bravest of fighters are not safe.\n\nThe former contestants of the Toshinden Tournament find themselves in a world gone mad. It is not inconceivable that one of them is responsible for the current chaos. But who is behind the disappearances, and for what purpose? All of the fighters came to the Toshinden Tournament for different reasons, but they are all fighting for the same reason now: SURVIVAL."
 }

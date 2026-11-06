@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.4517
+        }
+      ]
+    }
+  ],
   "overview": "Scenario 2, Target: Child of God, features Medion, Prince of Destonia, and youngest of three sons of Emperor Domaric. Although loyal to his father and his country, he senses that there are other forces at work beneath the tensions between Aspinia and Destonia. He attends the conference in Saraband on behalf of Destonia, along with his brothers Arrawnt and Mageron. As discovered in Scenario 1, much of this influence comes from the Bulzome sect, as well as collaborating separatist factions within both Destonia and Aspinia. Medion works parallel to Synbios of Aspinia, often disposing of rogue Aspinian elements to spare Synbios's force from fighting against its own countrymen. At the end of the game, Medion is forced to battle with Synbios' force when Julian steps in to stop them."
 }

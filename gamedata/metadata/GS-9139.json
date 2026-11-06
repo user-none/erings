@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.6683
+        }
+      ]
+    }
+  ],
   "overview": "Pro Yakyū Greatest Nine '97 is a baseball game featuring featuring an NPB (Nippon Professional Baseball) license and all twelve teams and all players from the Central and Pacific Leagues of Japanese baseball for the 1997 season, and the third game in Sega's Greatest Nine series of Sega Saturn baseball games.\n\nThe game features an overhauled visual style that uses fully-3D player models instead of the digitized sprites of the previous two games. Available modes are Open Game (Exhibition), Pennant Race, and Home Run Contest — the Tournament and All-Star modes have been removed. The Team Edit mode also returns, though the player database is no longer available. The Nagoya Dome and Osaka Dome stadiums — brand new at the time of the game's release — have also been added to the available real-life stadiums.\n\nA modified version featuring American MLB teams and players was released internationally as World Series Baseball 98."
 }

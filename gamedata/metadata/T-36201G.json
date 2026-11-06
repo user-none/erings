@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.1421
+        }
+      ]
+    }
+  ],
   "overview": "\"Futatsu Dake no Shinjitsu\" (\"The Only Two Truths\") is the third and final game in the Nightruth series, this time starring the youngest of Shinya's classmates, Ai Himekawa. The story focuses on her previously unexplained powers of precognition and telekinesis. Gameplay is again similar to the visual novel-style adventure presentation of the previous entries, featuring voiced and illustrated story sequences which occasionally branch via player choice into multiple endings. However, rather than featuring stories about famous supernatural phenomena, the focus this time is strictly on the main characters and their own personal stories."
 }

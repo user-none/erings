@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.3166
+        }
+      ]
+    }
+  ],
   "overview": "Chisato Moritaka: Watarasebashi/Lala Sunshine (森高千里 渡良瀬橋／ララ サンシャイン) is a multimedia disc for the Sega Saturn by Sega and Oracion released exclusively in Japan in 1997. It contains content on Japanese pop singer Chisato Moritaka and is named after two of her singles, Watarasebashi and Lala Sunshine."
 }

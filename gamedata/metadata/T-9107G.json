@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.6
+        }
+      ]
+    }
+  ],
   "overview": "Break Point is your basic tennis game. You can play on several different courts which differ in surroundings and style. There's a couple of fantasy courts as well as some real life courts. Player can choose between various motion captured players and game modes including practice, cup, tournament and so on. The speciality in this one is the fact that you can play with up to 8 players in tournament."
 }

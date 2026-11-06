@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.756
+        }
+      ]
+    }
+  ],
   "overview": "Shunsai is a horse racing database and simulation software which includes detailed race records for Japanese horse racing between January 1986 and April 1996. The main features are the database of race and horse information, as well as a simulator in which the player can select one of many famous races, along with a lineup of real-life horses to simulate the results of that race. There is also a quiz mode with three difficulty levels which tests the player's knowledge of horse racing."
 }

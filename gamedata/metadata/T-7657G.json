@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5172
+        }
+      ]
+    }
+  ],
   "overview": "Daikoukai Jidai Gaiden is a spin-off game of New Horizons (also known as Daikoukai Jidai II or Uncharted Waters II). The in-game world and mechanics are similar to New Horizons along with some adjustments. In comparison with New Horizons, the game's story is much more fulfilling, at the cost of reducing number of playable protagonists to two compared with New Horizon's six."
 }

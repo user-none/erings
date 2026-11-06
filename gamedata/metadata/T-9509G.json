@@ -24,5 +24,36 @@
   ],
   "max_players": 2,
   "cooperative": true,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5983
+        }
+      ]
+    }
+  ],
   "overview": "This pack contains both the arcade classics Gradius I and II. Each of these side-scrolling shooters has over a dozen levels each, all of which are completely unique. There are no enemy types that are re-used from level to level (except for the boss who is the same in every level). You can collect powerups that provide things like extra speed, laser shots, target-seeking missiles, shields, etc.\n\nWhile there have been many small modernizing touches made to the games, there is still no ability to save."
 }

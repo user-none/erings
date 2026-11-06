@@ -24,5 +24,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.3451
+        }
+      ]
+    }
+  ],
   "overview": "Snatcher is set in the futuristic Neo Kobe City, a city of madness and decadence. The year is 2047 (or 2042, according to the original Japanese version). Mankind is facing its gravest crisis. A mysterious bio-roid life form has appeared. Its true nature and purpose are unknown. Is it some country's secret weapon, or an alien from another world? They appear in the winter, killing people and taking their place in society. They wear artificial skin and can sweat and even bleed. They are called \"Snatchers\" because they \"snatch\" their victims before they take their place.\n\nA new police force, specifically trained to fight the Snatchers, has been formed. They are JUNKERs (which is deciphered as \"Japanese Undercover Neuro-Kinetic Elimination Rangers\" in the English version). Every time you encounter someone, a difficult question must be asked — is it a person or a snatcher?\n\nThe player takes control of Gillian Seed, one of the JUNKERs. The gameplay largely follows the structure of a Japanese-style adventure. The player uses a menu-driven interface to execute commands, which include moving between locations and interacting with the environment. Typically, every room contains objects that can be examined, leading to text descriptions and comments. Conversations occupy a large portion of the gameplay, with various topics available and a wealth of information about the game's world and characters. A few parts contain light puzzle-solving elements, though as a rule the game is almost completely devoid of puzzles.\n\nDuring key moments of the narrative, the player will be prompted to participate in intense shooting sequences. The goal is usually to kill all the enemies that pop out on the screen before they are able to kill Gillian. Some of such sequences are timed, i.e. the player is required to quickly shoot before another events is triggered, leading to the protagonist's death."
 }

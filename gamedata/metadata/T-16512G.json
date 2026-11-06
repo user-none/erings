@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.9541
+        }
+      ]
+    }
+  ],
   "overview": "This spin-off title in the Super Real Mahjong series takes a much different approach. It's a visual novel. You can pursue a relationship with several girls from Super Real Mahjong PV, P VI, and P7. There is a lot of talking, and you often have to make choices of what to say or do. An overworld map system is utilized, as the girls are in different locations."
 }

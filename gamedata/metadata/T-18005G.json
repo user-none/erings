@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 3
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.9333
+        }
+      ]
+    }
+  ],
   "overview": "Seikai Risshiden is a politics-themed digital board game for up to four players where the players compete to win an election. Each player selects their avatar's background, such as journalist, celebrity, or businessman, which affects their starting money and fame, and then takes turns moving around the board via dice roll. Different spaces have different effects; some may ask the player a question which will affect their public perception, while others may trigger events such as campaign events or sports tournaments that affect that player's status. Election day occurs once any player reaches the goal, and the winner — as in real life — is determined by the votes that are tallied."
 }

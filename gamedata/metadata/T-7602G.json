@@ -25,5 +25,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.9606
+        }
+      ]
+    }
+  ],
   "overview": "EMIT is a visual novel, divided into 3 parts, which was made to help Japanese people study English. The game can be played both in English or Japanese with the ability to listen to the audio and/or read the transcript in both languages. There are 2 modes to play the game: Story mode and English Game mode. The story mode is the main game divided into chapters where players get to watch the story unfold and can do a number of exercises after each chapter. During the story mode, players can pause the game at any time in order to look up a term they didn't understand or to change the language.\n\nThe exercises are:\n\n• Listening comprehension activities where players pick the right options to check their understanding of the story.\n• Guessing what's going to happen where players choose the question that's closest to their opinion and listen to the characters in the story commenting about the player's opinion.\n• Conversation practice where students can listen to the character's speech and act out the dialogues.\n\nThe English game mode is a mini-game that involves 2 police officers in the game's world looking for a criminal. Players must tell the officers where they should go, write down which buildings are nearby, and take note of the phone calls from the local citizens informing them where the criminal was last seen.\n\nThe first volume of the game deals with Yuri's chance encounter with an old man and the events that unfold after that meeting."
 }

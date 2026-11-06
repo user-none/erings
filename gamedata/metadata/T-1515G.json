@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4692
+        }
+      ]
+    }
+  ],
   "overview": "The seven magical Waku Waku balls have surfaced once again and the few that know of their existence decide to battle against each other in order to collect them all. If they are able to defeat the powerful monster enslaved in them, the Waku Waku balls will grant the lucky victor whatever wish they desire.\n\nThe game was created as a parody of animé series in general, WW7 pools together all the mainstays of the genre and has them fight against each other. From furry catgirls and effeminate, super-cool elfs to cute Pokémon-like creatures and dumb and loud heroes.\n\nGameplay-wise the game is a 2D fighting game in which two characters try to defeat each other in one-on-one combat using their attacks and special moves. The player selects his/her character and then tries to defeat all opponents in succession. As in most games of the genre each character possesses individual strengths and movesets, plus a power-bar that gets charged by unleashing special moves that allows one to trigger super moves and even unblockable attacks at the expense of power slots.\n\nFeatures arcade and Vs gameplay modes as well as an artwork gallery for the Saturn version which showcases the bright colorful art design of WW7."
 }

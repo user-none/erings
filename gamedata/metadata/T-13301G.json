@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.6055
+        }
+      ]
+    }
+  ],
   "overview": "Slam Dunk is based on the popular manga/anime of the same title, created by Takehiko Inoue. The game follows the story of Sakuragi Hanamichi, a high school delinquent, as he joins a basketball team in an attempt to win the heart of a young woman. The story follows the same plot as the anime/manga and progresses between basketball matches as you progress through the story mode.\n\nAlso available is a versus mode, where two players can play against each other using the pre-set teams or by mixing and matching players into their own personal dream team."
 }

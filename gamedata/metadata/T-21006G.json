@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.5645
+        }
+      ]
+    }
+  ],
   "overview": "Cube Battler: Anna Mirai-hen is a competitive puzzle game where two players race to rotate and arrange cubes on a grid to match a video playing in the background. Each player can pick up cubes from the tray at the bottom, then rotate and place them into a 3x4 playfield; each player can also attack or defend at any time. Whichever player completes their puzzle first, or reduces their opponent's health to zero, wins the match.\n\nThis release is the second chapter of the story; it follows Anna Mirai, a young girl who enters the Cube Battle tournament in hopes of meeting a cool gamer boyfriend."
 }

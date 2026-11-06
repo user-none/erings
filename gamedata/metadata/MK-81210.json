@@ -44,5 +44,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 3.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 91
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 79
+        }
+      ]
+    }
+  ],
   "overview": "Yet another world-class arcade conversion hits the Saturn! Manx TT Superbikes recreates the top-speed twists and turns of the legendary Isle of Man TT circuits. Throw your high-powered superbike around country lanes and hurtle through villages at hair-raising speeds as one or two riders push their nerves to the absolute limit on the circuit where heroes are made!"
 }

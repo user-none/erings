@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7857
+        }
+      ]
+    }
+  ],
   "overview": "Eiyuu Shigan: Gal ACT Heroism differs in premise and structure from the vast majority of Japanese RPGs by focusing on non-linear questing rather than following a developed narrative. The game is set on a nameless island, which has elements of medieval fantasy as well as futuristic civilization. It allows the player to control a party of three female students from the School of Adventuring. The player can name the girls, but not change their unique battle techniques and proficiencies. The goal of the game is to reach a higher rank than the three competing teams (also containing girls only). Each team is accompanied by a guardian elf, and might also meet and/or hire other NPCs.\n\nThe game has an internal schedule, which reminds the player of the other competitors and what they might have accomplished in the meantime. Game progression is non-linear: the four cities on the island can be accessed right from the beginning. Each city contains special locations where the party can choose to accept a mission. These missions can also be completed in any order; each has an approximate difficulty label. Accepting a mission usually unlocks new hostile areas, which are inaccessible otherwise.\n\nDuring a mission, the game plays the same way as most other Japanese RPGs: exploring the dungeon, the party finds treasure and fights enemies in turn-based combat (viewed from first-person perspective). There are no random battles: all the enemies are visibly walking on screen and can be avoided. Combat largely relies on techniques, which are grouped by classes and are unique to each girl."
 }

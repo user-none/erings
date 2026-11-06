@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5649
+        }
+      ]
+    }
+  ],
   "overview": "Strikers 1945, not to be confused with the US PSX game Strikers 1945, which is actually the sequel Strikers 1945 II, is a port of the top-down vertically-scrolling arcade shooter. Set during World War II, the player can choose from different ships and pilots to engage the enemy. At the end of the war, all sides are left powerless and defeated. A secret organization known as CANY manages to initiate a coup among each country's military forces. The last resort is a team assembled with the best fighters from the US, Japan, Germany and England, with the goal to push back CANY."
 }

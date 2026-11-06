@@ -31,5 +31,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.25
+        }
+      ]
+    }
+  ],
   "overview": "Hide doesn't get to see his girlfriend Kyoko very often, and so when she calls to invite him to a concert in Shibuya, he gladly accepts. However, while on his way to meet her, he sees a flash of red lightning across the sky. It seems nobody else around him could see it, and soon, Hide finds himself dead and turned into a ghost. Knowing Kyoko must be in danger too, he decides that even as a ghost he must protect her at all costs. However, it seems a demonic force is about to twist its grip around all of Tokyo, and it's not just Kyoko whose life is in danger next.\n\nTokyo Shadow is an FMV adventure game based on the novels of the same title written by Aya Nishitani. The story plays out via video clips and still photographs, and the player is occasionally given choices which branch the storyline to one of nearly 50 different endings. As specific endings are reached, more decision points are added to certain scenes, and the game keeps track of which endings have been seen."
 }

@@ -33,5 +33,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    }
+  ],
   "overview": "Somewhere in the universe, The Goddess Antowas created a world from a single jewel. On this world, Quartilia, she created the sky, earth, and air. To inhabit this world, she created two humans - from a green jewel, a girl: Leda, who has the power to make things live on Quartilia. And from a red Jewel, a boy: Astal, whose purpose was to protect Leda. Content with her creation, Antowas slept.\nWhile she slept, the evil Jerado tried to take over Quartilia. To ensure victory, Jerado created a warrior: Geist. Geist kidnapped Leda, and held her at the bottom of the ocean. In an effort to get her back, Astal tore Quartilia apart, awakening Antowas. As punishment, Antowas banished Astal to Quartilia's moon. Leda took pity on Astal, and gave him her jewel. Once Astal and Jerado were dealt with, Antowas went back to sleep.\nHowever, Geist was still free, and Quartilia was not restored from the changes Jerado wrought. From his prison on the moon, Astal witnessed Geist kidnap Leda again. Consumed with the need to protect her, he freed himself and returned to Quartilia. Now Astal journeys in search of Leda through a Quartilia transformed by Jerado's dark design, along with a strange bird who for some reason just won't leave him alone..."
 }

@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        }
+      ]
+    }
+  ],
   "overview": "In the the near future, in response to rising crime rates and dwindling public funding, the Japanese government has just passed a bill to privatize the country's police force. The first city selected to test this new approach to law enforcement is the former capital city of Tokyo, with numerous security companies setting up shop there for the three-year trial period.\n\nHyper Securities S is a life simulation game similar to Graduation, in which the player must manage the schedules of three young police cadets in order to both train them into outstanding officers, as well as maintain the safety of Tokyo while keeping the company's budget under control. Each girl's schedule is decided weekly, with the player deciding whether each day is dedicated to training, working, or rest; numerous kinds of training and work can be selected, which will affect that character's status and skills. The girls can also encounter criminals while out on patrol; encounters take the form of a turn-based card battle, with the suspect being arrested if the player wins.\n\nThe Sega Saturn release has enhanced graphics and adds voice acting for the game's dialogue, but is otherwise the same game."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 2.4111
+        }
+      ]
+    }
+  ],
   "overview": "Heartbeat Scramble is a love simulation game in the style of Tokimeki Memorial, in which the player takes the part of a high school student trying to keep up with his studies, a part-time job and, of course, a healthy social life. Unusual among such games, all the in-game characters and locations are portrayed using photographs of real-life actors, rather than the illustrated characters usually found in dating sims.\n\nThe game follows the main character through three years of high school life. The player can choose an activity for each day, such as studying or going to a part-time job to earn money, which affects their status and relationships with six potential romantic interests. The player can ask girls out on dates, and numerous events happen at fixed dates, such as school festivals, a ski resort trip, and ultimately graduation."
 }

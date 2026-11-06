@@ -33,5 +33,26 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    }
+  ],
   "overview": "Gaia Breeder is a life-simulation sandbox game where the player attempts to recreate a natural environment. In the 23rd century, a meteor has wiped out all wild animal life on Earth, and humanity has decided to attempt to restore it using science. Using a time machine and a curious pink creature called \"Mupi\", the player travels back in time to harvest the DNA of extinct animals, then can clone or combine them in the present day. The game is divided into a series of \"Breeder Tournaments\" where the goal is to build a balanced and sustainable natural environment that can be used as a blueprint for restoring nature."
 }

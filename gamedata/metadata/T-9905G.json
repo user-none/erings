@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.8461
+        }
+      ]
+    }
+  ],
   "overview": "Guardian Force is a shoot-em-up where the player controls a tank that can fire in eight directions. While the body of the tank can be moved freely around the screen, each press of the outer buttons will rotate the tank's turret 45 degrees clockwise or counter-clockwise. The tank/screen will scroll vertically for much of the game, but will sometimes be reoriented midlevel to scroll horizontally or diagonally.\n\nThere are five unique weapons which can be used: a standard shmup spread shot (Tusk), a non-continuing laser (Feeler), what is essentially a giant yo-yo that can be launched and retracted (Fang), a short-ranged explosive attack (Horn), and a bevy of missiles (Beak). Each of them has a designated color (red, yellow, green, purple, and blue respectively) and special attack (bomb equivalent), and will increase in damage/ability as the tank's level increases. The tank also has a standard repeating shot that will always fire in the direction the screen is scrolling."
 }

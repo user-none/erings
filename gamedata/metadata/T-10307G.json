@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.0722
+        }
+      ]
+    }
+  ],
   "overview": "D-Xhird is 3D arcade, weapon-based 1vs 1 fighting game, similar to Battle Arena Toshinden (1 character from Battle Arena Toshinden, Eiji Shinjo comes back as unlockable character). The player can choose 1 from 10 initially playable characters (+4 unlockable heroes), each with own weapon (for example, Sabrina uses stun baton, Lucifer uses scythe, Karen has 2 chakrams). Game is based on 3d arenas - players can strafe and be thrown out from ring. Gameplay is typical - player must beat opponent to go to next opponent."
 }

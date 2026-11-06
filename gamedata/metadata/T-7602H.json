@@ -33,5 +33,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 2.5
+        },
+        {
+          "category": "Sound",
+          "score": 2.5
+        },
+        {
+          "category": "Control",
+          "score": 2.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 2
+        }
+      ]
+    }
+  ],
   "overview": "Winning Post lets the player take control of a stable of horse, breeding and training them for the ultimate goal, to win the French Grand Prix.\n\nThe player can hire breeders, trainers and jockeys and race in over 240 different races to earn more money to buy even better personnel and breed faster and stronger horses as well as keeping their horses healthy. Players can also bet on races as well.\n\nThe gameplay consists of choosing options before races, such as choosing which horses to train and what regiment they undertake, view stats, hire personnel and place bets. However the player has no controls over races and cannot participate and only view as a spectator."
 }

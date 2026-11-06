@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4528
+        }
+      ]
+    }
+  ],
   "overview": "One year after both the conclusion of the World Heroes Battle Fest and the defeat of Zeus, invitations has been sent to the 16 fighters by Dr. Brown, informing them of a new World Heroes tournament that'll help finally settle the question of who's the strongest fighter in history. With the 16 fighters preparing themselves in order to finally determine on who's the strongest fighter in history, Zeus seeks to gain his revenge against those who had caused his downfall, but little does Zeus and the rest of the fighters know and realize that an old enemy from the past is also back and that he too has his own personal desire for revenge as well."
 }

@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.0666
+        }
+      ]
+    }
+  ],
   "overview": "Simulation Zoo is, as the name suggests, a business simulation game similar to the well-known Theme Park, in which the player operates and manages a zoo. The player is a new CEO brought in to turn around a failing zoo, maintaining and expanding facilities, balancing income and expenses, and acquiring new exhibits. The game is viewed from an isometric perspective and proceeds in real-time. There are eight different scenarios to choose from, each focusing on a different biome such as river valley, jungle, or desert."
 }

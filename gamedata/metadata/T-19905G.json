@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2439
+        }
+      ]
+    }
+  ],
   "overview": "In Bubble Symphony, you play one of four dragons - Bubblun, Bobblun, Kululun, and Cororon. Each dragon has its advantages and disadvantages. You have the task of trapping your enemies in bubbles, then bumping into them to make them turn into food, which you can get for points. There are multiple paths that you can take, and bosses that you have to defeat in order to proceed to the next set of levels. Multiple endings are viewed depending on skill and secrets found. Features an excellent soundtrack and guest appearances from various Taito games."
 }

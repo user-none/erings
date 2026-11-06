@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.56
+        }
+      ]
+    }
+  ],
   "overview": "Private Idol Disc Tokubetsuhen: Cosplayers is a multimedia photobook of female cosplayers. It includes a gallery of photos and video clips, as well as a simple rock-paper-scissors style minigame themed like a 1-on-1 fighting game. Winning the minigame will unlock bonus videos."
 }

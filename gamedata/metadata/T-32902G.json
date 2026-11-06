@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 9
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.3031
+        }
+      ]
+    }
+  ],
   "overview": "Radiant Silvergun is a single-player and multiplayer vertical scrolling shoot-'em-up with a time-traveling narrative and a weapon system built entirely around strategic versatility.\n\nThe story begins in the distant future, where humanity faces extinction after the awakening of a mysterious alien construct known as the Origin. Pilots of the battleship Radiant Silvergun are transported back in time in a last attempt to alter history. Their mission is to destroy the Origin before it can awaken, battling through waves of enemies across multiple time periods to prevent the annihilation of civilization.\n\nUnlike many shoot-'em-ups that rely on limited power-up items, the game equips the player’s fighter with seven distinct weapons available from the start. These include forward-firing Vulcan shots, homing lasers, wide-spread guns, and more specialized attacks that can be combined to create new firing patterns. A sword weapon is also included, capable of absorbing certain enemy bullets to charge an energy attack. Weapons level up through use, encouraging players to adapt their style and specialize as they progress.\n\nScoring emphasizes chaining kills of the same enemy color, which multiplies points and unlocks higher weapon levels more quickly. Mastery of the chaining system is essential for high-level play and replay value, creating a strong risk-versus-reward loop. Boss encounters punctuate stages with large-scale mechanical enemies, each requiring memorization of patterns and precision use of the available arsenal.\n\nThe game offers multiple modes across its various releases. The original Saturn version included a story-driven arcade mode and a score-focused Saturn mode with persistent weapon leveling. Later ports, such as the Xbox 360, Switch, and PC releases, added visual upgrades, widescreen support, online leaderboards, and optional rebalancing."
 }

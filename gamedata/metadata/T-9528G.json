@@ -24,5 +24,36 @@
   ],
   "max_players": 4,
   "cooperative": true,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.9677
+        }
+      ]
+    }
+  ],
   "overview": "This is the Japanese release of the game that in the US is known as Winning Eleven, although it was never actually released in the US for the Saturn. That might be because the Saturn version really wasn't that good of a version."
 }

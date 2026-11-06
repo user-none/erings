@@ -34,5 +34,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.1546
+        }
+      ]
+    }
+  ],
   "overview": "SteamGear Mash is an isometric platformer. It has the (almost) classic case of \"kidnap and rescue\", except now you play a robot who has to save a little girl called Mina. She was lonely and the scientist with whom she lived built her a robot, called Mash. One day, while these two were playing outside, an alien spaceship came around and fell in love with the girl. He sent his minions to take her and they did. Now it's your job to rescue Mina. There are seven stages, two of which are shoot 'em up stages."
 }

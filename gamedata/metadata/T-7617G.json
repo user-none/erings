@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.3
+        }
+      ]
+    }
+  ],
   "overview": "Sangokushi Returns is a remake of the original Romance of the Three Kingdoms from 1985. The strategy gameplay is identical to the original release — select one of several warlords vying for power in the aftermath of the Yellow Turban Rebellion in the year 184 CE, and attempt to conquer territory — but this remake features completely redone graphics and sound similar to the previous remake of Nobunaga's Ambition. All 250+ generals are now rendered in full 3D, and there is a full remixed soundtrack including many songs appearing from other games in the series."
 }

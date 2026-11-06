@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.8091
+        }
+      ]
+    }
+  ],
   "overview": "Darius II takes place sometime after the first Darius game. The colonized planet Darius is recuperating from its invasion from the alien Belser Army thanks to that game's heroes Proco and Tiat. Darius' inhabitants have since situated themselves on the planet Olga while Darius' societies, architecture and attacked areas were being repaired. The space flight Headquarters established on Olga picks up an SOS signal coming from Earth, where the first colonists originated before colonizing Darius. The signal included the description of alien ships similar to those of the Belser Army. Suspecting that these might be their remaining Earthling ancestors, the people of Darius sends both Proco Jr. and Tiat Young to help them."
 }

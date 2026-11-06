@@ -32,5 +32,17 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 91
+        }
+      ]
+    }
+  ],
   "overview": "Based on the 1995 Rugby World Cup in South Africa and officially licenced by player of the tournament Jonah Lomu, this game plays as more of an arcade style of gameplay rather than a sports simulation. Players can compete in the full World Cup, a round-robin league, or a knock-out cup.\n\nThe 32 included teams range from the All Blacks of New Zealand and Springboks of South Africa to minnows such as Namibia and Hong Kong, neither of which qualified for the final stages."
 }

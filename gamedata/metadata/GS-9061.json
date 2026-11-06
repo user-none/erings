@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.4651
+        }
+      ]
+    }
+  ],
   "overview": "The boys of summer invade your living room in WORLD SERIES BASEBALL. Play as any of the 28 Major League teams with complete up-to-date rosters. Try to win the pennant in a 162-game season, or skip the season and head to the playoffs. If your favorite part of the baseball season is the All-Star game, then choose to participate in the All-Star mode. See who the biggest hitter is with the Home Run Derby. While you play, your ears will be treated to CD quality sound that includes play-by-play announcing, ballpark anthems, and dynamic crowd responses. Do you think you can handle the action of the big leagues? Find out with World Series Baseball."
 }

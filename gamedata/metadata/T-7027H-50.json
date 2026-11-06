@@ -32,5 +32,27 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 68
+        }
+      ]
+    }
+  ],
   "overview": "Set in 1998, the player controls a helicopter ace recruited into a black ops counterterrorism strike force named Operation Black Dawn. The player pilots the agile AH-69 Mohawk, an advanced combat helicopter with a powerful arsenal of weaponry. The game consists of seven campaigns that take place in different areas, and each campaign has a number of different missions. In addition to search-and-destroy objectives, there are hostages that require saving. The game has drawn comparisons with Soviet Strike, another helicopter simulator released in the same year. However, Black Dawn resembles an arcade game rather than a typical simulator, not least because various power-ups are obtained from destroyed enemies."
 }

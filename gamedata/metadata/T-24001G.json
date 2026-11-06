@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.3452
+        }
+      ]
+    }
+  ],
   "overview": "Aquazone is a simulation of an aquarium. The player can customize the aquarium with different backdrops, accessories and sorts of gravel and then add fishes and plants to create a living ecosystem. The fish will swim around the screen, eat and grow and ultimately die. To ensure the well being of the tank's inhabitants the player has to feed and medicate the fishes, change the water, clean the filter and maintain an appropriate temperature. If taken care of the fish will breed, lay eggs and give birth to new life."
 }

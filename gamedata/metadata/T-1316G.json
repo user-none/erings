@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.9193
+        }
+      ]
+    }
+  ],
   "overview": "Tantei Jinguuji Saburou: Yume no Owari ni (literally translated as Detective Jinguuji Saburou: To the End of Dream) is the 6th entry in the Jake Hunter series.\n\nIn this game, Jingūji is tormented by hideous dreams of his past in New York. One day, he helped Nagata Yuka, a high-school friend of his assistant Yōko Misono, to solve the stalker problem. After he thought that he had already solved this case successfully, Nagata vanished. At the same time, a series of women missing cases were happening."
 }

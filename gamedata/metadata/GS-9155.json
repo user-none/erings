@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.1139
+        }
+      ]
+    }
+  ],
   "overview": "In this strategy role-playing game, you and your mercenary group decide which of the six warring factions to support on your journey to unify the land. Battles take place on a traditional turn-based movement grid, transitioning to real-time skirmishes between armies or between individual commanders."
 }

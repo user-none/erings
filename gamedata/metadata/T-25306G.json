@@ -32,5 +32,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.375
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Gakuensai DX is a strip-mahjong game with a high school festival theme, and part of the Mahjong Gakuensai series. It is a remixed conversion of the first and second arcade releases, including a mix of opponents and locations found in both prior games. It is set on the day before the school festival, and the player is once again cast as a student hoping to get photos of his female classmates. Gameplay is the same as every other entry in the series, with the player visiting locations around campus and challenging other students in hopes of getting saucy photos of them. More impressive mahjong hands will raise a girl's \"Mecha-Moe\" gauge, resulting in more revealing photos the higher it gets, though this console version is censored and does not include any actual nudity. This version also includes a free-battle mode, various game rule options, and new animated opening and ending cutscenes."
 }

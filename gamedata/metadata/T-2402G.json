@@ -33,5 +33,36 @@
       "rating": "X"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.2465
+        }
+      ]
+    }
+  ],
   "overview": "Mahjong Hyper Reaction R is a one-on-one strip mahjong game and a home conversion of Mahjong Hyper Reaction. This version is significantly expanded over the original arcade game and includes new content and features:\n\n• A new opponent, Yuka, has been added for a total of three girls to play against.\n• New animated opening and ending sequences.\n• A new \"Free Battle\" mode where the player can unlock newly-drawn illustrations of each girl."
 }

@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.36
+        }
+      ]
+    }
+  ],
   "overview": "Welcome House is an adventure game which has players take the role of Keaton Paxman who is visiting his rich uncle Parkinson on April Fools. When Keaton got to his uncle's estate, his car broke down and, on top of that, when he entered the mansion, the door got jammed trapping him inside the mansion. Now, players must help Keaton find a way out of the mansion.\n\nThe game never takes itself seriously, featuring a lot of slapstick humor and a laugh track when Keaton uses an item in the wrong place or gets into a trap. There are no enemies, Keaton can't die in the game and the traps that are scattered across the mansion are mainly for comic relief making it kid friendly. Players will need to locate keys, books, food and other objects and use them in the right place to get to the locked rooms and progress through the game."
 }

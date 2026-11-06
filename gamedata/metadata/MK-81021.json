@@ -32,5 +32,17 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 83
+        }
+      ]
+    }
+  ],
   "overview": "Clockwork Knight 2 uses identical gameplay to that of its predecessor, right down to using all the same items and having four rooms with three levels each, plus a final boss.\n \nHowever, there are three minor additions:\n Four playing cards are scattered around each level. Spinning all four cards gives players a Gold Key; collecting all 32 cards in the game yields a secret code.\n There are some forced scrolling levels in which Pepper rides on the back of his steed Barobaro. Attacking is done not with Pepper's key in these levels, but by firing Barobaro's head at enemies.\n An additional game mode called \"Bosses Galore\" lets the player control either Pepper or Ginger in fighting all the bosses of both Clockwork Knight games one after the other. Doing well in this mode is said to unlock a mini-game."
 }

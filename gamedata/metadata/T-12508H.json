@@ -41,5 +41,50 @@
       "rating": "3+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 82
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 46
+        }
+      ]
+    }
+  ],
   "overview": "In the year 2027, the world is controlled by two rival superpowers, the western-bloc Free World Alliance and the east-bloc Cartel. Transmissions from an FWA spy reveal the location of a secret multi-national laboratory deep within Siberia, the Cyberia Complex, where a mysterious weapon is being developed. FWA leader Devlin frees a cyber-hacker named Zak from prison and sends him to infiltrate the complex and discover the true nature of the Cyberia weapon.\n\nUnfortunately, the Cartel is also interested in the weapon and will stop at nothing to get it. Not only must Zak make his way past the Cartel forces sent to stop him, but he must also overcome the Cartel agents which have already seized control of the complex. To make matters worse the Cyberian scientist's genetically engineered creations are running rampant in the same area as the weapon and Devlin also appears to be have something up his sleeve.\n\nCyberia is an action game with puzzle sequences and a heavy reliance on scripted events and cutscenes. The game allows limited navigation between locations, which usually lead to a puzzle or (more often) action scenes that involve either shooting down planes with a gun turret or navigating various flying vehicles, destroying enemies in a Star Wars: Rebel Assault-style confrontations."
 }

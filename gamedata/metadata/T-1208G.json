@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0507
+        }
+      ]
+    }
+  ],
   "overview": "A group of shifty gangsters, cops and other groups gather together to compete in a Mahjong tournament. Before starting the game, the player configures the game settings and bets, then choose the characters. There are a total of 16 different opponents to choose from. The order of players' turns is determined by a dice-roll. Then the traditional rules of Mahjong apply with the goal being to beat the other three opponents."
 }

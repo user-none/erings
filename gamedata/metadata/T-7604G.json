@@ -25,5 +25,36 @@
   ],
   "max_players": 1,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.6774
+        }
+      ]
+    }
+  ],
   "overview": "EMIT is a visual novel, divided into 3 parts, which was made to help Japanese people study English. The game can be played both in English or Japanese with the ability to listen to the audio and/or read the transcript in both languages. There are 2 modes to play the game: Story mode and English Game mode. The story mode is the main game divided into chapters where players get to watch the story unfold and can do a number of exercises after each chapter. During the story mode, players can pause the game at any time in order to look up a term they didn't understand or to change the language.\n\nThe exercises are:\n\n• Listening comprehension activities where players pick the right options to check their understanding of the story.\n• Guessing what's going to happen where players choose the question that's closest to their opinion and listen to the characters in the story commenting about the player's opinion.\n• Conversation practice where students can listen to the character's speech and act out the dialogues.\n\nExclusive to the third volume is a new English Game called Ghost Sweeper. This game is modeled after traditional turn-based RPGs and in this game, players must defeat ghosts and search for objects in haunted houses that they can sell. Players can encounter enemies in set places on a map as well as when searching for objects in rooms and furniture. Some ghosts that are trapped can tell the player where to find things if the player guarantees their freedom.\n\nThe last volume concludes the story with Yuri barely surviving her trip back to her world. In this game, Yuri searches for her doppelgänger to get her back to her world and to her son."
 }

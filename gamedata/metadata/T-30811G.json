@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.8437
+        }
+      ]
+    }
+  ],
   "overview": "Private Idol Disc Vol. 5: Fujisaki Nanako is a multimedia photobook of gravure idol Nanako Fujisaki. It includes a gallery of photos and video clips of the idol, as well as a simple rock-paper-scissors minigame and a quiz minigame. Completing the minigames will give the player passwords to unlock bonus photos."
 }

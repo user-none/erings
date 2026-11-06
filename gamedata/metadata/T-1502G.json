@@ -24,5 +24,36 @@
   ],
   "max_players": 2,
   "cooperative": false,
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.7181
+        }
+      ]
+    }
+  ],
   "overview": "Within Game no Tatsujin are four different classic Japanese board games made by different developers, which are Mahjong, Shogi, Go and Reversi. The board games can be played in three different modes including the Training Mode with five opponents, the Free Battle Mode with progressive levels of difficulty and World Mode with a total of 21 game masters to challenge with the ultimate goal beating them all and earning the award title \"Master of the Game\"."
 }

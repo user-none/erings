@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5454
+        }
+      ]
+    }
+  ],
   "overview": "Friends: Seishun no Kagayaki is a console port of an adult visual novel Dousoukai for PC. Sega Saturn port was released 3 years after the PC version and has all the adult content removed but is fully voice-acted. A PlayStation 2 port came 5 years after the Sega Saturn release in two versions, first one marked with age 18 restriction and second one a year later with age 15 restriction. Both PS2 versions, however, do not feature adult CG event scenes, but are fully voiced and have a new opening animation whereas Sega Saturn version does not feature an opening animation.\n\nThis is the first game in the Dousoukai series and starts with you on your way to a nice resort to reunite with some of your classmates from high-school. In particular, your tennis team members. The game focuses on romance and features full map of the place you're staying at as well as the rural town and its surrounding area. The game occurs through one week time and lets you visit any location on the map during both daytime and nighttime, which advances the time. An icon of a character marks when someone is at some location, but not who the person is. This visual novel features typical static anime characters sprites with light animation such as talking animations, pasted over background images. CG event scenes occur with the right character at the right place and time. Your dialogue choices and actions affect how the story progresses and if you will end up with one of the heroines or help with the match-making for your friends."
 }

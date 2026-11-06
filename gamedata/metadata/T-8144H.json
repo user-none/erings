@@ -32,5 +32,30 @@
       "rating": "K-A"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 3.5
+        },
+        {
+          "category": "Sound",
+          "score": 2.5
+        },
+        {
+          "category": "Control",
+          "score": 3.5
+        },
+        {
+          "category": "FunFactor",
+          "score": 3.5
+        }
+      ]
+    }
+  ],
   "overview": "You are on a mission to destroy the ultimate weapon of your enemy. This involves travelling through a set of precarious tunnels in your high-tech hover-craft. The tunnels are filled with enemy vehicles, choppers and sentry guns which you have to take out or avoid. To make life even worse, a lot of sections require you to clear them in a given time limit. The only good thing is that you'll be able to upgrade your weaponry often."
 }

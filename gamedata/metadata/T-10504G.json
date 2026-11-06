@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.5588
+        }
+      ]
+    }
+  ],
   "overview": "Sotsugyou Album is a fan disc for the Sotsugyou series. The disc features artwork, video clips from the voice actors etc."
 }

@@ -33,5 +33,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.5853
+        }
+      ]
+    }
+  ],
   "overview": "Techno Motor is a fully featured music generator & Midi synthesizer for the Sega Saturn. Not a game, but a piece of software intended for the creation of mainly club style music such as Techno, Dance, House & Drum 'n bass."
 }

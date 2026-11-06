@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        }
+      ]
+    }
+  ],
   "overview": "Sotsugyou Crossworld is love adventure game and a spinoff of the Graduation series featuring the main heroines from the first two games, with the player controlling a fellow student rather than a teacher as in the main games. All five girls from each game appear, along with two new girls for a total of 12, though only seven can be dated in this version of the game.\n\nThe player is cast as a student who hopes to find a girlfriend before his final high school summer vacation is over. The player can visit various locations around Yokohama to try to meet the various girls; meet up with a girl enough times to build up affection and various special events will occur, with the ultimate goal of successfully asking one of the girls out before the end of summer.\n\nSega Saturn port of Sotsugyou Crossworld includes significant additional content over the original PlayStation release: there are new events and endings for five additional characters, meaning all 12 girls can now be dated in this version, and there is also a new original voice drama included."
 }

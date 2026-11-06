@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 8
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.4081
+        }
+      ]
+    }
+  ],
   "overview": "This is the very first coin-op game (and home conversions) in the Magical Drop series. Similar to other titles in the series, the goal of the game is to clear the screen of constantly advancing objects called 'drops'. The player character, stuck at the bottom of the screen, has a grapple which can be used to pull down a single drop, change its colour and put it back in line. Drops disappear when a line of three or more drops of the same colour is created.\n\nThere are several game modes: endless mode, story mode, two-player mode, and puzzle mode."
 }

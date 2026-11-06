@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.7656
+        }
+      ]
+    }
+  ],
   "overview": "Continuing where the last game ended, the forces of CANY had been demolished by the previous Strikers' line-up. However, a small group known as the FGR stole the sources and technology responsible for the last events and planned to continue CANYs work by initiating world-warfare with massive mech technology. Once again, the Strikers are called into action."
 }

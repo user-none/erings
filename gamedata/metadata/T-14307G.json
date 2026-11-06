@@ -30,5 +30,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 4
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 4
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.2459
+        }
+      ]
+    }
+  ],
   "overview": "Yuna Remix is a remake of the original PC Engine game. The gameplay and story are identical to the original release, but this version features completely redrawn graphics at a higher quality, newly-arranged music, and additional newly-recorded voiceovers. There is also some additional bonus content such as an illustration gallery. The package also includes a 1997 calendar featuring new artwork by series illustrator Mika Akitaka."
 }

@@ -33,5 +33,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.0173
+        }
+      ]
+    }
+  ],
   "overview": "In the near future, a system called \"Virtuacall\" allows for real-time group video calls. The player is a young man who signs up for the Virtuacall service in hopes of meeting women. These group chats each include three girls plus the player, with the player selecting dialogue choices and which girl to direct their attention to as the conversation proceeds, and it is possible to choose a girl to talk to one-on-one at certain points. Build enough trust and friendship with a girl and you'll eventually learn their phone number, and perhaps even get to meet them for a real-life date.\n\nVirtuacall S is a modified conversion of the adult PC game Virtuacall 3. This version removes the explicit adult content, but adds three additional characters originally from Virtuacall 2."
 }

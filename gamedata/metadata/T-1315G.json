@@ -30,5 +30,36 @@
       "rating": "18"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 9.2529
+        }
+      ]
+    }
+  ],
   "overview": "In this game, you play the role of a high-school student (whom you can name as you like). A bus takes him and his classmates to the school every day. But this time, just when the hero was talking to one of his classmates, the lovely girl Riyo, a car drove up to the bus, there was a sound of a crash, and then the hero became unconscious. When he woke up, he found himself, his classmates (most of whom were girls), and a couple of unknown people in a locked room in a strange mansion. Soon the hero realizes something terrible is going on in the mansion. People are being killed under mysterious circumstances, their corpses hidden; he finds a memo soaked in blood and a photograph. Will he be able to solve the mystery and to protect the people destiny brought him together with?\n\nDōkoku Soshite... is an adventure game that incorporates elements of both Western and Japanese adventure styles. Like most \"digital novels\", there are multiple endings depending on the decisions you make during the game (mostly concerning your relationship with the girls). However, unlike digital novels, the game offers Western-style gameplay with free movement, interaction with the environment, inventory, and item-based puzzles."
 }

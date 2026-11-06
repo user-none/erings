@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 3.3448
+        }
+      ]
+    }
+  ],
   "overview": "Grid Runner is a futuristic version of \"tag.\" On offense, your objective is to capture the flags around the levels without being tagged or killed. On defense, your main objective is to tag the other player (either the computer or a friend in two-player mode) before he or she collects all the flags.\n\nIn each level you will find different colored balls that will help you defeat your enemies. For example, the green balls increase your speed, red increases your magic, and blue increases your agility. The more power-ups you collect, the more efficient you become. You can also use and collect magic points.\n\nCollecting magic points allows you to do one of six things: build a temporary bridge, drop explosives behind you, slow down your opponent, fire a weapon (which can be upgraded or traded), temporarily boost your speed, or teleport out of danger."
 }

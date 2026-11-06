@@ -30,5 +30,17 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.8031
+        }
+      ]
+    }
+  ],
   "overview": "Daina Airan: Yokoku-HEN is the trailer to Daina Airan."
 }

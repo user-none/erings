@@ -31,5 +31,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6.4285
+        }
+      ]
+    }
+  ],
   "overview": "Gekiretsu Pachinkers is a gambling simulation game featuring both pachinko and pachi-slot (slot machine) games. It includes four playable machines of each type, which are original and not licensed from any specific real-life machines. The main story mode casts the player as an unemployed young man who decides to use the small amount of money he has left to take up gambling full-time and try to make it rich. The player sets either a time limit or money goal for the game and then must spend each day visiting the parlors and gambling to try to win as much money as possible. It's also possible to play the lottery, take out loans, and even go out in the evening looking for a date. In addition to the story mode there is also a practice mode where each of the eight machines can be freely practiced without any time or money restrictions."
 }

@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 7.9538
+        }
+      ]
+    }
+  ],
   "overview": "Real Bout changes the play controls from the previous Fatal Fury games, reducing the number of attack buttons from four to three: a standard Punch and Kick button, a \"Strong Attack\" button which can be either a stronger punch or kick attack, depending on the character. The game retains the three-plane \"oversway\" system from Fatal Fury 3, which features a main lane for fighting, with foreground and background planes used to avoid attacks or leap towards the opponent. A dedicated button is now used to make an \"oversway\" (or change plane) towards the background or foreground. Real Bout introduces a Power Gauge, which fills up as the player performs normal or special techniques against their opponent or defend themselves, similar to many super move gauges featured in other fighting games. The Power Gauge allows players to perform one of three types of Special Techniques, depending of the level of the Power Gauge. Real Bout also introduces stages with ring-outs, a gameplay feature previously introduced in 3D fighting games such as Virtua Fighter. If the player performs certain attacks on their opponent while next to the boundaries, the character will eventually destroy the barrier keeping the opponent in the ring and be able to knock them out of the stage for an easy win."
 }

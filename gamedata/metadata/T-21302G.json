@@ -33,5 +33,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        },
+        {
+          "score": 6
+        },
+        {
+          "score": 5
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 5.8333
+        }
+      ]
+    }
+  ],
   "overview": "Tryrush Deppy is a 2D platformer which plays similarly to Sonic and Mario games. The player controls a cartoony-looking taxi cab and has to get past various levels mostly set in urban environments. Some enemies can be defeated by simply jumping on them, but others have spikes and fire on their body, so in order to defeat them the player must use the Super Dash move, which grants an increased speed for a short amount of time. The super dash meter takes away gas, but it is possible to charge it up as much as one wants until it maxes out. In addition to killing enemies and bosses, super dashing can also break down certain walls that lead to secret items. Bosses each have a weak point somewhere on their body that is seen just before the battle begins."
 }

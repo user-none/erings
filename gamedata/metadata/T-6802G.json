@@ -34,5 +34,36 @@
       "rating": "All"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "Famitsu",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 6
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 7
+        },
+        {
+          "score": 6
+        }
+      ]
+    },
+    {
+      "source": "SSM JP Readers",
+      "region": "Japan",
+      "scale": 10,
+      "scores": [
+        {
+          "score": 8.2028
+        }
+      ]
+    }
+  ],
   "overview": "Puzzle & Action: 2do Arukoto wa Sand-R (Puzzle & Action: Treasure Hunt) is the third and final instalment in the Puzzle & Action series, after Puzzle & Action: Tant-R and Puzzle & Action: Ichidant-R. Like the previous games, players play a series of timed mini games to overcome enemies.\n\nGameplay is similar to the previous games, although the games are in 3D. There are four rounds of a number of timed mini games, and two players are supported. Twenty-two categorized mini games are featured, and like the previous instalments, there is a 'Free Play' mode where they can be practiced. The Saturn version features a RPG-style 'Original mode', which features a shop where items such as torches and brooms can be purchased."
 }

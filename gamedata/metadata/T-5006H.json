@@ -42,5 +42,50 @@
       "rating": "11+"
     }
   ],
+  "critic_ratings": [
+    {
+      "source": "GamePro",
+      "region": "USA",
+      "scale": 5,
+      "scores": [
+        {
+          "category": "Graphics",
+          "score": 4
+        },
+        {
+          "category": "Sound",
+          "score": 4.5
+        },
+        {
+          "category": "Control",
+          "score": 4
+        },
+        {
+          "category": "FunFactor",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "source": "SSM UK",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 90
+        }
+      ]
+    },
+    {
+      "source": "MAN!AC",
+      "region": "Europe",
+      "scale": 100,
+      "scores": [
+        {
+          "score": 85
+        }
+      ]
+    }
+  ],
   "overview": "The game is played from the first-person perspective of a wizard on a magic carpet flying over water, mountains, and other landscapes. The wizard destroys monsters and rival sorcerers, which are controlled by the computers, by launching fireballs, and collects \"mana\", which is gathered by hot air balloons that appear when the player places down their castle, and is stored inside.\n\nThe greater the amounts of mana in the player's castle, the more powerful the player's spells are. As the player expands the castle, by placing more structures, it spawns additional mana-collecting balloons and armed guards that defend it against attacks by enemy wizards. Besides storing mana, the player's castle also serves as a sanctuary for them where they cannot be killed and can regain health and mana."
 }
