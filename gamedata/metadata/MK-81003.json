@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-10-17",
   "developer": "Novalogic",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

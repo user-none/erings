@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-01-10",
   "developer": "Game Arts",
-  "publisher": "Patra",
+  "publisher": [
+    {
+      "name": "Patra",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform",

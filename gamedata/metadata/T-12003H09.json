@@ -13,7 +13,14 @@
   ],
   "release_date": "1997",
   "developer": "Rage Games",
-  "publisher": "Codemasters",
+  "publisher": [
+    {
+      "name": "Codemasters",
+      "regions": [
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

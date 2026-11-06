@@ -13,8 +13,15 @@
     "4 973393 000017"
   ],
   "release_date": "1995-06-23",
-  "developer": "KaZe",
-  "publisher": "Sega",
+  "developer": "KAZe",
+  "publisher": [
+    {
+      "name": "KAZe",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Pinball"
   ],

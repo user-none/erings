@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-22",
   "developer": "Thunder Stone Japan",
-  "publisher": "Shouei System",
+  "publisher": [
+    {
+      "name": "Shouei System",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Role-Playing"

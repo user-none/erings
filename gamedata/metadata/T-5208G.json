@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-04-16",
   "developer": "Cynus",
-  "publisher": "Cynus",
+  "publisher": [
+    {
+      "name": "Micro Cabin",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

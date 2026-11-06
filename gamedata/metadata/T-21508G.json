@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-07-24",
   "developer": "TamTam",
-  "publisher": "Shoeisha",
+  "publisher": [
+    {
+      "name": "Shoeisha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Role-Playing"

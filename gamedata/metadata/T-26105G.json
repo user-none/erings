@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-03-28",
   "developer": "Data East",
-  "publisher": "Xing Entertainment",
+  "publisher": [
+    {
+      "name": "Xing Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

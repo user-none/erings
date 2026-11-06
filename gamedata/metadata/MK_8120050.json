@@ -12,8 +12,15 @@
     "4 974365 812003"
   ],
   "release_date": "1995-07-08",
-  "developer": "Sega AM7",
-  "publisher": "Sega of America",
+  "developer": "Sega AM2",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

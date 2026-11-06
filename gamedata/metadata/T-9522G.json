@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-07-10",
   "developer": "Konami",
-  "publisher": "Konami",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Sports",

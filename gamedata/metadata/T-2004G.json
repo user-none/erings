@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-08-06",
   "developer": "Vantan International",
-  "publisher": "Asmik Ace Entertainment",
+  "publisher": [
+    {
+      "name": "Asmik Ace Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform",

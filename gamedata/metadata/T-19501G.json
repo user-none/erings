@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-02-23",
   "developer": "Success",
-  "publisher": "Datam Polystar",
+  "publisher": [
+    {
+      "name": "Datam Polystar",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

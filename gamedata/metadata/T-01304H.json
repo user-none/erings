@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-06-24",
   "developer": "Argonaut Software",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "Data East USA",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

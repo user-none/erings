@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-11-14",
   "developer": "Realtime Associates",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

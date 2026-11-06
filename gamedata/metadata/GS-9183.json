@@ -13,8 +13,15 @@
     "4 974365 091835"
   ],
   "release_date": "1998-08-06",
-  "developer": "TNS",
-  "publisher": "Sega Enterprises",
+  "developer": "Scarab Studio",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

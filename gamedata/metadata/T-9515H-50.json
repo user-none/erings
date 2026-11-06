@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-08-29",
   "developer": "Flair Software",
-  "publisher": "Konami Deutschland",
+  "publisher": [
+    {
+      "name": "Konami Deutschland",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

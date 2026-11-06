@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-14",
   "developer": "Fupac",
-  "publisher": "Datam Polystar",
+  "publisher": [
+    {
+      "name": "Datam Polystar",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

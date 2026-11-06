@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-11-26",
   "developer": "Takuyo",
-  "publisher": "Takuyo",
+  "publisher": [
+    {
+      "name": "Takuyo",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-01-22",
   "developer": "Quintet",
-  "publisher": "Quintet",
+  "publisher": [
+    {
+      "name": "Quintet",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Strategy"

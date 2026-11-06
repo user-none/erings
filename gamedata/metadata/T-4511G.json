@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-04-23",
   "developer": "Game Arts",
-  "publisher": "ESP",
+  "publisher": [
+    {
+      "name": "Game Arts",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter",
     "Vehicle Simulation"

@@ -12,8 +12,15 @@
     "0 10086 81200 8"
   ],
   "release_date": "1995-05-11",
-  "developer": "Sega AM7",
-  "publisher": "Sega of America",
+  "developer": "Sega AM2",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

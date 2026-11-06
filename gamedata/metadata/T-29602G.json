@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-07-05",
   "developer": "Planning Office Wada",
-  "publisher": "Planning Office Wada",
+  "publisher": [
+    {
+      "name": "Planning Office Wada",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Casino",

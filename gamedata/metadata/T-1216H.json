@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-25",
   "developer": "Capcom",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

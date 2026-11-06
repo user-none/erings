@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-15",
   "developer": "Saru Brunei",
-  "publisher": "BMG Japan",
+  "publisher": [
+    {
+      "name": "BMG Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

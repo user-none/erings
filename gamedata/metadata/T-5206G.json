@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-29",
   "developer": "Micro Cabin",
-  "publisher": "Micro Cabin",
+  "publisher": [
+    {
+      "name": "Micro Cabin",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

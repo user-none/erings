@@ -13,8 +13,15 @@
     "4 932896 040036"
   ],
   "release_date": "1998-01-29",
-  "developer": "JSH",
-  "publisher": "SIMS",
+  "developer": "Japan System House",
+  "publisher": [
+    {
+      "name": "SIMS",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

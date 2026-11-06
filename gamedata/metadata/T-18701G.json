@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1995-06-02",
   "developer": "Scarab",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Naxat Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

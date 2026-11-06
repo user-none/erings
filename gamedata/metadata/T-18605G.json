@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-27",
   "developer": "Perfect Entertainment",
-  "publisher": "Psygnosis",
+  "publisher": [
+    {
+      "name": "SoftBank",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

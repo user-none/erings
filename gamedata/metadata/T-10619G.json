@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-20",
   "developer": "Electronic Arts",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

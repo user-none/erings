@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-08-09",
   "developer": "Sky Think Systems",
-  "publisher": "Sky Think Systems",
+  "publisher": [
+    {
+      "name": "Sky Think Systems",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

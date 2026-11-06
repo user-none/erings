@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-11-11",
   "developer": "Screaming Pink",
-  "publisher": "Playmates Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Takara",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

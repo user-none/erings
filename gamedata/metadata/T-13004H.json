@@ -15,7 +15,15 @@
   ],
   "release_date": "1997-04-01",
   "developer": "Quantum Factory",
-  "publisher": "Activision",
+  "publisher": [
+    {
+      "name": "Activision",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Vehicle Simulation"

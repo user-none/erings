@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-15",
   "developer": "Altron",
-  "publisher": "Altron",
+  "publisher": [
+    {
+      "name": "Altron",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Music"

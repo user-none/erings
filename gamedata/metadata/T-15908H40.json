@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11",
   "developer": "Crystal Dynamics",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "BMG Victor",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-09",
   "developer": "AKI",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game",
     "Strategy"

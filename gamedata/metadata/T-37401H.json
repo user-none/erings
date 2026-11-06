@@ -9,10 +9,16 @@
   "languages": [
     "Chinese"
   ],
-  "barcodes": [],
   "release_date": "1999-02-05",
   "developer": "Softstar Entertainment",
-  "publisher": "Softstar Entertainment",
+  "publisher": [
+    {
+      "name": "Softstar Entertainment",
+      "regions": [
+        "Taiwan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

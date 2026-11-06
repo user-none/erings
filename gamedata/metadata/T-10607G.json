@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-10-25",
   "developer": "Core Design",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

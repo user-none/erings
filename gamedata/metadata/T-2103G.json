@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-07-26",
   "developer": "System Sacom",
-  "publisher": "ASCII",
+  "publisher": [
+    {
+      "name": "ASCII",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

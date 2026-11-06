@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-09-03",
   "developer": "Onion Egg",
-  "publisher": "Kadokawa Shoten Publishing",
+  "publisher": [
+    {
+      "name": "Kadokawa Shoten Publishing",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

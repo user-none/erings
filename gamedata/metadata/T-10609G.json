@@ -13,8 +13,15 @@
     "4 938833 003379"
   ],
   "release_date": "1996-07-26",
-  "developer": "Electronic Arts",
-  "publisher": "Electronic Arts",
+  "developer": "Buzz Puppet",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Racing"

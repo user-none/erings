@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 14633 07796 4"
   ],
   "release_date": "1997-08-20",
   "developer": "Climax Group",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

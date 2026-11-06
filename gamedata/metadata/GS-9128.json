@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-01-31",
   "developer": "Realtime Associates",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

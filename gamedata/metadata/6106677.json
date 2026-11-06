@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-08-01",
   "developer": "Magical Company",
-  "publisher": "Magical Company",
+  "publisher": [
+    {
+      "name": "Magical Company",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

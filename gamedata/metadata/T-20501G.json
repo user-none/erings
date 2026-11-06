@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-11-24",
   "developer": "Media Entertainment",
-  "publisher": "Media Entertainment",
+  "publisher": [
+    {
+      "name": "Media Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

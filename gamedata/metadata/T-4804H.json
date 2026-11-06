@@ -12,8 +12,15 @@
     "0 31763 11420 8"
   ],
   "release_date": "1995-12-06",
-  "developer": "KaZe",
-  "publisher": "Sega",
+  "developer": "KAZe",
+  "publisher": [
+    {
+      "name": "Time Warner Interactive",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Pinball"
   ],

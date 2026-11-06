@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11-17",
   "developer": "Data East",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "Data East USA",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

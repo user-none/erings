@@ -13,8 +13,15 @@
     "4 935066 800034"
   ],
   "release_date": "1997-03-28",
-  "developer": "System Supply N‑Tech",
-  "publisher": "Technical Group Laboratory",
+  "developer": "Technical Group Laboratory",
+  "publisher": [
+    {
+      "name": "Technical Group Laboratory",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

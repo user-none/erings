@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-14",
   "developer": "Sculptured Software",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

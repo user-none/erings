@@ -12,8 +12,15 @@
     "0 21481 82059 8"
   ],
   "release_date": "1996-01-29",
-  "developer": "Taito",
-  "publisher": "Acclaim Entertainment",
+  "developer": "Aisystem Tokyo",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

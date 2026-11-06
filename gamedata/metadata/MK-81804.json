@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-09-18",
   "developer": "Sega AM7 R&D Division",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Horror"

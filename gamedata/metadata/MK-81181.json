@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-05-29",
   "developer": "Silicon Dreams Studio",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

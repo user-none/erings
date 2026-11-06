@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-06",
   "developer": "Funcom Dublin",
-  "publisher": "JVC Musical Industries",
+  "publisher": [
+    {
+      "name": "Coconuts Japan Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

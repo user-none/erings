@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-09-25",
   "developer": "GOO!",
-  "publisher": "Xing Entertainment",
+  "publisher": [
+    {
+      "name": "Xing Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

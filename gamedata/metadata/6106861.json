@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1998-03-26",
   "developer": "Tantalus Interactive",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Horror",
     "Shooter"

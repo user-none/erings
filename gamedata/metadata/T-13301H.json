@@ -14,7 +14,15 @@
   ],
   "release_date": "1996-05-31",
   "developer": "TOSE",
-  "publisher": "Bandai",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "France",
+        "Spain"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

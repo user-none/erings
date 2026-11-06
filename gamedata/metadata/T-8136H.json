@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 21481 82073 4"
   ],
   "release_date": "1996-08-29",
   "developer": "Iguana Entertainment",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

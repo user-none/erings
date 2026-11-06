@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-12-23",
   "developer": "SIMS",
-  "publisher": "Red Company",
+  "publisher": [
+    {
+      "name": "Red Company",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Visual Novel"

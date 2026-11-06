@@ -13,8 +13,15 @@
     "4 988013 038295"
   ],
   "release_date": "1997-01-24",
-  "developer": "Pony Canyon",
-  "publisher": "Pony Canyon",
+  "developer": "Anchor",
+  "publisher": [
+    {
+      "name": "Pony Canyon",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting",
     "Sports"

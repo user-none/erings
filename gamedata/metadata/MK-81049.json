@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-08-28",
   "developer": "Sega AM2",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises, Ltd., Samsung (KR)",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

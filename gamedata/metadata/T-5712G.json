@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-06",
   "developer": "Jaleco",
-  "publisher": "Jaleco",
+  "publisher": [
+    {
+      "name": "Jaleco",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

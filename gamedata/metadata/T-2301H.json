@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-09-21",
   "developer": "Sega",
-  "publisher": "Vic Tokai",
+  "publisher": [
+    {
+      "name": "Vic Tokai",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-05-30",
   "developer": "Tecmo",
-  "publisher": "Tecmo",
+  "publisher": [
+    {
+      "name": "Tecmo",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

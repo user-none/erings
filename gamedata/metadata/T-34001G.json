@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-22",
   "developer": "Chunsoft",
-  "publisher": "Chunsoft",
+  "publisher": [
+    {
+      "name": "Chunsoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

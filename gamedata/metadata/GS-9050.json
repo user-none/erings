@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-12-22",
   "developer": "Scarab",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

@@ -9,10 +9,15 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1996-04-26",
-  "developer": "Software Creations",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

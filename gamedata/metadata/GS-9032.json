@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-10-27",
   "developer": "Genki",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

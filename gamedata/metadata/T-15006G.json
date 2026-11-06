@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-12-15",
   "developer": "SIMS",
-  "publisher": "Imagineer",
+  "publisher": [
+    {
+      "name": "Imagineer",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

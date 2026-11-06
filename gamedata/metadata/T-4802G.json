@@ -13,8 +13,15 @@
     "4 991425 000231"
   ],
   "release_date": "1995-08-04",
-  "developer": "K.K. Time Warner Interactive",
-  "publisher": "K.K. Time Warner Interactive",
+  "developer": "Time Warner Interactive",
+  "publisher": [
+    {
+      "name": "Time Warner Interactive",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

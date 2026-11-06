@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1995-10-27",
   "developer": "Arc System Works",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Imagineer",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

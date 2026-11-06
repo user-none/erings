@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-04-12",
   "developer": "Rutubo Games",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

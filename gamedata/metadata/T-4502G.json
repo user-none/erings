@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-03-15",
   "developer": "Game Arts",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Game Arts",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter",
     "Vehicle Simulation"

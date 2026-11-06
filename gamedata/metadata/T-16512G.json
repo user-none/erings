@@ -13,8 +13,15 @@
     "4 963919 830075"
   ],
   "release_date": "1998-11-05",
-  "developer": "",
-  "publisher": "SETA",
+  "developer": "Seta",
+  "publisher": [
+    {
+      "name": "SETA",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

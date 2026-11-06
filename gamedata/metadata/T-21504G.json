@@ -13,8 +13,15 @@
     "4 997153 900089"
   ],
   "release_date": "1996-06-14",
-  "developer": "TamTam",
-  "publisher": "Shoeisha",
+  "developer": "Shoeisha",
+  "publisher": [
+    {
+      "name": "Shoeisha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle",
     "Shooter"

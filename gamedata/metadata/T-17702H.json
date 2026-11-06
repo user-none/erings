@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-11-16",
   "developer": "Vivid Image",
-  "publisher": "Ubi Soft Entertainment Software",
+  "publisher": [
+    {
+      "name": "Ubi Soft Entertainment Software",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

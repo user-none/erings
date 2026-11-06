@@ -12,8 +12,15 @@
     "5 028587 080371"
   ],
   "release_date": "1996-06-28",
-  "developer": "Jumpin Jack Software",
-  "publisher": "Virgin Interactive Entertainment",
+  "developer": "Jumpin' Jack Software",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

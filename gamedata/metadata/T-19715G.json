@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-07-23",
   "developer": "Success",
-  "publisher": "KID",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation",
     "Visual Novel"

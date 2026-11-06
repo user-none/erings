@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-12-10",
   "developer": "Starlight Marry",
-  "publisher": "Media Works",
+  "publisher": [
+    {
+      "name": "Media Works",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

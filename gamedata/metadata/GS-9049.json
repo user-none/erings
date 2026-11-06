@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-22",
   "developer": "Team Andromeda",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

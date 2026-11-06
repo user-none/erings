@@ -8,10 +8,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-04-01",
   "developer": "Core Design",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Eidos Interactive",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Adventure"

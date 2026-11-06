@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-02-23",
   "developer": "Sega",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

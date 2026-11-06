@@ -15,7 +15,20 @@
   ],
   "release_date": "1997-10-17",
   "developer": "Sega AM3",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

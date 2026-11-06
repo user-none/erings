@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-04-18",
   "developer": "Japan Media Programming",
-  "publisher": "Virgin Interactive Entertainment (Japan)",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

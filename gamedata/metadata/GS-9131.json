@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-04-25",
   "developer": "Westwood Studios",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

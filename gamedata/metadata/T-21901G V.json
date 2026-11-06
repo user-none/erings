@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-07-28",
   "developer": "NEW Jatre",
-  "publisher": "Societa Daikanyama",
+  "publisher": [
+    {
+      "name": "Societa Daikanyama",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

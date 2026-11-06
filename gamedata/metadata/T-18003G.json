@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-01-31",
   "developer": "Crystal Dynamics",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "BMG Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

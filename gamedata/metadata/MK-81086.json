@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-10-24",
   "developer": "Core Design",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

@@ -13,8 +13,15 @@
     "4 516259 000198"
   ],
   "release_date": "1998-07-30",
-  "developer": "Vantan International",
-  "publisher": "Waka Manufacturing",
+  "developer": "Success",
+  "publisher": [
+    {
+      "name": "Waka Manufacturing",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Education",
     "Music"

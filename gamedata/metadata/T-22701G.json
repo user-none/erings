@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-02-16",
   "developer": "Vantan International",
-  "publisher": "Vantan International",
+  "publisher": [
+    {
+      "name": "Vantan International",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

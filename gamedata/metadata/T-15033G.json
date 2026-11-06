@@ -9,10 +9,15 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-12-11",
-  "developer": "Gust",
-  "publisher": "Imadio",
+  "publisher": [
+    {
+      "name": "Imadio",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

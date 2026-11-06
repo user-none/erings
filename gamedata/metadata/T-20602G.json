@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-08-23",
   "developer": "Japan Media Programming",
-  "publisher": "Banpresto",
+  "publisher": [
+    {
+      "name": "Banpresto",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

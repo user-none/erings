@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-10-27",
   "developer": "Gainax",
-  "publisher": "Micro Cabin",
+  "publisher": [
+    {
+      "name": "Micro Cabin",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation",
     "Role-Playing"

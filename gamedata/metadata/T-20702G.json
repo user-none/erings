@@ -15,7 +15,14 @@
   ],
   "release_date": "1997-01-17",
   "developer": "Ecseco Development",
-  "publisher": "Ecseco Development",
+  "publisher": [
+    {
+      "name": "Ecseco Development",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Compilation"

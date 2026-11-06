@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-12-20",
-  "developer": "Racdym",
-  "publisher": "Virgin Interactive Entertainment",
+  "developer": "Etona",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-02-24",
   "developer": "System Sacom",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

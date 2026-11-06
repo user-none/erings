@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-07-23",
   "developer": "Compile",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Compile",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

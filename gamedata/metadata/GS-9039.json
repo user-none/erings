@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-07-14",
   "developer": "AM R&D Dept. #2",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises, Ltd., Samsung (KR)",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

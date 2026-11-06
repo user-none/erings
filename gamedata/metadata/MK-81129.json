@@ -15,7 +15,20 @@
   ],
   "release_date": "1998-02-03",
   "developer": "Data East",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

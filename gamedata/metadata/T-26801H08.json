@@ -9,10 +9,16 @@
   "languages": [
     "Korean"
   ],
-  "barcodes": [],
   "release_date": "1996",
   "developer": "Sunsoft",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Korea"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-09-29",
-  "developer": "HyperBole Studios",
-  "publisher": "GAGA Communications",
+  "developer": "Success",
+  "publisher": [
+    {
+      "name": "GAGA Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

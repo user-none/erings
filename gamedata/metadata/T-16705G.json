@@ -13,11 +13,13 @@
     "4 959093 202029"
   ],
   "release_date": "1996-05-31",
-  "developer": "",
-  "publisher": "",
-  "genres": [],
-  "max_players": 0,
-  "cooperative": false,
-  "esrb": "",
-  "overview": ""
+  "publisher": [
+    {
+      "name": "ASK Kodansha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
+  "cooperative": false
 }

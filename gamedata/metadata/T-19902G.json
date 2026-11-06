@@ -13,8 +13,15 @@
     "4 988736 070015"
   ],
   "release_date": "1996-05-24",
-  "developer": "Taito",
-  "publisher": "Ving",
+  "developer": "Ving",
+  "publisher": [
+    {
+      "name": "Ving",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

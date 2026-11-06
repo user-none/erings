@@ -14,12 +14,18 @@
   ],
   "release_date": "1998-10-08",
   "developer": "Bandai",
-  "publisher": "Bandai",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "",
   "overview": "Kidou Senshi Gundam: Giren no Yabou - Kouryaku Shireisho is an update to Kidou Senshi Gundam: Giren no Yabou. It is an \"append disc\", thus relies on a copy of Giren no Yabou to function."
 }

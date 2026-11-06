@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-01-17",
   "developer": "Xing Entertainment",
-  "publisher": "Xing Entertainment",
+  "publisher": [
+    {
+      "name": "Xing Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Visual Novel"

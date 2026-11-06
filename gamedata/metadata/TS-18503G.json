@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-10-27",
   "developer": "Merit Studios",
-  "publisher": "GAGA Communications",
+  "publisher": [
+    {
+      "name": "GAGA Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

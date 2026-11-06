@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-29",
   "developer": "SIMS",
-  "publisher": "Banpresto",
+  "publisher": [
+    {
+      "name": "Banpresto",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11-29",
   "developer": "Ving",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-06",
   "developer": "Saurus",
-  "publisher": "Saurus",
+  "publisher": [
+    {
+      "name": "SNK",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

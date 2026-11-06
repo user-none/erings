@@ -15,7 +15,20 @@
   ],
   "release_date": "1996-01-30",
   "developer": "Genki",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

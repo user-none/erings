@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-09-18",
   "developer": "Nihon Create",
-  "publisher": "Nihon Create",
+  "publisher": [
+    {
+      "name": "Nihon Create",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation",
     "Visual Novel"

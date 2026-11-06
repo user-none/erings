@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-10-02",
   "developer": "Koei",
-  "publisher": "Koei",
+  "publisher": [
+    {
+      "name": "Koei",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

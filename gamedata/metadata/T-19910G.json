@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-10-22",
   "developer": "Ving",
-  "publisher": "Ving",
+  "publisher": [
+    {
+      "name": "Ving",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

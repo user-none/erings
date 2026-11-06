@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-01-15",
   "developer": "NEON Software",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

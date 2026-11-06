@@ -13,12 +13,18 @@
   ],
   "release_date": "1997-03-21",
   "developer": "Konami",
-  "publisher": "Konami",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "",
   "overview": "Crypt Killer is a horror-themed lightgun shooter. As a tireless adventurer, you are looking for the \"Eyes of Guidance\", ancient crystals of mysterious power. To find them, you have to shoot your way through hordes of monsters.\n\nThe game has six stages which can be taken on in any order. Each stage consists of four acts. The levels range from dark forests to deep caves, ancient crypts and underwater labyrinths. You move through the 3D levels on a predetermined path and shoot at skeletons, zombies, spiders, demons and other foul beasts. Your standard weapon is a shotgun, but you can gain additional weapons like gatling guns and grenade throwers. Some enemies throw projectiles like knives or bones at you, so be sure to aim at those as well. If the screen becomes too crowded, clear it with a smartbomb. At the end of some acts, you can choose from one of two paths through the next act, giving you different ways of completing a stage. At the end of each stage, a boss enemy awaits."
 }

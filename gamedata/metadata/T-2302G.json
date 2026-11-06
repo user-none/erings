@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-02-28",
   "developer": "Kronos Digital Entertainment",
-  "publisher": "Vic Tokai",
+  "publisher": [
+    {
+      "name": "Vic Tokai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

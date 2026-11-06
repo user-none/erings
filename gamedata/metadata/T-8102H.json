@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11-10",
   "developer": "Iguana UK",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

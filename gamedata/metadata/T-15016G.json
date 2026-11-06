@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-12-13",
   "developer": "ALU",
-  "publisher": "Imagineer",
+  "publisher": [
+    {
+      "name": "Imagineer",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Life Simulation"

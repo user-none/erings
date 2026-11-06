@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1995-12-08",
   "developer": "Natsume",
-  "publisher": "Taito",
+  "publisher": [
+    {
+      "name": "Taito",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

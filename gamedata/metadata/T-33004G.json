@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-10-01",
   "developer": "Axes Art Amuse",
-  "publisher": "Tokuma Shoten",
+  "publisher": [
+    {
+      "name": "Tokuma Shoten Intermedia",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Life Simulation"

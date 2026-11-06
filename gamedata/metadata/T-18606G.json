@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-09-11",
   "developer": "Perfect Entertainment",
-  "publisher": "Softbank",
+  "publisher": [
+    {
+      "name": "SoftBank",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

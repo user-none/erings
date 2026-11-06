@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11",
   "developer": "Gray Matter",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

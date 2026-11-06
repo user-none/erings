@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-05-24",
   "developer": "Scitron & Art",
-  "publisher": "MediaQuest",
+  "publisher": [
+    {
+      "name": "Media Quest",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Education"

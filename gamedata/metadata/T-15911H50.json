@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-04-12",
   "developer": "Crystal Dynamics",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "Crystal Dynamics",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-30",
   "developer": "Ancient",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation",
     "Puzzle"

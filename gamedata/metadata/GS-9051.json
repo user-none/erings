@@ -13,8 +13,14 @@
     "4 974365 090517"
   ],
   "release_date": "1996-03-01",
-  "developer": "Sega AM2",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

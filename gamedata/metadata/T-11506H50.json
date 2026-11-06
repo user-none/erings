@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-02",
   "developer": "Core Design",
-  "publisher": "Core Design",
+  "publisher": [
+    {
+      "name": "Core Design",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

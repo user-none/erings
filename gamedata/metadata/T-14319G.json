@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-05-21",
   "developer": "Success",
-  "publisher": "Hudson Soft",
+  "publisher": [
+    {
+      "name": "Hudson Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

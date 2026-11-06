@@ -13,8 +13,15 @@
     "4 905040 090201"
   ],
   "release_date": "1996-03-15",
-  "developer": "Epoch",
-  "publisher": "Epoch",
+  "developer": "Sakata SAS",
+  "publisher": [
+    {
+      "name": "Epoch",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform"
   ],

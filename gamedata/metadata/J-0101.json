@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-10-06",
   "developer": "Sega",
-  "publisher": "Takarajimasha",
+  "publisher": [
+    {
+      "name": "Takarajimasha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

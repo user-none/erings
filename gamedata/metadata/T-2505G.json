@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-08-01",
   "developer": "Career Soft",
-  "publisher": "Masaya",
+  "publisher": [
+    {
+      "name": "Nippon Computer Systems",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

@@ -13,8 +13,15 @@
     "4902425 48152 4"
   ],
   "release_date": "1995-08-11",
-  "developer": "BEC",
-  "publisher": "Bandai",
+  "developer": "Bandai Entertainment Company",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

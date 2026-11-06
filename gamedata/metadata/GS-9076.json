@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-29",
   "developer": "Team Andromeda",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

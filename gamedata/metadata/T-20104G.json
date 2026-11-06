@@ -13,8 +13,15 @@
     "4 513244 900112"
   ],
   "release_date": "1997-07-11",
-  "developer": "Elf",
-  "publisher": "NEC Interchannel",
+  "developer": "elf",
+  "publisher": [
+    {
+      "name": "NEC Interchannel",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

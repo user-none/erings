@@ -16,7 +16,14 @@
   ],
   "release_date": "1998-05-15",
   "developer": "New Level Software",
-  "publisher": "GT Interactive Software",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-07-12",
   "developer": "Mizuki",
-  "publisher": "Masudaya",
+  "publisher": [
+    {
+      "name": "Masudaya",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Education",
     "Life Simulation"

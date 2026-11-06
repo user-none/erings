@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-05-28",
   "developer": "Mediamuse",
-  "publisher": "KSS",
+  "publisher": [
+    {
+      "name": "KSS",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

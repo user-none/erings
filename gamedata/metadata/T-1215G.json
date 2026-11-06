@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-08-08",
   "developer": "Capcom",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

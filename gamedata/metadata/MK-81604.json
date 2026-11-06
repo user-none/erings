@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-12-19",
   "developer": "Rutubo Games",
-  "publisher": "Working Designs",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

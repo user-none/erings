@@ -15,7 +15,20 @@
   ],
   "release_date": "1997-05-01",
   "developer": "Hudson Soft",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

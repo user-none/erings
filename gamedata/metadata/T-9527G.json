@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-06-25",
   "developer": "Konami",
-  "publisher": "Konami",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Horror",

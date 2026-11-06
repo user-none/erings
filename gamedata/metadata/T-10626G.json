@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-12-18",
   "developer": "Raizing",
-  "publisher": "Electronic Arts Victor",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

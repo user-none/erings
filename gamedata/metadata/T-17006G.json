@@ -14,8 +14,14 @@
   ],
   "release_date": "1997-06-27",
   "developer": "General Entertainment",
-  "publisher": "General Entertainment",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "General Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

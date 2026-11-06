@@ -9,11 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995",
   "developer": "Eyeful Home Technology",
-  "publisher": "Sega Enterprises",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

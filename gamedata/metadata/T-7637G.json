@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-06-20",
-  "developer": "Scavenger",
-  "publisher": "Koei",
+  "developer": "Lemon",
+  "publisher": [
+    {
+      "name": "Koei",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

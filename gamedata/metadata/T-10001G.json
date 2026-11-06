@@ -14,7 +14,15 @@
   ],
   "release_date": "1996-06-04",
   "developer": "SIMS",
-  "publisher": "Imagineer",
+  "publisher": [
+    {
+      "name": "Kokopeli Digital Studios",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

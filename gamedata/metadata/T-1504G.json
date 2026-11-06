@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-03-03",
   "developer": "Success",
-  "publisher": "Sunsoft",
+  "publisher": [
+    {
+      "name": "Sunsoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

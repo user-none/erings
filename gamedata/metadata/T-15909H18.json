@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-02-13",
   "developer": "Silicon Knights",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "BMG Victor",
+      "regions": [
+        "Germany"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Strategy"

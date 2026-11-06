@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-02-19",
   "developer": "SIMS",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

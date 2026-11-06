@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-20",
   "developer": "Syrox Developments",
-  "publisher": "SegaSoft",
+  "publisher": [
+    {
+      "name": "SegaSoft",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-01-10",
   "developer": "TOSE",
-  "publisher": "Yoshimoto Kogyo",
+  "publisher": [
+    {
+      "name": "Yoshimoto Kogyo",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting",
     "Sports"

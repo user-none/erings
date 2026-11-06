@@ -8,10 +8,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1998",
   "developer": "Sega Enterprises",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "UK"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

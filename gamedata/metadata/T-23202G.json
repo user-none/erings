@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-08-09",
   "developer": "Ecole Software",
-  "publisher": "Ecole Software",
+  "publisher": [
+    {
+      "name": "Ecole Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

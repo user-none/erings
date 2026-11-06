@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-10-07",
   "developer": "Koei",
-  "publisher": "Koei",
+  "publisher": [
+    {
+      "name": "Koei",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

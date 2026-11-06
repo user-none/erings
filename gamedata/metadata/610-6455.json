@@ -8,10 +8,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-05-26",
   "developer": "Eidos Interactive",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Eidos Interactive",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-09-15",
   "developer": "T&E Soft",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Role-Playing"

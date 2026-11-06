@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-26",
   "developer": "Arc Developments",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "Soft Vision",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-02-16",
   "developer": "Altron",
-  "publisher": "THQ",
+  "publisher": [
+    {
+      "name": "Altron",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

@@ -15,7 +15,20 @@
   ],
   "release_date": "1996-06-19",
   "developer": "Game Arts",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter",
     "Vehicle Simulation"

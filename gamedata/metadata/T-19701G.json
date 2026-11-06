@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-05",
   "developer": "Cocktail Soft",
-  "publisher": "KID",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-09-11",
   "developer": "Nextech",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Horror"

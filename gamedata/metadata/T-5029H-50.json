@@ -14,7 +14,15 @@
   ],
   "release_date": "1997-10",
   "developer": "Argonaut Software",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Fox Interactive",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Platform"
   ],

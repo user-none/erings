@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-05-30",
   "developer": "Aisystem Tokyo",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "Data East",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

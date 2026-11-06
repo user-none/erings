@@ -13,8 +13,15 @@
     "4 994934 200093"
   ],
   "release_date": "1997-06-27",
-  "developer": "Genki",
-  "publisher": "Genki",
+  "developer": "Sada Soft",
+  "publisher": [
+    {
+      "name": "Sada Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Quiz"
   ],

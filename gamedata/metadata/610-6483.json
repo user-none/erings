@@ -8,10 +8,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1996-12",
   "developer": "Sonic Team",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Platform"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-03-28",
   "developer": "Datt Japan",
-  "publisher": "Datt Japan",
+  "publisher": [
+    {
+      "name": "Datt Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-04-04",
   "developer": "Fill in Café",
-  "publisher": "TEN Institute",
+  "publisher": [
+    {
+      "name": "TEN Institute",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Casino"
   ],

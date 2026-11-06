@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-07-11",
   "developer": "Visual Concepts Entertainment",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

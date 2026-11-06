@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-27",
   "developer": "Warashi",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Warashi",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

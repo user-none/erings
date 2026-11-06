@@ -16,7 +16,14 @@
   ],
   "release_date": "1996-09-04",
   "developer": "Probe Entertainment",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

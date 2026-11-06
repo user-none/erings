@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-26",
   "developer": "Zono",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Horror",

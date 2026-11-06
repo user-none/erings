@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-01-15",
   "developer": "MBL Research",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

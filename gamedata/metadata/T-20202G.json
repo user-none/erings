@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-05-03",
-  "developer": "Varie",
-  "publisher": "Sonnet Computer Entertainment",
+  "developer": "Sonnet Computer Entertainment",
+  "publisher": [
+    {
+      "name": "Varie",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

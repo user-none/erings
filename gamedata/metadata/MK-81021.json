@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-10-27",
   "developer": "Sega Enterprises",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Platform"
   ],

@@ -15,7 +15,20 @@
   ],
   "release_date": "1997-03-05",
   "developer": "Zyrinx",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

@@ -14,12 +14,18 @@
   ],
   "release_date": "1995-09-22",
   "developer": "Shoeisha",
-  "publisher": "Shoeisha",
+  "publisher": [
+    {
+      "name": "Shoeisha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "",
   "overview": "In the award-winning tradition of Tetris, comes BreakThru! This time, your goal is to make as many bricks disappear as you can before time runs out. Click on a group of same-colored bricks to remove bricks and make the wall come tumbling down."
 }

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-02",
   "developer": "Mediamuse",
-  "publisher": "KSS",
+  "publisher": [
+    {
+      "name": "KSS",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

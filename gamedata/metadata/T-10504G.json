@@ -14,8 +14,14 @@
   ],
   "release_date": "1998-01-15",
   "developer": "Westone",
-  "publisher": "Shogakukan Productions",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Shogakukan Productions",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

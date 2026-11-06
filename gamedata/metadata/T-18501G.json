@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-07-07",
   "developer": "Cyberdreams",
-  "publisher": "GAGA Communications",
+  "publisher": [
+    {
+      "name": "GAGA Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

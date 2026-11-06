@@ -9,11 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996",
   "developer": "Sega AM2",
-  "publisher": "Sega Enterprises",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

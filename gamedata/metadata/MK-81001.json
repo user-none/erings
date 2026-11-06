@@ -12,8 +12,15 @@
     "0 10086 81001 1"
   ],
   "release_date": "1995-11-22",
-  "developer": "Jumpin Jack Software",
-  "publisher": "Virgin Interactive Entertainment",
+  "developer": "Jumpin' Jack Software",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-12-06",
   "developer": "Westwood Studios",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

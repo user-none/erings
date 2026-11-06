@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-07-19",
   "developer": "Micronet",
-  "publisher": "Micronet",
+  "publisher": [
+    {
+      "name": "Micronet",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

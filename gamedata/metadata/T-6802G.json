@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-05",
   "developer": "CSK Research Institute",
-  "publisher": "CSK Research Institute",
+  "publisher": [
+    {
+      "name": "CSK Research Institute",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

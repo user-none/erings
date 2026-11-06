@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-09-15",
   "developer": "Random House",
-  "publisher": "SETA",
+  "publisher": [
+    {
+      "name": "SETA",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-02-26",
   "developer": "Sonic Team",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

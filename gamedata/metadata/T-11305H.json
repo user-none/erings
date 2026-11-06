@@ -16,7 +16,15 @@
   ],
   "release_date": "1997-05-23",
   "developer": "Perfect Entertainment",
-  "publisher": "Psygnosis",
+  "publisher": [
+    {
+      "name": "Psygnosis",
+      "regions": [
+        "Europe",
+        "Germany"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

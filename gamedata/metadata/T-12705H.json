@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-07-24",
   "developer": "Sunsoft",
-  "publisher": "Sunsoft",
+  "publisher": [
+    {
+      "name": "Working Designs",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

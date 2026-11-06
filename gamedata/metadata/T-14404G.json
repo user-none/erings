@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-22",
   "developer": "ISCO",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

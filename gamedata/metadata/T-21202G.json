@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-27",
   "developer": "Dual",
-  "publisher": "Oz Club",
+  "publisher": [
+    {
+      "name": "Oz Club",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-11-19",
   "developer": "Gaibrain",
-  "publisher": "KID",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Visual Novel"

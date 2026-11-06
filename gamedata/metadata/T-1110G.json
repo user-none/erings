@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-04-25",
   "developer": "Taito",
-  "publisher": "Taito",
+  "publisher": [
+    {
+      "name": "Taito",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Horror"

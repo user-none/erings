@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-15",
   "developer": "Digital Factory",
-  "publisher": "Natsume",
+  "publisher": [
+    {
+      "name": "Datt Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Casino"
   ],

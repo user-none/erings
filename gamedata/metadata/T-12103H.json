@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 92667 75028 2"
   ],
   "release_date": "1996-09-23",
   "developer": "ReadySoft",
-  "publisher": "ReadySoft",
+  "publisher": [
+    {
+      "name": "ReadySoft",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

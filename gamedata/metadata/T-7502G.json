@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-21",
   "developer": "Atelier Double",
-  "publisher": "Pony Canyon",
+  "publisher": [
+    {
+      "name": "Pony Canyon",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

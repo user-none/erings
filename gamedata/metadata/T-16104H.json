@@ -19,7 +19,15 @@
   ],
   "release_date": "1997-03-20",
   "developer": "Radical Entertainment",
-  "publisher": "Fox Interactive",
+  "publisher": [
+    {
+      "name": "Fox Interactive",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

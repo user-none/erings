@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-06-27",
   "developer": "Smart Dog",
-  "publisher": "Ocean Software",
+  "publisher": [
+    {
+      "name": "Pack-In-Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

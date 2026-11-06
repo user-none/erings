@@ -14,7 +14,14 @@
   ],
   "release_date": "1996",
   "developer": "Sammy",
-  "publisher": "Sammy",
+  "publisher": [
+    {
+      "name": "Sammy",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Casino"
   ],

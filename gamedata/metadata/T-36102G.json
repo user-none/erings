@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-08-29",
   "developer": "Flair Software",
-  "publisher": "Konami Deutschland",
+  "publisher": [
+    {
+      "name": "Bandai Visual",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

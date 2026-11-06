@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11-02",
   "developer": "Digital Pictures",
-  "publisher": "Digital Pictures",
+  "publisher": [
+    {
+      "name": "Digital Pictures",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

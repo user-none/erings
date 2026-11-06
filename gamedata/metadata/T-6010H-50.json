@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-07-05",
   "developer": "Funcom Dublin",
-  "publisher": "JVC Musical Industries",
+  "publisher": [
+    {
+      "name": "JVC Musical Industries Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

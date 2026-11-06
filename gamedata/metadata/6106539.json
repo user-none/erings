@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-04-18",
   "developer": "SIMS",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

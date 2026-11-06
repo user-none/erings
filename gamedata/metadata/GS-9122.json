@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-01-24",
   "developer": "Sega AM1",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

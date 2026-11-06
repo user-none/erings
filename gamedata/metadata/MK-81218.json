@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-02-16",
   "developer": "Sega AM2",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-08-20",
   "developer": "Natsu System",
-  "publisher": "Mainichi Communications",
+  "publisher": [
+    {
+      "name": "Mainichi Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Board Game"

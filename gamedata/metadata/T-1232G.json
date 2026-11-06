@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-08-27",
   "developer": "Capcom",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation",
     "Shooter"

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-10-04",
   "developer": "Gremlin Interactive",
-  "publisher": "VR Sports",
+  "publisher": [
+    {
+      "name": "Naxat Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

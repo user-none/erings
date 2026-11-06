@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-08-22",
   "developer": "Japan System Supply",
-  "publisher": "Bandai Visual",
+  "publisher": [
+    {
+      "name": "Bandai Visual",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

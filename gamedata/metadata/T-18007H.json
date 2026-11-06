@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-11-14",
   "developer": "NMS Software",
-  "publisher": "American Softworks",
+  "publisher": [
+    {
+      "name": "American Softworks",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

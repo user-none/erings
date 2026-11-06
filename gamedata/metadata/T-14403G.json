@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-12-25",
   "developer": "Atlus",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

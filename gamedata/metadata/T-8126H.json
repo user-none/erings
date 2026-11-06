@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 21481 82074 1"
   ],
   "release_date": "1996-11-23",
   "developer": "Sculptured Software",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting",
     "Sports"

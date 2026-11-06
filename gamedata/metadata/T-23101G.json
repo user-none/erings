@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-19",
   "developer": "Soft Office",
-  "publisher": "Pai",
+  "publisher": [
+    {
+      "name": "Pai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

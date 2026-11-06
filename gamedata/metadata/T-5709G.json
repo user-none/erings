@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-09",
   "developer": "Atelier Double",
-  "publisher": "Jaleco",
+  "publisher": [
+    {
+      "name": "Jaleco",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

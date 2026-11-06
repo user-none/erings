@@ -15,7 +15,20 @@
   ],
   "release_date": "1996-01",
   "developer": "Team17 Software",
-  "publisher": "Ocean Software",
+  "publisher": [
+    {
+      "name": "Ocean of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Ocean Software",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

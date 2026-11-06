@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-06-14",
   "developer": "Probe Entertainment",
-  "publisher": "Time Warner Interactive",
+  "publisher": [
+    {
+      "name": "Time Warner Interactive",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

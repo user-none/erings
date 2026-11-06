@@ -24,7 +24,23 @@
   ],
   "release_date": "1995-11-02",
   "developer": "System Sacom",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe",
+        "Germany",
+        "Spain",
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

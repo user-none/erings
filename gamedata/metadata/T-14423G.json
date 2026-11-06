@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-07-02",
   "developer": "Boom",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

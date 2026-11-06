@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-05-28",
   "developer": "Societa Daikanyama",
-  "publisher": "Societa Daikanyama",
+  "publisher": [
+    {
+      "name": "Societa Daikanyama",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-05-30",
   "developer": "Media Entertainment",
-  "publisher": "Media Entertainment",
+  "publisher": [
+    {
+      "name": "Media Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Casino",
     "Racing"

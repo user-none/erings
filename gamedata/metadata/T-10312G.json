@@ -13,8 +13,15 @@
     "4 904880 135745"
   ],
   "release_date": "1998-04-23",
-  "developer": "TamTam",
-  "publisher": "Takara",
+  "developer": "Japan Media Programming",
+  "publisher": [
+    {
+      "name": "Takara",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-11-21",
   "developer": "Taito",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

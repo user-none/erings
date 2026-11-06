@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-05-19",
   "developer": "Konami Computer Entertainment Tokyo",
-  "publisher": "Konami",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation",
     "Shooter"

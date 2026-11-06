@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-01-24",
   "developer": "Arc Developments",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "U.S. Gold",
+      "regions": [
+        "Germany"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-29",
   "developer": "Beam Software",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "BMG Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

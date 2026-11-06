@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-07-05",
   "developer": "Video System",
-  "publisher": "MediaQuest",
+  "publisher": [
+    {
+      "name": "Media Quest",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

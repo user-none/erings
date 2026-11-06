@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-08-09",
   "developer": "Success",
-  "publisher": "Waka Manufacturing",
+  "publisher": [
+    {
+      "name": "Waka Manufacturing",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Education",
     "Music"

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-09-17",
-  "developer": "Konami Computer Entertainment Tokyo",
-  "publisher": "Konami",
+  "developer": "Konami Computer Entertainment Sapporo",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-10-20",
   "developer": "Ecseco Development",
-  "publisher": "Ecseco Development",
+  "publisher": [
+    {
+      "name": "Ecseco Development",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation",
     "Racing",

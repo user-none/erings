@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-12-10",
   "developer": "Micronet",
-  "publisher": "Micronet",
+  "publisher": [
+    {
+      "name": "Micronet",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game",
     "Casino"

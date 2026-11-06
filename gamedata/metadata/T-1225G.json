@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-06-25",
   "developer": "Kouyousha",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Shooter"

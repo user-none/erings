@@ -6,11 +6,16 @@
   "regions": [
     "Korea"
   ],
-  "languages": [],
-  "barcodes": [],
   "release_date": "1997",
   "developer": "Funcom Dublin",
-  "publisher": "JVC Musical Industries",
+  "publisher": [
+    {
+      "name": "JVC Musical Industries",
+      "regions": [
+        "Korea"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

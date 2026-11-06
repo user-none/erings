@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-02-11",
   "developer": "Japan Art Media",
-  "publisher": "Bandai",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Strategy"

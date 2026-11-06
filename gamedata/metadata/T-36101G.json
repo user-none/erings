@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-08-29",
   "developer": "Cyberdreams",
-  "publisher": "B-Factory",
+  "publisher": [
+    {
+      "name": "B-Factory",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

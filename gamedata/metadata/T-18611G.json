@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-07",
   "developer": "Computer & Entertainment",
-  "publisher": "Softbank",
+  "publisher": [
+    {
+      "name": "SoftBank",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation"
   ],

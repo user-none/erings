@@ -12,8 +12,14 @@
     "7 19593 03008 9"
   ],
   "release_date": "1996-11-21",
-  "developer": "Genki",
-  "publisher": "Natsume",
+  "publisher": [
+    {
+      "name": "Natsume",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

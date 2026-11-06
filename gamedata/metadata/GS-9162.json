@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-23",
   "developer": "Appaloosa Interactive",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

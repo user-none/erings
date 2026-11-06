@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-10-29",
   "developer": "Ecole Software",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform",

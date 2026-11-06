@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-01-14",
   "developer": "Hudson Soft",
-  "publisher": "Hudson Soft",
+  "publisher": [
+    {
+      "name": "Hudson Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

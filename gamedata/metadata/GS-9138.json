@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-03-28",
   "developer": "Red Company",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle",
     "Visual Novel"

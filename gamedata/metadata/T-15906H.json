@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 24294 12618 5"
   ],
   "release_date": "1996-12-14",
   "developer": "Crystal Dynamics",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "Crystal Dynamics",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

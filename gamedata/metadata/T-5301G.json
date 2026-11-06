@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-08-11",
   "developer": "Tenky",
-  "publisher": "Riverhill Soft",
+  "publisher": [
+    {
+      "name": "Riverhill Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

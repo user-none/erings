@@ -20,7 +20,15 @@
   ],
   "release_date": "1997-07-01",
   "developer": "Rage Games",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

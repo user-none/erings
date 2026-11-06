@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-01-17",
   "developer": "NMS Software",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Pinball"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-01-22",
   "developer": "Burst",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

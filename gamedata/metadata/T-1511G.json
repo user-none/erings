@@ -12,10 +12,16 @@
     "German",
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-10-18",
   "developer": "ELOI Productions",
-  "publisher": "Sunsoft",
+  "publisher": [
+    {
+      "name": "Sunsoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

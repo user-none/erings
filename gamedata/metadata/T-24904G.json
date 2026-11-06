@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-05-30",
   "developer": "A Wave",
-  "publisher": "King Records",
+  "publisher": [
+    {
+      "name": "King Records",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

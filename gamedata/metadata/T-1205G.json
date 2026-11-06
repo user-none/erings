@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-08-11",
   "developer": "Amuse",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

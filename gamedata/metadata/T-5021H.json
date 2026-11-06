@@ -17,7 +17,15 @@
   ],
   "release_date": "1997-05-21",
   "developer": "Realtime Associates",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

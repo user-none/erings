@@ -13,8 +13,15 @@
     "4 933516 801211"
   ],
   "release_date": "1998-12-23",
-  "developer": "Kid",
-  "publisher": "KID",
+  "developer": "Kindle Imagine Develop",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

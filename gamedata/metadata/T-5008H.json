@@ -15,7 +15,15 @@
   ],
   "release_date": "1996-06-25",
   "developer": "Electronic Arts",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Racing"

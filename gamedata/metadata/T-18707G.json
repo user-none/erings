@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-08-23",
-  "developer": "NAXAT Soft",
-  "publisher": "Naxat Soft",
+  "developer": "Naxat Soft",
+  "publisher": [
+    {
+      "name": "Naxat Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

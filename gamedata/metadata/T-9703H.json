@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 31719 20967 5"
   ],
   "release_date": "1996-12-23",
   "developer": "Digital Eclipse Software",
-  "publisher": "Midway Home Entertainment",
+  "publisher": [
+    {
+      "name": "Midway Home Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

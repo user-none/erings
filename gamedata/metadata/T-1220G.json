@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-27",
   "developer": "Capcom",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game",
     "Life Simulation",

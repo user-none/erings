@@ -18,7 +18,15 @@
   ],
   "release_date": "1995-12-22",
   "developer": "Bullfrog Productions",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "Europe",
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-06-18",
   "developer": "Ninelives",
-  "publisher": "Gainax",
+  "publisher": [
+    {
+      "name": "Gainax",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation",
     "Role-Playing"

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-06-18",
   "developer": "Unlimited",
-  "publisher": "Masudaya",
+  "publisher": [
+    {
+      "name": "Masudaya",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

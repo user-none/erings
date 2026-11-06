@@ -12,8 +12,15 @@
     "4 974365 810627"
   ],
   "release_date": "1997-02-13",
-  "developer": "Traveller's Tales (UK)",
-  "publisher": "Sega of America",
+  "developer": "Traveller's Tales",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

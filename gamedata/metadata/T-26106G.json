@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-08-28",
   "developer": "GOO!",
-  "publisher": "Xing Entertainment",
+  "publisher": [
+    {
+      "name": "Xing Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

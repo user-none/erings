@@ -15,7 +15,14 @@
   ],
   "release_date": "1996-08-30",
   "developer": "Sega AM2",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-09-01",
   "developer": "Hitachi",
-  "publisher": "Hitachi",
+  "publisher": [
+    {
+      "name": "Hitachi",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Education"
   ],

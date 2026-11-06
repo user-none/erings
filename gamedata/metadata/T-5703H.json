@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-03",
   "developer": "Jaleco",
-  "publisher": "Jaleco",
+  "publisher": [
+    {
+      "name": "Jaleco USA",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

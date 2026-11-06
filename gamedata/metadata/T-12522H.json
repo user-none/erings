@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-04-14",
   "developer": "Beam Software",
-  "publisher": "Interplay Productions",
+  "publisher": [
+    {
+      "name": "Interplay Productions",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Puzzle"

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-03-15",
   "developer": "A Wave",
-  "publisher": "King Records",
+  "publisher": [
+    {
+      "name": "King Records",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

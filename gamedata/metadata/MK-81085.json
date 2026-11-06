@@ -12,8 +12,15 @@
     "4 974365 810856"
   ],
   "release_date": "1996-10-24",
-  "developer": "Taito",
-  "publisher": "Taito",
+  "developer": "I.T.L",
+  "publisher": [
+    {
+      "name": "Taito",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

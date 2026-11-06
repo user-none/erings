@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-06-14",
   "developer": "Core Design",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "U.S. Gold",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

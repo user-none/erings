@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-11-06",
   "developer": "Flight-Plan",
-  "publisher": "NEC Interchannel",
+  "publisher": [
+    {
+      "name": "NEC Interchannel",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

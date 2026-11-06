@@ -14,7 +14,14 @@
   ],
   "release_date": "1999-04-22",
   "developer": "Fupac",
-  "publisher": "Datam Polystar",
+  "publisher": [
+    {
+      "name": "Datam Polystar",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

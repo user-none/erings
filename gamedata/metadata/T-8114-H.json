@@ -17,7 +17,14 @@
   ],
   "release_date": "1996-05-24",
   "developer": "MIRAGE Technologies",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

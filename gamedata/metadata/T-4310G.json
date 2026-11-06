@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-03-20",
   "developer": "Access",
-  "publisher": "Human Entertainment",
+  "publisher": [
+    {
+      "name": "Human Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation"
   ],

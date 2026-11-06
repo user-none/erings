@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-11-05",
   "developer": "Adrenalin Entertainment",
-  "publisher": "American Softworks",
+  "publisher": [
+    {
+      "name": "American Softworks",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

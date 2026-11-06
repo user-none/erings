@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 47875 53210 6"
   ],
   "release_date": "1996-12-20",
   "developer": "Attention to Detail",
-  "publisher": "Activision",
+  "publisher": [
+    {
+      "name": "Activision",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

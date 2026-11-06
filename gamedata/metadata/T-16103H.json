@@ -20,7 +20,15 @@
   ],
   "release_date": "1997-01-21",
   "developer": "Virtually Unreal",
-  "publisher": "Fox Interactive",
+  "publisher": [
+    {
+      "name": "Fox Interactive",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

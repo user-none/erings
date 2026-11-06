@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-08-23",
   "developer": "Core Design",
-  "publisher": "Core Design",
+  "publisher": [
+    {
+      "name": "Victor Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

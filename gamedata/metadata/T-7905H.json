@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-01-20",
   "developer": "Attention to Detail",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Eidos Interactive",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

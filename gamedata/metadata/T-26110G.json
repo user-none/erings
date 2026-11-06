@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-08-20",
   "developer": "Irem Software Engineering",
-  "publisher": "Xing Entertainment",
+  "publisher": [
+    {
+      "name": "Xing Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-08-08",
   "developer": "Abogado Powers",
-  "publisher": "Oz Club",
+  "publisher": [
+    {
+      "name": "Oz Club",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

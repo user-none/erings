@@ -17,7 +17,14 @@
   ],
   "release_date": "1996-11-13",
   "developer": "Attention to Detail",
-  "publisher": "Activision",
+  "publisher": [
+    {
+      "name": "Activision",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

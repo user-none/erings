@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-03",
   "developer": "Digital Eclipse Software",
-  "publisher": "Midway Home Entertainment",
+  "publisher": [
+    {
+      "name": "GT Interactive Software",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

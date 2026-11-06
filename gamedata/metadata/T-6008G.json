@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-20",
   "developer": "Feycraft",
-  "publisher": "Victor Interactive Software",
+  "publisher": [
+    {
+      "name": "Victor Interactive Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

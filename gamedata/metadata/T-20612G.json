@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-04-23",
   "developer": "Winky Soft",
-  "publisher": "Banpresto",
+  "publisher": [
+    {
+      "name": "Banpresto",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

@@ -16,7 +16,14 @@
   ],
   "release_date": "1997-03-14",
   "developer": "Tantalus Interactive",
-  "publisher": "Midway Home Entertainment",
+  "publisher": [
+    {
+      "name": "GT Interactive Software",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -8,13 +8,6 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1995",
-  "developer": "",
-  "publisher": "",
-  "genres": [],
-  "max_players": 0,
-  "cooperative": false,
-  "esrb": "",
-  "overview": ""
+  "cooperative": false
 }

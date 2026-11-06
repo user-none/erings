@@ -13,8 +13,14 @@
     "4 933516 801075"
   ],
   "release_date": "1998-01-29",
-  "developer": "Kid",
-  "publisher": "KID",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

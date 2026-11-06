@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-07-11",
   "developer": "Capcom",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

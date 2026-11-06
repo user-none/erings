@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-11-24",
   "developer": "Kiwame",
-  "publisher": "SETA",
+  "publisher": [
+    {
+      "name": "SETA",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

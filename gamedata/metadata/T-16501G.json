@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-05-26",
   "developer": "SETA",
-  "publisher": "SETA",
+  "publisher": [
+    {
+      "name": "SETA",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

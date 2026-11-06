@@ -17,7 +17,14 @@
   ],
   "release_date": "1996-10-16",
   "developer": "NEON Software",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Ocean Software",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

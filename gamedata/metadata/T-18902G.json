@@ -13,8 +13,15 @@
     "4 973393 000031"
   ],
   "release_date": "1996-11-15",
-  "developer": "KaZe",
-  "publisher": "KAZe",
+  "developer": "KAZe",
+  "publisher": [
+    {
+      "name": "KAZe",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Pinball"
   ],

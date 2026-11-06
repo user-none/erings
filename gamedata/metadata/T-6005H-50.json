@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11",
   "developer": "Victor Entertainment",
-  "publisher": "Victor Entertainment",
+  "publisher": [
+    {
+      "name": "JVC Musical Industries Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Fighting",
     "Sports"

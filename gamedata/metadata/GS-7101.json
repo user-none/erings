@@ -14,8 +14,14 @@
   ],
   "release_date": "1996-07-27",
   "developer": "Sega",
-  "publisher": "Sega Enterprises",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

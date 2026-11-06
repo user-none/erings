@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-20",
   "developer": "9003",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "OPeNBooK9003",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

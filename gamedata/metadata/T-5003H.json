@@ -20,7 +20,15 @@
   ],
   "release_date": "1995-12-23",
   "developer": "Probe Entertainment",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

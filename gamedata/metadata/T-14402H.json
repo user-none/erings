@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11-24",
   "developer": "Cave",
-  "publisher": "Atlus Software",
+  "publisher": [
+    {
+      "name": "Atlus Software",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

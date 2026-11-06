@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-03-05",
   "developer": "Victor Interactive Software",
-  "publisher": "Victor Interactive Software",
+  "publisher": [
+    {
+      "name": "Victor Interactive Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation"
   ],

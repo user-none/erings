@@ -14,7 +14,20 @@
   ],
   "release_date": "1995",
   "developer": "Sega Enterprises",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

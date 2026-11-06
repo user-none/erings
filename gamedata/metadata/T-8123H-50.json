@@ -12,8 +12,15 @@
     "3 455198 205947"
   ],
   "release_date": "1996-03-01",
-  "developer": "Taito",
-  "publisher": "Acclaim Entertainment",
+  "developer": "Aisystem Tokyo",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -21,7 +21,17 @@
   ],
   "release_date": "1997-11-13",
   "developer": "High Score Entertainment",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe",
+        "Germany",
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-07-11",
   "developer": "Societa Daikanyama",
-  "publisher": "Societa Daikanyama",
+  "publisher": [
+    {
+      "name": "Societa Daikanyama",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

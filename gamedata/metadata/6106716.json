@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-10-23",
   "developer": "Cave",
-  "publisher": "Victor Interactive Software",
+  "publisher": [
+    {
+      "name": "Victor Interactive Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

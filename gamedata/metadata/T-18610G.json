@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-07-11",
   "developer": "Rage Software",
-  "publisher": "id Software",
+  "publisher": [
+    {
+      "name": "SoftBank",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

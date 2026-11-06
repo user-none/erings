@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-12",
   "developer": "Gray Matter",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

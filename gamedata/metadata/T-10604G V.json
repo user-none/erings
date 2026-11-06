@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-11-17",
   "developer": "Electronic Arts Victor",
-  "publisher": "Electronic Arts Victor",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

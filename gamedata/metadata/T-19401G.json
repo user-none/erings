@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-05-17",
   "developer": "Shirogumi",
-  "publisher": "We Net",
+  "publisher": [
+    {
+      "name": "We Net",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Education"

@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-11-21",
   "developer": "Smart Dog",
-  "publisher": "Ocean Software",
+  "publisher": [
+    {
+      "name": "Ocean Software",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

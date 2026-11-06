@@ -13,8 +13,15 @@
     "4904880 13464 9"
   ],
   "release_date": "1997-07-24",
-  "developer": "Kid",
-  "publisher": "Takara",
+  "developer": "Kindle Imagine Develop",
+  "publisher": [
+    {
+      "name": "Takara",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

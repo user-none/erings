@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-07-17",
   "developer": "Big Ape Productions",
-  "publisher": "LucasArts Entertainment",
+  "publisher": [
+    {
+      "name": "LucasArts Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-10-20",
   "developer": "i2 PROJECT",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Music"

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-03-31",
   "developer": "Data East",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "Data East",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-11-13",
   "developer": "Coconuts Japan Entertainment",
-  "publisher": "Coconuts Japan Entertainment",
+  "publisher": [
+    {
+      "name": "Coconuts Japan Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

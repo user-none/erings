@@ -15,7 +15,20 @@
   ],
   "release_date": "1996-04-24",
   "developer": "Treasure",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up",
     "Role-Playing"

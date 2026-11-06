@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-05-30",
   "developer": "Appaloosa Interactive",
-  "publisher": "SegaSoft",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

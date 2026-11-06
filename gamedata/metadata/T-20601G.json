@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-12-22",
   "developer": "Natsume",
-  "publisher": "Banpresto",
+  "publisher": [
+    {
+      "name": "Banpresto",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Strategy"

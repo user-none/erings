@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-28",
   "developer": "DML",
-  "publisher": "Yanoman",
+  "publisher": [
+    {
+      "name": "Yanoman",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

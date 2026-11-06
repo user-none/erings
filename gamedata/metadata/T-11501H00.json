@@ -19,7 +19,21 @@
   ],
   "release_date": "1995-12-27",
   "developer": "Core Design",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "Core Design",
+      "regions": [
+        "Europe",
+        "Germany"
+      ]
+    },
+    {
+      "name": "U.S. Gold",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

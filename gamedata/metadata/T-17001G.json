@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-07-07",
   "developer": "DiCE",
-  "publisher": "General Entertainment",
+  "publisher": [
+    {
+      "name": "General Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-08-16",
   "developer": "Genki",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

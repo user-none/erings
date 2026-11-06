@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-11-22",
   "developer": "Ecole Software",
-  "publisher": "Ecole Software",
+  "publisher": [
+    {
+      "name": "Ecole Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

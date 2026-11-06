@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-03-28",
   "developer": "Marcus",
-  "publisher": "Shogakukan Production",
+  "publisher": [
+    {
+      "name": "Shogakukan Production",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

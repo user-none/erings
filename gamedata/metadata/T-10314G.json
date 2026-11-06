@@ -14,12 +14,18 @@
   ],
   "release_date": "1998-03-26",
   "developer": "Nextech",
-  "publisher": "Takara",
+  "publisher": [
+    {
+      "name": "Takara",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "",
   "overview": "Choro Q Park (チョロＱパーク) is a 1998 racing game for the Sega Saturn in which players race Takara's Choro Q/Penny Racers line of toy cars. It was only released in Japan."
 }

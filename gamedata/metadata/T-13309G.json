@@ -13,8 +13,15 @@
     "4902425 54465 6"
   ],
   "release_date": "1996-12-06",
-  "developer": "BEC",
-  "publisher": "Bandai",
+  "developer": "Bandai Entertainment Company",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Chinese"
   ],
-  "barcodes": [],
   "release_date": "1995-04-28",
   "developer": "Koei",
-  "publisher": "Koei",
+  "publisher": [
+    {
+      "name": "Koei",
+      "regions": [
+        "Taiwan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

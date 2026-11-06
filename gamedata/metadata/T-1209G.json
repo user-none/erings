@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-08-30",
   "developer": "Magical Formation",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-12",
   "developer": "Success",
-  "publisher": "Sunsoft",
+  "publisher": [
+    {
+      "name": "Sunsoft",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-07-08",
   "developer": "Sega AM2",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

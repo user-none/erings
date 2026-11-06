@@ -15,7 +15,14 @@
   ],
   "release_date": "1996-09-06",
   "developer": "Gremlin Interactive",
-  "publisher": "Interplay",
+  "publisher": [
+    {
+      "name": "Gremlin Interactive",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

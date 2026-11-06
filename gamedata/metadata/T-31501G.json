@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-06",
   "developer": "Ancient",
-  "publisher": "Victor Company of Japan",
+  "publisher": [
+    {
+      "name": "Victor Company of Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

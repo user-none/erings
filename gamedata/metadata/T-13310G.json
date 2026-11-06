@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-27",
   "developer": "TOSE",
-  "publisher": "Bandai",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Horror"

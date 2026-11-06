@@ -14,8 +14,14 @@
   ],
   "release_date": "1996-07-27",
   "developer": "Aplix",
-  "publisher": "Aplix",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Aplix",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

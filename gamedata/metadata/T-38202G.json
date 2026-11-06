@@ -14,7 +14,14 @@
   ],
   "release_date": "1999-01-14",
   "developer": "Sai-Mate",
-  "publisher": "Kamata and Partners",
+  "publisher": [
+    {
+      "name": "Kamata and Partners",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

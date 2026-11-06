@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-07-21",
-  "developer": "TechnoSoft",
-  "publisher": "Technosoft",
+  "developer": "Technosoft",
+  "publisher": [
+    {
+      "name": "Technosoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-05-28",
   "developer": "Natsume",
-  "publisher": "Jaleco",
+  "publisher": [
+    {
+      "name": "Jaleco",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

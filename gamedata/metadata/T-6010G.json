@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-01-24",
   "developer": "Core Design",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Victor Interactive Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

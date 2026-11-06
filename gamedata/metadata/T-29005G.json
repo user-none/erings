@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-04-23",
   "developer": "Feycraft",
-  "publisher": "Mainichi Communications",
+  "publisher": [
+    {
+      "name": "Mainichi Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

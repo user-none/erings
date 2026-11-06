@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-06-06",
   "developer": "Arc System Works",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

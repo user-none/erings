@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-26",
   "developer": "Capcom",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

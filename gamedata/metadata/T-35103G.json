@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-11-05",
   "developer": "Gainax",
-  "publisher": "Gainax",
+  "publisher": [
+    {
+      "name": "Gainax",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

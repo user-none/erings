@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-09-12",
   "developer": "Gray Matter",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

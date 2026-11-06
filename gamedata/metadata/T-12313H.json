@@ -8,10 +8,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-07-01",
   "developer": "Gremlin Interactive",
-  "publisher": "Future Publishing",
+  "publisher": [
+    {
+      "name": "Future Publishing",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

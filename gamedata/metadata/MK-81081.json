@@ -16,7 +16,14 @@
   ],
   "release_date": "1995-10-06",
   "developer": "Sunsoft",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

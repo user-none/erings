@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-05-31",
   "developer": "GOO!",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "Data East",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

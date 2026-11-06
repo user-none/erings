@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-26",
   "developer": "Jaleco",
-  "publisher": "Jaleco",
+  "publisher": [
+    {
+      "name": "Jaleco",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

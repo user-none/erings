@@ -14,7 +14,14 @@
   ],
   "release_date": "1999-07-08",
   "developer": "Culture Brain",
-  "publisher": "Culture Brain",
+  "publisher": [
+    {
+      "name": "Culture Brain",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-08-28",
   "developer": "Iguana Entertainment",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

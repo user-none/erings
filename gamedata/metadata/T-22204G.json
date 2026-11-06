@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-28",
   "developer": "Access",
-  "publisher": "Pioneer",
+  "publisher": [
+    {
+      "name": "Pioneer LDC",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -12,10 +12,16 @@
     "Portuguese",
     "Spanish"
   ],
-  "barcodes": [],
   "release_date": "1996-09-20",
   "developer": "SNK",
-  "publisher": "SNK",
+  "publisher": [
+    {
+      "name": "SNK",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

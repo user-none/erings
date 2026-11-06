@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-11-29",
   "developer": "Gremlin Interactive",
-  "publisher": "Interplay",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

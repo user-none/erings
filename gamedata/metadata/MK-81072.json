@@ -12,11 +12,13 @@
     "0 10086 81608 2"
   ],
   "release_date": "1997-08-05",
-  "developer": "",
-  "publisher": "",
-  "genres": [],
-  "max_players": 0,
-  "cooperative": false,
-  "esrb": "",
-  "overview": ""
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
+  "cooperative": false
 }

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-06-20",
   "developer": "Media Rings",
-  "publisher": "Media Rings",
+  "publisher": [
+    {
+      "name": "Media Rings",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

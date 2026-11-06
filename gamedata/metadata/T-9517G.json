@@ -9,10 +9,15 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-03-27",
-  "developer": "Konami Computer Entertainment Japan",
-  "publisher": "Konami",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Visual Novel"

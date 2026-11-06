@@ -14,7 +14,14 @@
   ],
   "release_date": "1999-04-29",
   "developer": "Stack Software",
-  "publisher": "NEC Interchannel",
+  "publisher": [
+    {
+      "name": "NEC Interchannel",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

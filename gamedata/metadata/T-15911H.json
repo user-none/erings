@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11-27",
   "developer": "Crystal Dynamics",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "Crystal Dynamics",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-09-25",
   "developer": "Quantum Factory",
-  "publisher": "Activision",
+  "publisher": [
+    {
+      "name": "Emotion Digital Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Vehicle Simulation"

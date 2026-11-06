@@ -15,7 +15,14 @@
   ],
   "release_date": "1996-09",
   "developer": "Infogrames Europe",
-  "publisher": "Infogrames",
+  "publisher": [
+    {
+      "name": "Infogrames Multimedia",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -15,7 +15,14 @@
   ],
   "release_date": "1998-04-02",
   "developer": "Compile",
-  "publisher": "Compile",
+  "publisher": [
+    {
+      "name": "Compile",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Role-Playing"

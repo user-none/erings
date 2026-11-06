@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-29",
   "developer": "Neverland",
-  "publisher": "Neverland",
+  "publisher": [
+    {
+      "name": "Entertainment Software Publishing",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

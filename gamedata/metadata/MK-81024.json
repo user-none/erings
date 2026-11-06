@@ -15,7 +15,20 @@
   ],
   "release_date": "1996-01-05",
   "developer": "Bell",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-12-27",
   "developer": "Game Arts",
-  "publisher": "Game Arts",
+  "publisher": [
+    {
+      "name": "Game Arts",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

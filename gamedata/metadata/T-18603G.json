@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-07-12",
   "developer": "Tantalus Interactive",
-  "publisher": "Psygnosis",
+  "publisher": [
+    {
+      "name": "SoftBank",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

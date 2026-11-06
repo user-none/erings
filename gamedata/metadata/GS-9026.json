@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-07-14",
   "developer": "Japan Media Programming",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Horror"

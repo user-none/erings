@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-01-27",
   "developer": "Micronet",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

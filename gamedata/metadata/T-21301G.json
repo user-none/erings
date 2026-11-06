@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-19",
   "developer": "Nihon Create",
-  "publisher": "Nihon Create",
+  "publisher": [
+    {
+      "name": "Nihon Create",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

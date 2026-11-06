@@ -13,8 +13,15 @@
     "4904880 13376 5"
   ],
   "release_date": "1995-12-15",
-  "developer": "Kid",
-  "publisher": "Takara",
+  "developer": "Kindle Imagine Develop",
+  "publisher": [
+    {
+      "name": "Takara",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

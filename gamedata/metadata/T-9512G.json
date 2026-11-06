@@ -9,10 +9,15 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-09-27",
-  "developer": "Konami Computer Entertainment Tokyo",
-  "publisher": "Konami",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -13,8 +13,15 @@
     "4 933516 801105"
   ],
   "release_date": "1998-04-23",
-  "developer": "Kid",
-  "publisher": "KID",
+  "developer": "Kindle Imagine Develop",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

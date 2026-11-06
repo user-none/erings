@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-03-26",
   "developer": "Atod",
-  "publisher": "GT Interactive Software",
+  "publisher": [
+    {
+      "name": "Gamebank",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

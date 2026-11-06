@@ -19,7 +19,14 @@
   ],
   "release_date": "1997-12-18",
   "developer": "Electronic Arts Canada",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-15",
   "developer": "Prosit",
-  "publisher": "KID",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

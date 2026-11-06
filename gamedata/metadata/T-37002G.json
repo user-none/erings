@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-12-23",
   "developer": "Uran",
-  "publisher": "Xuse",
+  "publisher": [
+    {
+      "name": "Xuse",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-06",
   "developer": "Cryo Interactive Entertainment",
-  "publisher": "Cryo Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

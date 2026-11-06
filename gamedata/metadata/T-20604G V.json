@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-28",
   "developer": "Now Production",
-  "publisher": "Banpresto",
+  "publisher": [
+    {
+      "name": "Banpresto",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

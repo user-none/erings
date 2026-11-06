@@ -13,8 +13,15 @@
     "4 531383 742202"
   ],
   "release_date": "1997-06-20",
-  "developer": "Winds",
-  "publisher": "Tokuma Shoten",
+  "developer": "Koga Game Factory",
+  "publisher": [
+    {
+      "name": "Tokuma Shoten Intermedia",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-03-22",
   "developer": "Data East",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "Data East",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

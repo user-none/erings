@@ -13,8 +13,14 @@
     "4 513451 699090"
   ],
   "release_date": "1996-09-27",
-  "developer": "Warashi",
-  "publisher": "SharRock",
+  "publisher": [
+    {
+      "name": "SharRock",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

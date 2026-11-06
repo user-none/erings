@@ -14,7 +14,14 @@
   ],
   "release_date": "2000-03-30",
   "developer": "Capcom Digital Studios",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

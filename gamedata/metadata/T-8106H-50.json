@@ -18,7 +18,16 @@
   ],
   "release_date": "1996-03-08",
   "developer": "Warp",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe",
+        "France",
+        "Germany"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

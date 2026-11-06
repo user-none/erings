@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-11-29",
   "developer": "Angel",
-  "publisher": "Angel",
+  "publisher": [
+    {
+      "name": "Angel",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

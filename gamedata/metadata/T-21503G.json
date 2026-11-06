@@ -13,8 +13,15 @@
     "4 997153 900072"
   ],
   "release_date": "1996-04-26",
-  "developer": "TamTam",
-  "publisher": "Shoeisha",
+  "developer": "Shoeisha",
+  "publisher": [
+    {
+      "name": "Shoeisha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

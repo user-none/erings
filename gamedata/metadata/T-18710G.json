@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-04-04",
   "developer": "Gremlin Interactive",
-  "publisher": "Interplay",
+  "publisher": [
+    {
+      "name": "Naxat Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

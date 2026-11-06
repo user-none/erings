@@ -14,12 +14,18 @@
   ],
   "release_date": "1998-02-26",
   "developer": "Raizing",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],
   "max_players": 2,
   "cooperative": false,
-  "esrb": "",
   "overview": "Battle Garegga is a vertically scrolling shoot'em up arcade game. The storyline takes place in a sort of diesel punk versions of the 1940s. Main heroes are brothers Brian and Jason — the sons of genius designer who want to destroy the evil Federation. Players control planes (4 air crafts to choose), fly forward, collect items and shoot to enemies. Unlike in most other scrolling shooter games, where bullets are brightly colored to distinguish from the background, bullets are realistically colored, making it difficult for players to see them. As a bonus, by entering a code, you can unlock four of the characters from Mahou Daisakusen."
 }

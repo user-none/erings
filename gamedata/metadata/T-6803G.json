@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-02-05",
   "developer": "Polestar",
-  "publisher": "CSK Research Institute",
+  "publisher": [
+    {
+      "name": "CSK Research Institute",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

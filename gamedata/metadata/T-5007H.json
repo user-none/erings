@@ -15,7 +15,15 @@
   ],
   "release_date": "1996-09-18",
   "developer": "Krisalis Software",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter",
     "Strategy"

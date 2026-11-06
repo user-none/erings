@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-09-29",
   "developer": "Feycraft",
-  "publisher": "Victor Entertainment",
+  "publisher": [
+    {
+      "name": "Victor Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Sports"

@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-09-14",
   "developer": "T&E Soft",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus Software",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Role-Playing"

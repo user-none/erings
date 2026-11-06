@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1999-03-25",
   "developer": "ParityBit",
-  "publisher": "ASCII",
+  "publisher": [
+    {
+      "name": "ASCII",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

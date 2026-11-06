@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-07-18",
   "developer": "Warp",
-  "publisher": "Warp",
+  "publisher": [
+    {
+      "name": "Warp",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

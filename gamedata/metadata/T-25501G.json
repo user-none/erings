@@ -14,8 +14,14 @@
   ],
   "release_date": "1996-09-13",
   "developer": "Tsuburaya Productions",
-  "publisher": "Kodansha",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Kodansha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

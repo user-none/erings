@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-03-28",
   "developer": "Media Works",
-  "publisher": "Media Works",
+  "publisher": [
+    {
+      "name": "Media Works",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

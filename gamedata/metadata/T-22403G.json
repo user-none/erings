@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-04-26",
   "developer": "Irem",
-  "publisher": "I'Max",
+  "publisher": [
+    {
+      "name": "I'Max",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

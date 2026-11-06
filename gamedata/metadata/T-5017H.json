@@ -23,8 +23,17 @@
     "5 030931 010736"
   ],
   "release_date": "1997-03-20",
-  "developer": "High Score Productions",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "Europe",
+        "USA",
+        "Germany",
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

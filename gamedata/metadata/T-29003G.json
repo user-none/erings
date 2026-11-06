@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-08-01",
   "developer": "Oxford Softworks",
-  "publisher": "Mainichi Communications",
+  "publisher": [
+    {
+      "name": "Mainichi Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

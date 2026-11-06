@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-03-28",
   "developer": "Dplus",
-  "publisher": "Make Software",
+  "publisher": [
+    {
+      "name": "Make Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

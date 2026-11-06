@@ -15,8 +15,16 @@
     "5 026102 276230"
   ],
   "release_date": "1996-02-08",
-  "developer": "Byse",
-  "publisher": "Interplay Productions",
+  "developer": "Xatrix Entertainment",
+  "publisher": [
+    {
+      "name": "Interplay Productions",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle",
     "Shooter"

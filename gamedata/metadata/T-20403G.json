@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-12-17",
   "developer": "Psikyo",
-  "publisher": "Psikyo",
+  "publisher": [
+    {
+      "name": "Psikyo",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

@@ -18,7 +18,14 @@
   ],
   "release_date": "1996-05-30",
   "developer": "Gremlin Interactive",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

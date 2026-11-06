@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-10-31",
   "developer": "Cunning Developments",
-  "publisher": "Interplay Productions",
+  "publisher": [
+    {
+      "name": "Interplay Productions",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Pinball"
   ],

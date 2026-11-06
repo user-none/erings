@@ -16,8 +16,16 @@
     "4 991425 000248"
   ],
   "release_date": "1995-12-22",
-  "developer": "Time Warner Interactive (California)",
-  "publisher": "Time Warner Interactive",
+  "developer": "Time Warner Interactive",
+  "publisher": [
+    {
+      "name": "Time Warner Interactive",
+      "regions": [
+        "Europe",
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

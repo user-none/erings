@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-03-10",
   "developer": "Cosmos Computer",
-  "publisher": "ASCII",
+  "publisher": [
+    {
+      "name": "ASCII",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

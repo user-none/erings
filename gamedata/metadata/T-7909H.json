@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "7 43175 95253 7"
   ],
   "release_date": "1996-02-28",
   "developer": "Arc Developments",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "U.S. Gold",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

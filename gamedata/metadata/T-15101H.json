@@ -17,7 +17,14 @@
   ],
   "release_date": "1996-05",
   "developer": "Infogrames",
-  "publisher": "Interplay Entertainment",
+  "publisher": [
+    {
+      "name": "Infogrames Multimedia",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Adventure"

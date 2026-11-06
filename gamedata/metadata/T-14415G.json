@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-30",
   "developer": "Multimedia Intelligence Transfer",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-11-22",
   "developer": "Psikyo",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

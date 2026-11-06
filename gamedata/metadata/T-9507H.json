@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-05-16",
   "developer": "Appaloosa Interactive",
-  "publisher": "Konami",
+  "publisher": [
+    {
+      "name": "Konami",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

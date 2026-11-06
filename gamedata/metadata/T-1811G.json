@@ -13,8 +13,15 @@
     "4 907095 000617"
   ],
   "release_date": "1997-07-11",
-  "developer": "TechnoSoft",
-  "publisher": "Technosoft",
+  "developer": "Technosoft",
+  "publisher": [
+    {
+      "name": "Technosoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

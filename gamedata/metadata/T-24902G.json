@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-13",
   "developer": "Kamui",
-  "publisher": "King Records",
+  "publisher": [
+    {
+      "name": "King Records",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

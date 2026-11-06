@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-14",
   "developer": "Video System",
-  "publisher": "Video System",
+  "publisher": [
+    {
+      "name": "Video System",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

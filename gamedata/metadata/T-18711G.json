@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-03-07",
   "developer": "Interactive Multimedia Products",
-  "publisher": "Naxat Soft",
+  "publisher": [
+    {
+      "name": "Naxat Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

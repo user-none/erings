@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "7 52919 48005 2"
   ],
   "release_date": "1996-09-24",
   "developer": "Altron",
-  "publisher": "THQ",
+  "publisher": [
+    {
+      "name": "Kokopeli Digital Studios",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

@@ -13,8 +13,14 @@
     "4 994964 115053"
   ],
   "release_date": "1997-09-04",
-  "developer": "Altron",
-  "publisher": "Altron",
+  "publisher": [
+    {
+      "name": "Altron",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

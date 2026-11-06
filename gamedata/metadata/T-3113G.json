@@ -6,13 +6,19 @@
   "regions": [
     "Japan"
   ],
-  "languages": [],
   "barcodes": [
     "4 946318 297021"
   ],
   "release_date": "1997-04-04",
   "developer": "Saurus",
-  "publisher": "SNK",
+  "publisher": [
+    {
+      "name": "SNK",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

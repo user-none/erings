@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-04-09",
   "developer": "Smart Dog",
-  "publisher": "Ubi Soft Entertainment Software",
+  "publisher": [
+    {
+      "name": "Ubi Soft Entertainment Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

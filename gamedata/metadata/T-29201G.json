@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-06-28",
   "developer": "Metro",
-  "publisher": "Metro",
+  "publisher": [
+    {
+      "name": "Metro",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

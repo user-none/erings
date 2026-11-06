@@ -5,11 +5,16 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
-  "barcodes": [],
   "release_date": "1996-05-22",
   "developer": "Left Field Productions",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "Crystal Dynamics",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

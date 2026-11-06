@@ -16,7 +16,15 @@
   ],
   "release_date": "1996-06",
   "developer": "Millennium Interactive",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "GT Interactive Software",
+      "regions": [
+        "Europe",
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Shooter"

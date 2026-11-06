@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-01-07",
   "developer": "Black Ops Entertainment",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

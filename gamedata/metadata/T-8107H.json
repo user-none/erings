@@ -12,8 +12,14 @@
     "0 21481 82020 8"
   ],
   "release_date": "1996-03-04",
-  "developer": "Software Creations",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

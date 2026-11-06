@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-08-07",
   "developer": "Thinking Rabbit",
-  "publisher": "Atlus",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

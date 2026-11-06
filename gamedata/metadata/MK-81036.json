@@ -14,7 +14,20 @@
   ],
   "release_date": "1996-02-17",
   "developer": "Sega Enterprises",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Tec Toy",
+      "regions": [
+        "Brazil"
+      ]
+    }
+  ],
   "genres": [
     "Platform"
   ],

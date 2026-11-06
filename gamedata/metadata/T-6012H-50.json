@@ -12,8 +12,14 @@
     "0 091191 007114"
   ],
   "release_date": "1996-09",
-  "developer": "Genki",
-  "publisher": "Natsume",
+  "publisher": [
+    {
+      "name": "JVC Musical Industries Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

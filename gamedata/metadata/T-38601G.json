@@ -13,8 +13,14 @@
     "4 949606 771029"
   ],
   "release_date": "1998-11-26",
-  "developer": "Soliton Software",
-  "publisher": "Locus",
+  "publisher": [
+    {
+      "name": "Locus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

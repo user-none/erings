@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-06-28",
   "developer": "Sculptured Software",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Fighting",
     "Sports"

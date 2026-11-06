@@ -13,8 +13,15 @@
     "4 933516 901232"
   ],
   "release_date": "1999-03-18",
-  "developer": "Kid",
-  "publisher": "KID",
+  "developer": "Kindle Imagine Develop",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

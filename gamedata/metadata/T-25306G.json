@@ -13,8 +13,14 @@
     "4 949935 010073"
   ],
   "release_date": "1998-09-23",
-  "developer": "Make Software",
-  "publisher": "Make Software",
+  "publisher": [
+    {
+      "name": "Make Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

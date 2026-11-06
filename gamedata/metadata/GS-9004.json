@@ -14,7 +14,14 @@
   ],
   "release_date": "1994-12-09",
   "developer": "Sega Enterprises",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform"
   ],

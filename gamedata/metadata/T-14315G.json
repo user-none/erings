@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-01-15",
   "developer": "Metro",
-  "publisher": "Hudson Soft",
+  "publisher": [
+    {
+      "name": "Hudson Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

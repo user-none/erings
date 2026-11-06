@@ -13,7 +13,14 @@
   ],
   "release_date": "1997",
   "developer": "Sega AM3 R&D Division",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

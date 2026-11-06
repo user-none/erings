@@ -12,8 +12,15 @@
     "7 35366 12701 5"
   ],
   "release_date": "1996-05-08",
-  "developer": "SystemSoft Alpha",
-  "publisher": "Sega",
+  "developer": "Sega CS2",
+  "publisher": [
+    {
+      "name": "Working Designs",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

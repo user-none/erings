@@ -13,9 +13,15 @@
     "4 984841 010113"
   ],
   "release_date": "1997-11-27",
-  "developer": "CRI",
-  "publisher": "Gainax",
-  "genres": [],
+  "developer": "CSK Research Institute",
+  "publisher": [
+    {
+      "name": "Gainax",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

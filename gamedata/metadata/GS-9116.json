@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-09-26",
   "developer": "Sega AM3 R&D Division",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

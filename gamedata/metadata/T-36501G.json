@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-09-18",
   "developer": "Nihon Syscom",
-  "publisher": "Nihon Syscom",
+  "publisher": [
+    {
+      "name": "Nihon Syscom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Casino"
   ],

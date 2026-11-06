@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-01",
   "developer": "Fun House",
-  "publisher": "Fun House",
+  "publisher": [
+    {
+      "name": "Fun House",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

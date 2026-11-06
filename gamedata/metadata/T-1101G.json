@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-09-14",
   "developer": "Ving",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Taito",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

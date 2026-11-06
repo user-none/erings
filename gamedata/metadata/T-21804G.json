@@ -13,8 +13,14 @@
     "4 995515 971098"
   ],
   "release_date": "1997-11-13",
-  "developer": "GOO!",
-  "publisher": "Aroma",
+  "publisher": [
+    {
+      "name": "Aroma",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

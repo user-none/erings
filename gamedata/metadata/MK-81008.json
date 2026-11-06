@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-10-20",
   "developer": "Genki",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

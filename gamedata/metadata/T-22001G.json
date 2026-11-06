@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-12-29",
   "developer": "Arc System Works",
-  "publisher": "Arc System Works",
+  "publisher": [
+    {
+      "name": "Arc System Works",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation",
     "Strategy"

@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-02-24",
   "developer": "Tantalus Interactive",
-  "publisher": "GT Interactive Software",
+  "publisher": [
+    {
+      "name": "GT Interactive Software",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

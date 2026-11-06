@@ -16,7 +16,15 @@
   ],
   "release_date": "1995-12-15",
   "developer": "T&E Soft",
-  "publisher": "Vic Tokai",
+  "publisher": [
+    {
+      "name": "Vic Tokai",
+      "regions": [
+        "USA",
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

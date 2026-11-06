@@ -16,7 +16,14 @@
   ],
   "release_date": "1997-03-27",
   "developer": "NMS Software",
-  "publisher": "American Softworks",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-06-25",
   "developer": "WorkJam",
-  "publisher": "WorkJam",
+  "publisher": [
+    {
+      "name": "WorkJam",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

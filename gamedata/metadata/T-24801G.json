@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-02-02",
   "developer": "TOSE",
-  "publisher": "MediaQuest",
+  "publisher": [
+    {
+      "name": "Media Quest",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-10-04",
   "developer": "TOSE",
-  "publisher": "Jaleco",
+  "publisher": [
+    {
+      "name": "Jaleco",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

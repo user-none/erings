@@ -15,7 +15,15 @@
   ],
   "release_date": "1995-05-11",
   "developer": "Team Aquila",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega, Samsung (KR)",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

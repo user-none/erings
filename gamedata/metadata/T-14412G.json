@@ -13,8 +13,15 @@
     "4 984995 800103"
   ],
   "release_date": "1997-04-18",
-  "developer": "SIMS",
-  "publisher": "Atlus",
+  "developer": "Cave",
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

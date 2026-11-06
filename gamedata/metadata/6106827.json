@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-02-26",
   "developer": "SIMS",
-  "publisher": "SIMS",
+  "publisher": [
+    {
+      "name": "SIMS",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

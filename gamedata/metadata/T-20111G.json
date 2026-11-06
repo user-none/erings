@@ -14,8 +14,14 @@
   ],
   "release_date": "1997-04-11",
   "developer": "Cybelle",
-  "publisher": "NEC Interchannel",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "NEC Interchannel",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

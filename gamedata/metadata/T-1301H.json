@@ -17,7 +17,20 @@
   ],
   "release_date": "1996-02-18",
   "developer": "Millennium Interactive",
-  "publisher": "Data East",
+  "publisher": [
+    {
+      "name": "Data East USA",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Multisoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Shooter"

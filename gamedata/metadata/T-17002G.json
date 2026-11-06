@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-04-05",
   "developer": "General Entertainment",
-  "publisher": "General Entertainment",
+  "publisher": [
+    {
+      "name": "General Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

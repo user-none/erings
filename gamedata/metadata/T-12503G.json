@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-04-25",
   "developer": "Funcom Oslo",
-  "publisher": "Interplay Productions",
+  "publisher": [
+    {
+      "name": "Interplay Productions",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

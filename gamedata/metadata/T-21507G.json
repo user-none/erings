@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-05-23",
   "developer": "Shoeisha",
-  "publisher": "Shoeisha",
+  "publisher": [
+    {
+      "name": "Shoeisha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

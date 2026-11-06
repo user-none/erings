@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-04-08",
   "developer": "Cyan Productions",
-  "publisher": "Enix",
+  "publisher": [
+    {
+      "name": "Enix",
+      "regions": [
+        "Brazil"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

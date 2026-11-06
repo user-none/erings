@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-08-08",
   "developer": "Spike",
-  "publisher": "Spike",
+  "publisher": [
+    {
+      "name": "Spike",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Quiz"
   ],

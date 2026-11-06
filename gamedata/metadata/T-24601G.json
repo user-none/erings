@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-13",
   "developer": "AIC Spirits",
-  "publisher": "Increment P",
+  "publisher": [
+    {
+      "name": "Increment P",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

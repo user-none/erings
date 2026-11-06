@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-01-29",
-  "developer": "Pixel",
-  "publisher": "Technical Group Laboratory",
+  "developer": "Technical Group Laboratory",
+  "publisher": [
+    {
+      "name": "Technical Group Laboratory",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing",
     "Strategy"

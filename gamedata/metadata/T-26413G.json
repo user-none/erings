@@ -13,8 +13,14 @@
     "4 902931 950422"
   ],
   "release_date": "1998-04-29",
-  "developer": "Red Company",
-  "publisher": "MediaQuest",
+  "publisher": [
+    {
+      "name": "Media Quest",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-07",
   "developer": "Radical Entertainment",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

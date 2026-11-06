@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-26",
   "developer": "Rage Software",
-  "publisher": "id Software",
+  "publisher": [
+    {
+      "name": "id Software",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

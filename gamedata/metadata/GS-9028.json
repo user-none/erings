@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-29",
   "developer": "Sega",
-  "publisher": "Working Designs",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

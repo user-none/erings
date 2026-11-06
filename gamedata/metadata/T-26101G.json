@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-29",
   "developer": "Irem",
-  "publisher": "Xing Entertainment",
+  "publisher": [
+    {
+      "name": "Xing Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Puzzle"

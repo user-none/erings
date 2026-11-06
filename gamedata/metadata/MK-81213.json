@@ -15,7 +15,20 @@
   ],
   "release_date": "1996-11-14",
   "developer": "Sega AM2",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

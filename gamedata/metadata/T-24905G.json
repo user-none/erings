@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-15",
   "developer": "Komaoto",
-  "publisher": "King Records",
+  "publisher": [
+    {
+      "name": "King Records",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

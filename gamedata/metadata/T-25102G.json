@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-27",
   "developer": "AlfaSystem",
-  "publisher": "Patra",
+  "publisher": [
+    {
+      "name": "Patra",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

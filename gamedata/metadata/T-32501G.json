@@ -13,8 +13,15 @@
     "4 935066 800010"
   ],
   "release_date": "1997-03-14",
-  "developer": "TGL",
-  "publisher": "TGL",
+  "developer": "Technical Group Laboratory",
+  "publisher": [
+    {
+      "name": "Technical Group Laboratory",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

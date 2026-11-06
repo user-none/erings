@@ -10,10 +10,16 @@
     "English",
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-03-29",
   "developer": "Arc Developments",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "Soft Vision",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-04-18",
   "developer": "System Vision",
-  "publisher": "Daiki",
+  "publisher": [
+    {
+      "name": "Daiki",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

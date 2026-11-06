@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-10-10",
   "developer": "SQ4",
-  "publisher": "Scholar Publishers",
+  "publisher": [
+    {
+      "name": "Scholar Publishers",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

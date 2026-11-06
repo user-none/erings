@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-06-06",
   "developer": "Scarab",
-  "publisher": "Bandai Visual",
+  "publisher": [
+    {
+      "name": "Bandai Visual",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

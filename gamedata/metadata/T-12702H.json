@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-06-26",
   "developer": "Camelot Software Planning",
-  "publisher": "Working Designs",
+  "publisher": [
+    {
+      "name": "Working Designs",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Role-Playing"

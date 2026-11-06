@@ -15,7 +15,15 @@
   ],
   "release_date": "1996-06-25",
   "developer": "Paradox Development",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

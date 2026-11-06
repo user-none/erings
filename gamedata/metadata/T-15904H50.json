@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-04-05",
   "developer": "Beam Software",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "Crystal Dynamics",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

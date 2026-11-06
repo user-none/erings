@@ -13,8 +13,15 @@
     "4 946318 297038"
   ],
   "release_date": "1997-05-02",
-  "developer": "System Vision",
-  "publisher": "SNK",
+  "developer": "Saurus",
+  "publisher": [
+    {
+      "name": "SNK",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

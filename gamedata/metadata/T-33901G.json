@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-05-21",
   "developer": "Sting Entertainment",
-  "publisher": "Entertainment Software Publishing",
+  "publisher": [
+    {
+      "name": "Entertainment Software Publishing",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Horror",

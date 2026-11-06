@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-11-20",
   "developer": "Sega CS2",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

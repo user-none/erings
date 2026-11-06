@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-03-26",
   "developer": "Denshi Media Services",
-  "publisher": "Denshi Media Services",
+  "publisher": [
+    {
+      "name": "Denshi Media Services",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Music"
   ],

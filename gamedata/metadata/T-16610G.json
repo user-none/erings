@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-07-16",
   "developer": "Altron",
-  "publisher": "Altron",
+  "publisher": [
+    {
+      "name": "Altron",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

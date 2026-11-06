@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-11-29",
   "developer": "CSK Research Institute",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

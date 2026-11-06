@@ -8,10 +8,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-09-25",
   "developer": "Tantalus Interactive",
-  "publisher": "Psygnosis",
+  "publisher": [
+    {
+      "name": "Psygnosis",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

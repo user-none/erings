@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-08-30",
   "developer": "Silicon Dreams Studio",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Coconuts Japan Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

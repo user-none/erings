@@ -15,7 +15,15 @@
   ],
   "release_date": "1997-03-28",
   "developer": "Realtime Associates",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

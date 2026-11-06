@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-02-23",
   "developer": "Core Design",
-  "publisher": "U.S. Gold",
+  "publisher": [
+    {
+      "name": "Victor Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

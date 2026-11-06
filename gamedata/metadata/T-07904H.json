@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-08-06",
   "developer": "Silicon Dreams Studio",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "U.S. Gold",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

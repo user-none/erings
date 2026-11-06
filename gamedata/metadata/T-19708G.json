@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-03-12",
   "developer": "Cocktail Soft",
-  "publisher": "KID",
+  "publisher": [
+    {
+      "name": "Kindle Imagine Develop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Life Simulation"

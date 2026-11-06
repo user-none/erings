@@ -17,7 +17,14 @@
   ],
   "release_date": "1996-06-21",
   "developer": "Krisalis Software",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Telstar Electronic Studios",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

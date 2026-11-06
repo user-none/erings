@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-04-26",
   "developer": "Betop",
-  "publisher": "I Max",
+  "publisher": [
+    {
+      "name": "I'Max",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Visual Novel"

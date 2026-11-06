@@ -14,7 +14,14 @@
   ],
   "release_date": "1999-03-04",
   "developer": "Softstar Entertainment",
-  "publisher": "Softstar Entertainment",
+  "publisher": [
+    {
+      "name": "Softstar Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

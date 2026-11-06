@@ -13,13 +13,19 @@
     "4 512874 000018"
   ],
   "release_date": "1996-12-20",
-  "developer": "Game Studio",
-  "publisher": "game studio",
+  "developer": "game studio",
+  "publisher": [
+    {
+      "name": "game studio",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "",
   "overview": "Airs Adventure takes place in an environment reminiscent of 17th century Europe. The game follows the story of an aspiring knight (default name Henry), who is framed for a crime and is about to be executed. However, the beautiful princess of the country feels mercy and stops the execution at the last moment. As the hero tries to uncover the truth about his conviction, fate brings the two together, and they begin a journey to discover distant lands in search for adventure, and perhaps even develop feelings for each other..."
 }

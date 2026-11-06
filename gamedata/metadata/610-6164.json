@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-11-03",
   "developer": "Ubi Soft Paris Studios",
-  "publisher": "Ubi Soft Entertainment Software",
+  "publisher": [
+    {
+      "name": "Ubi Soft Entertainment Software",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Platform"
   ],

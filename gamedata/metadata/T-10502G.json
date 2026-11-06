@@ -14,8 +14,14 @@
   ],
   "release_date": "1995-10-27",
   "developer": "Bits Laboratory",
-  "publisher": "Shogakukan Production",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Shogakukan Production",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

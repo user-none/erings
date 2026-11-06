@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-16",
   "developer": "TamTam",
-  "publisher": "Media Rings",
+  "publisher": [
+    {
+      "name": "Media Rings",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation"
   ],

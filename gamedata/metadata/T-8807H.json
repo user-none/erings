@@ -19,7 +19,15 @@
   ],
   "release_date": "1996-11-08",
   "developer": "Eidos Interactive",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Eidos Interactive",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-10-25",
   "developer": "Gremlin Interactive",
-  "publisher": "Interplay",
+  "publisher": [
+    {
+      "name": "Interplay",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

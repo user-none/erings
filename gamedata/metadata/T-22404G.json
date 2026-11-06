@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1997-03-04",
   "developer": "Team17 Software",
-  "publisher": "Ocean Software",
+  "publisher": [
+    {
+      "name": "I'Max",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

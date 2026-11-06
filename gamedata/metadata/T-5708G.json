@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-08-30",
   "developer": "Natsume",
-  "publisher": "Jaleco",
+  "publisher": [
+    {
+      "name": "Jaleco",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

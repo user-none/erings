@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-12-08",
   "developer": "Japan Media Programming",
-  "publisher": "Yanoman",
+  "publisher": [
+    {
+      "name": "Yanoman",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

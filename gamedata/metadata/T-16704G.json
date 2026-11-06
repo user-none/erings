@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-06-14",
   "developer": "Syscom Entertainment",
-  "publisher": "Nihon System",
+  "publisher": [
+    {
+      "name": "ASK Kodansha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Casino"
   ],

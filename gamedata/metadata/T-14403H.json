@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-26",
   "developer": "System Sacom",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Atlus Software",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

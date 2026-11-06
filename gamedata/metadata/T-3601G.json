@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-01-26",
   "developer": "Tecmo",
-  "publisher": "Tecmo",
+  "publisher": [
+    {
+      "name": "Tecmo",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

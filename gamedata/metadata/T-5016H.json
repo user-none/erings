@@ -18,7 +18,16 @@
   ],
   "release_date": "1996-12-04",
   "developer": "Visual Concepts Entertainment",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe",
+        "Germany"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

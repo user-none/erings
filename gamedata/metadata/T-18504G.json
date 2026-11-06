@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-12-08",
   "developer": "Millennium Interactive",
-  "publisher": "GAGA Communications",
+  "publisher": [
+    {
+      "name": "GAGA Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "English"
   ],
-  "barcodes": [],
   "release_date": "1996-12-06",
-  "developer": "TechnoSoft",
-  "publisher": "Technosoft",
+  "developer": "Technosoft",
+  "publisher": [
+    {
+      "name": "Technosoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation",
     "Shooter"

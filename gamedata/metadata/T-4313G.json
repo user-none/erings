@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-05-02",
   "developer": "Gremlin Interactive",
-  "publisher": "American Softworks",
+  "publisher": [
+    {
+      "name": "Human",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

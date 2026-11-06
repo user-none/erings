@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-20",
   "developer": "High Voltage Software",
-  "publisher": "Interplay Productions",
+  "publisher": [
+    {
+      "name": "Interplay Productions",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

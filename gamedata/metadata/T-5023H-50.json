@@ -17,7 +17,14 @@
   ],
   "release_date": "1997-07",
   "developer": "Climax Group",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

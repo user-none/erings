@@ -13,8 +13,14 @@
     "4 948536 190214"
   ],
   "release_date": "1998-03-05",
-  "developer": "Capcom",
-  "publisher": "Xing Entertainment",
+  "publisher": [
+    {
+      "name": "Xing Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

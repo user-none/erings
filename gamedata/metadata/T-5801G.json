@@ -13,8 +13,15 @@
     "4 959359 975018"
   ],
   "release_date": "1998-07-30",
-  "developer": "Electronics Application",
-  "publisher": "Visco",
+  "developer": "Visco",
+  "publisher": [
+    {
+      "name": "Visco",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game",
     "Compilation"

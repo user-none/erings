@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-11-18",
   "developer": "Core Design",
-  "publisher": "Eidos Interactive",
+  "publisher": [
+    {
+      "name": "Eidos Interactive",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

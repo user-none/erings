@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-02-24",
   "developer": "T&E Soft",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

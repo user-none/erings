@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-12-22",
   "developer": "CSK Research Institute",
-  "publisher": "Bandai",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-07-02",
   "developer": "Radical Entertainment",
-  "publisher": "Virgin Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Virgin Interactive Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

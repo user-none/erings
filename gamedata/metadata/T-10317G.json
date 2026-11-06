@@ -13,8 +13,14 @@
     "4904880 13738 1"
   ],
   "release_date": "1998-10-01",
-  "developer": "Takara",
-  "publisher": "Takara",
+  "publisher": [
+    {
+      "name": "Takara",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Vehicle Simulation"
   ],

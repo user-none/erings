@@ -5,13 +5,19 @@
   "regions": [
     "Europe"
   ],
-  "languages": [],
   "barcodes": [
     "3 455198 205442"
   ],
   "release_date": "1996-02",
   "developer": "Ving",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

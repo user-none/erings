@@ -12,8 +12,14 @@
     "5 026102 270399"
   ],
   "release_date": "1997-08-01",
-  "developer": "Amazing Media",
-  "publisher": "Interplay",
+  "publisher": [
+    {
+      "name": "Interplay",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Horror"

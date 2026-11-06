@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-04-25",
   "developer": "Jaleco Entertainment",
-  "publisher": "Jaleco Entertainment",
+  "publisher": [
+    {
+      "name": "Jaleco Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

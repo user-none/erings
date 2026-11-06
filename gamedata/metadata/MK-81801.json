@@ -13,7 +13,14 @@
   ],
   "release_date": "1998-05-15",
   "developer": "Cyan Productions",
-  "publisher": "Enix",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

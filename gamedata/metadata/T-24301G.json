@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-29",
   "developer": "GOO!",
-  "publisher": "OCC",
+  "publisher": [
+    {
+      "name": "OCC",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

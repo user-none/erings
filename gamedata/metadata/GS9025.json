@@ -13,8 +13,15 @@
     "4 974365 090258"
   ],
   "release_date": "1995-09-22",
-  "developer": "SystemSoft Alpha",
-  "publisher": "Sega",
+  "developer": "Sega CS2",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

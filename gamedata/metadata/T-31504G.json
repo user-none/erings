@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-10-29",
   "developer": "Nihon Falcom",
-  "publisher": "Victor Company of Japan",
+  "publisher": [
+    {
+      "name": "Victor Company of Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Compilation"
   ],

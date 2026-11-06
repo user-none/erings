@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-07-25",
   "developer": "Access",
-  "publisher": "Tomy",
+  "publisher": [
+    {
+      "name": "Tomy",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

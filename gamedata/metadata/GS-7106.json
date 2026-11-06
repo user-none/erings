@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-12-31",
   "developer": "Sega AM3 R&D Division",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting",
     "Shooter"

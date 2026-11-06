@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-09-27",
   "developer": "Insect",
-  "publisher": "Athena",
+  "publisher": [
+    {
+      "name": "Athena",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

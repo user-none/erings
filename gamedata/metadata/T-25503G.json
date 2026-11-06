@@ -13,8 +13,14 @@
     "4 938838 097229"
   ],
   "release_date": "1998-06-25",
-  "developer": "Natsume",
-  "publisher": "Kodansha",
+  "publisher": [
+    {
+      "name": "Kodansha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

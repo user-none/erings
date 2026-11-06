@@ -14,7 +14,14 @@
   ],
   "release_date": "1999-01-14",
   "developer": "Datam Polystar",
-  "publisher": "Datam Polystar",
+  "publisher": [
+    {
+      "name": "Datam Polystar",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

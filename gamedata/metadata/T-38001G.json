@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-07-02",
   "developer": "Starlight Marry",
-  "publisher": "Starlight Marry",
+  "publisher": [
+    {
+      "name": "Starlight Marry",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Life Simulation"

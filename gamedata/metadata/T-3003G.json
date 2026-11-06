@@ -13,8 +13,15 @@
     "4 983078 987038"
   ],
   "release_date": "1998-05-21",
-  "developer": "Video System",
-  "publisher": "Video System",
+  "developer": "Yoshidayama-Workshop",
+  "publisher": [
+    {
+      "name": "Video System",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

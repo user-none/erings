@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-10-01",
   "developer": "Media Gallop",
-  "publisher": "Kamata and Partners",
+  "publisher": [
+    {
+      "name": "Media Gallop",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Visual Novel"
   ],

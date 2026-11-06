@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-01",
   "developer": "OPeNBooK",
-  "publisher": "OPeNBooK",
+  "publisher": [
+    {
+      "name": "OPeNBooK",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation"
   ],

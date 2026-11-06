@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-08-08",
   "developer": "Scitron & Art",
-  "publisher": "MediaQuest",
+  "publisher": [
+    {
+      "name": "Media Quest",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Education",
     "Shooter"

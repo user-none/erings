@@ -14,8 +14,21 @@
     "4 974365 812164"
   ],
   "release_date": "1997-11-07",
-  "developer": "Sega AM9",
-  "publisher": "Sega of America",
+  "developer": "CSK Research Institute",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

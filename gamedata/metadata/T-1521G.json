@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-08-06",
   "developer": "Santa Claus",
-  "publisher": "Sunsoft",
+  "publisher": [
+    {
+      "name": "Sunsoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

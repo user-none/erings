@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-11-22",
   "developer": "Rutubo Games",
-  "publisher": "Capcom",
+  "publisher": [
+    {
+      "name": "Capcom",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

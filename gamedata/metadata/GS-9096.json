@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-07-12",
   "developer": "Sega Enterprises",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

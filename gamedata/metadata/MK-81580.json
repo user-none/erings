@@ -13,7 +13,14 @@
   ],
   "release_date": "1995-12-08",
   "developer": "Maxis Software",
-  "publisher": "Maxis Software",
+  "publisher": [
+    {
+      "name": "Maxis Software",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation"
   ],

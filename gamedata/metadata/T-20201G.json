@@ -13,8 +13,15 @@
     "4 959020 001459"
   ],
   "release_date": "1995-10-20",
-  "developer": "Varie",
-  "publisher": "Sonnet Computer Entertainment",
+  "developer": "Sonnet Computer Entertainment",
+  "publisher": [
+    {
+      "name": "Varie",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

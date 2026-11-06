@@ -13,11 +13,14 @@
     "4902425 58886 5"
   ],
   "release_date": "1997-08-29",
-  "developer": "",
-  "publisher": "",
-  "genres": [],
-  "max_players": 0,
-  "cooperative": false,
-  "esrb": "",
-  "overview": ""
+  "developer": "Bandai Entertainment Company",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
+  "cooperative": false
 }

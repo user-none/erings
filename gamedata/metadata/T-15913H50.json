@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-11-15",
   "developer": "The Illusions Gaming Company",
-  "publisher": "Crystal Dynamics",
+  "publisher": [
+    {
+      "name": "Crystal Dynamics",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-11-26",
   "developer": "Point of View",
-  "publisher": "GT Interactive Software",
+  "publisher": [
+    {
+      "name": "Midway Home Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

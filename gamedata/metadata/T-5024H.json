@@ -15,7 +15,15 @@
   ],
   "release_date": "1997-08-26",
   "developer": "Tiburon Entertainment",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

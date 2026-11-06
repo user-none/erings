@@ -15,7 +15,14 @@
   ],
   "release_date": "1995-11-10",
   "developer": "Sega AM3",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-09-27",
   "developer": "Japan Media Programming",
-  "publisher": "Fujitsu Parex",
+  "publisher": [
+    {
+      "name": "Fujitsu Parex",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Education",
     "Sports"

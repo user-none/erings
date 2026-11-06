@@ -9,16 +9,21 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-07-12",
   "developer": "9003",
-  "publisher": "9003",
+  "publisher": [
+    {
+      "name": "9003",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation",
     "Sandbox"
   ],
   "max_players": 1,
   "cooperative": false,
-  "esrb": "",
   "overview": "Aquazone is a simulation of an aquarium. The player can customize the aquarium with different backdrops, accessories and sorts of gravel and then add fishes and plants to create a living ecosystem. The fish will swim around the screen, eat and grow and ultimately die. To ensure the well being of the tank's inhabitants the player has to feed and medicate the fishes, change the water, clean the filter and maintain an appropriate temperature. If taken care of the fish will breed, lay eggs and give birth to new life."
 }

@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-29",
   "developer": "AIC Spirits",
-  "publisher": "NEC Interchannel",
+  "publisher": [
+    {
+      "name": "NEC Interchannel",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Visual Novel"

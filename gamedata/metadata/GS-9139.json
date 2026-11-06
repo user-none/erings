@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-03-28",
   "developer": "Sega CS1",
-  "publisher": "Sega",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

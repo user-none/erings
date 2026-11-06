@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-09-25",
   "developer": "TOSE",
-  "publisher": "Bandai",
+  "publisher": [
+    {
+      "name": "Bandai",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

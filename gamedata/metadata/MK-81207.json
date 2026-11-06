@@ -15,7 +15,20 @@
   ],
   "release_date": "1995-11-18",
   "developer": "Sega AM3",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

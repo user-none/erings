@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-08-08",
   "developer": "Point of View",
-  "publisher": "GT Interactive Software",
+  "publisher": [
+    {
+      "name": "Midway Home Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

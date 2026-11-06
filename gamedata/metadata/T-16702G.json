@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1995-08-11",
   "developer": "Video System",
-  "publisher": "ASK Kodansha",
+  "publisher": [
+    {
+      "name": "ASK Kodansha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

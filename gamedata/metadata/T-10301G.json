@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-09-29",
   "developer": "Tamsoft",
-  "publisher": "Takara",
+  "publisher": [
+    {
+      "name": "Takara",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Platform",
     "Shooter"

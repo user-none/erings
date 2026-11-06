@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-06-11",
   "developer": "ASCII Something Good",
-  "publisher": "ASCII Something Good",
+  "publisher": [
+    {
+      "name": "ASCII Something Good",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

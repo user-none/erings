@@ -9,10 +9,15 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-07-19",
-  "developer": "Kid",
-  "publisher": "Imagineer",
+  "publisher": [
+    {
+      "name": "Imagineer",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],

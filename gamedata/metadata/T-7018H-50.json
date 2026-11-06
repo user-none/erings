@@ -17,7 +17,14 @@
   ],
   "release_date": "1996-09-04",
   "developer": "Neversoft Entertainment",
-  "publisher": "Playmates Interactive Entertainment",
+  "publisher": [
+    {
+      "name": "Playmates Interactive Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Platform"

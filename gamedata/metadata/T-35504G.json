@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-06-25",
   "developer": "TOSE",
-  "publisher": "Enix",
+  "publisher": [
+    {
+      "name": "Enix",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Construction and Management Simulation",
     "Sports"

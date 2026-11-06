@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-02-23",
   "developer": "A Wave",
-  "publisher": "Victor Entertainment",
+  "publisher": [
+    {
+      "name": "Victor Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

@@ -14,8 +14,14 @@
   ],
   "release_date": "1996-04-26",
   "developer": "Atlus",
-  "publisher": "Atlus",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Atlus",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

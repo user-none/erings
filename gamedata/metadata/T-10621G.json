@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-09-18",
   "developer": "Tiburon Entertainment",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

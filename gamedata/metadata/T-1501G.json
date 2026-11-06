@@ -9,10 +9,15 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1994-11-22",
-  "developer": "Sunsoft",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Sunsoft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-02-14",
   "developer": "Compile",
-  "publisher": "Compile",
+  "publisher": [
+    {
+      "name": "Compile",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle"
   ],

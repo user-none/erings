@@ -17,7 +17,14 @@
   ],
   "release_date": "1996-05-31",
   "developer": "Rage Software",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

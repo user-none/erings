@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-03-05",
   "developer": "Tantalus Interactive",
-  "publisher": "Psygnosis",
+  "publisher": [
+    {
+      "name": "Gamebank",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

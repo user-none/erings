@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-29",
   "developer": "Mizuki",
-  "publisher": "Mizuki",
+  "publisher": [
+    {
+      "name": "Mizuki",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Education"
   ],

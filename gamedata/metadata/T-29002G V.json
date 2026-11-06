@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-09-27",
   "developer": "Kaneko",
-  "publisher": "Mycom",
+  "publisher": [
+    {
+      "name": "Mainichi Communications",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

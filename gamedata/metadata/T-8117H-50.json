@@ -15,7 +15,14 @@
   ],
   "release_date": "1996-01-01",
   "developer": "Funcom Oslo",
-  "publisher": "Acclaim Entertainment",
+  "publisher": [
+    {
+      "name": "Acclaim Entertainment",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Beat 'em Up"
   ],

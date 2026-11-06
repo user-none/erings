@@ -13,8 +13,15 @@
     "4 938833 003133"
   ],
   "release_date": "1996-02-16",
-  "developer": "Byse",
-  "publisher": "Interplay Productions",
+  "developer": "Xatrix Entertainment",
+  "publisher": [
+    {
+      "name": "Interplay Productions",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Puzzle",
     "Shooter"

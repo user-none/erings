@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-22",
   "developer": "Bullfrog Productions",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts Victor",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing",
     "Shooter"

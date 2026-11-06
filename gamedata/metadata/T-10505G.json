@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-04-09",
   "developer": "Westone",
-  "publisher": "Shogakukan Production",
+  "publisher": [
+    {
+      "name": "Shogakukan Production",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

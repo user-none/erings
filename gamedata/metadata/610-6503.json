@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-02-28",
   "developer": "Osaka Natsume",
-  "publisher": "Imagineer",
+  "publisher": [
+    {
+      "name": "Imagineer",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

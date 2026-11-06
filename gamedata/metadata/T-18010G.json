@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-03-26",
   "developer": "New Level Software",
-  "publisher": "GT Interactive Software",
+  "publisher": [
+    {
+      "name": "BMG Japan",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

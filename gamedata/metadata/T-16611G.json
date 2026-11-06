@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-10-29",
   "developer": "Altron",
-  "publisher": "Altron",
+  "publisher": [
+    {
+      "name": "Altron",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

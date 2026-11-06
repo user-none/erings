@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-05-09",
   "developer": "DigitalWare",
-  "publisher": "Media Entertainment",
+  "publisher": [
+    {
+      "name": "Media Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation",
     "Visual Novel"

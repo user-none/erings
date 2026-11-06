@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-08-09",
   "developer": "Warashi",
-  "publisher": "Warashi",
+  "publisher": [
+    {
+      "name": "Warashi",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

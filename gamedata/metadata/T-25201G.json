@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-09-27",
   "developer": "Inner Brain",
-  "publisher": "Inner Brain",
+  "publisher": [
+    {
+      "name": "Inner Brain",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Music"
   ],

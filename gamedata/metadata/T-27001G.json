@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-03-29",
   "developer": "Affect",
-  "publisher": "Nihon System",
+  "publisher": [
+    {
+      "name": "Nihon System",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

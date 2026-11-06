@@ -13,8 +13,14 @@
     "4 997153 900065"
   ],
   "release_date": "1996-03-15",
-  "developer": "Arc System Works",
-  "publisher": "Shoeisha",
+  "publisher": [
+    {
+      "name": "Shoeisha",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

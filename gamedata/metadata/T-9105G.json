@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997-02-07",
   "developer": "Gingham Soft",
-  "publisher": "Victor Interactive Software",
+  "publisher": [
+    {
+      "name": "Victor Interactive Software",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

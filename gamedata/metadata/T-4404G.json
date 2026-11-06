@@ -14,8 +14,14 @@
   ],
   "release_date": "1998-02-26",
   "developer": "SIMS",
-  "publisher": "SIMS",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "SIMS",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

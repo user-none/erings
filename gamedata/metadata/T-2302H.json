@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-03-26",
   "developer": "Kronos Digital Entertainment",
-  "publisher": "Vic Tokai",
+  "publisher": [
+    {
+      "name": "Vic Tokai",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Fighting"
   ],

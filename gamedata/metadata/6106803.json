@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1997",
   "developer": "Cave",
-  "publisher": "Tokyo Broadcasting System",
+  "publisher": [
+    {
+      "name": "Tokyo Broadcasting System",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

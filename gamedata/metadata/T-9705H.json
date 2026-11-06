@@ -5,13 +5,19 @@
   "regions": [
     "USA"
   ],
-  "languages": [],
   "barcodes": [
     "0 31763 12220 3"
   ],
   "release_date": "1996-11-20",
   "developer": "Tantalus Interactive",
-  "publisher": "Midway Home Entertainment",
+  "publisher": [
+    {
+      "name": "Midway Home Entertainment",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -13,8 +13,15 @@
     "4 995515 971104"
   ],
   "release_date": "1998-01-15",
-  "developer": "GOO!",
-  "publisher": "Aroma",
+  "developer": "Four Winds Software",
+  "publisher": [
+    {
+      "name": "Yumedia",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

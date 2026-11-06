@@ -14,8 +14,14 @@
   ],
   "release_date": "1996-12-27",
   "developer": "Sada Soft",
-  "publisher": "Sada Soft",
-  "genres": [],
+  "publisher": [
+    {
+      "name": "Sada Soft",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "max_players": 1,
   "cooperative": false,
   "esrb": "Not Rated",

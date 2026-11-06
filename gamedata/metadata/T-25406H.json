@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-03-31",
   "developer": "Atod",
-  "publisher": "GT Interactive Software",
+  "publisher": [
+    {
+      "name": "id Software",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1998-12-10",
   "developer": "Flight-Plan",
-  "publisher": "Pioneer LDC",
+  "publisher": [
+    {
+      "name": "Pioneer LDC",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Strategy"

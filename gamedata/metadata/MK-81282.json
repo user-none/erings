@@ -16,7 +16,14 @@
   ],
   "release_date": "1997-05-22",
   "developer": "Manic Media Productions",
-  "publisher": "Sega Enterprises",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Racing"
   ],

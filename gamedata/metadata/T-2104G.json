@@ -14,7 +14,14 @@
   ],
   "release_date": "1995-04-14",
   "developer": "ASCII",
-  "publisher": "ASCII",
+  "publisher": [
+    {
+      "name": "ASCII",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Board Game"
   ],

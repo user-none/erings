@@ -13,7 +13,14 @@
   ],
   "release_date": "1996-12-12",
   "developer": "Digital Factory",
-  "publisher": "Natsume",
+  "publisher": [
+    {
+      "name": "Natsume",
+      "regions": [
+        "USA"
+      ]
+    }
+  ],
   "genres": [
     "Casino"
   ],

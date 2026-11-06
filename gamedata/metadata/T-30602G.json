@@ -14,7 +14,14 @@
   ],
   "release_date": "1997-10-23",
   "developer": "Soft Office",
-  "publisher": "Soft Office",
+  "publisher": [
+    {
+      "name": "Soft Office",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Puzzle"

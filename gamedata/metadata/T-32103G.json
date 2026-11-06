@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-01-15",
   "developer": "TEN Institute",
-  "publisher": "TEN Institute",
+  "publisher": [
+    {
+      "name": "TEN Institute",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure",
     "Casino"

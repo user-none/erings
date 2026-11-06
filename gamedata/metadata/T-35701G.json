@@ -13,8 +13,15 @@
     "4 961355 677612"
   ],
   "release_date": "1997-07-18",
-  "developer": "Tokyo Shoseki",
-  "publisher": "Tokyo Shoseki",
+  "developer": "Tonkin House",
+  "publisher": [
+    {
+      "name": "Tonkin House",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

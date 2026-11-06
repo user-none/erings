@@ -19,8 +19,21 @@
     "4 974365 810641"
   ],
   "release_date": "1997-01-17",
-  "developer": "Scavenger",
-  "publisher": "Koei",
+  "developer": "Lemon",
+  "publisher": [
+    {
+      "name": "Sega of America",
+      "regions": [
+        "USA"
+      ]
+    },
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Shooter"
   ],

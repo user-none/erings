@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-03-05",
   "developer": "SIMS",
-  "publisher": "Sega of America",
+  "publisher": [
+    {
+      "name": "Sega Enterprises",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Sports"
   ],

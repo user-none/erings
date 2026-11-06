@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-05-31",
   "developer": "Micro Cabin",
-  "publisher": "Micro Cabin",
+  "publisher": [
+    {
+      "name": "Micro Cabin",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Role-Playing"
   ],

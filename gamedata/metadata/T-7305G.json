@@ -14,7 +14,14 @@
   ],
   "release_date": "1996-10-10",
   "developer": "ReadySoft",
-  "publisher": "ReadySoft",
+  "publisher": [
+    {
+      "name": "Coconuts Japan Entertainment",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action"
   ],

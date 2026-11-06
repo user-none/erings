@@ -20,7 +20,17 @@
   ],
   "release_date": "1997-02-12",
   "developer": "Tiburon Entertainment",
-  "publisher": "Electronic Arts",
+  "publisher": [
+    {
+      "name": "Electronic Arts",
+      "regions": [
+        "USA",
+        "Europe",
+        "Germany",
+        "France"
+      ]
+    }
+  ],
   "genres": [
     "Flight Simulator",
     "Shooter"

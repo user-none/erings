@@ -9,10 +9,16 @@
   "languages": [
     "Japanese"
   ],
-  "barcodes": [],
   "release_date": "1996-08-09",
   "developer": "Taito",
-  "publisher": "Taito",
+  "publisher": [
+    {
+      "name": "Taito",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Action",
     "Compilation",

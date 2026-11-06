@@ -14,7 +14,14 @@
   ],
   "release_date": "1998-11-26",
   "developer": "TamTam",
-  "publisher": "Daiki",
+  "publisher": [
+    {
+      "name": "Daiki",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Life Simulation"
   ],

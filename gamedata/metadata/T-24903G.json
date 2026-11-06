@@ -13,8 +13,14 @@
     "4 988003 196936"
   ],
   "release_date": "1997-08-08",
-  "developer": "craftman",
-  "publisher": "King Records",
+  "publisher": [
+    {
+      "name": "King Records",
+      "regions": [
+        "Japan"
+      ]
+    }
+  ],
   "genres": [
     "Adventure"
   ],

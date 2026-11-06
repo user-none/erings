@@ -13,7 +13,14 @@
   ],
   "release_date": "1997-08-28",
   "developer": "Sega",
-  "publisher": "Working Designs",
+  "publisher": [
+    {
+      "name": "Sega Europe",
+      "regions": [
+        "Europe"
+      ]
+    }
+  ],
   "genres": [
     "Strategy"
   ],
