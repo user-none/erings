@@ -23,7 +23,6 @@
     "Sports"
   ],
   "max_players": 4,
-  "cooperative": true,
   "critic_ratings": [
     {
       "source": "Famitsu",

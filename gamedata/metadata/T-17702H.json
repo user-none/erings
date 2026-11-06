@@ -25,7 +25,6 @@
     "Racing"
   ],
   "max_players": 8,
-  "cooperative": false,
   "age_ratings": [
     {
       "system": "ELSPA",

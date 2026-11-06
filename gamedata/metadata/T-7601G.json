@@ -23,7 +23,6 @@
     "Strategy"
   ],
   "max_players": 8,
-  "cooperative": false,
   "critic_ratings": [
     {
       "source": "Famitsu",

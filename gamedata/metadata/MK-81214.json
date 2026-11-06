@@ -32,8 +32,7 @@
   "genres": [
     "Racing"
   ],
-  "max_players": 2,
-  "cooperative": false,
+  "max_players": 1,
   "age_ratings": [
     {
       "system": "ESRB",

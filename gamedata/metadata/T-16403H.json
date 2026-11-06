@@ -33,7 +33,6 @@
     "Strategy"
   ],
   "max_players": 16,
-  "cooperative": false,
   "age_ratings": [
     {
       "system": "ESRB",

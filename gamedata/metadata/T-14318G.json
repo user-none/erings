@@ -23,7 +23,6 @@
     "Party"
   ],
   "max_players": 7,
-  "cooperative": false,
   "age_ratings": [
     {
       "system": "Sega",

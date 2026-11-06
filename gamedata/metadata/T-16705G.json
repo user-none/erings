@@ -21,7 +21,7 @@
       ]
     }
   ],
-  "cooperative": false,
+  "max_players": 1,
   "age_ratings": [
     {
       "system": "Sega",

@@ -18,7 +18,7 @@
       ]
     }
   ],
-  "cooperative": false,
+  "max_players": 1,
   "critic_ratings": [
     {
       "source": "SSM JP Readers",

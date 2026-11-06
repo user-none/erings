@@ -23,8 +23,7 @@
     "Fighting",
     "Sports"
   ],
-  "max_players": 4,
-  "cooperative": true,
+  "max_players": 6,
   "age_ratings": [
     {
       "system": "Sega",

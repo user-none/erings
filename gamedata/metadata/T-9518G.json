@@ -23,7 +23,7 @@
     "Shooter"
   ],
   "max_players": 2,
-  "cooperative": false,
+  "cooperative": true,
   "critic_ratings": [
     {
       "source": "SSM JP Readers",

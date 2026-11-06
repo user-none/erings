@@ -23,7 +23,6 @@
     "Board Game"
   ],
   "max_players": 2,
-  "cooperative": false,
   "critic_ratings": [
     {
       "source": "SSM JP Readers",

@@ -23,6 +23,5 @@
     }
   ],
   "max_players": 1,
-  "cooperative": false,
   "overview": "Pad Nifty (パッドニフティ) is a piece of Sega Saturn software released exclusively in Japan. It was used to access Fujitsu's now defunct NIFTY-Serve network. Sega had a presence on NIFTY-Serve with their Sega Game Information Station, with the network having previously hosted dedicated Sega bulletin boards.\n\nIt is completely reliant on the Sega Saturn Modem (of which it was bundled with) and the defunct NIFTY-Serve network, as such it cannot function in the modern age."
 }

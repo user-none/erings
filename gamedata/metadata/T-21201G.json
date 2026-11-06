@@ -26,7 +26,6 @@
     "Quiz"
   ],
   "max_players": 6,
-  "cooperative": false,
   "age_ratings": [
     {
       "system": "Sega",

@@ -25,7 +25,7 @@
     "Shooter"
   ],
   "max_players": 8,
-  "cooperative": false,
+  "cooperative": true,
   "age_ratings": [
     {
       "system": "ELSPA",

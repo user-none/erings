@@ -26,7 +26,6 @@
     "Board Game"
   ],
   "max_players": 5,
-  "cooperative": false,
   "age_ratings": [
     {
       "system": "Sega",

@@ -22,7 +22,5 @@
   "genres": [
     "Fighting"
   ],
-  "max_players": 2,
-  "cooperative": false,
   "overview": "Rabbit is a 2D fighting game, with cartoonish colorful graphics. The game has 8 playable characters - Wu Ling (Rabbit), Tien-Ren (hawk), Eight (ox), Hou-En (wolf), Ja-Koh (snake), Yu-Lan (fox), Rex (tiger) and Eddy (wild boar). The player chooses one from these heroes, and must defeat all opponents, plus the final boss.\n\nEach character has a special animal spirit that helps with the battle (e.g. JoJo's Bizarre Adventure) - and they have a spirit' bar to use these specials. The game uses the joystick plus 4 buttons - for light punch, heavy punch, light kick, and heavy kick."
 }

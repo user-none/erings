@@ -24,8 +24,7 @@
   "genres": [
     "Adventure"
   ],
-  "max_players": 1,
-  "cooperative": false,
+  "max_players": 2,
   "age_ratings": [
     {
       "system": "Sega",

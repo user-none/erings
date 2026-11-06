@@ -26,7 +26,6 @@
     "Pinball"
   ],
   "max_players": 1,
-  "cooperative": false,
   "critic_ratings": [
     {
       "source": "SSM JP Readers",

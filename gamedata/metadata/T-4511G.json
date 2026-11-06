@@ -27,7 +27,6 @@
     "Vehicle Simulation"
   ],
   "max_players": 4,
-  "cooperative": false,
   "age_ratings": [
     {
       "system": "Sega",

@@ -24,8 +24,6 @@
   "genres": [
     "Beat 'em Up"
   ],
-  "max_players": 1,
-  "cooperative": false,
   "age_ratings": [
     {
       "system": "ESRB",

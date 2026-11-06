@@ -25,7 +25,6 @@
     "Sports"
   ],
   "max_players": 10,
-  "cooperative": true,
   "age_ratings": [
     {
       "system": "ESRB",

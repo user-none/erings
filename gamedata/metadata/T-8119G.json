@@ -23,7 +23,6 @@
     "Sports"
   ],
   "max_players": 6,
-  "cooperative": true,
   "age_ratings": [
     {
       "system": "Sega",
