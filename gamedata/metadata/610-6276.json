@@ -12,5 +12,6 @@
   "barcodes": [
     "4 974365 001285"
   ],
-  "release_date": "1996"
+  "release_date": "1996",
+  "overview": "A data management utility for the Saturn Floppy Disk Drive, supplied on CD-ROM with the drive. With it you can copy and move save files between the console's internal memory, a backup memory cartridge and 3.5-inch floppy disks.\n\nEach double-sided floppy appears as two separate storage areas, giving far more room than the internal memory or a cartridge. The utility runs from the disc, so it must be booted on its own rather than alongside a game."
 }

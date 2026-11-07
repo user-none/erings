@@ -43,5 +43,5 @@
       ]
     }
   ],
-  "overview": "Techno Motor is a fully featured music generator & Midi synthesizer for the Sega Saturn. Not a game, but a piece of software intended for the creation of mainly club style music such as Techno, Dance, House & Drum 'n bass."
+  "overview": "- Sequencer: 4 tracks (drums, bass, track 1, track 2)\n- Maximum simultaneously loaded sounds: 14 (6 drums)\n- Mixer: mute, volume (0-31), pan (L8-R8), reverb (0-7)\n- Sequence resolution: 32nd notes, velocity resolution: 16\n- BPM: 30-250\n- Transpose: -12 to +12, chord editor, arpeggio editor, melody editor, phrase editor\n- Built-in sounds: 11,716 (about 800 pitched instruments, about 2,500 drum sounds, plus noise and sample sounds)\n- Data backup: up to 99 (when using the separately sold Power Memory)\n\nシーケンサー:4トラック（ドラム、ベース、トラック1、トラック2）\n最大同時ロード音色数:14（ドラム6）\nミキサー:ミュート・ボリューム（0～31）・パン（L8～R8）・リバーブ（0～7）\nシーケンス解像度:32分音符、ベロシティ解像度:16\nBPM:30～250\nトランスポーズ:－12～＋12、コードエディタ、アルペジオエディタ、メロディエディタ、フレーズエディタ\n搭載音色数:11,716音色（ピッチドインストルメント約800、ドラム用音色約2500その他ノイズ・サンプルサウンド等）\nデータバックアップ:最大99（別売パワーメモリー使用時）"
 }

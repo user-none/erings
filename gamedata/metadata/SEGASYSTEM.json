@@ -8,5 +8,6 @@
   "languages": [
     "English"
   ],
-  "release_date": "1994"
+  "release_date": "1994",
+  "overview": "System-Disc (KD02) is a utility disc made for Sega Saturn game developers, not a game. Running it unlocks the console so that it will boot development discs written to ordinary CD-R media until the power is switched off.\n\nThe KD02 disc covers games from third-party publishers, while its companion KD01 disc covers Sega's own titles. It does not remove region locking."
 }
