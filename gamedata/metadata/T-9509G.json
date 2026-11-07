@@ -23,7 +23,6 @@
     "Shooter"
   ],
   "max_players": 2,
-  "cooperative": true,
   "critic_ratings": [
     {
       "source": "Famitsu",
