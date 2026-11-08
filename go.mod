@@ -7,12 +7,12 @@ require (
 	github.com/ebitengine/purego v0.11.3
 	github.com/ebitenui/ebitenui v0.7.3
 	github.com/gen2brain/mpeg v0.6.2
-	github.com/hajimehoshi/ebiten/v2 v2.10.5
+	github.com/hajimehoshi/ebiten/v2 v2.10.6
 	github.com/klauspost/compress v1.20.3
-	github.com/user-none/eblitui/coreif v0.9.0
-	github.com/user-none/eblitui/desktop v0.7.0
-	github.com/user-none/eblitui/romloader v0.4.1
-	github.com/user-none/eblitui/rumble v1.0.0
+	github.com/user-none/eblitui/coreif v0.10.0
+	github.com/user-none/eblitui/desktop v0.8.0
+	github.com/user-none/eblitui/romloader v0.4.2
+	github.com/user-none/eblitui/rumble v1.0.1
 	github.com/user-none/go-chip-m68k v0.1.2
 	golang.design/x/clipboard v0.11.0
 	golang.org/x/image v0.47.0
@@ -36,8 +36,7 @@ require (
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/stangelandcl/ppmd v0.1.1 // indirect
 	github.com/ulikunitz/xz v0.5.17 // indirect
-	github.com/user-none/eblitui/rdb v0.2.0 // indirect
-	github.com/user-none/go-rcheevos v0.1.0 // indirect
+	github.com/user-none/go-rcheevos v0.2.0 // indirect
 	go4.org v0.0.0-20261028031214-ed6929a230fe // indirect
 	golang.design/x/x11 v0.2.0 // indirect
 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
