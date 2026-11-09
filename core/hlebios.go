@@ -100,10 +100,11 @@ import (
 //   populateDataTables - every BIOS-set WRAM-H value (slot pointers,
 //                        workspace, IMS shadow, semaphores, System ID
 //                        cache, etc.)
-//   installIntStubs    - SCU interrupt vector trampolines + dispatcher
+//   installIntStubs    - SCU interrupt vector trampolines + dispatcher,
+//                        default RTE, fatal-exception halt, slave VBR
 //                        (these MUST be real SH-2 code; see 5)
-//   populateVBRTable   - master VBR with default-RTE everywhere + the
-//                        32 SCU stub addresses at vec $40-$5F
+//   populateVBRTable   - master VBR with each vector's BIOS default
+//                        (see hleVectorDefault)
 //   installVirtualBIOS - 512 KB virtual BIOS ROM with reset vectors
 //                        + a slave halt loop + sentinels in the
 //                        BIOS-ROM public routine table
@@ -156,15 +157,21 @@ import (
 // 5. Real SH-2 code embedded in WRAM-H
 // -----------------------------------------------------------------------------
 //
-// Three places lay down actual SH-2 instructions, because the SH-2
+// These places lay down actual SH-2 instructions, because the SH-2
 // reaches them on paths the magic-address trap can't intercept:
 //
-//   wramHDefaultRTE  ($0600094A):  "RTE; NOP" - slave VBR points all
-//                                  128 entries here so unexpected
-//                                  exceptions just return.
+//   wramHDefaultRTE  ($0600094A):  "RTE; NOP" - default for most
+//                                  vectors, so unexpected exceptions
+//                                  just return.
+//   wramHFatalHalt   ($0600094E):  mask all interrupts and spin -
+//                                  default for the unrecoverable
+//                                  exceptions (vectors 4, 6, 9, 10).
 //   wramHNoopHandler ($0600083C):  "RTS; NOP" - see 4(c).
-//   wramHIntStubBase ($06000600+): 32 per-vector SCU stubs + a common
-//                                  dispatcher (~270 bytes total). When
+//   SCU stubs ($06000840-$060008F5): 30 per-vector stubs at the
+//                                  real-BIOS addresses (see
+//                                  hleScuStubOffset) that branch to a
+//                                  common dispatcher at
+//                                  wramHIntDispatcher ($06000740). When
 //                                  the SCU asserts an IRQ the SH-2
 //                                  hardware reads VBR[vec], pushes
 //                                  SR+PC, and jumps there. We can't
@@ -343,22 +350,37 @@ const (
 	// both point at the same handler. Real-BIOS handoff dumps
 	// confirm this is where the live RTE+NOP code lives.
 	wramHDefaultRTE = 0x94A
+	// Fatal-exception handler at the real-BIOS address: masks all
+	// interrupts (SR = $F0) and spins. Default for general illegal
+	// instruction, slot illegal instruction, CPU address error and
+	// DMA address error (vectors 4, 6, 9, 10) on both CPUs.
+	wramHFatalHalt = 0x94E
 	// Slave SH-2 VBR table. SDK convention places it at $06000400;
-	// real BIOS pre-populates the 128 entries with default-RTE
-	// pointers so the slave (started later by SMPC SSH_ON) gets a
-	// safe handler for any exception until the game installs its
-	// own slave vectors. The previous HLE layout put master
-	// interrupt-dispatch code in this region, corrupting slave
+	// real BIOS pre-populates the 128 entries (default RTE, fatal
+	// halt for vectors 4/6/9/10) so the slave (started later by SMPC
+	// SSH_ON) gets a safe handler for any exception until the game
+	// installs its own slave vectors. The previous HLE layout put
+	// master interrupt-dispatch code in this region, corrupting slave
 	// dispatches when the slave's VBR landed here.
 	wramHSlaveVBR = 0x400
-	// Master SCU vector trampoline stubs. Located above the slave
-	// VBR window so the two don't collide. Each stub is 6 bytes
-	// (push R0, BRA to common dispatcher, load vector into R0 in
-	// the delay slot); the common dispatcher follows the stub block.
-	wramHIntStubBase = 0x600
-	hleIntStubStride = 6
-	// Common SCU dispatcher follows the 32 trampoline stubs.
-	wramHIntDispatcher = wramHIntStubBase + 0x20*hleIntStubStride
+	// SCU vector trampoline stubs at the real-BIOS addresses. Each
+	// stub is 6 bytes (push R0, BRA to common dispatcher, load vector
+	// into R0 in the delay slot). Vectors $40-$41, $43-$4D and
+	// $50-$5F are contiguous from wramHIntStubBase; H-Blank-IN ($42)
+	// is at wramHHBlankInStub; $4E/$4F have no stub (default RTE).
+	// See hleScuStubOffset. $06000600 is real-BIOS code that game
+	// code can read as data (Sonic Jam reads a sprite piece count
+	// from it through a null mapping pointer), so HLE places nothing
+	// there.
+	wramHIntStubBase  = 0x840
+	wramHHBlankInStub = 0x8F0
+	hleIntStubStride  = 6
+	// Common SCU dispatcher (96 B of code + 20 B pool, ends at
+	// $060007B3). The real-BIOS dispatcher at $060008F4 is smaller;
+	// this one does not fit before the default RTE at $0600094A, so
+	// it sits in the free range below the no-op handler at
+	// $0600083C.
+	wramHIntDispatcher = 0x740
 
 	// No-op handler at $0600083C. Real BIOS deposits a 2-instruction
 	// RTS+NOP here during Phase 4 and uses $0600083C as the sentinel
@@ -720,20 +742,27 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 }
 
 // installIntStubs writes the SH-2 dispatch code used to handle SCU
-// interrupts plus the BIOS-compatible default exception handler and
+// interrupts plus the BIOS-compatible default exception handlers and
 // slave VBR table.
 //
 // Layout:
 //
-//	$0600094A  RTE+NOP                  default exception handler
-//	$06000400-$060005FF  128-entry slave VBR table, all pointing
-//	                     at $0600094A (matches real-BIOS handoff;
-//	                     SDK convention puts slave VBR at $06000400)
-//	$06000600+  32 SCU vector trampolines, 6 B each:
+//	$06000400-$060005FF  128-entry slave VBR table: $0600094E for
+//	                     vectors 4/6/9/10, $0600094A elsewhere
+//	                     (matches real-BIOS handoff; SDK convention
+//	                     puts slave VBR at $06000400)
+//	$06000740  common dispatcher.
+//	$06000840-$060008ED  29 SCU vector trampolines ($40-$41, $43-$4D,
+//	                     $50-$5F), 6 B each:
 //	    +00  MOV.L R0, @-R15            ; push R0
 //	    +02  BRA   wramHIntDispatcher   ; branch to common dispatcher
 //	    +04  MOV   #vec, R0             ; vector number (delay slot)
-//	$060006C0  common dispatcher.
+//	$060008F0  H-Blank-IN ($42) trampoline, same 6-byte form.
+//	$0600094A  RTE+NOP                  default exception handler
+//	$0600094E  fatal-exception halt:
+//	    MOV #$0F,R0; SHLL2 R0; SHLL2 R0 ; R0 = $F0
+//	    LDC R0,SR                       ; mask all interrupts
+//	    BRA self; NOP                   ; spin
 //
 // The dispatcher saves the full caller-save register set (R0 from
 // the stub plus R1-R7, GBR, PR) around the handler call, then
@@ -767,17 +796,25 @@ func (h *HLEBIOS) populateDataTables(ip []byte) {
 //	NOP
 //	.long pool: $06000348, $06000980, $25FE00A0, $06000900, $000000F0
 func (h *HLEBIOS) installIntStubs() {
-	defaultRTEAddr := uint32(0x06000000) + wramHDefaultRTE
-
 	writeWord(h.bus, wramHDefaultRTE+0, 0x002B) // RTE
 	writeWord(h.bus, wramHDefaultRTE+2, 0x0009) // NOP
 
+	writeWord(h.bus, wramHFatalHalt+0, 0xE00F)  // MOV #$0F,R0
+	writeWord(h.bus, wramHFatalHalt+2, 0x4008)  // SHLL2 R0
+	writeWord(h.bus, wramHFatalHalt+4, 0x4008)  // SHLL2 R0
+	writeWord(h.bus, wramHFatalHalt+6, 0x400E)  // LDC R0,SR
+	writeWord(h.bus, wramHFatalHalt+8, 0xAFFE)  // BRA self
+	writeWord(h.bus, wramHFatalHalt+10, 0x0009) // NOP
+
 	for i := uint32(0); i < 128; i++ {
-		h.bus.writeWramHU32(wramHSlaveVBR+i*4, defaultRTEAddr)
+		h.bus.writeWramHU32(wramHSlaveVBR+i*4, hleExceptionDefault(i))
 	}
 
 	for vec := uint32(0x40); vec <= 0x5F; vec++ {
-		base := wramHIntStubBase + (vec-0x40)*hleIntStubStride
+		base, ok := hleScuStubOffset(vec)
+		if !ok {
+			continue
+		}
 		writeWord(h.bus, base+0, 0x2F06)
 		delta := int32(wramHIntDispatcher) - int32(base+6)
 		disp := uint16((delta / 2) & 0x0FFF)
@@ -883,39 +920,74 @@ func (h *HLEBIOS) installIntStubs() {
 	h.bus.writeWramHU32(addrSRF0, 0x000000F0)
 }
 
+// hleScuStubOffset returns the WRAM-H offset of the dispatcher
+// trampoline for SCU vector vec, at the real-BIOS stub addresses
+// (docs/bios/scu_interrupt_handling.md). Vectors $40-$41, $43-$4D and
+// $50-$5F are contiguous 6-byte stubs from wramHIntStubBase,
+// H-Blank-IN ($42) is at wramHHBlankInStub. $4E/$4F and vectors
+// outside $40-$5F have no stub and return false.
+func hleScuStubOffset(vec uint32) (uint32, bool) {
+	switch {
+	case vec >= 0x40 && vec <= 0x41:
+		return wramHIntStubBase + (vec-0x40)*hleIntStubStride, true
+	case vec == 0x42:
+		return wramHHBlankInStub, true
+	case vec >= 0x43 && vec <= 0x4D:
+		return wramHIntStubBase + (vec-0x41)*hleIntStubStride, true
+	case vec >= 0x50 && vec <= 0x5F:
+		return wramHIntStubBase + (vec-0x43)*hleIntStubStride, true
+	}
+	return 0, false
+}
+
+// hleExceptionDefault returns the BIOS default handler address for a
+// vector with no SCU trampoline: the fatal-exception halt for general
+// illegal instruction (4), slot illegal instruction (6), CPU address
+// error (9) and DMA address error (10), the RTE+NOP handler for the
+// rest. The NMI vector (11) also gets RTE+NOP; the real BIOS points
+// it at an NMI handler in BIOS ROM ($00000420) that HLE does not
+// provide.
+func hleExceptionDefault(vec uint32) uint32 {
+	switch vec {
+	case 4, 6, 9, 10:
+		return 0x06000000 + wramHFatalHalt
+	}
+	return 0x06000000 + wramHDefaultRTE
+}
+
+// hleVectorDefault returns the BIOS default handler address for
+// master vector vec: its SCU trampoline if it has one, otherwise
+// hleExceptionDefault. Both the boot-time VBR table and the SYS_SETSINT
+// default table use it, so SYS_SETSINT(vec, 0) restores the boot-time
+// entry.
+func hleVectorDefault(vec uint32) uint32 {
+	if off, ok := hleScuStubOffset(vec); ok {
+		return 0x06000000 + off
+	}
+	return hleExceptionDefault(vec)
+}
+
 // populateVBRTable fills the 128-entry VBR exception/interrupt
-// vector table at $06000000-$060001FF. Default everywhere is the
-// 4-byte RTE+NOP stub at $06000400 (any exception just returns).
-// SCU interrupt vectors $40-$5F are overwritten with pointers to
-// their per-vector dispatch stubs in $06000410-$0600068F.
+// vector table at $06000000-$060001FF with each vector's BIOS default
+// (see hleVectorDefault).
 //
 // The table is 128 entries, not 256: SH-2 reserves vectors 0-127.
 // $06000200+ is BIOS data (per-disc System ID partial cache, etc.)
 // - leaving that region alone so populateDataTables' writes to
 // $0254, $0260, $0300+ etc. aren't clobbered.
 func (h *HLEBIOS) populateVBRTable() {
-	defaultAddr := uint32(0x06000000) + wramHDefaultRTE
 	for i := uint32(0); i < 128; i++ {
-		h.bus.writeWramHU32(i*4, defaultAddr)
-	}
-	for vec := uint32(0x40); vec <= 0x5F; vec++ {
-		stubAddr := uint32(0x06000000) + wramHIntStubBase + (vec-0x40)*hleIntStubStride
-		h.bus.writeWramHU32(vec*4, stubAddr)
+		h.bus.writeWramHU32(i*4, hleVectorDefault(i))
 	}
 }
 
 // populateIntDefaultTable fills the per-vector interrupt default-handler
 // table at BIOS-ROM $0600, read by SYS_SETSINT when the caller passes
 // handler=0 (see docs/bios/system_services.md "$06000784 - SYS_SETSINT").
-// SCU vectors $40-$5F default to their dispatcher trampoline; $4E/$4F and
-// all other entries default to the RTE;NOP no-op.
+// Each entry is the same default populateVBRTable installs.
 func (h *HLEBIOS) populateIntDefaultTable() {
-	noop := uint32(0x06000000) + wramHDefaultRTE
 	for idx := uint32(0); idx < 128; idx++ {
-		def := noop
-		if idx >= 0x40 && idx <= 0x5F && idx != 0x4E && idx != 0x4F {
-			def = uint32(0x06000000) + wramHIntStubBase + (idx-0x40)*hleIntStubStride
-		}
+		def := hleVectorDefault(idx)
 		off := wramHIntDefaultTable + idx*4
 		h.bus.bios[off+0] = byte(def >> 24)
 		h.bus.bios[off+1] = byte(def >> 16)

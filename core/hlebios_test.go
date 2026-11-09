@@ -127,7 +127,6 @@ func TestHLEDispatcherLowersSR(t *testing.T) {
 	const (
 		retPC    uint32 = 0x06012000
 		retSR    uint32 = 0x00000000
-		stubPC          = uint32(0x06000000) + wramHIntStubBase + (vec-0x40)*hleIntStubStride
 		frameSP  uint32 = 0x0600FEF8
 		frameOff        = frameSP - 0x06000000
 	)
@@ -135,7 +134,11 @@ func TestHLEDispatcherLowersSR(t *testing.T) {
 	bus.writeWramHU32(frameOff+4, retSR) // below: return SR
 	master.SetReg(15, frameSP)
 	master.SetSR(0x000000F0) // mask 15, as just-accepted VBlankIN
-	master.SetPC(stubPC)
+	stubOff, ok := hleScuStubOffset(vec)
+	if !ok {
+		t.Fatalf("no stub for vec $%02X", vec)
+	}
+	master.SetPC(0x06000000 + stubOff)
 
 	mask := func(sr uint32) uint32 { return (sr >> 4) & 0xF }
 
@@ -233,7 +236,8 @@ func TestHLESysSetSintService(t *testing.T) {
 	// trampoline, not null. Games arm SCU interrupts this way (SFZ3
 	// Level-0 DMA, vec $4B); writing null here sent the master through
 	// a null vector on the next interrupt.
-	wantTramp := uint32(0x06000000) + wramHIntStubBase + (0x4B-0x40)*hleIntStubStride
+	// Level-0 DMA is at $0600087C on a real-BIOS boot.
+	wantTramp := uint32(0x0600087C)
 	master.SetReg(4, 0x4B)
 	master.SetReg(5, 0)
 	hleSysSetSintService(master)
@@ -524,19 +528,90 @@ func TestHLEVBRTablePopulated(t *testing.T) {
 	if err := h.Boot(makeIPImage()); err != nil {
 		t.Fatalf("Boot: %v", err)
 	}
-	defaultAddr := uint32(0x06000000) + wramHDefaultRTE
+	const (
+		defaultAddr uint32 = 0x0600094A
+		haltAddr    uint32 = 0x0600094E
+	)
 
-	// Vec 0, 5, 11, 31 - all should be default RTE.
-	for _, vec := range []uint32{0, 5, 11, 31, 0x3F, 0x60, 0x7F} {
+	// Vectors with no special handler use the default RTE, including
+	// NMI (11) and the unused SCU vectors $4E/$4F.
+	for _, vec := range []uint32{0, 5, 11, 31, 0x3F, 0x4E, 0x4F, 0x60, 0x7F} {
 		if got := bus.readWramHU32(vec * 4); got != defaultAddr {
 			t.Errorf("VBR[%02X] = %08X, want default %08X", vec, got, defaultAddr)
 		}
 	}
-	// SCU vectors $40-$5F point to their per-vector stubs.
-	for vec := uint32(0x40); vec <= 0x5F; vec++ {
-		wantStub := uint32(0x06000000) + wramHIntStubBase + (vec-0x40)*hleIntStubStride
-		if got := bus.readWramHU32(vec * 4); got != wantStub {
-			t.Errorf("VBR[%02X] = %08X, want stub %08X", vec, got, wantStub)
+	// Unrecoverable exceptions use the fatal halt on both CPUs.
+	for _, vec := range []uint32{4, 6, 9, 10} {
+		if got := bus.readWramHU32(vec * 4); got != haltAddr {
+			t.Errorf("master VBR[%02X] = %08X, want halt %08X", vec, got, haltAddr)
+		}
+		if got := bus.readWramHU32(wramHSlaveVBR + vec*4); got != haltAddr {
+			t.Errorf("slave VBR[%02X] = %08X, want halt %08X", vec, got, haltAddr)
+		}
+	}
+	// Slave SCU-range vectors keep the default RTE.
+	if got := bus.readWramHU32(wramHSlaveVBR + 0x40*4); got != defaultAddr {
+		t.Errorf("slave VBR[40] = %08X, want default %08X", got, defaultAddr)
+	}
+	// SCU vectors point to their stubs at the real-BIOS addresses.
+	wantStubs := map[uint32]uint32{
+		0x40: 0x06000840, 0x41: 0x06000846, 0x42: 0x060008F0,
+		0x43: 0x0600084C, 0x4B: 0x0600087C, 0x4D: 0x06000888,
+		0x50: 0x0600088E, 0x5F: 0x060008E8,
+	}
+	for vec, want := range wantStubs {
+		if got := bus.readWramHU32(vec * 4); got != want {
+			t.Errorf("VBR[%02X] = %08X, want stub %08X", vec, got, want)
+		}
+	}
+}
+
+func TestHLEVBRMatchesSetSintDefaults(t *testing.T) {
+	h, bus, _, _ := newHLEBIOSForTest()
+	if err := h.Boot(makeIPImage()); err != nil {
+		t.Fatalf("Boot: %v", err)
+	}
+	// SYS_SETSINT(vec, 0) must restore the boot-time entry.
+	for vec := uint32(0); vec < 128; vec++ {
+		off := wramHIntDefaultTable + vec*4
+		def := uint32(bus.bios[off])<<24 | uint32(bus.bios[off+1])<<16 |
+			uint32(bus.bios[off+2])<<8 | uint32(bus.bios[off+3])
+		if got := bus.readWramHU32(vec * 4); got != def {
+			t.Errorf("VBR[%02X] = %08X, SETSINT default = %08X", vec, got, def)
+		}
+	}
+}
+
+func TestHLEFatalHaltStub(t *testing.T) {
+	h, _, master, _ := newHLEBIOSForTest()
+	if err := h.Boot(makeIPImage()); err != nil {
+		t.Fatalf("Boot: %v", err)
+	}
+	master.SetSR(0x00000000)
+	master.SetPC(0x06000000 + wramHFatalHalt)
+	for i := 0; i < 64; i++ {
+		master.Step()
+	}
+	if got := (master.Registers().SR >> 4) & 0xF; got != 0xF {
+		t.Errorf("SR mask after halt stub = %X, want F", got)
+	}
+	pc := master.Registers().PC
+	if pc < 0x06000000+wramHFatalHalt || pc >= 0x06000000+wramHFatalHalt+12 {
+		t.Errorf("PC after halt stub = %08X, want inside the stub", pc)
+	}
+}
+
+func TestHLELeavesSlaveInitAreaEmpty(t *testing.T) {
+	h, bus, _, _ := newHLEBIOSForTest()
+	if err := h.Boot(makeIPImage()); err != nil {
+		t.Fatalf("Boot: %v", err)
+	}
+	// $06000600 is real-BIOS code. Sonic Jam reads it as a sprite
+	// piece count through a null mapping pointer, so HLE must not put
+	// its own code there.
+	for off := uint32(0x600); off < 0x740; off++ {
+		if bus.wramH[off] != 0 {
+			t.Fatalf("WRAM-H $%06X = %02X, want 0", 0x06000000+off, bus.wramH[off])
 		}
 	}
 }
@@ -553,9 +628,16 @@ func TestHLEIntStubLayout(t *testing.T) {
 	//   +0  MOV.L R0,@-R15        ; push R0
 	//   +2  BRA   wramHIntDispatcher
 	//   +4  MOV   #vec,R0          ; delay slot
-	// Verify for $40 (VBLANK_IN, first) and $5F (last).
-	for _, vec := range []uint32{0x40, 0x5F} {
-		base := uint32(wramHIntStubBase) + (vec-0x40)*hleIntStubStride
+	// Verify every vector that has a stub, including H-Blank-IN ($42)
+	// at its separate address.
+	for vec := uint32(0x40); vec <= 0x5F; vec++ {
+		base, ok := hleScuStubOffset(vec)
+		if !ok {
+			if vec != 0x4E && vec != 0x4F {
+				t.Errorf("vec $%02X has no stub", vec)
+			}
+			continue
+		}
 		if got := readWord(base + 0); got != 0x2F06 {
 			t.Errorf("vec $%02X stub +0 = %04X, want 2F06 (MOV.L R0,@-R15)", vec, got)
 		}
