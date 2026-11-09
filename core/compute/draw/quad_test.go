@@ -9,6 +9,59 @@ import (
 	"github.com/user-none/erings/core/compute"
 )
 
+// TestPreClipDetectionPerDrawnLine verifies every drawing form charges
+// the pre-clipping detection cost on each line it draws when the
+// command performs pre-clipping (CMDPMOD Pclp = 0) and nothing extra
+// when it does not (VDP1 User's Manual Supplement Sections 1.2 and
+// 2.2): the timing walk with OpFlagPreClip set costs PreClipLineCycles
+// more per drawn line. Scaled sprite rows outside the clip Y range
+// keep their off-screen cost and pay no detection on top.
+func TestPreClipDetectionPerDrawnLine(t *testing.T) {
+	pixel := PixelParams{ClipX: 319, ClipY: 223, FBWidth: 512, FBHeight: 256}
+	cases := []struct {
+		name  string
+		op    DrawOp
+		lines int32
+	}{
+		{"normal sprite", DrawOp{Kind: OpNormalSprite, CharW: 8, CharH: 4, ColorMode: 5,
+			X: [4]int32{10}, Y: [4]int32{10}}, 4},
+		{"scaled sprite", DrawOp{Kind: OpScaledSprite, CharW: 8, CharH: 4, ColorMode: 5,
+			X: [4]int32{10, 0, 25, 0}, Y: [4]int32{10, 0, 19, 0}}, 10},
+		{"scaled sprite rows above clip", DrawOp{Kind: OpScaledSprite, CharW: 8, CharH: 4, ColorMode: 5,
+			X: [4]int32{10, 0, 25, 0}, Y: [4]int32{-5, 0, 4, 0}}, 5},
+		{"distorted sprite", DrawOp{Kind: OpDistortedSprite, CharW: 8, CharH: 8, ColorMode: 5,
+			X: [4]int32{10, 17, 17, 10}, Y: [4]int32{10, 10, 17, 17}}, 8},
+		{"polygon", DrawOp{Kind: OpPolygon,
+			X: [4]int32{10, 17, 17, 10}, Y: [4]int32{10, 10, 17, 17}}, 8},
+		{"line", DrawOp{Kind: OpLine,
+			X: [4]int32{10, 30}, Y: [4]int32{10, 20}}, 1},
+		{"polyline", DrawOp{Kind: OpPolyline,
+			X: [4]int32{10, 17, 17, 10}, Y: [4]int32{10, 10, 17, 17}}, 4},
+	}
+	vram := new(compute.VDP1VRAM)
+	records := make(compute.LineRecords, 256)
+	walk := func(op DrawOp) int32 {
+		b := Buffers{VRAM: vram, Records: records}
+		st := DrawState{PixCycles: 1, Timing: true}
+		Draw(&b, &op, &st)
+		if !st.Done {
+			t.Fatalf("%v: walk did not complete", op.Kind)
+		}
+		return st.Cycles
+	}
+	for _, c := range cases {
+		op := c.op
+		op.Pixel = pixel
+		op.Flags = OpFlagECDOff
+		off := walk(op)
+		op.Flags |= OpFlagPreClip
+		on := walk(op)
+		if got, want := on-off, c.lines*PreClipLineCycles; got != want {
+			t.Errorf("%s: pre-clipping adds %d cycles, want %d (%d lines x %d)", c.name, got, want, c.lines, PreClipLineCycles)
+		}
+	}
+}
+
 // TestEdgeAtMatchesStepping pins the closed forms a line's setup uses
 // for the edge positions against stepping the DDA edges, over edges
 // of every slope class and step count, so the software schedule and

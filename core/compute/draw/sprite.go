@@ -104,7 +104,8 @@ func SpriteRowChecksECD(op *DrawOp) bool {
 
 // BeginSpriteRow starts row of op and returns the cycles charged. A
 // scaled sprite row outside the drawing area is complete on return,
-// its end at column 0 so no column of it draws.
+// its end at column 0 so no column of it draws. A row that draws pays
+// the pre-clipping detection cost when pre-clipping is performed.
 func BeginSpriteRow(op *DrawOp, st *SpriteRow, row int32) int32 {
 	st.X = 0
 	st.End = SpriteRowWidth(op)
@@ -117,7 +118,7 @@ func BeginSpriteRow(op *DrawOp, st *SpriteRow, row int32) int32 {
 			return OffscreenRowCycles
 		}
 	}
-	return 0
+	return PreClipDetectCycles(op)
 }
 
 // SpriteRowSpan draws columns [st.X, x1) of row of op, x1 clamped to

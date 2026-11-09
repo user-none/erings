@@ -138,6 +138,7 @@ func Draw(b *Buffers, op *DrawOp, st *DrawState) {
 					x1, y1, x2, y2, gStart, gEnd = PolylineLeg(op, st.Line)
 				}
 				BeginSegment(&st.Seg, x1, y1, x2, y2, gStart, gEnd)
+				st.Cycles += PreClipDetectCycles(op)
 				st.Begun = true
 				st.Seg.Key = LineKey(op.Seq, st.Line)
 			}

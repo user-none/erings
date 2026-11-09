@@ -5,18 +5,31 @@ package draw
 
 import "github.com/user-none/erings/core/compute"
 
-// PreClipLineCycles is the per-line pre-clipping detection cost
-// charged when a connecting line is wholly outside the drawing area.
-// Off-screen dots of a partially visible line are charged per dot
-// like visible dots, since the DDA iteration runs regardless and only
-// the frame buffer write is discarded.
+// PreClipLineCycles is the per-line pre-clipping detection cost. A
+// line wholly outside the drawing area costs only this; a line that
+// draws pays it on top of its dots when pre-clipping is performed
+// (PreClipDetectCycles). Off-screen dots of a partially visible line
+// are charged per dot like visible dots, since the DDA iteration runs
+// regardless and only the frame buffer write is discarded.
 //
 // The VDP1 User's Manual Supplement Section 1.2 (Pre-Clipping Disable)
 // states the detection overhead is "up to five CPU clock cycles for
-// one line", a maximum with no formula for the actual value. 3
-// approximates an average over the detection cases (trivial reject
-// through full clip-edge intersection).
-const PreClipLineCycles = 3
+// one line", a maximum with no formula for the actual value, and
+// Section 2.2 that disabling pre-clipping raises drawing speed, so
+// the detection is paid on the lines that draw too. 4 is within that
+// maximum.
+const PreClipLineCycles = 4
+
+// PreClipDetectCycles is the pre-clipping detection cost a line that
+// draws pays: PreClipLineCycles when the command performs
+// pre-clipping (CMDPMOD Pclp = 0), else nothing (VDP1 User's Manual
+// Supplement Sections 1.2 and 2.2).
+func PreClipDetectCycles(op *DrawOp) int32 {
+	if op.Flags&OpFlagPreClip != 0 {
+		return PreClipLineCycles
+	}
+	return 0
+}
 
 // QuadLine is one connecting line of a four-vertex part (a distorted
 // sprite or a polygon): its endpoints and length, the steps still to
@@ -288,7 +301,7 @@ func BeginQuadLine(op *DrawOp, st *QuadLine, i int32) int32 {
 	st.J = 0
 	st.JEnd = st.Len
 	if st.Len == 0 {
-		return 0
+		return PreClipDetectCycles(op)
 	}
 
 	// Pre-clip the connecting line to the drawing area (VDP1 manual
@@ -316,7 +329,7 @@ func BeginQuadLine(op *DrawOp, st *QuadLine, i int32) int32 {
 			st.J = j0
 		}
 	}
-	return cycles
+	return cycles + PreClipDetectCycles(op)
 }
 
 // The anti-alias hole fill of a connecting line (VDP1 manual Sec 1,

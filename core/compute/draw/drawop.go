@@ -16,12 +16,13 @@ const (
 
 // Draw op flag bits.
 const (
-	OpFlagECDOff = 1 << 0 // end code detection disabled (CMDPMOD ECD)
-	OpFlagSPDOn  = 1 << 1 // transparent dots drawn (CMDPMOD SPD)
-	OpFlagFlipH  = 1 << 2 // character read right to left
-	OpFlagFlipV  = 1 << 3 // character read bottom to top
-	OpFlagHSS    = 1 << 4 // high speed shrink (CMDPMOD HSS)
-	OpFlagHSSOdd = 1 << 5 // high speed shrink samples odd source dots (FBCR EOS)
+	OpFlagECDOff  = 1 << 0 // end code detection disabled (CMDPMOD ECD)
+	OpFlagSPDOn   = 1 << 1 // transparent dots drawn (CMDPMOD SPD)
+	OpFlagFlipH   = 1 << 2 // character read right to left
+	OpFlagFlipV   = 1 << 3 // character read bottom to top
+	OpFlagHSS     = 1 << 4 // high speed shrink (CMDPMOD HSS)
+	OpFlagHSSOdd  = 1 << 5 // high speed shrink samples odd source dots (FBCR EOS)
+	OpFlagPreClip = 1 << 6 // pre-clipping performed (CMDPMOD Pclp = 0)
 )
 
 // DrawOp is one drawing command as the command list walk resolved it:

@@ -1,6 +1,34 @@
 package core
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/user-none/erings/core/compute/draw"
+)
+
+// TestBeginOpPreClipFlag verifies a drawing command's op carries
+// OpFlagPreClip exactly when CMDPMOD Pclp (bit 11) is 0, the command
+// performing pre-clipping (VDP1 User's Manual Sec 6.3, Pre-Clipping
+// Disable), so its drawn lines pay the detection cost.
+func TestBeginOpPreClipFlag(t *testing.T) {
+	v := newDrawTestVDP1()
+	for _, c := range []struct {
+		pmod uint16
+		want bool
+	}{
+		{0x0000, true},
+		{0x0020, true},
+		{0x0800, false},
+		{0x0820, false},
+	} {
+		var op draw.DrawOp
+		cmd := vdp1Command{pmod: c.pmod}
+		v.beginOp(&op, draw.OpPolygon, &cmd)
+		if got := op.Flags&draw.OpFlagPreClip != 0; got != c.want {
+			t.Errorf("pmod 0x%04X: pre-clip flag %v, want %v", c.pmod, got, c.want)
+		}
+	}
+}
 
 // TestPolygonPreClipLeadingSkipGouraud verifies that a connecting line
 // starting off the left of the drawing area skips its leading

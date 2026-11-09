@@ -109,6 +109,9 @@ func (v *VDP1) beginOp(op *draw.DrawOp, kind uint32, cmd *vdp1Command) {
 	clipX, clipY := v.clipBounds()
 	*op = draw.DrawOp{Kind: kind, Addr: v.procAddr, Color: uint32(cmd.colr)}
 	op.Pixel = v.pixelParams(cmd.pmod&0x07, cmd.pmod&0x8000 != 0, cmd.pmod&0x0100 != 0, (cmd.pmod>>9)&3, clipX, clipY)
+	if cmd.pmod&0x0800 == 0 {
+		op.Flags |= draw.OpFlagPreClip
+	}
 	if cmd.pmod&0x07 >= 4 {
 		gt := v.readGouraudTable(cmd.grda)
 		for i := range gt {
