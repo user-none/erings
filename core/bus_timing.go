@@ -370,7 +370,7 @@ func (b *Bus) SH2Read32(addr uint32, now int64, slave bool) (uint32, uint32) {
 	bufWait := b.pendingWriteOf(slave).wait(now)
 	stall := bufWait + b.chargeAccess(area, cost, now+int64(bufWait), slave)
 	val := b.read32Impl(addr)
-	if drawArb {
+	if area == areaBBus {
 		b.vdp1.chargeDrawStallBounded(addr, 2)
 	}
 	b.unlockArea(area)
@@ -391,7 +391,7 @@ func (b *Bus) SH2Read16(addr uint32, now int64, slave bool) (uint16, uint32) {
 	bufWait := b.pendingWriteOf(slave).wait(now)
 	stall := bufWait + b.chargeAccess(area, cost, now+int64(bufWait), slave)
 	val := b.read16Impl(addr)
-	if drawArb {
+	if area == areaBBus {
 		b.vdp1.chargeDrawStallBounded(addr, 1)
 	}
 	b.unlockArea(area)
@@ -412,7 +412,7 @@ func (b *Bus) SH2Read8(addr uint32, now int64, slave bool) (uint8, uint32) {
 	bufWait := b.pendingWriteOf(slave).wait(now)
 	stall := bufWait + b.chargeAccess(area, cost, now+int64(bufWait), slave)
 	val := b.read8Impl(addr)
-	if drawArb {
+	if area == areaBBus {
 		b.vdp1.chargeDrawStallBounded(addr, 1)
 	}
 	b.unlockArea(area)
@@ -428,8 +428,7 @@ func (b *Bus) SH2Write32(addr uint32, val uint32, now int64, slave bool) uint32 
 	b.lockArea(area)
 	stall := b.chargeWrite(area, cost, now, slave)
 	b.write32Impl(addr, val)
-	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
-	if drawArb {
+	if area == areaBBus {
 		b.vdp1.chargeDrawStallBounded(addr, 2)
 	}
 	b.unlockArea(area)
@@ -442,8 +441,7 @@ func (b *Bus) SH2Write16(addr uint32, val uint16, now int64, slave bool) uint32 
 	b.lockArea(area)
 	stall := b.chargeWrite(area, cost, now, slave)
 	b.write16Impl(addr, val)
-	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
-	if drawArb {
+	if area == areaBBus {
 		b.vdp1.chargeDrawStallBounded(addr, 1)
 	}
 	b.unlockArea(area)
@@ -456,8 +454,7 @@ func (b *Bus) SH2Write8(addr uint32, val uint8, now int64, slave bool) uint32 {
 	b.lockArea(area)
 	stall := b.chargeWrite(area, cost, now, slave)
 	b.write8Impl(addr, val)
-	drawArb := area == areaBBus && b.vdp1.drawingVRAMAccess(addr)
-	if drawArb {
+	if area == areaBBus {
 		b.vdp1.chargeDrawStallBounded(addr, 1)
 	}
 	b.unlockArea(area)

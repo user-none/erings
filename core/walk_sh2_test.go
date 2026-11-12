@@ -432,3 +432,58 @@ func TestWalkSlaveEnabledMidFrame(t *testing.T) {
 	}
 	f.checkCycleBound("slave", e.slave.Cycles(), 1)
 }
+
+// TestWalkVDP1FrameChangeFollowsVBlankOut: the VDP1 frame change runs
+// on the line after V-blank OUT (VDP1 manual Sec 4.2), and the PTM=10
+// automatic draw starts on line 1. With a top border (224 lines on
+// NTSC) V-blank OUT is before the frame boundary, so the first frame
+// ends with the buffers changed and the draw not yet started, and the
+// draw starts in the second frame. With no border (240 lines) both are
+// on line 1 and the draw starts in the first frame. The command list
+// loops forever, so a started draw stays active.
+func TestWalkVDP1FrameChangeFollowsVBlankOut(t *testing.T) {
+	setup := func(t *testing.T, tvmd uint16) *walkFixture {
+		f := newWalkFixture(t)
+		f.code(walkCode, wopBRASelf, wopNOP)
+		f.e.bus.Write16(0x25F80000, tvmd)
+		v := f.e.vdp1
+		writeCmd16(v, 0x00, 0x100A) // local coordinates, jump assign
+		writeCmd16(v, 0x02, 0x0000) // back to address 0
+		v.Write(0x04, 2)            // PTM=10
+		return f
+	}
+
+	t.Run("TopBorder224", func(t *testing.T) {
+		f := setup(t, 0x8000)
+		v := f.e.vdp1
+		f.runFrames(1)
+		if got, want := f.e.vdpFrameChangeLine, int64(f.e.frameScanlines)-7; got != want {
+			t.Fatalf("frame change line = %d, want %d (the line after V-blank OUT)", got, want)
+		}
+		if got := v.SwapCount(); got != 1 {
+			t.Errorf("swaps after frame 1 = %d, want 1", got)
+		}
+		if v.drawActive {
+			t.Error("draw active after frame 1; the automatic draw starts on line 1 of the next frame")
+		}
+		f.runFrames(1)
+		if !v.drawActive {
+			t.Error("draw not active after frame 2; the automatic draw should have started on its line 1")
+		}
+	})
+
+	t.Run("NoBorder240", func(t *testing.T) {
+		f := setup(t, 0x8010)
+		v := f.e.vdp1
+		f.runFrames(1)
+		if got := f.e.vdpFrameChangeLine; got != 1 {
+			t.Fatalf("frame change line = %d, want 1", got)
+		}
+		if got := v.SwapCount(); got != 1 {
+			t.Errorf("swaps after frame 1 = %d, want 1", got)
+		}
+		if !v.drawActive {
+			t.Error("draw not active after frame 1; change and automatic draw are both on line 1")
+		}
+	})
+}

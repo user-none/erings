@@ -114,6 +114,9 @@ type Emulator struct {
 	frameCyclesPerScanline uint32
 	frameScanlines         uint16
 	vdpWalkActiveLines     uint16
+	// vdpFrameChangeLine is the walker line of the VDP1 frame change:
+	// the first H-blank IN after V-blank OUT (VDP1 manual Sec 4.2).
+	vdpFrameChangeLine int64
 
 	// The VDP worker walks the frame a line at a time: VDP1 incremental
 	// command processing by the line's cycles, the VDP2 row render at

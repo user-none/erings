@@ -135,6 +135,65 @@ func TestVDP1DMABurstChargedBurstRate(t *testing.T) {
 	}
 }
 
+// TestVDP1SH2FrameBufferAccessStallsDrawing verifies an SH-2 access to
+// the VDP1 frame buffer during an active draw stalls drawing like a
+// VRAM access does (VDP1 manual Sec 2.1, Frame Buffer: access from the
+// system controller during drawing interrupts drawing). An access to
+// the VDP1 registers or past the end of the 256 KB frame buffer charges
+// nothing, and neither does a frame buffer access with no draw active.
+func TestVDP1SH2FrameBufferAccessStallsDrawing(t *testing.T) {
+	bus := newBusForTest()
+	v := bus.vdp1
+	const fb = uint32(0x05C80000)
+	const fbLast = uint32(0x05CBFFFE)
+	const pastFB = uint32(0x05CC0000)
+	const regs = uint32(0x05D00010)
+
+	bus.SH2Write16(fb, 0x1234, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 0 {
+		t.Fatalf("SH2Write16 to frame buffer with no draw active: stall=%d, want 0", got)
+	}
+
+	v.drawActive = true
+	v.drawTicked.Store(1 << 20)
+
+	v.vramWriteStallCycles.Store(0)
+	bus.SH2Write16(fb, 0x1234, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != vdp1WriteStallSystemCycles {
+		t.Fatalf("SH2Write16 to frame buffer during draw: stall=%d, want %d", got, vdp1WriteStallSystemCycles)
+	}
+
+	v.vramWriteStallCycles.Store(0)
+	bus.SH2Write32(fb, 0xDEADBEEF, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 2*vdp1WriteStallSystemCycles {
+		t.Fatalf("SH2Write32 to frame buffer during draw: stall=%d, want %d", got, 2*vdp1WriteStallSystemCycles)
+	}
+
+	v.vramWriteStallCycles.Store(0)
+	bus.SH2Read16(fb, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != vdp1WriteStallSystemCycles {
+		t.Fatalf("SH2Read16 of frame buffer during draw: stall=%d, want %d", got, vdp1WriteStallSystemCycles)
+	}
+
+	v.vramWriteStallCycles.Store(0)
+	bus.SH2Write16(fbLast, 0x1234, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != vdp1WriteStallSystemCycles {
+		t.Fatalf("SH2Write16 to the frame buffer's last word during draw: stall=%d, want %d", got, vdp1WriteStallSystemCycles)
+	}
+
+	v.vramWriteStallCycles.Store(0)
+	bus.SH2Write16(pastFB, 0x1234, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 0 {
+		t.Fatalf("SH2Write16 past the frame buffer during draw: stall=%d, want 0", got)
+	}
+
+	v.vramWriteStallCycles.Store(0)
+	bus.SH2Read16(regs, 0, false)
+	if got := v.vramWriteStallCycles.Load(); got != 0 {
+		t.Fatalf("SH2Read16 of VDP1 registers during draw: stall=%d, want 0", got)
+	}
+}
+
 // TestVDP1GenericWriteNotCharged verifies the generic bus write path
 // (Bus.Write*) never charges VDP1 draw contention, even to VDP1 VRAM
 // during a draw - contention is the business of the typed access-class

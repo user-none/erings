@@ -4565,6 +4565,51 @@ func TestENDRStopsDrawing(t *testing.T) {
 	}
 }
 
+// TestENDRTerminatesCommandInProgress verifies ENDR ends drawing while
+// a command is part way through, without finishing it (VDP1 manual Sec
+// 4.5: drawing is terminated within approximately 30 clock cycles and
+// cannot be resumed). The dots drawn before the write stay, the rest
+// of the command is not drawn, and CEF is not set.
+func TestENDRTerminatesCommandInProgress(t *testing.T) {
+	v := NewVDP1(NewSCU())
+
+	// A 301-dot line, far more than the first tick's budget covers.
+	writeCmd16(v, 0x00, 0x0006)
+	writeCmd16(v, 0x04, 0x0000)
+	writeCmd16(v, 0x06, 0x1234)
+	writeCmd16(v, 0x0C, 0)
+	writeCmd16(v, 0x0E, 0)
+	writeCmd16(v, 0x10, 300)
+	writeCmd16(v, 0x12, 0)
+	writeDrawEnd(v, 0x20)
+
+	v.ptmr = 2
+	v.startDraw()
+	v.TickSystemCycles(40)
+	if v.cmdPhase == phaseIdle {
+		t.Fatal("line finished within the first tick; the test needs it in progress")
+	}
+	if got := readFBPixel(v, 5, 0); got != 0x1234 {
+		t.Fatalf("px(5,0) = 0x%04X, want 0x1234 (drawn before ENDR)", got)
+	}
+
+	v.Write(0x0C, 0x0000)
+	v.TickSystemCycles(100000)
+
+	if v.drawActive {
+		t.Error("drawActive still set after ENDR")
+	}
+	if v.cmdPhase != phaseIdle {
+		t.Error("command still in progress after ENDR")
+	}
+	if got := readFBPixel(v, 290, 0); got != 0 {
+		t.Errorf("px(290,0) = 0x%04X, want 0 (command not finished after ENDR)", got)
+	}
+	if v.edsr&0x02 != 0 {
+		t.Error("CEF set after ENDR termination")
+	}
+}
+
 func TestENDRRespectsDrawActiveGate(t *testing.T) {
 	v := NewVDP1(NewSCU())
 

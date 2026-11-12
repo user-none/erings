@@ -199,6 +199,14 @@ func (e *Emulator) RunFrame() {
 	e.frameScanlines = e.scanlines
 	e.frameTotalCycles = int64(e.frameCyclesPerScanline) * int64(e.frameScanlines)
 	e.vdpWalkActiveLines = vdp2.ActiveLines()
+	// The VDP1 frame change is at the first H-blank IN after V-blank OUT
+	// (VDP1 manual Sec 4.2). V-blank OUT starts a line (vblankOutLine);
+	// that line's H-blank IN is behind the walker once the line is
+	// walked, so the change runs at the start of the next walker line.
+	e.vdpFrameChangeLine = 1
+	if vo := int64(vdp2.vblankOutLine()); vo+1 < int64(e.frameScanlines) {
+		e.vdpFrameChangeLine = vo + 1
+	}
 
 	// Kick the VDP worker's frame walk. The workers are spawned by
 	// Start; RunFrame only kicks them.
@@ -323,14 +331,15 @@ func (e *Emulator) vdpWorker() {
 //
 // Frame events fire at their line positions:
 //
-//	Start of line 1 (the first H-blank IN after V-blank OUT): VDP1's
-//	FBCR take-in point per manual Sec 4.2 - the VDP1 frame change
-//	(VBlankIn: deferred-register latch, swap or parity erase, EDSR),
-//	the VBlankOut manual-swap evaluation, the PTM=10 auto-draw gate,
-//	the VDP2 frame-scoped sample (BeginFrame), and row 0's render
-//	from the post-change state. Every register write the game makes
-//	during the vertical blank precedes this point, so the change acts
-//	on the last value written.
+//	Start of vdpFrameChangeLine, the line after V-blank OUT: the VDP1
+//	frame change - register latch, buffer swap or erase, EDSR. VDP1
+//	takes FBCR in at the first H-blank IN after V-blank OUT (manual
+//	Sec 4.2), so the change sees every write made through the V-blank
+//	OUT line. This is line 1 unless a top border puts V-blank OUT
+//	ahead of the frame boundary.
+//
+//	Start of line 1: the PTM=10 automatic draw start, the VDP2 frame
+//	sample (BeginFrame), and row 0's render, all after the change.
 //
 //	Start of each later active line: BeginLine - the row's register
 //	snapshot and per-line setup, and the VDP1 frame buffer view, taken
@@ -359,26 +368,18 @@ func (e *Emulator) walkVDPFrame() {
 		// have completed it.
 		wait := (line + 1) * lineWidth
 		e.waitLineEnd(wait, int(line))
-		if line == 1 {
-			// First H-blank IN after V-blank OUT: VDP1's FBCR
-			// latch point. Per VDP1 manual Sec 4.2, FCM/FCT
-			// settings are to be made immediately after the
-			// V-blank OUT interrupt, and FBCR access is
-			// prohibited from the first H-blank IN after V-blank
-			// OUT until the next H-blank IN - the window in which
-			// VDP1 latches and processes the register. So the
-			// frame change (VBlankIn), the manual-change swap,
-			// and the PTM=10 auto-draw gate evaluate here, one
-			// line after the interrupt: every write made during
-			// the vertical blank, including the V-blank OUT
-			// handler's during line 0, is included, and the
-			// handlers read pre-swap state (e.g. EDSR.CEF)
-			// before the change lands. The changed display buffer
-			// applies to this field, so row 0 renders here from
-			// the post-change state before this line's VDP1
-			// cycles run.
+		if line == e.vdpFrameChangeLine {
+			// VDP1 frame change. The V-blank OUT handler has had
+			// its line to write FBCR, and until here it reads
+			// pre-swap state such as EDSR.CEF.
 			vdp1.VBlankIn()
 			vdp1.VBlankOut()
+		}
+		if line == 1 {
+			// PTM=10 automatic draw start, gated on a swap having
+			// occurred. VDP1 manual Sec 4.3 ties the start to the
+			// frame change. It runs on line 1 in every mode, so a
+			// top border puts it that many lines after the change.
 			if vdp1.PTM() == 2 && vdp1.ConsumeFBSwap() {
 				vdp1.StartAutoDraw()
 			}

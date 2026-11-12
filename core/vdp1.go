@@ -44,13 +44,13 @@ const vdp1CLUTWords = 16
 const vdp1GouraudWords = 4
 
 // vdp1WriteStallSystemCycles is the system cycles drawing stalls for
-// each 16-bit VRAM word a CPU access takes during drawing. A 32-bit
-// access counts as two words. VDP1 User's Manual Sec 2.1 (VRAM)
-// documents that CPU access is arbitrated with priority over drawing
-// and interrupts it, but gives no figure for how long drawing loses.
-// Its "more than 10 wait cycles" describes the CPU-side wait (see
-// vdp1DrawAccessWaitCycles), and its burst-transfer statement implies
-// the port transaction itself is short.
+// each 16-bit VRAM or frame buffer word a CPU access takes during
+// drawing. A 32-bit access counts as two words. VDP1 User's Manual Sec
+// 2.1 (VRAM, Frame Buffer) documents that CPU access is arbitrated with
+// priority over drawing and interrupts it, but gives no figure for how
+// long drawing loses. Its "more than 10 wait cycles" describes the
+// CPU-side wait (see vdp1DrawAccessWaitCycles), and its burst-transfer
+// statement implies the port transaction itself is short.
 //
 // The value is therefore an empirical calibration, not spec-derived.
 // It must be large enough that drawing stays behind an SH-2 still
@@ -711,10 +711,23 @@ func (v *VDP1) drawingVRAMAccess(addr uint32) bool {
 	return m >= 0x05C00000 && m <= 0x05C7FFFF
 }
 
+// drawingPortAccess reports whether addr targets memory drawing uses -
+// VRAM (parameter and pattern reads) or the frame buffer (dot writes) -
+// while a draw is active. VDP1 User's Manual Sec 2.1: for both, access
+// by the system controller has priority, and during drawing "drawing
+// is interrupted and must wait".
+func (v *VDP1) drawingPortAccess(addr uint32) bool {
+	if !v.drawActive {
+		return false
+	}
+	m := addr & 0x07FFFFFF
+	return m >= 0x05C00000 && m <= 0x05CBFFFF
+}
+
 // chargeDrawStallBounded stalls drawing by vdp1WriteStallSystemCycles
-// per 16-bit word of a CPU VRAM access during drawing, capped at the
-// cycles the draw has run since startDraw. A shared port cannot take
-// more time from drawing than has actually elapsed.
+// per 16-bit word of a CPU VRAM or frame buffer access during drawing,
+// capped at the cycles the draw has run since startDraw. A shared port
+// cannot take more time from drawing than has actually elapsed.
 //
 // A draw that keeps advancing stays ahead of the cap, so occasional
 // accesses charge the full penalty. A dense access stream that pins
@@ -726,7 +739,7 @@ func (v *VDP1) drawingVRAMAccess(addr uint32) bool {
 // other CPU. The VDP walker advances drawTicked concurrently without
 // the lock, but it only grows, which can only under-count the slack.
 func (v *VDP1) chargeDrawStallBounded(addr uint32, words int32) {
-	if !v.drawingVRAMAccess(addr) {
+	if !v.drawingPortAccess(addr) {
 		return
 	}
 	charge := int64(words) * vdp1WriteStallSystemCycles

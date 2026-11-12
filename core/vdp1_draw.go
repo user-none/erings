@@ -377,6 +377,19 @@ func (v *VDP1) processCommands(budget int32) (consumed int32, endBit bool) {
 			return consumed, false
 		}
 
+		// ENDR force-termination, VDP1 manual Sec 4.5: drawing ends
+		// within approximately 30 clock cycles of the write, including
+		// the drawing currently being processed, and the interrupted
+		// drawing cannot be resumed. A command in progress is abandoned
+		// where it stands.
+		if v.drawEnd {
+			consumed += 30
+			v.drawEnd = false
+			v.drawActive = false
+			v.cmdPhase = phaseIdle
+			return consumed, false
+		}
+
 		// Resume any in-progress command before fetching a new one.
 		// The resume helper returns done=true on completion so the
 		// dispatcher can advance procAddr per the saved cmd's jp.
@@ -388,14 +401,6 @@ func (v *VDP1) processCommands(budget int32) (consumed int32, endBit bool) {
 			}
 			v.advanceProcAddrAfterCmd(&v.cmdSnapshot)
 			continue
-		}
-
-		if v.drawEnd {
-			// ENDR force-termination: ~30 cycles per VDP1 manual Sec 4.5.
-			consumed += 30
-			v.drawEnd = false
-			v.drawActive = false
-			return consumed, false
 		}
 
 		cmd := v.readCommand(v.procAddr)
