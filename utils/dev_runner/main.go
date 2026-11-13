@@ -57,7 +57,7 @@ func writeMemProfile(path string) {
 
 func main() {
 	biosPath := flag.String("bios", "", "Path to Saturn BIOS ROM (512KB). Optional - if omitted, the HLE BIOS boots the disc directly.")
-	discPath := flag.String("disc", "", "Path to CHD V5 or cue disc image.")
+	discPath := flag.String("disc", "", "Path to CHD V5, cue, or zip (cue/bin) disc image.")
 	cpuProfile := flag.String("cpuprofile", "", "Write CPU profile to file.")
 	memProfile := flag.String("memprofile", "", "Write an allocation profile to file on exit (go tool pprof -sample_index=alloc_space).")
 	dumpDir := flag.String("dump-dir", ".", "Directory to write memory dumps into (created if missing).")

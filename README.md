@@ -84,6 +84,7 @@ Several disc image formats are supported
 
 - chd
 - cue (tracks must have .bin extension)
+- zip holding one cue and its bin tracks
 
 ## BIOS
 
